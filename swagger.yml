@@ -1,0 +1,524 @@
+openapi: 3.0.0
+info:
+  description: |
+    Election Tally Sheet Service.
+    [http://swagger.io](http://swagger.io) or on
+    [irc.freenode.net, #swagger](http://swagger.io/irc/).
+  version: "2.0.0-oas3"
+  title: Tally Sheet
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+tags:
+  - name: tallySheet
+    description: Access to tally sheets
+  - name: tallySheetList
+    description: Access to tally sheets
+  - name: tallySheetHistory
+    description: Access to tally sheet history
+
+paths:
+  /tallySheet:
+    get:
+      tags:
+        - tallySheet
+      summary: Get all the tally sheets.
+      operationId: api.tallySheet.getAll
+      parameters:
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: officeId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: createdBy
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: code
+          required: false
+          in: query
+          schema:
+            type: string
+            enum:
+              - PCE-22
+              - PCE-34
+              - PCE-35
+              - PCE-31
+              - CE-CO-PR-1
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TallySheet'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+#      security:
+#        - organization_auth:
+#            - 'read:org'
+    post:
+      tags:
+        - tallySheet
+      summary: Create a tally sheet.
+      operationId: api.tallySheet.create
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TallySheet'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+#      security:
+#        - organization_auth:
+#            - 'write:org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TallySheet'
+        description: Tally sheet object.
+        required: True
+
+#  '/tallySheet/{tallySheetId}':
+#    parameters:
+#      - name: tallySheetId
+#        in: path
+#        description: Tally sheet ID
+#        required: true
+#        schema:
+#          type: string
+#    get:
+#      tags:
+#        - tallySheet
+#      summary: Get tally sheet by ID
+#      operationId: api.tallySheet.getById
+#      parameters:
+#      - name: tallySheetVersion
+#        in: query
+#        description: Tally sheet version
+#        required: false
+#        schema:
+#          type: integer
+#          format: int64
+#      responses:
+#        '200':
+#          description: Successful operation.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/TallySheet'
+#        '400':
+#          description: Bad request.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '401':
+#          description: Unauthorized.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '404':
+#          description: Resource was not found.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '500':
+#          description: Unexpected error.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#      security:
+#        - organization_auth:
+#            - 'read:org'
+#    put:
+#      tags:
+#        - tallySheet
+#      summary: Update tally sheet
+#      operationId: api.tallySheet.update
+#      responses:
+#        '200':
+#          description: Successful operation.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/TallySheet'
+#        '400':
+#          description: Bad request.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '401':
+#          description: Unauthorized.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '404':
+#          description: Resource was not found.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '500':
+#          description: Unexpected error.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#      security:
+#        - organization_auth:
+#            - 'write:org'
+#      requestBody:
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/TallySheet'
+#        description: Updated tally sheet object.
+#        required: true
+#
+#  '/tallySheet/{tallySheetId}/history':
+#    parameters:
+#      - name: tallySheetId
+#        in: path
+#        description: Tally sheet ID
+#        required: true
+#        schema:
+#          type: string
+#      - name: tallySheetVersion
+#        in: path
+#        description: Tally sheet version
+#        required: true
+#        schema:
+#          type: string
+#    get:
+#      tags:
+#        - tallySheetHistory
+#      summary: Get tally sheet hostory
+#      operationId: api.tallySheetHistory.getAll
+#      responses:
+#        '200':
+#          description: Successful operation.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/TallySheetHistory'
+#        '400':
+#          description: Bad request.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '401':
+#          description: Unauthorized.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '404':
+#          description: Resource was not found.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '500':
+#          description: Unexpected error.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#      security:
+#        - organization_auth:
+#            - 'read:org'
+
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
+
+components:
+  securitySchemes:
+    organization_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
+          scopes:
+            'write:org': modify
+            'read:org': read
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+    TallySheetHistory:
+      type: array
+      items:
+        type: object
+        properties:
+          version:
+            type: integer
+            format: int64
+          createdBy:
+            type: integer
+            format: int64
+          createdAt:
+            type: string
+            format: date-time
+    TallySheet:
+      type: object
+      required:
+        - electionId
+        - officeId
+        - code
+      properties:
+        id:
+          type: integer
+          format: int64
+        version:
+          type: integer
+          format: int64
+        electionId:
+          type: integer
+          format: int64
+        officeId:
+          type: integer
+          format: int64
+        createdBy:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        code:
+          type: string
+          enum:
+            - PCE-22
+            - PCE-34
+            - PCE-35
+            - PCE-31
+            - CE/ CO/ PR/ 1
+        table:
+          type: array
+          items:
+            type: object
+
+
+    ########################################################
+    ###  Provincial Council                              ###
+    ########################################################
+    TallySheet_PCE-22:
+      allOf:
+        - $ref: '#/components/schemas/TallySheet'
+      type: object
+      description: Record of ballot papers of each ballot box of a polling station.
+      properties:
+        countingStartedAt:
+          type: string
+          format: data-time
+        table:
+          type: array
+          items:
+            type: object
+            description: the count of ballot of a ballot box.
+            properties:
+              id:
+                type: integer
+                format: int64
+              ballotBox:
+                type: integer
+              ballotCount:
+                type: integer
+    TallySheet_PCE-34:
+      allOf:
+        - $ref: '#/components/schemas/TallySheet'
+      type: object
+      description: >-
+        Statement for number and grounds on which ballot papers have been
+        rejected.
+      properties:
+        countingStartedAt:
+          type: string
+          format: data-time
+        does_not_bear_the_official_mark:
+          type: integer
+        votes_are_given_for_more_than_one_recognized_political_party:
+          type: integer
+        votes_are_given_for_more_than_one_independent_group:
+          type: integer
+        votes_are_given_for_a_combination_of_one_or_more_recognized_political_parties_and_independent_groups:
+          type: integer
+        something_is_written_or_marked_by_which_the_voter_can_be_identified:
+          type: integer
+        unmarked:
+          type: integer
+        void_for_uncertainty:
+          type: integer
+    TallySheet_PCE-35:
+      allOf:
+        - $ref: '#/components/schemas/TallySheet'
+      type: object
+      description: >-
+        Statement on the number of votes given to each recognized political
+        party/ independent group from the counting centre.
+      properties:
+        table:
+          type: array
+          items:
+            type: object
+            description: >-
+              votes given to a particular political party/ independent group
+              approved by an agent.
+            properties:
+              id:
+                type: integer
+                format: int64
+              partyId:
+                type: integer
+                format: int64
+              vote_count:
+                type: integer
+              vote_count_in_words:
+                type: string
+              signed_agent:
+                type: string
+    TallySheet_PCE-31:
+      allOf:
+        - $ref: '#/components/schemas/TallySheet'
+      type: object
+      description: Statement for invalid ballot papers at the count of preferences.
+      properties:
+        table:
+          type: array
+          items:
+            type: object
+            description: >-
+              Statement for invalid ballot papers at the count of preferences of
+              a party
+            properties:
+              id:
+                type: integer
+                format: int64
+              partyId:
+                type: integer
+                format: int64
+              preferences_given_for_more_than_three_candidates:
+                type: integer
+              all_preferences_are_void_uncertainity:
+                type: integer
+              no_preferences_marked:
+                type: integer
+    TallySheet_CE-CO-PR-1:
+      allOf:
+        - $ref: '#/components/schemas/TallySheet'
+      type: object
+      description: Tally sheet of preferences of a 50 bundle of a party.
+      properties:
+        partyId:
+          type: integer
+          format: int64
+        table:
+          type: array
+          items:
+            type: object
+            description: >-
+              Statement for invalid ballot papers at the count of preferences of
+              a party
+            properties:
+              id:
+                type: integer
+                format: int64
+              candidateId:
+                type: integer
+                format: int64
+              preferences_count:
+                type: integer
