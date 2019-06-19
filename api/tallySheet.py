@@ -29,7 +29,7 @@ def get_by_id(tallySheetId):
 
     # person = Person.query.filter(Person.person_id == person_id).one_or_none()
 
-    tallySheet = TallySheet.query.filter(TallySheet.id == tallySheetId).one_or_none()
+    tallySheet = TallySheet.query.filter(TallySheet.tallySheetId == tallySheetId).one_or_none()
 
     print("##### tallySheet.latestVersionId ###", tallySheet.latestVersionId)
 
@@ -79,7 +79,7 @@ def create_tallysheet_PRE_41__party(body, tallysheetVersion):
 
     for party_wise_entry_body in body["table"]:
         new_tallysheet_PRE_41__party = schema.load(party_wise_entry_body, session=db.session).data
-        new_tallysheet_PRE_41__party.tallySheetVersionId = tallysheetVersion.id
+        new_tallysheet_PRE_41__party.tallySheetVersionId = tallysheetVersion.tallySheetVersionId
         new_tallysheet_PRE_41__party.partyId = party_wise_entry_body["partyId"]
 
         db.session.add(new_tallysheet_PRE_41__party)
@@ -90,7 +90,7 @@ def create_tallysheet_PRE_41(body, tallysheetVersion):
     schema = TallySheet_PRE_41_Schema()
     new_tallysheet_PRE_41 = schema.load(body, session=db.session).data
     new_tallysheet_PRE_41.tallySheetId = tallysheetVersion.tallySheetId
-    new_tallysheet_PRE_41.tallySheetVersionId = tallysheetVersion.id
+    new_tallysheet_PRE_41.tallySheetVersionId = tallysheetVersion.tallySheetVersionId
 
     db.session.add(new_tallysheet_PRE_41)
     db.session.commit()
@@ -109,7 +109,7 @@ def create_tallysheet_version(body, tallysheet):
     # Create an instance using the schema and the passed-in data
     schema = TallySheetVersionSchema()
     new_tallysheet_version = schema.load(body, session=db.session).data
-    new_tallysheet_version.tallySheetId = tallysheet.id
+    new_tallysheet_version.tallySheetId = tallysheet.tallySheetId
 
     db.session.add(new_tallysheet_version)
     db.session.commit()
@@ -150,7 +150,7 @@ def update(tallySheetId, body):
     """
     # Get the tally sheet
     tallySheet = TallySheet.query.filter(
-        TallySheet.id == tallySheetId
+        TallySheet.tallySheetId == tallySheetId
     ).one_or_none()
 
     if tallySheet is None:

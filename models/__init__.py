@@ -39,11 +39,11 @@ class Party(db.Model):
 
 class TallySheet(db.Model):
     __tablename__ = 'tallySheet'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tallySheetId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     code = db.Column(db.String(10), index=True)
     electionId = db.Column(db.Integer, db.ForeignKey("election.id"))
     officeId = db.Column(db.Integer, db.ForeignKey("office.id"))
-    latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.id"))
+    latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"))
 
     election = relationship("Election", foreign_keys=[electionId], lazy='joined')
     office = relationship("Office", foreign_keys=[officeId], lazy='joined')
@@ -52,8 +52,8 @@ class TallySheet(db.Model):
 
 class TallySheetVersion(db.Model):
     __tablename__ = 'tallySheet_version'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.id"))
+    tallySheetVersionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"))
 
     createdBy = db.Column(db.Integer)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -66,7 +66,7 @@ class TallySheetVersion(db.Model):
 
 class TallySheet_PRE_41(db.Model):
     __tablename__ = 'tallySheet_PRE-41'
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.id"), primary_key=True)
+    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"), primary_key=True)
     tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetId"))
     electoralDistrictId = db.Column(db.Integer, db.ForeignKey("office.id"))
     pollingDivisionId = db.Column(db.Integer, db.ForeignKey("office.id"))
