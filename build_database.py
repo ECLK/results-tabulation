@@ -1,6 +1,6 @@
 import os
 from config import db
-from models import Person
+from models import Person, Party
 
 # Data to initialize database with
 PEOPLE = [
@@ -16,9 +16,7 @@ if os.path.exists('tallysheet.db'):
 # Create the database
 db.create_all()
 
-# Iterate over the PEOPLE structure and populate the database
-for person in PEOPLE:
-    p = Person(lname=person['lname'], fname=person['fname'])
-    db.session.add(p)
+for i in range(5):
+    db.session.add(Party())
 
 db.session.commit()

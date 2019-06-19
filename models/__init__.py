@@ -1,6 +1,7 @@
 from datetime import datetime
 from config import db, ma
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.associationproxy import association_proxy
 
 
 class Person(db.Model):
@@ -57,6 +58,11 @@ class TallySheetVersion(db.Model):
     createdBy = db.Column(db.Integer)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    tallySheet = relationship("TallySheet", foreign_keys=[tallySheetId])
+
+    electionId = association_proxy('tallySheet', 'electionId')
+    officeId = association_proxy('tallySheet', 'officeId')
+
 
 class TallySheet_PRE_41(db.Model):
     __tablename__ = 'tallySheet_PRE-41'
@@ -68,6 +74,13 @@ class TallySheet_PRE_41(db.Model):
 
     party_wise_results = relationship("TallySheet_PRE_41__party")
 
+    tallySheetVersion = relationship("TallySheetVersion", foreign_keys=[tallySheetVersionId])
+
+    electionId = association_proxy('TallySheetVersion', 'electionId')
+    officeId = association_proxy('TallySheetVersion', 'officeId')
+    createdBy = association_proxy('tallySheetVersion', 'createdBy')
+    createdAt = association_proxy('tallySheetVersion', 'createdAt')
+
 
 class TallySheet_PRE_41__party(db.Model):
     __tablename__ = 'tallySheet_PRE-41__party'
@@ -75,7 +88,6 @@ class TallySheet_PRE_41__party(db.Model):
                                     primary_key=True)
     partyId = db.Column(db.Integer, db.ForeignKey("party.id"), primary_key=True)
     voteCount = db.Column(db.Integer)
-
 
     # tallySheet_PRE_41 = relationship("TallySheet_PRE_41", back_populates="party_wise_results")
 

@@ -16,10 +16,10 @@ def getAll():
     """
 
     # Create the list of tally sheets from our data
-    people = TallySheet.query.all()
+    people = TallySheetVersion.query.all()
 
     # Serialize the data for the response
-    person_schema = TallySheetSchema(many=True)
+    person_schema = TallySheetVersionSchema(many=True)
     data = person_schema.dump(people).data
     return data
 
@@ -31,12 +31,43 @@ def get_by_id(tallySheetId):
 
     tallySheet = TallySheet.query.filter(TallySheet.id == tallySheetId).one_or_none()
 
-
     print("##### tallySheet.latestVersionId ###", tallySheet.latestVersionId)
 
-    tallySheet_PRE_41 = TallySheet_PRE_41.query.filter(TallySheet_PRE_41.tallySheetVersionId == tallySheet.latestVersionId).one_or_none()
+    # tallySheet_PRE_41 = TallySheetVersion.query. \
+    #     join(TallySheet, TallySheet.id == TallySheetVersion.tallySheetId). \
+    #     join(TallySheet_PRE_41, TallySheet_PRE_41.tallySheetVersionId == TallySheetVersion.id). \
+    #     add_columns(
+    #     TallySheet.id.label("tallySheetId"),
+    #     TallySheet.code.label("code"),
+    #     TallySheetVersion.id.label("tallySheetVersionId"),
+    #     TallySheetVersion.createdBy.label("createdBy"),
+    #     TallySheetVersion.createdAt.label("createdAt"),
+    #     TallySheet_PRE_41.countingCentreId.label("countingCentreId"),
+    #     TallySheet_PRE_41.electoralDistrictId.label("electoralDistrictId"),
+    #     TallySheet_PRE_41.pollingDivisionId.label("pollingDivisionId")
+    # ) \
+    #     .filter(TallySheetVersion.id == tallySheet.latestVersionId).one_or_none()
 
-    print("#####", len(tallySheet_PRE_41.party_wise_results))
+    # tallySheet_PRE_41 = TallySheet_PRE_41.query. \
+    #     join(TallySheetVersion, TallySheet_PRE_41.tallySheetVersionId == TallySheetVersion.id). \
+    #     join(TallySheet, TallySheet.id == TallySheetVersion.tallySheetId). \
+    #     add_columns(
+    #     TallySheet.id.label("tallySheetId"),
+    #     TallySheet.code.label("code"),
+    #     TallySheetVersion.id.label("tallySheetVersionId"),
+    #     TallySheetVersion.createdBy.label("createdBy"),
+    #     TallySheetVersion.createdAt.label("createdAt"),
+    #     TallySheet_PRE_41.countingCentreId.label("countingCentreId"),
+    #     TallySheet_PRE_41.electoralDistrictId.label("electoralDistrictId"),
+    #     TallySheet_PRE_41.pollingDivisionId.label("pollingDivisionId"),
+    #     TallySheet_PRE_41.party_wise_results.label("party_wise_results")
+    # ) \
+    #     .filter(TallySheetVersion.id == tallySheet.latestVersionId).one_or_none()
+
+    tallySheet_PRE_41 = TallySheet_PRE_41.query.filter(
+        TallySheet_PRE_41.tallySheetVersionId == tallySheet.latestVersionId).one_or_none()
+
+    # print("#####", tallySheet_PRE_41.__dict__)
 
     person_schema = TallySheet_PRE_41_Schema()
     data = person_schema.dump(tallySheet_PRE_41).data

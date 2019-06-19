@@ -155,108 +155,115 @@ paths:
         description: Tally sheet object.
         required: True
 
-#  '/tallySheet/{tallySheetId}':
-#    parameters:
-#      - name: tallySheetId
-#        in: path
-#        description: Tally sheet ID
-#        required: true
-#        schema:
-#          type: string
-#    get:
-#      tags:
-#        - tallySheet
-#      summary: Get tally sheet by ID
-#      operationId: api.tallySheet.getById
-#      parameters:
-#      - name: tallySheetVersion
-#        in: query
-#        description: Tally sheet version
-#        required: false
-#        schema:
-#          type: integer
-#          format: int64
-#      responses:
-#        '200':
-#          description: Successful operation.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/TallySheet'
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#      security:
-#        - organization_auth:
-#            - 'read:org'
-#    put:
-#      tags:
-#        - tallySheet
-#      summary: Update tally sheet
-#      operationId: api.tallySheet.update
-#      responses:
-#        '200':
-#          description: Successful operation.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/TallySheet'
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#      security:
-#        - organization_auth:
-#            - 'write:org'
-#      requestBody:
-#        content:
-#          application/json:
-#            schema:
-#              $ref: '#/components/schemas/TallySheet'
-#        description: Updated tally sheet object.
-#        required: true
-#
+  '/tallySheet/{tallySheetId}':
+    get:
+      tags:
+        - tallySheet
+      summary: Get tally sheet by ID
+      operationId: api.tallySheet.get_by_id
+      parameters:
+      - name: tallySheetId
+        in: path
+        description: Tally sheet ID
+        required: true
+        schema:
+          type: string
+      - name: tallySheetVersion
+        in: query
+        description: Tally sheet version
+        required: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TallySheet'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    put:
+      tags:
+        - tallySheet
+      summary: Update tally sheet
+      operationId: api.tallySheet.update
+      parameters:
+      - name: tallySheetId
+        in: path
+        description: Tally sheet ID
+        required: true
+        schema:
+          type: string
+      - name: tallySheetVersion
+        in: query
+        description: Tally sheet version
+        required: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TallySheet'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TallySheet'
+        description: Updated tally sheet object.
+        required: true
+
 #  '/tallySheet/{tallySheetId}/history':
 #    parameters:
 #      - name: tallySheetId
