@@ -127,12 +127,10 @@ def create(body):
         Create new tally sheet.
     """
 
-    # to avoid merging when there's an id passed through the request.
-    body.pop('id', None)
-
-    # Create an instance using the schema and the passed-in data
-    schema = TallySheetSchema()
-    new_tallysheet = schema.load(body, session=db.session).data
+    new_tallysheet = TallySheet(
+        electionId=body["electionId"],
+        officeId=body["officeId"]
+    )
 
     # Add the entry to the database
     db.session.add(new_tallysheet)
@@ -141,7 +139,7 @@ def create(body):
     create_tallysheet_version(body, new_tallysheet)
 
     # Serialize and return the newly created entry in the response
-    return schema.dump(new_tallysheet).data, 201
+    return TallySheetSchema().dump(new_tallysheet).data, 201
 
 
 def update(tallySheetId, body):

@@ -4,45 +4,37 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
 
-class Person(db.Model):
-    __tablename__ = 'person'
-    person_id = db.Column(db.Integer, primary_key=True)
-    lname = db.Column(db.String(32), index=True)
-    fname = db.Column(db.String(32))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
 
 class Election(db.Model):
     __tablename__ = 'election'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
 
 class Office(db.Model):
     __tablename__ = 'office'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    electionId = db.Column(db.Integer, db.ForeignKey("election.id"))
+    officeId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
 
     election = relationship("Election", foreign_keys=[electionId])
 
 
 class Electorate(db.Model):
     __tablename__ = 'electorate'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    electionId = db.Column(db.Integer, db.ForeignKey("election.id"))
+    electorateId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
 
 
 class Party(db.Model):
     __tablename__ = 'party'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    code = db.Column(db.String(100), index=True)
+    partyId = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
 
 class TallySheet(db.Model):
     __tablename__ = 'tallySheet'
     tallySheetId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     code = db.Column(db.String(10), index=True)
-    electionId = db.Column(db.Integer, db.ForeignKey("election.id"))
-    officeId = db.Column(db.Integer, db.ForeignKey("office.id"))
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
+    officeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
     latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"))
 
     election = relationship("Election", foreign_keys=[electionId], lazy='joined')
@@ -66,11 +58,12 @@ class TallySheetVersion(db.Model):
 
 class TallySheet_PRE_41(db.Model):
     __tablename__ = 'tallySheet_PRE-41'
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"), primary_key=True)
+    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"),
+                                    primary_key=True)
     tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetId"))
-    electoralDistrictId = db.Column(db.Integer, db.ForeignKey("office.id"))
-    pollingDivisionId = db.Column(db.Integer, db.ForeignKey("office.id"))
-    countingCentreId = db.Column(db.Integer, db.ForeignKey("office.id"))
+    electoralDistrictId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
+    pollingDivisionId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
+    countingCentreId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
 
     party_wise_results = relationship("TallySheet_PRE_41__party")
 
@@ -86,10 +79,8 @@ class TallySheet_PRE_41__party(db.Model):
     __tablename__ = 'tallySheet_PRE-41__party'
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_PRE-41.tallySheetVersionId"),
                                     primary_key=True)
-    partyId = db.Column(db.Integer, db.ForeignKey("party.id"), primary_key=True)
+    partyId = db.Column(db.Integer, db.ForeignKey("party.partyId"), primary_key=True)
     voteCount = db.Column(db.Integer)
-
-    # tallySheet_PRE_41 = relationship("TallySheet_PRE_41", back_populates="party_wise_results")
 
 
 # class TallySheet_PRE_34_CO(db.Model):

@@ -371,18 +371,23 @@ components:
         id:
           type: integer
           format: int64
+          default: 1
         version:
           type: integer
           format: int64
+          default: 1
         electionId:
           type: integer
           format: int64
+          default: 1
         officeId:
           type: integer
           format: int64
+          default: 1
         createdBy:
           type: integer
           format: int64
+          default: 1
         createdAt:
           type: string
           format: date-time
