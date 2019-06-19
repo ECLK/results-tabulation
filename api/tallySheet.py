@@ -3,6 +3,7 @@ This is the people module and supports all the REST actions for the
 people data
 """
 
+from flask import jsonify
 from flask import make_response, abort
 from config import db
 from models import TallySheet, TallySheetVersion, TallySheet_PRE_41
@@ -20,6 +21,25 @@ def getAll():
     # Serialize the data for the response
     person_schema = TallySheetSchema(many=True)
     data = person_schema.dump(people).data
+    return data
+
+
+def get_by_id(tallySheetId):
+    print("################tallySheetId####", tallySheetId)
+
+    # person = Person.query.filter(Person.person_id == person_id).one_or_none()
+
+    tallySheet = TallySheet.query.filter(TallySheet.id == tallySheetId).one_or_none()
+
+
+    print("##### tallySheet.latestVersionId ###", tallySheet.latestVersionId)
+
+    tallySheet_PRE_41 = TallySheet_PRE_41.query.filter(TallySheet_PRE_41.tallySheetVersionId == tallySheet.latestVersionId).one_or_none()
+
+    print("#####", len(tallySheet_PRE_41.party_wise_results))
+
+    person_schema = TallySheet_PRE_41_Schema()
+    data = person_schema.dump(tallySheet_PRE_41).data
     return data
 
 

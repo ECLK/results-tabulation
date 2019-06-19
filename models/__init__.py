@@ -66,12 +66,18 @@ class TallySheet_PRE_41(db.Model):
     pollingDivisionId = db.Column(db.Integer, db.ForeignKey("office.id"))
     countingCentreId = db.Column(db.Integer, db.ForeignKey("office.id"))
 
+    party_wise_results = relationship("TallySheet_PRE_41__party")
+
 
 class TallySheet_PRE_41__party(db.Model):
     __tablename__ = 'tallySheet_PRE-41__party'
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.id"), primary_key=True)
+    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_PRE-41.tallySheetVersionId"),
+                                    primary_key=True)
     partyId = db.Column(db.Integer, db.ForeignKey("party.id"), primary_key=True)
     voteCount = db.Column(db.Integer)
+
+
+    # tallySheet_PRE_41 = relationship("TallySheet_PRE_41", back_populates="party_wise_results")
 
 
 # class TallySheet_PRE_34_CO(db.Model):
