@@ -35,7 +35,10 @@ def get_by_id(tallySheetId):
 
 
 def create_tallysheet_PRE_41__party(body, tallysheetVersion):
-    for party_wise_entry_body in body["table"]:
+
+    print("##########", body["party_wise_results"])
+
+    for party_wise_entry_body in body["party_wise_results"]:
         new_tallysheet_PRE_41__party = TallySheet_PRE_41__party(
             partyId=party_wise_entry_body["partyId"],
             tallySheetVersionId=tallysheetVersion.tallySheetVersionId
@@ -87,6 +90,7 @@ def create(body):
 
     new_tallysheet = TallySheet(
         electionId=body["electionId"],
+        code=body["code"],
         officeId=body["officeId"]
     )
 

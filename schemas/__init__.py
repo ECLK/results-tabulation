@@ -43,8 +43,18 @@ class TallySheet_PRE_41__party_Schema(ma.ModelSchema):
 class TallySheet_PRE_41_Schema(ma.ModelSchema):
     class Meta:
         fields = (
-            "tallySheetVersionId", "tallySheetId", "electoralDistrictId", "pollingDivisionId", "countingCentreId",
-            "party_wise_results", "createdBy", "createdAt"
+            "tallySheetVersionId",
+            "tallySheetId",
+            "electoralDistrictId",
+            "pollingDivisionId",
+            "countingCentreId",
+            "party_wise_results",
+            "createdBy",
+            "createdAt",
+            "electionId",
+            "officeId",
+            "code",
+            "latestVersionId"
         )
 
         model = TallySheet_PRE_41
