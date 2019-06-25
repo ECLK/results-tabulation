@@ -105,9 +105,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-#      security:
-#        - organization_auth:
-#            - 'read:org'
+    #      security:
+    #        - organization_auth:
+    #            - 'read:org'
     post:
       tags:
         - tallySheet
@@ -144,9 +144,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-#      security:
-#        - organization_auth:
-#            - 'write:org'
+      #      security:
+      #        - organization_auth:
+      #            - 'write:org'
       requestBody:
         content:
           application/json:
@@ -162,19 +162,19 @@ paths:
       summary: Get tally sheet by ID
       operationId: api.tallySheet.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: string
-      - name: tallySheetVersion
-        in: query
-        description: Tally sheet version
-        required: false
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: string
+        - name: tallySheetVersion
+          in: query
+          description: Tally sheet version
+          required: false
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -212,19 +212,19 @@ paths:
       summary: Update tally sheet
       operationId: api.tallySheet.update
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: string
-      - name: tallySheetVersion
-        in: query
-        description: Tally sheet version
-        required: false
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: string
+        - name: tallySheetVersion
+          in: query
+          description: Tally sheet version
+          required: false
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -399,10 +399,6 @@ components:
             - PCE-35
             - PCE-31
             - CE/ CO/ PR/ 1
-        table:
-          type: array
-          items:
-            type: object
 
 
     ########################################################
@@ -509,6 +505,7 @@ components:
                 type: integer
               no_preferences_marked:
                 type: integer
+
     TallySheet_CE-CO-PR-1:
       allOf:
         - $ref: '#/components/schemas/TallySheet'
@@ -534,3 +531,33 @@ components:
                 format: int64
               preferences_count:
                 type: integer
+
+    TallySheet_PRE-41:
+      allOf:
+        - $ref: '#/components/schemas/TallySheet'
+      type: object
+      description: Tally sheet of preferences of a 50 bundle of a party.
+      properties:
+        electoralDistrictId:
+          type: integer
+          format: int64
+        pollingDivisionId:
+          type: integer
+          format: int64
+        countingCentreId:
+          type: integer
+          format: int64
+        party_wise_results:
+          type: array
+          items:
+            type: object
+            description: >-
+              Statement for invalid ballot papers at the count of preferences of
+              a party
+            properties:
+              partyId:
+                type: integer
+                format: int64
+              voteCount:
+                type: integer
+                format: int64

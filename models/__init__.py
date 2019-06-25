@@ -52,8 +52,10 @@ class TallySheetVersion(db.Model):
 
     tallySheet = relationship("TallySheet", foreign_keys=[tallySheetId])
 
+    code = association_proxy('tallySheet', 'code')
     electionId = association_proxy('tallySheet', 'electionId')
     officeId = association_proxy('tallySheet', 'officeId')
+    latestVersionId = association_proxy('tallySheet', 'latestVersionId')
 
 
 class TallySheet_PRE_41(db.Model):
@@ -69,10 +71,12 @@ class TallySheet_PRE_41(db.Model):
 
     tallySheetVersion = relationship("TallySheetVersion", foreign_keys=[tallySheetVersionId])
 
-    electionId = association_proxy('TallySheetVersion', 'electionId')
-    officeId = association_proxy('TallySheetVersion', 'officeId')
+    code = association_proxy('tallySheetVersion', 'code')
+    electionId = association_proxy('tallySheetVersion', 'electionId')
+    officeId = association_proxy('tallySheetVersion', 'officeId')
     createdBy = association_proxy('tallySheetVersion', 'createdBy')
     createdAt = association_proxy('tallySheetVersion', 'createdAt')
+    latestVersionId = association_proxy('tallySheetVersion', 'latestVersionId')
 
 
 class TallySheet_PRE_41__party(db.Model):
