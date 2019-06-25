@@ -35,7 +35,6 @@ def get_by_id(tallySheetId):
 
 
 def create_tallysheet_PRE_41__party(body, tallysheetVersion):
-
     print("##########", body["party_wise_results"])
 
     for party_wise_entry_body in body["party_wise_results"]:
@@ -62,6 +61,8 @@ def create_tallysheet_PRE_41(body, tallysheetVersion):
 
     create_tallysheet_PRE_41__party(body, tallysheetVersion)
 
+    return new_tallysheet_PRE_41
+
 
 def create_tallysheet_version(body, tallysheet):
     """
@@ -78,9 +79,10 @@ def create_tallysheet_version(body, tallysheet):
     tallysheet.latestVersion = new_tallysheet_version
     db.session.commit()
 
-    create_tallysheet_PRE_41(body, new_tallysheet_version)
-
-    return new_tallysheet_version
+    if tallysheet.code == "PRE-41":
+        return create_tallysheet_PRE_41(body, new_tallysheet_version)
+    else:
+        return new_tallysheet_version
 
 
 def create(body):
@@ -98,10 +100,18 @@ def create(body):
     db.session.add(new_tallysheet)
     db.session.commit()
 
-    create_tallysheet_version(body, new_tallysheet)
+    new_tallysheet = create_tallysheet_version(body, new_tallysheet)
 
     # Serialize and return the newly created entry in the response
-    return TallySheetSchema().dump(new_tallysheet).data, 201
+    return get_tallysheet_response(new_tallysheet), 201
+
+
+def get_tallysheet_response(new_tallysheet):
+    if new_tallysheet.code == "PRE-41":
+        return TallySheet_PRE_41_Schema().dump(new_tallysheet).data
+    else:
+        return TallySheetVersionSchema().dump(new_tallysheet).data
+
 
 
 def update(tallySheetId, body):

@@ -14,6 +14,18 @@ class ElectionSchema(ma.ModelSchema):
 
 class TallySheetVersionSchema(ma.ModelSchema):
     class Meta:
+        fields = (
+            "tallySheetId",
+            "code",
+            "electionId",
+            "officeId",
+            "latestVersionId",
+
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt"
+        )
+
         model = TallySheetVersion
         # optionally attach a Session
         # to use for deserialization
@@ -43,18 +55,20 @@ class TallySheet_PRE_41__party_Schema(ma.ModelSchema):
 class TallySheet_PRE_41_Schema(ma.ModelSchema):
     class Meta:
         fields = (
-            "tallySheetVersionId",
             "tallySheetId",
+            "code",
+            "electionId",
+            "officeId",
+            "latestVersionId",
+
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt",
+
             "electoralDistrictId",
             "pollingDivisionId",
             "countingCentreId",
             "party_wise_results",
-            "createdBy",
-            "createdAt",
-            "electionId",
-            "officeId",
-            "code",
-            "latestVersionId"
         )
 
         model = TallySheet_PRE_41
