@@ -3,6 +3,23 @@ from config import db, ma
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
+import enum
+
+
+class ElectorateType(enum.Enum):
+    ElectionCommission = 1
+    DistrictCenter = 2
+    CountingCenter = 3
+
+
+class OfficeType(enum.Enum):
+    Country = 1
+    Province = 2
+    AdministrativeDistrict = 3
+    ElectoralDistrict = 4
+    PollingDivision = 5
+    PollingDistrict = 6
+    PollingStation = 7
 
 
 class Election(db.Model):
@@ -13,15 +30,38 @@ class Election(db.Model):
 class Office(db.Model):
     __tablename__ = 'office'
     officeId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    officeType = db.Column(db.Enum(OfficeType))
     electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
+    parentOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
 
     election = relationship("Election", foreign_keys=[electionId])
+
+    electorates = relationship("Election", foreign_keys=[electionId])
 
 
 class Electorate(db.Model):
     __tablename__ = 'electorate'
     electorateId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    electorateType = db.Column(db.Enum(ElectorateType))
     electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
+    parentElectorateId = db.Column(db.Integer, db.ForeignKey("electorate.electorateId"))
+
+
+class Ballot(db.Model):
+    __tablename__ = 'ballot'
+    ballotId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+
+class BallotBox(db.Model):
+    __tablename__ = 'ballotBox'
+    ballotBoxId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+
+class BallotBundle(db.Model):
+    __tablename__ = 'ballotBundle'
+    ballotBundleId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    ballotFromId = db.Column(db.Integer, db.ForeignKey("ballot.ballotId"))
+    ballotToId = db.Column(db.Integer, db.ForeignKey("ballot.ballotId"))
 
 
 class Party(db.Model):
@@ -56,6 +96,37 @@ class TallySheetVersion(db.Model):
     electionId = association_proxy('tallySheet', 'electionId')
     officeId = association_proxy('tallySheet', 'officeId')
     latestVersionId = association_proxy('tallySheet', 'latestVersionId')
+
+
+class TallySheet_IssuingAndReceiving(db.Model):
+    __tablename__ = 'tallySheet_issuingAndReceiving'
+    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"),
+                                    primary_key=True)
+    tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetId"))
+
+    ballotBundles = relationship("TallySheet_IssuingAndReceiving__BallotBundle")
+    ballotBoxes = relationship("TallySheet_IssuingAndReceiving__BallotBox")
+
+
+class TallySheet_IssuingAndReceiving__BallotBundle(db.Model):
+    __tablename__ = 'tallySheet_issuingAndReceiving__ballotBundle'
+    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_issuingAndReceiving.tallySheetVersionId"),
+                                    primary_key=True)
+    ballotBundleId = db.Column(db.Integer, db.ForeignKey("ballotBundle.ballotBundleId"), primary_key=True)
+
+    ballotBundle = relationship("BallotBundle", foreign_keys=[ballotBundleId])
+
+    ballotFromId = association_proxy('ballotBundle', 'ballotFromId')
+    ballotToId = association_proxy('ballotBundle', 'ballotToId')
+
+
+class TallySheet_IssuingAndReceiving__BallotBox(db.Model):
+    __tablename__ = 'tallySheet_issuingAndReceiving__ballotBox'
+    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_issuingAndReceiving.tallySheetVersionId"),
+                                    primary_key=True)
+    ballotBoxId = db.Column(db.Integer, db.ForeignKey("ballotBox.ballotBoxId"), primary_key=True)
+
+    ballotBox = relationship("BallotBox", foreign_keys=[ballotBoxId])
 
 
 class TallySheet_PRE_41(db.Model):

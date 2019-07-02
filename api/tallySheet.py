@@ -5,8 +5,9 @@ people data
 
 from flask import make_response, abort
 from config import db
-from models import TallySheet, TallySheetVersion, TallySheet_PRE_41, TallySheet_PRE_41__party
-from schemas import TallySheetSchema, TallySheetVersionSchema, TallySheet_PRE_41_Schema
+from models import TallySheet, TallySheetVersion, TallySheet_PRE_41
+from schemas import TallySheetVersionSchema, TallySheet_PRE_41_Schema
+from api import tallySheet_PRE_41
 
 
 def getAll():
@@ -34,36 +35,6 @@ def get_by_id(tallySheetId):
     return data
 
 
-def create_tallysheet_PRE_41__party(body, tallysheetVersion):
-    print("##########", body["party_wise_results"])
-
-    for party_wise_entry_body in body["party_wise_results"]:
-        new_tallysheet_PRE_41__party = TallySheet_PRE_41__party(
-            partyId=party_wise_entry_body["partyId"],
-            tallySheetVersionId=tallysheetVersion.tallySheetVersionId
-        )
-
-        db.session.add(new_tallysheet_PRE_41__party)
-        db.session.commit()
-
-
-def create_tallysheet_PRE_41(body, tallysheetVersion):
-    new_tallysheet_PRE_41 = TallySheet_PRE_41(
-        tallySheetId=tallysheetVersion.tallySheetId,
-        tallySheetVersionId=tallysheetVersion.tallySheetVersionId,
-        electoralDistrictId=body["electoralDistrictId"],
-        pollingDivisionId=body["pollingDivisionId"],
-        countingCentreId=body["countingCentreId"],
-    )
-
-    db.session.add(new_tallysheet_PRE_41)
-    db.session.commit()
-
-    create_tallysheet_PRE_41__party(body, tallysheetVersion)
-
-    return new_tallysheet_PRE_41
-
-
 def create_tallysheet_version(body, tallysheet):
     """
         Create new tally sheet version and append it as the latest version.
@@ -80,7 +51,7 @@ def create_tallysheet_version(body, tallysheet):
     db.session.commit()
 
     if tallysheet.code == "PRE-41":
-        return create_tallysheet_PRE_41(body, new_tallysheet_version)
+        return tallySheet_PRE_41.create(body, new_tallysheet_version)
     else:
         return new_tallysheet_version
 
@@ -111,7 +82,6 @@ def get_tallysheet_response(new_tallysheet):
         return TallySheet_PRE_41_Schema().dump(new_tallysheet).data
     else:
         return TallySheetVersionSchema().dump(new_tallysheet).data
-
 
 
 def update(tallySheetId, body):
