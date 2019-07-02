@@ -1,5 +1,6 @@
 from config import db, ma
-from models import Election, TallySheet, TallySheetVersion, TallySheet_PRE_41, TallySheet_PRE_41__party
+from models import Election, TallySheet, TallySheetVersion, TallySheet_PRE_41, TallySheet_PRE_41__party, Invoice, \
+    InvoiceItem, Invoice_InvoiceItem
 
 from marshmallow import Schema, fields, validates_schema, ValidationError
 
@@ -80,3 +81,53 @@ class TallySheet_PRE_41_Schema(ma.ModelSchema):
     createdAt = ma.String()
 
     party_wise_results = ma.Nested(TallySheet_PRE_41__party_Schema, many=True)
+
+
+class InvoiceItem_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "invoiceId",
+            "invoiceItemType"
+        )
+
+        model = Invoice
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class Invoice_InvoiceItem_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "invoiceId",
+            "invoiceItemId",
+            "receivedBy",
+            "receivedFrom",
+            "receivedAt"
+        )
+
+        model = Invoice_InvoiceItem
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class Invoice_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "invoiceId",
+            "electionId",
+            "issuingOfficeId",
+            "receivingOfficeId",
+            "issuedBy",
+            "issuedTo",
+            "issuedAt",
+            "invoiceItems"
+        )
+
+        model = Invoice
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    invoiceItems = ma.Nested(Invoice_InvoiceItem_Schema, many=True)

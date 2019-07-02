@@ -1,6 +1,6 @@
 import os
 from config import db
-from models import Party, Office, Electorate, Election
+from models import Party, Office, Electorate, Election, Ballot, BallotBox, InvoiceItem
 
 # Data to initialize database with
 PEOPLE = [
@@ -23,5 +23,27 @@ for i in range(1, 6):
     for j in range(1, 5):
         db.session.add(Office(electionId=i))
         db.session.add(Electorate(electionId=i))
+
+for i in range(1, 20):
+    invoice_item = InvoiceItem()
+
+    db.session.add(invoice_item)
+    db.session.commit()
+
+    db.session.add(Ballot(
+        ballotId="pre-ballot-%d" % i,
+        invoiceItemId=invoice_item.invoiceItemId
+    ))
+
+for i in range(1, 200):
+    invoice_item = InvoiceItem()
+
+    db.session.add(invoice_item)
+    db.session.commit()
+
+    db.session.add(BallotBox(
+        ballotBoxId="pre-ballot-box-%d" % i,
+        invoiceItemId=invoice_item.invoiceItemId
+    ))
 
 db.session.commit()

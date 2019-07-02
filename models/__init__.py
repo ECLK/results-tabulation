@@ -47,23 +47,6 @@ class Electorate(db.Model):
     parentElectorateId = db.Column(db.Integer, db.ForeignKey("electorate.electorateId"))
 
 
-class Ballot(db.Model):
-    __tablename__ = 'ballot'
-    ballotId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-
-class BallotBox(db.Model):
-    __tablename__ = 'ballotBox'
-    ballotBoxId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-
-class BallotBundle(db.Model):
-    __tablename__ = 'ballotBundle'
-    ballotBundleId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ballotFromId = db.Column(db.Integer, db.ForeignKey("ballot.ballotId"))
-    ballotToId = db.Column(db.Integer, db.ForeignKey("ballot.ballotId"))
-
-
 class Party(db.Model):
     __tablename__ = 'party'
     partyId = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -98,37 +81,6 @@ class TallySheetVersion(db.Model):
     latestVersionId = association_proxy('tallySheet', 'latestVersionId')
 
 
-class TallySheet_IssuingAndReceiving(db.Model):
-    __tablename__ = 'tallySheet_issuingAndReceiving'
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"),
-                                    primary_key=True)
-    tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetId"))
-
-    ballotBundles = relationship("TallySheet_IssuingAndReceiving__BallotBundle")
-    ballotBoxes = relationship("TallySheet_IssuingAndReceiving__BallotBox")
-
-
-class TallySheet_IssuingAndReceiving__BallotBundle(db.Model):
-    __tablename__ = 'tallySheet_issuingAndReceiving__ballotBundle'
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_issuingAndReceiving.tallySheetVersionId"),
-                                    primary_key=True)
-    ballotBundleId = db.Column(db.Integer, db.ForeignKey("ballotBundle.ballotBundleId"), primary_key=True)
-
-    ballotBundle = relationship("BallotBundle", foreign_keys=[ballotBundleId])
-
-    ballotFromId = association_proxy('ballotBundle', 'ballotFromId')
-    ballotToId = association_proxy('ballotBundle', 'ballotToId')
-
-
-class TallySheet_IssuingAndReceiving__BallotBox(db.Model):
-    __tablename__ = 'tallySheet_issuingAndReceiving__ballotBox'
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_issuingAndReceiving.tallySheetVersionId"),
-                                    primary_key=True)
-    ballotBoxId = db.Column(db.Integer, db.ForeignKey("ballotBox.ballotBoxId"), primary_key=True)
-
-    ballotBox = relationship("BallotBox", foreign_keys=[ballotBoxId])
-
-
 class TallySheet_PRE_41(db.Model):
     __tablename__ = 'tallySheet_PRE-41'
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"),
@@ -156,6 +108,52 @@ class TallySheet_PRE_41__party(db.Model):
                                     primary_key=True)
     partyId = db.Column(db.Integer, db.ForeignKey("party.partyId"), primary_key=True)
     voteCount = db.Column(db.Integer)
+
+
+class Invoice(db.Model):
+    __tablename__ = 'invoice'
+    invoiceId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
+    issuingOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
+    receivingOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
+
+    issuedBy = db.Column(db.Integer)
+    issuedTo = db.Column(db.Integer)
+    issuedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    invoiceItems = relationship("Invoice_InvoiceItem")
+
+
+class InvoiceItem(db.Model):
+    __tablename__ = 'invoiceItem'
+    invoiceItemId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    invoiceItemType = db.Column(db.String(10), index=True)
+
+
+class Invoice_InvoiceItem(db.Model):
+    __tablename__ = 'invoice_invoiceItem'
+    invoiceId = db.Column(db.Integer, db.ForeignKey("invoice.invoiceId"), primary_key=True)
+    invoiceItemId = db.Column(db.Integer, db.ForeignKey("invoiceItem.invoiceItemId"), primary_key=True)
+
+    receivedBy = db.Column(db.Integer)
+    receivedFrom = db.Column(db.Integer)
+    receivedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    invoiceItem = relationship("InvoiceItem", foreign_keys=[invoiceItemId])
+
+    invoiceItemType = association_proxy('invoiceItem', 'invoiceItemType')
+
+
+class Ballot(db.Model):
+    __tablename__ = 'ballot'
+    ballotId = db.Column(db.String(20), primary_key=True)
+    invoiceItemId = db.Column(db.Integer, db.ForeignKey("invoiceItem.invoiceItemId"), primary_key=True)
+
+
+class BallotBox(db.Model):
+    __tablename__ = 'ballotBox'
+    ballotBoxId = db.Column(db.String(20), primary_key=True)
+    invoiceItemId = db.Column(db.Integer, db.ForeignKey("invoiceItem.invoiceItemId"), primary_key=True)
 
 
 # class TallySheet_PRE_34_CO(db.Model):

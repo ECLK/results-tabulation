@@ -16,12 +16,121 @@ info:
 tags:
   - name: tallySheet
     description: Access to tally sheets
-  - name: tallySheetList
-    description: Access to tally sheets
-  - name: tallySheetHistory
-    description: Access to tally sheet history
+  - name: invoice
+    description: Access to invoices
 
 paths:
+
+  /invoice:
+    get:
+      tags:
+        - invoice
+      summary: Get all.
+      operationId: api.invoice.get_all
+      parameters:
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invoice'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    #      security:
+    #        - organization_auth:
+    #            - 'read:org'
+    post:
+      tags:
+        - invoice
+      summary: Create.
+      operationId: api.invoice.create
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      #      security:
+      #        - organization_auth:
+      #            - 'write:org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+        description: Invoice Object.
+        required: True
+
   /tallySheet:
     get:
       tags:
@@ -564,3 +673,82 @@ components:
               voteCount:
                 type: integer
                 format: int64
+
+
+
+
+
+    Invoice:
+      type: object
+      required:
+        - electionId
+        - issuingOfficeId
+        - receivingOfficeId
+        - issuedTo
+        - invoiceItems
+      properties:
+        invoiceId:
+          type: integer
+          format: int64
+        electionId:
+          type: integer
+          format: int64
+        issuingOfficeId:
+          type: integer
+          format: int64
+        receivingOfficeId:
+          type: integer
+          format: int64
+        issuedBy:
+          type: integer
+          format: int64
+        issuedTo:
+          type: integer
+          format: int64
+        issuedAt:
+          type: string
+          format: date-time
+        invoiceItems:
+          type: array
+          items:
+            type: object
+            properties:
+              invoiceId:
+                type: integer
+                format: int64
+              invoiceItemId:
+                type: integer
+                format: int64
+              receivedBy:
+                type: integer
+                format: int64
+              receivedFrom:
+                type: integer
+                format: int64
+              receivedAt:
+                type: string
+                format: date-time
+
+    InvoiceItem:
+      type: object
+      required:
+        - invoiceId
+        - invoiceItemId
+      properties:
+        invoiceId:
+          type: integer
+          format: int64
+        invoiceItemId:
+          type: integer
+          format: int64
+        receivedBy:
+          type: integer
+          format: int64
+        receivedFrom:
+          type: integer
+          format: int64
+        receivedAt:
+          type: string
+          format: date-time
+
+
