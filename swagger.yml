@@ -21,12 +21,235 @@ tags:
 
 paths:
 
+
+  /invoice-item/ballot:
+    get:
+      tags:
+        - invoice
+      summary: Get all.
+      operationId: api.BallotApi.get_all
+      parameters:
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ballot'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    #      security:
+    #        - organization_auth:
+    #            - 'read:org'
+    post:
+      tags:
+        - invoice
+      summary: Create.
+      operationId: api.BallotApi.create
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ballot'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      #      security:
+      #        - organization_auth:
+      #            - 'write:org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ballot'
+        description: Ballot Object.
+        required: True
+
+
+
+  /invoice-item/ballotBox:
+    get:
+      tags:
+        - invoice
+      summary: Get all.
+      operationId: api.BallotBoxApi.get_all
+      parameters:
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BallotBox'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    #      security:
+    #        - organization_auth:
+    #            - 'read:org'
+    post:
+      tags:
+        - invoice
+      summary: Create.
+      operationId: api.BallotBoxApi.create
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BallotBox'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      #      security:
+      #        - organization_auth:
+      #            - 'write:org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BallotBox'
+        description: BallotBox Object.
+        required: True
+
   /invoice:
     get:
       tags:
         - invoice
       summary: Get all.
-      operationId: api.invoice.get_all
+      operationId: api.InvoiceApi.get_all
       parameters:
         - name: limit
           in: query
@@ -88,7 +311,7 @@ paths:
       tags:
         - invoice
       summary: Create.
-      operationId: api.invoice.create
+      operationId: api.InvoiceApi.create
       responses:
         '200':
           description: Successful operation.
@@ -136,7 +359,7 @@ paths:
       tags:
         - tallySheet
       summary: Get all the tally sheets.
-      operationId: api.tallySheet.getAll
+      operationId: api.TallySheetApi.getAll
       parameters:
         - name: limit
           in: query
@@ -221,7 +444,7 @@ paths:
       tags:
         - tallySheet
       summary: Create a tally sheet.
-      operationId: api.tallySheet.create
+      operationId: api.TallySheetApi.create
       responses:
         '200':
           description: Successful operation.
@@ -269,7 +492,7 @@ paths:
       tags:
         - tallySheet
       summary: Get tally sheet by ID
-      operationId: api.tallySheet.get_by_id
+      operationId: api.TallySheetApi.get_by_id
       parameters:
         - name: tallySheetId
           in: path
@@ -319,7 +542,7 @@ paths:
       tags:
         - tallySheet
       summary: Update tally sheet
-      operationId: api.tallySheet.update
+      operationId: api.TallySheetApi.update
       parameters:
         - name: tallySheetId
           in: path
@@ -750,5 +973,29 @@ components:
         receivedAt:
           type: string
           format: date-time
+
+
+    Ballot:
+      type: object
+      required:
+        - ballotId
+      properties:
+        ballotId:
+          type: string
+        invoiceItemId:
+          type: integer
+          format: int64
+
+
+    BallotBox:
+      type: object
+      required:
+        - ballotBoxId
+      properties:
+        ballotBoxId:
+          type: string
+        invoiceItemId:
+          type: integer
+          format: int64
 
 

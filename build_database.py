@@ -1,47 +1,44 @@
 import os
 from config import db
-from models import Party, Office, Electorate, Election, Ballot, BallotBox, InvoiceItem
+from models import PartyModel, OfficeModel, ElectorateModel, ElectionModel, BallotModel, BallotBoxModel, InvoiceItemModel
 
-# Data to initialize database with
-PEOPLE = [
-    {'fname': 'Doug', 'lname': 'Farrell'},
-    {'fname': 'Kent', 'lname': 'Brockman'},
-    {'fname': 'Bunny', 'lname': 'Easter'}
-]
+# db.engine.execute("create database election")
 
-# Delete database file if it exists currently
-if os.path.exists('tallysheet.db'):
-    os.remove('tallysheet.db')
 
 # Create the database
 db.create_all()
 
 for i in range(1, 6):
-    db.session.add(Party())
-    db.session.add(Election())
+    election = ElectionModel()
+    db.session.add(election)
+    db.session.commit()
 
-    for j in range(1, 5):
-        db.session.add(Office(electionId=i))
-        db.session.add(Electorate(electionId=i))
+    for i in range(1, 6):
+        db.session.add(PartyModel(electionId=election.electionId))
+        db.session.commit()
+
+    for j in range(1, 20):
+        db.session.add(OfficeModel(electionId=election.electionId))
+        db.session.add(ElectorateModel(electionId=election.electionId))
 
 for i in range(1, 20):
-    invoice_item = InvoiceItem()
+    invoice_item = InvoiceItemModel()
 
     db.session.add(invoice_item)
     db.session.commit()
 
-    db.session.add(Ballot(
+    db.session.add(BallotModel(
         ballotId="pre-ballot-%d" % i,
         invoiceItemId=invoice_item.invoiceItemId
     ))
 
 for i in range(1, 200):
-    invoice_item = InvoiceItem()
+    invoice_item = InvoiceItemModel()
 
     db.session.add(invoice_item)
     db.session.commit()
 
-    db.session.add(BallotBox(
+    db.session.add(BallotBoxModel(
         ballotBoxId="pre-ballot-box-%d" % i,
         invoiceItemId=invoice_item.invoiceItemId
     ))

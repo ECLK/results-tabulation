@@ -1,13 +1,13 @@
 from config import db, ma
-from models import Election, TallySheet, TallySheetVersion, TallySheet_PRE_41, TallySheet_PRE_41__party, Invoice, \
-    InvoiceItem, Invoice_InvoiceItem
+from models import ElectionModel, TallySheetModel, TallySheetVersionModel, TallySheetPRE41Model, TallySheetPRE41PartyModel, InvoiceModel, \
+    InvoiceItemModel, InvoiceInvoiceItemModel, BallotBoxModel, BallotModel
 
 from marshmallow import Schema, fields, validates_schema, ValidationError
 
 
 class ElectionSchema(ma.ModelSchema):
     class Meta:
-        model = Election
+        model = ElectionModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -27,7 +27,7 @@ class TallySheetVersionSchema(ma.ModelSchema):
             "createdAt"
         )
 
-        model = TallySheetVersion
+        model = TallySheetVersionModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -35,7 +35,7 @@ class TallySheetVersionSchema(ma.ModelSchema):
 
 class TallySheetSchema(ma.ModelSchema):
     class Meta:
-        model = TallySheet
+        model = TallySheetModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -47,7 +47,7 @@ class TallySheet_PRE_41__party_Schema(ma.ModelSchema):
     class Meta:
         fields = ("partyId", "voteCount")
 
-        model = TallySheet_PRE_41__party
+        model = TallySheetPRE41PartyModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -72,7 +72,7 @@ class TallySheet_PRE_41_Schema(ma.ModelSchema):
             "party_wise_results",
         )
 
-        model = TallySheet_PRE_41
+        model = TallySheetPRE41Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -90,7 +90,7 @@ class InvoiceItem_Schema(ma.ModelSchema):
             "invoiceItemType"
         )
 
-        model = Invoice
+        model = InvoiceModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -106,7 +106,7 @@ class Invoice_InvoiceItem_Schema(ma.ModelSchema):
             "receivedAt"
         )
 
-        model = Invoice_InvoiceItem
+        model = InvoiceInvoiceItemModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -125,9 +125,35 @@ class Invoice_Schema(ma.ModelSchema):
             "invoiceItems"
         )
 
-        model = Invoice
+        model = InvoiceModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
 
     invoiceItems = ma.Nested(Invoice_InvoiceItem_Schema, many=True)
+
+
+class Ballot_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "ballotId",
+            "invoiceItemId"
+        )
+
+        model = BallotModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class BallotBox_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "ballotBoxId",
+            "invoiceItemId"
+        )
+
+        model = BallotBoxModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
