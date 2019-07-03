@@ -3,15 +3,14 @@ This is the people module and supports all the REST actions for the
 people data
 """
 
-from flask import make_response, abort
+from flask import abort
 from config import db
-from models import Invoice, InvoiceItem, Invoice_InvoiceItem
+from models import InvoiceModel, InvoiceInvoiceItemModel
 from schemas import Invoice_Schema
-from api import tallySheet_PRE_41
 
 
 def get_all():
-    invoices = Invoice.query.all()
+    invoices = InvoiceModel.query.all()
 
     invoices_schema = Invoice_Schema(many=True)
     data = invoices_schema.dump(invoices).data
@@ -19,7 +18,7 @@ def get_all():
 
 
 def create_invoice_item(invoice, invoice_item_body):
-    invoice_invoiceitem = Invoice_InvoiceItem(
+    invoice_invoiceitem = InvoiceInvoiceItemModel(
         invoiceId=invoice.invoiceId,
         invoiceItemId=invoice_item_body["invoiceItemId"]
     )
@@ -34,7 +33,7 @@ def create_invoice_items(invoice, invoice_items_body):
 
 
 def create(body):
-    invoice = Invoice(
+    invoice = InvoiceModel(
         electionId=body["electionId"],
         issuingOfficeId=body["issuingOfficeId"],
         receivingOfficeId=body["receivingOfficeId"],
@@ -55,8 +54,8 @@ def update(tallySheetId, body):
         Append new version to the tally sheet.
     """
     # Get the tally sheet
-    tallySheet = Invoice.query.filter(
-        Invoice.invoiceId == tallySheetId
+    tallySheet = InvoiceModel.query.filter(
+        InvoiceModel.invoiceId == tallySheetId
     ).one_or_none()
 
     if tallySheet is None:
