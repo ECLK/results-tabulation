@@ -1,12 +1,8 @@
-"""
-This is the people module and supports all the REST actions for the
-people data
-"""
-
 from flask import abort
 from config import db
 from models import InvoiceModel, InvoiceStationaryItemModel
 from schemas import Invoice_Schema
+from util import RequestBody
 
 
 def get_all():
@@ -17,55 +13,39 @@ def get_all():
     return data
 
 
-def create_invoice_item(invoice, invoice_item_body):
-    invoice_stationary_item = InvoiceStationaryItemModel(
-        invoiceId=invoice.invoiceId,
-        stationaryItemId=invoice_item_body["stationaryItemId"]
-    )
-
-    db.session.add(invoice_stationary_item)
-    db.session.commit()
-
-
-def create_invoice_items(invoice, invoice_items_body):
-    for item_body in invoice_items_body:
-        create_invoice_item(invoice, item_body)
-
-
 def create(body):
+    request_body = RequestBody(body)
     invoice = InvoiceModel(
-        electionId=body["electionId"],
-        issuingOfficeId=body["issuingOfficeId"],
-        receivingOfficeId=body["receivingOfficeId"],
-        issuedTo=body["issuedTo"]
+        electionId=request_body.get("electionId"),
+        issuingOfficeId=request_body.get("issuingOfficeId"),
+        receivingOfficeId=request_body.get("receivingOfficeId"),
+        issuedTo=request_body.get("issuedTo")
     )
 
     # Add the entry to the database
     db.session.add(invoice)
     db.session.commit()
 
-    create_invoice_items(invoice, body["stationaryItems"])
+    _create_invoice_items(invoice, request_body.get("stationaryItems"))
 
     return Invoice_Schema().dump(invoice).data, 201
 
 
+def _create_invoice_item(invoice, invoice_item_body):
+    request_body = RequestBody(invoice_item_body)
+    invoice_stationary_item = InvoiceStationaryItemModel(
+        invoiceId=invoice.invoiceId,
+        stationaryItemId=request_body.get("stationaryItemId")
+    )
+
+    db.session.add(invoice_stationary_item)
+    db.session.commit()
+
+
+def _create_invoice_items(invoice, invoice_items_body):
+    for item_body in invoice_items_body:
+        _create_invoice_item(invoice, item_body)
+
+
 def update(tallySheetId, body):
-    """
-        Append new version to the tally sheet.
-    """
-    # Get the tally sheet
-    tallySheet = InvoiceModel.query.filter(
-        InvoiceModel.invoiceId == tallySheetId
-    ).one_or_none()
-
-    if tallySheet is None:
-        abort(
-            404,
-            "Tally Sheet not found for Id: {tallySheetId}".format(tallySheetId=tallySheetId),
-        )
-
-    create_tallysheet_version(body, tallySheet)
-
-    schema = TallySheetVersionSchema()
-
-    return schema.dump(new_tallysheet).data, 201
+    print("")

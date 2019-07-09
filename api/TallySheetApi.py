@@ -1,44 +1,33 @@
-"""
-This is the people module and supports all the REST actions for the
-people data
-"""
-
 from flask import make_response, abort
 from config import db
 from models import TallySheetModel, TallySheetVersionModel, TallySheetPRE41Model
 from schemas import TallySheetVersionSchema, TallySheet_PRE_41_Schema
 from api import tallySheetPRE41Api
+from util import RequestBody
 
 
 def getAll():
-    """
-        return all tally sheets
-    """
-
     # Create the list of tally sheets from our data
-    people = TallySheetVersionModel.query.all()
+    tallysheets = TallySheetVersionModel.query.all()
 
     # Serialize the data for the response
     person_schema = TallySheetVersionSchema(many=True)
-    data = person_schema.dump(people).data
+    data = person_schema.dump(tallysheets).data
     return data
 
 
 def get_by_id(tallySheetId):
     tallySheet = TallySheetModel.query.filter(TallySheetModel.tallySheetId == tallySheetId).one_or_none()
 
-    tallySheet_PRE_41 = TallySheetPRE41Model.query.filter(
-        TallySheetPRE41Model.tallySheetVersionId == tallySheet.latestVersionId).one_or_none()
-
-    person_schema = TallySheet_PRE_41_Schema()
-    data = person_schema.dump(tallySheet_PRE_41).data
-    return data
+    if tallySheet.code == "PRE-41":
+        tallySheet = TallySheetPRE41Model.query.filter(
+            TallySheetPRE41Model.tallySheetVersionId == tallySheet.latestVersionId).one_or_none()
+        return TallySheet_PRE_41_Schema().dump(tallySheet).data
+    else:
+        return TallySheetVersionSchema().dump(tallySheet).data
 
 
 def create_tallysheet_version(body, tallysheet):
-    """
-        Create new tally sheet version and append it as the latest version.
-    """
     new_tallysheet_version = TallySheetVersionModel(
         tallySheetId=tallysheet.tallySheetId,
         createdBy=12  # TODO
@@ -57,14 +46,11 @@ def create_tallysheet_version(body, tallysheet):
 
 
 def create(body):
-    """
-        Create new tally sheet.
-    """
-
+    request_body = RequestBody(body)
     new_tallysheet = TallySheetModel(
-        electionId=body["electionId"],
-        code=body["code"],
-        officeId=body["officeId"]
+        electionId=request_body.get("electionId"),
+        code=request_body.get("code"),
+        officeId=request_body.get("officeId")
     )
 
     # Add the entry to the database
@@ -85,9 +71,6 @@ def get_tallysheet_response(new_tallysheet):
 
 
 def update(tallySheetId, body):
-    """
-        Append new version to the tally sheet.
-    """
     # Get the tally sheet
     tallySheet = TallySheetModel.query.filter(
         TallySheetModel.tallySheetId == tallySheetId
