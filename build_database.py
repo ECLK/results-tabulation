@@ -1,6 +1,6 @@
 import os
 from config import db
-from models import PartyModel, OfficeModel, ElectorateModel, ElectionModel, BallotModel, BallotBoxModel, InvoiceItemModel
+from models import PartyModel, OfficeModel, ElectorateModel, ElectionModel, BallotModel, BallotBoxModel, StationaryItemModel
 
 # db.engine.execute("create database election")
 
@@ -22,25 +22,25 @@ for i in range(1, 6):
         db.session.add(ElectorateModel(electionId=election.electionId))
 
 for i in range(1, 20):
-    invoice_item = InvoiceItemModel()
+    stationary_item = StationaryItemModel()
 
-    db.session.add(invoice_item)
+    db.session.add(stationary_item)
     db.session.commit()
 
     db.session.add(BallotModel(
         ballotId="pre-ballot-%d" % i,
-        invoiceItemId=invoice_item.invoiceItemId
+        stationaryItemId=stationary_item.stationaryItemId
     ))
 
 for i in range(1, 200):
-    invoice_item = InvoiceItemModel()
+    stationary_item = StationaryItemModel()
 
-    db.session.add(invoice_item)
+    db.session.add(stationary_item)
     db.session.commit()
 
     db.session.add(BallotBoxModel(
         ballotBoxId="pre-ballot-box-%d" % i,
-        invoiceItemId=invoice_item.invoiceItemId
+        stationaryItemId=stationary_item.stationaryItemId
     ))
 
 db.session.commit()

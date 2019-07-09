@@ -139,43 +139,43 @@ class InvoiceModel(db.Model):
     issuedTo = db.Column(db.Integer)
     issuedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    invoiceItems = relationship("InvoiceInvoiceItemModel")
+    stationaryItems = relationship("InvoiceStationaryItemModel")
 
 
-class InvoiceItemModel(db.Model):
-    __tablename__ = 'invoiceItem'
-    invoiceItemId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    invoiceItemType = db.Column(db.String(10), index=True)
+class StationaryItemModel(db.Model):
+    __tablename__ = 'stationaryItem'
+    stationaryItemId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    stationaryItemType = db.Column(db.String(10), index=True)
 
 
-class InvoiceInvoiceItemModel(db.Model):
-    __tablename__ = 'invoice_invoiceItem'
+class InvoiceStationaryItemModel(db.Model):
+    __tablename__ = 'invoice_stationaryItem'
     invoiceId = db.Column(db.Integer, db.ForeignKey("invoice.invoiceId"), primary_key=True)
-    invoiceItemId = db.Column(db.Integer, db.ForeignKey("invoiceItem.invoiceItemId"), primary_key=True)
+    stationaryItemId = db.Column(db.Integer, db.ForeignKey("stationaryItem.stationaryItemId"), primary_key=True)
 
     receivedBy = db.Column(db.Integer)
     receivedFrom = db.Column(db.Integer)
-    receivedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    receivedAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow)
 
-    invoiceItem = relationship("InvoiceItemModel", foreign_keys=[invoiceItemId])
+    stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
 
-    invoiceItemType = association_proxy('invoiceItem', 'invoiceItemType')
+    stationaryItemType = association_proxy('stationaryItem', 'stationaryItemType')
 
 
 class BallotModel(db.Model):
     __tablename__ = 'ballot'
-    invoiceItemId = db.Column(db.Integer, db.ForeignKey("invoiceItem.invoiceItemId"), primary_key=True)
+    stationaryItemId = db.Column(db.Integer, db.ForeignKey("stationaryItem.stationaryItemId"), primary_key=True)
     ballotId = db.Column(db.String(20), unique=True, nullable=False)
 
-    invoiceItem = relationship("InvoiceItemModel", foreign_keys=[invoiceItemId])
+    stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
 
 
 class BallotBoxModel(db.Model):
     __tablename__ = 'ballotBox'
-    invoiceItemId = db.Column(db.Integer, db.ForeignKey("invoiceItem.invoiceItemId"), primary_key=True)
+    stationaryItemId = db.Column(db.Integer, db.ForeignKey("stationaryItem.stationaryItemId"), primary_key=True)
     ballotBoxId = db.Column(db.String(20), unique=True, nullable=False)
 
-    invoiceItem = relationship("InvoiceItemModel", foreign_keys=[invoiceItemId])
+    stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
 
 
 # class TallySheet_PRE_34_CO(db.Model):

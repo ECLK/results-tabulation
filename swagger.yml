@@ -1018,7 +1018,7 @@ components:
         - issuingOfficeId
         - receivingOfficeId
         - issuedTo
-        - invoiceItems
+        - stationaryItems
       properties:
         invoiceId:
           type: integer
@@ -1041,7 +1041,7 @@ components:
         issuedAt:
           type: string
           format: date-time
-        invoiceItems:
+        stationaryItems:
           type: array
           items:
             type: object
@@ -1049,7 +1049,7 @@ components:
               invoiceId:
                 type: integer
                 format: int64
-              invoiceItemId:
+              stationaryItemId:
                 type: integer
                 format: int64
               receivedBy:
@@ -1062,16 +1062,16 @@ components:
                 type: string
                 format: date-time
 
-    InvoiceItem:
+    stationaryItem:
       type: object
       required:
         - invoiceId
-        - invoiceItemId
+        - stationaryItemId
       properties:
         invoiceId:
           type: integer
           format: int64
-        invoiceItemId:
+        stationaryItemId:
           type: integer
           format: int64
         receivedBy:
@@ -1092,7 +1092,7 @@ components:
       properties:
         ballotId:
           type: string
-        invoiceItemId:
+        stationaryItemId:
           type: integer
           format: int64
 
@@ -1104,7 +1104,7 @@ components:
       properties:
         ballotBoxId:
           type: string
-        invoiceItemId:
+        stationaryItemId:
           type: integer
           format: int64
 

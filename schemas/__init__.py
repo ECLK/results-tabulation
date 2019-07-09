@@ -1,6 +1,7 @@
 from config import db, ma
-from models import ElectionModel, TallySheetModel, TallySheetVersionModel, TallySheetPRE41Model, TallySheetPRE41PartyModel, InvoiceModel, \
-    InvoiceItemModel, InvoiceInvoiceItemModel, BallotBoxModel, BallotModel
+from models import ElectionModel, TallySheetModel, TallySheetVersionModel, TallySheetPRE41Model, \
+    TallySheetPRE41PartyModel, InvoiceModel, \
+    StationaryItemModel, InvoiceStationaryItemModel, BallotBoxModel, BallotModel
 
 from marshmallow import Schema, fields, validates_schema, ValidationError
 
@@ -83,30 +84,30 @@ class TallySheet_PRE_41_Schema(ma.ModelSchema):
     party_wise_results = ma.Nested(TallySheet_PRE_41__party_Schema, many=True)
 
 
-class InvoiceItem_Schema(ma.ModelSchema):
+class StationaryItem_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "invoiceId",
-            "invoiceItemType"
+            "stationaryItemType"
         )
 
-        model = InvoiceModel
+        model = StationaryItemModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
 
 
-class Invoice_InvoiceItem_Schema(ma.ModelSchema):
+class Invoice_StationaryItem_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "invoiceId",
-            "invoiceItemId",
+            "stationaryItemId",
             "receivedBy",
             "receivedFrom",
             "receivedAt"
         )
 
-        model = InvoiceInvoiceItemModel
+        model = InvoiceStationaryItemModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -122,7 +123,7 @@ class Invoice_Schema(ma.ModelSchema):
             "issuedBy",
             "issuedTo",
             "issuedAt",
-            "invoiceItems"
+            "stationaryItems"
         )
 
         model = InvoiceModel
@@ -130,14 +131,14 @@ class Invoice_Schema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    invoiceItems = ma.Nested(Invoice_InvoiceItem_Schema, many=True)
+    stationaryItems = ma.Nested(Invoice_StationaryItem_Schema, many=True)
 
 
 class Ballot_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "ballotId",
-            "invoiceItemId"
+            "stationaryItemId"
         )
 
         model = BallotModel
@@ -150,7 +151,7 @@ class BallotBox_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "ballotBoxId",
-            "invoiceItemId"
+            "stationaryItemId"
         )
 
         model = BallotBoxModel
