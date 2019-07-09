@@ -5,7 +5,7 @@ people data
 
 from flask import abort
 from config import db
-from models import InvoiceModel, InvoiceInvoiceItemModel
+from models import InvoiceModel, InvoiceStationaryItemModel
 from schemas import Invoice_Schema
 
 
@@ -18,12 +18,12 @@ def get_all():
 
 
 def create_invoice_item(invoice, invoice_item_body):
-    invoice_invoiceitem = InvoiceInvoiceItemModel(
+    invoice_stationary_item = InvoiceStationaryItemModel(
         invoiceId=invoice.invoiceId,
-        invoiceItemId=invoice_item_body["invoiceItemId"]
+        stationaryItemId=invoice_item_body["stationaryItemId"]
     )
 
-    db.session.add(invoice_invoiceitem)
+    db.session.add(invoice_stationary_item)
     db.session.commit()
 
 
@@ -44,7 +44,7 @@ def create(body):
     db.session.add(invoice)
     db.session.commit()
 
-    create_invoice_items(invoice, body["invoiceItems"])
+    create_invoice_items(invoice, body["stationaryItems"])
 
     return Invoice_Schema().dump(invoice).data, 201
 

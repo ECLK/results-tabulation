@@ -1,5 +1,5 @@
 from config import db
-from models import InvoiceItemModel as Model
+from models import StationaryItemModel as Model
 
 
 def get_all():

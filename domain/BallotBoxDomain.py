@@ -1,6 +1,6 @@
 from config import db
 from models import BallotBoxModel as Model
-from domain import InvoiceItemDomain
+from domain import StationaryItemDomain
 
 
 def get_all():
@@ -10,10 +10,10 @@ def get_all():
 
 
 def create(body):
-    invoice_item = InvoiceItemDomain.create()
+    stationary_item = StationaryItemDomain.create()
     result = Model(
         ballotBoxId=body["ballotBoxId"],
-        invoiceItemId=invoice_item.invoiceItemId
+        stationaryItemId=stationary_item.stationaryItemId
     )
 
     db.session.add(result)
