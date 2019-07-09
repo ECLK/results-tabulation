@@ -7,3 +7,8 @@ class RequestBody:
             return self.body[property_name]
         else:
             return None
+
+
+class Auth:
+    def get_user_id(self):
+        return 2

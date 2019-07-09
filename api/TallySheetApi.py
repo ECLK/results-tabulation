@@ -3,7 +3,7 @@ from config import db
 from models import TallySheetModel, TallySheetVersionModel, TallySheetPRE41Model
 from schemas import TallySheetVersionSchema, TallySheet_PRE_41_Schema
 from api import tallySheetPRE41Api
-from util import RequestBody
+from util import RequestBody, Auth
 
 
 def getAll():
@@ -30,7 +30,7 @@ def get_by_id(tallySheetId):
 def create_tallysheet_version(body, tallysheet):
     new_tallysheet_version = TallySheetVersionModel(
         tallySheetId=tallysheet.tallySheetId,
-        createdBy=12  # TODO
+        createdBy=Auth().get_user_id()
     )
 
     db.session.add(new_tallysheet_version)
