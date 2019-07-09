@@ -167,11 +167,15 @@ class BallotModel(db.Model):
     invoiceItemId = db.Column(db.Integer, db.ForeignKey("invoiceItem.invoiceItemId"), primary_key=True)
     ballotId = db.Column(db.String(20), unique=True, nullable=False)
 
+    invoiceItem = relationship("InvoiceItemModel", foreign_keys=[invoiceItemId])
+
 
 class BallotBoxModel(db.Model):
     __tablename__ = 'ballotBox'
     invoiceItemId = db.Column(db.Integer, db.ForeignKey("invoiceItem.invoiceItemId"), primary_key=True)
     ballotBoxId = db.Column(db.String(20), unique=True, nullable=False)
+
+    invoiceItem = relationship("InvoiceItemModel", foreign_keys=[invoiceItemId])
 
 
 # class TallySheet_PRE_34_CO(db.Model):
