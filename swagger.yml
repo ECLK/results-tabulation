@@ -22,7 +22,7 @@ tags:
 paths:
 
 
-  /invoice-item/ballot:
+  /ballot:
     get:
       tags:
         - invoice
@@ -132,9 +132,7 @@ paths:
         description: Ballot Object.
         required: True
 
-
-
-  /invoice-item/ballotBox:
+  /ballotBox:
     get:
       tags:
         - invoice
@@ -354,7 +352,7 @@ paths:
         description: Invoice Object.
         required: True
 
-  /tallySheet:
+  /tally-sheet:
     get:
       tags:
         - tallySheet
@@ -487,7 +485,7 @@ paths:
         description: Tally sheet object.
         required: True
 
-  '/tallySheet/{tallySheetId}':
+  /tally-sheet/{tallySheetId}:
     get:
       tags:
         - tallySheet
@@ -596,7 +594,7 @@ paths:
         description: Updated tally sheet object.
         required: true
 
-#  '/tallySheet/{tallySheetId}/history':
+#  '/tally-sheet/{tallySheetId}/history':
 #    parameters:
 #      - name: tallySheetId
 #        in: path
