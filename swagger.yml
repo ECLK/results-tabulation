@@ -352,116 +352,227 @@ paths:
         description: Invoice Object.
         required: True
 
-#
-#  /invoice-item:
-#    get:
-#      tags:
-#        - invoice
-#      summary: Get all.
-#      operationId: api.InvoiceApi.get_all
-#      parameters:
-#        - name: limit
-#          in: query
-#          description: Limit of the result array.
-#          required: false
-#          schema:
-#            type: integer
-#            default: 20
-#        - name: offset
-#          in: query
-#          description: Offset of the result array.
-#          required: false
-#          schema:
-#            type: integer
-#            default: 0
-#        - name: electionId
-#          required: false
-#          in: query
-#          schema:
-#            type: integer
-#            format: int64
-#      responses:
-#        '200':
-#          description: Successful operation.
-#          content:
-#            application/json:
-#              schema:
-#                type: array
-#                items:
-#                  $ref: '#/components/schemas/Invoice'
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#    #      security:
-#    #        - organization_auth:
-#    #            - 'read:org'
-#    post:
-#      tags:
-#        - invoice
-#      summary: Create.
-#      operationId: api.InvoiceApi.create
-#      responses:
-#        '200':
-#          description: Successful operation.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/Invoice'
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#      #      security:
-#      #        - organization_auth:
-#      #            - 'write:org'
-#      requestBody:
-#        content:
-#          application/json:
-#            schema:
-#              $ref: '#/components/schemas/Invoice'
-#        description: Invoice Object.
-#        required: True
+
+
+  /invoice/{invoiceId}/stationary-item:
+    get:
+      tags:
+        - invoice
+      summary: Get all.
+      operationId: api.InvoiceStationaryItemApi.get_all
+      parameters:
+        - name: invoiceId
+          required: false
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvoiceStationaryItem'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    #      security:
+    #        - organization_auth:
+    #            - 'read:org'
+    post:
+      tags:
+        - invoice
+      summary: Create.
+      operationId: api.InvoiceStationaryItemApi.create
+      parameters:
+        - name: invoiceId
+          required: false
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceStationaryItem'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      #      security:
+      #        - organization_auth:
+      #            - 'write:org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceStationaryItem'
+        description: Invoice Stationary Item Object.
+        required: True
+
+
+  /invoice/{invoiceId}/stationary-item/{stationaryItemId}:
+    get:
+      tags:
+        - invoice
+      summary: Get all.
+      operationId: api.InvoiceStationaryItemApi.get_by_id
+      parameters:
+        - name: invoiceId
+          required: false
+          in: path
+          schema:
+            type: integer
+            format: int64
+        - name: stationaryItemId
+          required: false
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvoiceStationaryItem'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    #      security:
+    #        - organization_auth:
+    #            - 'read:org'
+    put:
+      tags:
+        - invoice
+      summary: Create.
+      operationId: api.InvoiceStationaryItemApi.update
+      parameters:
+        - name: invoiceId
+          required: false
+          in: path
+          schema:
+            type: integer
+            format: int64
+        - name: stationaryItemId
+          required: false
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceStationaryItem'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      #      security:
+      #        - organization_auth:
+      #            - 'write:org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceStationaryItem'
+        description: Invoice Stationary Item Object.
+        required: True
+
 
 
   /tally-sheet:
@@ -1062,7 +1173,7 @@ components:
                 type: string
                 format: date-time
 
-    stationaryItem:
+    InvoiceStationaryItem:
       type: object
       required:
         - invoiceId
