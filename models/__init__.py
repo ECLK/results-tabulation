@@ -35,6 +35,7 @@ class OfficeModel(db.Model):
     parentOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
+    parentOffice = relationship("OfficeModel", foreign_keys=[parentOfficeId])
 
     electorates = relationship("ElectionModel", foreign_keys=[electionId])
 
@@ -46,11 +47,16 @@ class ElectorateModel(db.Model):
     electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
     parentElectorateId = db.Column(db.Integer, db.ForeignKey("electorate.electorateId"))
 
+    election = relationship("ElectionModel", foreign_keys=[electionId])
+    parentElectorate = relationship("ElectorateModel", foreign_keys=[parentElectorateId])
+
 
 class PartyModel(db.Model):
     __tablename__ = 'party'
     partyId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), primary_key=True)
+
+    election = relationship("ElectionModel", foreign_keys=[electionId])
 
 
 class TallySheetModel(db.Model):
@@ -61,8 +67,8 @@ class TallySheetModel(db.Model):
     officeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
     latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"))
 
-    election = relationship("ElectionModel", foreign_keys=[electionId], lazy='joined')
-    office = relationship("OfficeModel", foreign_keys=[officeId], lazy='joined')
+    election = relationship("ElectionModel", foreign_keys=[electionId])
+    office = relationship("OfficeModel", foreign_keys=[officeId])
     latestVersion = relationship("TallySheetVersionModel", foreign_keys=[latestVersionId])
 
 
@@ -94,7 +100,11 @@ class TallySheetPRE41Model(db.Model):
     party_wise_results = relationship("TallySheetPRE41PartyModel")
 
     tallySheetVersion = relationship("TallySheetVersionModel", foreign_keys=[tallySheetVersionId])
+    electoralDistrict = relationship("OfficeModel", foreign_keys=[electoralDistrictId])
+    pollingDivision = relationship("OfficeModel", foreign_keys=[pollingDivisionId])
+    countingCentre = relationship("OfficeModel", foreign_keys=[countingCentreId])
 
+    tallySheet = association_proxy('tallySheetVersion', 'tallySheet')
     code = association_proxy('tallySheetVersion', 'code')
     electionId = association_proxy('tallySheetVersion', 'electionId')
     officeId = association_proxy('tallySheetVersion', 'officeId')
@@ -110,6 +120,9 @@ class TallySheetPRE41PartyModel(db.Model):
     partyId = db.Column(db.Integer, db.ForeignKey("party.partyId"), primary_key=True)
     voteCount = db.Column(db.Integer)
 
+    party = relationship("PartyModel", foreign_keys=[partyId])
+    tallySheetVersion = relationship("TallySheetPRE41Model", foreign_keys=[tallySheetVersionId])
+
 
 class InvoiceModel(db.Model):
     __tablename__ = 'invoice'
@@ -117,6 +130,10 @@ class InvoiceModel(db.Model):
     electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
     issuingOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
     receivingOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
+
+    election = relationship("ElectionModel", foreign_keys=[electionId])
+    issuingOffice = relationship("OfficeModel", foreign_keys=[issuingOfficeId])
+    receivingOffice = relationship("OfficeModel", foreign_keys=[receivingOfficeId])
 
     issuedBy = db.Column(db.Integer)
     issuedTo = db.Column(db.Integer)
@@ -160,7 +177,7 @@ class BallotBoxModel(db.Model):
 # class TallySheet_PRE_34_CO(db.Model):
 #     __tablename__ = 'tallySheet_PRE-34-CO'
 #     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.id"), primary_key=True)
-#     tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetId"))
+#     tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetI d"))
 #     electoralDistrictId = db.Column(db.Integer, db.ForeignKey("office.id"))
 #     pollingDivisionId = db.Column(db.Integer, db.ForeignKey("office.id"))
 #     countingCentreId = db.Column(db.Integer, db.ForeignKey("office.id"))
