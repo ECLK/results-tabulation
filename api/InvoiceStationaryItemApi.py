@@ -1,6 +1,7 @@
 from flask import abort
 from schemas import Invoice_StationaryItem_Schema as Schema
 from domain import InvoiceStationaryItemDomain
+from util import RequestBody
 
 
 def get_all(invoiceId):
@@ -16,7 +17,11 @@ def get_by_id(invoiceId, stationaryItemId, body):
 
 
 def create(invoiceId, body):
-    result = InvoiceStationaryItemDomain.create(invoiceId, body)
+    request_body = RequestBody(body)
+    result = InvoiceStationaryItemDomain.create(
+        invoiceId=invoiceId,
+        stationaryItemId=request_body.get("stationaryItemId")
+    )
 
     return Schema().dump(result).data, 201
 

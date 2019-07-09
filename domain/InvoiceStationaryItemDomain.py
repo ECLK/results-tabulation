@@ -8,10 +8,10 @@ def get_all(invoiceId):
     return result
 
 
-def create(invoiceId, body):
+def create(invoiceId, stationaryItemId):
     result = Model(
         invoiceId=invoiceId,
-        stationaryItemId=body["stationaryItemId"]
+        stationaryItemId=stationaryItemId
     )
 
     db.session.add(result)

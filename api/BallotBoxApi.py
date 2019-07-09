@@ -1,6 +1,7 @@
 from flask import abort
 from schemas import BallotBox_Schema as Schema
 from domain import BallotBoxDomain
+from util import RequestBody
 
 
 def get_all():
@@ -10,6 +11,9 @@ def get_all():
 
 
 def create(body):
-    result = BallotBoxDomain.create(body)
+    request_body = RequestBody(body)
+    result = BallotBoxDomain.create(
+        ballotBoxId=request_body.get("ballotBoxId")
+    )
 
     return Schema().dump(result).data, 201

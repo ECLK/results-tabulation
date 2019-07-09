@@ -9,10 +9,10 @@ def get_all():
     return result
 
 
-def create(body):
+def create(ballotBoxId):
     stationary_item = StationaryItemDomain.create()
     result = Model(
-        ballotBoxId=body["ballotBoxId"],
+        ballotBoxId=ballotBoxId,
         stationaryItemId=stationary_item.stationaryItemId
     )
 
