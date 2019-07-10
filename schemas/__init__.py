@@ -123,7 +123,7 @@ class Invoice_Schema(ma.ModelSchema):
             "issuedBy",
             "issuedTo",
             "issuedAt",
-            "stationaryItems"
+            "confirmed"
         )
 
         model = InvoiceModel

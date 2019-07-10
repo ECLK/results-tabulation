@@ -1,6 +1,7 @@
 from config import db
 from models import InvoiceStationaryItemModel as Model
 from util import Auth
+from datetime import datetime
 
 
 def get_all(invoiceId):
@@ -32,7 +33,7 @@ def get_by_id(invoiceId, stationaryItemId):
     return result
 
 
-def update(invoiceId, stationaryItemId, receivedFrom):
+def update(invoiceId, stationaryItemId, received=False, receivedFrom=None):
     entry = Model.query.filter(
         Model.invoiceId == invoiceId,
         Model.stationaryItemId == stationaryItemId
@@ -42,7 +43,9 @@ def update(invoiceId, stationaryItemId, receivedFrom):
         return {}
     else:
         entry.receivedFrom = receivedFrom
+        entry.received = received
 
+        entry.receivedAt = datetime.utcnow()
         entry.receivedBy = Auth().get_user_id()
 
         db.session.add(entry)

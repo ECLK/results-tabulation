@@ -18,6 +18,8 @@ tags:
     description: Access to tally sheets
   - name: invoice
     description: Access to invoices
+  - name: stationary
+    description: Access to stationaries
 
 paths:
 
@@ -25,7 +27,7 @@ paths:
   /ballot:
     get:
       tags:
-        - invoice
+        - stationary
       summary: Get all.
       operationId: api.BallotApi.get_all
       parameters:
@@ -57,7 +59,15 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Ballot'
+                  type: object
+                  required:
+                    - ballotId
+                  properties:
+                    ballotId:
+                      type: string
+                    stationaryItemId:
+                      type: integer
+                      format: int64
         '400':
           description: Bad request.
           content:
@@ -82,12 +92,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-    #      security:
-    #        - organization_auth:
-    #            - 'read:org'
+
     post:
       tags:
-        - invoice
+        - stationary
       summary: Create.
       operationId: api.BallotApi.create
       responses:
@@ -96,7 +104,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Ballot'
+                type: object
+                required:
+                  - ballotId
+                properties:
+                  ballotId:
+                    type: string
         '400':
           description: Bad request.
           content:
@@ -135,7 +148,7 @@ paths:
   /ballot-box:
     get:
       tags:
-        - invoice
+        - stationary
       summary: Get all.
       operationId: api.BallotBoxApi.get_all
       parameters:
@@ -167,7 +180,15 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BallotBox'
+                  type: object
+                  required:
+                    - ballotBoxId
+                  properties:
+                    ballotBoxId:
+                      type: string
+                    stationaryItemId:
+                      type: integer
+                      format: int64
         '400':
           description: Bad request.
           content:
@@ -192,12 +213,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-    #      security:
-    #        - organization_auth:
-    #            - 'read:org'
+
     post:
       tags:
-        - invoice
+        - stationary
       summary: Create.
       operationId: api.BallotBoxApi.create
       responses:
@@ -238,7 +257,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BallotBox'
+              type: object
+              required:
+                - ballotBoxId
+              properties:
+                ballotBoxId:
+                  type: string
         description: BallotBox Object.
         required: True
 
@@ -277,7 +301,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Invoice'
+                  type: object
+                  required:
+                    - electionId
+                    - issuingOfficeId
+                    - receivingOfficeId
+                    - issuedTo
+                    - stationaryItems
+                  properties:
+                    invoiceId:
+                      type: integer
+                      format: int64
+                    electionId:
+                      type: integer
+                      format: int64
+                    issuingOfficeId:
+                      type: integer
+                      format: int64
+                    receivingOfficeId:
+                      type: integer
+                      format: int64
+                    issuedBy:
+                      type: integer
+                      format: int64
+                    issuedTo:
+                      type: integer
+                      format: int64
+                    issuedAt:
+                      type: string
+                      format: date-time
+                    confirmed:
+                      type: boolean
         '400':
           description: Bad request.
           content:
@@ -302,9 +356,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-    #      security:
-    #        - organization_auth:
-    #            - 'read:org'
+
     post:
       tags:
         - invoice
@@ -316,7 +368,37 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Invoice'
+                type: object
+                required:
+                  - electionId
+                  - issuingOfficeId
+                  - receivingOfficeId
+                  - issuedTo
+                  - stationaryItems
+                properties:
+                  invoiceId:
+                    type: integer
+                    format: int64
+                  electionId:
+                    type: integer
+                    format: int64
+                  issuingOfficeId:
+                    type: integer
+                    format: int64
+                  receivingOfficeId:
+                    type: integer
+                    format: int64
+                  issuedBy:
+                    type: integer
+                    format: int64
+                  issuedTo:
+                    type: integer
+                    format: int64
+                  issuedAt:
+                    type: string
+                    format: date-time
+                  confirmed:
+                    type: boolean
         '400':
           description: Bad request.
           content:
@@ -348,11 +430,72 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Invoice'
+              type: object
+              required:
+                - electionId
+                - issuingOfficeId
+                - receivingOfficeId
+                - issuedTo
+              properties:
+                electionId:
+                  type: integer
+                  format: int64
+                issuingOfficeId:
+                  type: integer
+                  format: int64
+                receivingOfficeId:
+                  type: integer
+                  format: int64
+                issuedTo:
+                  type: integer
+                  format: int64
         description: Invoice Object.
         required: True
 
-
+  /invoice/{invoiceId}/confirm:
+    put:
+      tags:
+        - invoice
+      summary: Create.
+      operationId: api.InvoiceApi.confirm
+      parameters:
+        - name: invoiceId
+          required: false
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /invoice/{invoiceId}/stationary-item:
     get:
@@ -375,7 +518,29 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/InvoiceStationaryItem'
+                  type: object
+                  required:
+                    - invoiceId
+                    - stationaryItemId
+                  properties:
+                    invoiceId:
+                      type: integer
+                      format: int64
+                    stationaryItemId:
+                      type: integer
+                      format: int64
+                    received:
+                      type: boolean
+                      default: false
+                    receivedBy:
+                      type: integer
+                      format: int64
+                    receivedFrom:
+                      type: integer
+                      format: int64
+                    receivedAt:
+                      type: string
+                      format: date-time
         '400':
           description: Bad request.
           content:
@@ -400,9 +565,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-    #      security:
-    #        - organization_auth:
-    #            - 'read:org'
+
     post:
       tags:
         - invoice
@@ -421,7 +584,29 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InvoiceStationaryItem'
+                type: object
+                required:
+                  - invoiceId
+                  - stationaryItemId
+                properties:
+                  invoiceId:
+                    type: integer
+                    format: int64
+                  stationaryItemId:
+                    type: integer
+                    format: int64
+                  received:
+                    type: boolean
+                    default: false
+                  receivedBy:
+                    type: integer
+                    format: int64
+                  receivedFrom:
+                    type: integer
+                    format: int64
+                  receivedAt:
+                    type: string
+                    format: date-time
         '400':
           description: Bad request.
           content:
@@ -446,17 +631,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-      #      security:
-      #        - organization_auth:
-      #            - 'write:org'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InvoiceStationaryItem'
+              type: object
+              required:
+                - stationaryItemId
+              properties:
+                stationaryItemId:
+                  type: integer
+                  format: int64
         description: Invoice Stationary Item Object.
         required: True
-
 
   /invoice/{invoiceId}/stationary-item/{stationaryItemId}:
     get:
@@ -483,9 +670,29 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/InvoiceStationaryItem'
+                type: object
+                required:
+                  - invoiceId
+                  - stationaryItemId
+                properties:
+                  invoiceId:
+                    type: integer
+                    format: int64
+                  stationaryItemId:
+                    type: integer
+                    format: int64
+                  received:
+                    type: boolean
+                    default: false
+                  receivedBy:
+                    type: integer
+                    format: int64
+                  receivedFrom:
+                    type: integer
+                    format: int64
+                  receivedAt:
+                    type: string
+                    format: date-time
         '400':
           description: Bad request.
           content:
@@ -510,14 +717,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-    #      security:
-    #        - organization_auth:
-    #            - 'read:org'
+
+
+  /invoice/{invoiceId}/stationary-item/{stationaryItemId}/received:
     put:
       tags:
         - invoice
       summary: Create.
-      operationId: api.InvoiceStationaryItemApi.update
+      operationId: api.InvoiceStationaryItemApi.receive
       parameters:
         - name: invoiceId
           required: false
@@ -537,7 +744,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InvoiceStationaryItem'
+                type: integer
         '400':
           description: Bad request.
           content:
@@ -569,10 +776,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InvoiceStationaryItem'
+              type: object
+              required:
+                - receivedFrom
+              properties:
+                receivedFrom:
+                  type: integer
+                  format: int64
         description: Invoice Stationary Item Object.
         required: True
-
 
 
   /tally-sheet:
@@ -1152,6 +1364,8 @@ components:
         issuedAt:
           type: string
           format: date-time
+        confirmed:
+          type: boolean
         stationaryItems:
           type: array
           items:

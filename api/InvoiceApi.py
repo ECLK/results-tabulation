@@ -26,26 +26,36 @@ def create(body):
     db.session.add(invoice)
     db.session.commit()
 
-    _create_invoice_items(invoice, request_body.get("stationaryItems"))
+    # _create_invoice_items(invoice, request_body.get("stationaryItems"))
 
     return Invoice_Schema().dump(invoice).data, 201
 
 
-def _create_invoice_item(invoice, invoice_item_body):
-    request_body = RequestBody(invoice_item_body)
-    invoice_stationary_item = InvoiceStationaryItemModel(
-        invoiceId=invoice.invoiceId,
-        stationaryItemId=request_body.get("stationaryItemId")
-    )
-
-    db.session.add(invoice_stationary_item)
-    db.session.commit()
-
-
-def _create_invoice_items(invoice, invoice_items_body):
-    for item_body in invoice_items_body:
-        _create_invoice_item(invoice, item_body)
+# def _create_invoice_item(invoice, invoice_item_body):
+#     request_body = RequestBody(invoice_item_body)
+#     invoice_stationary_item = InvoiceStationaryItemModel(
+#         invoiceId=invoice.invoiceId,
+#         stationaryItemId=request_body.get("stationaryItemId")
+#     )
+#
+#     db.session.add(invoice_stationary_item)
+#     db.session.commit()
+#
+#
+# def _create_invoice_items(invoice, invoice_items_body):
+#     for item_body in invoice_items_body:
+#         _create_invoice_item(invoice, item_body)
 
 
 def update(tallySheetId, body):
     print("")
+
+
+def confirm(invoiceId):
+    result = InvoiceModel.query.filter(
+        InvoiceModel.invoiceId == invoiceId
+    ).update({"confirmed": True})
+
+    db.session.commit()
+
+    return result, 201
