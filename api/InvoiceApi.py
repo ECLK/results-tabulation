@@ -2,7 +2,8 @@ from flask import abort
 from config import db
 from models import InvoiceModel, InvoiceStationaryItemModel
 from schemas import Invoice_Schema
-from util import RequestBody
+from util import RequestBody, Auth
+from datetime import datetime
 
 
 def get_all(limit=20, offset=0, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
@@ -38,7 +39,9 @@ def create(body):
         electionId=request_body.get("electionId"),
         issuingOfficeId=request_body.get("issuingOfficeId"),
         receivingOfficeId=request_body.get("receivingOfficeId"),
-        issuedTo=request_body.get("issuedTo")
+        issuedTo=request_body.get("issuedTo"),
+        issuedBy=Auth().get_user_id(),
+        issuedAt=datetime.utcnow()
     )
 
     # Add the entry to the database
