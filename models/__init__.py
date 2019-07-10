@@ -135,6 +135,8 @@ class InvoiceModel(db.Model):
     issuingOffice = relationship("OfficeModel", foreign_keys=[issuingOfficeId])
     receivingOffice = relationship("OfficeModel", foreign_keys=[receivingOfficeId])
 
+    confirmed = db.Column(db.Boolean, default=False)
+
     issuedBy = db.Column(db.Integer)
     issuedTo = db.Column(db.Integer)
     issuedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -153,6 +155,7 @@ class InvoiceStationaryItemModel(db.Model):
     invoiceId = db.Column(db.Integer, db.ForeignKey("invoice.invoiceId"), primary_key=True)
     stationaryItemId = db.Column(db.Integer, db.ForeignKey("stationaryItem.stationaryItemId"), primary_key=True)
 
+    received = db.Column(db.Boolean, default=False)
     receivedBy = db.Column(db.Integer)
     receivedFrom = db.Column(db.Integer)
     receivedAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow)
