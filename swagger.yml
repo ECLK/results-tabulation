@@ -293,6 +293,30 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: issuingOfficeId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: receivingOfficeId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: issuedBy
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: issuedTo
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.

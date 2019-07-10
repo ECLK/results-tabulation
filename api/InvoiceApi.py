@@ -5,8 +5,27 @@ from schemas import Invoice_Schema
 from util import RequestBody
 
 
-def get_all():
-    invoices = InvoiceModel.query.all()
+def get_all(limit=20, offset=0, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
+            issuedTo=None):
+
+    query = InvoiceModel.query
+
+    if electionId is not None:
+        query = query.filter(InvoiceModel.electionId == electionId)
+
+    if issuingOfficeId is not None:
+        query = query.filter(InvoiceModel.issuingOfficeId == issuingOfficeId)
+
+    if receivingOfficeId is not None:
+        query = query.filter(InvoiceModel.receivingOfficeId == receivingOfficeId)
+
+    if issuedBy is not None:
+        query = query.filter(InvoiceModel.issuedBy == issuedBy)
+
+    if issuedTo is not None:
+        query = query.filter(InvoiceModel.issuedTo == issuedTo)
+
+    invoices = query.limit(limit).offset(offset).all()
 
     invoices_schema = Invoice_Schema(many=True)
     data = invoices_schema.dump(invoices).data
