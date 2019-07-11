@@ -7,12 +7,6 @@ import enum
 
 
 class ElectorateTypeEnum(enum.Enum):
-    ElectionCommission = 1
-    DistrictCenter = 2
-    CountingCenter = 3
-
-
-class OfficeTypeEnum(enum.Enum):
     Country = 1
     Province = 2
     AdministrativeDistrict = 3
@@ -20,6 +14,17 @@ class OfficeTypeEnum(enum.Enum):
     PollingDivision = 5
     PollingDistrict = 6
     PollingStation = 7
+
+
+class OfficeTypeEnum(enum.Enum):
+    ElectionCommission = 1
+    DistrictCenter = 2
+    CountingCenter = 3
+
+
+class StationaryItemTypeEnum(enum.Enum):
+    Ballot = 1
+    BallotBox = 2
 
 
 class ElectionModel(db.Model):
@@ -30,22 +35,23 @@ class ElectionModel(db.Model):
 class OfficeModel(db.Model):
     __tablename__ = 'office'
     officeId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    officeType = db.Column(db.Enum(OfficeTypeEnum))
-    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
-    parentOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
+    officeName = db.Column(db.String(100), nullable=False)
+    officeType = db.Column(db.Enum(OfficeTypeEnum), nullable=False)
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=False)
+    parentOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"), nullable=True)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     parentOffice = relationship("OfficeModel", foreign_keys=[parentOfficeId])
-
     electorates = relationship("ElectionModel", foreign_keys=[electionId])
 
 
 class ElectorateModel(db.Model):
     __tablename__ = 'electorate'
     electorateId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    electorateType = db.Column(db.Enum(ElectorateTypeEnum))
-    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
-    parentElectorateId = db.Column(db.Integer, db.ForeignKey("electorate.electorateId"))
+    electorateName = db.Column(db.String(100), nullable=False)
+    electorateType = db.Column(db.Enum(ElectorateTypeEnum), nullable=False)
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=False)
+    parentElectorateId = db.Column(db.Integer, db.ForeignKey("electorate.electorateId"), nullable=True)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     parentElectorate = relationship("ElectorateModel", foreign_keys=[parentElectorateId])
@@ -62,10 +68,10 @@ class PartyModel(db.Model):
 class TallySheetModel(db.Model):
     __tablename__ = 'tallySheet'
     tallySheetId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    code = db.Column(db.String(10), index=True)
-    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
-    officeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
-    latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"))
+    code = db.Column(db.String(10), index=True, nullable=False)
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=False)
+    officeId = db.Column(db.Integer, db.ForeignKey("office.officeId"), nullable=False)
+    latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"), nullable=True)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     office = relationship("OfficeModel", foreign_keys=[officeId])
@@ -75,10 +81,10 @@ class TallySheetModel(db.Model):
 class TallySheetVersionModel(db.Model):
     __tablename__ = 'tallySheet_version'
     tallySheetVersionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"))
+    tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=False)
 
-    createdBy = db.Column(db.Integer)
-    createdAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    createdBy = db.Column(db.Integer, nullable=False)
+    createdAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     tallySheet = relationship("TallySheetModel", foreign_keys=[tallySheetId])
 
@@ -127,42 +133,42 @@ class TallySheetPRE41PartyModel(db.Model):
 class InvoiceModel(db.Model):
     __tablename__ = 'invoice'
     invoiceId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
-    issuingOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
-    receivingOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"))
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=False)
+    issuingOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"), nullable=False)
+    receivingOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"), nullable=False)
+    confirmed = db.Column(db.Boolean, default=False, nullable=False)
+    issuedBy = db.Column(db.Integer, nullable=False)
+    issuedTo = db.Column(db.Integer, nullable=False)
+    issuedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     issuingOffice = relationship("OfficeModel", foreign_keys=[issuingOfficeId])
     receivingOffice = relationship("OfficeModel", foreign_keys=[receivingOfficeId])
-
-    confirmed = db.Column(db.Boolean, default=False)
-
-    issuedBy = db.Column(db.Integer)
-    issuedTo = db.Column(db.Integer)
-    issuedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
     stationaryItems = relationship("InvoiceStationaryItemModel")
 
 
 class StationaryItemModel(db.Model):
     __tablename__ = 'stationaryItem'
     stationaryItemId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    stationaryItemType = db.Column(db.String(10), index=True)
+    stationaryItemType = db.Column(db.Enum(StationaryItemTypeEnum), nullable=False)
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=False)
+
+    election = relationship("ElectionModel", foreign_keys=[electionId])
 
 
 class InvoiceStationaryItemModel(db.Model):
     __tablename__ = 'invoice_stationaryItem'
     invoiceId = db.Column(db.Integer, db.ForeignKey("invoice.invoiceId"), primary_key=True)
     stationaryItemId = db.Column(db.Integer, db.ForeignKey("stationaryItem.stationaryItemId"), primary_key=True)
+    received = db.Column(db.Boolean, default=False, nullable=False)
+    receivedBy = db.Column(db.Integer, nullable=True)
+    receivedFrom = db.Column(db.Integer, nullable=True)
+    receivedAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow, nullable=True)
+    receivedOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"), nullable=True)
 
-    received = db.Column(db.Boolean, default=False)
-    receivedBy = db.Column(db.Integer)
-    receivedFrom = db.Column(db.Integer)
-    receivedAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow)
-
-    stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
-
-    stationaryItemType = association_proxy('stationaryItem', 'stationaryItemType')
+    receivedOffice = relationship("OfficeModel", foreign_keys=[receivedOfficeId], lazy='joined')
+    stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId], lazy='joined')
+    invoice = relationship("InvoiceModel", foreign_keys=[invoiceId], lazy='joined')
 
 
 class BallotModel(db.Model):
