@@ -4,8 +4,17 @@ from domain import InvoiceStationaryItemDomain
 from util import RequestBody
 
 
-def get_all(invoiceId):
-    result = InvoiceStationaryItemDomain.get_all(invoiceId)
+def get_all(invoiceId, limit=20, offset=0, received=None, receivedFrom=None, receivedBy=None, receivedOffice=None):
+    result = InvoiceStationaryItemDomain.get_all(
+        invoiceId=invoiceId,
+        received=received,
+        receivedFrom=receivedFrom,
+        receivedBy=receivedBy,
+        receivedOffice=receivedOffice,
+
+        limit=limit,
+        offset=offset
+    )
 
     return Schema(many=True).dump(result).data
 

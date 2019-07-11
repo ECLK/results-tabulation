@@ -4,10 +4,19 @@ from util import Auth
 from datetime import datetime
 
 
-def get_all(invoiceId):
-    result = Model.query.filter(
-        Model.invoiceId == invoiceId
-    ).all()
+def get_all(invoiceId, limit, offset, received=None, receivedFrom=None, receivedBy=None, receivedOffice=None):
+    query = Model.query.filter(Model.invoiceId == invoiceId)
+
+    if received is not None:
+        query = query.filter(Model.received == received)
+    if receivedFrom is not None:
+        query = query.filter(Model.receivedFrom == receivedFrom)
+    if receivedBy is not None:
+        query = query.filter(Model.receivedBy == receivedBy)
+    if receivedOffice is not None:
+        query = query.filter(Model.receivedOffice == receivedOffice)
+
+    result = query.limit(limit).offset(offset).all()
 
     return result
 

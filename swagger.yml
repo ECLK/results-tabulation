@@ -20,6 +20,8 @@ tags:
     description: Access to invoices
   - name: stationary
     description: Access to stationaries
+  - name: invoice-stationary
+    description: Access to stationaries
 
 paths:
 
@@ -521,16 +523,55 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+
   /invoice/{invoiceId}/stationary-item:
     get:
       tags:
-        - invoice
+        - invoice-stationary
       summary: Get all.
       operationId: api.InvoiceStationaryItemApi.get_all
       parameters:
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
         - name: invoiceId
           required: false
           in: path
+          schema:
+            type: integer
+            format: int64
+        - name: received
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: receivedBy
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: receivedFrom
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: receivedOffice
+          required: false
+          in: query
           schema:
             type: integer
             format: int64
@@ -592,7 +633,7 @@ paths:
 
     post:
       tags:
-        - invoice
+        - invoice-stationary
       summary: Create.
       operationId: api.InvoiceStationaryItemApi.create
       parameters:
@@ -672,7 +713,7 @@ paths:
   /invoice/{invoiceId}/stationary-item/{stationaryItemId}:
     get:
       tags:
-        - invoice
+        - invoice-stationary
       summary: Get all.
       operationId: api.InvoiceStationaryItemApi.get_by_id
       parameters:
@@ -742,11 +783,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /invoice/{invoiceId}/stationary-item/{stationaryItemId}/received:
     put:
       tags:
-        - invoice
+        - invoice-stationary
       summary: Create.
       operationId: api.InvoiceStationaryItemApi.receive
       parameters:
@@ -995,6 +1035,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
     put:
       tags:
         - tallySheet
