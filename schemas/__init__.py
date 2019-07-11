@@ -121,6 +121,7 @@ class Invoice_Schema(ma.ModelSchema):
 
 
 class Invoice_StationaryItem_Schema(ma.ModelSchema):
+
     class Meta:
         fields = (
             "received",
@@ -128,7 +129,8 @@ class Invoice_StationaryItem_Schema(ma.ModelSchema):
             "receivedFrom",
             "receivedOffice",
             "receivedAt",
-            "invoice",
+            "invoiceId",
+            "stationaryItemId",
             "stationaryItem"
         )
 

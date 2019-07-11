@@ -166,9 +166,9 @@ class InvoiceStationaryItemModel(db.Model):
     receivedAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow, nullable=True)
     receivedOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"), nullable=True)
 
-    receivedOffice = relationship("OfficeModel", foreign_keys=[receivedOfficeId], lazy='joined')
-    stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId], lazy='joined')
-    invoice = relationship("InvoiceModel", foreign_keys=[invoiceId], lazy='joined')
+    receivedOffice = relationship("OfficeModel", foreign_keys=[receivedOfficeId])
+    stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
+    invoice = relationship("InvoiceModel", foreign_keys=[invoiceId])
 
 
 class BallotModel(db.Model):
