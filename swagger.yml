@@ -847,6 +847,9 @@ paths:
                 receivedFrom:
                   type: integer
                   format: int64
+                receivedOfficeId:
+                  type: integer
+                  format: int64
         description: Invoice Stationary Item Object.
         required: True
 

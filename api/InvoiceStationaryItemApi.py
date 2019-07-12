@@ -51,7 +51,8 @@ def receive(invoiceId, stationaryItemId, body):
     result = InvoiceStationaryItemDomain.update(
         invoiceId=invoiceId,
         stationaryItemId=stationaryItemId,
-        receivedFrom=request_body.get("receivedFrom")
+        receivedFrom=request_body.get("receivedFrom"),
+        receivedOfficeId=request_body.get("receivedOfficeId")
     )
 
     return Schema().dump(result).data, 201

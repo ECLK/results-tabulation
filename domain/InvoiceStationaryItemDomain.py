@@ -42,22 +42,19 @@ def get_by_id(invoiceId, stationaryItemId):
     return result
 
 
-def update(invoiceId, stationaryItemId, received=False, receivedFrom=None):
-    entry = Model.query.filter(
+def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, receivedOfficeId=None):
+    result = Model.query.filter(
         Model.invoiceId == invoiceId,
         Model.stationaryItemId == stationaryItemId
-    ).one_or_none()
+    ).update({
+        Model.received: received,
+        Model.receivedFrom: receivedFrom,
+        Model.receivedOfficeId: receivedOfficeId,
 
-    if entry is None:
-        return {}
-    else:
-        entry.receivedFrom = receivedFrom
-        entry.received = received
+        Model.receivedBy: Auth().get_user_id(),
+        Model.receivedAt: datetime.utcnow()
+    })
 
-        entry.receivedAt = datetime.utcnow()
-        entry.receivedBy = Auth().get_user_id()
+    db.session.commit()
 
-        db.session.add(entry)
-        db.session.commit()
-
-        return entry
+    return get_by_id(invoiceId, stationaryItemId)
