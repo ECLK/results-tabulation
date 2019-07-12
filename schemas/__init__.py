@@ -92,7 +92,8 @@ class StationaryItem_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "stationaryItemId",
-            "stationaryItemType"
+            "stationaryItemType",
+            "electionId"
         )
 
         model = StationaryItemModel
@@ -121,7 +122,6 @@ class Invoice_Schema(ma.ModelSchema):
 
 
 class Invoice_StationaryItem_Schema(ma.ModelSchema):
-
     class Meta:
         fields = (
             "received",
@@ -147,6 +147,7 @@ class Ballot_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "ballotId",
+            "electionId",
             "stationaryItemId"
         )
 
@@ -160,6 +161,7 @@ class BallotBox_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "ballotBoxId",
+            "electionId",
             "stationaryItemId"
         )
 

@@ -13,6 +13,7 @@ def get_all():
 def create(body):
     request_body = RequestBody(body)
     result = BallotDomain.create(
+        electionId=request_body.get("electionId"),
         ballotId=request_body.get("ballotId")
     )
 

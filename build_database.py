@@ -49,6 +49,7 @@ for i in range(1, 2):
         db.session.commit()
 
         db.session.add(BallotModel(
+            electionId=election.electionId,
             ballotId="pre-ballot-%d-%d" % (election.electionId, i),
             stationaryItemId=stationary_item.stationaryItemId
         ))
@@ -61,6 +62,7 @@ for i in range(1, 2):
         db.session.commit()
 
         db.session.add(BallotBoxModel(
+            electionId=election.electionId,
             ballotBoxId="pre-ballot-box-%d-%d" % (election.electionId, i),
             stationaryItemId=stationary_item.stationaryItemId
         ))

@@ -64,10 +64,15 @@ paths:
                   type: object
                   required:
                     - ballotId
+                    - stationaryItemId
+                    - electionId
                   properties:
                     ballotId:
                       type: string
                     stationaryItemId:
+                      type: integer
+                      format: int64
+                    electionId:
                       type: integer
                       format: int64
         '400':
@@ -109,9 +114,17 @@ paths:
                 type: object
                 required:
                   - ballotId
+                  - stationaryItemId
+                  - electionId
                 properties:
                   ballotId:
                     type: string
+                  stationaryItemId:
+                    type: integer
+                    format: int64
+                  electionId:
+                    type: integer
+                    format: int64
         '400':
           description: Bad request.
           content:
@@ -143,7 +156,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Ballot'
+              type: object
+              required:
+                - ballotId
+                - electionId
+              properties:
+                ballotId:
+                  type: string
+                electionId:
+                  type: integer
+                  format: int64
         description: Ballot Object.
         required: True
 
@@ -185,10 +207,15 @@ paths:
                   type: object
                   required:
                     - ballotBoxId
+                    - stationaryItemId
+                    - electionId
                   properties:
                     ballotBoxId:
                       type: string
                     stationaryItemId:
+                      type: integer
+                      format: int64
+                    electionId:
                       type: integer
                       format: int64
         '400':
@@ -227,7 +254,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BallotBox'
+                type: object
+                required:
+                  - ballotBoxId
+                  - stationaryItemId
+                  - electionId
+                properties:
+                  ballotBoxId:
+                    type: string
+                  stationaryItemId:
+                    type: integer
+                    format: int64
+                  electionId:
+                    type: integer
+                    format: int64
         '400':
           description: Bad request.
           content:
@@ -262,9 +302,13 @@ paths:
               type: object
               required:
                 - ballotBoxId
+                - electionId
               properties:
                 ballotBoxId:
                   type: string
+                electionId:
+                  type: integer
+                  format: int64
         description: BallotBox Object.
         required: True
 
@@ -486,7 +530,7 @@ paths:
       operationId: api.InvoiceApi.confirm
       parameters:
         - name: invoiceId
-          required: false
+          required: true
           in: path
           schema:
             type: integer
@@ -546,7 +590,7 @@ paths:
             type: integer
             default: 0
         - name: invoiceId
-          required: false
+          required: true
           in: path
           schema:
             type: integer
@@ -603,6 +647,9 @@ paths:
                     receivedFrom:
                       type: integer
                       format: int64
+                    receivedOfficeId:
+                      type: integer
+                      format: int64
                     receivedAt:
                       type: string
                       format: date-time
@@ -638,7 +685,7 @@ paths:
       operationId: api.InvoiceStationaryItemApi.create
       parameters:
         - name: invoiceId
-          required: false
+          required: true
           in: path
           schema:
             type: integer
@@ -667,6 +714,9 @@ paths:
                     type: integer
                     format: int64
                   receivedFrom:
+                    type: integer
+                    format: int64
+                  receivedOfficeId:
                     type: integer
                     format: int64
                   receivedAt:
@@ -718,13 +768,13 @@ paths:
       operationId: api.InvoiceStationaryItemApi.get_by_id
       parameters:
         - name: invoiceId
-          required: false
+          required: true
           in: path
           schema:
             type: integer
             format: int64
         - name: stationaryItemId
-          required: false
+          required: true
           in: path
           schema:
             type: integer
@@ -753,6 +803,9 @@ paths:
                     type: integer
                     format: int64
                   receivedFrom:
+                    type: integer
+                    format: int64
+                  receivedOfficeId:
                     type: integer
                     format: int64
                   receivedAt:
@@ -791,13 +844,13 @@ paths:
       operationId: api.InvoiceStationaryItemApi.receive
       parameters:
         - name: invoiceId
-          required: false
+          required: true
           in: path
           schema:
             type: integer
             format: int64
         - name: stationaryItemId
-          required: false
+          required: true
           in: path
           schema:
             type: integer
@@ -808,7 +861,32 @@ paths:
           content:
             application/json:
               schema:
-                type: integer
+                type: object
+                required:
+                  - invoiceId
+                  - stationaryItemId
+                properties:
+                  invoiceId:
+                    type: integer
+                    format: int64
+                  stationaryItemId:
+                    type: integer
+                    format: int64
+                  received:
+                    type: boolean
+                    default: false
+                  receivedBy:
+                    type: integer
+                    format: int64
+                  receivedFrom:
+                    type: integer
+                    format: int64
+                  receivedOfficeId:
+                    type: integer
+                    format: int64
+                  receivedAt:
+                    type: string
+                    format: date-time
         '400':
           description: Bad request.
           content:
@@ -1397,108 +1475,3 @@ components:
               voteCount:
                 type: integer
                 format: int64
-
-
-
-
-
-    Invoice:
-      type: object
-      required:
-        - electionId
-        - issuingOfficeId
-        - receivingOfficeId
-        - issuedTo
-        - stationaryItems
-      properties:
-        invoiceId:
-          type: integer
-          format: int64
-        electionId:
-          type: integer
-          format: int64
-        issuingOfficeId:
-          type: integer
-          format: int64
-        receivingOfficeId:
-          type: integer
-          format: int64
-        issuedBy:
-          type: integer
-          format: int64
-        issuedTo:
-          type: integer
-          format: int64
-        issuedAt:
-          type: string
-          format: date-time
-        confirmed:
-          type: boolean
-        stationaryItems:
-          type: array
-          items:
-            type: object
-            properties:
-              invoiceId:
-                type: integer
-                format: int64
-              stationaryItemId:
-                type: integer
-                format: int64
-              receivedBy:
-                type: integer
-                format: int64
-              receivedFrom:
-                type: integer
-                format: int64
-              receivedAt:
-                type: string
-                format: date-time
-
-    InvoiceStationaryItem:
-      type: object
-      required:
-        - invoiceId
-        - stationaryItemId
-      properties:
-        invoiceId:
-          type: integer
-          format: int64
-        stationaryItemId:
-          type: integer
-          format: int64
-        receivedBy:
-          type: integer
-          format: int64
-        receivedFrom:
-          type: integer
-          format: int64
-        receivedAt:
-          type: string
-          format: date-time
-
-
-    Ballot:
-      type: object
-      required:
-        - ballotId
-      properties:
-        ballotId:
-          type: string
-        stationaryItemId:
-          type: integer
-          format: int64
-
-
-    BallotBox:
-      type: object
-      required:
-        - ballotBoxId
-      properties:
-        ballotBoxId:
-          type: string
-        stationaryItemId:
-          type: integer
-          format: int64
-
-
