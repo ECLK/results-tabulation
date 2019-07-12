@@ -1,4 +1,6 @@
- Create an Invoice  
+# Issuing and Receiving Process
+
+## Create an Invoice  
 
 ```bash
 curl -X POST http://localhost:5000/invoice \
