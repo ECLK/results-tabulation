@@ -1238,8 +1238,8 @@ components:
         implicit:
           authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
           scopes:
-            'write:org': modify
-            'read:org': read
+              'write:org': modify
+              'read:org': read
     api_key:
       type: apiKey
       name: api_key

@@ -4,6 +4,7 @@ from datetime import datetime
 
 from models import InvoiceStationaryItemModel as Model
 from domain import InvoiceDomain
+from exception import NotFoundException, ForbiddenException
 
 
 def get_all(invoiceId, limit, offset, received=None, receivedFrom=None, receivedBy=None, receivedOffice=None):
@@ -27,12 +28,10 @@ def create(invoiceId, stationaryItemId):
     invoice = InvoiceDomain.get_by_id(invoiceId)
 
     if invoice is None:
-        # TODO
-        return {}
+        raise NotFoundException("Invoice not found associated with the given invoiceId (%d)" % invoiceId)
     else:
-        if invoice.confirmed == True:
-            # TODO throw
-            return {}
+        if invoice.confirmed:
+            raise ForbiddenException("Stationary items cannot be added to confirmed invoices (%d)" % invoiceId)
         else:
             result = Model(
                 invoiceId=invoiceId,
@@ -58,8 +57,8 @@ def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, recei
     instance = get_by_id(invoiceId, stationaryItemId)
 
     if instance is None:
-        # TODO
-        return {}
+        raise NotFoundException("Invoice Stationary Item not found associated with the given invoiceId (%d, %d)"
+                                % (invoiceId, stationaryItemId))
     else:
 
         if received is not None:

@@ -3,6 +3,7 @@ from util import Auth
 from datetime import datetime
 
 from models import InvoiceModel as Model
+from exception import NotFoundException
 
 
 def get_all(limit, offset, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
@@ -57,8 +58,7 @@ def update(invoiceId, issuingOfficeId=None, receivingOfficeId=None, issuedTo=Non
     instance = get_by_id(invoiceId)
 
     if instance is None:
-        # TODO
-        return {}
+        raise NotFoundException("Invoice not found associated with the given invoiceId (%d)" % invoiceId)
     else:
         if issuingOfficeId is not None:
             instance.issuingOfficeId = issuingOfficeId
