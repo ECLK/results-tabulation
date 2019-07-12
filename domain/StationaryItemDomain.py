@@ -8,8 +8,11 @@ def get_all():
     return result
 
 
-def create():
-    result = Model()
+def create(electionId, stationaryItemType):
+    result = Model(
+        electionId=electionId,
+        stationaryItemType=stationaryItemType
+    )
 
     db.session.add(result)
     db.session.commit()

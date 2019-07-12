@@ -1,5 +1,6 @@
 from config import db
 from models import BallotBoxModel as Model
+from models import StationaryItemTypeEnum
 from domain import StationaryItemDomain
 
 
@@ -9,9 +10,14 @@ def get_all():
     return result
 
 
-def create(ballotBoxId):
-    stationary_item = StationaryItemDomain.create()
+def create(electionId, ballotBoxId):
+    stationary_item = StationaryItemDomain.create(
+        electionId=electionId,
+        stationaryItemType=StationaryItemTypeEnum.BallotBox
+    )
+
     result = Model(
+        electionId=electionId,
         ballotBoxId=ballotBoxId,
         stationaryItemId=stationary_item.stationaryItemId
     )
