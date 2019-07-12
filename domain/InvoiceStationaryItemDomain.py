@@ -3,6 +3,7 @@ from util import Auth
 from datetime import datetime
 
 from models import InvoiceStationaryItemModel as Model
+from domain import InvoiceDomain
 
 
 def get_all(invoiceId, limit, offset, received=None, receivedFrom=None, receivedBy=None, receivedOffice=None):
@@ -23,15 +24,25 @@ def get_all(invoiceId, limit, offset, received=None, receivedFrom=None, received
 
 
 def create(invoiceId, stationaryItemId):
-    result = Model(
-        invoiceId=invoiceId,
-        stationaryItemId=stationaryItemId
-    )
+    invoice = InvoiceDomain.get_by_id(invoiceId)
 
-    db.session.add(result)
-    db.session.commit()
+    if invoice is None:
+        # TODO
+        return {}
+    else:
+        if invoice.confirmed == True:
+            # TODO throw
+            return {}
+        else:
+            result = Model(
+                invoiceId=invoiceId,
+                stationaryItemId=stationaryItemId
+            )
 
-    return result
+            db.session.add(result)
+            db.session.commit()
+
+            return result
 
 
 def get_by_id(invoiceId, stationaryItemId):
