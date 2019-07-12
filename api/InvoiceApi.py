@@ -1,81 +1,44 @@
 from flask import abort
-from config import db
-from models import InvoiceModel, InvoiceStationaryItemModel
-from schemas import Invoice_Schema
-from util import RequestBody, Auth
-from datetime import datetime
+from util import RequestBody
+
+from schemas import Invoice_Schema as Schema
+from domain import InvoiceDomain as Domain
 
 
 def get_all(limit=20, offset=0, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
             issuedTo=None):
-    query = InvoiceModel.query
+    result = Domain.get_all(
+        electionId=electionId,
+        issuingOfficeId=issuingOfficeId,
+        receivingOfficeId=receivingOfficeId,
+        issuedBy=issuedBy,
+        issuedTo=issuedTo,
 
-    if electionId is not None:
-        query = query.filter(InvoiceModel.electionId == electionId)
+        limit=limit,
+        offset=offset
+    )
 
-    if issuingOfficeId is not None:
-        query = query.filter(InvoiceModel.issuingOfficeId == issuingOfficeId)
-
-    if receivingOfficeId is not None:
-        query = query.filter(InvoiceModel.receivingOfficeId == receivingOfficeId)
-
-    if issuedBy is not None:
-        query = query.filter(InvoiceModel.issuedBy == issuedBy)
-
-    if issuedTo is not None:
-        query = query.filter(InvoiceModel.issuedTo == issuedTo)
-
-    invoices = query.limit(limit).offset(offset).all()
-
-    invoices_schema = Invoice_Schema(many=True)
-    data = invoices_schema.dump(invoices).data
-    return data
+    return Schema(many=True).dump(result).data
 
 
 def get_by_id(invoiceId):
-    result = InvoiceModel.query.filter(
-        InvoiceModel.invoiceId == invoiceId
-    ).one_or_none()
+    result = Domain.get_by_id(
+        invoiceId=invoiceId
+    )
 
-    invoices_schema = Invoice_Schema()
-    data = invoices_schema.dump(result).data
-    return data
+    return Schema().dump(result).data
 
 
 def create(body):
     request_body = RequestBody(body)
-    invoice = InvoiceModel(
+    result = Domain.create(
         electionId=request_body.get("electionId"),
         issuingOfficeId=request_body.get("issuingOfficeId"),
         receivingOfficeId=request_body.get("receivingOfficeId"),
         issuedTo=request_body.get("issuedTo"),
-        issuedBy=Auth().get_user_id(),
-        issuedAt=datetime.utcnow()
     )
 
-    # Add the entry to the database
-    db.session.add(invoice)
-    db.session.commit()
-
-    # _create_invoice_items(invoice, request_body.get("stationaryItems"))
-
-    return Invoice_Schema().dump(invoice).data, 201
-
-
-# def _create_invoice_item(invoice, invoice_item_body):
-#     request_body = RequestBody(invoice_item_body)
-#     invoice_stationary_item = InvoiceStationaryItemModel(
-#         invoiceId=invoice.invoiceId,
-#         stationaryItemId=request_body.get("stationaryItemId")
-#     )
-#
-#     db.session.add(invoice_stationary_item)
-#     db.session.commit()
-#
-#
-# def _create_invoice_items(invoice, invoice_items_body):
-#     for item_body in invoice_items_body:
-#         _create_invoice_item(invoice, item_body)
+    return Schema().dump(result).data
 
 
 def update(tallySheetId, body):
@@ -83,15 +46,9 @@ def update(tallySheetId, body):
 
 
 def confirm(invoiceId):
-    result = InvoiceModel.query.filter(
-        InvoiceModel.invoiceId == invoiceId
-    ).update({
-        InvoiceModel.confirmed: True
-    })
+    result = Domain.update(
+        invoiceId=invoiceId,
+        confirmed=True
+    )
 
-    db.session.commit()
-
-    if result > 0:
-        return get_by_id(invoiceId)
-    else:
-        {}, 404
+    return Schema().dump(result).data

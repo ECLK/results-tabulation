@@ -493,9 +493,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-      #      security:
-      #        - organization_auth:
-      #            - 'write:org'
       requestBody:
         content:
           application/json:
