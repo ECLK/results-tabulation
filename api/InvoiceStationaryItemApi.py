@@ -35,17 +35,6 @@ def create(invoiceId, body):
     return Schema().dump(result).data, 201
 
 
-def update(invoiceId, stationaryItemId, body):
-    request_body = RequestBody(body)
-    result = InvoiceStationaryItemDomain.update(
-        invoiceId=invoiceId,
-        stationaryItemId=stationaryItemId,
-        receivedFrom=request_body.get("receivedFrom")
-    )
-
-    return Schema().dump(result).data, 201
-
-
 def receive(invoiceId, stationaryItemId, body):
     request_body = RequestBody(body)
     result = InvoiceStationaryItemDomain.update(
