@@ -127,7 +127,7 @@ class Invoice_StationaryItem_Schema(ma.ModelSchema):
             "received",
             "receivedBy",
             "receivedFrom",
-            "receivedOffice",
+            "receivedOfficeId",
             "receivedAt",
             "invoiceId",
             "stationaryItemId",

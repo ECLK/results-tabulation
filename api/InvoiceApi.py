@@ -8,7 +8,6 @@ from datetime import datetime
 
 def get_all(limit=20, offset=0, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
             issuedTo=None):
-
     query = InvoiceModel.query
 
     if electionId is not None:
@@ -30,6 +29,16 @@ def get_all(limit=20, offset=0, electionId=None, issuingOfficeId=None, receiving
 
     invoices_schema = Invoice_Schema(many=True)
     data = invoices_schema.dump(invoices).data
+    return data
+
+
+def get_by_id(invoiceId):
+    result = InvoiceModel.query.filter(
+        InvoiceModel.invoiceId == invoiceId
+    ).one_or_none()
+
+    invoices_schema = Invoice_Schema()
+    data = invoices_schema.dump(result).data
     return data
 
 
@@ -76,8 +85,13 @@ def update(tallySheetId, body):
 def confirm(invoiceId):
     result = InvoiceModel.query.filter(
         InvoiceModel.invoiceId == invoiceId
-    ).update({"confirmed": True})
+    ).update({
+        InvoiceModel.confirmed: True
+    })
 
     db.session.commit()
 
-    return result, 201
+    if result > 0:
+        return get_by_id(invoiceId)
+    else:
+        {}, 404
