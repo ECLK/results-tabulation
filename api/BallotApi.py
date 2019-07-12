@@ -1,7 +1,8 @@
 from flask import abort
+from util import RequestBody
+
 from schemas import Ballot_Schema as Schema
 from domain import BallotDomain
-from util import RequestBody
 
 
 def get_all():

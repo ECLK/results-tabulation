@@ -1,7 +1,8 @@
 from flask import abort
+from util import RequestBody
+
 from schemas import Invoice_StationaryItem_Schema as Schema
 from domain import InvoiceStationaryItemDomain
-from util import RequestBody
 
 
 def get_all(invoiceId, limit=20, offset=0, received=None, receivedFrom=None, receivedBy=None, receivedOffice=None):
