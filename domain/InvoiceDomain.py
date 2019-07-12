@@ -1,7 +1,8 @@
 from config import db
-from models import InvoiceModel as Model
 from util import Auth
 from datetime import datetime
+
+from models import InvoiceModel as Model
 
 
 def get_all(limit, offset, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,

@@ -1,7 +1,8 @@
 from config import db
-from models import BallotBoxModel as Model
 from models import StationaryItemTypeEnum
 from domain import StationaryItemDomain
+
+from models import BallotBoxModel as Model
 
 
 def get_all():
