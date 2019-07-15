@@ -1316,12 +1316,12 @@ components:
     ApiResponse:
       type: object
       properties:
-        code:
+        status:
           type: integer
           format: int32
-        type:
+        title:
           type: string
-        message:
+        detail:
           type: string
     TallySheetHistory:
       type: array

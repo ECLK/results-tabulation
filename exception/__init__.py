@@ -1,44 +1,25 @@
-class ApiException(Exception):
-    def __init__(self, title, message, code):
-        super()
-
-        self.title = title
-        self.message = message
-        self.code = code
-
-    def to_json_response(self):
-        return {
-            "type": self.title,
-            "message": self.message,
-            "code": self.code
-        }, self.code
+from connexion import ProblemException
 
 
-class UnauthorizedException(ApiException):
-    def __init__(self, message=""):
-        super(UnauthorizedException, self).__init__("Unauthorized", message, 401)
+def UnauthorizedException(message=""):
+    raise ProblemException(401, "Unauthorized", message, "Unauthorized")
 
 
-class ForbiddenException(ApiException):
-    def __init__(self, message=""):
-        super(ForbiddenException, self).__init__("Forbidden", message, 403)
+def ForbiddenException(message=""):
+    raise ProblemException(403, "Unauthorized", message, "Unauthorized")
 
 
-class NotFoundException(ApiException):
-    def __init__(self, message=""):
-        super(NotFoundException, self).__init__("Not Found", message, 404)
+def NotFoundException(message=""):
+    raise ProblemException(404, "Unauthorized", message, "Unauthorized")
 
 
-class MethodNotAllowedException(ApiException):
-    def __init__(self, message=""):
-        super(MethodNotAllowedException, self).__init__("Method Not Allowed", message, 405)
+def MethodNotAllowedException(message=""):
+    raise ProblemException(405, "Unauthorized", message, "Unauthorized")
 
 
-class InternalServerErrorException(ApiException):
-    def __init__(self, message=""):
-        super(InternalServerErrorException, self).__init__("Internal Server Error", message, 500)
+def InternalServerErrorException(message=""):
+    raise ProblemException(500, "Unauthorized", message, "Unauthorized")
 
 
-class NotImplementedException(ApiException):
-    def __init__(self, message=""):
-        super(NotImplementedException, self).__init__("Not Implemented", message, 501)
+def NotImplementedException(message=""):
+    raise ProblemException(501, "Unauthorized", message, "Unauthorized")

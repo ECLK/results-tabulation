@@ -1,4 +1,3 @@
-
 """
 Main module of the server file
 """
@@ -17,7 +16,6 @@ connex_app = config.connex_app
 connex_app.add_api("swagger.yml", strict_validation=True, validate_responses=True)
 
 
-
 # create a URL route in our application for "/"
 @connex_app.route("/")
 def home():
@@ -31,3 +29,5 @@ def home():
 
 if __name__ == "__main__":
     connex_app.run(debug=True)
+
+
