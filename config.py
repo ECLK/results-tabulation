@@ -3,10 +3,33 @@ import connexion
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
+from connexion.exceptions import ProblemException
+import json
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Create the Connexion application instance
 connex_app = connexion.App(__name__, specification_dir=basedir)
+
+
+def render_exception(exception):
+    return json.dumps({
+        "detail": "",
+        "status": 500,
+        "title": "Internal Server Error"
+    }, indent=2), 500
+
+
+def render_connexion_problem_exception(connexion_exception):
+    return json.dumps({
+        "detail": connexion_exception.detail,
+        "status": connexion_exception.status,
+        "title": connexion_exception.title
+    }, indent=2), connexion_exception.status
+
+
+connex_app.add_error_handler(Exception, render_exception)
+connex_app.add_error_handler(ProblemException, render_connexion_problem_exception)
 
 # Get the underlying Flask app instance
 app = connex_app.app

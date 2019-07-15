@@ -3,7 +3,6 @@ from util import RequestBody
 
 from schemas import Invoice_Schema as Schema
 from domain import InvoiceDomain as Domain
-from exception import ApiException, InternalServerErrorException
 
 
 def get_all(limit=20, offset=0, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
@@ -47,14 +46,9 @@ def update(tallySheetId, body):
 
 
 def confirm(invoiceId):
-    try:
-        result = Domain.update(
-            invoiceId=invoiceId,
-            confirmed=True
-        )
+    result = Domain.update(
+        invoiceId=invoiceId,
+        confirmed=True
+    )
 
-        return Schema().dump(result).data
-    except ApiException as error:
-        return error.to_json_response()
-    except Exception as error:
-        return InternalServerErrorException().to_json_response()
+    return Schema().dump(result).data
