@@ -11,7 +11,7 @@ class ApiException(Exception):
             "type": self.title,
             "message": self.message,
             "code": self.code
-        }
+        }, self.code
 
 
 class UnauthorizedException(ApiException):
