@@ -373,11 +373,14 @@ paths:
                 items:
                   type: object
                   required:
+                    - invoiceId
                     - electionId
                     - issuingOfficeId
                     - receivingOfficeId
+                    - issuedBy
                     - issuedTo
-                    - stationaryItems
+                    - issuedAt
+                    - confirmed
                   properties:
                     invoiceId:
                       type: integer
@@ -440,11 +443,14 @@ paths:
               schema:
                 type: object
                 required:
+                  - invoiceId
                   - electionId
                   - issuingOfficeId
                   - receivingOfficeId
+                  - issuedBy
                   - issuedTo
-                  - stationaryItems
+                  - issuedAt
+                  - confirmed
                 properties:
                   invoiceId:
                     type: integer
@@ -538,7 +544,40 @@ paths:
           content:
             application/json:
               schema:
-                type: integer
+                type: object
+                required:
+                  - invoiceId
+                  - electionId
+                  - issuingOfficeId
+                  - receivingOfficeId
+                  - issuedBy
+                  - issuedTo
+                  - issuedAt
+                  - confirmed
+                properties:
+                  invoiceId:
+                    type: integer
+                    format: int64
+                  electionId:
+                    type: integer
+                    format: int64
+                  issuingOfficeId:
+                    type: integer
+                    format: int64
+                  receivingOfficeId:
+                    type: integer
+                    format: int64
+                  issuedBy:
+                    type: integer
+                    format: int64
+                  issuedTo:
+                    type: integer
+                    format: int64
+                  issuedAt:
+                    type: string
+                    format: date-time
+                  confirmed:
+                    type: boolean
         '400':
           description: Bad request.
           content:
@@ -628,6 +667,11 @@ paths:
                   required:
                     - invoiceId
                     - stationaryItemId
+                    - received
+                    - receivedBy
+                    - receivedFrom
+                    - receivedOfficeId
+                    - receivedAt
                   properties:
                     invoiceId:
                       type: integer
@@ -641,15 +685,19 @@ paths:
                     receivedBy:
                       type: integer
                       format: int64
+                      nullable: true
                     receivedFrom:
                       type: integer
                       format: int64
+                      nullable: true
                     receivedOfficeId:
                       type: integer
                       format: int64
+                      nullable: true
                     receivedAt:
                       type: string
                       format: date-time
+                      nullable: true
         '400':
           description: Bad request.
           content:
@@ -697,6 +745,7 @@ paths:
                 required:
                   - invoiceId
                   - stationaryItemId
+                  - received
                 properties:
                   invoiceId:
                     type: integer
@@ -710,15 +759,19 @@ paths:
                   receivedBy:
                     type: integer
                     format: int64
+                    nullable: true
                   receivedFrom:
                     type: integer
                     format: int64
+                    nullable: true
                   receivedOfficeId:
                     type: integer
                     format: int64
+                    nullable: true
                   receivedAt:
                     type: string
                     format: date-time
+                    nullable: true
         '400':
           description: Bad request.
           content:
@@ -786,6 +839,11 @@ paths:
                 required:
                   - invoiceId
                   - stationaryItemId
+                  - received
+                  - receivedBy
+                  - receivedFrom
+                  - receivedOfficeId
+                  - receivedAt
                 properties:
                   invoiceId:
                     type: integer
@@ -799,15 +857,19 @@ paths:
                   receivedBy:
                     type: integer
                     format: int64
+                    nullable: true
                   receivedFrom:
                     type: integer
                     format: int64
+                    nullable: true
                   receivedOfficeId:
                     type: integer
                     format: int64
+                    nullable: true
                   receivedAt:
                     type: string
                     format: date-time
+                    nullable: true
         '400':
           description: Bad request.
           content:
@@ -862,6 +924,11 @@ paths:
                 required:
                   - invoiceId
                   - stationaryItemId
+                  - received
+                  - receivedBy
+                  - receivedFrom
+                  - receivedOfficeId
+                  - receivedAt
                 properties:
                   invoiceId:
                     type: integer
@@ -918,6 +985,7 @@ paths:
               type: object
               required:
                 - receivedFrom
+                - receivedOfficeId
               properties:
                 receivedFrom:
                   type: integer
@@ -1238,8 +1306,8 @@ components:
         implicit:
           authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
           scopes:
-              'write:org': modify
-              'read:org': read
+            'write:org': modify
+            'read:org': read
     api_key:
       type: apiKey
       name: api_key
