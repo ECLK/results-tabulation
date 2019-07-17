@@ -5,9 +5,11 @@ from schemas import Invoice_StationaryItem_Schema as Schema
 from domain import InvoiceStationaryItemDomain
 
 
-def get_all(invoiceId, limit=20, offset=0, received=None, receivedFrom=None, receivedBy=None, receivedOffice=None):
+def get_all(invoiceId, stationaryItemId=None, limit=20, offset=0, received=None, receivedFrom=None, receivedBy=None,
+            receivedOffice=None):
     result = InvoiceStationaryItemDomain.get_all(
         invoiceId=invoiceId,
+        stationaryItemId=stationaryItemId,
         received=received,
         receivedFrom=receivedFrom,
         receivedBy=receivedBy,
