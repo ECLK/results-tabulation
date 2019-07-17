@@ -525,6 +525,130 @@ paths:
         description: Invoice Object.
         required: True
 
+
+  /invoice/{invoiceId}:
+    get:
+      tags:
+        - invoice
+      summary: Create.
+      operationId: api.InvoiceApi.get_by_id
+      parameters:
+        - name: invoiceId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - invoiceId
+                  - electionId
+                  - issuingOfficeId
+                  - receivingOfficeId
+                  - issuedBy
+                  - issuedTo
+                  - issuedAt
+                  - confirmed
+                properties:
+                  invoiceId:
+                    type: integer
+                    format: int64
+                  electionId:
+                    type: integer
+                    format: int64
+                  issuingOfficeId:
+                    type: integer
+                    format: int64
+                  receivingOfficeId:
+                    type: integer
+                    format: int64
+                  issuedBy:
+                    type: integer
+                    format: int64
+                  issuedTo:
+                    type: integer
+                    format: int64
+                  issuedAt:
+                    type: string
+                    format: date-time
+                  confirmed:
+                    type: boolean
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+    delete:
+      tags:
+        - invoice
+      summary: Create.
+      operationId: api.InvoiceApi.delete
+      parameters:
+        - name: invoiceId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /invoice/{invoiceId}/confirm:
     put:
       tags:

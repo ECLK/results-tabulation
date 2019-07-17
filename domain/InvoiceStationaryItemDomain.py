@@ -9,7 +9,7 @@ from exception import NotFoundException, ForbiddenException
 
 def get_all(invoiceId=None, stationaryItemId=None, limit=20, offset=0, received=None, receivedFrom=None,
             receivedBy=None, receivedOffice=None):
-    query = Model.query
+    query = Model.query.filter(Model.delete == False)
 
     if invoiceId is not None:
         query = query.filter(Model.invoiceId == invoiceId)
@@ -49,7 +49,8 @@ def create(invoiceId, stationaryItemId):
 def get_by_id(invoiceId, stationaryItemId):
     result = Model.query.filter(
         Model.invoiceId == invoiceId,
-        Model.stationaryItemId == stationaryItemId
+        Model.stationaryItemId == stationaryItemId,
+        Model.delete == False
     ).one_or_none()
 
     return result
@@ -62,7 +63,6 @@ def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, recei
         raise NotFoundException("Invoice Stationary Item not found associated with the given invoiceId (%d, %d)"
                                 % (invoiceId, stationaryItemId))
     else:
-
         if received is not None:
             instance.received = received
         if receivedFrom is not None:
@@ -79,11 +79,14 @@ def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, recei
 
 
 def delete(invoiceId, stationaryItemId):
-    result = Model.query.filter(
-        Model.invoiceId == invoiceId,
-        Model.stationaryItemId == stationaryItemId
-    ).delete()
+    if InvoiceDomain.has_confirmed(invoiceId):
+        raise ForbiddenException("Stationary items cannot be deleted from confirmed invoices (%d)" % invoiceId)
+    else:
+        result = Model.query.filter(
+            Model.invoiceId == invoiceId,
+            Model.stationaryItemId == stationaryItemId
+        ).delete()
 
-    db.session.commit()
+        db.session.commit()
 
-    return result
+        return result
