@@ -632,7 +632,7 @@ paths:
             type: integer
             format: int64
         - name: stationaryItemId
-          required: true
+          required: false
           in: path
           schema:
             type: integer

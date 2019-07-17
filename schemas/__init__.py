@@ -93,7 +93,8 @@ class StationaryItem_Schema(ma.ModelSchema):
         fields = (
             "stationaryItemId",
             "stationaryItemType",
-            "electionId"
+            "electionId",
+            "locked"
         )
 
         model = StationaryItemModel
@@ -148,13 +149,15 @@ class Ballot_Schema(ma.ModelSchema):
         fields = (
             "ballotId",
             "electionId",
-            "stationaryItemId"
+            "stationaryItemId",
+            "stationaryItem"
         )
 
         model = BallotModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+    stationaryItem = ma.Nested(StationaryItem_Schema)
 
 
 class BallotBox_Schema(ma.ModelSchema):
@@ -162,10 +165,12 @@ class BallotBox_Schema(ma.ModelSchema):
         fields = (
             "ballotBoxId",
             "electionId",
-            "stationaryItemId"
+            "stationaryItemId",
+            "stationaryItem"
         )
 
         model = BallotBoxModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+    stationaryItem = ma.Nested(StationaryItem_Schema)

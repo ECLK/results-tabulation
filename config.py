@@ -13,6 +13,8 @@ connex_app = connexion.App(__name__, specification_dir=basedir)
 
 
 def render_exception(exception):
+    print(exception)
+
     return json.dumps({
         "detail": "",
         "status": 500,
@@ -21,6 +23,8 @@ def render_exception(exception):
 
 
 def render_connexion_problem_exception(connexion_exception):
+    print(connexion_exception)
+
     return json.dumps({
         "detail": connexion_exception.detail,
         "status": connexion_exception.status,

@@ -4,10 +4,19 @@ from datetime import datetime
 
 from models import StationaryItemModel as Model
 from domain import InvoiceStationaryItemDomain
+from exception import NotFoundException
 
 
 def get_all():
     result = Model.query.all()
+
+    return result
+
+
+def get_by_id(stationaryItemId):
+    result = Model.query.filter(
+        Model.stationaryItemId == stationaryItemId
+    ).one_or_none()
 
     return result
 
@@ -25,6 +34,9 @@ def create(electionId, stationaryItemType):
 
 
 def is_locked(stationaryItemId):
-    abcd = InvoiceStationaryItemDomain.get_all(stationaryItemId=stationaryItemId)
-    print("########## abcd ########", abcd)
-    return len(abcd) > 0
+    entry = get_by_id(stationaryItemId)
+
+    if entry is None:
+        raise NotFoundException("Stationary Item Not Found (stationaryItemId=%d) " % stationaryItemId)
+    else:
+        return entry.locked
