@@ -72,3 +72,12 @@ def update(invoiceId, issuingOfficeId=None, receivingOfficeId=None, issuedTo=Non
         db.session.commit()
 
         return instance
+
+
+def has_confirmed(invoiceId):
+    entry = get_by_id(invoiceId)
+
+    if entry is None:
+        raise NotFoundException("Invoice Not Found (stationaryItemId=%d) " % stationaryItemId)
+    else:
+        return entry.confirmed

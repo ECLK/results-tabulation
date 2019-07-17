@@ -2,6 +2,7 @@ from datetime import datetime
 from config import db, ma
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 import enum
 
@@ -154,6 +155,11 @@ class StationaryItemModel(db.Model):
     electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=False)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
+    invoiceStationaryItems = relationship("InvoiceStationaryItemModel")
+
+    @hybrid_property
+    def locked(self):
+        return len(self.invoiceStationaryItems) > 0
 
 
 class InvoiceStationaryItemModel(db.Model):
@@ -181,6 +187,8 @@ class BallotModel(db.Model):
     stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
     election = relationship("ElectionModel", foreign_keys=[electionId])
 
+    locked = association_proxy("stationaryItem", "locked")
+
 
 class BallotBoxModel(db.Model):
     __tablename__ = 'ballotBox'
@@ -191,6 +199,8 @@ class BallotBoxModel(db.Model):
 
     stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
     election = relationship("ElectionModel", foreign_keys=[electionId])
+
+    #locked = association_proxy("stationaryItem", "locked")
 
 
 # class TallySheet_PRE_34_CO(db.Model):
