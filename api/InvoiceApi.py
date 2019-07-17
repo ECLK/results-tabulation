@@ -52,3 +52,11 @@ def confirm(invoiceId):
     )
 
     return Schema().dump(result).data
+
+
+def delete(invoiceId):
+    result = Domain.delete(
+        invoiceId=invoiceId
+    )
+
+    return result

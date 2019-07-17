@@ -3,12 +3,12 @@ from util import Auth
 from datetime import datetime
 
 from models import InvoiceModel as Model
-from exception import NotFoundException
+from exception import NotFoundException, ForbiddenException
 
 
 def get_all(limit, offset, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
             issuedTo=None):
-    query = Model.query
+    query = Model.query.filter(Model.delete == False)
 
     if electionId is not None:
         query = query.filter(Model.electionId == electionId)
@@ -32,7 +32,8 @@ def get_all(limit, offset, electionId=None, issuingOfficeId=None, receivingOffic
 
 def get_by_id(invoiceId):
     result = Model.query.filter(
-        Model.invoiceId == invoiceId
+        Model.invoiceId == invoiceId,
+        Model.delete == False
     ).one_or_none()
 
     return result
@@ -78,6 +79,21 @@ def has_confirmed(invoiceId):
     entry = get_by_id(invoiceId)
 
     if entry is None:
-        raise NotFoundException("Invoice Not Found (stationaryItemId=%d) " % stationaryItemId)
+        raise NotFoundException("Invoice Not Found (invoiceId=%d) " % invoiceId)
     else:
         return entry.confirmed
+
+
+def delete(invoiceId):
+    instance = get_by_id(invoiceId)
+
+    if instance is None:
+        raise NotFoundException("Invoice not found associated with the given invoiceId (invoiceId=%d)" % invoiceId)
+    elif instance.confirmed:
+        raise ForbiddenException("Confirmed invoices cannot be deleted (invoiceId=%d)" % invoiceId)
+    else:
+        instance.delete = True
+
+        db.session.commit()
+
+        return 1

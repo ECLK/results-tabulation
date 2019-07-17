@@ -141,6 +141,7 @@ class InvoiceModel(db.Model):
     issuedBy = db.Column(db.Integer, nullable=False)
     issuedTo = db.Column(db.Integer, nullable=False)
     issuedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    delete = db.Column(db.Boolean, default=False)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     issuingOffice = relationship("OfficeModel", foreign_keys=[issuingOfficeId])
@@ -158,8 +159,12 @@ class StationaryItemModel(db.Model):
     invoiceStationaryItems = relationship("InvoiceStationaryItemModel")
 
     @hybrid_property
+    def lockedInvoices(self):
+        return [i for i in self.invoiceStationaryItems if i.delete == False]
+
+    @hybrid_property
     def locked(self):
-        return len(self.invoiceStationaryItems) > 0
+        return len([i for i in self.invoiceStationaryItems if i.delete == False]) > 0
 
 
 class InvoiceStationaryItemModel(db.Model):
@@ -175,6 +180,8 @@ class InvoiceStationaryItemModel(db.Model):
     receivedOffice = relationship("OfficeModel", foreign_keys=[receivedOfficeId])
     stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
     invoice = relationship("InvoiceModel", foreign_keys=[invoiceId])
+
+    delete = association_proxy('invoice', 'delete')
 
 
 class BallotModel(db.Model):
@@ -200,7 +207,7 @@ class BallotBoxModel(db.Model):
     stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
     election = relationship("ElectionModel", foreign_keys=[electionId])
 
-    #locked = association_proxy("stationaryItem", "locked")
+    # locked = association_proxy("stationaryItem", "locked")
 
 
 # class TallySheet_PRE_34_CO(db.Model):

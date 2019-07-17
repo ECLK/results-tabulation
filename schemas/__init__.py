@@ -113,7 +113,8 @@ class Invoice_Schema(ma.ModelSchema):
             "issuedBy",
             "issuedTo",
             "issuedAt",
-            "confirmed"
+            "confirmed",
+            "delete"
         )
 
         model = InvoiceModel
@@ -132,7 +133,8 @@ class Invoice_StationaryItem_Schema(ma.ModelSchema):
             "receivedAt",
             "invoiceId",
             "stationaryItemId",
-            "stationaryItem"
+            "stationaryItem",
+            "delete"
         )
 
         model = InvoiceStationaryItemModel
