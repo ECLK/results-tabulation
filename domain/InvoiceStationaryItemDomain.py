@@ -3,13 +3,18 @@ from util import Auth
 from datetime import datetime
 
 from models import InvoiceStationaryItemModel as Model
-from domain import InvoiceDomain
+from domain import InvoiceDomain, StationaryItemDomain
 from exception import NotFoundException, ForbiddenException
 
 
-def get_all(invoiceId, limit, offset, received=None, receivedFrom=None, receivedBy=None, receivedOffice=None):
-    query = Model.query.filter(Model.invoiceId == invoiceId)
+def get_all(invoiceId=None, stationaryItemId=None, limit=20, offset=0, received=None, receivedFrom=None,
+            receivedBy=None, receivedOffice=None):
+    query = Model.query
 
+    if invoiceId is not None:
+        query = query.filter(Model.invoiceId == invoiceId)
+    if stationaryItemId is not None:
+        query = query.filter(Model.stationaryItemId == stationaryItemId)
     if received is not None:
         query = query.filter(Model.received == received)
     if receivedFrom is not None:
@@ -29,6 +34,8 @@ def create(invoiceId, stationaryItemId):
 
     if invoice is None:
         raise NotFoundException("Invoice not found associated with the given invoiceId (%d)" % invoiceId)
+    elif StationaryItemDomain.is_locked(stationaryItemId=stationaryItemId):
+        raise ForbiddenException("Stationary item is not available (%d)" % stationaryItemId)
     else:
         if invoice.confirmed:
             raise ForbiddenException("Stationary items cannot be added to confirmed invoices (%d)" % invoiceId)

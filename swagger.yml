@@ -631,6 +631,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: stationaryItemId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
         - name: received
           required: false
           in: query
