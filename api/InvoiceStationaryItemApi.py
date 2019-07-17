@@ -49,3 +49,12 @@ def receive(invoiceId, stationaryItemId, body):
     )
 
     return Schema().dump(result).data, 201
+
+
+def delete(invoiceId, stationaryItemId):
+    result = InvoiceStationaryItemDomain.delete(
+        invoiceId=invoiceId,
+        stationaryItemId=stationaryItemId
+    )
+
+    return result

@@ -76,3 +76,14 @@ def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, recei
         db.session.commit()
 
         return instance
+
+
+def delete(invoiceId, stationaryItemId):
+    result = Model.query.filter(
+        Model.invoiceId == invoiceId,
+        Model.stationaryItemId == stationaryItemId
+    ).delete()
+
+    db.session.commit()
+
+    return result
