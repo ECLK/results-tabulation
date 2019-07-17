@@ -901,6 +901,56 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+    delete:
+      tags:
+        - invoice-stationary
+      summary: Get all.
+      operationId: api.InvoiceStationaryItemApi.delete
+      parameters:
+        - name: invoiceId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+        - name: stationaryItemId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /invoice/{invoiceId}/stationary-item/{stationaryItemId}/received:
     put:
       tags:
