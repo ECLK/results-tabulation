@@ -1,7 +1,7 @@
 from config import db, ma
 from models import ElectionModel, TallySheetModel, TallySheetVersionModel, TallySheetPRE41Model, \
     TallySheetPRE41PartyModel, InvoiceModel, \
-    StationaryItemModel, InvoiceStationaryItemModel, BallotBoxModel, BallotModel, StationaryItemTypeEnum
+    StationaryItemModel, InvoiceStationaryItemModel, BallotBoxModel, BallotModel, StationaryItemTypeEnum, FileModel
 
 from marshmallow_enum import EnumField
 
@@ -159,6 +159,7 @@ class Ballot_Schema(ma.ModelSchema):
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+
     stationaryItem = ma.Nested(StationaryItem_Schema)
 
 
@@ -175,4 +176,20 @@ class BallotBox_Schema(ma.ModelSchema):
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+
     stationaryItem = ma.Nested(StationaryItem_Schema)
+
+
+class File_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "fileId",
+            "fileName",
+            "fileMimeType",
+            "fileContentLength"
+        )
+
+        model = FileModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
