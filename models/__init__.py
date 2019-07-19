@@ -46,6 +46,7 @@ class FileModel(db.Model):
     fileMimeType = db.Column(db.String(100), nullable=False)
     fileContentLength = db.Column(db.String(100), nullable=False)
     fileContentType = db.Column(db.String(100), nullable=False)
+    fileCollectionId = db.Column(db.Integer, db.ForeignKey("file_collection.fileCollectionId"), nullable=True)
 
     __mapper_args__ = {
         'polymorphic_on': fileType,
@@ -57,6 +58,12 @@ class ImageModel(FileModel):
     __mapper_args__ = {
         'polymorphic_identity': FileTypeEnum.Image
     }
+
+
+class FileCollectionModel(db.Model):
+    __tablename__ = 'file_collection'
+    fileCollectionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    files = relationship("FileModel")
 
 
 class OfficeModel(db.Model):
@@ -202,12 +209,18 @@ class InvoiceStationaryItemModel(db.Model):
     receivedFrom = db.Column(db.Integer, nullable=True)
     receivedAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow, nullable=True)
     receivedOfficeId = db.Column(db.Integer, db.ForeignKey("office.officeId"), nullable=True)
+    receivedScannedFilesCollectionId = db.Column(db.Integer, db.ForeignKey("file_collection.fileCollectionId"),
+                                                 nullable=True)
 
+    receivedScannedFilesCollection = relationship("FileCollectionModel",
+                                                  foreign_keys=[receivedScannedFilesCollectionId])
     receivedOffice = relationship("OfficeModel", foreign_keys=[receivedOfficeId])
     stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
     invoice = relationship("InvoiceModel", foreign_keys=[invoiceId])
 
     delete = association_proxy('invoice', 'delete')
+
+    receivedScannedFiles = association_proxy("receivedScannedFilesCollection", "files")
 
 
 class BallotModel(db.Model):

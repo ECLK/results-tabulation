@@ -41,15 +41,20 @@ def create(invoiceId, body):
 
 def receive(body):
     request_body = RequestBody(body)
-
-    image = ImageDomain.create(connexion.request.files['scannedImages'])
-
     result = InvoiceStationaryItemDomain.update(
         invoiceId=request_body.get("invoiceId"),
         stationaryItemId=request_body.get("stationaryItemId"),
         received=True,
         receivedFrom=request_body.get("receivedFrom"),
-        receivedOfficeId=request_body.get("receivedOfficeId")
+        receivedOfficeId=request_body.get("receivedOfficeId"),
+    )
+
+    # TODO support muliple images
+    # https://github.com/zalando/connexion/issues/510
+
+    ImageDomain.create(
+        fileSource=connexion.request.files['scannedImages'],
+        fileCollectionId=result.receivedScannedFilesCollectionId
     )
 
     return Schema().dump(result).data, 201

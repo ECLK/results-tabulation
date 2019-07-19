@@ -8,6 +8,21 @@ from marshmallow_enum import EnumField
 from marshmallow import Schema, fields, validates_schema, ValidationError
 
 
+class File_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "fileId",
+            "fileName",
+            "fileMimeType",
+            "fileContentLength"
+        )
+
+        model = FileModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class ElectionSchema(ma.ModelSchema):
     class Meta:
         model = ElectionModel
@@ -134,7 +149,8 @@ class Invoice_StationaryItem_Schema(ma.ModelSchema):
             "invoiceId",
             "stationaryItemId",
             "stationaryItem",
-            "delete"
+            "delete",
+            "receivedScannedFiles"
         )
 
         model = InvoiceStationaryItemModel
@@ -144,6 +160,7 @@ class Invoice_StationaryItem_Schema(ma.ModelSchema):
 
     invoice = ma.Nested(Invoice_Schema)
     stationaryItem = ma.Nested(StationaryItem_Schema)
+    receivedScannedFiles = ma.Nested(File_Schema, many=True)
 
 
 class Ballot_Schema(ma.ModelSchema):
@@ -178,18 +195,3 @@ class BallotBox_Schema(ma.ModelSchema):
         sqla_session = db.session
 
     stationaryItem = ma.Nested(StationaryItem_Schema)
-
-
-class File_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "fileId",
-            "fileName",
-            "fileMimeType",
-            "fileContentLength"
-        )
-
-        model = FileModel
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
