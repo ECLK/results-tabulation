@@ -3,7 +3,7 @@ from util import Auth
 from datetime import datetime
 
 from models import InvoiceStationaryItemModel as Model
-from domain import InvoiceDomain, StationaryItemDomain
+from domain import InvoiceDomain, StationaryItemDomain, FileCollectionDomain
 from exception import NotFoundException, ForbiddenException
 
 
@@ -35,9 +35,12 @@ def create(invoiceId, stationaryItemId):
     elif StationaryItemDomain.is_locked(stationaryItemId):
         raise ForbiddenException("Stationary item is not available (%d)" % stationaryItemId)
     else:
+        received_scanned_files_collection = FileCollectionDomain.create()
+
         result = Model(
             invoiceId=invoiceId,
-            stationaryItemId=stationaryItemId
+            stationaryItemId=stationaryItemId,
+            receivedScannedFilesCollectionId=received_scanned_files_collection.fileCollectionId
         )
 
         db.session.add(result)

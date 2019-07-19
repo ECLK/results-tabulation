@@ -14,7 +14,7 @@ def get_by_id(fileId):
     return result
 
 
-def create(fileSource, fileType):
+def create(fileSource, fileType, fileCollectionId=None):
     # TODO validate the
     #   - file type
     #   - file size
@@ -25,7 +25,8 @@ def create(fileSource, fileType):
         fileMimeType=fileSource.mimetype,
         fileContentLength=fileSource.content_length,
         fileContentType=fileSource.content_type,
-        fileName=fileSource.filename
+        fileName=fileSource.filename,
+        fileCollectionId=fileCollectionId
     )
 
     db.session.add(result)
