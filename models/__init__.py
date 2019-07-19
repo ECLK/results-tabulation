@@ -28,9 +28,35 @@ class StationaryItemTypeEnum(enum.Enum):
     BallotBox = 2
 
 
+class FileTypeEnum(enum.Enum):
+    Any = 1
+    Image = 2
+
+
 class ElectionModel(db.Model):
     __tablename__ = 'election'
     electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+
+class FileModel(db.Model):
+    __tablename__ = 'file'
+    fileId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    fileType = db.Column(db.Enum(FileTypeEnum), nullable=False)
+    fileName = db.Column(db.String(100), nullable=True)
+    fileMimeType = db.Column(db.String(100), nullable=False)
+    fileContentLength = db.Column(db.String(100), nullable=False)
+    fileContentType = db.Column(db.String(100), nullable=False)
+
+    __mapper_args__ = {
+        'polymorphic_on': fileType,
+        'polymorphic_identity': FileTypeEnum.Any
+    }
+
+
+class ImageModel(FileModel):
+    __mapper_args__ = {
+        'polymorphic_identity': FileTypeEnum.Image
+    }
 
 
 class OfficeModel(db.Model):

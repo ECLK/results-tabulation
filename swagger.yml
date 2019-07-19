@@ -1075,25 +1075,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /invoice/{invoiceId}/stationary-item/{stationaryItemId}/received:
+  /invoice/stationary-item/received:
     put:
       tags:
         - invoice-stationary
       summary: Create.
       operationId: api.InvoiceStationaryItemApi.receive
-      parameters:
-        - name: invoiceId
-          required: true
-          in: path
-          schema:
-            type: integer
-            format: int64
-        - name: stationaryItemId
-          required: true
-          in: path
-          schema:
-            type: integer
-            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1101,14 +1088,6 @@ paths:
             application/json:
               schema:
                 type: object
-                required:
-                  - invoiceId
-                  - stationaryItemId
-                  - received
-                  - receivedBy
-                  - receivedFrom
-                  - receivedOfficeId
-                  - receivedAt
                 properties:
                   invoiceId:
                     type: integer
@@ -1160,22 +1139,163 @@ paths:
       #            - 'write:org'
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
-              required:
-                - receivedFrom
-                - receivedOfficeId
               properties:
+                invoiceId:
+                  type: integer
+                  format: int64
+                stationaryItemId:
+                  type: integer
+                  format: int64
                 receivedFrom:
                   type: integer
                   format: int64
                 receivedOfficeId:
                   type: integer
                   format: int64
+                scannedImages:
+                  type: string
+                  format: binary
+        #            encoding:
+        #              scannedImages:
+        #                contentType: image/png, image/gif, image/jpeg, image/jpg
         description: Invoice Stationary Item Object.
         required: True
 
+  /File/{fileId}:
+    get:
+      tags:
+        - Files
+      summary: Get by ID
+      operationId: api.FileApi.get_by_id
+      parameters:
+        - name: fileId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+  /File/{fileId}/inline:
+    get:
+      tags:
+        - Files
+      summary: Get by ID
+      operationId: api.FileApi.get_inline_file
+      parameters:
+        - name: fileId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+  /File/{fileId}/download:
+    get:
+      tags:
+        - Files
+      summary: Get by ID
+      operationId: api.FileApi.get_download_file
+      parameters:
+        - name: fileId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /tally-sheet:
     get:
