@@ -11,4 +11,11 @@ class Model(db.Model):
     election = relationship(Election.Model, foreign_keys=[electionId])
 
 
-Model = Model
+def create(electionId):
+    result = Model(
+        electionId=electionId
+    )
+    db.session.add(result)
+    db.session.commit()
+
+    return result

@@ -16,6 +16,17 @@ class Model(db.Model):
     electorates = relationship(Election.Model, foreign_keys=[electionId])
 
 
-Model = Model
-
 Model.parentOffice = relationship(Model, foreign_keys=[Model.parentOfficeId])
+
+
+def create(officeName, officeType, electionId, parentOfficeId=None):
+    result = Model(
+        officeName=officeName,
+        officeType=officeType,
+        electionId=electionId,
+        parentOfficeId=parentOfficeId
+    )
+    db.session.add(result)
+    db.session.commit()
+
+    return result

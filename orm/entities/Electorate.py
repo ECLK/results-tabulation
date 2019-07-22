@@ -16,3 +16,16 @@ class Model(db.Model):
 
 
 Model.parentElectorate = relationship(Model, foreign_keys=[Model.parentElectorateId])
+
+
+def create(electorateName, electorateType, electionId, parentElectorateId=None):
+    result = Model(
+        electorateName=electorateName,
+        electorateType=electorateType,
+        electionId=electionId,
+        parentElectorateId=parentElectorateId
+    )
+    db.session.add(result)
+    db.session.commit()
+
+    return result

@@ -20,50 +20,36 @@ db.create_all()
 # ]
 
 for i in range(1, 2):
-    election = Election()
+    election = Election.create()
     db.session.add(election)
     db.session.commit()
 
     for i in range(1, 6):
-        db.session.add(Party(electionId=election.electionId))
+        db.session.add(Party.create(electionId=election.electionId))
         db.session.commit()
 
     for j in range(1, 20):
-        db.session.add(Office(
+        db.session.add(Office.create(
             electionId=election.electionId,
             officeType=OfficeTypeEnum.DistrictCenter,
             officeName="Office %d" % j
         ))
-        db.session.add(Electorate(
+        db.session.add(Electorate.create(
             electionId=election.electionId,
             electorateType=ElectorateTypeEnum.AdministrativeDistrict,
             electorateName="Electorate %d" % j
         ))
 
     for i in range(1, 10):
-        stationary_item = StationaryItem(stationaryItemType=StationaryItemTypeEnum.Ballot,
-                                         electionId=election.electionId)
-
-        db.session.add(stationary_item)
-        db.session.commit()
-
-        db.session.add(Ballot(
+        db.session.add(Ballot.create(
             electionId=election.electionId,
-            ballotId="pre-ballot-%d-%d" % (election.electionId, i),
-            stationaryItemId=stationary_item.stationaryItemId
+            ballotId="pre-ballot-%d-%d" % (election.electionId, i)
         ))
 
     for i in range(1, 50):
-        stationary_item = StationaryItem(stationaryItemType=StationaryItemTypeEnum.BallotBox,
-                                         electionId=election.electionId)
-
-        db.session.add(stationary_item)
-        db.session.commit()
-
-        db.session.add(BallotBox(
+        db.session.add(BallotBox.create(
             electionId=election.electionId,
-            ballotBoxId="pre-ballot-box-%d-%d" % (election.electionId, i),
-            stationaryItemId=stationary_item.stationaryItemId
+            ballotBoxId="pre-ballot-box-%d-%d" % (election.electionId, i)
         ))
 
 db.session.commit()
