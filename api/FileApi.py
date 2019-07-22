@@ -1,17 +1,12 @@
-from flask import abort
-from util import RequestBody
-
 from flask import send_from_directory
-import os
-import connexion
 
 from schemas import File_Schema as Schema
-from domain import FileDomain as Domain
-from domain.FileDomain import FILE_DIRECTORY
+from orm.entities import File as Model
+from orm.entities.File import FILE_DIRECTORY
 
 
 def get_by_id(fileId):
-    result = Domain.get_by_id(
+    result = Model.get_by_id(
         fileId=fileId
     )
 
@@ -19,7 +14,7 @@ def get_by_id(fileId):
 
 
 def get_inline_file(fileId):
-    file = Domain.get_by_id(
+    file = Model.get_by_id(
         fileId=fileId
     )
 
@@ -28,7 +23,7 @@ def get_inline_file(fileId):
 
 
 def get_download_file(fileId):
-    file = Domain.get_by_id(
+    file = Model.get_by_id(
         fileId=fileId
     )
 

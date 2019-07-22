@@ -1,7 +1,9 @@
 from config import db
 
-from models import FileCollectionModel as Model
-import os
+
+class Model(db.Model):
+    __tablename__ = 'file_collection'
+    fileCollectionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
 
 def get_by_id(fileCollectionId):

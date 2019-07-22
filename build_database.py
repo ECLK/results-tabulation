@@ -1,7 +1,6 @@
-import os
 from config import db
-from models import PartyModel, OfficeModel, ElectorateModel, ElectionModel, BallotModel, BallotBoxModel, \
-    StationaryItemModel, InvoiceModel, ElectorateTypeEnum, OfficeTypeEnum, StationaryItemTypeEnum
+from orm.entities import Party, StationaryItem, Ballot, Electorate, Office, BallotBox, Election
+from orm.enums import ElectorateTypeEnum, StationaryItemTypeEnum, OfficeTypeEnum
 
 # db.engine.execute("create database election")
 
@@ -21,47 +20,47 @@ db.create_all()
 # ]
 
 for i in range(1, 2):
-    election = ElectionModel()
+    election = Election()
     db.session.add(election)
     db.session.commit()
 
     for i in range(1, 6):
-        db.session.add(PartyModel(electionId=election.electionId))
+        db.session.add(Party(electionId=election.electionId))
         db.session.commit()
 
     for j in range(1, 20):
-        db.session.add(OfficeModel(
+        db.session.add(Office(
             electionId=election.electionId,
             officeType=OfficeTypeEnum.DistrictCenter,
             officeName="Office %d" % j
         ))
-        db.session.add(ElectorateModel(
+        db.session.add(Electorate(
             electionId=election.electionId,
             electorateType=ElectorateTypeEnum.AdministrativeDistrict,
             electorateName="Electorate %d" % j
         ))
 
     for i in range(1, 10):
-        stationary_item = StationaryItemModel(stationaryItemType=StationaryItemTypeEnum.Ballot,
-                                              electionId=election.electionId)
+        stationary_item = StationaryItem(stationaryItemType=StationaryItemTypeEnum.Ballot,
+                                         electionId=election.electionId)
 
         db.session.add(stationary_item)
         db.session.commit()
 
-        db.session.add(BallotModel(
+        db.session.add(Ballot(
             electionId=election.electionId,
             ballotId="pre-ballot-%d-%d" % (election.electionId, i),
             stationaryItemId=stationary_item.stationaryItemId
         ))
 
     for i in range(1, 50):
-        stationary_item = StationaryItemModel(stationaryItemType=StationaryItemTypeEnum.BallotBox,
-                                              electionId=election.electionId)
+        stationary_item = StationaryItem(stationaryItemType=StationaryItemTypeEnum.BallotBox,
+                                         electionId=election.electionId)
 
         db.session.add(stationary_item)
         db.session.commit()
 
-        db.session.add(BallotBoxModel(
+        db.session.add(BallotBox(
             electionId=election.electionId,
             ballotBoxId="pre-ballot-box-%d-%d" % (election.electionId, i),
             stationaryItemId=stationary_item.stationaryItemId

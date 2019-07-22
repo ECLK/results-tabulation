@@ -1,11 +1,9 @@
 from config import db, ma
-from models import ElectionModel, TallySheetModel, TallySheetVersionModel, TallySheetPRE41Model, \
-    TallySheetPRE41PartyModel, InvoiceModel, \
-    StationaryItemModel, InvoiceStationaryItemModel, BallotBoxModel, BallotModel, StationaryItemTypeEnum, FileModel
+from orm.entities import StationaryItem, Ballot, TallySheetPRE41Party, TallySheet, File, Invoice, BallotBox, \
+    TallySheetPRE41, InvoiceStationaryItem, Election, TallySheetVersion
+from orm.enums import StationaryItemTypeEnum
 
 from marshmallow_enum import EnumField
-
-from marshmallow import Schema, fields, validates_schema, ValidationError
 
 
 class File_Schema(ma.ModelSchema):
@@ -17,7 +15,7 @@ class File_Schema(ma.ModelSchema):
             "fileContentLength"
         )
 
-        model = FileModel
+        model = File.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -25,7 +23,7 @@ class File_Schema(ma.ModelSchema):
 
 class ElectionSchema(ma.ModelSchema):
     class Meta:
-        model = ElectionModel
+        model = Election.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -45,7 +43,7 @@ class TallySheetVersionSchema(ma.ModelSchema):
             "createdAt"
         )
 
-        model = TallySheetVersionModel
+        model = TallySheetVersion.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -53,7 +51,7 @@ class TallySheetVersionSchema(ma.ModelSchema):
 
 class TallySheetSchema(ma.ModelSchema):
     class Meta:
-        model = TallySheetModel
+        model = TallySheet.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -65,7 +63,7 @@ class TallySheet_PRE_41__party_Schema(ma.ModelSchema):
     class Meta:
         fields = ("partyId", "voteCount")
 
-        model = TallySheetPRE41PartyModel
+        model = TallySheetPRE41Party.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -90,7 +88,7 @@ class TallySheet_PRE_41_Schema(ma.ModelSchema):
             "party_wise_results",
         )
 
-        model = TallySheetPRE41Model
+        model = TallySheetPRE41.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -112,7 +110,7 @@ class StationaryItem_Schema(ma.ModelSchema):
             "locked"
         )
 
-        model = StationaryItemModel
+        model = StationaryItem.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -132,7 +130,7 @@ class Invoice_Schema(ma.ModelSchema):
             "delete"
         )
 
-        model = InvoiceModel
+        model = Invoice.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -153,7 +151,7 @@ class Invoice_StationaryItem_Schema(ma.ModelSchema):
             "receivedScannedFiles"
         )
 
-        model = InvoiceStationaryItemModel
+        model = InvoiceStationaryItem.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -172,7 +170,7 @@ class Ballot_Schema(ma.ModelSchema):
             "stationaryItem"
         )
 
-        model = BallotModel
+        model = Ballot.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -189,7 +187,7 @@ class BallotBox_Schema(ma.ModelSchema):
             "stationaryItem"
         )
 
-        model = BallotBoxModel
+        model = BallotBox.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
