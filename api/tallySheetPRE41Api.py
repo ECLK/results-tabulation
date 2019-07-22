@@ -1,5 +1,6 @@
 from config import db
-from models import TallySheetPRE41Model, TallySheetPRE41PartyModel
+from orm.entities.TallySheetPRE41 import Model as TallySheetPRE41Model
+from orm.entities.TallySheetPRE41Party import Model as TallySheetPRE41PartyModel
 from util import RequestBody
 
 

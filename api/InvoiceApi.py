@@ -1,13 +1,12 @@
-from flask import abort
 from util import RequestBody
 
 from schemas import Invoice_Schema as Schema
-from domain import InvoiceDomain as Domain
+from orm.entities import Invoice as Model
 
 
 def get_all(limit=20, offset=0, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
             issuedTo=None):
-    result = Domain.get_all(
+    result = Model.get_all(
         electionId=electionId,
         issuingOfficeId=issuingOfficeId,
         receivingOfficeId=receivingOfficeId,
@@ -22,7 +21,7 @@ def get_all(limit=20, offset=0, electionId=None, issuingOfficeId=None, receiving
 
 
 def get_by_id(invoiceId):
-    result = Domain.get_by_id(
+    result = Model.get_by_id(
         invoiceId=invoiceId
     )
 
@@ -31,7 +30,7 @@ def get_by_id(invoiceId):
 
 def create(body):
     request_body = RequestBody(body)
-    result = Domain.create(
+    result = Model.create(
         electionId=request_body.get("electionId"),
         issuingOfficeId=request_body.get("issuingOfficeId"),
         receivingOfficeId=request_body.get("receivingOfficeId"),
@@ -46,7 +45,7 @@ def update(tallySheetId, body):
 
 
 def confirm(invoiceId):
-    result = Domain.update(
+    result = Model.update(
         invoiceId=invoiceId,
         confirmed=True
     )
@@ -55,7 +54,7 @@ def confirm(invoiceId):
 
 
 def delete(invoiceId):
-    result = Domain.delete(
+    result = Model.delete(
         invoiceId=invoiceId
     )
 

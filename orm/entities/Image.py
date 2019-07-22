@@ -1,7 +1,11 @@
-from config import db
+from orm.entities import File
+from orm.enums import FileTypeEnum
 
-from models import ImageModel as Model, FileTypeEnum
-from domain import FileDomain
+
+class Model(File.Model):
+    __mapper_args__ = {
+        'polymorphic_identity': FileTypeEnum.Image
+    }
 
 
 def get_by_id(fileId):
@@ -12,8 +16,8 @@ def get_by_id(fileId):
     return result
 
 
-def create(fileSource, fileCollectionId = None):
-    return FileDomain.create(
+def create(fileSource, fileCollectionId=None):
+    return File.create(
         fileSource=fileSource,
         fileType=FileTypeEnum.Image,
         fileCollectionId=fileCollectionId

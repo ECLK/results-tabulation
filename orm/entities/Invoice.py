@@ -1,9 +1,26 @@
-from config import db
-from util import Auth
 from datetime import datetime
-
-from models import InvoiceModel as Model
+from config import db
+from sqlalchemy.orm import relationship
+from util import Auth
 from exception import NotFoundException, ForbiddenException
+from orm.entities import Office, Election
+
+
+class Model(db.Model):
+    __tablename__ = 'invoice'
+    invoiceId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
+    issuingOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=False)
+    receivingOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=False)
+    confirmed = db.Column(db.Boolean, default=False, nullable=False)
+    issuedBy = db.Column(db.Integer, nullable=False)
+    issuedTo = db.Column(db.Integer, nullable=False)
+    issuedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    delete = db.Column(db.Boolean, default=False)
+
+    election = relationship(Election.Model, foreign_keys=[electionId])
+    issuingOffice = relationship(Office.Model, foreign_keys=[issuingOfficeId])
+    receivingOffice = relationship(Office.Model, foreign_keys=[receivingOfficeId])
 
 
 def get_all(limit, offset, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,

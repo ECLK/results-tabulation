@@ -1,6 +1,8 @@
-from flask import make_response, abort
+from flask import abort
 from config import db
-from models import TallySheetModel, TallySheetVersionModel, TallySheetPRE41Model
+from orm.entities.TallySheet import Model as TallySheetModel
+from orm.entities.TallySheetVersion import Model as TallySheetVersionModel
+from orm.entities.TallySheetPRE41 import Model as TallySheetPRE41Model
 from schemas import TallySheetVersionSchema, TallySheet_PRE_41_Schema
 from api import tallySheetPRE41Api
 from util import RequestBody, Auth

@@ -1,14 +1,12 @@
-from flask import abort
 from util import RequestBody
 from schemas import Invoice_StationaryItem_Schema as Schema
-from domain import InvoiceStationaryItemDomain, ImageDomain
-import os
+from orm.entities import Image, InvoiceStationaryItem
 import connexion
 
 
 def get_all(invoiceId, stationaryItemId=None, limit=20, offset=0, received=None, receivedFrom=None, receivedBy=None,
             receivedOffice=None):
-    result = InvoiceStationaryItemDomain.get_all(
+    result = InvoiceStationaryItem.get_all(
         invoiceId=invoiceId,
         stationaryItemId=stationaryItemId,
         received=received,
@@ -24,14 +22,14 @@ def get_all(invoiceId, stationaryItemId=None, limit=20, offset=0, received=None,
 
 
 def get_by_id(invoiceId, stationaryItemId):
-    result = InvoiceStationaryItemDomain.get_by_id(invoiceId, stationaryItemId)
+    result = InvoiceStationaryItem.get_by_id(invoiceId, stationaryItemId)
 
     return Schema().dump(result).data, 201
 
 
 def create(invoiceId, body):
     request_body = RequestBody(body)
-    result = InvoiceStationaryItemDomain.create(
+    result = InvoiceStationaryItem.create(
         invoiceId=invoiceId,
         stationaryItemId=request_body.get("stationaryItemId")
     )
@@ -41,7 +39,7 @@ def create(invoiceId, body):
 
 def receive(body):
     request_body = RequestBody(body)
-    result = InvoiceStationaryItemDomain.update(
+    result = InvoiceStationaryItem.update(
         invoiceId=request_body.get("invoiceId"),
         stationaryItemId=request_body.get("stationaryItemId"),
         received=True,
@@ -52,7 +50,7 @@ def receive(body):
     # TODO support muliple images
     # https://github.com/zalando/connexion/issues/510
 
-    ImageDomain.create(
+    Image.create(
         fileSource=connexion.request.files['scannedImages'],
         fileCollectionId=result.receivedScannedFilesCollectionId
     )
@@ -61,7 +59,7 @@ def receive(body):
 
 
 def delete(invoiceId, stationaryItemId):
-    result = InvoiceStationaryItemDomain.delete(
+    result = InvoiceStationaryItem.delete(
         invoiceId=invoiceId,
         stationaryItemId=stationaryItemId
     )

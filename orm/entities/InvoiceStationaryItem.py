@@ -1,10 +1,37 @@
-from config import db
-from util import Auth
 from datetime import datetime
-
-from models import InvoiceStationaryItemModel as Model
-from domain import InvoiceDomain, StationaryItemDomain, FileCollectionDomain
+from config import db
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.associationproxy import association_proxy
+from util import Auth
+from orm.entities import FileCollection, Office, Invoice, StationaryItem
 from exception import NotFoundException, ForbiddenException
+
+
+class Model(db.Model):
+    __tablename__ = 'invoice_stationaryItem'
+    invoiceId = db.Column(db.Integer, db.ForeignKey(Invoice.Model.__table__.c.invoiceId), primary_key=True)
+    stationaryItemId = db.Column(db.Integer, db.ForeignKey(StationaryItem.Model.__table__.c.stationaryItemId),
+                                 primary_key=True)
+    received = db.Column(db.Boolean, default=False, nullable=False)
+    receivedBy = db.Column(db.Integer, nullable=True)
+    receivedFrom = db.Column(db.Integer, nullable=True)
+    receivedAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow, nullable=True)
+    receivedOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=True)
+    receivedScannedFilesCollectionId = db.Column(db.Integer,
+                                                 db.ForeignKey(FileCollection.Model.__table__.c.fileCollectionId),
+                                                 nullable=True)
+
+    receivedScannedFilesCollection = relationship(FileCollection.Model,
+                                                  foreign_keys=[receivedScannedFilesCollectionId])
+    receivedOffice = relationship(Office.Model, foreign_keys=[receivedOfficeId])
+    stationaryItem = relationship(StationaryItem.Model, foreign_keys=[stationaryItemId])
+    invoice = relationship(Invoice.Model, foreign_keys=[invoiceId])
+
+    delete = association_proxy('invoice', 'delete')
+    receivedScannedFiles = association_proxy("receivedScannedFilesCollection", "files")
+
+
+StationaryItem.invoiceStationaryItems = relationship(Model)
 
 
 def get_all(invoiceId=None, stationaryItemId=None, limit=20, offset=0, received=None, receivedFrom=None,
@@ -30,12 +57,12 @@ def get_all(invoiceId=None, stationaryItemId=None, limit=20, offset=0, received=
 
 
 def create(invoiceId, stationaryItemId):
-    if InvoiceDomain.has_confirmed(invoiceId):
+    if Invoice.has_confirmed(invoiceId):
         raise ForbiddenException("Stationary items cannot be added to confirmed invoices (%d)" % invoiceId)
-    elif StationaryItemDomain.is_locked(stationaryItemId):
+    elif StationaryItem.is_locked(stationaryItemId):
         raise ForbiddenException("Stationary item is not available (%d)" % stationaryItemId)
     else:
-        received_scanned_files_collection = FileCollectionDomain.create()
+        received_scanned_files_collection = FileCollection.create()
 
         result = Model(
             invoiceId=invoiceId,
@@ -82,7 +109,7 @@ def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, recei
 
 
 def delete(invoiceId, stationaryItemId):
-    if InvoiceDomain.has_confirmed(invoiceId):
+    if Invoice.has_confirmed(invoiceId):
         raise ForbiddenException("Stationary items cannot be deleted from confirmed invoices (%d)" % invoiceId)
     else:
         result = Model.query.filter(
