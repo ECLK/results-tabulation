@@ -14,7 +14,9 @@ class File_Schema(ma.ModelSchema):
             "fileMimeType",
             "fileContentLength",
             "fileCreatedBy",
-            "fileCreatedAt"
+            "fileCreatedAt",
+            "urlInline",
+            "urlDownload"
         )
 
         model = File.Model

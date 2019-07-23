@@ -4,6 +4,8 @@ import os
 from orm.entities import FileCollection
 from util import Auth
 from datetime import datetime
+from sqlalchemy.ext.hybrid import hybrid_property
+from flask import Flask, request
 
 FILE_DIRECTORY = os.path.join(os.getcwd(), 'data')
 
@@ -21,6 +23,14 @@ class FileModel(db.Model):
 
     fileCreatedBy = db.Column(db.Integer, nullable=False)
     fileCreatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    @hybrid_property
+    def urlInline(self):
+        return "%sfile/%d/inline" % (request.host_url, self.fileId)
+
+    @hybrid_property
+    def urlDownload(self):
+        return "%sfile/%d/download" % (request.host_url, self.fileId)
 
     __mapper_args__ = {
         'polymorphic_on': fileType,

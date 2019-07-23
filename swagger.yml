@@ -1164,7 +1164,7 @@ paths:
         description: Invoice Stationary Item Object.
         required: True
 
-  /File/{fileId}:
+  /file/{fileId}:
     get:
       tags:
         - Files
@@ -1206,7 +1206,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
 
-  /File/{fileId}/inline:
+  /file/{fileId}/inline:
     get:
       tags:
         - Files
@@ -1252,7 +1252,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
 
-  /File/{fileId}/download:
+  /file/{fileId}/download:
     get:
       tags:
         - Files
