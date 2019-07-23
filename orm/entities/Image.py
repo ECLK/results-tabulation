@@ -2,10 +2,13 @@ from orm.entities import File
 from orm.enums import FileTypeEnum
 
 
-class Model(File.Model):
+class ImageModel(File.Model):
     __mapper_args__ = {
         'polymorphic_identity': FileTypeEnum.Image
     }
+
+
+Model = ImageModel
 
 
 def get_by_id(fileId):

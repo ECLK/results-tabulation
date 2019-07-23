@@ -4,7 +4,7 @@ from orm.enums import OfficeTypeEnum
 from orm.entities import Election
 
 
-class Model(db.Model):
+class OfficeModel(db.Model):
     __tablename__ = 'office'
     officeId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     officeName = db.Column(db.String(100), nullable=False)
@@ -14,9 +14,10 @@ class Model(db.Model):
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     electorates = relationship(Election.Model, foreign_keys=[electionId])
+    parentOffice = relationship("OfficeModel", foreign_keys=[parentOfficeId])
 
 
-Model.parentOffice = relationship(Model, foreign_keys=[Model.parentOfficeId])
+Model = OfficeModel
 
 
 def create(officeName, officeType, electionId, parentOfficeId=None):

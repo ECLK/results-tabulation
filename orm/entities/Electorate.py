@@ -4,7 +4,7 @@ from orm.enums import ElectorateTypeEnum
 from orm.entities import Election
 
 
-class Model(db.Model):
+class ElectorateModel(db.Model):
     __tablename__ = 'electorate'
     electorateId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electorateName = db.Column(db.String(100), nullable=False)
@@ -13,9 +13,10 @@ class Model(db.Model):
     parentElectorateId = db.Column(db.Integer, db.ForeignKey(electorateId), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
+    parentElectorate = relationship("ElectorateModel", foreign_keys=[parentElectorateId])
 
 
-Model.parentElectorate = relationship(Model, foreign_keys=[Model.parentElectorateId])
+Model = ElectorateModel
 
 
 def create(electorateName, electorateType, electionId, parentElectorateId=None):

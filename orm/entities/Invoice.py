@@ -6,7 +6,7 @@ from exception import NotFoundException, ForbiddenException
 from orm.entities import Office, Election
 
 
-class Model(db.Model):
+class InvoiceModel(db.Model):
     __tablename__ = 'invoice'
     invoiceId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
@@ -21,6 +21,10 @@ class Model(db.Model):
     election = relationship(Election.Model, foreign_keys=[electionId])
     issuingOffice = relationship(Office.Model, foreign_keys=[issuingOfficeId])
     receivingOffice = relationship(Office.Model, foreign_keys=[receivingOfficeId])
+    invoicStationaryItems = relationship("InvoiceStationaryItemModel")
+
+
+Model = InvoiceModel
 
 
 def get_all(limit, offset, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
