@@ -21,7 +21,7 @@ class InvoiceModel(db.Model):
     election = relationship(Election.Model, foreign_keys=[electionId])
     issuingOffice = relationship(Office.Model, foreign_keys=[issuingOfficeId])
     receivingOffice = relationship(Office.Model, foreign_keys=[receivingOfficeId])
-    invoicStationaryItems = relationship("InvoiceStationaryItemModel")
+    invoiceStationaryItems = relationship("InvoiceStationaryItemModel")
 
 
 Model = InvoiceModel
