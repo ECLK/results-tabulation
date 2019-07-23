@@ -52,7 +52,7 @@ def create(fileSource, fileType, fileCollectionId=None):
         fileContentType=fileSource.content_type,
         fileName=fileSource.filename,
         fileCollectionId=fileCollectionId,
-        fileCreatedBy=Auth.get_user_id()
+        fileCreatedBy=Auth().get_user_id()
     )
 
     db.session.add(result)

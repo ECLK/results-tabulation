@@ -13,6 +13,7 @@ class StationaryItemModel(db.Model):
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
+    invoiceStationaryItems = relationship("InvoiceStationaryItemModel")
 
     @hybrid_property
     def lockedInvoices(self):
