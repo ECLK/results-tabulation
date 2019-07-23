@@ -12,7 +12,9 @@ class File_Schema(ma.ModelSchema):
             "fileId",
             "fileName",
             "fileMimeType",
-            "fileContentLength"
+            "fileContentLength",
+            "fileCreatedBy",
+            "fileCreatedAt"
         )
 
         model = File.Model

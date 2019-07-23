@@ -5,7 +5,7 @@ from orm.enums import StationaryItemTypeEnum
 from orm.entities import StationaryItem, Election
 
 
-class Model(db.Model):
+class BallotModel(db.Model):
     __tablename__ = 'ballot'
     ballotId = db.Column(db.String(20), primary_key=True)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), primary_key=True)
@@ -26,6 +26,9 @@ class Model(db.Model):
         self.ballotId = ballotId
         self.electionId = electionId
         self.stationaryItemId = stationary_item.stationaryItemId
+
+
+Model = BallotModel
 
 
 def get_all():

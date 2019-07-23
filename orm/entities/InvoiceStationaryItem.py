@@ -7,7 +7,7 @@ from orm.entities import FileCollection, Office, Invoice, StationaryItem
 from exception import NotFoundException, ForbiddenException
 
 
-class Model(db.Model):
+class InvoiceStationaryItemModel(db.Model):
     __tablename__ = 'invoice_stationaryItem'
     invoiceId = db.Column(db.Integer, db.ForeignKey(Invoice.Model.__table__.c.invoiceId), primary_key=True)
     stationaryItemId = db.Column(db.Integer, db.ForeignKey(StationaryItem.Model.__table__.c.stationaryItemId),
@@ -31,7 +31,7 @@ class Model(db.Model):
     receivedScannedFiles = association_proxy("receivedScannedFilesCollection", "files")
 
 
-StationaryItem.invoiceStationaryItems = relationship(Model)
+Model = InvoiceStationaryItemModel
 
 
 def get_all(invoiceId=None, stationaryItemId=None, limit=20, offset=0, received=None, receivedFrom=None,

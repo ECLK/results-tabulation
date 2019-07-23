@@ -1,9 +1,12 @@
 from config import db
 
 
-class Model(db.Model):
+class ElectionModel(db.Model):
     __tablename__ = 'election'
     electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+
+Model = ElectionModel
 
 
 def create():

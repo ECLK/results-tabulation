@@ -6,7 +6,7 @@ from exception import NotFoundException
 from orm.entities import Election
 
 
-class Model(db.Model):
+class StationaryItemModel(db.Model):
     __tablename__ = 'stationaryItem'
     stationaryItemId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     stationaryItemType = db.Column(db.Enum(StationaryItemTypeEnum), nullable=False)
@@ -21,6 +21,9 @@ class Model(db.Model):
     @hybrid_property
     def locked(self):
         return len([i for i in self.invoiceStationaryItems if i.delete == False]) > 0
+
+
+Model = StationaryItemModel
 
 
 def get_all():

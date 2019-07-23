@@ -1,13 +1,14 @@
 from config import db
-from sqlalchemy.orm import relationship
 from orm.enums import FileTypeEnum
 import os
 from orm.entities import FileCollection
+from util import Auth
+from datetime import datetime
 
 FILE_DIRECTORY = os.path.join(os.getcwd(), 'data')
 
 
-class Model(db.Model):
+class FileModel(db.Model):
     __tablename__ = 'file'
     fileId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     fileType = db.Column(db.Enum(FileTypeEnum), nullable=False)
@@ -18,13 +19,16 @@ class Model(db.Model):
     fileCollectionId = db.Column(db.Integer, db.ForeignKey(FileCollection.Model.__table__.c.fileCollectionId),
                                  nullable=True)
 
+    fileCreatedBy = db.Column(db.Integer, nullable=False)
+    fileCreatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
     __mapper_args__ = {
         'polymorphic_on': fileType,
         'polymorphic_identity': FileTypeEnum.Any
     }
 
 
-FileCollection.files = relationship(Model)
+Model = FileModel
 
 
 def get_by_id(fileId):
@@ -47,7 +51,8 @@ def create(fileSource, fileType, fileCollectionId=None):
         fileContentLength=fileSource.content_length,
         fileContentType=fileSource.content_type,
         fileName=fileSource.filename,
-        fileCollectionId=fileCollectionId
+        fileCollectionId=fileCollectionId,
+        fileCreatedBy=Auth.get_user_id()
     )
 
     db.session.add(result)
