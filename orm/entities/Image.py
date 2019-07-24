@@ -19,9 +19,8 @@ def get_by_id(fileId):
     return result
 
 
-def create(fileSource, fileCollectionId=None):
+def create(fileSource):
     return File.create(
         fileSource=fileSource,
-        fileType=FileTypeEnum.Image,
-        fileCollectionId=fileCollectionId
+        fileType=FileTypeEnum.Image
     )

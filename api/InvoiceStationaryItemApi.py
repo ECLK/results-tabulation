@@ -45,14 +45,7 @@ def receive(body):
         received=True,
         receivedFrom=request_body.get("receivedFrom"),
         receivedOfficeId=request_body.get("receivedOfficeId"),
-    )
-
-    # TODO support muliple images
-    # https://github.com/zalando/connexion/issues/510
-
-    Image.create(
-        fileSource=connexion.request.files['scannedImages'],
-        fileCollectionId=result.receivedScannedFilesCollectionId
+        scannedImages=connexion.request.files['scannedImages']
     )
 
     return Schema().dump(result).data, 201

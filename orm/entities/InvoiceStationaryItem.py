@@ -3,7 +3,7 @@ from config import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from util import Auth
-from orm.entities import FileCollection, Office, Invoice, StationaryItem
+from orm.entities import Folder, FolderFile, Office, Invoice, StationaryItem, Image
 from exception import NotFoundException, ForbiddenException
 
 
@@ -17,18 +17,16 @@ class InvoiceStationaryItemModel(db.Model):
     receivedFrom = db.Column(db.Integer, nullable=True)
     receivedAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow, nullable=True)
     receivedOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=True)
-    receivedScannedFilesCollectionId = db.Column(db.Integer,
-                                                 db.ForeignKey(FileCollection.Model.__table__.c.fileCollectionId),
-                                                 nullable=True)
+    receivedScannedFilesFolderId = db.Column(db.Integer, db.ForeignKey(Folder.Model.__table__.c.folderId),
+                                             nullable=True)
 
-    receivedScannedFilesCollection = relationship(FileCollection.Model,
-                                                  foreign_keys=[receivedScannedFilesCollectionId])
+    receivedScannedFilesFolder = relationship(Folder.Model, foreign_keys=[receivedScannedFilesFolderId])
     receivedOffice = relationship(Office.Model, foreign_keys=[receivedOfficeId])
     stationaryItem = relationship(StationaryItem.Model, foreign_keys=[stationaryItemId])
     invoice = relationship(Invoice.Model, foreign_keys=[invoiceId])
 
     delete = association_proxy('invoice', 'delete')
-    receivedScannedFiles = association_proxy("receivedScannedFilesCollection", "files")
+    receivedScannedFiles = association_proxy("receivedScannedFilesFolder", "files")
 
 
 Model = InvoiceStationaryItemModel
@@ -62,12 +60,12 @@ def create(invoiceId, stationaryItemId):
     elif StationaryItem.is_locked(stationaryItemId):
         raise ForbiddenException("Stationary item is not available (%d)" % stationaryItemId)
     else:
-        received_scanned_files_collection = FileCollection.create()
+        received_scanned_files_folder = Folder.create()
 
         result = Model(
             invoiceId=invoiceId,
             stationaryItemId=stationaryItemId,
-            receivedScannedFilesCollectionId=received_scanned_files_collection.fileCollectionId
+            receivedScannedFilesFolderId=received_scanned_files_folder.folderId
         )
 
         db.session.add(result)
@@ -86,8 +84,15 @@ def get_by_id(invoiceId, stationaryItemId):
     return result
 
 
-def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, receivedOfficeId=None):
+def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, receivedOfficeId=None, scannedImages=None):
     instance = get_by_id(invoiceId, stationaryItemId)
+
+    if scannedImages is not None:
+        file = Image.create(fileSource=scannedImages)
+        FolderFile.create(folderId=instance.receivedScannedFilesFolderId, fileId=file.fileId)
+
+        # TODO support muliple images
+        # https://github.com/zalando/connexion/issues/510
 
     if instance is None:
         raise NotFoundException("Invoice Stationary Item not found associated with the given invoiceId (%d, %d)"

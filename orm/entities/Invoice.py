@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from util import Auth
 from exception import NotFoundException, ForbiddenException
 from orm.entities import Office, Election
+from sqlalchemy.ext.associationproxy import association_proxy
 
 
 class InvoiceModel(db.Model):
@@ -22,6 +23,8 @@ class InvoiceModel(db.Model):
     issuingOffice = relationship(Office.Model, foreign_keys=[issuingOfficeId])
     receivingOffice = relationship(Office.Model, foreign_keys=[receivingOfficeId])
     invoiceStationaryItems = relationship("InvoiceStationaryItemModel")
+
+    stationaryItems = association_proxy("invoiceStationaryItems", "stationaryItem")
 
 
 Model = InvoiceModel
