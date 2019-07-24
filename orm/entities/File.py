@@ -1,7 +1,6 @@
 from config import db
 from orm.enums import FileTypeEnum
 import os
-from orm.entities import FileCollection
 from util import Auth
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -18,8 +17,6 @@ class FileModel(db.Model):
     fileMimeType = db.Column(db.String(100), nullable=False)
     fileContentLength = db.Column(db.String(100), nullable=False)
     fileContentType = db.Column(db.String(100), nullable=False)
-    fileCollectionId = db.Column(db.Integer, db.ForeignKey(FileCollection.Model.__table__.c.fileCollectionId),
-                                 nullable=True)
 
     fileCreatedBy = db.Column(db.Integer, nullable=False)
     fileCreatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
@@ -49,11 +46,14 @@ def get_by_id(fileId):
     return result
 
 
-def create(fileSource, fileType, fileCollectionId=None):
+def create(fileSource, fileType=FileTypeEnum.Any):
     # TODO validate the
     #   - file type
     #   - file size
     #         etc.
+
+    if fileType is None:
+        fileType = FileTypeEnum.Any
 
     result = Model(
         fileType=fileType,
@@ -61,7 +61,6 @@ def create(fileSource, fileType, fileCollectionId=None):
         fileContentLength=fileSource.content_length,
         fileContentType=fileSource.content_type,
         fileName=fileSource.filename,
-        fileCollectionId=fileCollectionId,
         fileCreatedBy=Auth().get_user_id()
     )
 

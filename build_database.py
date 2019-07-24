@@ -1,9 +1,6 @@
 from config import db
 from orm.entities import *
-from orm.entities import Election, Electorate, Office, Party, \
-    File, Image, FileCollection, \
-    Invoice, StationaryItem, BallotBox, Ballot, InvoiceStationaryItem, \
-    TallySheet, TallySheetVersion, TallySheetPRE41, TallySheetPRE41Party
+from orm.entities import *
 from orm.enums import ElectorateTypeEnum, StationaryItemTypeEnum, OfficeTypeEnum, FileTypeEnum
 
 # db.engine.execute("create database election")
