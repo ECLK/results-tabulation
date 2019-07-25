@@ -1075,7 +1075,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /invoice/stationary-item/received:
+  /invoice/stationary-item/receive:
     put:
       tags:
         - invoice-stationary
@@ -1163,6 +1163,151 @@ paths:
         #                contentType: image/png, image/gif, image/jpeg, image/jpg
         description: Invoice Stationary Item Object.
         required: True
+
+
+  /proof/upload:
+    put:
+      tags:
+        - proof
+      summary: Upload a proof.
+      operationId: api.ProofApi.upload_file
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invoiceId:
+                    type: integer
+                    format: int64
+                  stationaryItemId:
+                    type: integer
+                    format: int64
+                  received:
+                    type: boolean
+                    default: false
+                  receivedBy:
+                    type: integer
+                    format: int64
+                  receivedFrom:
+                    type: integer
+                    format: int64
+                  receivedOfficeId:
+                    type: integer
+                    format: int64
+                  receivedAt:
+                    type: string
+                    format: date-time
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      #      security:
+      #        - organization_auth:
+      #            - 'write:org'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                proofId:
+                  type: integer
+                  format: int64
+                scannedFile:
+                  type: string
+                  format: binary
+        description: Proof file
+        required: True
+
+  /proof/{proofId}/finish:
+    put:
+      tags:
+        - proof
+      summary: Create.
+      operationId: api.ProofApi.finish
+      parameters:
+        - name: proofId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invoiceId:
+                    type: integer
+                    format: int64
+                  stationaryItemId:
+                    type: integer
+                    format: int64
+                  received:
+                    type: boolean
+                    default: false
+                  receivedBy:
+                    type: integer
+                    format: int64
+                  receivedFrom:
+                    type: integer
+                    format: int64
+                  receivedOfficeId:
+                    type: integer
+                    format: int64
+                  receivedAt:
+                    type: string
+                    format: date-time
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /file/{fileId}:
     get:

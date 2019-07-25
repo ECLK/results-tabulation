@@ -1,7 +1,7 @@
 from config import db, ma
 from orm.entities import StationaryItem, Ballot, TallySheetPRE41Party, TallySheet, File, Invoice, BallotBox, \
-    TallySheetPRE41, InvoiceStationaryItem, Election, TallySheetVersion
-from orm.enums import StationaryItemTypeEnum
+    TallySheetPRE41, InvoiceStationaryItem, Election, TallySheetVersion, Proof
+from orm.enums import StationaryItemTypeEnum, ProofTypeEnum
 
 from marshmallow_enum import EnumField
 
@@ -140,6 +140,26 @@ class Invoice_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class Proof_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "proofId",
+            "proofType",
+            # "createdAt",
+            # "scannedFilesFolderId",
+            "finished",
+            "scannedFiles"
+        )
+
+        model = Proof.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    scannedFiles = ma.Nested(File_Schema, many=True)
+    proofType = EnumField(ProofTypeEnum)
+
+
 class Invoice_StationaryItem_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -148,11 +168,12 @@ class Invoice_StationaryItem_Schema(ma.ModelSchema):
             "receivedFrom",
             "receivedOfficeId",
             "receivedAt",
+            # "receivedProofId",
             "invoiceId",
             "stationaryItemId",
             "stationaryItem",
             "delete",
-            "receivedScannedFiles"
+            "receivedProof"
         )
 
         model = InvoiceStationaryItem.Model
@@ -162,7 +183,7 @@ class Invoice_StationaryItem_Schema(ma.ModelSchema):
 
     invoice = ma.Nested(Invoice_Schema)
     stationaryItem = ma.Nested(StationaryItem_Schema)
-    receivedScannedFiles = ma.Nested(File_Schema, many=True)
+    receivedProof = ma.Nested(Proof_Schema)
 
 
 class Ballot_Schema(ma.ModelSchema):
