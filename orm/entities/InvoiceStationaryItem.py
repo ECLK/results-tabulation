@@ -111,6 +111,12 @@ def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, recei
         if receivedOfficeId is not None:
             instance.receivedOfficeId = receivedOfficeId
 
+        if instance.received is True:
+            Proof.update(
+                proofId=instance.receivedProofId,
+                finished=True
+            )
+
         instance.receivedBy = Auth().get_user_id()
         instance.receivedAt = datetime.utcnow()
 
