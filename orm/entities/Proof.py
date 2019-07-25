@@ -6,6 +6,7 @@ from util import Auth
 from orm.entities import Folder, FolderFile, File, Office, Invoice, StationaryItem
 from orm.enums import ProofTypeEnum
 from exception import NotFoundException, ForbiddenException
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 class ProofModel(db.Model):
@@ -51,6 +52,10 @@ def update(proofId, finished=None):
         raise NotFoundException("Proof not found associated with the given proofId (proofId=%d)" % proofId)
     else:
         if finished is not None:
+            if len(instance.scannedFiles) is 0:
+                raise ForbiddenException(
+                    "A proof required at least one evidence. Please upload an evidence (proofId=%d)" % proofId)
+
             instance.finished = finished
 
         db.session.commit()
@@ -63,13 +68,15 @@ def upload_file(proofId, fileSource, fileType):
 
     if proof is None:
         raise NotFoundException("Proof not found associated with the given proofId (proofId=%d)" % proofId)
+    elif proof.finished is True:
+        raise ForbiddenException("No more evidence is accepted for this proof (proofId=%d)" % proofId)
     else:
         file = File.create(
             fileSource=fileSource,
             fileType=fileType
         )
 
-        folder_file = FolderFile.create(
+        FolderFile.create(
             folderId=proof.scannedFilesFolderId,
             fileId=file.fileId
         )
