@@ -1,3 +1,4 @@
+from util import get_paginated_query
 from config import db
 from sqlalchemy.orm import relationship
 from orm.enums import StationaryItemTypeEnum
@@ -30,8 +31,14 @@ class BallotBoxModel(db.Model):
 Model = BallotBoxModel
 
 
-def get_all():
-    result = Model.query.all()
+def get_all(ballotBoxId=None):
+    query = Model.query
+    if ballotBoxId is not None:
+        query = query.filter(
+            Model.ballotBoxId.like(ballotBoxId)
+        )
+
+    result = get_paginated_query(query).all()
 
     return result
 

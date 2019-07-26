@@ -2,7 +2,7 @@ from datetime import datetime
 from config import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
-from util import Auth
+from util import Auth, get_paginated_query
 from orm.entities import Folder, FolderFile, File, Office, Invoice, StationaryItem
 from orm.enums import ProofTypeEnum
 from exception import NotFoundException, ForbiddenException
@@ -26,8 +26,9 @@ class ProofModel(db.Model):
 Model = ProofModel
 
 
-def get_all(limit=20, offset=0):
-    result = Model.query.limit(limit).offset(offset).all()
+def get_all():
+    query = Model.query
+    result = get_paginated_query(query).all()
 
     return result
 
