@@ -14,7 +14,6 @@ def get_all():
 
 def upload_file(body):
     request_body = RequestBody(body)
-    print("####### connexion.request.files ###", connexion.request.files)
     result = Proof.upload_file(
         proofId=request_body.get("proofId"),
         fileSource=connexion.request.files['scannedFile'],

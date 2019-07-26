@@ -145,8 +145,6 @@ class Proof_Schema(ma.ModelSchema):
         fields = (
             "proofId",
             "proofType",
-            # "createdAt",
-            # "scannedFilesFolderId",
             "finished",
             "scannedFiles"
         )

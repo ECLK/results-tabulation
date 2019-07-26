@@ -1,3 +1,4 @@
+from util import get_paginated_query
 from datetime import datetime
 from config import db
 from sqlalchemy.orm import relationship
@@ -30,7 +31,7 @@ class InvoiceModel(db.Model):
 Model = InvoiceModel
 
 
-def get_all(limit, offset, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
+def get_all(electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
             issuedTo=None):
     query = Model.query.filter(Model.delete == False)
 
@@ -49,7 +50,7 @@ def get_all(limit, offset, electionId=None, issuingOfficeId=None, receivingOffic
     if issuedTo is not None:
         query = query.filter(Model.issuedTo == issuedTo)
 
-    result = query.limit(limit).offset(offset).all()
+    result = get_paginated_query(query).all()
 
     return result
 
