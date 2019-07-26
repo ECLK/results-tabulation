@@ -4,7 +4,7 @@ from orm.entities import Image, InvoiceStationaryItem
 import connexion
 
 
-def get_all(invoiceId, stationaryItemId=None, limit=20, offset=0, received=None, receivedFrom=None, receivedBy=None,
+def get_all(invoiceId, stationaryItemId=None, received=None, receivedFrom=None, receivedBy=None,
             receivedOffice=None):
     result = InvoiceStationaryItem.get_all(
         invoiceId=invoiceId,
@@ -12,10 +12,7 @@ def get_all(invoiceId, stationaryItemId=None, limit=20, offset=0, received=None,
         received=received,
         receivedFrom=receivedFrom,
         receivedBy=receivedBy,
-        receivedOffice=receivedOffice,
-
-        limit=limit,
-        offset=offset
+        receivedOffice=receivedOffice
     )
 
     return Schema(many=True).dump(result).data

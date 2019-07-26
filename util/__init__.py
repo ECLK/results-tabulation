@@ -1,3 +1,6 @@
+import connexion
+
+
 class RequestBody:
     def __init__(self, body):
         self.body = body
@@ -12,3 +15,10 @@ class RequestBody:
 class Auth:
     def get_user_id(self):
         return 2
+
+
+def get_paginated_query(query):
+    limit = connexion.request.args["limit"]
+    offset = connexion.request.args["offset"]
+
+    return query.limit(limit).offset(offset)

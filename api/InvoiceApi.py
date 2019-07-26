@@ -4,17 +4,14 @@ from schemas import Invoice_Schema as Schema
 from orm.entities import Invoice as Model
 
 
-def get_all(limit=20, offset=0, electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
+def get_all(electionId=None, issuingOfficeId=None, receivingOfficeId=None, issuedBy=None,
             issuedTo=None):
     result = Model.get_all(
         electionId=electionId,
         issuingOfficeId=issuingOfficeId,
         receivingOfficeId=receivingOfficeId,
         issuedBy=issuedBy,
-        issuedTo=issuedTo,
-
-        limit=limit,
-        offset=offset
+        issuedTo=issuedTo
     )
 
     return Schema(many=True).dump(result).data
