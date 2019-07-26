@@ -53,6 +53,11 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: ballotId
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation.
@@ -196,6 +201,11 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: ballotBoxId
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation.

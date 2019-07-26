@@ -2,10 +2,13 @@ from util import RequestBody
 
 from schemas import Ballot_Schema as Schema
 from orm.entities import Ballot
+import connexion
 
 
-def get_all():
-    result = Ballot.get_all()
+def get_all(ballotId=None):
+    result = Ballot.get_all(
+        ballotId=ballotId
+    )
 
     return Schema(many=True).dump(result).data
 

@@ -1,3 +1,4 @@
+from util import get_paginated_query
 from config import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -31,8 +32,14 @@ class BallotModel(db.Model):
 Model = BallotModel
 
 
-def get_all():
-    result = Model.query.all()
+def get_all(ballotId=None):
+    query = Model.query
+    if ballotId is not None:
+        query = query.filter(
+            Model.ballotId.like(ballotId)
+        )
+
+    result = get_paginated_query(query).all()
 
     return result
 
