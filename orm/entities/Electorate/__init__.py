@@ -13,7 +13,12 @@ class ElectorateModel(db.Model):
     parentElectorateId = db.Column(db.Integer, db.ForeignKey(electorateId), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
-    parentElectorate = relationship("ElectorateModel", foreign_keys=[parentElectorateId])
+    parentElectorate = relationship("ElectorateModel", remote_side=[electorateId])
+    childElectorates = relationship("ElectorateModel", foreign_keys=[parentElectorateId])
+
+    __mapper_args__ = {
+        'polymorphic_on': electorateType
+    }
 
 
 Model = ElectorateModel
