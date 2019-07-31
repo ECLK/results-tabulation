@@ -2,11 +2,10 @@ from datetime import datetime
 from config import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
-from util import Auth, get_paginated_query
-from orm.entities import Folder, FolderFile, File, Office, Invoice, StationaryItem
+from util import get_paginated_query
+from orm.entities import Folder, FolderFile, File
 from orm.enums import ProofTypeEnum
 from exception import NotFoundException, ForbiddenException
-from sqlalchemy.ext.hybrid import hybrid_property
 
 
 class ProofModel(db.Model):
