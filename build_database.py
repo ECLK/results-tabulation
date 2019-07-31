@@ -2,7 +2,7 @@ from config import db
 from orm.entities import *
 from orm.entities import Electorate
 from orm.entities.Office import DistrictCentre, CountingCentre
-from orm.enums import ElectorateTypeEnum, OfficeTypeEnum
+from orm.enums import ElectorateTypeEnum
 
 from sqlalchemy.sql import func
 
@@ -44,17 +44,17 @@ ELECTORATES_DATA = {
 
 OFFICE_DATA = {
     "districtCentres": [
-        {"id": 1, "parent": None, "name": "Colombo"},
-        {"id": 2, "parent": None, "name": "Kalutara"},
-        {"id": 3, "parent": None, "name": "Gampaha"},
+        {"id": 1, "parent": None, "name": "Colombo", "tallySheetCodes": ["PRE_30_PD", "PRE_30_ED"]},
+        {"id": 2, "parent": None, "name": "Kalutara", "tallySheetCodes": ["PRE_30_PD", "PRE_30_ED"]},
+        {"id": 3, "parent": None, "name": "Gampaha", "tallySheetCodes": ["PRE_30_PD", "PRE_30_ED"]},
     ],
     "countingCentres": [
-        {"id": 4, "parent": 1, "name": "Colombo South"},
-        {"id": 5, "parent": 1, "name": "Colombo West"},
-        {"id": 6, "parent": 2, "name": "Kalutara South"},
-        {"id": 7, "parent": 2, "name": "Kalutara West"},
-        {"id": 8, "parent": 3, "name": "Gampaha South"},
-        {"id": 9, "parent": 3, "name": "Gampaha West"},
+        {"id": 4, "parent": 1, "name": "Colombo South", "tallySheetCodes": ["PRE_41"]},
+        {"id": 5, "parent": 1, "name": "Colombo West", "tallySheetCodes": ["PRE_41"]},
+        {"id": 6, "parent": 2, "name": "Kalutara South", "tallySheetCodes": ["PRE_41"]},
+        {"id": 7, "parent": 2, "name": "Kalutara West", "tallySheetCodes": ["PRE_41"]},
+        {"id": 8, "parent": 3, "name": "Gampaha South", "tallySheetCodes": ["PRE_41"]},
+        {"id": 9, "parent": 3, "name": "Gampaha West", "tallySheetCodes": ["PRE_41"]},
     ]
 }
 
@@ -114,17 +114,27 @@ for i in range(1, 2):
     for row in OFFICE_DATA["districtCentres"]:
         last_counting_centre = DistrictCentre.create(
             officeName=row["name"],
-            # officeType=OfficeTypeEnum.DistrictCenter,
             electionId=election.electionId,
             parentOfficeId=None
         )
+        for tallySheetCode in row["tallySheetCodes"]:
+            TallySheet.create(
+                code=tallySheetCode,
+                electionId=election.electionId,
+                officeId=officeIdOffset + row["id"]
+            )
     for row in OFFICE_DATA["countingCentres"]:
         CountingCentre.create(
             officeName=row["name"],
-            # officeType=OfficeTypeEnum.CountingCenter,
             electionId=election.electionId,
             parentOfficeId=officeIdOffset + row["parent"]
         )
+        for tallySheetCode in row["tallySheetCodes"]:
+            TallySheet.create(
+                code=tallySheetCode,
+                electionId=election.electionId,
+                officeId=officeIdOffset + row["id"]
+            )
 
     for row in POLLING_STATION_DATA:
         PollingStation.create(

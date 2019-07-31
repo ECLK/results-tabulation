@@ -1,37 +1,43 @@
 from config import db
 from sqlalchemy.orm import relationship
+from sqlalchemy.schema import UniqueConstraint
 
-from orm.entities import Office, Election
+from orm.entities import Election, Office, Proof
 
-print("#####", Election.Model.electionId)
-print("#####", Election.Model.__table__.c.electionId)
-print("#####", Election.Model.__tablename__)
-print("#####", Election.Model.electionId._parententity)
-print("#####", Election.Model.electionId._parentmapper)
+from orm.enums import TallySheetCodeEnum, ProofTypeEnum
 
 
 class TallySheetModel(db.Model):
     __tablename__ = 'tallySheet'
     tallySheetId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    code = db.Column(db.String(10), index=True, nullable=False)
+    code = db.Column(db.Enum(TallySheetCodeEnum), nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
     officeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=False)
     latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"), nullable=True,
                                 post_update=True)
+    tallySheetProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId), nullable=False)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     office = relationship(Office.Model, foreign_keys=[officeId])
+    tallySheetProof = relationship(Proof.Model, foreign_keys=[tallySheetProofId])
     latestVersion = relationship("TallySheetVersionModel", foreign_keys=[latestVersionId], post_update=True)
+
+    __table_args__ = (
+        UniqueConstraint('code', 'electionId', 'officeId', name='_tallysheet_unique_key'),
+    )
 
 
 Model = TallySheetModel
 
 
 def create(code, electionId, officeId):
+    tallySheetProof = Proof.create(proofType=ProofTypeEnum.ManuallyFilledTallySheets)
+
     result = Model(
         electionId=electionId,
         code=code,
-        officeId=officeId
+        officeId=officeId,
+        tallySheetProofId=tallySheetProof.proofId
     )
 
     db.session.add(result)

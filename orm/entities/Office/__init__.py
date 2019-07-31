@@ -16,6 +16,7 @@ class OfficeModel(db.Model):
     election = relationship(Election.Model, foreign_keys=[electionId])
     parentOffice = relationship("OfficeModel", remote_side=[officeId])
     childOffices = relationship("OfficeModel", foreign_keys=[parentOfficeId])
+    tallySheets = relationship("TallySheetModel")
 
     @hybrid_property
     def allPollingStations(self):
