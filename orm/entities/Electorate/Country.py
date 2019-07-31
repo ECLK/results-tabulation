@@ -1,9 +1,7 @@
 from config import db
 from orm.entities import Electorate
 from orm.enums import ElectorateTypeEnum
-
-print("##### hey Electorate.Model ### ", Electorate)
-print("##### hey Electorate.Model ### ", Electorate.Model)
+from sqlalchemy.ext.associationproxy import association_proxy
 
 
 class CountryModel(Electorate.Model):

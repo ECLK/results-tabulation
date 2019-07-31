@@ -4,6 +4,7 @@ from orm.entities.Electorate import Country
 from orm.enums import ElectorateTypeEnum
 from exception import NotFoundException
 from sqlalchemy.orm import synonym
+from sqlalchemy.ext.associationproxy import association_proxy
 
 
 class ElectoralDistrictModel(Electorate.Model):

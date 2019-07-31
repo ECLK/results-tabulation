@@ -8,4 +8,3 @@ class ElectorateTypeEnum(enum.Enum):
     ElectoralDistrict = 4
     PollingDivision = 5
     PollingDistrict = 6
-    PollingStation = 7

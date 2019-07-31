@@ -4,7 +4,8 @@ from config import db
 from sqlalchemy.orm import relationship
 from util import Auth
 from exception import NotFoundException, ForbiddenException
-from orm.entities import Office, Election
+from orm.entities import Election
+from orm.entities import Office
 from sqlalchemy.ext.associationproxy import association_proxy
 
 
