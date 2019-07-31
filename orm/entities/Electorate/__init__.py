@@ -1,7 +1,9 @@
 from config import db
 from sqlalchemy.orm import relationship
 from orm.enums import ElectorateTypeEnum
-from orm.entities import Election
+from orm.entities import Election, Office
+from sqlalchemy.ext.hybrid import hybrid_property
+from util import get_paginated_query
 
 
 class ElectorateModel(db.Model):
@@ -15,6 +17,16 @@ class ElectorateModel(db.Model):
     election = relationship(Election.Model, foreign_keys=[electionId])
     parentElectorate = relationship("ElectorateModel", remote_side=[electorateId])
     childElectorates = relationship("ElectorateModel", foreign_keys=[parentElectorateId])
+    pollingStations = relationship("PollingStationModel")
+
+    @hybrid_property
+    def allPollingStations(self):
+        result = self.pollingStations
+        if self.childElectorates is not None:
+            for childElectorate in self.childElectorates:
+                result = result + childElectorate.allPollingStations
+
+        return result
 
     __mapper_args__ = {
         'polymorphic_on': electorateType
@@ -33,5 +45,12 @@ def create(electorateName, electorateType, electionId, parentElectorateId=None):
     )
     db.session.add(result)
     db.session.commit()
+
+    return result
+
+
+def get_all():
+    query = Model.query
+    result = query.all()
 
     return result

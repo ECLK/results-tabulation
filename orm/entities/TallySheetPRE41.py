@@ -2,7 +2,8 @@ from config import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from orm.entities import Office, TallySheetVersion
+from orm.entities import TallySheetVersion
+from orm.entities import Office
 
 
 class TallySheetPRE41Model(db.Model):

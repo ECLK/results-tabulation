@@ -1,8 +1,10 @@
 from config import db
 from orm.entities import *
-from orm.entities import *
-from orm.entities.Electorate import Country, Province, AdministrativeDistrict
-from orm.enums import ElectorateTypeEnum, StationaryItemTypeEnum, OfficeTypeEnum, FileTypeEnum
+from orm.entities import Electorate
+from orm.entities.Office import DistrictCentre, CountingCentre
+from orm.enums import ElectorateTypeEnum, OfficeTypeEnum
+
+from sqlalchemy.sql import func
 
 # db.engine.execute("create database election")
 
@@ -10,90 +12,139 @@ from orm.enums import ElectorateTypeEnum, StationaryItemTypeEnum, OfficeTypeEnum
 # Create the database
 db.create_all()
 
-# OFFICES = [
-#     {"officeId": 0, "officeName": "Colombo", "officeType": OfficeTypeEnum.DistrictCenter, "parentOfficeId": None},
-#     {"officeId": 1, "officeName": "", "Moratuwa": OfficeTypeEnum.CountingCenter, "parentOfficeId": 0},
-#     {"officeId": 1, "officeName": "", "officeType": OfficeTypeEnum.CountingCenter, "parentOfficeId": 0},
-#     {"officeId": 1, "officeName": "", "officeType": OfficeTypeEnum.CountingCenter, "parentOfficeId": 0},
-#     {"officeId": 1, "officeName": "", "officeType": OfficeTypeEnum.CountingCenter, "parentOfficeId": 0},
-#     {"officeId": 1, "officeName": "Gampaha", "officeType": OfficeTypeEnum.DistrictCenter, "parentOfficeId": None},
-#     {"officeId": 2, "officeName": "Kalutara South", "officeType": OfficeTypeEnum.DistrictCenter, "parentOfficeId": None},
-#     {"officeId": 3, "officeName": "Kalutara North", "officeType": OfficeTypeEnum.DistrictCenter, "parentOfficeId": None}
-# ]
+ELECTORATES_DATA = {
+    "administrativeDistricts": [
+        {"id": 1, "parent": None, "name": "Colombo"},
+        {"id": 2, "parent": None, "name": "Kalutara"},
+        {"id": 3, "parent": None, "name": "Gampaha"}
+    ],
+    "pollingDivisions": [
+        {"id": 4, "parent": 1, "name": "Colombo South"},
+        {"id": 5, "parent": 1, "name": "Colombo North"},
+        {"id": 6, "parent": 2, "name": "Kalutara South"},
+        {"id": 7, "parent": 2, "name": "Kalutara North"},
+        {"id": 8, "parent": 3, "name": "Gampaha South"},
+        {"id": 9, "parent": 3, "name": "Gampaha North"}
+    ],
+    "pollingDistricts": [
+        {"id": 10, "parent": 4, "name": "1"},
+        {"id": 11, "parent": 4, "name": "2"},
+        {"id": 12, "parent": 5, "name": "1"},
+        {"id": 13, "parent": 5, "name": "2"},
+        {"id": 14, "parent": 6, "name": "1"},
+        {"id": 15, "parent": 6, "name": "2"},
+        {"id": 16, "parent": 7, "name": "1"},
+        {"id": 17, "parent": 7, "name": "2"},
+        {"id": 18, "parent": 8, "name": "1"},
+        {"id": 19, "parent": 8, "name": "2"},
+        {"id": 20, "parent": 9, "name": "1"},
+        {"id": 21, "parent": 9, "name": "2"}
+    ]
+}
+
+OFFICE_DATA = {
+    "districtCentres": [
+        {"id": 1, "parent": None, "name": "Colombo"},
+        {"id": 2, "parent": None, "name": "Kalutara"},
+        {"id": 3, "parent": None, "name": "Gampaha"},
+    ],
+    "countingCentres": [
+        {"id": 4, "parent": 1, "name": "Colombo South"},
+        {"id": 5, "parent": 1, "name": "Colombo West"},
+        {"id": 6, "parent": 2, "name": "Kalutara South"},
+        {"id": 7, "parent": 2, "name": "Kalutara West"},
+        {"id": 8, "parent": 3, "name": "Gampaha South"},
+        {"id": 9, "parent": 3, "name": "Gampaha West"},
+    ]
+}
+
+POLLING_STATION_DATA = [
+    {"id": 1, "pollingDistrict": 10, "countingCentre": 4, "name": "St. Thomas College, Hall 1"},
+    {"id": 2, "pollingDistrict": 11, "countingCentre": 4, "name": "St. Thomas College, Hall 2"},
+    {"id": 3, "pollingDistrict": 12, "countingCentre": 5, "name": "Science College, Hall 1"},
+    {"id": 4, "pollingDistrict": 13, "countingCentre": 5, "name": "Science College, Hall 2"},
+    {"id": 5, "pollingDistrict": 14, "countingCentre": 6, "name": "Science College, Hall 3"},
+    {"id": 6, "pollingDistrict": 15, "countingCentre": 6, "name": "Hill Street Community Centre, Hall 1"},
+    {"id": 7, "pollingDistrict": 16, "countingCentre": 7, "name": "Hill Street Community Centre, Hall 2"},
+    {"id": 8, "pollingDistrict": 17, "countingCentre": 7, "name": "Hill Street Community Centre, Hall 3"},
+    {"id": 9, "pollingDistrict": 18, "countingCentre": 8, "name": "Hill Street Community Centre, Hall 4"},
+    {"id": 10, "pollingDistrict": 19, "countingCentre": 8, "name": "Muslim Girls College, Hall 1"},
+    {"id": 11, "pollingDistrict": 20, "countingCentre": 9, "name": "Muslim Girls College, Hall 2"},
+    {"id": 12, "pollingDistrict": 21, "countingCentre": 9, "name": "Muslim Girls College, Hall 3"},
+    {"id": 13, "pollingDistrict": 21, "countingCentre": 9, "name": "Muslim Girls College, Hall 4"}
+]
 
 
-election = Election.create()
+def get_column_max(column):
+    query_result = db.session.query(func.max(column).label("max")).one_or_none()
 
-country = Country.create(electionId=election.electionId, name="Sri Lanka")
+    return 0 if query_result.max is None else query_result.max
 
-province1 = Province.create(
-    electionId=election.electionId,
-    name="Colombo",
-    countryId=country.electorateId
-)
 
-print(" ###### province1 ###### ", province1)
-print(" ###### province1.parentElectorateId ###### ", province1.parentElectorateId)
-print(" ###### province1.parentElectorate ###### ", province1.parentElectorate)
-print(" ###### province1.country ###### ", province1.country)
+for i in range(1, 2):
+    election = Election.create()
 
-administrativeDistrict1 = AdministrativeDistrict.create(
-    electionId=election.electionId,
-    name="Colombo",
-    provinceId=province1.electorateId
-)
+    electorateIdOffset = get_column_max(Electorate.Model.electorateId)
 
-administrativeDistrict2 = AdministrativeDistrict.create(
-    electionId=election.electionId,
-    name="Colombo",
-    provinceId=province1.electorateId
-)
+    last_electorate = None
+    for row in ELECTORATES_DATA["administrativeDistricts"]:
+        last_electorate = Electorate.create(
+            electorateName=row["name"],
+            electorateType=ElectorateTypeEnum.AdministrativeDistrict,
+            electionId=election.electionId,
+            parentElectorateId=None
+        )
+    for row in ELECTORATES_DATA["pollingDivisions"]:
+        Electorate.create(
+            electorateName=row["name"],
+            electorateType=ElectorateTypeEnum.PollingDivision,
+            electionId=election.electionId,
+            parentElectorateId=electorateIdOffset + row["parent"]
+        )
+    for row in ELECTORATES_DATA["pollingDistricts"]:
+        Electorate.create(
+            electorateName=row["name"],
+            electorateType=ElectorateTypeEnum.PollingDistrict,
+            electionId=election.electionId,
+            parentElectorateId=electorateIdOffset + row["parent"]
+        )
 
-print(" ###### administrativeDistrict1 ###### ", administrativeDistrict1)
-print(" ###### administrativeDistrict1.parentElectorateId ###### ", administrativeDistrict1.parentElectorateId)
-print(" ###### administrativeDistrict1.parentElectorate ###### ", administrativeDistrict1.parentElectorate)
-print(" ###### administrativeDistrict1.province ###### ", administrativeDistrict1.province)
-print(" ###### administrativeDistrict1.province.country ###### ", administrativeDistrict1.province.country)
-print(" ###### administrativeDistrict1.country ###### ", administrativeDistrict1.country)
-print(" ###### province1.childElectorates ###### ", province1.childElectorates)
+    officeIdOffset = get_column_max(Office.Model.officeId)
+    last_counting_centre = None
+    for row in OFFICE_DATA["districtCentres"]:
+        last_counting_centre = DistrictCentre.create(
+            officeName=row["name"],
+            # officeType=OfficeTypeEnum.DistrictCenter,
+            electionId=election.electionId,
+            parentOfficeId=None
+        )
+    for row in OFFICE_DATA["countingCentres"]:
+        CountingCentre.create(
+            officeName=row["name"],
+            # officeType=OfficeTypeEnum.CountingCenter,
+            electionId=election.electionId,
+            parentOfficeId=officeIdOffset + row["parent"]
+        )
 
-# print(" ###### administrativeDistrict1 ###### ", administrativeDistrict1)
-# print(" ###### administrativeDistrict1.province ###### ", administrativeDistrict1.province)
-# print(" ###### administrativeDistrict1.country ###### ", administrativeDistrict1.country)
+    for row in POLLING_STATION_DATA:
+        PollingStation.create(
+            officeName=row["name"],
+            electionId=election.electionId,
+            electorateId=electorateIdOffset + row["pollingDistrict"],
+            parentOfficeId=officeIdOffset + row["countingCentre"],
+        )
 
-# for i in range(1, 2):
-#     election = Election.create()
-#     db.session.add(election)
-#     db.session.commit()
-#
-#     for i in range(1, 6):
-#         db.session.add(Party.create(
-#             partyName="Party-%d" % i
-#         ))
-#         db.session.commit()
-#
-#     for j in range(1, 20):
-#         db.session.add(Office.create(
-#             electionId=election.electionId,
-#             officeType=OfficeTypeEnum.DistrictCenter,
-#             officeName="Office %d" % j
-#         ))
-#         db.session.add(Electorate.create(
-#             electionId=election.electionId,
-#             electorateType=ElectorateTypeEnum.AdministrativeDistrict,
-#             electorateName="Electorate %d" % j
-#         ))
-#
-#     for i in range(1, 10):
-#         db.session.add(Ballot.create(
-#             electionId=election.electionId,
-#             ballotId="pre-ballot-%d-%d" % (election.electionId, i)
-#         ))
-#
-#     for i in range(1, 50):
-#         db.session.add(BallotBox.create(
-#             electionId=election.electionId,
-#             ballotBoxId="pre-ballot-box-%d-%d" % (election.electionId, i)
-#         ))
+    for i in range(1, 6):
+        Party.create(partyName="Party-%d" % i)
 
-db.session.commit()
+    for i in range(1, 10):
+        Ballot.create(
+            electionId=election.electionId,
+            ballotId="pre-ballot-%d-%d" % (election.electionId, i)
+        )
+
+    for i in range(1, 50):
+        BallotBox.create(
+            electionId=election.electionId,
+            ballotBoxId="pre-ballot-box-%d-%d" % (election.electionId, i)
+        )

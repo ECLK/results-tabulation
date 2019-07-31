@@ -4,7 +4,8 @@ from config import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from util import Auth
-from orm.entities import Office, Invoice, StationaryItem, Proof
+from orm.entities import Invoice, StationaryItem, Proof
+from orm.entities import Office
 from orm.enums import ProofTypeEnum
 from exception import NotFoundException, ForbiddenException
 
