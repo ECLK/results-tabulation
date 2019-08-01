@@ -2,6 +2,8 @@ from config import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import UniqueConstraint
 
+from util import get_paginated_query
+
 from orm.entities import Election, Office, Proof
 
 from orm.enums import TallySheetCodeEnum, ProofTypeEnum
@@ -28,6 +30,20 @@ class TallySheetModel(db.Model):
 
 
 Model = TallySheetModel
+
+
+def get_all(electionId=None, officeId=None):
+    query = Model.query
+
+    if electionId is not None:
+        query = query.filter(Model.electionId == electionId)
+
+    if officeId is not None:
+        query = query.filter(Model.officeId == officeId)
+
+    result = get_paginated_query(query).all()
+
+    return result
 
 
 def create(code, electionId, officeId):

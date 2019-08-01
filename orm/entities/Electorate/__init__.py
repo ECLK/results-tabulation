@@ -1,7 +1,7 @@
 from config import db
 from sqlalchemy.orm import relationship
 from orm.enums import ElectorateTypeEnum
-from orm.entities import Election, Office
+from orm.entities import Election
 from sqlalchemy.ext.hybrid import hybrid_property
 from util import get_paginated_query
 

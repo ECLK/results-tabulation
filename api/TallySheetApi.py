@@ -7,15 +7,17 @@ from schemas import TallySheetVersionSchema, TallySheet_PRE_41_Schema
 from api import tallySheetPRE41Api
 from util import RequestBody, Auth
 
+from schemas import TallySheetSchema as Schema
+from orm.entities import TallySheet
 
-def getAll():
-    # Create the list of tally sheets from our data
-    tallysheets = TallySheetVersionModel.query.all()
 
-    # Serialize the data for the response
-    person_schema = TallySheetVersionSchema(many=True)
-    data = person_schema.dump(tallysheets).data
-    return data
+def getAll(electionId=None, officeId=None):
+    result = TallySheet.get_all(
+        electionId=electionId,
+        officeId=officeId
+    )
+
+    return Schema(many=True).dump(result).data
 
 
 def get_by_id(tallySheetId):
