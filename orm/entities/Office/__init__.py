@@ -4,6 +4,8 @@ from orm.enums import OfficeTypeEnum
 from orm.entities import Election
 from sqlalchemy.ext.hybrid import hybrid_property
 
+from util import get_paginated_query
+
 
 class OfficeModel(db.Model):
     __tablename__ = 'office'
@@ -51,8 +53,20 @@ def create(officeName, officeType, electionId, parentOfficeId=None):
     return result
 
 
-def get_all():
+def get_all(electionId=None, officeName=None, parentOfficeId=None, officeType=None):
     query = Model.query
-    result = query.all()
+
+    if officeName is not None:
+        query = query.filter(Model.officeName.like(officeName))
+
+    if electionId is not None:
+        query = query.filter(Model.electionId == electionId)
+
+    if officeType is not None:
+        query = query.filter(Model.officeType == officeType)
+    else:
+        query = query.filter(Model.parentOfficeId == parentOfficeId)
+
+    result = get_paginated_query(query).all()
 
     return result
