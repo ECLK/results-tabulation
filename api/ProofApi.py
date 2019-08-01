@@ -12,6 +12,14 @@ def get_all():
     return Schema(many=True).dump(result).data
 
 
+def get_by_id(proofId):
+    result = Proof.get_by_id(
+        proofId=proofId
+    )
+
+    return Schema().dump(result).data
+
+
 def upload_file(body):
     request_body = RequestBody(body)
     result = Proof.upload_file(
