@@ -6,8 +6,9 @@ from sqlalchemy.orm import relationship, synonym
 
 class CountingCentreModel(Office.Model):
     __mapper_args__ = {
-        'polymorphic_identity': OfficeTypeEnum.CountingCenter
+        'polymorphic_identity': OfficeTypeEnum.CountingCentre
     }
+
 
 
 Model = CountingCentreModel

@@ -1,8 +1,7 @@
 from config import db
 from orm.entities import *
-from orm.entities import Electorate
-from orm.entities.Office import DistrictCentre, CountingCentre
-from orm.enums import ElectorateTypeEnum
+
+from orm.enums import ElectorateTypeEnum, OfficeTypeEnum
 
 from sqlalchemy.sql import func
 
@@ -86,9 +85,8 @@ for i in range(1, 2):
 
     electorateIdOffset = get_column_max(Electorate.Model.electorateId)
 
-    last_electorate = None
     for row in ELECTORATES_DATA["administrativeDistricts"]:
-        last_electorate = Electorate.create(
+        Electorate.create(
             electorateName=row["name"],
             electorateType=ElectorateTypeEnum.AdministrativeDistrict,
             electionId=election.electionId,
@@ -110,11 +108,11 @@ for i in range(1, 2):
         )
 
     officeIdOffset = get_column_max(Office.Model.officeId)
-    last_counting_centre = None
     for row in OFFICE_DATA["districtCentres"]:
-        last_counting_centre = DistrictCentre.create(
+        Office.create(
             officeName=row["name"],
             electionId=election.electionId,
+            officeType=OfficeTypeEnum.DistrictCentre,
             parentOfficeId=None
         )
         for tallySheetCode in row["tallySheetCodes"]:
@@ -124,9 +122,10 @@ for i in range(1, 2):
                 officeId=officeIdOffset + row["id"]
             )
     for row in OFFICE_DATA["countingCentres"]:
-        CountingCentre.create(
+        Office.create(
             officeName=row["name"],
             electionId=election.electionId,
+            officeType=OfficeTypeEnum.CountingCentre,
             parentOfficeId=officeIdOffset + row["parent"]
         )
         for tallySheetCode in row["tallySheetCodes"]:

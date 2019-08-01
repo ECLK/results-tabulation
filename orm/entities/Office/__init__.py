@@ -49,3 +49,10 @@ def create(officeName, officeType, electionId, parentOfficeId=None):
     db.session.commit()
 
     return result
+
+
+def get_all():
+    query = Model.query
+    result = query.all()
+
+    return result
