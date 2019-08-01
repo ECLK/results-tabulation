@@ -70,15 +70,35 @@ class OfficeSchema(ma.ModelSchema):
     officeType = EnumField(OfficeTypeEnum)
 
 
+class Proof_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "proofId",
+            "proofType",
+            "finished",
+            "scannedFiles"
+        )
+
+        model = Proof.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    scannedFiles = ma.Nested(File_Schema, many=True)
+    proofType = EnumField(ProofTypeEnum)
+
+
 class TallySheetSchema(ma.ModelSchema):
     class Meta:
         fields = (
             "tallySheetId",
             "code",
             "electionId",
-            "officeId",
+            # "officeId",
             "office",
-            "latestVersionId"
+            "latestVersionId",
+            # "tallySheetProofId",
+            "tallySheetProof"
         )
 
         model = TallySheet.Model
@@ -89,6 +109,7 @@ class TallySheetSchema(ma.ModelSchema):
     latestVersion = ma.Nested(TallySheetVersionSchema)
     office = ma.Nested(OfficeSchema)
     code = EnumField(TallySheetCodeEnum)
+    tallySheetProof = ma.Nested(Proof_Schema)
 
 
 class TallySheet_PRE_41__party_Schema(ma.ModelSchema):
@@ -166,24 +187,6 @@ class Invoice_Schema(ma.ModelSchema):
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
-
-
-class Proof_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "proofId",
-            "proofType",
-            "finished",
-            "scannedFiles"
-        )
-
-        model = Proof.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    scannedFiles = ma.Nested(File_Schema, many=True)
-    proofType = EnumField(ProofTypeEnum)
 
 
 class Invoice_StationaryItem_Schema(ma.ModelSchema):
