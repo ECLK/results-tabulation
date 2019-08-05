@@ -16,6 +16,8 @@ pip install -r requirements.txt
 
 sudo apt-get install libpq-dev python-dev
 
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-18-04
+
 https://www.postgresql.org/download/linux/ubuntu/
 
 pgadmin4
@@ -27,3 +29,7 @@ pgadmin4
 `python index.py`
 
 http://localhost:5000/ui/
+
+
+
+sudo apt-get install --reinstall ubuntu-desktop
