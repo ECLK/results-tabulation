@@ -1,5 +1,6 @@
+# Election REST API
 
-# Prerequisites
+## Prerequisites
 
 **Python 3**
 
@@ -17,7 +18,7 @@ source ./venv/bin/activate
 https://www.postgresql.org/download/linux/ubuntu/
 
 
-# Get Started
+## Get Started
 
 **Install Dependancies**
 
