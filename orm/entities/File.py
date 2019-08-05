@@ -1,4 +1,4 @@
-from config import db
+from app import db
 from orm.enums import FileTypeEnum
 import os
 from util import Auth

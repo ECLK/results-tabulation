@@ -1,5 +1,5 @@
 from util import get_paginated_query
-from config import db
+from app import db
 from sqlalchemy.orm import relationship
 from orm.enums import StationaryItemTypeEnum
 from orm.entities import StationaryItem, Election

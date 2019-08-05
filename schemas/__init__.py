@@ -1,4 +1,4 @@
-from config import db, ma
+from app import db, ma
 from orm.entities import StationaryItem, Ballot, TallySheetPRE41Party, TallySheet, File, Invoice, BallotBox, \
     TallySheetPRE41, InvoiceStationaryItem, Election, TallySheetVersion, Proof
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum
