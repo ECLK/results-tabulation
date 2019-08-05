@@ -38,12 +38,18 @@ connex_app.add_error_handler(ProblemException, render_connexion_problem_exceptio
 # Get the underlying Flask app instance
 app = connex_app.app
 
+app.config.from_envvar('ENV_CONFIG')
+
 # Configure the SQLAlchemy part of the app instance
 app.config['SQLALCHEMY_ECHO'] = True
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////' + os.path.join(basedir, 'tallysheet.db')
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:1234@localhost/election'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://postgres:1234@localhost:5432/election'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://%s:%s@%s:%s/%s' % (
+    app.config['DATABASE_USERNAME'],
+    app.config['DATABASE_PASSWORD'],
+    app.config['DATABASE_HOST'],
+    app.config['DATABASE_PORT'],
+    app.config['DATABASE_NAME']
+)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -52,3 +58,6 @@ db = SQLAlchemy(app)
 
 # Initialize Marshmallow
 ma = Marshmallow(app)
+
+# Read the swagger.yml file to configure the endpoints
+connex_app.add_api("swagger.yml", strict_validation=True, validate_responses=False)

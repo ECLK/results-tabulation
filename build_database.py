@@ -1,4 +1,4 @@
-from config import db
+from app import db
 from orm.entities import *
 
 from orm.enums import ElectorateTypeEnum, OfficeTypeEnum

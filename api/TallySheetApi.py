@@ -1,5 +1,5 @@
 from flask import abort
-from config import db
+from app import db
 from orm.entities.TallySheet import Model as TallySheetModel
 from orm.entities.TallySheetVersion import Model as TallySheetVersionModel
 from orm.entities.TallySheetPRE41 import Model as TallySheetPRE41Model

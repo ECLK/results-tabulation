@@ -1,4 +1,4 @@
-from config import db
+from app import db
 from sqlalchemy.orm import relationship
 from orm.entities import Election, Image
 

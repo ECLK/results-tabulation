@@ -1,5 +1,5 @@
 from datetime import datetime
-from config import db
+from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 

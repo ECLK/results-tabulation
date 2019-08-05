@@ -1,4 +1,4 @@
-from config import db
+from app import db
 from orm.entities import Electorate
 from orm.enums import ElectorateTypeEnum
 from sqlalchemy.ext.associationproxy import association_proxy

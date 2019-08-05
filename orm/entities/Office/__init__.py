@@ -1,4 +1,4 @@
-from config import db
+from app import db
 from sqlalchemy.orm import relationship
 from orm.enums import OfficeTypeEnum
 from orm.entities import Election

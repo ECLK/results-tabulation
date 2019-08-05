@@ -1,4 +1,4 @@
-from config import db
+from app import db
 # from orm.entities import TallySheet, Office
 # from orm.entities.Office import CountingCentre
 # from sqlalchemy.orm import relationship
