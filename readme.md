@@ -1,9 +1,9 @@
 
 # Prerequisites
 
-## Python 3
+**Python 3**
 
-## Virtual Environment
+**Virtual Environment**
 
 sudo apt install virtualenv
 
@@ -12,22 +12,22 @@ virtualenv venv --python=python3
 source ./venv/bin/activate
 
 
-## Postgresql
+**Postgresql**
 
 https://www.postgresql.org/download/linux/ubuntu/
 
 
 # Get Started
 
-## Install Dependancies
+**Install Dependancies**
 
 `pip install -r requirements.txt`
 
-## Build the Database
+**Build the Database**
 
 `python build_database.py`
 
-## Run local server
+**Run local server**
 
 `export ENV_CONFIG=./env/dev.cfg && python index.py`
 
