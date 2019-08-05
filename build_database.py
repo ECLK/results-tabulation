@@ -117,7 +117,7 @@ for i in range(1, 2):
         )
         for tallySheetCode in row["tallySheetCodes"]:
             TallySheet.create(
-                code=tallySheetCode,
+                tallySheetCode=tallySheetCode,
                 electionId=election.electionId,
                 officeId=officeIdOffset + row["id"]
             )
@@ -130,7 +130,7 @@ for i in range(1, 2):
         )
         for tallySheetCode in row["tallySheetCodes"]:
             TallySheet.create(
-                code=tallySheetCode,
+                tallySheetCode=tallySheetCode,
                 electionId=election.electionId,
                 officeId=officeIdOffset + row["id"]
             )

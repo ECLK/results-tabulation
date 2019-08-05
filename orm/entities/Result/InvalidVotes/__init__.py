@@ -9,7 +9,7 @@ from orm.entities import Election, Office, Proof
 from orm.enums import TallySheetCodeEnum, ProofTypeEnum
 
 
-class TallySheetModel(db.Model):
+class TallySheetInvalidVotesModel(db.Model):
     __tablename__ = 'tallySheet'
     tallySheetId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     code = db.Column(db.Enum(TallySheetCodeEnum), nullable=False)
