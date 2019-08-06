@@ -2,6 +2,7 @@ from app import db
 from orm.entities import *
 
 from orm.enums import ElectorateTypeEnum, OfficeTypeEnum
+from api import TallySheetVersionApi
 
 from sqlalchemy.sql import func
 
@@ -83,6 +84,21 @@ def get_column_max(column):
 for i in range(1, 2):
     election = Election.create()
 
+    for i in range(1, 6):
+        Party.create(partyName="Party-%d" % i)
+
+    for i in range(1, 10):
+        Ballot.create(
+            electionId=election.electionId,
+            ballotId="pre-ballot-%d-%d" % (election.electionId, i)
+        )
+
+    for i in range(1, 50):
+        BallotBox.create(
+            electionId=election.electionId,
+            ballotBoxId="pre-ballot-box-%d-%d" % (election.electionId, i)
+        )
+
     electorateIdOffset = get_column_max(Electorate.Model.electorateId)
 
     for row in ELECTORATES_DATA["administrativeDistricts"]:
@@ -116,11 +132,28 @@ for i in range(1, 2):
             parentOfficeId=None
         )
         for tallySheetCode in row["tallySheetCodes"]:
-            TallySheet.create(
+            tallySheet = TallySheet.create(
                 tallySheetCode=tallySheetCode,
                 electionId=election.electionId,
                 officeId=officeIdOffset + row["id"]
             )
+            tallySheetVersion = TallySheetVersionApi.createPRE41({
+                "tallySheetId": tallySheet.tallySheetId,
+                "tallySheetContent": [
+                    {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
+                    {"partyId": 2, "count": 45, "countInWords": "Forty five"},
+                    {"partyId": 3, "count": 60, "countInWords": "Sixty"}
+                ]
+            })
+            tallySheetVersion = TallySheetVersionApi.createPRE41({
+                "tallySheetId": tallySheet.tallySheetId,
+                "tallySheetContent": [
+                    {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
+                    {"partyId": 2, "count": 45, "countInWords": "Forty five"},
+                    {"partyId": 3, "count": 60, "countInWords": "Sixty"}
+                ]
+            })
+
     for row in OFFICE_DATA["countingCentres"]:
         Office.create(
             officeName=row["name"],
@@ -129,11 +162,27 @@ for i in range(1, 2):
             parentOfficeId=officeIdOffset + row["parent"]
         )
         for tallySheetCode in row["tallySheetCodes"]:
-            TallySheet.create(
+            tallySheet = TallySheet.create(
                 tallySheetCode=tallySheetCode,
                 electionId=election.electionId,
                 officeId=officeIdOffset + row["id"]
             )
+            tallySheetVersion = TallySheetVersionApi.createPRE41({
+                "tallySheetId": tallySheet.tallySheetId,
+                "tallySheetContent": [
+                    {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
+                    {"partyId": 2, "count": 45, "countInWords": "Forty five"},
+                    {"partyId": 3, "count": 60, "countInWords": "Sixty"}
+                ]
+            })
+            tallySheetVersion = TallySheetVersionApi.createPRE41({
+                "tallySheetId": tallySheet.tallySheetId,
+                "tallySheetContent": [
+                    {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
+                    {"partyId": 2, "count": 45, "countInWords": "Forty five"},
+                    {"partyId": 3, "count": 60, "countInWords": "Sixty"}
+                ]
+            })
 
     for row in POLLING_STATION_DATA:
         PollingStation.create(
@@ -141,19 +190,4 @@ for i in range(1, 2):
             electionId=election.electionId,
             electorateId=electorateIdOffset + row["pollingDistrict"],
             parentOfficeId=officeIdOffset + row["countingCentre"],
-        )
-
-    for i in range(1, 6):
-        Party.create(partyName="Party-%d" % i)
-
-    for i in range(1, 10):
-        Ballot.create(
-            electionId=election.electionId,
-            ballotId="pre-ballot-%d-%d" % (election.electionId, i)
-        )
-
-    for i in range(1, 50):
-        BallotBox.create(
-            electionId=election.electionId,
-            ballotBoxId="pre-ballot-box-%d-%d" % (election.electionId, i)
         )
