@@ -1,7 +1,9 @@
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, File, Invoice, BallotBox, \
     InvoiceStationaryItem, Election, Proof, History
-from orm.entities import TallySheet
+from orm.entities import TallySheet, TallySheetVersion
+from orm.entities.Result import PartyWiseResult
+from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum
 
 from marshmallow_enum import EnumField
@@ -34,6 +36,43 @@ class ElectionSchema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class PartyCountSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "partyId",
+            "count",
+            "countInWords"
+        )
+
+        model = PartyCount.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class TallySheetVersionPRE41Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetCode",
+            "electionId",
+            "officeId",
+            # "latestVersionId",
+
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt",
+            "tallySheetContent"
+        )
+
+        model = TallySheetVersion.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    tallySheetCode = EnumField(TallySheetCodeEnum)
+    tallySheetContent = ma.Nested(PartyCountSchema, many=True)
+
 class TallySheetVersionSchema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -45,13 +84,17 @@ class TallySheetVersionSchema(ma.ModelSchema):
 
             "tallySheetVersionId",
             "createdBy",
-            "createdAt"
+            "createdAt",
+            "tallySheetContent"
         )
 
-        model = History.Model
+        model = TallySheetVersion.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+
+    tallySheetCode = EnumField(TallySheetCodeEnum)
+    tallySheetContent = ma.Nested(PartyCountSchema, many=True)
 
 
 class OfficeSchema(ma.ModelSchema):
@@ -60,7 +103,8 @@ class OfficeSchema(ma.ModelSchema):
             "officeId",
             "officeName",
             "officeType",
-            "electionId"
+            "electionId",
+            "parentOffice"
         )
 
         model = TallySheet.Model
@@ -69,6 +113,7 @@ class OfficeSchema(ma.ModelSchema):
         sqla_session = db.session
 
     officeType = EnumField(OfficeTypeEnum)
+    parentOffice = ma.Nested('self')
 
 
 class Proof_Schema(ma.ModelSchema):
@@ -95,11 +140,11 @@ class TallySheetSchema(ma.ModelSchema):
             "tallySheetId",
             "tallySheetCode",
             "electionId",
-            # "officeId",
             "office",
-            # "latestVersionId",
+            "latestVersionId",
             # "tallySheetProofId",
-            "tallySheetProof"
+            "tallySheetProof",
+            "versions"
         )
 
         model = TallySheet.Model
@@ -111,6 +156,7 @@ class TallySheetSchema(ma.ModelSchema):
     office = ma.Nested(OfficeSchema)
     tallySheetCode = EnumField(TallySheetCodeEnum)
     tallySheetProof = ma.Nested(Proof_Schema)
+    # versions = ma.Nested(TallySheetVersionSchema, many=True)
 
 
 # class TallySheet_PRE_41__party_Schema(ma.ModelSchema):

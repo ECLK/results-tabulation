@@ -15,6 +15,14 @@ class PartyModel(db.Model):
 Model = PartyModel
 
 
+def get_by_id(partyId):
+    result = Model.query.filter(
+        Model.partyId == partyId
+    ).one_or_none()
+
+    return result
+
+
 def create(partyName, partySymbolFileSource=None):
     if partySymbolFileSource is not None:
         partySymbolFile = Image.create(partySymbolFileSource)

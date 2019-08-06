@@ -1,4 +1,5 @@
 from datetime import datetime
+from util import Auth
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -15,3 +16,14 @@ class HistoryVersionModel(db.Model):
 
 
 Model = HistoryVersionModel
+
+
+def create(historyId):
+    result = Model(
+        historyId=historyId,
+        createdBy=Auth().get_user_id(),
+    )
+    db.session.add(result)
+    db.session.commit()
+
+    return result

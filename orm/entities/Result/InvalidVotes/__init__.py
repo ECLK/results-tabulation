@@ -15,21 +15,20 @@ class TallySheetInvalidVotesModel(db.Model):
     code = db.Column(db.Enum(TallySheetCodeEnum), nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
     officeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=False)
-    latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"), nullable=True,
-                                post_update=True)
+    latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheet_version.tallySheetVersionId"), nullable=True)
     tallySheetProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId), nullable=False)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     office = relationship(Office.Model, foreign_keys=[officeId])
     tallySheetProof = relationship(Proof.Model, foreign_keys=[tallySheetProofId])
-    latestVersion = relationship("TallySheetVersionModel", foreign_keys=[latestVersionId], post_update=True)
+    latestVersion = relationship("TallySheetVersionModel", foreign_keys=[latestVersionId])
 
     __table_args__ = (
         UniqueConstraint('code', 'electionId', 'officeId', name='_tallysheet_unique_key'),
     )
 
 
-Model = TallySheetModel
+Model = TallySheetInvalidVotesModel
 
 
 def get_all(electionId=None, officeId=None):

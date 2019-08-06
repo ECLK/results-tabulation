@@ -26,7 +26,7 @@ https://www.postgresql.org/download/linux/ubuntu/
 
 **Build the Database**
 
-`python build_database.py`
+`export ENV_CONFIG=./env/dev.cfg && python build_database.py`
 
 **Run local server**
 

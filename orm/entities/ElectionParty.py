@@ -15,6 +15,15 @@ class ElectionPartyModel(db.Model):
 Model = ElectionPartyModel
 
 
+def get_by_id(electionId, partyId):
+    result = Model.query.filter(
+        Model.electionId == electionId,
+        Model.partyId == partyId
+    ).one_or_none()
+
+    return result
+
+
 def create(electionId, partyId):
     result = Model(
         electionId=electionId,
