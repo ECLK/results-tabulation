@@ -2,7 +2,7 @@ from flask import abort
 from app import db
 from orm.entities.TallySheet import Model as TallySheetModel
 from orm.entities.History import Model as TallySheetVersionModel
-from schemas import TallySheetVersionSchema
+from schemas import TallySheetSchema
 from api import tallySheetPRE41Api
 from util import RequestBody, Auth
 
@@ -22,10 +22,7 @@ def getAll(electionId=None, officeId=None):
 def get_by_id(tallySheetId):
     tallySheet = TallySheetModel.query.filter(TallySheetModel.tallySheetId == tallySheetId).one_or_none()
 
-    if tallySheet.code == "PRE-41":
-        return TallySheetVersionSchema().dump(tallySheet).data
-    else:
-        return TallySheetVersionSchema().dump(tallySheet).data
+    return TallySheetSchema().dump(tallySheet).data
 
 
 def create_tallysheet_version(body, tallysheet):
@@ -66,9 +63,9 @@ def create(body):
 
 def get_tallysheet_response(new_tallysheet):
     if new_tallysheet.code == "PRE-41":
-        return TallySheetVersionSchema().dump(new_tallysheet).data
+        return TallySheetSchema().dump(new_tallysheet).data
     else:
-        return TallySheetVersionSchema().dump(new_tallysheet).data
+        return TallySheetSchema().dump(new_tallysheet).data
 
 
 def update(tallySheetId, body):
@@ -85,6 +82,6 @@ def update(tallySheetId, body):
 
     create_tallysheet_version(body, tallySheet)
 
-    schema = TallySheetVersionSchema()
+    schema = TallySheetSchema()
 
     return schema.dump(new_tallysheet).data, 201

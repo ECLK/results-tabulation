@@ -137,7 +137,7 @@ for i in range(1, 2):
                 electionId=election.electionId,
                 officeId=officeIdOffset + row["id"]
             )
-            tallySheetVersion = TallySheetVersionApi.createPRE41({
+            tallySheetVersion = TallySheetVersionApi.PRE41.create({
                 "tallySheetId": tallySheet.tallySheetId,
                 "tallySheetContent": [
                     {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
@@ -145,7 +145,7 @@ for i in range(1, 2):
                     {"partyId": 3, "count": 60, "countInWords": "Sixty"}
                 ]
             })
-            tallySheetVersion = TallySheetVersionApi.createPRE41({
+            tallySheetVersion = TallySheetVersionApi.PRE41.create({
                 "tallySheetId": tallySheet.tallySheetId,
                 "tallySheetContent": [
                     {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
@@ -167,7 +167,7 @@ for i in range(1, 2):
                 electionId=election.electionId,
                 officeId=officeIdOffset + row["id"]
             )
-            tallySheetVersion = TallySheetVersionApi.createPRE41({
+            tallySheetVersion = TallySheetVersionApi.PRE41.create({
                 "tallySheetId": tallySheet.tallySheetId,
                 "tallySheetContent": [
                     {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
@@ -175,7 +175,7 @@ for i in range(1, 2):
                     {"partyId": 3, "count": 60, "countInWords": "Sixty"}
                 ]
             })
-            tallySheetVersion = TallySheetVersionApi.createPRE41({
+            tallySheetVersion = TallySheetVersionApi.PRE41.create({
                 "tallySheetId": tallySheet.tallySheetId,
                 "tallySheetContent": [
                     {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
