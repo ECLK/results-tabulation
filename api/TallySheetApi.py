@@ -66,22 +66,3 @@ def get_tallysheet_response(new_tallysheet):
         return TallySheetSchema().dump(new_tallysheet).data
     else:
         return TallySheetSchema().dump(new_tallysheet).data
-
-
-def update(tallySheetId, body):
-    # Get the tally sheet
-    tallySheet = TallySheetModel.query.filter(
-        TallySheetModel.tallySheetId == tallySheetId
-    ).one_or_none()
-
-    if tallySheet is None:
-        abort(
-            404,
-            "Tally Sheet not found for Id: {tallySheetId}".format(tallySheetId=tallySheetId),
-        )
-
-    create_tallysheet_version(body, tallySheet)
-
-    schema = TallySheetSchema()
-
-    return schema.dump(new_tallysheet).data, 201
