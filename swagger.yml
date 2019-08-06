@@ -25,7 +25,6 @@ tags:
 
 paths:
 
-
   /ballot:
     get:
       tags:
@@ -535,7 +534,6 @@ paths:
         description: Invoice Object.
         required: True
 
-
   /invoice/{invoiceId}:
     get:
       tags:
@@ -735,7 +733,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-
 
   /invoice/{invoiceId}/stationary-item:
     get:
@@ -1173,7 +1170,6 @@ paths:
         description: Invoice Stationary Item Object.
         required: True
 
-
   /proof/upload:
     put:
       tags:
@@ -1274,7 +1270,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /proof/{proofId}:
     get:
       tags:
@@ -1361,7 +1356,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /file/{fileId}/inline:
     get:
       tags:
@@ -1407,7 +1401,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /file/{fileId}/download:
     get:
       tags:
@@ -1452,7 +1445,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-
 
   /office:
     get:
@@ -1619,53 +1611,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  #    post:
-  #        tags:
-  #          - tallySheet
-  #        summary: Create a tally sheet.
-  #        operationId: api.TallySheetApi.create
-  #        responses:
-  #          '200':
-  #            description: Successful operation.
-  #            content:
-  #              application/json:
-  #                schema:
-  #                  $ref: '#/components/schemas/TallySheet'
-  #          '400':
-  #            description: Bad request.
-  #            content:
-  #              application/json:
-  #                schema:
-  #                  $ref: '#/components/schemas/ApiResponse'
-  #          '401':
-  #            description: Unauthorized.
-  #            content:
-  #              application/json:
-  #                schema:
-  #                  $ref: '#/components/schemas/ApiResponse'
-  #          '404':
-  #            description: Resource was not found.
-  #            content:
-  #              application/json:
-  #                schema:
-  #                  $ref: '#/components/schemas/ApiResponse'
-  #          '500':
-  #            description: Unexpected error.
-  #            content:
-  #              application/json:
-  #                schema:
-  #                  $ref: '#/components/schemas/ApiResponse'
-  #        #      security:
-  #        #        - organization_auth:
-  #        #            - 'write:org'
-  #        requestBody:
-  #          content:
-  #            application/json:
-  #              schema:
-  #                $ref: '#/components/schemas/TallySheet'
-  #          description: Tally sheet object.
-  #          required: True
-
   /tally-sheet/{tallySheetId}:
     get:
       tags:
@@ -1710,65 +1655,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-
-    put:
-      tags:
-        - tallySheet
-      summary: Update tally sheet
-      operationId: api.TallySheetApi.update
-      parameters:
-        - name: tallySheetId
-          in: path
-          description: Tally sheet ID
-          required: true
-          schema:
-            type: string
-        - name: tallySheetVersion
-          in: query
-          description: Tally sheet version
-          required: false
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TallySheet'
-        '400':
-          description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '404':
-          description: Resource was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '500':
-          description: Unexpected error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TallySheet'
-        description: Updated tally sheet object.
-        required: true
-
 
   /tally-sheet/PRE-41/{tallySheetId}/version/{tallySheetVersionId}:
     get:
@@ -1822,7 +1708,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-
 
   /tally-sheet/PRE-41/{tallySheetId}/version:
     post:
@@ -1907,61 +1792,6 @@ paths:
                         type: string
         description: Updated tally sheet object.
         required: true
-
-
-#  '/tally-sheet/{tallySheetId}/history':
-#    parameters:
-#      - name: tallySheetId
-#        in: path
-#        description: Tally sheet ID
-#        required: true
-#        schema:
-#          type: string
-#      - name: tallySheetVersion
-#        in: path
-#        description: Tally sheet version
-#        required: true
-#        schema:
-#          type: string
-#    get:
-#      tags:
-#        - tallySheetHistory
-#      summary: Get tally sheet hostory
-#      operationId: api.tallySheetHistory.getAll
-#      responses:
-#        '200':
-#          description: Successful operation.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/TallySheetHistory'
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#      security:
-#        - organization_auth:
-#            - 'read:org'
 
 externalDocs:
   description: Find out more about Swagger
