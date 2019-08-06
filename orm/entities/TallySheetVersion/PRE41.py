@@ -3,9 +3,10 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.schema import UniqueConstraint
 
+from exception import NotFoundException
 from util import get_paginated_query
 
-from orm.entities import HistoryVersion, TallySheetVersion
+from orm.entities import HistoryVersion, TallySheetVersion, TallySheet
 from orm.entities.Result import PartyWiseResult
 
 
@@ -24,15 +25,25 @@ class TallySheetVersionPRE41Model(db.Model):
     tallySheetCode = association_proxy("tallySheetVersion", "tallySheetCode")
     createdBy = association_proxy("tallySheetVersion", "createdBy")
     createdAt = association_proxy("tallySheetVersion", "createdAt")
-    # tallySheetContent = association_proxy("tallySheetVersion", "tallySheetContent")
-
-
+    tallySheetContent = association_proxy("partyWiseResult", "resultCounts")
 
 
 Model = TallySheetVersionPRE41Model
 
 
-def get_by_id(tallySheetVersionId):
+def get_all(tallySheetId):
+    query = Model.query.filter(Model.tallySheetId == tallySheetId)
+
+    result = get_paginated_query(query).all()
+
+    return result
+
+
+def get_by_id(tallySheetId, tallySheetVersionId):
+    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    if tallySheet is None:
+        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+
     result = Model.query.filter(
         Model.tallySheetVersionId == tallySheetVersionId
     ).one_or_none()

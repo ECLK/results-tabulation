@@ -1679,13 +1679,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: tallySheetVersion
-          in: query
-          description: Tally sheet version
-          required: false
-          schema:
-            type: integer
-            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1775,6 +1768,146 @@ paths:
               $ref: '#/components/schemas/TallySheet'
         description: Updated tally sheet object.
         required: true
+
+
+  /tally-sheet/PRE-41/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - tallySheetVersion
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.PRE41.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TallySheet'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+  /tally-sheet/PRE-41/{tallySheetId}/version:
+    post:
+      tags:
+        - tallySheetVersion
+      summary: Create tally sheet version
+      operationId: api.TallySheetVersionApi.PRE41.create
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - tallySheetContent
+                properties:
+                  tallySheetContent:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        partyId:
+                          type: integer
+                          format: int64
+                        count:
+                          type: integer
+                          format: int64
+                        countInWords:
+                          type: string
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tallySheetContent
+              properties:
+                tallySheetContent:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      partyId:
+                        type: integer
+                        format: int64
+                      count:
+                        type: integer
+                        format: int64
+                      countInWords:
+                        type: string
+        description: Updated tally sheet object.
+        required: true
+
 
 #  '/tally-sheet/{tallySheetId}/history':
 #    parameters:

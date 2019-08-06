@@ -55,8 +55,8 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
         fields = (
             "tallySheetId",
             "tallySheetCode",
-            "electionId",
-            "officeId",
+            # "electionId",
+            # "officeId",
             # "latestVersionId",
 
             "tallySheetVersionId",
@@ -73,13 +73,14 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
     tallySheetCode = EnumField(TallySheetCodeEnum)
     tallySheetContent = ma.Nested(PartyCountSchema, many=True)
 
+
 class TallySheetVersionSchema(ma.ModelSchema):
     class Meta:
         fields = (
             "tallySheetId",
             "tallySheetCode",
-            "electionId",
-            "officeId",
+            # "electionId",
+            # "officeId",
             # "latestVersionId",
 
             "tallySheetVersionId",
