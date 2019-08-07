@@ -17,6 +17,10 @@ source ./venv/bin/activate
 
 https://www.postgresql.org/download/linux/ubuntu/
 
+**wkhtmltopdf**
+
+`sudo apt-get install wkhtmltopdf`
+
 
 ## Get Started
 
