@@ -28,6 +28,10 @@ https://www.postgresql.org/download/linux/ubuntu/
 
 `pip install -r requirements.txt`
 
+**Drop (If exists) and Create the Database**
+
+`export ENV_CONFIG=./env/dev.cfg && python drop-and-create-database.py`
+
 **Build the Database**
 
 `export ENV_CONFIG=./env/dev.cfg && python build_database.py`
@@ -36,4 +40,4 @@ https://www.postgresql.org/download/linux/ubuntu/
 
 `export ENV_CONFIG=./env/dev.cfg && python index.py`
 
-http://localhost:5000/ui/
+https://localhost:5000/ui/
