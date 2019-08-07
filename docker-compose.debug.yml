@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  results-tabulation-tallysheets:
+    image: results-tabulation-tallysheets
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
