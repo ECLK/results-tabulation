@@ -4,7 +4,7 @@ from orm.entities import StationaryItem, Ballot, File, Invoice, BallotBox, \
 from orm.entities import TallySheet, TallySheetVersion
 from orm.entities.Result import PartyWiseResult
 from orm.entities.Result.PartyWiseResult import PartyCount
-from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum
+from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, ReportCodeEnum
 
 from marshmallow_enum import EnumField
 
@@ -158,6 +158,29 @@ class TallySheetSchema(ma.ModelSchema):
     tallySheetCode = EnumField(TallySheetCodeEnum)
     tallySheetProof = ma.Nested(Proof_Schema)
     # versions = ma.Nested(TallySheetVersionSchema, many=True)
+
+
+class ReportSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "reportId",
+            "reportCode",
+            "electionId",
+            "office",
+            "latestVersionId",
+            # "tallySheetProofId",
+            "reportProof",
+            "versions"
+        )
+
+        model = TallySheet.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    office = ma.Nested(OfficeSchema)
+    reportCode = EnumField(ReportCodeEnum)
+    reportProof = ma.Nested(Proof_Schema)
 
 
 # class TallySheet_PRE_41__party_Schema(ma.ModelSchema):

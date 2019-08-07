@@ -5,6 +5,7 @@ from util import Auth
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
 from flask import Flask, request
+import pdfkit
 
 FILE_DIRECTORY = os.path.join(os.getcwd(), 'data')
 
@@ -46,7 +47,7 @@ def get_by_id(fileId):
     return result
 
 
-def create(fileSource, fileType=FileTypeEnum.Any):
+def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
     # TODO validate the
     #   - file type
     #   - file size
@@ -67,12 +68,31 @@ def create(fileSource, fileType=FileTypeEnum.Any):
     db.session.add(result)
     db.session.commit()
 
-    save_file(result, fileSource)
+    save_uploaded_file_source(result, fileSource)
 
     return result
 
 
-def save_file(file, fileSource):
+def createReport(fileName, html):
+    file = Model(
+        fileType=FileTypeEnum.Pdf,
+        fileMimeType="application/pdf",
+        fileContentLength=len(bytes),
+        fileContentType="application/pdf ",
+        fileName=fileName,
+        fileCreatedBy=Auth().get_user_id()
+    )
+
+    db.session.add(file)
+    db.session.commit()
+
+    file_path = os.path.join(FILE_DIRECTORY, str(file.fileId))
+    pdf = pdfkit.from_string(html, file_path)
+
+    return file
+
+
+def save_uploaded_file_source(file, fileSource):
     file_path = os.path.join(FILE_DIRECTORY, str(file.fileId))
 
     fileSource.save(file_path)
