@@ -11,5 +11,6 @@ from orm.entities.Result import PartyWiseResult
 from orm.entities.Result.PartyWiseResult import PartyCount
 
 from orm.entities import TallySheet, TallySheetVersion
-from orm.entities.TallySheetVersion import PRE41
+from orm.entities.TallySheetVersion import TallySheetVersionPRE41
 
+from orm.entities import Report, ReportVersion

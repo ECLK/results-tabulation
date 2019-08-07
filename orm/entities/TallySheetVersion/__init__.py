@@ -10,7 +10,7 @@ from orm.entities import HistoryVersion, TallySheet
 
 from orm.enums import TallySheetCodeEnum, ProofTypeEnum
 
-from orm.entities.TallySheetVersion import PRE41
+from orm.entities.TallySheetVersion import TallySheetVersionPRE41
 from exception import NotFoundException
 
 
@@ -30,7 +30,7 @@ class TallySheetVersionModel(db.Model):
     @hybrid_property
     def tallySheetContent(self):
         if self.tallySheetCode == TallySheetCodeEnum.PRE_41:
-            pre41 = PRE41.get_by_id(tallySheetVersionId=self.tallySheetVersionId)
+            pre41 = TallySheetVersionPRE41.get_by_id(tallySheetVersionId=self.tallySheetVersionId)
             if pre41 is not None:
                 return pre41.partyWiseResult.resultCounts
 

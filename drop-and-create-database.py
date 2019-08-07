@@ -1,6 +1,5 @@
 from flask import Flask
 import sqlalchemy
-from app import connex_app
 
 app = Flask(__name__)
 

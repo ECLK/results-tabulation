@@ -1,8 +1,9 @@
 from app import db
 from orm.entities import *
+from orm.entities import Report
 
-from orm.enums import ElectorateTypeEnum, OfficeTypeEnum
-from api.TallySheetVersionApi import PRE41
+from orm.enums import ElectorateTypeEnum, OfficeTypeEnum, ReportCodeEnum
+from api.TallySheetVersionApi import TallySheetVersionPRE41Api
 
 from sqlalchemy.sql import func
 
@@ -137,7 +138,7 @@ for i in range(1, 2):
                 electionId=election.electionId,
                 officeId=officeIdOffset + row["id"]
             )
-            tallySheetVersion = PRE41.create(
+            tallySheetVersion = TallySheetVersionPRE41Api.create(
                 tallySheetId=tallySheet.tallySheetId,
                 body={
                     "tallySheetId": tallySheet.tallySheetId,
@@ -148,7 +149,7 @@ for i in range(1, 2):
                     ]
                 }
             )
-            tallySheetVersion = PRE41.create(
+            tallySheetVersion = TallySheetVersionPRE41Api.create(
                 tallySheetId=tallySheet.tallySheetId,
                 body={
                     "tallySheetId": tallySheet.tallySheetId,
@@ -173,7 +174,12 @@ for i in range(1, 2):
                 electionId=election.electionId,
                 officeId=officeIdOffset + row["id"]
             )
-            tallySheetVersion = PRE41.create(
+            report = Report.create(
+                reportCode=ReportCodeEnum.PRE_41,
+                electionId=election.electionId,
+                officeId=officeIdOffset + row["id"]
+            )
+            tallySheetVersion = TallySheetVersionPRE41Api.create(
                 tallySheetId=tallySheet.tallySheetId,
                 body={
                     "tallySheetId": tallySheet.tallySheetId,
@@ -184,7 +190,7 @@ for i in range(1, 2):
                     ]
                 }
             )
-            tallySheetVersion = PRE41.create(
+            tallySheetVersion = TallySheetVersionPRE41Api.create(
                 tallySheetId=tallySheet.tallySheetId,
                 body={
                     "tallySheetId": tallySheet.tallySheetId,

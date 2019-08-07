@@ -8,6 +8,7 @@ from util import get_paginated_query
 
 from orm.entities import HistoryVersion, TallySheetVersion, TallySheet
 from orm.entities.Result import PartyWiseResult
+from orm.enums import TallySheetCodeEnum
 
 
 class TallySheetVersionPRE41Model(db.Model):
@@ -43,6 +44,9 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
     if tallySheet is None:
         raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_41:
+        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
+
 
     result = Model.query.filter(
         Model.tallySheetVersionId == tallySheetVersionId

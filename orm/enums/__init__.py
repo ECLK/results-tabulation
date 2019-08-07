@@ -4,3 +4,4 @@ from orm.enums.FileTypeEnum import FileTypeEnum
 from orm.enums.ElectorateTypeEnum import ElectorateTypeEnum
 from orm.enums.ProofTypeEnum import ProofTypeEnum
 from orm.enums.TallySheetCodeEnum import TallySheetCodeEnum
+from orm.enums.ReportCodeEnum import ReportCodeEnum
