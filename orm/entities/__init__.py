@@ -10,6 +10,7 @@ from orm.entities.Office import DistrictCentre, CountingCentre, PollingStation
 from orm.entities.Result import PartyWiseResult
 from orm.entities.Result.PartyWiseResult import PartyCount
 
+from orm.entities import Submission, SubmissionVersion
 from orm.entities import TallySheet, TallySheetVersion
 from orm.entities.TallySheetVersion import TallySheetVersionPRE41
 

@@ -18,6 +18,5 @@ def create(reportCode, electionId, electorateId=None, officeId=None, parentRepor
         electionId=electionId,
         officeId=officeId,
         electorateId=electorateId,
-        parentReportId=parentReportId
+        parentSubmissionId=parentReportId
     )
-

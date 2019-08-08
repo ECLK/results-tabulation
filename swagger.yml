@@ -1872,6 +1872,55 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
 
+  /report/{reportId}/version:
+    post:
+      tags:
+        - report
+      summary: Get by ID
+      operationId: api.ReportVersionApi.create
+      parameters:
+        - name: reportId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: object
+                format: binary
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+
+
   /report:
     get:
       tags:

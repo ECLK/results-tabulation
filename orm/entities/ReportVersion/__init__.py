@@ -2,24 +2,25 @@ from app import db
 from sqlalchemy.orm import relationship
 from flask import render_template
 from sqlalchemy.ext.associationproxy import association_proxy
-from orm.entities import Election, File, Report, HistoryVersion
+
+from exception import NotFoundException
+from orm.entities import Election, File, Report, HistoryVersion, SubmissionVersion
 from orm.enums import ReportCodeEnum
 
 
 class ReportVersionModel(db.Model):
     __tablename__ = 'reportVersion'
-    reportVersionId = db.Column(db.Integer, db.ForeignKey(HistoryVersion.Model.__table__.c.historyVersionId),
-                                primary_key=True)
-    reportId = db.Column(db.Integer, db.ForeignKey(Report.Model.__table__.c.reportId))
-    reportFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId), nullable=True)
 
-    report = relationship(Report.Model, foreign_keys=[reportId])
-    historyVersion = relationship(HistoryVersion.Model, foreign_keys=[reportVersionId])
+    reportVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
+                                primary_key=True)
+    reportFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId), nullable=False)
+
+    submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[reportVersionId])
     reportFile = relationship(File.Model, foreign_keys=[reportFileId])
 
-    reportCode = association_proxy("report", "reportCode")
-    createdBy = association_proxy("historyVersion", "createdBy")
-    createdAt = association_proxy("historyVersion", "createdAt")
+    reportId = association_proxy("submissionVersion", "submissionId")
+    createdBy = association_proxy("submissionVersion", "createdBy")
+    createdAt = association_proxy("submissionVersion", "createdAt")
 
 
 Model = ReportVersionModel
@@ -34,8 +35,11 @@ def get_by_id(reportVersionId):
 
 
 def create(reportId):
-    report = Report.get_by_id(reportId)
-    report = Report.Model()
+    report = Report.get_by_id(reportId=reportId)
+    if report is None:
+        raise NotFoundException("Report not found. (reportId=%d)" % reportId)
+
+    submissionVersion = SubmissionVersion.create(submissionId=reportId)
 
     html = render_template(
         'test-report-template.html',
@@ -50,11 +54,10 @@ def create(reportId):
         ]
     )
 
-    fileName = ""
-    if report.electorateId is None:
-        fileName = "[PRE-41][%s][%s]" % (report.office.officeType, report.office.officeName)
+    if report.submission.electorate is None:
+        fileName = "PRE-41-%s-%s.pdf" % (report.office.officeType.name, report.office.officeName)
     else:
-        fileName = "[PRE-41][%s][%s]" % (report.electorate.electorateType, report.electorate.electorateName)
+        fileName = "PRE-41-%s-%s.pdf" % (report.electorate.electorateType.name, report.electorate.electorateName)
 
     reportFile = File.createReport(
         fileName=fileName,
@@ -62,7 +65,7 @@ def create(reportId):
     )
 
     result = Model(
-        reportId=reportId,
+        reportVersionId=submissionVersion.submissionVersionId,
         reportFileId=reportFile.fileId
     )
 
