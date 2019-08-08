@@ -13,19 +13,31 @@ def get_by_id(fileId):
     return Schema().dump(result).data
 
 
-def get_inline_file(fileId):
+def response_file(fileId, as_attachment):
     file = Model.get_by_id(
         fileId=fileId
     )
 
-    return send_from_directory(directory=FILE_DIRECTORY, filename=str(file.fileId), mimetype=file.fileMimeType,
-                               attachment_filename=file.fileName)
+    fileName = "%d-%s" % (file.fileId, file.fileName)
+
+    return send_from_directory(
+        directory=FILE_DIRECTORY,
+        filename=str(file.fileId),
+        mimetype=file.fileMimeType,
+        attachment_filename=fileName,
+        as_attachment=as_attachment
+    )
+
+
+def get_inline_file(fileId):
+    return response_file(
+        fileId=fileId,
+        as_attachment=False
+    )
 
 
 def get_download_file(fileId):
-    file = Model.get_by_id(
-        fileId=fileId
+    return response_file(
+        fileId=fileId,
+        as_attachment=True
     )
-
-    return send_from_directory(directory=FILE_DIRECTORY, filename=str(file.fileId), mimetype=file.fileMimeType,
-                               attachment_filename=file.fileName, as_attachment=True)

@@ -77,7 +77,7 @@ def createReport(fileName, html):
     file = Model(
         fileType=FileTypeEnum.Pdf,
         fileMimeType="application/pdf",
-        fileContentLength=len(bytes),
+        fileContentLength=len(html),
         fileContentType="application/pdf ",
         fileName=fileName,
         fileCreatedBy=Auth().get_user_id()
@@ -86,8 +86,9 @@ def createReport(fileName, html):
     db.session.add(file)
     db.session.commit()
 
+    options = {}
     file_path = os.path.join(FILE_DIRECTORY, str(file.fileId))
-    pdf = pdfkit.from_string(html, file_path)
+    pdfkit.from_string(html, file_path, options=options)
 
     return file
 

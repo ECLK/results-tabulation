@@ -5,32 +5,27 @@ from sqlalchemy.schema import UniqueConstraint
 
 from util import get_paginated_query
 
-from orm.entities import Election, Office, Proof, History, HistoryVersion
+from orm.entities import Election, Office, Proof, History, HistoryVersion, Submission
 
-from orm.enums import TallySheetCodeEnum, ProofTypeEnum
+from orm.enums import TallySheetCodeEnum, ProofTypeEnum, SubmissionTypeEnum
 
 
 class TallySheetModel(db.Model):
     __tablename__ = 'tallySheet'
-    tallySheetId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    tallySheetId = db.Column(db.Integer, db.ForeignKey(Submission.Model.__table__.c.submissionId), primary_key=True)
     tallySheetCode = db.Column(db.Enum(TallySheetCodeEnum), nullable=False)
-    electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
-    officeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=False)
-    latestVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"), nullable=True)
-    tallySheetProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId), nullable=False)
-    tallySheetHistoryId = db.Column(db.Integer, db.ForeignKey(History.Model.__table__.c.historyId), nullable=False)
 
-    election = relationship(Election.Model, foreign_keys=[electionId])
-    office = relationship(Office.Model, foreign_keys=[officeId])
-    tallySheetProof = relationship(Proof.Model, foreign_keys=[tallySheetProofId])
-    tallySheetHistory = relationship(History.Model, foreign_keys=[tallySheetHistoryId])
-    latestVersion = relationship("TallySheetVersionModel", foreign_keys=[latestVersionId])
-    versions = relationship("TallySheetVersionModel", order_by="desc(TallySheetVersionModel.tallySheetVersionId)",
-                            primaryjoin="TallySheetModel.tallySheetId==TallySheetVersionModel.tallySheetId")
+    submission = relationship("SubmissionModel", foreign_keys=[tallySheetId])
 
-    __table_args__ = (
-        UniqueConstraint('tallySheetCode', 'electionId', 'officeId', name='_tallysheet_unique_key'),
-    )
+    electionId = association_proxy("submission", "electionId")
+    office = association_proxy("submission", "office")
+    electorate = association_proxy("submission", "electorate")
+    latestVersionId = association_proxy("submission", "latestVersionId")
+    parentSubmission = association_proxy("submission", "parentSubmission")
+    childSubmissions = association_proxy("submission", "childSubmissions")
+    submissionProofId = association_proxy("submission", "submissionProofId")
+    versions = association_proxy("submission", "versions")
 
 
 Model = TallySheetModel
@@ -48,10 +43,10 @@ def get_all(electionId=None, officeId=None):
     query = Model.query
 
     if electionId is not None:
-        query = query.filter(Model.electionId == electionId)
+        query = query.filter(Model.submission.electionId == electionId)
 
     if officeId is not None:
-        query = query.filter(Model.officeId == officeId)
+        query = query.filter(Model.submission.officeId == officeId)
 
     result = get_paginated_query(query).all()
 
@@ -59,15 +54,17 @@ def get_all(electionId=None, officeId=None):
 
 
 def create(tallySheetCode, electionId, officeId):
-    tallySheetProof = Proof.create(proofType=ProofTypeEnum.ManuallyFilledTallySheets)
-    tallySheetHistory = History.create()
+    submission = Submission.create(
+        submissionType=SubmissionTypeEnum.TallySheet,
+        electionId=electionId,
+        officeId=officeId,
+        electorateId=None,
+        parentSubmissionId=None
+    )
 
     result = Model(
-        electionId=electionId,
+        tallySheetId=submission.submissionId,
         tallySheetCode=tallySheetCode,
-        officeId=officeId,
-        tallySheetProofId=tallySheetProof.proofId,
-        tallySheetHistoryId=tallySheetHistory.historyId
     )
 
     db.session.add(result)

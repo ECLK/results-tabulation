@@ -6,7 +6,7 @@ from sqlalchemy.schema import UniqueConstraint
 
 from util import get_paginated_query
 
-from orm.entities import HistoryVersion, TallySheet
+from orm.entities import HistoryVersion, TallySheet, SubmissionVersion, Submission
 
 from orm.enums import TallySheetCodeEnum, ProofTypeEnum
 
@@ -16,25 +16,10 @@ from exception import NotFoundException
 
 class TallySheetVersionModel(db.Model):
     __tablename__ = 'tallySheetVersion'
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(HistoryVersion.Model.__table__.c.historyVersionId),
+    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
                                     primary_key=True)
-    tallySheetId = db.Column(db.Integer, db.ForeignKey(TallySheet.Model.__table__.c.tallySheetId))
 
-    tallySheet = relationship(TallySheet.Model, foreign_keys=[tallySheetId])
-    historyVersion = relationship(HistoryVersion.Model, foreign_keys=[tallySheetVersionId])
-
-    tallySheetCode = association_proxy("tallySheet", "tallySheetCode")
-    createdBy = association_proxy("historyVersion", "createdBy")
-    createdAt = association_proxy("historyVersion", "createdAt")
-
-    @hybrid_property
-    def tallySheetContent(self):
-        if self.tallySheetCode == TallySheetCodeEnum.PRE_41:
-            pre41 = TallySheetVersionPRE41.get_by_id(tallySheetVersionId=self.tallySheetVersionId)
-            if pre41 is not None:
-                return pre41.partyWiseResult.resultCounts
-
-        return None
+    submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[tallySheetVersionId])
 
 
 Model = TallySheetVersionModel
@@ -56,11 +41,10 @@ def create(tallySheetId):
     if tallySheet is None:
         raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
 
-    historyVersion = HistoryVersion.create(tallySheet.tallySheetHistoryId)
+    submissionVersion = SubmissionVersion.create(submissionId=tallySheetId)
 
     result = Model(
-        tallySheetId=tallySheetId,
-        tallySheetVersionId=historyVersion.historyVersionId,
+        tallySheetVersionId=submissionVersion.submissionVersionId
     )
     db.session.add(result)
     db.session.commit()
