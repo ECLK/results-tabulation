@@ -1,7 +1,7 @@
 from app import db
 from orm.entities import Electorate
 from orm.entities.Electorate import Country
-from orm.enums import ElectorateTypeEnum
+from orm.enums import ElectorateTypeEnum, AreaTypeEnum
 from exception import NotFoundException
 from sqlalchemy.orm import relationship, synonym
 
@@ -12,7 +12,7 @@ class ProvinceModel(Electorate.Model):
     country = synonym("parentElectorate")
 
     __mapper_args__ = {
-        'polymorphic_identity': ElectorateTypeEnum.Province
+        'polymorphic_identity': AreaTypeEnum.Province
     }
 
 

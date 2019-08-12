@@ -13,8 +13,8 @@ class InvoiceModel(db.Model):
     __tablename__ = 'invoice'
     invoiceId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
-    issuingOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=False)
-    receivingOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=False)
+    issuingOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.areaId), nullable=False)
+    receivingOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.areaId), nullable=False)
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
     issuedBy = db.Column(db.Integer, nullable=False)
     issuedTo = db.Column(db.Integer, nullable=False)
