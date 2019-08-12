@@ -1,9 +1,9 @@
 from app import db
-from orm.entities import Electorate
-from orm.entities.Electorate import PollingDivision
-from orm.enums import ElectorateTypeEnum, AreaTypeEnum
+from orm.entities.Area import Electorate
+from orm.entities.Area.Electorate import PollingDivision
+from orm.enums import AreaTypeEnum
 from exception import NotFoundException
-from sqlalchemy.orm import relationship, synonym
+from sqlalchemy.orm import synonym
 from sqlalchemy.ext.associationproxy import association_proxy
 
 

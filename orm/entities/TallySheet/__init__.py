@@ -19,8 +19,8 @@ class TallySheetModel(db.Model):
     submission = relationship("SubmissionModel", foreign_keys=[tallySheetId])
 
     electionId = association_proxy("submission", "electionId")
-    office = association_proxy("submission", "office")
-    electorate = association_proxy("submission", "electorate")
+    officeId = association_proxy("submission", "areaId")
+    office = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
     parentSubmission = association_proxy("submission", "parentSubmission")
     childSubmissions = association_proxy("submission", "childSubmissions")
@@ -46,7 +46,7 @@ def get_all(electionId=None, officeId=None):
         query = query.filter(Model.submission.electionId == electionId)
 
     if officeId is not None:
-        query = query.filter(Model.submission.officeId == officeId)
+        query = query.filter(Model.submission.areaId == officeId)
 
     result = get_paginated_query(query).all()
 
@@ -57,7 +57,7 @@ def create(tallySheetCode, electionId, officeId):
     submission = Submission.create(
         submissionType=SubmissionTypeEnum.TallySheet,
         electionId=electionId,
-        officeId=officeId,
+        areaId=officeId,
         electorateId=None,
         parentSubmissionId=None
     )

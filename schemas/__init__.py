@@ -102,13 +102,6 @@ class AreaSchema(ma.ModelSchema):
 class ElectorateSchema(ma.ModelSchema):
     class Meta:
         fields = (
-            # "areaId",
-            # "areaName",
-            # "areaType",
-            # "electionId",
-            # "parents",
-            # "children"
-
             "electorateId",
             "electorateName",
             "electorateType",
@@ -132,13 +125,6 @@ class ElectorateSchema(ma.ModelSchema):
 class OfficeSchema(ma.ModelSchema):
     class Meta:
         fields = (
-            # "areaId",
-            # "areaName",
-            # "areaType",
-            # "electionId",
-            # "parents",
-            # "children"
-
             "officeId",
             "officeName",
             "officeType",
@@ -297,11 +283,8 @@ class TallySheetSchema(ma.ModelSchema):
         sqla_session = db.session
 
     tallySheetCode = EnumField(TallySheetCodeEnum)
-    # submission = ma.Nested(SubmissionSchema)
     office = ma.Nested(OfficeSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
-    # versions = ma.Nested(SubmissionVersionSchema, "submissionVersionId", many=True)
-    electorate = ma.Nested(ElectorateSchema)
     submissionProof = ma.Nested(Proof_Schema)
 
 
@@ -311,8 +294,7 @@ class ReportSchema(ma.ModelSchema):
             "reportId",
             "reportCode",
             "electionId",
-            "office",
-            "electorate",
+            "area",
             "latestVersionId",
             "parentSubmission",
             "childSubmissions",
@@ -326,9 +308,8 @@ class ReportSchema(ma.ModelSchema):
         sqla_session = db.session
 
     reportCode = EnumField(ReportCodeEnum)
-    office = ma.Nested(OfficeSchema)
+    area = ma.Nested(AreaSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
-    electorate = ma.Nested(ElectorateSchema)
     submissionProof = ma.Nested(Proof_Schema)
 
 
