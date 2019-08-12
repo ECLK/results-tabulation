@@ -42,8 +42,8 @@ def create(tallySheetId, body):
                 partyWiseResultId=pre41.partyWiseResultId,
                 partyId=party_count_body.get("partyId"),
                 count=party_count_body.get("count"),
-                countInWords=party_count_body.get("countInWords")
-                # electionId=pre41.tallySheet.electionId
+                countInWords=party_count_body.get("countInWords"),
+                electionId=pre41.submission.electionId
             )
 
     return TallySheetVersionPRE41Schema().dump(pre41).data
