@@ -1,6 +1,6 @@
 from app import db
-from orm.entities import Electorate
-from orm.entities.Electorate import Country
+from orm.entities.Area import Electorate
+from orm.entities.Area.Electorate import Country
 from orm.enums import ElectorateTypeEnum, AreaTypeEnum
 from exception import NotFoundException
 from sqlalchemy.orm import synonym

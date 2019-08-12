@@ -1,5 +1,5 @@
 from app import db
-from orm.entities import Electorate
+from orm.entities.Area import Electorate
 from orm.enums import ElectorateTypeEnum, AreaTypeEnum
 from sqlalchemy.ext.associationproxy import association_proxy
 

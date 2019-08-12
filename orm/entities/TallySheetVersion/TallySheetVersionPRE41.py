@@ -20,6 +20,7 @@ class TallySheetVersionPRE41Model(db.Model):
     partyWiseResult = relationship(PartyWiseResult.Model, foreign_keys=[partyWiseResultId])
     submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[tallySheetVersionId])
 
+    submission = association_proxy("submissionVersion", "submission")
     tallySheetId = association_proxy("submissionVersion", "submissionId")
     createdBy = association_proxy("submissionVersion", "createdBy")
     createdAt = association_proxy("submissionVersion", "createdAt")

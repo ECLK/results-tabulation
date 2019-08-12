@@ -16,8 +16,7 @@ class SubmissionModel(db.Model):
     submissionType = db.Column(db.Enum(SubmissionTypeEnum), nullable=False)
     parentSubmissionId = db.Column(db.Integer, db.ForeignKey(submissionId), nullable=True)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
-    officeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.areaId), nullable=False)
-    electorateId = db.Column(db.Integer, db.ForeignKey(Electorate.Model.__table__.c.areaId), nullable=True)
+    areaId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.areaId), nullable=False)
     latestVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
     submissionProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId), nullable=False)
     submissionHistoryId = db.Column(db.Integer, db.ForeignKey(History.Model.__table__.c.historyId), nullable=False)
@@ -25,8 +24,7 @@ class SubmissionModel(db.Model):
     parentSubmission = relationship("SubmissionModel", remote_side=[submissionId])
     childSubmissions = relationship("SubmissionModel", foreign_keys=[parentSubmissionId])
     election = relationship(Election.Model, foreign_keys=[electionId])
-    office = relationship(Office.Model, foreign_keys=[officeId])
-    electorate = relationship(Electorate.Model, foreign_keys=[electorateId])
+    area = relationship(Office.Model, foreign_keys=[areaId])
     submissionProof = relationship(Proof.Model, foreign_keys=[submissionProofId])
     submissionHistory = relationship(History.Model, foreign_keys=[submissionHistoryId])
     latestVersion = relationship("SubmissionVersionModel", foreign_keys=[latestVersionId])
@@ -52,7 +50,7 @@ def get_all(electionId=None, officeId=None):
         query = query.filter(Model.electionId == electionId)
 
     if officeId is not None:
-        query = query.filter(Model.officeId == officeId)
+        query = query.filter(Model.areaId == officeId)
 
     result = get_paginated_query(query).all()
 
@@ -68,15 +66,14 @@ def get_submission_proof_type(submissionType):
     return None
 
 
-def create(submissionType, electionId, officeId, electorateId=None, parentSubmissionId=None):
+def create(submissionType, electionId, areaId, electorateId=None, parentSubmissionId=None):
     submissionProof = Proof.create(proofType=get_submission_proof_type(submissionType=submissionType))
     submissionHistory = History.create()
 
     result = Model(
         electionId=electionId,
         submissionType=submissionType,
-        officeId=officeId,
-        electorateId=electorateId,
+        areaId=areaId,
         parentSubmissionId=parentSubmissionId,
         submissionProofId=submissionProof.proofId,
         submissionHistoryId=submissionHistory.historyId

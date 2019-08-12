@@ -16,8 +16,7 @@ class ReportModel(db.Model):
     submission = relationship("SubmissionModel", foreign_keys=[reportId])
 
     electionId = association_proxy("submission", "electionId")
-    office = association_proxy("submission", "office")
-    electorate = association_proxy("submission", "electorate")
+    area = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
     parentSubmission = association_proxy("submission", "parentSubmission")
     childSubmissions = association_proxy("submission", "childSubmissions")
@@ -50,11 +49,11 @@ def get_all(electionId=None, officeId=None):
     return result
 
 
-def create(reportCode, electionId, officeId=None, electorateId=None, parentSubmissionId=None):
+def create(reportCode, electionId, areaId=None, electorateId=None, parentSubmissionId=None):
     submission = Submission.create(
         submissionType=SubmissionTypeEnum.Report,
         electionId=electionId,
-        officeId=officeId,
+        areaId=areaId,
         electorateId=electorateId,
         parentSubmissionId=parentSubmissionId
     )
