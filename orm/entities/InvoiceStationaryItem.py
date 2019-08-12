@@ -19,7 +19,7 @@ class InvoiceStationaryItemModel(db.Model):
     receivedBy = db.Column(db.Integer, nullable=True)
     receivedFrom = db.Column(db.Integer, nullable=True)
     receivedAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow, nullable=True)
-    receivedOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.officeId), nullable=True)
+    receivedOfficeId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.areaId), nullable=True)
     receivedProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId),
                                 nullable=True)
 

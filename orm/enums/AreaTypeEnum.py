@@ -1,7 +1,7 @@
 import enum
 
 
-class ElectorateTypeEnum(enum.Enum):
+class AreaTypeEnum(enum.Enum):
     Country = 1
     Province = 2
     AdministrativeDistrict = 3
@@ -13,3 +13,6 @@ class ElectorateTypeEnum(enum.Enum):
     DistrictCentre = 8
     CountingCentre = 9
     PollingStation = 10
+
+    Electorate = 11
+    Office = 12

@@ -1,11 +1,13 @@
+from marshmallow.fields import Integer, String
+
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, File, Invoice, BallotBox, \
-    InvoiceStationaryItem, Election, Proof, History, Submission, Electorate, SubmissionVersion
+    InvoiceStationaryItem, Election, Proof, History, Submission, Electorate, SubmissionVersion, Area
 from orm.entities import TallySheet, TallySheetVersion
 from orm.entities.Result import PartyWiseResult
 from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, ReportCodeEnum, \
-    SubmissionTypeEnum, ElectorateTypeEnum
+    SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum
 
 from marshmallow_enum import EnumField
 
@@ -75,14 +77,44 @@ class TallySheetVersionSchema(ma.ModelSchema):
     tallySheetContent = ma.Nested(PartyCountSchema, many=True)
 
 
+class AreaSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "areaId",
+            "areaName",
+            "areaType",
+            "electionId",
+            "parents",
+            "children"
+        )
+
+        model = Area.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    areaType = EnumField(AreaTypeEnum)
+    electorateType = EnumField(ElectorateTypeEnum)
+    parents = ma.Nested('self', many=True)
+    children = ma.Nested('self', only="areaId", many=True)
+
+
 class ElectorateSchema(ma.ModelSchema):
     class Meta:
         fields = (
+            # "areaId",
+            # "areaName",
+            # "areaType",
+            # "electionId",
+            # "parents",
+            # "children"
+
             "electorateId",
             "electorateName",
             "electorateType",
             "electionId",
-            "parentelectorate"
+            "parents",
+            "children"
         )
 
         model = Electorate.Model
@@ -90,18 +122,29 @@ class ElectorateSchema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
+    electorateId = Integer()
+    electorateName = String()
     electorateType = EnumField(ElectorateTypeEnum)
-    parentelectorate = ma.Nested('self')
+    parents = ma.Nested('AreaSchema', many=True)
+    children = ma.Nested('AreaSchema', only="areaId", many=True)
 
 
 class OfficeSchema(ma.ModelSchema):
     class Meta:
         fields = (
+            # "areaId",
+            # "areaName",
+            # "areaType",
+            # "electionId",
+            # "parents",
+            # "children"
+
             "officeId",
             "officeName",
             "officeType",
             "electionId",
-            "parentOffice"
+            "parents",
+            "children"
         )
 
         model = TallySheet.Model
@@ -109,8 +152,11 @@ class OfficeSchema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
+    electorateId = Integer()
+    electorateName = String()
     officeType = EnumField(OfficeTypeEnum)
-    parentOffice = ma.Nested('self')
+    parents = ma.Nested('AreaSchema', many=True)
+    children = ma.Nested('AreaSchema', only="areaId", many=True)
 
 
 class Proof_Schema(ma.ModelSchema):
@@ -211,6 +257,7 @@ class ReportVersionSchema(ma.ModelSchema):
     # submission = ma.Nested(SubmissionSchema)
     reportFile = ma.Nested(File_Schema)
 
+
 class TallySheetVersionPRE41Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -237,7 +284,6 @@ class TallySheetSchema(ma.ModelSchema):
             "tallySheetCode",
             "electionId",
             "office",
-            "electorate",
             "latestVersionId",
             "parentSubmission",
             "childSubmissions",
@@ -264,7 +310,14 @@ class ReportSchema(ma.ModelSchema):
         fields = (
             "reportId",
             "reportCode",
-            "submission"
+            "electionId",
+            "office",
+            "electorate",
+            "latestVersionId",
+            "parentSubmission",
+            "childSubmissions",
+            "submissionProofId",
+            "versions"
         )
 
         model = TallySheet.Model
@@ -273,7 +326,10 @@ class ReportSchema(ma.ModelSchema):
         sqla_session = db.session
 
     reportCode = EnumField(ReportCodeEnum)
-    submission = ma.Nested(SubmissionSchema)
+    office = ma.Nested(OfficeSchema)
+    versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
+    electorate = ma.Nested(ElectorateSchema)
+    submissionProof = ma.Nested(Proof_Schema)
 
 
 # class TallySheet_PRE_41__party_Schema(ma.ModelSchema):

@@ -1,7 +1,7 @@
 from app import db
 from orm.entities import Electorate
 from orm.entities.Electorate import PollingDivision
-from orm.enums import ElectorateTypeEnum
+from orm.enums import ElectorateTypeEnum, AreaTypeEnum
 from exception import NotFoundException
 from sqlalchemy.orm import relationship, synonym
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -13,7 +13,7 @@ class PollingDistrictModel(Electorate.Model):
     country = association_proxy("electoralDistrict", "country")
 
     __mapper_args__ = {
-        'polymorphic_identity': ElectorateTypeEnum.PollingDistrict
+        'polymorphic_identity': AreaTypeEnum.PollingDistrict
     }
 
 

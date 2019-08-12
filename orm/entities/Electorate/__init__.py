@@ -1,35 +1,23 @@
+from sqlalchemy.ext.associationproxy import association_proxy
+
 from app import db
-from sqlalchemy.orm import relationship
-from orm.enums import ElectorateTypeEnum
-from orm.entities import Election
+from sqlalchemy.orm import relationship, synonym
+from orm.enums import ElectorateTypeEnum, AreaTypeEnum, AreaCategoryEnum
+from orm.entities import Election, Area
 from sqlalchemy.ext.hybrid import hybrid_property
 from util import get_paginated_query
 
 
-class ElectorateModel(db.Model):
-    __tablename__ = 'electorate'
-    electorateId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    electorateName = db.Column(db.String(100), nullable=False)
-    electorateType = db.Column(db.Enum(ElectorateTypeEnum), nullable=False)
-    electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
-    parentElectorateId = db.Column(db.Integer, db.ForeignKey(electorateId), nullable=True)
+class ElectorateModel(Area.Model):
+    # __tablename__ = 'electorate'
 
-    election = relationship(Election.Model, foreign_keys=[electionId])
-    parentElectorate = relationship("ElectorateModel", remote_side=[electorateId])
-    childElectorates = relationship("ElectorateModel", foreign_keys=[parentElectorateId])
-    pollingStations = relationship("PollingStationModel")
-
-    @hybrid_property
-    def allPollingStations(self):
-        result = self.pollingStations
-        if self.childElectorates is not None:
-            for childElectorate in self.childElectorates:
-                result = result + childElectorate.allPollingStations
-
-        return result
+    electorateId = synonym("areaId")
+    electorateName = synonym("areaName")
+    electorateType = synonym("areaType")
 
     __mapper_args__ = {
-        'polymorphic_on': electorateType
+        'polymorphic_identity': AreaTypeEnum.Electorate,
+        'polymorphic_on': "areaType"
     }
 
 
@@ -38,11 +26,12 @@ Model = ElectorateModel
 
 def create(electorateName, electorateType, electionId, parentElectorateId=None):
     result = Model(
-        electorateName=electorateName,
-        electorateType=electorateType,
+        areaName=electorateName,
+        areaType=electorateType,
         electionId=electionId,
-        parentElectorateId=parentElectorateId
+        parentAreaId=parentElectorateId
     )
+
     db.session.add(result)
     db.session.commit()
 

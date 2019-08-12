@@ -1,12 +1,12 @@
 from app import db
 from orm.entities import Electorate
-from orm.enums import ElectorateTypeEnum
+from orm.enums import ElectorateTypeEnum, AreaTypeEnum
 from sqlalchemy.ext.associationproxy import association_proxy
 
 
 class CountryModel(Electorate.Model):
     __mapper_args__ = {
-        'polymorphic_identity': ElectorateTypeEnum.Country
+        'polymorphic_identity': AreaTypeEnum.Country
     }
 
 
