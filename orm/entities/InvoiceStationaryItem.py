@@ -67,9 +67,6 @@ def create(invoiceId, stationaryItemId):
             proofType=ProofTypeEnum.InvoiceStationaryItemReceive
         )
 
-        print("######################### received_proof ###", received_proof)
-        print("######################### received_proof.proofId ###", received_proof.proofId)
-
         result = Model(
             invoiceId=invoiceId,
             stationaryItemId=stationaryItemId,

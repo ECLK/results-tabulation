@@ -13,14 +13,20 @@ class ReportVersionModel(db.Model):
 
     reportVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
                                 primary_key=True)
+    reportVersionCode = db.Column(db.Enum(ReportCodeEnum), nullable=False)
     reportFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId), nullable=False)
 
     submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[reportVersionId])
     reportFile = relationship(File.Model, foreign_keys=[reportFileId])
 
+    submission = association_proxy("submissionVersion", "submission")
     reportId = association_proxy("submissionVersion", "submissionId")
     createdBy = association_proxy("submissionVersion", "createdBy")
     createdAt = association_proxy("submissionVersion", "createdAt")
+
+    __mapper_args__ = {
+        'polymorphic_on': reportVersionCode
+    }
 
 
 Model = ReportVersionModel
@@ -34,39 +40,26 @@ def get_by_id(reportVersionId):
     return result
 
 
-def create(reportId):
+def get_report_filename(report):
+    return "PRE-41-%s-%s.pdf" % (report.area.areaType.name, report.area.areaName)
+
+
+def create(reportId, html):
     report = Report.get_by_id(reportId=reportId)
     if report is None:
         raise NotFoundException("Report not found. (reportId=%d)" % reportId)
 
     submissionVersion = SubmissionVersion.create(submissionId=reportId)
 
-    html = render_template(
-        'test-report-template.html',
-        title="Test Template",
-        data=[
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        ]
-    )
-
-    if report.submission.electorate is None:
-        fileName = "PRE-41-%s-%s.pdf" % (report.office.officeType.name, report.office.officeName)
-    else:
-        fileName = "PRE-41-%s-%s.pdf" % (report.electorate.electorateType.name, report.electorate.electorateName)
-
     reportFile = File.createReport(
-        fileName=fileName,
+        fileName=get_report_filename(report),
         html=html
     )
 
     result = Model(
         reportVersionId=submissionVersion.submissionVersionId,
-        reportFileId=reportFile.fileId
+        reportFileId=reportFile.fileId,
+        reportVersionCode=report.reportCode
     )
 
     db.session.add(result)

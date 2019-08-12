@@ -33,7 +33,6 @@ def create(electionId, name, countryId=None):
     if country is None:
         raise NotFoundException("Country not found (countryId=%d)" % countryId)
     else:
-        print("###### ")
         province = Model(
             electorateName=name,
             electionId=electionId,
