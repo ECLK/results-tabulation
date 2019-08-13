@@ -46,7 +46,7 @@ class CandidateSchema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    partySymbol = ma.Nested(File_Schema)
+    candidateProfileImageFile = ma.Nested(File_Schema)
 
 
 class PartySchema(ma.ModelSchema):
@@ -54,7 +54,7 @@ class PartySchema(ma.ModelSchema):
         fields = (
             "partyId",
             "partyName",
-            "partySymbol",
+            "partySymbolFile",
             "candidates"
         )
 
@@ -63,7 +63,7 @@ class PartySchema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    partySymbol = ma.Nested(File_Schema)
+    partySymbolFile = ma.Nested(File_Schema)
     candidates = ma.Nested(CandidateSchema, many=True)
 
 

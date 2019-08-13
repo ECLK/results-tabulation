@@ -9,8 +9,9 @@ from util import get_paginated_query
 
 class ElectionPartyModel(db.Model):
     __tablename__ = 'election_party'
-    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), primary_key=True)
-    partyId = db.Column(db.Integer, db.ForeignKey(Party.Model.__table__.c.partyId), primary_key=True)
+    electionPartyId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
+    partyId = db.Column(db.Integer, db.ForeignKey(Party.Model.__table__.c.partyId))
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     party = relationship(Party.Model, foreign_keys=[partyId])
@@ -23,7 +24,12 @@ class ElectionPartyModel(db.Model):
 
     partyName = association_proxy("party", "partyName")
     partySymbolFileId = association_proxy("party", "partySymbolFileId")
+    partySymbolFile = association_proxy("party", "partySymbolFile")
     partySymbol = association_proxy("party", "partySymbol")
+
+    __table_args__ = (
+        db.UniqueConstraint('electionId', 'partyId', name='PartyPerElection'),
+    )
 
     def __init__(self, electionId, partyId):
         super(ElectionPartyModel, self).__init__(
