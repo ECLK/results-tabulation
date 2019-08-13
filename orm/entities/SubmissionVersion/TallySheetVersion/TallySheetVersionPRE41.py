@@ -1,12 +1,12 @@
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.schema import UniqueConstraint
 
 from exception import NotFoundException
 from util import get_paginated_query
 
-from orm.entities import HistoryVersion, TallySheetVersion, TallySheet, SubmissionVersion
+from orm.entities import SubmissionVersion
+from orm.entities.Submission import TallySheet
 from orm.entities.Result import PartyWiseResult
 from orm.enums import TallySheetCodeEnum
 

@@ -1,14 +1,11 @@
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.schema import UniqueConstraint
 
 from util import get_paginated_query
 
-from orm.entities import HistoryVersion, Submission
-
-from orm.enums import ProofTypeEnum
+from orm.entities import Submission
+from orm.entities.History import HistoryVersion
 
 from exception import NotFoundException
 

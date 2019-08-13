@@ -1,13 +1,12 @@
-from flask import abort
 from app import db
-from orm.entities.TallySheet import Model as TallySheetModel
+from orm.entities.Submission.TallySheet import Model as TallySheetModel
 from orm.entities.History import Model as TallySheetVersionModel
 from schemas import TallySheetSchema
 from api import tallySheetPRE41Api
 from util import RequestBody, Auth
 
 from schemas import TallySheetSchema as Schema
-from orm.entities import TallySheet
+from orm.entities.Submission import TallySheet
 
 
 def getAll(electionId=None, officeId=None):

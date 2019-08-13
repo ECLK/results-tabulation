@@ -1,7 +1,7 @@
 from app import db
-from sqlalchemy.orm import relationship
 
-from orm.entities import Party, ElectionParty
+from orm.entities import Party
+from orm.entities.Election import ElectionParty
 from orm.entities.Result import PartyWiseResult
 from exception import NotFoundException
 

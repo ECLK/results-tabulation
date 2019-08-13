@@ -1,6 +1,6 @@
 from app import db
 from sqlalchemy.orm import relationship
-from orm.entities import Image
+from orm.entities.IO.File import Image
 
 
 class CandidateModel(db.Model):

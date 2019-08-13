@@ -1,7 +1,6 @@
 from app import db
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.associationproxy import association_proxy
-from orm.entities import File, Folder
+from orm.entities.IO import File, Folder
 
 
 class FolderFileModel(db.Model):

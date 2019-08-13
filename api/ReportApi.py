@@ -1,8 +1,4 @@
-from util import RequestBody
-
-from flask import render_template, make_response
-import pdfkit
-from orm.entities import Report
+from orm.entities.Submission import Report
 from schemas import ReportSchema
 
 

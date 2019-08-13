@@ -1,6 +1,6 @@
 from util import RequestBody
 from schemas import Invoice_StationaryItem_Schema as Schema
-from orm.entities import Image, InvoiceStationaryItem
+from orm.entities.Invoice import InvoiceStationaryItem
 import connexion
 
 
