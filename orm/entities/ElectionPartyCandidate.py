@@ -1,38 +1,25 @@
-from sqlalchemy.ext.associationproxy import association_proxy
-
 from app import db
 from sqlalchemy.orm import relationship
-from orm.entities import Election, Party, ElectionPartyCandidate
+from orm.entities import Election, Party, Candidate
 from util import get_paginated_query
 
 
-class ElectionPartyModel(db.Model):
-    __tablename__ = 'election_party'
+class ElectionPartyCandidateModel(db.Model):
+    __tablename__ = 'election_party_candidate'
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), primary_key=True)
     partyId = db.Column(db.Integer, db.ForeignKey(Party.Model.__table__.c.partyId), primary_key=True)
+    candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.Model.__table__.c.candidateId), primary_key=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     party = relationship(Party.Model, foreign_keys=[partyId])
-    candidates = relationship(
-        "CandidateModel",
-        secondary="election_party_candidate",
-        primaryjoin="and_(ElectionPartyModel.electionId==ElectionPartyCandidateModel.electionId, ElectionPartyModel.partyId==ElectionPartyCandidateModel.partyId)",
-        secondaryjoin="ElectionPartyCandidateModel.candidateId==CandidateModel.candidateId"
+    candidate = relationship(Candidate.Model, foreign_keys=[candidateId])
+
+    __table_args__ = (
+        # To avoid the same candidate being in multiple parties per election.
+        db.UniqueConstraint('electionId', 'candidateId', name='CandidatePerElection'),
     )
 
-    partyName = association_proxy("party", "partyName")
-    partySymbolFileId = association_proxy("party", "partySymbolFileId")
-    partySymbol = association_proxy("party", "partySymbol")
-
-    def add_candidate(self, candidateId):
-        ElectionPartyCandidate.create(
-            electionId=self.electionId,
-            partyId=self.partyId,
-            candidateId=candidateId
-        )
-
-
-Model = ElectionPartyModel
+Model = ElectionPartyCandidateModel
 
 
 def get_all(electionId=None, partyId=None):
@@ -58,10 +45,11 @@ def get_by_id(electionId, partyId):
     return result
 
 
-def create(electionId, partyId):
+def create(electionId, partyId, candidateId):
     result = Model(
         electionId=electionId,
-        partyId=partyId
+        partyId=partyId,
+        candidateId=candidateId
     )
     db.session.add(result)
     db.session.commit()

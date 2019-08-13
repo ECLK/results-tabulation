@@ -1,7 +1,7 @@
 from orm.entities import File, Image, Folder, FolderFile
-from orm.entities import Election
+from orm.entities import Election, Candidate
 from orm.entities.Area import Electorate
-from orm.entities import Party, ElectionParty
+from orm.entities import Party, ElectionParty, ElectionPartyCandidate
 from orm.entities import Invoice, StationaryItem, BallotBox, Ballot, InvoiceStationaryItem
 from orm.entities import Proof, History, HistoryVersion
 from orm.entities.Area import Office
