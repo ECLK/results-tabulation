@@ -9,11 +9,16 @@ from util import get_paginated_query
 
 
 class ElectorateModel(Area.Model):
-    # __tablename__ = 'electorate'
-
     electorateId = synonym("areaId")
     electorateName = synonym("areaName")
     electorateType = synonym("areaType")
+
+    def __init__(self, electorateName, electorateType, electionId):
+        super(ElectorateModel, self).__init__(
+            areaName=electorateName,
+            areaType=electorateType,
+            electionId=electionId
+        )
 
     __mapper_args__ = {
         'polymorphic_identity': AreaTypeEnum.Electorate,
@@ -24,16 +29,12 @@ class ElectorateModel(Area.Model):
 Model = ElectorateModel
 
 
-def create(electorateName, electorateType, electionId, parentElectorateId=None):
+def create(electorateName, electorateType, electionId):
     result = Model(
-        areaName=electorateName,
-        areaType=electorateType,
-        electionId=electionId,
-        parentAreaId=parentElectorateId
+        electorateName=electorateName,
+        electorateType=electorateType,
+        electionId=electionId
     )
-
-    db.session.add(result)
-    db.session.commit()
 
     return result
 

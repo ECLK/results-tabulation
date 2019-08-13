@@ -22,3 +22,12 @@ def get_paginated_query(query):
     offset = connexion.request.args["offset"]
 
     return query.limit(limit).offset(offset)
+
+
+def get_array(array_or_value):
+    if array_or_value is None:
+        return []
+    elif isinstance(array_or_value, list) is False:
+        return [array_or_value]
+    else:
+        return array_or_value

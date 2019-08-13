@@ -19,27 +19,23 @@ class AdministrativeDistrictModel(Electorate.Model):
 Model = AdministrativeDistrictModel
 
 
+def get_all(electorateName=None, electionId=None):
+    query = Model.query
+
+    if electorateName is not None:
+        query = query.filter(Model.areaName.like(electorateName))
+
+    if electionId is not None:
+        query = query.filter(Model.electionId == electionId)
+
+    result = query.all()
+
+    return result
+
+
 def get_by_id(administrativeDistrictId):
     result = Model.query.filter(
         Model.electorateId == administrativeDistrictId
     ).one_or_none()
 
     return result
-
-
-def create(electionId, name, provinceId=None):
-    province = Province.get_by_id(provinceId=provinceId)
-
-    if province is None:
-        raise NotFoundException("Province not found (provinceId=%d)" % provinceId)
-    else:
-        province = Model(
-            electorateName=name,
-            electionId=electionId,
-            parentElectorateId=province.electorateId,
-        )
-
-        db.session.add(province)
-        db.session.commit()
-
-        return province

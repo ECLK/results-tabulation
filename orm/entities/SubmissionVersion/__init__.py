@@ -17,9 +17,9 @@ class SubmissionVersionModel(db.Model):
     __tablename__ = 'submissionVersion'
     submissionVersionId = db.Column(db.Integer, db.ForeignKey(HistoryVersion.Model.__table__.c.historyVersionId),
                                     primary_key=True)
-    submissionId = db.Column(db.Integer, db.ForeignKey(Submission.Model.__table__.c.submissionId))
+    submissionId = db.Column(db.Integer, db.ForeignKey("submission.submissionId"))
 
-    submission = relationship(Submission.Model, foreign_keys=[submissionId])
+    submission = relationship("SubmissionModel", foreign_keys=[submissionId])
     historyVersion = relationship(HistoryVersion.Model, foreign_keys=[submissionVersionId])
 
     createdBy = association_proxy("historyVersion", "createdBy")

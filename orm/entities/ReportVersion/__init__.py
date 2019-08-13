@@ -24,6 +24,27 @@ class ReportVersionModel(db.Model):
     createdBy = association_proxy("submissionVersion", "createdBy")
     createdAt = association_proxy("submissionVersion", "createdAt")
 
+    def __init__(self, reportId, html):
+        report = Report.get_by_id(reportId=reportId)
+        if report is None:
+            raise NotFoundException("Report not found. (reportId=%d)" % reportId)
+
+        submissionVersion = SubmissionVersion.create(submissionId=reportId)
+
+        reportFile = File.createReport(
+            fileName=get_report_filename(report),
+            html=html
+        )
+
+        super(ReportVersionModel, self).__init__(
+            reportVersionId=submissionVersion.submissionVersionId,
+            reportFileId=reportFile.fileId,
+            reportVersionCode=report.reportCode
+        )
+
+        db.session.add(self)
+        db.session.commit()
+
     __mapper_args__ = {
         'polymorphic_on': reportVersionCode
     }
@@ -45,24 +66,9 @@ def get_report_filename(report):
 
 
 def create(reportId, html):
-    report = Report.get_by_id(reportId=reportId)
-    if report is None:
-        raise NotFoundException("Report not found. (reportId=%d)" % reportId)
-
-    submissionVersion = SubmissionVersion.create(submissionId=reportId)
-
-    reportFile = File.createReport(
-        fileName=get_report_filename(report),
+    result = Model(
+        reportId=reportId,
         html=html
     )
-
-    result = Model(
-        reportVersionId=submissionVersion.submissionVersionId,
-        reportFileId=reportFile.fileId,
-        reportVersionCode=report.reportCode
-    )
-
-    db.session.add(result)
-    db.session.commit()
 
     return result

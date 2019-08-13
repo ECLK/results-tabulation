@@ -14,15 +14,11 @@ class PollingStationModel(Office.Model):
 Model = PollingStationModel
 
 
-def create(officeName, electionId, electorateId, parentOfficeId=None):
+def create(officeName, electionId):
     result = Model(
         officeName=officeName,
-        electionId=electionId,
-        parentOfficeId=parentOfficeId,
-        electorateId=electorateId
+        electionId=electionId
     )
-    db.session.add(result)
-    db.session.commit()
 
     return result
 
