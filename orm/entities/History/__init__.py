@@ -8,14 +8,17 @@ class HistoryModel(db.Model):
     historyId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     versions = relationship("HistoryVersionModel")
 
+    def __init__(self):
+        super(HistoryModel, self).__init__()
+
+        db.session.add(self)
+        db.session.commit()
+
 
 Model = HistoryModel
 
 
 def create():
     result = Model()
-
-    db.session.add(result)
-    db.session.commit()
 
     return result

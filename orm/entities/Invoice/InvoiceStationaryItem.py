@@ -31,6 +31,25 @@ class InvoiceStationaryItemModel(db.Model):
     delete = association_proxy('invoice', 'delete')
     receivedScannedFiles = association_proxy("receivedProof", "scannedFiles")
 
+    def __init__(self, invoiceId, stationaryItemId):
+        if Invoice.has_confirmed(invoiceId):
+            raise ForbiddenException("Stationary items cannot be added to confirmed invoices (%d)" % invoiceId)
+        elif StationaryItem.is_locked(stationaryItemId):
+            raise ForbiddenException("Stationary item is not available (%d)" % stationaryItemId)
+        else:
+            received_proof = Proof.create(
+                proofType=ProofTypeEnum.InvoiceStationaryItemReceive
+            )
+
+            super(InvoiceStationaryItemModel, self).__init__(
+                invoiceId=invoiceId,
+                stationaryItemId=stationaryItemId,
+                receivedProofId=received_proof.proofId
+            )
+
+            db.session.add(self)
+            db.session.commit()
+
 
 Model = InvoiceStationaryItemModel
 
@@ -58,25 +77,12 @@ def get_all(invoiceId=None, stationaryItemId=None, received=None, receivedFrom=N
 
 
 def create(invoiceId, stationaryItemId):
-    if Invoice.has_confirmed(invoiceId):
-        raise ForbiddenException("Stationary items cannot be added to confirmed invoices (%d)" % invoiceId)
-    elif StationaryItem.is_locked(stationaryItemId):
-        raise ForbiddenException("Stationary item is not available (%d)" % stationaryItemId)
-    else:
-        received_proof = Proof.create(
-            proofType=ProofTypeEnum.InvoiceStationaryItemReceive
-        )
+    result = Model(
+        invoiceId=invoiceId,
+        stationaryItemId=stationaryItemId,
+    )
 
-        result = Model(
-            invoiceId=invoiceId,
-            stationaryItemId=stationaryItemId,
-            receivedProofId=received_proof.proofId
-        )
-
-        db.session.add(result)
-        db.session.commit()
-
-        return result
+    return result
 
 
 def get_by_id(invoiceId, stationaryItemId):

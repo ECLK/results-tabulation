@@ -28,6 +28,19 @@ class InvoiceModel(db.Model):
 
     stationaryItems = association_proxy("invoiceStationaryItems", "stationaryItem")
 
+    def __init__(self, electionId, issuingOfficeId, receivingOfficeId, issuedTo):
+        super(InvoiceModel, self).__init__(
+            electionId=electionId,
+            issuingOfficeId=issuingOfficeId,
+            receivingOfficeId=receivingOfficeId,
+            issuedTo=issuedTo,
+            issuedBy=Auth().get_user_id(),
+            issuedAt=datetime.utcnow()
+        )
+
+        db.session.add(self)
+        db.session.commit()
+
 
 Model = InvoiceModel
 
@@ -70,13 +83,8 @@ def create(electionId, issuingOfficeId, receivingOfficeId, issuedTo):
         electionId=electionId,
         issuingOfficeId=issuingOfficeId,
         receivingOfficeId=receivingOfficeId,
-        issuedTo=issuedTo,
-        issuedBy=Auth().get_user_id(),
-        issuedAt=datetime.utcnow()
+        issuedTo=issuedTo
     )
-
-    db.session.add(result)
-    db.session.commit()
 
     return result
 
