@@ -19,28 +19,23 @@ class PollingDivisionModel(Electorate.Model):
 Model = PollingDivisionModel
 
 
+def get_all(electorateName=None, electionId=None):
+    query = Model.query
+
+    if electorateName is not None:
+        query = query.filter(Model.areaName.like(electorateName))
+
+    if electionId is not None:
+        query = query.filter(Model.electionId == electionId)
+
+    result = query.all()
+
+    return result
+
+
 def get_by_id(pollingDivisionId):
     result = Model.query.filter(
         Model.electorateId == pollingDivisionId
     ).one_or_none()
 
     return result
-
-
-def create(electionId, name, electoralDistrictId=None):
-    country = ElectoralDistrict.get_by_id(electoralDistrictId=electoralDistrictId)
-
-    if country is None:
-        raise NotFoundException("Electoral District not found (electoralDistrictId=%d)" % electoralDistrictId)
-    else:
-        polling_division = Model(
-            electorateName=name,
-            electionId=electionId,
-            parentElectorateId=electoralDistrictId,
-        )
-
-        db.session.add(polling_division)
-        db.session.add(polling_division)
-        db.session.commit()
-
-        return polling_division

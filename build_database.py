@@ -1,8 +1,9 @@
 from app import db
 from orm.entities import *
 from orm.entities import Report
+from orm.entities.Report import Report_PRE_41
 
-from orm.enums import ElectorateTypeEnum, OfficeTypeEnum, ReportCodeEnum, AreaTypeEnum
+from orm.enums import ElectorateTypeEnum, OfficeTypeEnum, ReportCodeEnum, AreaTypeEnum, TallySheetCodeEnum
 from api.TallySheetVersionApi import TallySheetVersionPRE41Api
 
 from sqlalchemy.sql import func
@@ -115,101 +116,69 @@ for i in range(1, 2):
         Electorate.create(
             electorateName=row["name"],
             electorateType=AreaTypeEnum.ElectoralDistrict,
-            electionId=election.electionId,
-            parentElectorateId=None
+            electionId=election.electionId
         )
     for row in ELECTORATES_DATA["pollingDivisions"]:
         Electorate.create(
             electorateName=row["name"],
             electorateType=AreaTypeEnum.PollingDivision,
-            electionId=election.electionId,
-            parentElectorateId=electorateIdOffset + row["parent"]
-        )
+            electionId=election.electionId
+        ).add_parent(parentId=electorateIdOffset + row["parent"])
     for row in ELECTORATES_DATA["pollingDistricts"]:
         Electorate.create(
             electorateName=row["name"],
             electorateType=AreaTypeEnum.PollingDistrict,
             electionId=election.electionId,
-            parentElectorateId=electorateIdOffset + row["parent"]
-        )
+        ).add_parent(parentId=electorateIdOffset + row["parent"])
 
     officeIdOffset = get_column_max(Office.Model.officeId)
     for row in OFFICE_DATA["districtCentres"]:
         Office.create(
             officeName=row["name"],
             electionId=election.electionId,
-            officeType=AreaTypeEnum.DistrictCentre,
-            parentOfficeId=None
+            officeType=AreaTypeEnum.DistrictCentre
         )
-        for tallySheetCode in row["tallySheetCodes"]:
-            tallySheet = TallySheet.create(
-                tallySheetCode=tallySheetCode,
-                electionId=election.electionId,
-                officeId=officeIdOffset + row["id"]
-            )
-            tallySheetVersion = TallySheetVersionPRE41Api.create(
-                tallySheetId=tallySheet.tallySheetId,
-                body={
-                    "tallySheetId": tallySheet.tallySheetId,
-                    "tallySheetContent": [
-                        {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                        {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                        {"partyId": 3, "count": 60, "countInWords": "Sixty"}
-                    ]
-                }
-            )
-            tallySheetVersion = TallySheetVersionPRE41Api.create(
-                tallySheetId=tallySheet.tallySheetId,
-                body={
-                    "tallySheetId": tallySheet.tallySheetId,
-                    "tallySheetContent": [
-                        {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                        {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                        {"partyId": 3, "count": 60, "countInWords": "Sixty"}
-                    ]
-                }
-            )
 
     for row in OFFICE_DATA["countingCentres"]:
         Office.create(
             officeName=row["name"],
             electionId=election.electionId,
-            officeType=AreaTypeEnum.CountingCentre,
-            parentOfficeId=officeIdOffset + row["parent"]
+            officeType=AreaTypeEnum.CountingCentre
+        ).add_parent(officeIdOffset + row["parent"])
+
+        tallySheet = TallySheet.create(
+            tallySheetCode=TallySheetCodeEnum.PRE_41,
+            electionId=election.electionId,
+            officeId=officeIdOffset + row["id"]
         )
-        for tallySheetCode in row["tallySheetCodes"]:
-            tallySheet = TallySheet.create(
-                tallySheetCode=tallySheetCode,
-                electionId=election.electionId,
-                officeId=officeIdOffset + row["id"]
-            )
-            report = Report.create(
-                reportCode=ReportCodeEnum.PRE_41,
-                electionId=election.electionId,
-                areaId=officeIdOffset + row["id"]
-            )
-            tallySheetVersion = TallySheetVersionPRE41Api.create(
-                tallySheetId=tallySheet.tallySheetId,
-                body={
-                    "tallySheetId": tallySheet.tallySheetId,
-                    "tallySheetContent": [
-                        {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                        {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                        {"partyId": 3, "count": 60, "countInWords": "Sixty"}
-                    ]
-                }
-            )
-            tallySheetVersion = TallySheetVersionPRE41Api.create(
-                tallySheetId=tallySheet.tallySheetId,
-                body={
-                    "tallySheetId": tallySheet.tallySheetId,
-                    "tallySheetContent": [
-                        {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                        {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                        {"partyId": 3, "count": 60, "countInWords": "Sixty"}
-                    ]
-                }
-            )
+        report = Report_PRE_41.create(
+            reportCode=ReportCodeEnum.PRE_41,
+            electionId=election.electionId,
+            areaId=officeIdOffset + row["id"],
+            tallySheetId=tallySheet.tallySheetId,
+        )
+        tallySheetVersion = TallySheetVersionPRE41Api.create(
+            tallySheetId=tallySheet.tallySheetId,
+            body={
+                "tallySheetId": tallySheet.tallySheetId,
+                "tallySheetContent": [
+                    {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
+                    {"partyId": 2, "count": 45, "countInWords": "Forty five"},
+                    {"partyId": 3, "count": 60, "countInWords": "Sixty"}
+                ]
+            }
+        )
+        tallySheetVersion = TallySheetVersionPRE41Api.create(
+            tallySheetId=tallySheet.tallySheetId,
+            body={
+                "tallySheetId": tallySheet.tallySheetId,
+                "tallySheetContent": [
+                    {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
+                    {"partyId": 2, "count": 45, "countInWords": "Forty five"},
+                    {"partyId": 3, "count": 60, "countInWords": "Sixty"}
+                ]
+            }
+        )
 
     # for row in POLLING_STATION_DATA:
     #     PollingStation.create(

@@ -5,10 +5,44 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from exception import NotFoundException
 from orm.entities import Election, File, Report, HistoryVersion, SubmissionVersion, ReportVersion, Electorate
+from orm.entities.Area.Electorate import ElectoralDistrict
+from orm.entities.Report import Report_PRE_41
+from orm.entities.TallySheetVersion import TallySheetVersionPRE41
 from orm.enums import ReportCodeEnum, AreaTypeEnum
 
 
 class ReportVersion_PRE_41_Model(ReportVersion.Model):
+
+    def __init__(self, reportId):
+        report = Report_PRE_41.get_by_id(reportId=reportId)
+        if report is None:
+            raise NotFoundException("Report not found. (reportId=%d)" % reportId)
+
+        print("$$$$$$$$$$$$$$$$$$$", [report.tallySheet.tallySheetId, report.tallySheet.versions])
+
+        tallySheetContent = TallySheetVersionPRE41.get_by_id(
+            tallySheetId=report.tallySheet.tallySheetId,
+            tallySheetVersionId=report.tallySheet.latestVersionId
+        ).tallySheetContent
+
+        data = []
+
+        for row in tallySheetContent:
+            data.append([
+                row.partyWiseResultId,
+                row.partyId,
+                row.count,
+                row.countInWords
+            ])
+
+        html = render_template(
+            'test-report-template.html',
+            title="Test Template PRE-41",
+            data=data
+        )
+
+        super(ReportVersion_PRE_41_Model, self).__init__(reportId=reportId, html=html)
+
     __mapper_args__ = {
         'polymorphic_identity': ReportCodeEnum.PRE_41
     }
@@ -26,31 +60,6 @@ def get_by_id(reportVersionId):
 
 
 def create(reportId):
-    report = Report.get_by_id(reportId=reportId)
-    data = []
+    result = Model(reportId=reportId)
 
-    electorates = Electorate.get_all(
-        electionId=report.electionId,
-        electorateType=AreaTypeEnum.ElectoralDistrict
-    )
-
-    for electoralDistrict in electorates:
-        for pollingDivision in electoralDistrict.children:
-            for pollingDistrict in pollingDivision.children:
-                # for pollingStation in pollingDistrict.pollingStations:
-                data.append([
-                    electoralDistrict.electorateName,
-                    pollingDivision.electorateName,
-                    pollingDistrict.electorateName,
-                    # pollingStation.officeName,
-                    # pollingStation.parentOffice.officeName,
-                    # pollingStation.parentOffice.parentOffice.officeName,
-                ])
-
-    html = render_template(
-        'test-report-template.html',
-        title="Test Template PRE-30-ED",
-        data=data
-    )
-
-    return ReportVersion.create(reportId=reportId, html=html)
+    return result

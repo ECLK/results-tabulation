@@ -18,10 +18,39 @@ class ReportModel(db.Model):
     electionId = association_proxy("submission", "electionId")
     area = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
-    parentSubmission = association_proxy("submission", "parentSubmission")
-    childSubmissions = association_proxy("submission", "childSubmissions")
+    parents = association_proxy("submission", "parents")
+    children = association_proxy("submission", "children")
     submissionProofId = association_proxy("submission", "submissionProofId")
     versions = association_proxy("submission", "versions")
+
+    def __init__(self, reportCode, electionId, areaId):
+        submission = Submission.create(
+            submissionType=SubmissionTypeEnum.Report,
+            electionId=electionId,
+            areaId=areaId
+        )
+
+        super(ReportModel, self).__init__(
+            reportId=submission.submissionId,
+            reportCode=reportCode,
+        )
+
+        db.session.add(self)
+        db.session.commit()
+
+    def add_parent(self, parentId):
+        self.submission.add_parent(parentId=parentId)
+
+        return self
+
+    def add_child(self, childId):
+        self.submission.add_child(childId=childId)
+
+        return self
+
+    __mapper_args__ = {
+        'polymorphic_on': reportCode
+    }
 
 
 Model = ReportModel
@@ -49,21 +78,12 @@ def get_all(electionId=None, officeId=None):
     return result
 
 
-def create(reportCode, electionId, areaId=None, electorateId=None, parentSubmissionId=None):
-    submission = Submission.create(
-        submissionType=SubmissionTypeEnum.Report,
+def create(reportCode, electionId, areaId=None, childSubmissionIds=None):
+    result = ReportModel(
+        reportCode=reportCode,
         electionId=electionId,
         areaId=areaId,
-        electorateId=electorateId,
-        parentSubmissionId=parentSubmissionId
+        childSubmissionIds=childSubmissionIds
     )
-
-    result = Model(
-        reportId=submission.submissionId,
-        reportCode=reportCode,
-    )
-
-    db.session.add(result)
-    db.session.commit()
 
     return result

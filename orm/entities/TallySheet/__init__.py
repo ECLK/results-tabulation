@@ -22,10 +22,35 @@ class TallySheetModel(db.Model):
     officeId = association_proxy("submission", "areaId")
     office = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
-    parentSubmission = association_proxy("submission", "parentSubmission")
-    childSubmissions = association_proxy("submission", "childSubmissions")
+    parents = association_proxy("submission", "parents")
+    children = association_proxy("submission", "children")
     submissionProofId = association_proxy("submission", "submissionProofId")
     versions = association_proxy("submission", "versions")
+
+    def __init__(self, tallySheetCode, electionId, officeId):
+        submission = Submission.create(
+            submissionType=SubmissionTypeEnum.TallySheet,
+            electionId=electionId,
+            areaId=officeId
+        )
+
+        super(TallySheetModel, self).__init__(
+            tallySheetId=submission.submissionId,
+            tallySheetCode=tallySheetCode,
+        )
+
+        db.session.add(self)
+        db.session.commit()
+
+    def add_parent(self, parentId):
+        self.submission.add_parent(parentId=parentId)
+
+        return self
+
+    def add_child(self, childId):
+        self.submission.add_child(childId=childId)
+
+        return self
 
 
 Model = TallySheetModel
@@ -54,20 +79,10 @@ def get_all(electionId=None, officeId=None):
 
 
 def create(tallySheetCode, electionId, officeId):
-    submission = Submission.create(
-        submissionType=SubmissionTypeEnum.TallySheet,
-        electionId=electionId,
-        areaId=officeId,
-        electorateId=None,
-        parentSubmissionId=None
-    )
-
     result = Model(
-        tallySheetId=submission.submissionId,
         tallySheetCode=tallySheetCode,
+        electionId=electionId,
+        officeId=officeId
     )
-
-    db.session.add(result)
-    db.session.commit()
 
     return result

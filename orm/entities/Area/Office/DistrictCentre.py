@@ -12,13 +12,10 @@ class DistrictCentreModel(Office.Model):
 Model = DistrictCentreModel
 
 
-def create(officeName, electionId, parentOfficeId=None):
+def create(officeName, electionId):
     result = Model(
         officeName=officeName,
-        electionId=electionId,
-        parentOfficeId=parentOfficeId
+        electionId=electionId
     )
-    db.session.add(result)
-    db.session.commit()
 
     return result

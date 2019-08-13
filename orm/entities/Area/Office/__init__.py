@@ -10,11 +10,16 @@ from util import get_paginated_query
 
 
 class OfficeModel(Area.Model):
-    # __tablename__ = 'office'
-
     officeId = synonym("areaId")
     officeType = synonym("areaType")
     officeName = synonym("areaName")
+
+    def __init__(self, officeName, officeType, electionId):
+        super(OfficeModel, self).__init__(
+            areaName=officeName,
+            areaType=officeType,
+            electionId=electionId
+        )
 
     __mapper_args__ = {
         'polymorphic_identity': AreaTypeEnum.Office,
@@ -25,21 +30,12 @@ class OfficeModel(Area.Model):
 Model = OfficeModel
 
 
-def create(officeName, officeType, electionId, parentOfficeId=None):
+def create(officeName, officeType, electionId):
     result = Model(
-        areaName=officeName,
-        areaType=officeType,
-        electionId=electionId,
-        parentAreaId=parentOfficeId
+        officeName=officeName,
+        officeType=officeType,
+        electionId=electionId
     )
-
-    # result = Model(
-    #     officeId=area.areaId,
-    #     officeType=officeType
-    # )
-
-    db.session.add(result)
-    db.session.commit()
 
     return result
 

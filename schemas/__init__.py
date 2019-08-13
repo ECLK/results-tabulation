@@ -173,8 +173,8 @@ class SubmissionSchema(ma.ModelSchema):
             "electorate",
             "latestVersionId",
             # "tallySheetProofId",
-            "parentSubmission",
-            "childSubmissions",
+            "parents",
+            "children",
             "submissionProofId",
             "versions"
         )
@@ -271,8 +271,8 @@ class TallySheetSchema(ma.ModelSchema):
             "electionId",
             "office",
             "latestVersionId",
-            "parentSubmission",
-            "childSubmissions",
+            "parents",
+            "children",
             "submissionProofId",
             "versions"
         )
@@ -285,6 +285,8 @@ class TallySheetSchema(ma.ModelSchema):
     tallySheetCode = EnumField(TallySheetCodeEnum)
     office = ma.Nested(OfficeSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
+    parents = ma.Nested(SubmissionSchema, only="submissionId", many=True)
+    children = ma.Nested(SubmissionSchema, many=True)
     submissionProof = ma.Nested(Proof_Schema)
 
 
@@ -296,8 +298,8 @@ class ReportSchema(ma.ModelSchema):
             "electionId",
             "area",
             "latestVersionId",
-            "parentSubmission",
-            "childSubmissions",
+            "parents",
+            "children",
             "submissionProofId",
             "versions"
         )
@@ -310,6 +312,8 @@ class ReportSchema(ma.ModelSchema):
     reportCode = EnumField(ReportCodeEnum)
     area = ma.Nested(AreaSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
+    parents = ma.Nested(SubmissionSchema, only="submissionId", many=True)
+    children = ma.Nested(SubmissionSchema, many=True)
     submissionProof = ma.Nested(Proof_Schema)
 
 

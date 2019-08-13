@@ -12,6 +12,18 @@ class CountryModel(Electorate.Model):
 
 Model = CountryModel
 
+def get_all(electorateName=None, electionId=None):
+    query = Model.query
+
+    if electorateName is not None:
+        query = query.filter(Model.areaName.like(electorateName))
+
+    if electionId is not None:
+        query = query.filter(Model.electionId == electionId)
+
+    result = query.all()
+
+    return result
 
 def get_by_id(countryId):
     result = Model.query.filter(
@@ -21,14 +33,3 @@ def get_by_id(countryId):
     return result
 
 
-def create(electionId, name):
-    country = Model(
-        electorateName=name,
-        electionId=electionId,
-        parentElectorateId=None,
-    )
-
-    db.session.add(country)
-    db.session.commit()
-
-    return country

@@ -18,28 +18,23 @@ class ElectoralDistrictModel(Electorate.Model):
 Model = ElectoralDistrictModel
 
 
+def get_all(electorateName=None, electionId=None):
+    query = Model.query
+
+    if electorateName is not None:
+        query = query.filter(Model.areaName.like(electorateName))
+
+    if electionId is not None:
+        query = query.filter(Model.electionId == electionId)
+
+    result = query.all()
+
+    return result
+
+
 def get_by_id(electoralDistrictId):
     result = Model.query.filter(
         Model.electorateId == electoralDistrictId
     ).one_or_none()
 
     return result
-
-
-def create(electionId, name, countryId=None):
-    country = Country.get_by_id(countryId=countryId)
-
-    if country is None:
-        raise NotFoundException("Country not found (countryId=%d)" % countryId)
-    else:
-        electoralDistrict = Model(
-            electorateName=name,
-            electionId=electionId,
-            parentElectorateId=countryId,
-        )
-
-        db.session.add(electoralDistrict)
-        db.session.add(electoralDistrict)
-        db.session.commit()
-
-        return electoralDistrict
