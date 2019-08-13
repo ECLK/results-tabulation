@@ -92,11 +92,16 @@ def get_column_max(column):
 for i in range(1, 6):
     Party.create(partyName="Party-%d" % i)
 
+for i in range(1, 50):
+    Candidate.create(candidateName="Candidate-%d" % i)
+
 for i in range(1, 2):
     election = Election.create()
 
     for i in range(1, 6):
-        ElectionParty.create(partyId=i, electionId=election.electionId)
+        electionParty = ElectionParty.create(partyId=i, electionId=election.electionId)
+        for j in range(1, 6):
+            electionParty.add_candidate((i * 5) + j)
 
     for i in range(1, 10):
         Ballot.create(

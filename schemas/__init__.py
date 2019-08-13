@@ -2,7 +2,7 @@ from marshmallow.fields import Integer, String
 
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, File, Invoice, BallotBox, \
-    InvoiceStationaryItem, Election, Proof, History, Submission, Electorate, SubmissionVersion, Area
+    InvoiceStationaryItem, Election, Proof, History, Submission, Electorate, SubmissionVersion, Area, Party
 from orm.entities import TallySheet, TallySheetVersion
 from orm.entities.Result import PartyWiseResult
 from orm.entities.Result.PartyWiseResult import PartyCount
@@ -31,12 +31,53 @@ class File_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class CandidateSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "candidateId",
+            "candidateName",
+            "candidateProfileImageFile"
+        )
+
+        model = Party.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    partySymbol = ma.Nested(File_Schema)
+
+
+class PartySchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "partyId",
+            "partyName",
+            "partySymbol",
+            "candidates"
+        )
+
+        model = Party.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    partySymbol = ma.Nested(File_Schema)
+    candidates = ma.Nested(CandidateSchema, many=True)
+
+
 class ElectionSchema(ma.ModelSchema):
     class Meta:
+        fields = (
+            "electionId",
+            "parties"
+        )
+
         model = Election.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+
+    parties = ma.Nested(PartySchema, many=True)
 
 
 class PartyCountSchema(ma.ModelSchema):
