@@ -95,10 +95,10 @@ for i in range(1, 50):
     Candidate.create(candidateName="Candidate-%d" % i)
 
 for i in range(1, 2):
-    election = Election.create()
+    election = Election.create(electionName="Test Election")
 
     for i in range(1, 6):
-        electionParty = ElectionParty.create(partyId=i, electionId=election.electionId)
+        electionParty = election.add_party(i)
         for j in range(1, 6):
             electionParty.add_candidate((i * 5) + j)
 

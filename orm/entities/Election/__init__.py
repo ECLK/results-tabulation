@@ -1,24 +1,34 @@
 from app import db
-# from orm.entities import TallySheet, Office
-# from orm.entities.Office import CountingCentre
 from sqlalchemy.orm import relationship
 
+from orm.entities.Election import ElectionParty
 from util import get_paginated_query
 
 
 class ElectionModel(db.Model):
     __tablename__ = 'election'
     electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    electionName = db.Column(db.String(100), nullable=False)
     parties = relationship("ElectionPartyModel")
+
+    def __init__(self, electionName):
+        super(ElectionModel, self).__init__(electionName=electionName)
+
+        db.session.add(self)
+        db.session.commit()
+
+    def add_party(self, partyId):
+        return ElectionParty.create(
+            electionId=self.electionId,
+            partyId=partyId
+        )
 
 
 Model = ElectionModel
 
 
-def create():
-    result = Model()
-    db.session.add(result)
-    db.session.commit()
+def create(electionName):
+    result = Model(electionName=electionName)
 
     return result
 

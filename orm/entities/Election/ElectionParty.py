@@ -2,17 +2,17 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from app import db
 from sqlalchemy.orm import relationship
-from orm.entities import Election, Party
+from orm.entities import Party
 from orm.entities.Election import ElectionPartyCandidate
 from util import get_paginated_query
 
 
 class ElectionPartyModel(db.Model):
     __tablename__ = 'election_party'
-    electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), primary_key=True)
+    electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), primary_key=True)
     partyId = db.Column(db.Integer, db.ForeignKey(Party.Model.__table__.c.partyId), primary_key=True)
 
-    election = relationship(Election.Model, foreign_keys=[electionId])
+    election = relationship("ElectionModel", foreign_keys=[electionId])
     party = relationship(Party.Model, foreign_keys=[partyId])
     candidates = relationship(
         "CandidateModel",
@@ -25,8 +25,17 @@ class ElectionPartyModel(db.Model):
     partySymbolFileId = association_proxy("party", "partySymbolFileId")
     partySymbol = association_proxy("party", "partySymbol")
 
+    def __init__(self, electionId, partyId):
+        super(ElectionPartyModel, self).__init__(
+            electionId=electionId,
+            partyId=partyId
+        )
+
+        db.session.add(self)
+        db.session.commit()
+
     def add_candidate(self, candidateId):
-        ElectionPartyCandidate.create(
+        return ElectionPartyCandidate.create(
             electionId=self.electionId,
             partyId=self.partyId,
             candidateId=candidateId
@@ -64,7 +73,5 @@ def create(electionId, partyId):
         electionId=electionId,
         partyId=partyId
     )
-    db.session.add(result)
-    db.session.commit()
 
     return result
