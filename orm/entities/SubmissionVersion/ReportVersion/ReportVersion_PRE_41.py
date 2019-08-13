@@ -1,6 +1,6 @@
 from flask import render_template
 
-from exception import NotFoundException
+from exception import NotFoundException, ForbiddenException
 from orm.entities import ReportVersion
 from orm.entities.Submission.Report import Report_PRE_41
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
@@ -24,11 +24,16 @@ class ReportVersion_PRE_41_Model(ReportVersion.Model):
         data = []
 
         for row in tallySheetContent:
+            if len(row.party.candidates) is 0:
+                raise ForbiddenException("Each party must be having at least one candidate. (partyId=%d)" % row.partyId)
+
+            candidate = row.party.candidates[0]
+
             data.append([
-                row.partyWiseResultId,
-                row.partyId,
+                candidate.candidateName,
+                row.party.partySymbol,
+                row.countInWords,
                 row.count,
-                row.countInWords
             ])
 
         html = render_template(

@@ -89,7 +89,7 @@ def get_column_max(column):
 
 
 for i in range(1, 6):
-    Party.create(partyName="Party-%d" % i)
+    Party.create(partyName="Party-%d" % i, partySymbol="Cat")
 
 for i in range(1, 50):
     Candidate.create(candidateName="Candidate-%d" % i)
