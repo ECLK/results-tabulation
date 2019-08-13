@@ -43,7 +43,8 @@ app.config.from_envvar('ENV_CONFIG')
 # Configure the SQLAlchemy part of the app instance
 app.config['SQLALCHEMY_ECHO'] = True
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://%s:%s@%s:%s/%s' % (
+app.config['SQLALCHEMY_DATABASE_URI'] = '%s://%s:%s@%s:%s/%s' % (
+    app.config['DATABASE_PLUGIN'],
     app.config['DATABASE_USERNAME'],
     app.config['DATABASE_PASSWORD'],
     app.config['DATABASE_HOST'],
