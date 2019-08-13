@@ -140,6 +140,7 @@ class AreaSchema(ma.ModelSchema):
     electorateType = EnumField(ElectorateTypeEnum)
     parents = ma.Nested('self', many=True)
     children = ma.Nested('self', only="areaId", many=True)
+    pollingStations = ma.Nested('self', many=True)
 
 
 class ElectorateSchema(ma.ModelSchema):
@@ -163,6 +164,7 @@ class ElectorateSchema(ma.ModelSchema):
     electorateType = EnumField(ElectorateTypeEnum)
     parents = ma.Nested('AreaSchema', many=True)
     children = ma.Nested('AreaSchema', only="areaId", many=True)
+    pollingStations = ma.Nested('AreaSchema', many=True)
 
 
 class OfficeSchema(ma.ModelSchema):
@@ -186,6 +188,7 @@ class OfficeSchema(ma.ModelSchema):
     officeType = EnumField(OfficeTypeEnum)
     parents = ma.Nested('AreaSchema', many=True)
     children = ma.Nested('AreaSchema', only="areaId", many=True)
+    pollingStations = ma.Nested('AreaSchema', many=True)
 
 
 class Proof_Schema(ma.ModelSchema):

@@ -66,19 +66,19 @@ OFFICE_DATA = {
 }
 
 POLLING_STATION_DATA = [
-    {"id": 10, "pollingDistrict": 10, "countingCentre": 4, "name": "St. Thomas College, Hall 1"},
-    {"id": 11, "pollingDistrict": 11, "countingCentre": 4, "name": "St. Thomas College, Hall 2"},
-    {"id": 12, "pollingDistrict": 12, "countingCentre": 5, "name": "Science College, Hall 1"},
-    {"id": 13, "pollingDistrict": 13, "countingCentre": 5, "name": "Science College, Hall 2"},
-    {"id": 14, "pollingDistrict": 14, "countingCentre": 6, "name": "Science College, Hall 3"},
-    {"id": 15, "pollingDistrict": 15, "countingCentre": 6, "name": "Hill Street Community Centre, Hall 1"},
-    {"id": 16, "pollingDistrict": 16, "countingCentre": 7, "name": "Hill Street Community Centre, Hall 2"},
-    {"id": 8, "pollingDistrict": 17, "countingCentre": 7, "name": "Hill Street Community Centre, Hall 3"},
-    {"id": 9, "pollingDistrict": 18, "countingCentre": 8, "name": "Hill Street Community Centre, Hall 4"},
-    {"id": 10, "pollingDistrict": 19, "countingCentre": 8, "name": "Muslim Girls College, Hall 1"},
-    {"id": 11, "pollingDistrict": 20, "countingCentre": 9, "name": "Muslim Girls College, Hall 2"},
-    {"id": 12, "pollingDistrict": 21, "countingCentre": 9, "name": "Muslim Girls College, Hall 3"},
-    {"id": 13, "pollingDistrict": 21, "countingCentre": 9, "name": "Muslim Girls College, Hall 4"}
+    {"id": 10, "pollingDistrict": 10, "countingCentre": 25, "name": "St. Thomas College, Hall 1"},
+    {"id": 11, "pollingDistrict": 11, "countingCentre": 25, "name": "St. Thomas College, Hall 2"},
+    {"id": 12, "pollingDistrict": 12, "countingCentre": 26, "name": "Science College, Hall 1"},
+    {"id": 13, "pollingDistrict": 13, "countingCentre": 26, "name": "Science College, Hall 2"},
+    {"id": 14, "pollingDistrict": 14, "countingCentre": 27, "name": "Science College, Hall 3"},
+    {"id": 15, "pollingDistrict": 15, "countingCentre": 27, "name": "Hill Street Community Centre, Hall 1"},
+    {"id": 16, "pollingDistrict": 16, "countingCentre": 28, "name": "Hill Street Community Centre, Hall 2"},
+    {"id": 8, "pollingDistrict": 17, "countingCentre": 28, "name": "Hill Street Community Centre, Hall 3"},
+    {"id": 9, "pollingDistrict": 18, "countingCentre": 29, "name": "Hill Street Community Centre, Hall 4"},
+    {"id": 10, "pollingDistrict": 19, "countingCentre": 29, "name": "Muslim Girls College, Hall 1"},
+    {"id": 11, "pollingDistrict": 20, "countingCentre": 30, "name": "Muslim Girls College, Hall 2"},
+    {"id": 12, "pollingDistrict": 21, "countingCentre": 30, "name": "Muslim Girls College, Hall 3"},
+    {"id": 13, "pollingDistrict": 21, "countingCentre": 30, "name": "Muslim Girls College, Hall 4"}
 ]
 
 
@@ -184,10 +184,11 @@ for i in range(1, 2):
             }
         )
 
-    # for row in POLLING_STATION_DATA:
-    #     PollingStation.create(
-    #         officeName=row["name"],
-    #         electionId=election.electionId,
-    #         electorateId=electorateIdOffset + row["pollingDistrict"],
-    #         parentOfficeId=officeIdOffset + row["countingCentre"],
-    #     )
+    for row in POLLING_STATION_DATA:
+        pollingStation = Office.create(
+            officeName=row["name"],
+            electionId=election.electionId,
+            officeType=AreaTypeEnum.PollingStation
+        )
+        pollingStation.add_parent(officeIdOffset + row["countingCentre"])
+        pollingStation.add_parent(electorateIdOffset + row["pollingDistrict"])

@@ -52,14 +52,10 @@ class AreaModel(db.Model):
 
         return self
 
-    # @hybrid_property
-    # def pollingStations(self):
-    #     result = []
-    #     if self.childAreas is not None:
-    #         for childArea in self.childAreas:
-    #             result = result + childArea.allPollingStations
-    #
-    #     return result
+    @hybrid_property
+    def pollingStations(self):
+        #return []
+        return get_child_areas(self, AreaTypeEnum.PollingStation)
 
     __mapper_args__ = {
         'polymorphic_on': areaType
@@ -75,11 +71,21 @@ class AreaAreaModel(db.Model):
 Model = AreaModel
 
 
-def get_child_areas(area, areaType, visitedAreas=None):
+def get_child_areas(area, areaType, visitedAreas=[]):
     result = []
-    if area.childAreas is not None:
-        for childArea in area.childAreas:
-            result = result + childArea.allPollingStations
+    if area.children is not None:
+        print("############ 1 ", result)
+        for child in area.children:
+            print("############ 2 ", result)
+            if child.areaId not in visitedAreas:
+                print("############ 3 ", child.areaType)
+                visitedAreas.append(child.areaId)
+                if child.areaType is areaType:
+                    result.append(child)
+                    print("############ 4 ", result)
+                else:
+                    result = result + get_child_areas(child, areaType, visitedAreas=visitedAreas)
+                    print("############ 5 ", result)
 
     return result
 
