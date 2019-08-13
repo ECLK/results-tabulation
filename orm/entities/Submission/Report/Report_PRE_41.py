@@ -1,10 +1,7 @@
-from app import db
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.associationproxy import association_proxy
-
 from exception import ForbiddenException, NotFoundException, MethodNotAllowedException
-from orm.entities import Report, TallySheet
-from orm.enums import ReportCodeEnum, ProofTypeEnum, SubmissionTypeEnum, TallySheetCodeEnum
+from orm.entities import Report
+from orm.entities.Submission import TallySheet
+from orm.enums import ReportCodeEnum, TallySheetCodeEnum
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from util import get_paginated_query

@@ -2,7 +2,8 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from app import db
 from sqlalchemy.orm import relationship
-from orm.entities import Election, Party, ElectionPartyCandidate
+from orm.entities import Election, Party
+from orm.entities.Election import ElectionPartyCandidate
 from util import get_paginated_query
 
 

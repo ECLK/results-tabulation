@@ -1,11 +1,10 @@
 from exception import NotFoundException
-from orm.entities import Report, ReportVersion
-from orm.entities.ReportVersion import ReportVersion_PRE_41, ReportVersion_PRE_30_PD, ReportVersion_PRE_30_ED
+from orm.entities.SubmissionVersion import ReportVersion
+from orm.entities.Submission import Report
+from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_41, ReportVersion_PRE_30_PD
+from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_30_ED
 from orm.enums import ReportCodeEnum
-from util import RequestBody
 
-from flask import render_template, make_response
-import pdfkit
 from schemas import ReportVersionSchema
 
 

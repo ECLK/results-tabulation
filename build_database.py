@@ -1,9 +1,8 @@
 from app import db
 from orm.entities import *
-from orm.entities import Report
-from orm.entities.Report import Report_PRE_41
+from orm.entities.Submission.Report import Report_PRE_41
 
-from orm.enums import ElectorateTypeEnum, OfficeTypeEnum, ReportCodeEnum, AreaTypeEnum, TallySheetCodeEnum
+from orm.enums import ReportCodeEnum, AreaTypeEnum, TallySheetCodeEnum
 from api.TallySheetVersionApi import TallySheetVersionPRE41Api
 
 from sqlalchemy.sql import func

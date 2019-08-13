@@ -1,10 +1,12 @@
 from marshmallow.fields import Integer, String
 
 from app import db, ma
-from orm.entities import StationaryItem, Ballot, File, Invoice, BallotBox, \
-    InvoiceStationaryItem, Election, Proof, History, Submission, Electorate, SubmissionVersion, Area, Party
-from orm.entities import TallySheet, TallySheetVersion
-from orm.entities.Result import PartyWiseResult
+from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
+    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party
+from orm.entities.IO import File
+from orm.entities.Invoice import InvoiceStationaryItem
+from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.entities.Submission import TallySheet
 from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, ReportCodeEnum, \
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum

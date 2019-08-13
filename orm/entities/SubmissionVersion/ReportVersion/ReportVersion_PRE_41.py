@@ -1,14 +1,10 @@
-from app import db
-from sqlalchemy.orm import relationship
 from flask import render_template
-from sqlalchemy.ext.associationproxy import association_proxy
 
 from exception import NotFoundException
-from orm.entities import Election, File, Report, HistoryVersion, SubmissionVersion, ReportVersion, Electorate
-from orm.entities.Area.Electorate import ElectoralDistrict
-from orm.entities.Report import Report_PRE_41
-from orm.entities.TallySheetVersion import TallySheetVersionPRE41
-from orm.enums import ReportCodeEnum, AreaTypeEnum
+from orm.entities import ReportVersion
+from orm.entities.Submission.Report import Report_PRE_41
+from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
+from orm.enums import ReportCodeEnum
 
 
 class ReportVersion_PRE_41_Model(ReportVersion.Model):

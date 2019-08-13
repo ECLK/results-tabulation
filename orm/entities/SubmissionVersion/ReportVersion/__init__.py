@@ -1,10 +1,11 @@
 from app import db
 from sqlalchemy.orm import relationship
-from flask import render_template
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from exception import NotFoundException
-from orm.entities import Election, File, Report, HistoryVersion, SubmissionVersion
+from orm.entities import SubmissionVersion
+from orm.entities.Submission import Report
+from orm.entities.IO import File
 from orm.enums import ReportCodeEnum
 
 

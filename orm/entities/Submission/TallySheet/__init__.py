@@ -1,13 +1,12 @@
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.schema import UniqueConstraint
 
 from util import get_paginated_query
 
-from orm.entities import Election, Office, Proof, History, HistoryVersion, Submission
+from orm.entities import Submission
 
-from orm.enums import TallySheetCodeEnum, ProofTypeEnum, SubmissionTypeEnum
+from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum
 
 
 class TallySheetModel(db.Model):

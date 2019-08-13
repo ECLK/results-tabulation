@@ -1,4 +1,4 @@
-from orm.entities import File
+from orm.entities.IO import File
 from orm.enums import FileTypeEnum
 
 

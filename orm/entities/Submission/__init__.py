@@ -2,13 +2,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from app import db
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy import func
 
 from util import get_paginated_query
 
-from orm.entities import Election, Office, Proof, History, HistoryVersion, Electorate, SubmissionVersion
+from orm.entities import Election, Office, Proof, History, SubmissionVersion
 
 from orm.enums import SubmissionTypeEnum, ProofTypeEnum
 

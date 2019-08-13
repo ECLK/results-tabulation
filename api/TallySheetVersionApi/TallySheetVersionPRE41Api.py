@@ -1,9 +1,8 @@
 from util import RequestBody
-from schemas import Ballot_Schema as Schema, TallySheetVersionPRE41Schema
-from orm.entities import TallySheetVersion, TallySheet
-from orm.entities.TallySheetVersion import TallySheetVersionPRE41
+from schemas import TallySheetVersionPRE41Schema
+from orm.entities.Submission import TallySheet
+from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from orm.entities.Result.PartyWiseResult import PartyCount
-from orm.enums import TallySheetCodeEnum
 from exception import NotFoundException
 
 
