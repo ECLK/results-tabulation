@@ -14,10 +14,9 @@ class OfficeModel(Area.Model):
     officeType = synonym("areaType")
     officeName = synonym("areaName")
 
-    def __init__(self, officeName, officeType, electionId):
+    def __init__(self, officeName, electionId):
         super(OfficeModel, self).__init__(
             areaName=officeName,
-            areaType=officeType,
             electionId=electionId
         )
 

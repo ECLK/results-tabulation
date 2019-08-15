@@ -29,19 +29,17 @@ class AreaModel(db.Model):
                            secondaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId"
                            )
 
-    def __init__(self, areaName, areaType, electionId):
+    def __init__(self, areaName, electionId):
         super(AreaModel, self).__init__(
             areaName=areaName,
-            areaType=areaType,
             electionId=electionId
         )
         db.session.add(self)
         db.session.commit()
 
     def add_parent(self, parentId):
-        areaParent = AreaAreaModel(parentAreaId=parentId, childAreaId=self.areaId)
-        db.session.add(areaParent)
-        db.session.commit()
+        parentArea = get_by_id(areaId=parentId)
+        parentArea.add_child(self.areaId)
 
         return self
 
@@ -54,7 +52,7 @@ class AreaModel(db.Model):
 
     @hybrid_property
     def pollingStations(self):
-        #return []
+        # return []
         return get_child_areas(self, AreaTypeEnum.PollingStation)
 
     __mapper_args__ = {
@@ -103,5 +101,13 @@ def create(areaName, areaType, electionId):
 def get_all():
     query = Model.query
     result = query.all()
+
+    return result
+
+
+def get_by_id(areaId):
+    result = Model.query.filter(
+        Model.areaId == areaId
+    ).one_or_none()
 
     return result

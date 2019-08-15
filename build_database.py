@@ -117,37 +117,32 @@ for i in range(1, 2):
     electorateIdOffset = get_column_max(Electorate.Model.electorateId)
 
     for row in ELECTORATES_DATA["electoralDistricts"]:
-        Electorate.create(
+        ElectoralDistrict.create(
             electorateName=row["name"],
-            electorateType=AreaTypeEnum.ElectoralDistrict,
             electionId=election.electionId
         )
     for row in ELECTORATES_DATA["pollingDivisions"]:
-        Electorate.create(
+        PollingDivision.create(
             electorateName=row["name"],
-            electorateType=AreaTypeEnum.PollingDivision,
             electionId=election.electionId
         ).add_parent(parentId=electorateIdOffset + row["parent"])
     for row in ELECTORATES_DATA["pollingDistricts"]:
-        Electorate.create(
+        PollingDistrict.create(
             electorateName=row["name"],
-            electorateType=AreaTypeEnum.PollingDistrict,
             electionId=election.electionId,
         ).add_parent(parentId=electorateIdOffset + row["parent"])
 
     officeIdOffset = get_column_max(Office.Model.officeId)
     for row in OFFICE_DATA["districtCentres"]:
-        Office.create(
+        DistrictCentre.create(
             officeName=row["name"],
-            electionId=election.electionId,
-            officeType=AreaTypeEnum.DistrictCentre
+            electionId=election.electionId
         )
 
     for row in OFFICE_DATA["countingCentres"]:
-        Office.create(
+        CountingCentre.create(
             officeName=row["name"],
-            electionId=election.electionId,
-            officeType=AreaTypeEnum.CountingCentre
+            electionId=election.electionId
         ).add_parent(officeIdOffset + row["parent"])
 
         tallySheet = TallySheet.create(
@@ -185,10 +180,9 @@ for i in range(1, 2):
         )
 
     for row in POLLING_STATION_DATA:
-        pollingStation = Office.create(
+        pollingStation = PollingStation.create(
             officeName=row["name"],
-            electionId=election.electionId,
-            officeType=AreaTypeEnum.PollingStation
+            electionId=election.electionId
         )
         pollingStation.add_parent(officeIdOffset + row["countingCentre"])
         pollingStation.add_parent(electorateIdOffset + row["pollingDistrict"])
