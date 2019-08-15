@@ -48,8 +48,8 @@ def get_all(electionId=None, officeName=None, parentOfficeId=None, officeType=No
     if electionId is not None:
         query = query.filter(Model.electionId == electionId)
 
-    # if officeType is not None:
-    #     query = query.filter(Model.officeType == officeType)
+    if officeType is not None:
+        query = query.filter(Model.officeType == officeType)
     # else:
     #     query = query.filter(Model.parentOfficeId == parentOfficeId)
 
