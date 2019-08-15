@@ -39,3 +39,12 @@ def get_by_id(administrativeDistrictId):
     ).one_or_none()
 
     return result
+
+
+def create(electorateName, electionId):
+    result = Model(
+        electorateName=electorateName,
+        electionId=electionId
+    )
+
+    return result

@@ -13,10 +13,9 @@ class ElectorateModel(Area.Model):
     electorateName = synonym("areaName")
     electorateType = synonym("areaType")
 
-    def __init__(self, electorateName, electorateType, electionId):
+    def __init__(self, electorateName, electionId):
         super(ElectorateModel, self).__init__(
             areaName=electorateName,
-            areaType=electorateType,
             electionId=electionId
         )
 
@@ -29,10 +28,9 @@ class ElectorateModel(Area.Model):
 Model = ElectorateModel
 
 
-def create(electorateName, electorateType, electionId):
+def create(electorateName, electionId):
     result = Model(
         electorateName=electorateName,
-        electorateType=electorateType,
         electionId=electionId
     )
 

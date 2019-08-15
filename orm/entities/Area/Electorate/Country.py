@@ -12,6 +12,7 @@ class CountryModel(Electorate.Model):
 
 Model = CountryModel
 
+
 def get_all(electorateName=None, electionId=None):
     query = Model.query
 
@@ -25,6 +26,7 @@ def get_all(electorateName=None, electionId=None):
 
     return result
 
+
 def get_by_id(countryId):
     result = Model.query.filter(
         Model.electorateId == countryId
@@ -33,3 +35,10 @@ def get_by_id(countryId):
     return result
 
 
+def create(electorateName, electionId):
+    result = Model(
+        electorateName=electorateName,
+        electionId=electionId
+    )
+
+    return result
