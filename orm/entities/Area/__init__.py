@@ -50,10 +50,31 @@ class AreaModel(db.Model):
 
         return self
 
-    @hybrid_property
-    def pollingStations(self):
-        # return []
-        return get_child_areas(self, AreaTypeEnum.PollingStation)
+    def get_associated_areas(self, areaType):
+        return get_associated_areas(self, areaType);
+    #
+    # @hybrid_property
+    # def pollingStations(self):
+    #     # return []
+    #     visitedAreas = []
+    #     return get_child_areas(self, AreaTypeEnum.PollingStation, visitedAreas) \
+    #            + get_parent_areas(self, AreaTypeEnum.PollingStation, visitedAreas)
+    #
+    # @hybrid_property
+    # def countingCentres(self):
+    #     # return []
+    #     visitedAreas = []
+    #     return get_child_areas(self, AreaTypeEnum.CountingCentre, visitedAreas) \
+    #            + get_parent_areas(self, AreaTypeEnum.CountingCentre, visitedAreas)
+    #
+    # @hybrid_property
+    # def districtCentres(self):
+    #     # return []
+    #     visitedAreas = []
+    #     return get_child_areas(self, AreaTypeEnum.DistrictCentre, visitedAreas) \
+    #            + get_parent_areas(self, AreaTypeEnum.DistrictCentre, visitedAreas)
+
+
 
     __mapper_args__ = {
         'polymorphic_on': areaType
@@ -69,21 +90,46 @@ class AreaAreaModel(db.Model):
 Model = AreaModel
 
 
+def get_associated_areas(area, areaType):
+    visitedAreas = []
+    return get_child_areas(area, areaType, visitedAreas) + get_parent_areas(area, areaType, visitedAreas)
+
+
 def get_child_areas(area, areaType, visitedAreas=[]):
     result = []
-    if area.children is not None:
-        print("############ 1 ", result)
-        for child in area.children:
-            print("############ 2 ", result)
-            if child.areaId not in visitedAreas:
-                print("############ 3 ", child.areaType)
-                visitedAreas.append(child.areaId)
-                if child.areaType is areaType:
-                    result.append(child)
-                    print("############ 4 ", result)
-                else:
-                    result = result + get_child_areas(child, areaType, visitedAreas=visitedAreas)
-                    print("############ 5 ", result)
+
+    if area.areaId not in visitedAreas:
+        if len(visitedAreas) > 0 and area.areaType is areaType:
+            # Avoid the source area being the result
+            visitedAreas.append(area.areaId)
+            result.append(area)
+            return result
+        elif area.areaType is AreaTypeEnum.PollingStation:
+            # Redirecting to parents since polling stations has not children because it
+            # an entity between electorates and other offices.
+            result = get_parent_areas(area, areaType, visitedAreas)
+            return result
+        else:
+            visitedAreas.append(area.areaId)
+            for child in area.children:
+                result = result + get_child_areas(child, areaType, visitedAreas=visitedAreas)
+
+    return result
+
+
+def get_parent_areas(area, areaType, visitedAreas=[]):
+    result = []
+
+    if area.areaId not in visitedAreas:
+        if len(visitedAreas) > 0 and area.areaType is areaType:
+            # Avoid the source area being the result
+            visitedAreas.append(area.areaId)
+            result.append(area)
+            return result
+        else:
+            visitedAreas.append(area.areaId)
+            for parent in area.parents:
+                result = result + get_parent_areas(parent, areaType, visitedAreas=visitedAreas)
 
     return result
 
