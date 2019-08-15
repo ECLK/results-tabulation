@@ -72,7 +72,7 @@ def upload_file(proofId, fileSource, fileType):
     elif proof.finished is True:
         raise ForbiddenException("No more evidence is accepted for this proof (proofId=%d)" % proofId)
     else:
-        file = File.create(
+        file = File.createFromFileSource(
             fileSource=fileSource,
             fileType=fileType
         )
