@@ -1,7 +1,10 @@
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
+from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from util import get_paginated_query
 
 from orm.entities import Submission
@@ -25,6 +28,13 @@ class TallySheetModel(db.Model):
     children = association_proxy("submission", "children")
     submissionProofId = association_proxy("submission", "submissionProofId")
     versions = association_proxy("submission", "versions")
+
+    @hybrid_property
+    def latestVersion(self):
+        return TallySheetVersionPRE41.Model.query.filter(
+            TallySheetVersionPRE41.Model.tallySheetVersionId == self.latestVersionId
+        ).one_or_none()
+
 
     def __init__(self, tallySheetCode, electionId, officeId):
         submission = Submission.create(

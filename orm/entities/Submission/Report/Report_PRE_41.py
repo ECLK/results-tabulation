@@ -14,7 +14,7 @@ class Report_PRE_41_Model(Report.Model):
         tallySheetId = self.children[0].submissionId
         return TallySheet.get_by_id(tallySheetId=tallySheetId)
 
-    def __init__(self, reportCode, electionId, areaId, tallySheetId):
+    def __init__(self, electionId, areaId, tallySheetId):
         if tallySheetId is None:
             raise ForbiddenException("PRE-41 report must be associated with exactly one PRE-41 tally sheet.")
 
@@ -26,7 +26,7 @@ class Report_PRE_41_Model(Report.Model):
         elif child_tally_sheet.tallySheetCode is not TallySheetCodeEnum.PRE_41:
             raise NotFoundException("Given tally sheet is not PRE-41 (tallySheetId=%d).", tallySheetId)
 
-        super(Report_PRE_41_Model, self).__init__(reportCode=reportCode, electionId=electionId, areaId=areaId)
+        super(Report_PRE_41_Model, self).__init__(electionId=electionId, areaId=areaId)
 
         self.submission.add_child(tallySheetId)
 
@@ -63,9 +63,8 @@ def get_all(electionId=None, officeId=None):
     return result
 
 
-def create(reportCode, electionId, areaId, tallySheetId):
+def create(electionId, areaId, tallySheetId):
     result = Model(
-        reportCode=reportCode,
         electionId=electionId,
         areaId=areaId,
         tallySheetId=tallySheetId

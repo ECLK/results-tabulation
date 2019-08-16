@@ -1,3 +1,5 @@
+from sqlalchemy.ext.associationproxy import association_proxy
+
 from app import db
 from sqlalchemy.orm import relationship
 from orm.enums import AreaTypeEnum, AreaCategoryEnum
@@ -29,6 +31,27 @@ class AreaModel(db.Model):
                            secondaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId"
                            )
 
+    reports = relationship("ReportModel", secondary="submission",
+                           primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
+                           secondaryjoin="SubmissionModel.submissionId==ReportModel.reportId"
+                           )
+
+    reports_PRE_41 = relationship("Report_PRE_41_Model", secondary="submission",
+                                  primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
+                                  secondaryjoin="SubmissionModel.submissionId==Report_PRE_41_Model.reportId"
+                                  )
+
+    tallySheets = relationship("TallySheetModel", secondary="submission",
+                               primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
+                               secondaryjoin="SubmissionModel.submissionId==TallySheetModel.tallySheetId"
+                               )
+
+    tallySheets_PRE_41 = relationship(
+        "TallySheetModel", secondary="submission",
+        primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
+        secondaryjoin="and_(SubmissionModel.submissionId==TallySheetModel.tallySheetId, TallySheetModel.tallySheetCode=='PRE_41')"
+    )
+
     def __init__(self, areaName, electionId):
         super(AreaModel, self).__init__(
             areaName=areaName,
@@ -52,29 +75,26 @@ class AreaModel(db.Model):
 
     def get_associated_areas(self, areaType):
         return get_associated_areas(self, areaType);
-    #
-    # @hybrid_property
-    # def pollingStations(self):
-    #     # return []
-    #     visitedAreas = []
-    #     return get_child_areas(self, AreaTypeEnum.PollingStation, visitedAreas) \
-    #            + get_parent_areas(self, AreaTypeEnum.PollingStation, visitedAreas)
-    #
-    # @hybrid_property
-    # def countingCentres(self):
-    #     # return []
-    #     visitedAreas = []
-    #     return get_child_areas(self, AreaTypeEnum.CountingCentre, visitedAreas) \
-    #            + get_parent_areas(self, AreaTypeEnum.CountingCentre, visitedAreas)
-    #
-    # @hybrid_property
-    # def districtCentres(self):
-    #     # return []
-    #     visitedAreas = []
-    #     return get_child_areas(self, AreaTypeEnum.DistrictCentre, visitedAreas) \
-    #            + get_parent_areas(self, AreaTypeEnum.DistrictCentre, visitedAreas)
 
+    def get_submissions(self, submissionType):
+        return [submission for submission in self.submissions if submission.submissionType is submissionType]
 
+    # def get_reports(self, reportCode):
+    #     return [report for report in self.reports if report.reportCode is reportCode]
+
+    @hybrid_property
+    def pollingStations(self):
+        return get_associated_areas(self, AreaTypeEnum.PollingStation)
+
+    @hybrid_property
+    def countingCentres(self):
+        # return []
+        return get_associated_areas(self, AreaTypeEnum.CountingCentre)
+
+    @hybrid_property
+    def districtCentres(self):
+        # return []
+        return get_associated_areas(self, AreaTypeEnum.DistrictCentre)
 
     __mapper_args__ = {
         'polymorphic_on': areaType
@@ -91,8 +111,7 @@ Model = AreaModel
 
 
 def get_associated_areas(area, areaType):
-    visitedAreas = []
-    return get_child_areas(area, areaType, visitedAreas) + get_parent_areas(area, areaType, visitedAreas)
+    return get_child_areas(area, areaType, []) + get_parent_areas(area, areaType, [])
 
 
 def get_child_areas(area, areaType, visitedAreas=[]):
@@ -104,7 +123,7 @@ def get_child_areas(area, areaType, visitedAreas=[]):
             visitedAreas.append(area.areaId)
             result.append(area)
             return result
-        elif area.areaType is AreaTypeEnum.PollingStation:
+        elif len(visitedAreas) > 0 and area.areaType is AreaTypeEnum.PollingStation:
             # Redirecting to parents since polling stations has not children because it
             # an entity between electorates and other offices.
             result = get_parent_areas(area, areaType, visitedAreas)

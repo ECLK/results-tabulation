@@ -21,5 +21,6 @@ from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.entities import Submission, SubmissionVersion
 from orm.entities.SubmissionVersion import TallySheetVersion, ReportVersion
 from orm.entities.Submission import TallySheet, Report
+from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
-
+from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_41, ReportVersion_PRE_30_PD

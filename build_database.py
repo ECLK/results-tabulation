@@ -1,6 +1,6 @@
 from app import db
 from orm.entities import *
-from orm.entities.Submission.Report import Report_PRE_41
+from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD, Report_PRE_30_ED
 
 from orm.enums import ReportCodeEnum, AreaTypeEnum, TallySheetCodeEnum
 from api.TallySheetVersionApi import TallySheetVersionPRE41Api
@@ -121,11 +121,24 @@ for i in range(1, 2):
             electorateName=row["name"],
             electionId=election.electionId
         )
+
+        report = Report_PRE_30_ED.create(
+            electionId=election.electionId,
+            areaId=electorateIdOffset + row["id"]
+        )
+
     for row in ELECTORATES_DATA["pollingDivisions"]:
-        PollingDivision.create(
+        pollingDivision = PollingDivision.create(
             electorateName=row["name"],
             electionId=election.electionId
-        ).add_parent(parentId=electorateIdOffset + row["parent"])
+        )
+        pollingDivision.add_parent(parentId=electorateIdOffset + row["parent"])
+
+        report = Report_PRE_30_PD.create(
+            electionId=election.electionId,
+            areaId=electorateIdOffset + row["id"]
+        )
+
     for row in ELECTORATES_DATA["pollingDistricts"]:
         PollingDistrict.create(
             electorateName=row["name"],
@@ -151,7 +164,6 @@ for i in range(1, 2):
             officeId=officeIdOffset + row["id"]
         )
         report = Report_PRE_41.create(
-            reportCode=ReportCodeEnum.PRE_41,
             electionId=election.electionId,
             areaId=officeIdOffset + row["id"],
             tallySheetId=tallySheet.tallySheetId,
