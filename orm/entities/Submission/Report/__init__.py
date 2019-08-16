@@ -1,7 +1,10 @@
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from orm.entities import Election, Office, Electorate, Proof, History, Submission
+from orm.entities.SubmissionVersion import ReportVersion
 from orm.enums import ReportCodeEnum, ProofTypeEnum, SubmissionTypeEnum
 
 from util import get_paginated_query
@@ -48,6 +51,12 @@ class ReportModel(db.Model):
         self.submission.add_child(childId=childId)
 
         return self
+
+    @hybrid_property
+    def latestVersion(self):
+        return ReportVersion.get_by_id(
+            reportVersionId=self.latestVersionId
+        )
 
     __mapper_args__ = {
         'polymorphic_on': reportCode

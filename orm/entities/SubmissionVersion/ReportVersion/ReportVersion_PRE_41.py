@@ -1,10 +1,10 @@
 from flask import render_template
 
 from exception import NotFoundException, ForbiddenException
-from orm.entities import ReportVersion
+from orm.entities import ReportVersion, Area
 from orm.entities.Submission.Report import Report_PRE_41
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
-from orm.enums import ReportCodeEnum
+from orm.enums import ReportCodeEnum, AreaTypeEnum
 
 
 class ReportVersion_PRE_41_Model(ReportVersion.Model):
@@ -14,29 +14,30 @@ class ReportVersion_PRE_41_Model(ReportVersion.Model):
         if report is None:
             raise NotFoundException("Report not found. (reportId=%d)" % reportId)
 
-        tallySheetContent = TallySheetVersionPRE41.get_by_id(
-            tallySheetId=report.tallySheet.tallySheetId,
-            tallySheetVersionId=report.tallySheet.latestVersionId
-        ).tallySheetContent
+        if len(report.area.tallySheets_PRE_41) is 0:
+            raise ForbiddenException(
+                "There's no PRE-41 tally sheet for the counting centre (officeId)" % report.area.areaId)
+        elif len(report.area.tallySheets_PRE_41) > 1:
+            raise ForbiddenException(
+                "There's more than one PRE-41 tally sheet for the counting centre (officeId)" % report.area.areaId)
+
+        tallySheetContent = report.area.tallySheets_PRE_41[0].latestVersion.tallySheetContent
 
         content = {
-                "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
-                "electoralDistrict": "1. Matara",
-                "pollingDivision": "Division 1",
-                "pollingDistrictNos": "1, 2, 3, 4",
-                "countingHallNo": report.area.areaName,
-                "data": [
-                    # [1, "Yujith Waraniyagoda", "Moon", "Five Hundred", 500, "Saman"],
-                    # [2, "Clement Fernando", "Bottle", "Five Hundred", 500, "Saman"],
-                    # [3, "Umayanga Gunewardena", "Python", "Five Hundred", 500, "Saman"],
-                    # [4, "Sherazad Hamit", "Hammer", "Five Hundred", 500, "Saman"],
-                    # [5, "Anushka", "Carrot", "Five Hundred", 500, "Saman"],
-                    # [6, "Samudra Weerasinghe", "Fish", "Five Hundred", 500, "Saman"]
-                ],
-                "total": 3000,
-                "rejectedVotes": 50,
-                "grandTotal": 3050
-            }
+            "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
+            "electoralDistrict": Area.get_associated_areas(report.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": Area.get_associated_areas(report.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "pollingDistrictNos": ", ".join([
+                pollingDistrict.areaName for pollingDistrict in
+                Area.get_associated_areas(report.area, AreaTypeEnum.PollingDistrict)
+            ]),
+            "countingHallNo": report.area.areaName,
+            "data": [
+            ],
+            "total": 3000,
+            "rejectedVotes": 50,
+            "grandTotal": 3050
+        }
 
         for row_index in range(len(tallySheetContent)):
             row = tallySheetContent[row_index]
