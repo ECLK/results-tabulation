@@ -17,13 +17,15 @@ class ReportModel(db.Model):
 
     electionId = association_proxy("submission", "electionId")
     area = association_proxy("submission", "area")
+    areaId = association_proxy("submission", "areaId")
     latestVersionId = association_proxy("submission", "latestVersionId")
+    latestVersion = association_proxy("submission", "latestVersion")
     parents = association_proxy("submission", "parents")
     children = association_proxy("submission", "children")
     submissionProofId = association_proxy("submission", "submissionProofId")
     versions = association_proxy("submission", "versions")
 
-    def __init__(self, reportCode, electionId, areaId):
+    def __init__(self, electionId, areaId):
         submission = Submission.create(
             submissionType=SubmissionTypeEnum.Report,
             electionId=electionId,
@@ -31,8 +33,7 @@ class ReportModel(db.Model):
         )
 
         super(ReportModel, self).__init__(
-            reportId=submission.submissionId,
-            reportCode=reportCode,
+            reportId=submission.submissionId
         )
 
         db.session.add(self)
@@ -64,26 +65,28 @@ def get_by_id(reportId):
     return result
 
 
-def get_all(electionId=None, officeId=None):
+def get_all(electionId=None, areaId=None, reportCode=None):
     query = Model.query
 
     if electionId is not None:
         query = query.filter(Model.electionId == electionId)
 
-    if officeId is not None:
-        query = query.filter(Model.officeId == officeId)
+    if areaId is not None:
+        query = query.filter(Model.areaId == areaId)
+
+    if reportCode is not None:
+        query = query.filter(Model.reportCode == reportCode)
 
     result = get_paginated_query(query).all()
 
     return result
 
-
-def create(reportCode, electionId, areaId=None, childSubmissionIds=None):
-    result = ReportModel(
-        reportCode=reportCode,
-        electionId=electionId,
-        areaId=areaId,
-        childSubmissionIds=childSubmissionIds
-    )
-
-    return result
+# def create(reportCode, electionId, areaId=None, childSubmissionIds=None):
+#     result = ReportModel(
+#         reportCode=reportCode,
+#         electionId=electionId,
+#         areaId=areaId,
+#         childSubmissionIds=childSubmissionIds
+#     )
+#
+#     return result

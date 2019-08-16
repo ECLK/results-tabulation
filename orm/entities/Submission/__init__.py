@@ -6,7 +6,7 @@ from sqlalchemy import func
 
 from util import get_paginated_query
 
-from orm.entities import Election, Office, Proof, History, SubmissionVersion
+from orm.entities import Election, Office, Proof, History, SubmissionVersion, Area
 
 from orm.enums import SubmissionTypeEnum, ProofTypeEnum
 
@@ -21,7 +21,7 @@ class SubmissionModel(db.Model):
     submissionHistoryId = db.Column(db.Integer, db.ForeignKey(History.Model.__table__.c.historyId), nullable=False)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
-    area = relationship(Office.Model, foreign_keys=[areaId])
+    area = relationship(Area.Model, foreign_keys=[areaId])
     submissionProof = relationship(Proof.Model, foreign_keys=[submissionProofId])
     submissionHistory = relationship(History.Model, foreign_keys=[submissionHistoryId])
     versions = relationship("SubmissionVersionModel", order_by="desc(SubmissionVersionModel.submissionVersionId)",
@@ -46,8 +46,7 @@ class SubmissionModel(db.Model):
 
     @hybrid_property
     def latestVersion(self):
-        # return db.session.query(func.max("SubmissionVersionModel.submissionVersionId")).scalar()
-        SubmissionVersion.Model.query.filter(
+        return SubmissionVersion.Model.query.filter(
             SubmissionVersion.Model.submissionVersionId == self.latestVersionId
         ).one_or_none()
 
