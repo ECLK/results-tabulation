@@ -3,7 +3,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from app import db
 from sqlalchemy.orm import relationship
 from orm.entities import Party
-from orm.entities.Election import ElectionPartyCandidate
+from orm.entities.Election import ElectionCandidate
 from util import get_paginated_query
 
 
@@ -17,9 +17,9 @@ class ElectionPartyModel(db.Model):
     party = relationship(Party.Model, foreign_keys=[partyId])
     candidates = relationship(
         "CandidateModel",
-        secondary="election_party_candidate",
-        primaryjoin="and_(ElectionPartyModel.electionId==ElectionPartyCandidateModel.electionId, ElectionPartyModel.partyId==ElectionPartyCandidateModel.partyId)",
-        secondaryjoin="ElectionPartyCandidateModel.candidateId==CandidateModel.candidateId"
+        secondary="election_candidate",
+        primaryjoin="and_(ElectionPartyModel.electionId==ElectionCandidateModel.electionId, ElectionPartyModel.partyId==ElectionCandidateModel.partyId)",
+        secondaryjoin="ElectionCandidateModel.candidateId==CandidateModel.candidateId"
     )
 
     partyName = association_proxy("party", "partyName")
@@ -41,7 +41,7 @@ class ElectionPartyModel(db.Model):
         db.session.commit()
 
     def add_candidate(self, candidateId):
-        return ElectionPartyCandidate.create(
+        return ElectionCandidate.create(
             electionId=self.electionId,
             partyId=self.partyId,
             candidateId=candidateId
