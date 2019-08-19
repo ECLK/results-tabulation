@@ -23,8 +23,6 @@ class ReportModel(db.Model):
     areaId = association_proxy("submission", "areaId")
     latestVersionId = association_proxy("submission", "latestVersionId")
     latestVersion = association_proxy("submission", "latestVersion")
-    parents = association_proxy("submission", "parents")
-    children = association_proxy("submission", "children")
     submissionProofId = association_proxy("submission", "submissionProofId")
     versions = association_proxy("submission", "versions")
 
@@ -41,16 +39,6 @@ class ReportModel(db.Model):
 
         db.session.add(self)
         db.session.commit()
-
-    def add_parent(self, parentId):
-        self.submission.add_parent(parentId=parentId)
-
-        return self
-
-    def add_child(self, childId):
-        self.submission.add_child(childId=childId)
-
-        return self
 
     @hybrid_property
     def latestVersion(self):

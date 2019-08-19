@@ -1,9 +1,11 @@
 from flask import render_template
 from sqlalchemy import func
+from sqlalchemy.sql import select
 
 from app import db
 from exception import NotFoundException
-from orm.entities import ReportVersion
+from orm.entities import ReportVersion, Party, Candidate
+from orm.entities.Election import ElectionParty, ElectionPartyCandidate
 from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.entities.Submission.Report import Report_PRE_30_ED
 from orm.enums import ReportCodeEnum, AreaTypeEnum
@@ -23,14 +25,56 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
 
         print("\n\n============================= partyWiseResultIds \n\n", partyWiseResultIds)
 
-        queryResult = db.session.query(
+        aggregatedPartyCount = db.session.query(
             func.sum(PartyCount.Model.count).label("count"),
             PartyCount.Model.partyId.label("partyId")
         ).filter(
             PartyCount.Model.partyWiseResultId.in_(partyWiseResultIds)
         ).group_by(
             PartyCount.Model.partyId
+        ).subquery()
+
+        queryResult = db.session.query(
+            ElectionParty.Model.partyId,
+            Party.Model.partyName,
+            Party.Model.partySymbol,
+            Party.Model.partySymbolFileId,
+            ElectionPartyCandidate.Model.candidateId,
+            Candidate.Model.candidateName,
+            Candidate.Model.candidateProfileImageFileId,
+            aggregatedPartyCount.c.count
+        ).join(
+            Party.Model,
+            Party.Model.partyId == ElectionParty.Model.partyId,
+            isouter=True
+        ).join(
+            ElectionPartyCandidate.Model,
+            ElectionPartyCandidate.Model.partyId == ElectionParty.Model.partyId,
+            isouter=True
+        ).join(
+            Candidate.Model,
+            Candidate.Model.candidateId == ElectionPartyCandidate.Model.candidateId,
+            isouter=True
+        ).join(
+            aggregatedPartyCount,
+            aggregatedPartyCount.c.partyId == ElectionParty.Model.partyId,
+            isouter=True
+        ).filter(
+            ElectionParty.Model.electionId == report.electionId,
         ).all()
+
+        # queryResult = db.session.query(Party.Model, avg_scores).join(
+        #     avg_scores, Party.Model.partyId == avg_scores.c.partyId
+        # ).order_by('partyId').all()
+
+        # queryResult = db.session.query(
+        #     func.sum(PartyCount.Model.count).label("count"),
+        #     PartyCount.Model.partyId
+        # ).filter(
+        #     PartyCount.Model.partyWiseResultId.in_(partyWiseResultIds)
+        # ).group_by(
+        #     PartyCount.Model.partyId
+        # ).all()
 
         content = {
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
@@ -47,12 +91,15 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
 
         for row_index in range(len(queryResult)):
             row = queryResult[row_index]
+            print("============ row : ", row.partyName)
             content["data"].append([
                 row_index + 1,
-                "candidate.candidateName",
-                row[0],
-                row[1],
-                "N/A"
+                row.candidateName,
+                row.partySymbol,
+                "N/A",
+                row.count,
+                "",
+                ""
             ])
 
         html = render_template(

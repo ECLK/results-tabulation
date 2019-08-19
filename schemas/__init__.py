@@ -127,11 +127,11 @@ class AreaSchema(ma.ModelSchema):
             "areaName",
             "areaType",
             "electionId",
-            "parents",
-            "children",
-            "pollingStations",
-            "countingCentres",
-            "districtCentres"
+            # "parents",
+            # "children",
+            # "pollingStations",
+            # "countingCentres",
+            # "districtCentres"
         )
 
         model = Area.Model
@@ -143,9 +143,9 @@ class AreaSchema(ma.ModelSchema):
     electorateType = EnumField(ElectorateTypeEnum)
     parents = ma.Nested('self', many=True)
     children = ma.Nested('self', only="areaId", many=True)
-    pollingStations = ma.Nested('self', only="areaId", many=True)
-    countingCentres = ma.Nested('self', only="areaId", many=True)
-    districtCentres = ma.Nested('self', only="areaId", many=True)
+    pollingStations = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    countingCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    districtCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
 
 
 class ElectorateSchema(ma.ModelSchema):
@@ -172,9 +172,9 @@ class ElectorateSchema(ma.ModelSchema):
     electorateType = EnumField(ElectorateTypeEnum)
     parents = ma.Nested('AreaSchema', many=True)
     children = ma.Nested('AreaSchema', only="areaId", many=True)
-    pollingStations = ma.Nested('AreaSchema', many=True)
-    countingCentres = ma.Nested('AreaSchema', many=True)
-    districtCentres = ma.Nested('AreaSchema', many=True)
+    pollingStations = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    countingCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    districtCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
 
 
 class OfficeSchema(ma.ModelSchema):
@@ -201,9 +201,9 @@ class OfficeSchema(ma.ModelSchema):
     officeType = EnumField(OfficeTypeEnum)
     parents = ma.Nested('AreaSchema', many=True)
     children = ma.Nested('AreaSchema', only="areaId", many=True)
-    pollingStations = ma.Nested('AreaSchema', many=True)
-    countingCentres = ma.Nested('AreaSchema', many=True)
-    districtCentres = ma.Nested('AreaSchema', many=True)
+    pollingStations = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    countingCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    districtCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
 
 
 class Proof_Schema(ma.ModelSchema):
@@ -233,8 +233,6 @@ class SubmissionSchema(ma.ModelSchema):
             "area",
             "latestVersionId",
             # "tallySheetProofId",
-            "parents",
-            "children",
             "submissionProofId",
             "versions"
         )
@@ -331,9 +329,7 @@ class TallySheetSchema(ma.ModelSchema):
             "electionId",
             "office",
             "latestVersionId",
-            "latestVersion",
-            "parents",
-            "children",
+            # "latestVersion",
             "submissionProofId",
             "versions"
         )
@@ -347,8 +343,6 @@ class TallySheetSchema(ma.ModelSchema):
     office = ma.Nested(OfficeSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
     latestVersion = ma.Nested(SubmissionVersionSchema)
-    parents = ma.Nested(SubmissionSchema, only="submissionId", many=True)
-    children = ma.Nested(SubmissionSchema, many=True)
     submissionProof = ma.Nested(Proof_Schema)
 
 
@@ -361,8 +355,6 @@ class ReportSchema(ma.ModelSchema):
             "area",
             "areaId",
             "latestVersionId",
-            "parents",
-            "children",
             "submissionProofId",
             "submission",
             "versions"
@@ -376,8 +368,6 @@ class ReportSchema(ma.ModelSchema):
     reportCode = EnumField(ReportCodeEnum)
     area = ma.Nested(AreaSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
-    parents = ma.Nested(SubmissionSchema, only="submissionId", many=True)
-    children = ma.Nested(SubmissionSchema, many=True)
     submission = ma.Nested(SubmissionSchema)
     submissionProof = ma.Nested(Proof_Schema)
 

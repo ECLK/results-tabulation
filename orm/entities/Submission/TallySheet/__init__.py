@@ -24,8 +24,6 @@ class TallySheetModel(db.Model):
     officeId = association_proxy("submission", "areaId")
     office = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
-    parents = association_proxy("submission", "parents")
-    children = association_proxy("submission", "children")
     submissionProofId = association_proxy("submission", "submissionProofId")
     versions = association_proxy("submission", "versions")
 
@@ -34,7 +32,6 @@ class TallySheetModel(db.Model):
         return TallySheetVersionPRE41.Model.query.filter(
             TallySheetVersionPRE41.Model.tallySheetVersionId == self.latestVersionId
         ).one_or_none()
-
 
     def __init__(self, tallySheetCode, electionId, officeId):
         submission = Submission.create(
@@ -50,16 +47,6 @@ class TallySheetModel(db.Model):
 
         db.session.add(self)
         db.session.commit()
-
-    def add_parent(self, parentId):
-        self.submission.add_parent(parentId=parentId)
-
-        return self
-
-    def add_child(self, childId):
-        self.submission.add_child(childId=childId)
-
-        return self
 
 
 Model = TallySheetModel
