@@ -99,7 +99,7 @@ for i in range(1, 2):
 
     for i in range(1, 6):
         electionParty = election.add_party(i)
-        for j in range(1, 6):
+        for j in range(1, 2):
             electionParty.add_candidate((i * 5) + j)
 
     for i in range(1, 10):
@@ -165,8 +165,7 @@ for i in range(1, 2):
         )
         report = Report_PRE_41.create(
             electionId=election.electionId,
-            areaId=officeIdOffset + row["id"],
-            tallySheetId=tallySheet.tallySheetId,
+            areaId=officeIdOffset + row["id"]
         )
         tallySheetVersion = TallySheetVersionPRE41Api.create(
             tallySheetId=tallySheet.tallySheetId,

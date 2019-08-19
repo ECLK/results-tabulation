@@ -10,11 +10,6 @@ from util import get_paginated_query
 
 class Report_PRE_30_ED_Model(Report.Model):
 
-    # @hybrid_property
-    # def tallySheets(self):
-    #     tallySheetId = self.children[0].submissionId
-    #     return TallySheet.get_by_id(tallySheetId=tallySheetId)
-
     def __init__(self, electionId, areaId):
         area = ElectoralDistrict.get_by_id(electoralDistrictId=areaId)
 

@@ -27,15 +27,6 @@ class SubmissionModel(db.Model):
     versions = relationship("SubmissionVersionModel", order_by="desc(SubmissionVersionModel.submissionVersionId)",
                             primaryjoin="SubmissionModel.submissionId==SubmissionVersionModel.submissionId")
 
-    children = relationship("SubmissionModel", secondary="submission_submission",
-                            primaryjoin="SubmissionModel.submissionId==SubmissionChildrenModel.parentSubmissionId",
-                            secondaryjoin="SubmissionModel.submissionId==SubmissionChildrenModel.childSubmissionId"
-                            )
-    parents = relationship("SubmissionModel", secondary="submission_submission",
-                           primaryjoin="SubmissionModel.submissionId==SubmissionChildrenModel.childSubmissionId",
-                           secondaryjoin="SubmissionModel.submissionId==SubmissionChildrenModel.parentSubmissionId"
-                           )
-
     @hybrid_property
     def latestVersionId(self):
         return db.session.query(
@@ -64,24 +55,6 @@ class SubmissionModel(db.Model):
 
         db.session.add(self)
         db.session.commit()
-
-    def add_parent(self, parentId):
-        db.session.add(SubmissionChildrenModel(parentSubmissionId=parentId, childSubmissionId=self.submissionId))
-        db.session.commit()
-
-        return self
-
-    def add_child(self, childId):
-        db.session.add(SubmissionChildrenModel(parentSubmissionId=self.submissionId, childSubmissionId=childId))
-        db.session.commit()
-
-        return self
-
-
-class SubmissionChildrenModel(db.Model):
-    __tablename__ = 'submission_submission'
-    parentSubmissionId = db.Column(db.Integer, db.ForeignKey("submission.submissionId"), primary_key=True)
-    childSubmissionId = db.Column(db.Integer, db.ForeignKey("submission.submissionId"), primary_key=True)
 
 
 Model = SubmissionModel
