@@ -6,7 +6,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import func
 
 from exception import NotFoundException
-from orm.entities import ReportVersion
+from orm.entities import ReportVersion, Party, Candidate
+from orm.entities.Election import ElectionParty, ElectionCandidate
 from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.entities.Submission.Report import Report_PRE_30_PD, Report_PRE_41
 from orm.enums import ReportCodeEnum, AreaTypeEnum
@@ -32,6 +33,44 @@ class ReportVersion_PRE_30_PD_Model(ReportVersion.Model):
             PartyCount.Model.partyWiseResultId.in_([4])
         ).group_by(
             PartyCount.Model.partyId
+        ).all()
+
+        aggregatedPartyCount = db.session.query(
+            func.sum(PartyCount.Model.count).label("count"),
+            PartyCount.Model.partyId.label("partyId")
+        ).filter(
+            PartyCount.Model.partyWiseResultId.in_(partyWiseResultIds)
+        ).group_by(
+            PartyCount.Model.partyId
+        ).subquery()
+
+        queryResult = db.session.query(
+            ElectionParty.Model.partyId,
+            Party.Model.partyName,
+            Party.Model.partySymbol,
+            Party.Model.partySymbolFileId,
+            ElectionCandidate.Model.candidateId,
+            Candidate.Model.candidateName,
+            Candidate.Model.candidateProfileImageFileId,
+            aggregatedPartyCount.c.count
+        ).join(
+            Party.Model,
+            Party.Model.partyId == ElectionParty.Model.partyId,
+            isouter=True
+        ).join(
+            ElectionCandidate.Model,
+            ElectionCandidate.Model.partyId == ElectionParty.Model.partyId,
+            isouter=True
+        ).join(
+            Candidate.Model,
+            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
+            isouter=True
+        ).join(
+            aggregatedPartyCount,
+            aggregatedPartyCount.c.partyId == ElectionParty.Model.partyId,
+            isouter=True
+        ).filter(
+            ElectionParty.Model.electionId == report.electionId,
         ).all()
 
         content = {

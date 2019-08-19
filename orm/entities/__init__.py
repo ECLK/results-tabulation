@@ -4,7 +4,7 @@ from orm.entities.IO.File import Image
 from orm.entities import Election, Candidate
 from orm.entities.Area import Electorate
 from orm.entities import Party
-from orm.entities.Election import ElectionParty, ElectionPartyCandidate
+from orm.entities.Election import ElectionParty, ElectionCandidate
 from orm.entities import Invoice, StationaryItem, BallotBox, Ballot
 from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities import Proof, History

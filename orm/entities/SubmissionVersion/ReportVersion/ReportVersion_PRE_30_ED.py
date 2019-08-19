@@ -5,7 +5,7 @@ from sqlalchemy.sql import select
 from app import db
 from exception import NotFoundException
 from orm.entities import ReportVersion, Party, Candidate
-from orm.entities.Election import ElectionParty, ElectionPartyCandidate
+from orm.entities.Election import ElectionParty, ElectionCandidate
 from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.entities.Submission.Report import Report_PRE_30_ED
 from orm.enums import ReportCodeEnum, AreaTypeEnum
@@ -39,7 +39,7 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             Party.Model.partyName,
             Party.Model.partySymbol,
             Party.Model.partySymbolFileId,
-            ElectionPartyCandidate.Model.candidateId,
+            ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
             Candidate.Model.candidateProfileImageFileId,
             aggregatedPartyCount.c.count
@@ -48,12 +48,12 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             Party.Model.partyId == ElectionParty.Model.partyId,
             isouter=True
         ).join(
-            ElectionPartyCandidate.Model,
-            ElectionPartyCandidate.Model.partyId == ElectionParty.Model.partyId,
+            ElectionCandidate.Model,
+            ElectionCandidate.Model.partyId == ElectionParty.Model.partyId,
             isouter=True
         ).join(
             Candidate.Model,
-            Candidate.Model.candidateId == ElectionPartyCandidate.Model.candidateId,
+            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
             isouter=True
         ).join(
             aggregatedPartyCount,
