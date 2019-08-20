@@ -1,13 +1,18 @@
+import numpy
 from flask import render_template
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.sql import select
 
 from app import db
 from exception import NotFoundException
-from orm.entities import ReportVersion, Party, Candidate
+from orm.entities import ReportVersion, Party, Candidate, Submission, SubmissionVersion
+from orm.entities.Area.Office import CountingCentre
 from orm.entities.Election import ElectionParty, ElectionCandidate
+from orm.entities.Result import CandidateWiseResult
+from orm.entities.Result.CandidateWiseResult import CandidateCount
 from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.entities.Submission.Report import Report_PRE_30_ED
+from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from orm.enums import ReportCodeEnum, AreaTypeEnum
 
 
@@ -18,91 +23,79 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
         if report is None:
             raise NotFoundException("Report not found. (reportId=%d)" % reportId)
 
-        partyWiseResultIds = []
-        for countingCentre in report.area.get_associated_areas(AreaTypeEnum.CountingCentre):
-            for tallySheet in countingCentre.tallySheets_PRE_41:
-                partyWiseResultIds.append(tallySheet.latestVersion.partyWiseResultId)
-
-        aggregatedPartyCount = db.session.query(
-            func.sum(PartyCount.Model.count).label("count"),
-            PartyCount.Model.partyId.label("partyId")
-        ).filter(
-            PartyCount.Model.partyWiseResultId.in_(partyWiseResultIds)
-        ).group_by(
-            PartyCount.Model.partyId
-        ).subquery()
-
-        queryResult = db.session.query(
-            ElectionParty.Model.partyId,
-            Party.Model.partyName,
-            Party.Model.partySymbol,
-            Party.Model.partySymbolFileId,
-            ElectionCandidate.Model.candidateId,
-            Candidate.Model.candidateName,
-            Candidate.Model.candidateProfileImageFileId,
-            aggregatedPartyCount.c.count
-        ).join(
-            Party.Model,
-            Party.Model.partyId == ElectionParty.Model.partyId,
-            isouter=True
-        ).join(
-            ElectionCandidate.Model,
-            ElectionCandidate.Model.partyId == ElectionParty.Model.partyId,
-            isouter=True
-        ).join(
-            Candidate.Model,
-            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
-            isouter=True
-        ).join(
-            aggregatedPartyCount,
-            aggregatedPartyCount.c.partyId == ElectionParty.Model.partyId,
-            isouter=True
-        ).filter(
-            ElectionParty.Model.electionId == report.electionId,
-        ).all()
-
-        # queryResult = db.session.query(Party.Model, avg_scores).join(
-        #     avg_scores, Party.Model.partyId == avg_scores.c.partyId
-        # ).order_by('partyId').all()
-
-        # queryResult = db.session.query(
-        #     func.sum(PartyCount.Model.count).label("count"),
-        #     PartyCount.Model.partyId
-        # ).filter(
-        #     PartyCount.Model.candidateWiseResultId.in_(partyWiseResultIds)
-        # ).group_by(
-        #     PartyCount.Model.partyId
-        # ).all()
-
         content = {
-            "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
-            "electoralDistrict": "1. Matara",
-            "pollingDivision": "Division 1",
-            "pollingDistrictNos": "1, 2, 3, 4",
-            "countingHallNo": report.area.areaName,
-            "data": [
-            ],
-            "total": 3000,
+            "electoralDistrict": report.area.areaName,
+            "pollingDivisions": [],
+            "data": [],
+            "validVotes": [],
             "rejectedVotes": 50,
             "grandTotal": 3050
         }
 
-        for row_index in range(len(queryResult)):
-            row = queryResult[row_index]
-            content["data"].append([
-                row_index + 1,
-                row.candidateName,
-                row.partySymbol,
-                "N/A",
-                row.count,
-                "",
-                ""
-            ])
+        pollingDivisions = []
+        data = []
+
+        candidates = db.session.query(
+            ElectionCandidate.Model.candidateId,
+            Candidate.Model.candidateName
+        ).join(
+            Candidate.Model,
+            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
+        ).order_by(
+            ElectionCandidate.Model.candidateId
+        ).all()
+
+        for candidate in candidates:
+            content["data"].append([candidate.candidateName])
+
+        for pollingDivision in report.area.get_associated_areas(AreaTypeEnum.PollingDivision):
+            content["pollingDivisions"].append(pollingDivision.areaName)
+            latestTallySheetVersions = []
+            for countingCentre in pollingDivision.get_associated_areas(AreaTypeEnum.CountingCentre):
+                for tallySheet in countingCentre.tallySheets_PRE_41:
+                    latestTallySheetVersions.append(tallySheet.latestVersionId)
+
+            divisionWiseResult = db.session.query(
+                ElectionCandidate.Model.candidateId,
+                func.sum(CandidateCount.Model.count).label("count")
+            ).join(
+                CandidateCount.Model,
+                CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId,
+                isouter=True
+            ).join(
+                CandidateWiseResult.Model,
+                CandidateWiseResult.Model.candidateWiseResultId == CandidateCount.Model.candidateWiseResultId,
+                isouter=True
+            ).join(
+                TallySheetVersionPRE41.Model,
+                and_(
+                    TallySheetVersionPRE41.Model.candidateWiseResultId == CandidateWiseResult.Model.candidateWiseResultId,
+                    TallySheetVersionPRE41.Model.tallySheetVersionId.in_(latestTallySheetVersions)
+                ),
+                isouter=True
+            ).filter(
+                ElectionCandidate.Model.electionId == report.electionId
+            ).group_by(
+                ElectionCandidate.Model.candidateId
+            ).order_by(
+                ElectionCandidate.Model.candidateId
+            ).all()
+
+            for divisionWiseResultIndex in range(len(divisionWiseResult)):
+                if divisionWiseResult[divisionWiseResultIndex].count is not None:
+                    content["data"][divisionWiseResultIndex].append(divisionWiseResult[divisionWiseResultIndex].count)
+                else:
+                    content["data"][divisionWiseResultIndex].append("")
+
+        for data_row in content["data"]:
+            data_row.append(sum(filter(lambda e: isinstance(e, int), data_row[1:])))
 
         html = render_template(
-            'pre-41.html',
+            'PRE-30-ED.html',
             content=content
         )
+
+        print("HTML ", html)
 
         super(ReportVersion_PRE_30_ED_Model, self).__init__(reportId=reportId, html=html)
 
