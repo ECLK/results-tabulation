@@ -31,19 +31,21 @@
 <body>
 
 <div>
-    <h1>PRE-30-PD</h1>
-    <h2>{{content.pollingDistrict}}</h2>
+    <h1>PRE-30-ED</h1>
+    <h2>{{content.electoralDistrict}}</h2>
     <table class="table table-borderless">
         <tbody>
         <tr>
             <th class="left right top bottom" rowspan="2">Name of the Candidate</th>
-            <th class="left right top bottom" colspan="{{content.countingCentres|length}}">Counting Centre No.</th>
+            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}">
+                Name of the Polling Division
+            </th>
             <th class="left right top bottom" rowspan="2">Total</th>
             <th class="left right top bottom" rowspan="2">Total No. of Votes in Words</th>
         </tr>
         <tr>
-            {% for countingCentre in content.countingCentres %}
-            <th class="left right top bottom">{{countingCentre}}</th>
+            {% for pollingDivision in content.pollingDivisions %}
+            <th class="left right top bottom">{{pollingDivision}}</th>
             {% endfor %}
         </tr>
         {% for row in content.data %}
