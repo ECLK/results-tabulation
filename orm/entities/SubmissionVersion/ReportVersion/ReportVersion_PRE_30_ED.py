@@ -23,8 +23,6 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             for tallySheet in countingCentre.tallySheets_PRE_41:
                 partyWiseResultIds.append(tallySheet.latestVersion.partyWiseResultId)
 
-        print("\n\n============================= partyWiseResultIds \n\n", partyWiseResultIds)
-
         aggregatedPartyCount = db.session.query(
             func.sum(PartyCount.Model.count).label("count"),
             PartyCount.Model.partyId.label("partyId")
@@ -71,7 +69,7 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
         #     func.sum(PartyCount.Model.count).label("count"),
         #     PartyCount.Model.partyId
         # ).filter(
-        #     PartyCount.Model.partyWiseResultId.in_(partyWiseResultIds)
+        #     PartyCount.Model.candidateWiseResultId.in_(partyWiseResultIds)
         # ).group_by(
         #     PartyCount.Model.partyId
         # ).all()
@@ -91,7 +89,6 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
 
         for row_index in range(len(queryResult)):
             row = queryResult[row_index]
-            print("============ row : ", row.partyName)
             content["data"].append([
                 row_index + 1,
                 row.candidateName,

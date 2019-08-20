@@ -1867,7 +1867,7 @@ paths:
                     items:
                       type: object
                       properties:
-                        partyId:
+                        candidateId:
                           type: integer
                           format: int64
                         count:
@@ -1912,7 +1912,7 @@ paths:
                   items:
                     type: object
                     properties:
-                      partyId:
+                      candidateId:
                         type: integer
                         format: int64
                       count:
