@@ -5,6 +5,7 @@ from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
     Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party
 from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
+from orm.entities.Result.CandidateWiseResult import CandidateCount
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.Result.PartyWiseResult import PartyCount
@@ -87,10 +88,26 @@ class PartyCountSchema(ma.ModelSchema):
         fields = (
             "partyId",
             "count",
-            "countInWords"
+            "countInWords",
+            "partyWiseResultId"
         )
 
         model = PartyCount.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class CandidateCountSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "candidateId",
+            "count",
+            "countInWords",
+            "candidateWiseResultId"
+        )
+
+        model = CandidateCount.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -117,7 +134,7 @@ class TallySheetVersionSchema(ma.ModelSchema):
         sqla_session = db.session
 
     tallySheetCode = EnumField(TallySheetCodeEnum)
-    tallySheetContent = ma.Nested(PartyCountSchema, many=True)
+    tallySheetContent = ma.Nested(CandidateCountSchema, many=True)
 
 
 class AreaSchema(ma.ModelSchema):
@@ -318,7 +335,7 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
         sqla_session = db.session
 
     # submission = ma.Nested(SubmissionSchema)
-    tallySheetContent = ma.Nested(PartyCountSchema, many=True)
+    tallySheetContent = ma.Nested(CandidateCountSchema, many=True)
 
 
 class TallySheetSchema(ma.ModelSchema):

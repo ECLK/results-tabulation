@@ -15,8 +15,9 @@ from orm.entities.Area.Electorate import Country, Province, AdministrativeDistri
 
 from orm.entities.Area.Office import DistrictCentre, CountingCentre, PollingStation
 
-from orm.entities.Result import PartyWiseResult
+from orm.entities.Result import PartyWiseResult, CandidateWiseResult
 from orm.entities.Result.PartyWiseResult import PartyCount
+from orm.entities.Result.CandidateWiseResult import CandidateCount
 
 from orm.entities import Submission, SubmissionVersion
 from orm.entities.SubmissionVersion import TallySheetVersion, ReportVersion

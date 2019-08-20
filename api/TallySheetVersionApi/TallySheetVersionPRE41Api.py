@@ -1,3 +1,4 @@
+from orm.entities.Result.CandidateWiseResult import CandidateCount
 from util import RequestBody
 from schemas import TallySheetVersionPRE41Schema
 from orm.entities.Submission import TallySheet
@@ -37,9 +38,9 @@ def create(tallySheetId, body):
     if tally_sheet_content is not None:
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
-            PartyCount.create(
-                partyWiseResultId=pre41.partyWiseResultId,
-                partyId=party_count_body.get("partyId"),
+            CandidateCount.create(
+                candidateWiseResultId=pre41.candidateWiseResultId,
+                candidateId=party_count_body.get("candidateId"),
                 count=party_count_body.get("count"),
                 countInWords=party_count_body.get("countInWords"),
                 electionId=pre41.submission.electionId

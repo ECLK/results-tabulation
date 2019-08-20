@@ -57,7 +57,7 @@ OFFICE_DATA = {
                 {"id": 23, "type": "report", "code": "PRE_41", "parent": 22}
             ]
         },
-        {"id": 26, "parent": 22, "name": "Colombo West", "tallySheetCodes": ["PRE_41"]},
+        {"id": 26, "parent": 22, "name": "Colombo", "tallySheetCodes": ["PRE_41"]},
         {"id": 27, "parent": 23, "name": "Kalutara South", "tallySheetCodes": ["PRE_41"]},
         {"id": 28, "parent": 23, "name": "Kalutara West", "tallySheetCodes": ["PRE_41"]},
         {"id": 29, "parent": 24, "name": "Gampaha South", "tallySheetCodes": ["PRE_41"]},
@@ -100,7 +100,7 @@ for i in range(1, 2):
     for i in range(1, 6):
         electionParty = election.add_party(i)
         for j in range(1, 2):
-            electionParty.add_candidate((i * 5) + j)
+            electionParty.add_candidate(i)
 
     for i in range(1, 10):
         Ballot.create(
@@ -172,9 +172,9 @@ for i in range(1, 2):
             body={
                 "tallySheetId": tallySheet.tallySheetId,
                 "tallySheetContent": [
-                    {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                    {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                    {"partyId": 3, "count": 60, "countInWords": "Sixty"}
+                    {"candidateId": 1, "count": 23, "countInWords": "Twenty three"},
+                    {"candidateId": 2, "count": 45, "countInWords": "Forty five"},
+                    {"candidateId": 3, "count": 60, "countInWords": "Sixty"}
                 ]
             }
         )
@@ -183,9 +183,9 @@ for i in range(1, 2):
             body={
                 "tallySheetId": tallySheet.tallySheetId,
                 "tallySheetContent": [
-                    {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                    {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                    {"partyId": 3, "count": 60, "countInWords": "Sixty"}
+                    {"candidateId": 1, "count": 23, "countInWords": "Twenty three"},
+                    {"candidateId": 2, "count": 45, "countInWords": "Forty five"},
+                    {"candidateId": 3, "count": 60, "countInWords": "Sixty"}
                 ]
             }
         )
