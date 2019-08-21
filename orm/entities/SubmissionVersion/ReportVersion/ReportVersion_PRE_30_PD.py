@@ -1,24 +1,11 @@
-from sqlalchemy import and_
-
 from flask import render_template
-from sqlalchemy.ext.hybrid import hybrid_property
-
-from app import db
-from sqlalchemy.orm import relationship
-from sqlalchemy import func
 
 from exception import NotFoundException
-from orm.entities import ReportVersion, Party, Candidate, Submission, SubmissionVersion, Area
-from orm.entities.Area.Office import CountingCentre
-from orm.entities.Election import ElectionParty, ElectionCandidate
-from orm.entities.Result import PartyWiseResult, CandidateWiseResult
-from orm.entities.Result.CandidateWiseResult import CandidateCount
-from orm.entities.Result.PartyWiseResult import PartyCount
-from orm.entities.Submission import TallySheet
-from orm.entities.Submission.Report import Report_PRE_30_PD, Report_PRE_41
+from orm.entities import ReportVersion
+
+from orm.entities.Submission.Report import Report_PRE_30_PD
 from orm.entities.SubmissionVersion.ReportVersion.util import get_PRE41_candidate_and_area_wise_aggregated_result
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
-from orm.enums import ReportCodeEnum, AreaTypeEnum
+from orm.enums import ReportCodeEnum
 
 
 class ReportVersion_PRE_30_PD_Model(ReportVersion.Model):
@@ -78,7 +65,7 @@ class ReportVersion_PRE_30_PD_Model(ReportVersion.Model):
 
                     # Calculate validVotes count.
                     content["rejectedVotes"][j] = 0  # TODO
-                    
+
                     content["totalVotes"][j] = content["validVotes"][j] + content["rejectedVotes"][j]
 
             data_row.append(total_count_per_candidate)
