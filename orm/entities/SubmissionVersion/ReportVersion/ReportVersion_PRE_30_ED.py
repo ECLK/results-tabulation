@@ -54,7 +54,7 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
 
                 # Append the candidateName and number (Only if it's not there already).
                 if len(content["data"]) <= divisionWiseResultIndex:
-                    candidate = divisionWiseResult[divisionWiseResultIndex].CandidateModel
+                    candidate = divisionWiseResult[divisionWiseResultIndex]
                     content["data"].append([divisionWiseResultIndex + 1, candidate.candidateName])
 
                 if divisionWiseResult[divisionWiseResultIndex].count is not None:

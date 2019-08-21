@@ -27,7 +27,7 @@ def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False
 
     query = db.session.query(
         ElectionCandidate.Model.candidateId,
-        Candidate.Model,
+        Candidate.Model.candidateName,
         func.sum(CandidateCount.Model.count).label("count")
     ).join(
         Candidate.Model,
@@ -88,9 +88,9 @@ def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subqu
 
     query = db.session.query(
         ElectionCandidate.Model.candidateId,
-        Candidate.Model,
+        Candidate.Model.candidateName,
         Area.Model.areaId,
-        Area.Model,
+        Area.Model.areaName,
         func.sum(CandidateCount.Model.count).label("count"),
     ).join(
         Candidate.Model,

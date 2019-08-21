@@ -36,37 +36,13 @@ class ReportVersion_PRE_30_PD_Model(ReportVersion.Model):
             "totalVotes": []
         }
 
-        aggregatedPartyCount, countingCentres, latestTallySheetVersions = get_PRE41_candidate_and_area_wise_aggregated_result(
+        queryResult, countingCentres, latestTallySheetVersions = get_PRE41_candidate_and_area_wise_aggregated_result(
             electionId=report.electionId,
             areas=report.area,
-            subquery=True
+            subquery=False
         )
 
         content["countingCentres"] = [countingCentre.areaName for countingCentre in countingCentres]
-
-        queryResult = db.session.query(
-            Candidate.Model.candidateId,
-            Candidate.Model.candidateName,
-            Area.Model.areaId,
-            Area.Model.areaName,
-            aggregatedPartyCount.c.count
-        ).join(
-            ElectionCandidate.Model,
-            ElectionCandidate.Model.candidateId == Candidate.Model.candidateId
-        ).join(
-            aggregatedPartyCount,
-            aggregatedPartyCount.c.candidateId == Candidate.Model.candidateId,
-            isouter=True
-        ).join(
-            Area.Model,
-            Area.Model.areaId == aggregatedPartyCount.c.areaId,
-            isouter=True
-        ).filter(
-            ElectionCandidate.Model.electionId == report.electionId,
-        ).order_by(
-            ElectionCandidate.Model.candidateId,
-            Area.Model.areaId
-        ).all()
 
         for i in range(0, len(countingCentres)):
             content["validVotes"].append(0)
