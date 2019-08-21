@@ -5,7 +5,8 @@ app = Flask(__name__)
 
 app.config.from_envvar('ENV_CONFIG')
 
-engine = sqlalchemy.create_engine('postgres://%s:%s@%s:%s' % (
+engine = sqlalchemy.create_engine('%s://%s:%s@%s:%s' % (
+    app.config['DATABASE_PLUGIN'],
     app.config['DATABASE_USERNAME'],
     app.config['DATABASE_PASSWORD'],
     app.config['DATABASE_HOST'],
