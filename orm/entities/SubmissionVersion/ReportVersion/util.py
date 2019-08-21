@@ -1,5 +1,5 @@
 from app import db
-from orm.entities import Area, Submission, SubmissionVersion
+from orm.entities import Area, Submission, SubmissionVersion, Candidate
 from orm.entities.Election import ElectionCandidate
 from orm.entities.Result import CandidateWiseResult
 from orm.entities.Result.CandidateWiseResult import CandidateCount
@@ -27,7 +27,12 @@ def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False
 
     query = db.session.query(
         ElectionCandidate.Model.candidateId,
+        Candidate.Model,
         func.sum(CandidateCount.Model.count).label("count")
+    ).join(
+        Candidate.Model,
+        Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
+        isouter=True
     ).join(
         Submission.Model,
         Submission.Model.electionId == ElectionCandidate.Model.electionId,
@@ -70,7 +75,7 @@ def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False
 
 def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subquery=False):
     areas = get_array(areas)
-    
+
     latestTallySheetVersions = []
     countingCentres = []
 
@@ -83,8 +88,14 @@ def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subqu
 
     query = db.session.query(
         ElectionCandidate.Model.candidateId,
+        Candidate.Model,
         Area.Model.areaId,
+        Area.Model,
         func.sum(CandidateCount.Model.count).label("count"),
+    ).join(
+        Candidate.Model,
+        Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
+        isouter=True
     ).join(
         Area.Model,
         Area.Model.electionId == ElectionCandidate.Model.electionId,
