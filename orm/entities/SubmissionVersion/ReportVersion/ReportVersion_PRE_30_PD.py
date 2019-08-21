@@ -68,9 +68,6 @@ class ReportVersion_PRE_30_PD_Model(ReportVersion.Model):
             Area.Model.areaId
         ).all()
 
-        for row in queryResult:
-            print("###### roow ##### ", row)
-
         for i in range(0, len(countingCentres)):
             content["validVotes"].append(0)
             content["rejectedVotes"].append(0)

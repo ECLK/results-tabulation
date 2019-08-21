@@ -55,7 +55,7 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
 
             content["pollingDivisions"].append(pollingDivision.areaName)
 
-            divisionWiseResult = get_PRE41_candidate_wise_aggregated_result(
+            divisionWiseResult, countingCentres, latestTallySheetVersions = get_PRE41_candidate_wise_aggregated_result(
                 electionId=report.electionId,
                 areas=pollingDivision
             )
@@ -64,9 +64,9 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             total_invalid_votes_from_division = 0
             for divisionWiseResultIndex in range(len(divisionWiseResult)):
                 if divisionWiseResult[divisionWiseResultIndex].count is not None:
-                    content["data"][divisionWiseResultIndex].append(divisionWiseResult[divisionWiseResultIndex].count)
-                    total_valid_votes_from_division = total_valid_votes_from_division + divisionWiseResult[
-                        divisionWiseResultIndex].count
+                    count = divisionWiseResult[divisionWiseResultIndex].count
+                    content["data"][divisionWiseResultIndex].append(count)
+                    total_valid_votes_from_division = total_valid_votes_from_division + count
                 else:
                     content["data"][divisionWiseResultIndex].append("")
 
@@ -86,8 +86,6 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             'PRE-30-ED.html',
             content=content
         )
-
-        print("HTML ", html)
 
         super(ReportVersion_PRE_30_ED_Model, self).__init__(reportId=reportId, html=html)
 

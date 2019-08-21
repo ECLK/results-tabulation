@@ -14,7 +14,6 @@ from util import get_array
 
 def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False):
     areas = get_array(areas)
-    latestTallySheetVersions = []
 
     latestTallySheetVersions = []
     countingCentres = []
@@ -30,18 +29,29 @@ def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False
         ElectionCandidate.Model.candidateId,
         func.sum(CandidateCount.Model.count).label("count")
     ).join(
-        CandidateCount.Model,
-        CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId,
+        Submission.Model,
+        Submission.Model.electionId == ElectionCandidate.Model.electionId,
         isouter=True
     ).join(
-        CandidateWiseResult.Model,
-        CandidateWiseResult.Model.candidateWiseResultId == CandidateCount.Model.candidateWiseResultId,
+        SubmissionVersion.Model,
+        SubmissionVersion.Model.submissionId == Submission.Model.submissionId,
         isouter=True
     ).join(
         TallySheetVersionPRE41.Model,
         and_(
-            TallySheetVersionPRE41.Model.candidateWiseResultId == CandidateWiseResult.Model.candidateWiseResultId,
+            TallySheetVersionPRE41.Model.tallySheetVersionId == SubmissionVersion.Model.submissionVersionId,
             TallySheetVersionPRE41.Model.tallySheetVersionId.in_(latestTallySheetVersions)
+        ),
+        isouter=True
+    ).join(
+        CandidateWiseResult.Model,
+        CandidateWiseResult.Model.candidateWiseResultId == TallySheetVersionPRE41.Model.candidateWiseResultId,
+        isouter=True
+    ).join(
+        CandidateCount.Model,
+        and_(
+            CandidateCount.Model.candidateWiseResultId == CandidateWiseResult.Model.candidateWiseResultId,
+            CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId,
         ),
         isouter=True
     ).filter(
@@ -60,6 +70,7 @@ def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False
 
 def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subquery=False):
     areas = get_array(areas)
+    
     latestTallySheetVersions = []
     countingCentres = []
 
@@ -88,7 +99,10 @@ def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subqu
         isouter=True
     ).join(
         TallySheetVersionPRE41.Model,
-        TallySheetVersionPRE41.Model.tallySheetVersionId == SubmissionVersion.Model.submissionVersionId,
+        and_(
+            TallySheetVersionPRE41.Model.tallySheetVersionId == SubmissionVersion.Model.submissionVersionId,
+            TallySheetVersionPRE41.Model.tallySheetVersionId.in_(latestTallySheetVersions)
+        ),
         isouter=True
     ).join(
         CandidateWiseResult.Model,
