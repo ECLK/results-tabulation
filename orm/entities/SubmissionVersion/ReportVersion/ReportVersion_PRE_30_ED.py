@@ -34,22 +34,10 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             "totalVotes": []
         }
 
+        # Retrieve the mapped polling divisions list.
         pollingDivisions = report.area.get_associated_areas(AreaTypeEnum.PollingDivision)
 
-        candidates = db.session.query(
-            ElectionCandidate.Model.candidateId,
-            Candidate.Model.candidateName
-        ).join(
-            Candidate.Model,
-            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
-        ).order_by(
-            ElectionCandidate.Model.candidateId
-        ).all()
-
-        for candidateIndex in range(len(candidates)):
-            candidate = candidates[candidateIndex]
-            content["data"].append([candidateIndex + 1, candidate.candidateName])
-
+        # Query the candidate wise results of each polling division separately.
         for pollingDivisionIndex in range(len(pollingDivisions)):
             pollingDivision = pollingDivisions[pollingDivisionIndex]
 
@@ -63,23 +51,46 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             total_valid_votes_from_division = 0
             total_invalid_votes_from_division = 0
             for divisionWiseResultIndex in range(len(divisionWiseResult)):
+
+                # Append the candidateName and number (Only if it's not there already).
+                if len(content["data"]) <= divisionWiseResultIndex:
+                    candidate = divisionWiseResult[divisionWiseResultIndex].CandidateModel
+                    content["data"].append([divisionWiseResultIndex + 1, candidate.candidateName])
+
                 if divisionWiseResult[divisionWiseResultIndex].count is not None:
                     count = divisionWiseResult[divisionWiseResultIndex].count
+
+                    # Append the aggregated vote count.
                     content["data"][divisionWiseResultIndex].append(count)
+
+                    # To calculate the division wise total.
                     total_valid_votes_from_division = total_valid_votes_from_division + count
                 else:
+                    # If the candidate wise count hasn't been found.
+                    # This could be not existing or not yet entered to the system.
                     content["data"][divisionWiseResultIndex].append("")
 
+            # Append the division wise valid votes total.
             content["validVotes"].append(total_valid_votes_from_division)
-            content["rejectedVotes"].append(total_invalid_votes_from_division)  # TODO
+
+            # TODO
+            content["rejectedVotes"].append(total_invalid_votes_from_division)
+
+            # Append the division wise total vote count which is the sum of valid and invalid votes.
             content["totalVotes"].append(total_valid_votes_from_division + total_invalid_votes_from_division)
 
+        # Calculate the candidate wise totals.
         for data_row in content["data"]:
             valid_counts = [count for count in data_row[2:] if count is not ""]
             data_row.append(sum(valid_counts))
 
+        # Append the total valid votes.
         content["validVotes"].append(sum(content["validVotes"]))
+
+        # Append the total invalid votes.
         content["rejectedVotes"].append(sum(content["rejectedVotes"]))
+
+        # Append the total votes.
         content["totalVotes"].append(sum(content["totalVotes"]))
 
         html = render_template(
