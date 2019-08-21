@@ -1,4 +1,3 @@
-import numpy
 from flask import render_template
 from app import db
 
