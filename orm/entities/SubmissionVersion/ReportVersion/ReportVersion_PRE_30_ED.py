@@ -1,21 +1,10 @@
-import numpy
 from flask import render_template
-from sqlalchemy import func, and_
-from sqlalchemy.sql import select
 
-from app import db
 from exception import NotFoundException
-from orm.entities import ReportVersion, Party, Candidate, Submission, SubmissionVersion
-from orm.entities.Area.Office import CountingCentre
-from orm.entities.Election import ElectionParty, ElectionCandidate
-from orm.entities.Result import CandidateWiseResult
-from orm.entities.Result.CandidateWiseResult import CandidateCount
-from orm.entities.Result.PartyWiseResult import PartyCount
+from orm.entities import ReportVersion
 from orm.entities.Submission.Report import Report_PRE_30_ED
 from orm.entities.SubmissionVersion.ReportVersion.util import get_PRE41_candidate_wise_aggregated_result
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from orm.enums import ReportCodeEnum, AreaTypeEnum
-from util import get_array
 
 
 class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):

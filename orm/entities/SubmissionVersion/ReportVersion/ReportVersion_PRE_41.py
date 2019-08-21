@@ -7,7 +7,6 @@ from orm.entities import ReportVersion, Area, Candidate, Party
 from orm.entities.Election import ElectionParty, ElectionCandidate
 from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.entities.Submission.Report import Report_PRE_41
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from orm.enums import ReportCodeEnum, AreaTypeEnum
 
 
