@@ -12,8 +12,10 @@ from orm.entities.Result import CandidateWiseResult
 from orm.entities.Result.CandidateWiseResult import CandidateCount
 from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.entities.Submission.Report import Report_PRE_30_ED
+from orm.entities.SubmissionVersion.ReportVersion.util import get_PRE41_candidate_wise_aggregated_result
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from orm.enums import ReportCodeEnum, AreaTypeEnum
+from util import get_array
 
 
 class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
@@ -52,36 +54,11 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             pollingDivision = pollingDivisions[pollingDivisionIndex]
 
             content["pollingDivisions"].append(pollingDivision.areaName)
-            latestTallySheetVersions = []
-            for countingCentre in pollingDivision.get_associated_areas(AreaTypeEnum.CountingCentre):
-                for tallySheet in countingCentre.tallySheets_PRE_41:
-                    latestTallySheetVersions.append(tallySheet.latestVersionId)
 
-            divisionWiseResult = db.session.query(
-                ElectionCandidate.Model.candidateId,
-                func.sum(CandidateCount.Model.count).label("count")
-            ).join(
-                CandidateCount.Model,
-                CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId,
-                isouter=True
-            ).join(
-                CandidateWiseResult.Model,
-                CandidateWiseResult.Model.candidateWiseResultId == CandidateCount.Model.candidateWiseResultId,
-                isouter=True
-            ).join(
-                TallySheetVersionPRE41.Model,
-                and_(
-                    TallySheetVersionPRE41.Model.candidateWiseResultId == CandidateWiseResult.Model.candidateWiseResultId,
-                    TallySheetVersionPRE41.Model.tallySheetVersionId.in_(latestTallySheetVersions)
-                ),
-                isouter=True
-            ).filter(
-                ElectionCandidate.Model.electionId == report.electionId
-            ).group_by(
-                ElectionCandidate.Model.candidateId
-            ).order_by(
-                ElectionCandidate.Model.candidateId
-            ).all()
+            divisionWiseResult = get_PRE41_candidate_wise_aggregated_result(
+                electionId=report.electionId,
+                areas=pollingDivision
+            )
 
             total_valid_votes_from_division = 0
             total_invalid_votes_from_division = 0
