@@ -32,10 +32,11 @@
 
 <div>
     <h1>PRE-30-ED</h1>
-    <h2>{{content.electoralDistrict}}</h2>
+    <h2>Electoral District : <small>{{content.electoralDistrict}}</small></h2>
     <table class="table table-borderless">
         <tbody>
         <tr>
+            <td rowspan="2"></td>
             <th class="left right top bottom" rowspan="2">Name of the Candidate</th>
             <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}">
                 Name of the Polling Division
@@ -48,6 +49,7 @@
             <th class="left right top bottom">{{pollingDivision}}</th>
             {% endfor %}
         </tr>
+
         {% for row in content.data %}
         <tr>
             {% for cell in row %}
@@ -56,6 +58,39 @@
             <td class="left right top bottom"></td>
         </tr>
         {% endfor %}
+
+        <tr>
+            <td colspan="2"></td>
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                No. of Valid Votes
+            </th>
+            {% for validVoteCount in content.validVotes %}
+            <td class="left right top bottom">{{validVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                No. of Rejected Votes
+            </th>
+            {% for rejectedVoteCount in content.rejectedVotes %}
+            <td class="left right top bottom">{{rejectedVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                Total No. of Votes Polled <br/>
+                <small>(Including Rejected)</small>
+            </th>
+            {% for totalVoteCount in content.totalVotes %}
+            <td class="left right top bottom">{{totalVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
         </tbody>
     </table>
 </div>
