@@ -28,12 +28,11 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             "pollingDivisions": [],
             "data": [],
             "validVotes": [],
-            "rejectedVotes": 50,
-            "grandTotal": 3050
+            "rejectedVotes": [],
+            "totalVotes": []
         }
 
-        pollingDivisions = []
-        data = []
+        pollingDivisions = report.area.get_associated_areas(AreaTypeEnum.PollingDivision)
 
         candidates = db.session.query(
             ElectionCandidate.Model.candidateId,
@@ -45,10 +44,13 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
             ElectionCandidate.Model.candidateId
         ).all()
 
-        for candidate in candidates:
-            content["data"].append([candidate.candidateName])
+        for candidateIndex in range(len(candidates)):
+            candidate = candidates[candidateIndex]
+            content["data"].append([candidateIndex + 1, candidate.candidateName])
 
-        for pollingDivision in report.area.get_associated_areas(AreaTypeEnum.PollingDivision):
+        for pollingDivisionIndex in range(len(pollingDivisions)):
+            pollingDivision = pollingDivisions[pollingDivisionIndex]
+
             content["pollingDivisions"].append(pollingDivision.areaName)
             latestTallySheetVersions = []
             for countingCentre in pollingDivision.get_associated_areas(AreaTypeEnum.CountingCentre):
@@ -81,14 +83,27 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
                 ElectionCandidate.Model.candidateId
             ).all()
 
+            total_valid_votes_from_division = 0
+            total_invalid_votes_from_division = 0
             for divisionWiseResultIndex in range(len(divisionWiseResult)):
                 if divisionWiseResult[divisionWiseResultIndex].count is not None:
                     content["data"][divisionWiseResultIndex].append(divisionWiseResult[divisionWiseResultIndex].count)
+                    total_valid_votes_from_division = total_valid_votes_from_division + divisionWiseResult[
+                        divisionWiseResultIndex].count
                 else:
                     content["data"][divisionWiseResultIndex].append("")
 
+            content["validVotes"].append(total_valid_votes_from_division)
+            content["rejectedVotes"].append(total_invalid_votes_from_division)  # TODO
+            content["totalVotes"].append(total_valid_votes_from_division + total_invalid_votes_from_division)
+
         for data_row in content["data"]:
-            data_row.append(sum(filter(lambda e: isinstance(e, int), data_row[1:])))
+            valid_counts = [count for count in data_row[2:] if count is not ""]
+            data_row.append(sum(valid_counts))
+
+        content["validVotes"].append(sum(content["validVotes"]))
+        content["rejectedVotes"].append(sum(content["rejectedVotes"]))
+        content["totalVotes"].append(sum(content["totalVotes"]))
 
         html = render_template(
             'PRE-30-ED.html',
