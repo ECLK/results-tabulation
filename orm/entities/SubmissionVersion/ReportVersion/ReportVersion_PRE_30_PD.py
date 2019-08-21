@@ -16,6 +16,7 @@ from orm.entities.Result.CandidateWiseResult import CandidateCount
 from orm.entities.Result.PartyWiseResult import PartyCount
 from orm.entities.Submission import TallySheet
 from orm.entities.Submission.Report import Report_PRE_30_PD, Report_PRE_41
+from orm.entities.SubmissionVersion.ReportVersion.util import get_PRE41_candidate_and_area_wise_aggregated_result
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from orm.enums import ReportCodeEnum, AreaTypeEnum
 
@@ -27,57 +28,21 @@ class ReportVersion_PRE_30_PD_Model(ReportVersion.Model):
         if report is None:
             raise NotFoundException("Report not found. (reportId=%d)" % reportId)
 
-        areas = report.area.get_associated_areas(AreaTypeEnum.CountingCentre)
-        areaIds = [area.areaId for area in areas]
-        latestTallySheetVersions = []
-        for countingCentre in areas:
-            for tallySheet in countingCentre.tallySheets_PRE_41:
-                latestTallySheetVersions.append(tallySheet.latestVersionId)
+        content = {
+            "data": [],
+            "countingCentres": [],
+            "validVotes": [],
+            "rejectedVotes": [],
+            "totalVotes": []
+        }
 
-        aggregatedPartyCount = db.session.query(
-            CountingCentre.Model.areaId,
-            ElectionCandidate.Model.candidateId,
-            func.sum(CandidateCount.Model.count).label("count")
-        ).join(
-            ElectionCandidate.Model,
-            ElectionCandidate.Model.electionId == CountingCentre.Model.electionId
-        ).join(
-            Submission.Model,
-            Submission.Model.areaId == CountingCentre.Model.areaId,
-            isouter=True
-        ).join(
-            SubmissionVersion.Model,
-            SubmissionVersion.Model.submissionId == Submission.Model.submissionId,
-            isouter=True
-        ).join(
-            TallySheetVersionPRE41.Model,
-            and_(
-                TallySheetVersionPRE41.Model.tallySheetVersionId == SubmissionVersion.Model.submissionVersionId,
-                TallySheetVersionPRE41.Model.tallySheetVersionId.in_(latestTallySheetVersions)
-            ),
-            isouter=True
-        ).join(
-            CandidateWiseResult.Model,
-            and_(
-                CandidateWiseResult.Model.candidateWiseResultId == TallySheetVersionPRE41.Model.candidateWiseResultId
-            ),
-            isouter=True
-        ).join(
-            CandidateCount.Model,
-            and_(
-                CandidateCount.Model.candidateWiseResultId == CandidateWiseResult.Model.candidateWiseResultId,
-                CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId
-            ),
-            isouter=True
-        ).filter(
-            CountingCentre.Model.areaId.in_(areaIds)
-        ).group_by(
-            ElectionCandidate.Model.candidateId,
-            CountingCentre.Model.areaId
-        ).order_by(
-            ElectionCandidate.Model.candidateId,
-            CountingCentre.Model.areaId
-        ).subquery()
+        aggregatedPartyCount, countingCentres, latestTallySheetVersions = get_PRE41_candidate_and_area_wise_aggregated_result(
+            electionId=report.electionId,
+            areas=report.area,
+            subquery=True
+        )
+
+        content["countingCentres"] = [countingCentre.areaName for countingCentre in countingCentres]
 
         queryResult = db.session.query(
             Candidate.Model.candidateId,
@@ -103,29 +68,36 @@ class ReportVersion_PRE_30_PD_Model(ReportVersion.Model):
             Area.Model.areaId
         ).all()
 
-        countingCentres = []
-        data = []
+        for row in queryResult:
+            print("###### roow ##### ", row)
 
-        for i in range(0, len(areas)):
-            countingCentres.append(queryResult[i].areaName)
+        for i in range(0, len(countingCentres)):
+            content["validVotes"].append(0)
+            content["rejectedVotes"].append(0)
+            content["totalVotes"].append(0)
 
-        for i in range(0, int(len(queryResult) / len(areas))):
-            data_row = [queryResult[i].candidateName]
-            data.append(data_row)
+        for i in range(int(len(queryResult) / len(countingCentres))):
+            data_row = [i + 1, queryResult[i].candidateName]
+            content["data"].append(data_row)
             total_count_per_candidate = 0
-            for j in range(i, i + len(areas)):
-                if queryResult[j].count is None:
+
+            for j in range(len(countingCentres)):
+                query_result_index = (i * len(countingCentres)) + j
+                count = queryResult[query_result_index].count
+                if count is None:
                     data_row.append("")
                 else:
-                    data_row.append(queryResult[j].count)
-                    total_count_per_candidate = total_count_per_candidate + queryResult[j].count
+                    content["validVotes"][j] = content["validVotes"][j] + count
+                    content["rejectedVotes"][j] = 0  # TODO
+                    content["totalVotes"][j] = content["validVotes"][j] + content["rejectedVotes"][j]
+
+                    data_row.append(count)
+                    total_count_per_candidate = total_count_per_candidate + count
             data_row.append(total_count_per_candidate)
 
-        content = {
-            "pollingDistrict": report.area.areaName,
-            "data": data,
-            "countingCentres": countingCentres
-        }
+        content["validVotes"].append(sum(content["validVotes"]))
+        content["rejectedVotes"].append(sum(content["rejectedVotes"]))
+        content["totalVotes"].append(sum(content["totalVotes"]))
 
         html = render_template(
             'PRE-30-PD.html',

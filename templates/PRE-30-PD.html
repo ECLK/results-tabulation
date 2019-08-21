@@ -36,6 +36,7 @@
     <table class="table table-borderless">
         <tbody>
         <tr>
+            <td rowspan="2"></td>
             <th class="left right top bottom" rowspan="2">Name of the Candidate</th>
             <th class="left right top bottom" colspan="{{content.countingCentres|length}}">Counting Centre No.</th>
             <th class="left right top bottom" rowspan="2">Total</th>
@@ -54,6 +55,39 @@
             <td class="left right top bottom"></td>
         </tr>
         {% endfor %}
+
+        <tr>
+            <td colspan="2"></td>
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                No. of Valid Votes
+            </th>
+            {% for validVoteCount in content.validVotes %}
+            <td class="left right top bottom">{{validVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                No. of Rejected Votes
+            </th>
+            {% for rejectedVoteCount in content.rejectedVotes %}
+            <td class="left right top bottom">{{rejectedVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                Total No. of Votes Polled <br/>
+                <small>(Including Rejected)</small>
+            </th>
+            {% for totalVoteCount in content.totalVotes %}
+            <td class="left right top bottom">{{totalVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
         </tbody>
     </table>
 </div>
