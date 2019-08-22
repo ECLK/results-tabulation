@@ -2,6 +2,7 @@ from orm.entities.IO import File, Folder
 from orm.entities.IO.Folder import FolderFile
 from orm.entities.IO.File import Image
 from orm.entities import Election, Candidate
+from orm.entities import Area
 from orm.entities.Area import Electorate
 from orm.entities import Party
 from orm.entities.Election import ElectionParty, ElectionCandidate
@@ -13,7 +14,7 @@ from orm.entities.Area import Office
 from orm.entities.Area.Electorate import Country, Province, AdministrativeDistrict, ElectoralDistrict, PollingDivision, \
     PollingDistrict
 
-from orm.entities.Area.Office import DistrictCentre, CountingCentre, PollingStation
+from orm.entities.Area.Office import DistrictCentre, CountingCentre, PollingStation, ElectionCommission
 
 from orm.entities.Result import PartyWiseResult, CandidateWiseResult
 from orm.entities.Result.PartyWiseResult import PartyCount
