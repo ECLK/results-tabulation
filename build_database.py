@@ -1,211 +1,176 @@
+import csv
 from app import db
 from orm.entities import *
-from orm.entities import Report
+from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD, Report_PRE_30_ED, \
+    Report_PRE_ALL_ISLAND_RESULTS
 
-from orm.enums import ElectorateTypeEnum, OfficeTypeEnum, ReportCodeEnum
-from api.TallySheetVersionApi import TallySheetVersionPRE41Api
-
-from sqlalchemy.sql import func
-
-# db.engine.execute("create database election")
-
+from orm.enums import TallySheetCodeEnum
 
 # Create the database
 db.create_all()
 
-ELECTORATES_DATA = {
-    "administrativeDistricts": [
-        {"id": 1, "parent": None, "name": "Colombo"},
-        {"id": 2, "parent": None, "name": "Kalutara"},
-        {"id": 3, "parent": None, "name": "Gampaha"}
-    ],
-    "pollingDivisions": [
-        {"id": 4, "parent": 1, "name": "Colombo South"},
-        {"id": 5, "parent": 1, "name": "Colombo North"},
-        {"id": 6, "parent": 2, "name": "Kalutara South"},
-        {"id": 7, "parent": 2, "name": "Kalutara North"},
-        {"id": 8, "parent": 3, "name": "Gampaha South"},
-        {"id": 9, "parent": 3, "name": "Gampaha North"}
-    ],
-    "pollingDistricts": [
-        {"id": 10, "parent": 4, "name": "1"},
-        {"id": 11, "parent": 4, "name": "2"},
-        {"id": 12, "parent": 5, "name": "1"},
-        {"id": 13, "parent": 5, "name": "2"},
-        {"id": 14, "parent": 6, "name": "1"},
-        {"id": 15, "parent": 6, "name": "2"},
-        {"id": 16, "parent": 7, "name": "1"},
-        {"id": 17, "parent": 7, "name": "2"},
-        {"id": 18, "parent": 8, "name": "1"},
-        {"id": 19, "parent": 8, "name": "2"},
-        {"id": 20, "parent": 9, "name": "1"},
-        {"id": 21, "parent": 9, "name": "2"}
-    ]
-}
+election = Election.create(electionName="Test Election")
 
-OFFICE_DATA = {
-    "districtCentres": [
-        {"id": 1, "parent": None, "name": "Colombo", "tallySheetCodes": ["PRE_30_PD", "PRE_30_ED"]},
-        {"id": 2, "parent": None, "name": "Kalutara", "tallySheetCodes": ["PRE_30_PD", "PRE_30_ED"]},
-        {"id": 3, "parent": None, "name": "Gampaha", "tallySheetCodes": ["PRE_30_PD", "PRE_30_ED"]},
-    ],
-    "countingCentres": [
-        {"id": 4, "parent": 1, "name": "Colombo South", "tallySheetCodes": ["PRE_41"]},
-        {"id": 5, "parent": 1, "name": "Colombo West", "tallySheetCodes": ["PRE_41"]},
-        {"id": 6, "parent": 2, "name": "Kalutara South", "tallySheetCodes": ["PRE_41"]},
-        {"id": 7, "parent": 2, "name": "Kalutara West", "tallySheetCodes": ["PRE_41"]},
-        {"id": 8, "parent": 3, "name": "Gampaha South", "tallySheetCodes": ["PRE_41"]},
-        {"id": 9, "parent": 3, "name": "Gampaha West", "tallySheetCodes": ["PRE_41"]},
-    ]
-}
+data_stores = {}
 
-POLLING_STATION_DATA = [
-    {"id": 1, "pollingDistrict": 10, "countingCentre": 4, "name": "St. Thomas College, Hall 1"},
-    {"id": 2, "pollingDistrict": 11, "countingCentre": 4, "name": "St. Thomas College, Hall 2"},
-    {"id": 3, "pollingDistrict": 12, "countingCentre": 5, "name": "Science College, Hall 1"},
-    {"id": 4, "pollingDistrict": 13, "countingCentre": 5, "name": "Science College, Hall 2"},
-    {"id": 5, "pollingDistrict": 14, "countingCentre": 6, "name": "Science College, Hall 3"},
-    {"id": 6, "pollingDistrict": 15, "countingCentre": 6, "name": "Hill Street Community Centre, Hall 1"},
-    {"id": 7, "pollingDistrict": 16, "countingCentre": 7, "name": "Hill Street Community Centre, Hall 2"},
-    {"id": 8, "pollingDistrict": 17, "countingCentre": 7, "name": "Hill Street Community Centre, Hall 3"},
-    {"id": 9, "pollingDistrict": 18, "countingCentre": 8, "name": "Hill Street Community Centre, Hall 4"},
-    {"id": 10, "pollingDistrict": 19, "countingCentre": 8, "name": "Muslim Girls College, Hall 1"},
-    {"id": 11, "pollingDistrict": 20, "countingCentre": 9, "name": "Muslim Girls College, Hall 2"},
-    {"id": 12, "pollingDistrict": 21, "countingCentre": 9, "name": "Muslim Girls College, Hall 3"},
-    {"id": 13, "pollingDistrict": 21, "countingCentre": 9, "name": "Muslim Girls College, Hall 4"}
-]
+csv_dir = "./sample-data"
 
 
-def get_column_max(column):
-    query_result = db.session.query(func.max(column).label("max")).one_or_none()
+def get_data_store(data_store_key):
+    if data_store_key not in data_stores:
+        data_stores[data_store_key] = {}
 
-    return 0 if query_result.max is None else query_result.max
+    return data_stores[data_store_key]
 
 
-for i in range(1, 2):
-    election = Election.create()
+def get_object_from_data_store(data_key, data_store_key):
+    data_store = get_data_store(data_store_key)
+    if data_key in data_store:
+        return data_store[data_key]
+    else:
+        return None
 
-    for i in range(1, 6):
-        Party.create(partyName="Party-%d" % i)
 
-    for i in range(1, 10):
-        Ballot.create(
-            electionId=election.electionId,
-            ballotId="pre-ballot-%d-%d" % (election.electionId, i)
-        )
+def set_object_to_data_store(data_key, data_store_key, obj):
+    data_store = get_data_store(data_store_key)
+    data_store[data_key] = obj
 
-    for i in range(1, 50):
-        BallotBox.create(
-            electionId=election.electionId,
-            ballotBoxId="pre-ballot-box-%d-%d" % (election.electionId, i)
-        )
 
-    electorateIdOffset = get_column_max(Electorate.Model.electorateId)
+def get_tallysheet_code(tallysheet_code_string):
+    if tallysheet_code_string == "PRE-41":
+        return TallySheetCodeEnum.PRE_41
+    if tallysheet_code_string == "CE-201":
+        return TallySheetCodeEnum.CE_201
 
-    for row in ELECTORATES_DATA["administrativeDistricts"]:
-        Electorate.create(
-            electorateName=row["name"],
-            electorateType=ElectorateTypeEnum.AdministrativeDistrict,
-            electionId=election.electionId,
-            parentElectorateId=None
-        )
-    for row in ELECTORATES_DATA["pollingDivisions"]:
-        Electorate.create(
-            electorateName=row["name"],
-            electorateType=ElectorateTypeEnum.PollingDivision,
-            electionId=election.electionId,
-            parentElectorateId=electorateIdOffset + row["parent"]
-        )
-    for row in ELECTORATES_DATA["pollingDistricts"]:
-        Electorate.create(
-            electorateName=row["name"],
-            electorateType=ElectorateTypeEnum.PollingDistrict,
-            electionId=election.electionId,
-            parentElectorateId=electorateIdOffset + row["parent"]
-        )
 
-    officeIdOffset = get_column_max(Office.Model.officeId)
-    for row in OFFICE_DATA["districtCentres"]:
-        Office.create(
-            officeName=row["name"],
-            electionId=election.electionId,
-            officeType=OfficeTypeEnum.DistrictCentre,
-            parentOfficeId=None
-        )
-        for tallySheetCode in row["tallySheetCodes"]:
-            tallySheet = TallySheet.create(
-                tallySheetCode=tallySheetCode,
+def get_object(row, row_key, data_key=None):
+    if data_key is None:
+        cell = row[row_key]
+        data_key = cell
+    else:
+        cell = row[data_key]
+        data_key = cell
+
+    data_store_key = row_key
+
+    if data_store_key == "TallySheet":
+        data_key = "%s-%s" % (row["TallySheet"], row["Counting Centre"])
+    elif data_store_key == "Report":
+        data_key = "%s-%s-%s" % (row["Report"], row["Electorate Type"], row["Electorate"])
+
+    obj = get_object_from_data_store(data_key, data_store_key)
+
+    if obj is None:
+        if data_store_key == "Ballot":
+            obj = Ballot.create(ballotId=cell, electionId=election.electionId)
+        elif data_store_key == "Ballot Box":
+            obj = BallotBox.create(ballotBoxId=cell, electionId=election.electionId)
+
+        elif data_store_key == "Party":
+            obj = Party.create(partyName=cell, partySymbol=row["Party Symbol"])
+        elif data_store_key == "Candidate":
+            obj = Candidate.create(candidateName=cell)
+
+        elif data_store_key == "Country":
+            obj = Country.create(cell, electionId=election.electionId)
+        elif data_store_key == "Electoral District":
+            obj = ElectoralDistrict.create(cell, electionId=election.electionId)
+        elif data_store_key == "Polling Division":
+            obj = PollingDivision.create(cell, electionId=election.electionId)
+        elif data_store_key == "Polling District":
+            obj = PollingDistrict.create(cell, electionId=election.electionId)
+
+        elif data_store_key == "Election Commission":
+            obj = ElectionCommission.create(cell, electionId=election.electionId)
+        elif data_store_key == "District Centre":
+            obj = DistrictCentre.create(cell, electionId=election.electionId)
+        elif data_store_key == "Counting Centre":
+            obj = CountingCentre.create(cell, electionId=election.electionId)
+        elif data_store_key == "Polling Station":
+            obj = PollingStation.create(cell, electionId=election.electionId)
+
+        elif data_store_key == "TallySheet":
+            obj = TallySheet.create(
+                tallySheetCode=get_tallysheet_code(cell),
                 electionId=election.electionId,
-                officeId=officeIdOffset + row["id"]
-            )
-            tallySheetVersion = TallySheetVersionPRE41Api.create(
-                tallySheetId=tallySheet.tallySheetId,
-                body={
-                    "tallySheetId": tallySheet.tallySheetId,
-                    "tallySheetContent": [
-                        {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                        {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                        {"partyId": 3, "count": 60, "countInWords": "Sixty"}
-                    ]
-                }
-            )
-            tallySheetVersion = TallySheetVersionPRE41Api.create(
-                tallySheetId=tallySheet.tallySheetId,
-                body={
-                    "tallySheetId": tallySheet.tallySheetId,
-                    "tallySheetContent": [
-                        {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                        {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                        {"partyId": 3, "count": 60, "countInWords": "Sixty"}
-                    ]
-                }
+                officeId=get_object(row, "Counting Centre").areaId
             )
 
-    for row in OFFICE_DATA["countingCentres"]:
-        Office.create(
-            officeName=row["name"],
-            electionId=election.electionId,
-            officeType=OfficeTypeEnum.CountingCentre,
-            parentOfficeId=officeIdOffset + row["parent"]
-        )
-        for tallySheetCode in row["tallySheetCodes"]:
-            tallySheet = TallySheet.create(
-                tallySheetCode=tallySheetCode,
-                electionId=election.electionId,
-                officeId=officeIdOffset + row["id"]
-            )
-            report = Report.create(
-                reportCode=ReportCodeEnum.PRE_41,
-                electionId=election.electionId,
-                officeId=officeIdOffset + row["id"]
-            )
-            tallySheetVersion = TallySheetVersionPRE41Api.create(
-                tallySheetId=tallySheet.tallySheetId,
-                body={
-                    "tallySheetId": tallySheet.tallySheetId,
-                    "tallySheetContent": [
-                        {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                        {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                        {"partyId": 3, "count": 60, "countInWords": "Sixty"}
-                    ]
-                }
-            )
-            tallySheetVersion = TallySheetVersionPRE41Api.create(
-                tallySheetId=tallySheet.tallySheetId,
-                body={
-                    "tallySheetId": tallySheet.tallySheetId,
-                    "tallySheetContent": [
-                        {"partyId": 1, "count": 23, "countInWords": "Twenty three"},
-                        {"partyId": 2, "count": 45, "countInWords": "Forty five"},
-                        {"partyId": 3, "count": 60, "countInWords": "Sixty"}
-                    ]
-                }
-            )
+        elif data_store_key == "Report":
+            areaId = get_object(row, row["Electorate Type"], data_key="Electorate").areaId
+            if cell == "PRE-41":
+                obj = Report_PRE_41.create(
+                    electionId=election.electionId,
+                    areaId=areaId
+                )
+            elif cell == "PRE-30-PD":
+                obj = Report_PRE_30_PD.create(
+                    electionId=election.electionId,
+                    areaId=areaId
+                )
+            elif cell == "PRE-30-ED":
+                obj = Report_PRE_30_ED.create(
+                    electionId=election.electionId,
+                    areaId=areaId
+                )
+            elif cell == "PRE-ALL-ISLAND-REPORT":
+                obj = Report_PRE_ALL_ISLAND_RESULTS.create(
+                    electionId=election.electionId,
+                    areaId=areaId
+                )
 
-    for row in POLLING_STATION_DATA:
-        PollingStation.create(
-            officeName=row["name"],
-            electionId=election.electionId,
-            electorateId=electorateIdOffset + row["pollingDistrict"],
-            parentOfficeId=officeIdOffset + row["countingCentre"],
-        )
+        else:
+            print("-------------  Not supported yet : ", data_store_key)
+
+        set_object_to_data_store(data_key, data_store_key, obj)
+
+    return obj
+
+
+def get_rows_from_csv(csv_path):
+    with open("%s/%s" % (csv_dir, csv_path), 'r') as f:
+        reader = csv.DictReader(f, delimiter=',')
+        rows = list(reader)
+
+    return rows
+
+
+for row in get_rows_from_csv('polling-stations.csv'):
+    country = get_object({"Country": "Sri Lanka"}, "Country")
+    electoralDistrict = get_object(row, "Electoral District")
+    pollingDivision = get_object(row, "Polling Division")
+    pollingDistrict = get_object(row, "Polling District")
+    electionCommission = get_object({"Election Commission": "Sri Lanka Election Commission"}, "Election Commission")
+    districtCentre = get_object(row, "District Centre")
+    countingCentre = get_object(row, "Counting Centre")
+    pollingStation = get_object(row, "Polling Station")
+
+    country.add_child(electoralDistrict.areaId)
+    electoralDistrict.add_child(pollingDivision.areaId)
+    pollingDivision.add_child(pollingDistrict.areaId)
+    pollingDistrict.add_child(pollingStation.areaId)
+    electionCommission.add_child(districtCentre.areaId)
+    districtCentre.add_child(countingCentre.areaId)
+    countingCentre.add_child(pollingStation.areaId)
+
+for row in get_rows_from_csv('parties.csv'):
+    party = get_object(row, "Party")
+    election.add_party(partyId=party.partyId)
+
+for row in get_rows_from_csv('ballots.csv'):
+    ballot = get_object(row, "Ballot")
+
+for row in get_rows_from_csv('ballot-boxes.csv'):
+    ballot = get_object(row, "Ballot Box")
+
+for row in get_rows_from_csv('party-candidate.csv'):
+    party = get_object(row, "Party")
+    candidate = get_object(row, "Candidate")
+
+    election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
+
+for row in get_rows_from_csv('tallysheets.csv'):
+    tallysheet = get_object(row, "TallySheet")
+
+for row in get_rows_from_csv('reports.csv'):
+    report = get_object(row, "Report")

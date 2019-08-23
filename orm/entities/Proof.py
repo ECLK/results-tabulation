@@ -3,7 +3,8 @@ from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from util import get_paginated_query
-from orm.entities import Folder, FolderFile, File
+from orm.entities.IO import File, Folder
+from orm.entities.IO.Folder import FolderFile
 from orm.enums import ProofTypeEnum
 from exception import NotFoundException, ForbiddenException
 
@@ -71,7 +72,7 @@ def upload_file(proofId, fileSource, fileType):
     elif proof.finished is True:
         raise ForbiddenException("No more evidence is accepted for this proof (proofId=%d)" % proofId)
     else:
-        file = File.create(
+        file = File.createFromFileSource(
             fileSource=fileSource,
             fileType=fileType
         )

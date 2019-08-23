@@ -25,6 +25,59 @@ tags:
 
 paths:
 
+  /election:
+    get:
+      tags:
+        - election
+      summary: Get all.
+      operationId: api.ElectionApi.get_all
+      parameters:
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /ballot:
     get:
       tags:
@@ -1527,6 +1580,82 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /electorate:
+    get:
+      tags:
+        - Electorate
+      summary: Get by ID
+      operationId: api.ElectorateApi.get_all
+      parameters:
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: electorateName
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: electorateType
+          required: false
+          in: query
+          schema:
+            type: string
+            enum:
+              - Country
+              - Province
+              - AdministrativeDistrict
+              - ElectoralDistrict
+              - PollingDivision
+              - PollingDistrict
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /tally-sheet:
     get:
       tags:
@@ -1721,7 +1850,8 @@ paths:
           description: Tally sheet ID
           required: true
           schema:
-            type: string
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1737,7 +1867,7 @@ paths:
                     items:
                       type: object
                       properties:
-                        partyId:
+                        candidateId:
                           type: integer
                           format: int64
                         count:
@@ -1782,7 +1912,7 @@ paths:
                   items:
                     type: object
                     properties:
-                      partyId:
+                      candidateId:
                         type: integer
                         format: int64
                       count:
@@ -1790,6 +1920,159 @@ paths:
                         format: int64
                       countInWords:
                         type: string
+        description: Updated tally sheet object.
+        required: true
+
+
+  /tally-sheet/CE-201/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - tallySheetVersion
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersionCE201Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TallySheet'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /tally-sheet/CE-201/{tallySheetId}/version:
+    post:
+      tags:
+        - tallySheetVersion
+      summary: Create tally sheet version
+      operationId: api.TallySheetVersionApi.TallySheetVersionCE201Api.create
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - tallySheetContent
+                properties:
+                  tallySheetContent:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        areaId:
+                          type: integer
+                          format: int64
+                        issuedBallotCount:
+                          type: integer
+                          format: int64
+                        issuedTenderBallotCount:
+                          type: integer
+                          format: int64
+                        receivedBallotCount:
+                          type: integer
+                          format: int64
+                        receivedTenderBallotCount:
+                          type: integer
+                          format: int64
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tallySheetContent
+              properties:
+                tallySheetContent:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      areaId:
+                        type: integer
+                        format: int64
+                      issuedBallotCount:
+                        type: integer
+                        format: int64
+                      issuedTenderBallotCount:
+                        type: integer
+                        format: int64
+                      receivedBallotCount:
+                        type: integer
+                        format: int64
+                      receivedTenderBallotCount:
+                        type: integer
+                        format: int64
         description: Updated tally sheet object.
         required: true
 
