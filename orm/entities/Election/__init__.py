@@ -1,7 +1,7 @@
 from app import db
 from sqlalchemy.orm import relationship
 
-from orm.entities.Election import ElectionParty
+from orm.entities.Election import ElectionParty, ElectionCandidate
 from util import get_paginated_query
 
 
@@ -21,6 +21,13 @@ class ElectionModel(db.Model):
         return ElectionParty.create(
             electionId=self.electionId,
             partyId=partyId
+        )
+
+    def add_candidate(self, partyId, candidateId):
+        return ElectionCandidate.create(
+            electionId=self.electionId,
+            partyId=partyId,
+            candidateId=candidateId
         )
 
 
