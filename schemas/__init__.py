@@ -5,10 +5,12 @@ from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
     Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party
 from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
+from orm.entities.Result.BallotPaperAccountResult import BallotPaperAccount
 from orm.entities.Result.CandidateWiseResult import CandidateCount
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.Result.PartyWiseResult import PartyCount
+from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, ReportCodeEnum, \
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum
 
@@ -108,6 +110,22 @@ class CandidateCountSchema(ma.ModelSchema):
         )
 
         model = CandidateCount.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class BallotPaperAccountSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "areaId",
+            "issuedBallotCount",
+            "issuedTenderBallotCount",
+            "receivedBallotCount",
+            "receivedTenderBallotCount"
+        )
+
+        model = BallotPaperAccount.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -329,13 +347,32 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
             "tallySheetContent"
         )
 
-        model = TallySheetVersion.Model
+        model = TallySheetVersionPRE41.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
 
     # submission = ma.Nested(SubmissionSchema)
     tallySheetContent = ma.Nested(CandidateCountSchema, many=True)
+
+
+class TallySheetVersionPRE201Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt",
+            "tallySheetContent"
+        )
+
+        model = TallySheetVersionCE201.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    # submission = ma.Nested(SubmissionSchema)
+    tallySheetContent = ma.Nested(BallotPaperAccountSchema, many=True)
 
 
 class TallySheetSchema(ma.ModelSchema):

@@ -39,6 +39,8 @@ def set_object_to_data_store(data_key, data_store_key, obj):
 def get_tallysheet_code(tallysheet_code_string):
     if tallysheet_code_string == "PRE-41":
         return TallySheetCodeEnum.PRE_41
+    if tallysheet_code_string == "CE-201":
+        return TallySheetCodeEnum.CE_201
 
 
 def get_object(row, row_key, data_key=None):

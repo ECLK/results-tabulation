@@ -2,6 +2,8 @@ import enum
 
 
 class TallySheetCodeEnum(enum.Enum):
+    CE_201 = 1
+
     PRE_28 = 1
     PRE_41 = 2
     PRE_30_PD = 3
