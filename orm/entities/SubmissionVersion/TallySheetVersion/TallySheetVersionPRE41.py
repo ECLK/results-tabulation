@@ -1,5 +1,5 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-
+from sqlalchemy import and_
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -9,7 +9,7 @@ from orm.entities.Election import ElectionCandidate
 from orm.entities.Result.CandidateWiseResult import CandidateCount
 from util import get_paginated_query
 
-from orm.entities import SubmissionVersion
+from orm.entities import SubmissionVersion, Candidate, Party
 from orm.entities.Submission import TallySheet
 from orm.entities.Result import CandidateWiseResult
 from orm.enums import TallySheetCodeEnum
@@ -34,14 +34,27 @@ class TallySheetVersionPRE41Model(db.Model):
     def tallySheetContent(self):
         return db.session.query(
             ElectionCandidate.Model.candidateId,
+            Candidate.Model.candidateName,
+            Party.Model.partySymbol,
             CandidateCount.Model.count,
             CandidateCount.Model.countInWords,
             CandidateCount.Model.candidateWiseResultId
         ).join(
             CandidateCount.Model,
-            CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId,
+            and_(
+                CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId,
+                CandidateCount.Model.candidateWiseResultId == self.candidateWiseResultId,
+            ),
+            isouter=True
+        ).join(
+            Candidate.Model,
+            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
+            isouter=True
+        ).join(
+            Party.Model,
+            Party.Model.partyId == ElectionCandidate.Model.partyId,
+            isouter=True
         ).filter(
-            CandidateCount.Model.candidateWiseResultId == self.candidateWiseResultId,
             ElectionCandidate.Model.electionId == self.submission.electionId
         ).all()
 
