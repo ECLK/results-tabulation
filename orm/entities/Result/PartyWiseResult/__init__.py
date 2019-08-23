@@ -1,8 +1,9 @@
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
 from app import db
 
-from orm.entities import History
+from orm.entities import History, Election
 
 
 class PartyWiseResultModel(db.Model):

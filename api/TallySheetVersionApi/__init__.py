@@ -1,10 +1,6 @@
 from util import RequestBody
-from schemas import Ballot_Schema as Schema, TallySheetVersionPRE41Schema
-from orm.entities import TallySheetVersion
-from orm.entities.TallySheetVersion import TallySheetVersionPRE41
-from orm.entities.Result.PartyWiseResult import PartyCount
-from orm.enums import TallySheetCodeEnum
-
+from schemas import Ballot_Schema as Schema
+from orm.entities.SubmissionVersion import TallySheetVersion
 
 
 def get_all(tallySheetId):

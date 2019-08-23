@@ -1,0 +1,97 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+
+        .top {
+            border-top: 1px solid #000 !important;
+        }
+
+        .bottom {
+            border-bottom: 1px solid #000 !important;
+        }
+
+        .left {
+            border-left: 1px solid #000 !important;
+        }
+
+        .right {
+            border-right: 1px solid #000 !important;
+        }
+
+        .all {
+            border-top: 1px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <h1>PRE-30-PD</h1>
+    <h2>{{content.pollingDistrict}}</h2>
+    <table class="table table-borderless">
+        <tbody>
+        <tr>
+            <td rowspan="2"></td>
+            <th class="left right top bottom" rowspan="2">Name of the Candidate</th>
+            <th class="left right top bottom" colspan="{{content.countingCentres|length}}">Counting Centre No.</th>
+            <th class="left right top bottom" rowspan="2">Total</th>
+            <th class="left right top bottom" rowspan="2">Total No. of Votes in Words</th>
+        </tr>
+        <tr>
+            {% for countingCentre in content.countingCentres %}
+            <th class="left right top bottom">{{countingCentre}}</th>
+            {% endfor %}
+        </tr>
+        {% for row in content.data %}
+        <tr>
+            {% for cell in row %}
+            <td class="left right top bottom">{{cell}}</td>
+            {% endfor %}
+            <td class="left right top bottom"></td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td colspan="2"></td>
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                No. of Valid Votes
+            </th>
+            {% for validVoteCount in content.validVotes %}
+            <td class="left right top bottom">{{validVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                No. of Rejected Votes
+            </th>
+            {% for rejectedVoteCount in content.rejectedVotes %}
+            <td class="left right top bottom">{{rejectedVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                Total No. of Votes Polled <br/>
+                <small>(Including Rejected)</small>
+            </th>
+            {% for totalVoteCount in content.totalVotes %}
+            <td class="left right top bottom">{{totalVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+</html>

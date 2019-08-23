@@ -1,8 +1,8 @@
 from flask import send_from_directory
 
 from schemas import File_Schema as Schema
-from orm.entities import File as Model
-from orm.entities.File import FILE_DIRECTORY
+from orm.entities.IO import File as Model
+from orm.entities.IO.File import FILE_DIRECTORY
 
 
 def get_by_id(fileId):

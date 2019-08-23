@@ -1,9 +1,9 @@
+from orm.entities.Result.CandidateWiseResult import CandidateCount
 from util import RequestBody
-from schemas import Ballot_Schema as Schema, TallySheetVersionPRE41Schema
-from orm.entities import TallySheetVersion, TallySheet
-from orm.entities.TallySheetVersion import TallySheetVersionPRE41
+from schemas import TallySheetVersionPRE41Schema
+from orm.entities.Submission import TallySheet
+from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from orm.entities.Result.PartyWiseResult import PartyCount
-from orm.enums import TallySheetCodeEnum
 from exception import NotFoundException
 
 
@@ -38,12 +38,12 @@ def create(tallySheetId, body):
     if tally_sheet_content is not None:
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
-            PartyCount.create(
-                partyWiseResultId=pre41.partyWiseResultId,
-                partyId=party_count_body.get("partyId"),
+            CandidateCount.create(
+                candidateWiseResultId=pre41.candidateWiseResultId,
+                candidateId=party_count_body.get("candidateId"),
                 count=party_count_body.get("count"),
-                countInWords=party_count_body.get("countInWords")
-                # electionId=pre41.tallySheet.electionId
+                countInWords=party_count_body.get("countInWords"),
+                electionId=pre41.submission.electionId
             )
 
     return TallySheetVersionPRE41Schema().dump(pre41).data
