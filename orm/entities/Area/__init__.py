@@ -67,9 +67,15 @@ class AreaModel(db.Model):
         return self
 
     def add_child(self, childId):
-        areaParent = AreaAreaModel(parentAreaId=self.areaId, childAreaId=childId)
-        db.session.add(areaParent)
-        db.session.commit()
+        existing_mapping = AreaAreaModel.query.filter(
+            AreaAreaModel.parentAreaId == self.areaId,
+            AreaAreaModel.childAreaId == childId
+        ).one_or_none()
+
+        if existing_mapping is None:
+            areaParent = AreaAreaModel(parentAreaId=self.areaId, childAreaId=childId)
+            db.session.add(areaParent)
+            db.session.commit()
 
         return self
 
