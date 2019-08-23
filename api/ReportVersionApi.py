@@ -1,7 +1,8 @@
 from exception import NotFoundException
 from orm.entities.SubmissionVersion import ReportVersion
 from orm.entities.Submission import Report
-from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_41, ReportVersion_PRE_30_PD
+from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_41, ReportVersion_PRE_30_PD, \
+    ReportVersion_PRE_ALL_ISLAND_RESULTS
 from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_30_ED
 from orm.enums import ReportCodeEnum
 
@@ -21,6 +22,8 @@ def get_report_version_entity(reportCode):
         return ReportVersion_PRE_30_PD
     elif reportCode == ReportCodeEnum.PRE_30_ED:
         return ReportVersion_PRE_30_ED
+    elif reportCode == ReportCodeEnum.PRE_ALL_ISLAND_RESULTS:
+        return ReportVersion_PRE_ALL_ISLAND_RESULTS
     else:
         raise NotFoundException("Report version not found (reportCode=%s)", reportCode)
 
