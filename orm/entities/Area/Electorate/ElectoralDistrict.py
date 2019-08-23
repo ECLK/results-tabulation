@@ -9,6 +9,12 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 class ElectoralDistrictModel(Electorate.Model):
     country = synonym("parentElectorate")
+    #
+    # def add_parent(self, parentId):
+    #     super(ElectoralDistrictModel, self).add_child(parentId)
+    #
+    # def add_child(self, childId):
+    #     super(ElectoralDistrictModel, self).add_child(childId)
 
     __mapper_args__ = {
         'polymorphic_identity': AreaTypeEnum.ElectoralDistrict
