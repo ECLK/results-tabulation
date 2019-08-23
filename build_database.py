@@ -1,7 +1,8 @@
 import csv
 from app import db
 from orm.entities import *
-from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD, Report_PRE_30_ED
+from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD, Report_PRE_30_ED, \
+    Report_PRE_ALL_ISLAND_RESULTS
 
 from orm.enums import TallySheetCodeEnum
 
@@ -107,6 +108,11 @@ def get_object(row, row_key, data_key=None):
                 )
             elif cell == "PRE-30-ED":
                 obj = Report_PRE_30_ED.create(
+                    electionId=election.electionId,
+                    areaId=areaId
+                )
+            elif cell == "PRE-ALL-ISLAND-REPORT":
+                obj = Report_PRE_ALL_ISLAND_RESULTS.create(
                     electionId=election.electionId,
                     areaId=areaId
                 )
