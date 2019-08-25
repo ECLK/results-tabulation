@@ -37,8 +37,12 @@ def create(electorateName, electionId):
     return result
 
 
-def get_all(electorateName=None, electionId=None, electorateType=None):
-    query = Model.query
+def get_all(electorateName=None, electionId=None, parentElectorateId=None, electorateType=None):
+    query = Model.query.join(
+        Area.AreaAreaModel,
+        Model.areaId == Area.AreaAreaModel.childAreaId,
+        isouter=True
+    )
 
     if electorateName is not None:
         query = query.filter(Model.areaName.like(electorateName))
@@ -48,6 +52,9 @@ def get_all(electorateName=None, electionId=None, electorateType=None):
 
     if electorateType is not None:
         query = query.filter(Model.areaType == electorateType)
+
+    if parentElectorateId is not None:
+        query = query.filter(Area.AreaAreaModel.parentAreaId == parentElectorateId)
 
     result = query.all()
 
