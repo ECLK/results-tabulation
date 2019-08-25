@@ -4,7 +4,7 @@ from orm.entities.Invoice import InvoiceStationaryItem
 import connexion
 
 
-def get_all(invoiceId, stationaryItemId=None, received=None, receivedFrom=None, receivedBy=None,
+def get_all(invoiceId=None, stationaryItemId=None, received=None, receivedFrom=None, receivedBy=None,
             receivedOffice=None):
     result = InvoiceStationaryItem.get_all(
         invoiceId=invoiceId,
