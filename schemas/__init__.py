@@ -192,9 +192,9 @@ class ElectorateSchema(ma.ModelSchema):
             "electionId",
             # "parents",
             # "children",
-            "pollingStations",
-            "countingCentres",
-            "districtCentres"
+            # "pollingStations",
+            # "countingCentres",
+            # "districtCentres"
         )
 
         model = Electorate.Model
@@ -221,9 +221,9 @@ class OfficeSchema(ma.ModelSchema):
             "electionId",
             # "parents",
             # "children",
-            "pollingStations",
-            "countingCentres",
-            "districtCentres"
+            # "pollingStations",
+            # "countingCentres",
+            # "districtCentres"
         )
 
         model = TallySheet.Model
