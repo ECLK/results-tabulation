@@ -40,7 +40,11 @@ def create(officeName, officeType, electionId):
 
 
 def get_all(electionId=None, officeName=None, parentOfficeId=None, officeType=None):
-    query = Model.query
+    query = Model.query.join(
+        Area.AreaAreaModel,
+        Model.areaId == Area.AreaAreaModel.childAreaId,
+        isouter=True
+    )
 
     if officeName is not None:
         query = query.filter(Model.officeName.like(officeName))
@@ -50,8 +54,9 @@ def get_all(electionId=None, officeName=None, parentOfficeId=None, officeType=No
 
     if officeType is not None:
         query = query.filter(Model.officeType == officeType)
-    # else:
-    #     query = query.filter(Model.parentOfficeId == parentOfficeId)
+
+    if parentOfficeId is not None:
+        query = query.filter(Area.AreaAreaModel.parentAreaId == parentOfficeId)
 
     result = get_paginated_query(query).all()
 
