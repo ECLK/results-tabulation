@@ -787,7 +787,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /invoice/{invoiceId}/stationary-item:
+  /invoice/stationary-item:
     get:
       tags:
         - invoice-stationary
@@ -809,14 +809,14 @@ paths:
             type: integer
             default: 0
         - name: invoiceId
-          required: true
-          in: path
+          required: false
+          in: query
           schema:
             type: integer
             format: int64
         - name: stationaryItemId
           required: false
-          in: path
+          in: query
           schema:
             type: integer
             format: int64
@@ -912,6 +912,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /invoice/{invoiceId}/stationary-item:
     post:
       tags:
         - invoice-stationary
