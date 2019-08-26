@@ -17,6 +17,9 @@ RUN apt-get install -y apt-utils libpq-dev python-dev
 
 # Install requirements
 RUN pip install -r requirements.txt
-# RUN python build_database.py; exit 0
+RUN python manage.py db init
+RUN python manage.py db migrate
+RUN python manage.py db upgrade
+RUN python build_database.py; exit 0
 
 CMD [ "python", "index.py" ]
