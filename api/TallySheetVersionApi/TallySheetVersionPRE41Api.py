@@ -1,9 +1,7 @@
-from orm.entities.Result.CandidateWiseResult import CandidateCount
 from util import RequestBody
 from schemas import TallySheetVersionPRE41Schema
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
-from orm.entities.Result.PartyWiseResult import PartyCount
 from exception import NotFoundException
 
 
@@ -12,6 +10,8 @@ def get_by_id(tallySheetId, tallySheetVersionId):
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     )
+
+    print("\n\n\n ####### result ##### ", result)
 
     return TallySheetVersionPRE41Schema().dump(result).data
 
@@ -30,20 +30,18 @@ def get_all(tallySheetId):
 
 def create(tallySheetId, body):
     request_body = RequestBody(body)
-    pre41 = TallySheetVersionPRE41.create(
+    tallySheetVersion = TallySheetVersionPRE41.create(
         tallySheetId=tallySheetId
     )
 
-    tally_sheet_content = request_body.get("tallySheetContent")
+    tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
-            CandidateCount.create(
-                candidateWiseResultId=pre41.candidateWiseResultId,
+            tallySheetVersion.add_row(
                 candidateId=party_count_body.get("candidateId"),
                 count=party_count_body.get("count"),
-                countInWords=party_count_body.get("countInWords"),
-                electionId=pre41.submission.electionId
+                countInWords=party_count_body.get("countInWords")
             )
 
-    return TallySheetVersionPRE41Schema().dump(pre41).data
+    return TallySheetVersionPRE41Schema().dump(tallySheetVersion).data

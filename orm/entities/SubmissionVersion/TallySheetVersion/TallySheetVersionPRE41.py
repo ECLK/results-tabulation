@@ -1,49 +1,53 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import and_
-from app import db
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.associationproxy import association_proxy
 
+from app import db
 from exception import NotFoundException
+from orm.entities import Candidate, Party
 from orm.entities.Election import ElectionCandidate
-from orm.entities.Result.CandidateWiseResult import CandidateCount
+from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41
 from util import get_paginated_query
 
-from orm.entities import SubmissionVersion, Candidate, Party
 from orm.entities.Submission import TallySheet
-from orm.entities.Result import CandidateWiseResult
 from orm.enums import TallySheetCodeEnum
+from sqlalchemy import and_
 
 
-class TallySheetVersionPRE41Model(db.Model):
-    __tablename__ = 'tallySheetVersion_PRE41'
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
-                                    primary_key=True)
-    candidateWiseResultId = db.Column(db.Integer,
-                                      db.ForeignKey(CandidateWiseResult.Model.__table__.c.candidateWiseResultId))
+class TallySheetVersionPRE41Model(TallySheetVersion.Model):
 
-    candidateWiseResult = relationship(CandidateWiseResult.Model, foreign_keys=[candidateWiseResultId])
-    submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[tallySheetVersionId])
+    def __init__(self, tallySheetId):
+        super(TallySheetVersionPRE41Model, self).__init__(
+            tallySheetId=tallySheetId
+        )
 
-    submission = association_proxy("submissionVersion", "submission")
-    tallySheetId = association_proxy("submissionVersion", "submissionId")
-    createdBy = association_proxy("submissionVersion", "createdBy")
-    createdAt = association_proxy("submissionVersion", "createdAt")
+    __mapper_args__ = {
+        'polymorphic_identity': TallySheetCodeEnum.PRE_41
+    }
+
+    def add_row(self, candidateId, count, countInWords=None):
+        from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41
+
+        TallySheetVersionRow_PRE_41.create(
+            tallySheetVersionId=self.tallySheetVersionId,
+            candidateId=candidateId,
+            count=count,
+            countInWords=countInWords
+        )
 
     @hybrid_property
-    def tallySheetContent(self):
+    def content(self):
         return db.session.query(
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
             Party.Model.partySymbol,
-            CandidateCount.Model.count,
-            CandidateCount.Model.countInWords,
-            CandidateCount.Model.candidateWiseResultId
+            TallySheetVersionRow_PRE_41.Model.count,
+            TallySheetVersionRow_PRE_41.Model.countInWords
         ).join(
-            CandidateCount.Model,
+            TallySheetVersionRow_PRE_41.Model,
             and_(
-                CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId,
-                CandidateCount.Model.candidateWiseResultId == self.candidateWiseResultId,
+                TallySheetVersionRow_PRE_41.Model.candidateId == ElectionCandidate.Model.candidateId,
+                TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == self.tallySheetVersionId,
             ),
             isouter=True
         ).join(
@@ -85,19 +89,6 @@ def get_by_id(tallySheetId, tallySheetVersionId):
 
 
 def create(tallySheetId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-
-    submissionVersion = SubmissionVersion.create(submissionId=tallySheetId)
-    candidateWiseResult = CandidateWiseResult.create()
-
-    result = Model(
-        tallySheetVersionId=submissionVersion.submissionVersionId,
-        candidateWiseResultId=candidateWiseResult.candidateWiseResultId
-    )
-
-    db.session.add(result)
-    db.session.commit()
+    result = Model(tallySheetId=tallySheetId)
 
     return result

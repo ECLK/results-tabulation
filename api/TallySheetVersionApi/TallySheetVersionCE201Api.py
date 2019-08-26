@@ -1,10 +1,7 @@
-from orm.entities.Result.BallotPaperAccountResult import BallotPaperAccount
-from orm.entities.Result.CandidateWiseResult import CandidateCount
 from util import RequestBody
-from schemas import TallySheetVersionPRE201Schema
+from schemas import TallySheetVersionCE201Schema
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201
-from orm.entities.Result.PartyWiseResult import PartyCount
 from exception import NotFoundException
 
 
@@ -14,7 +11,7 @@ def get_by_id(tallySheetId, tallySheetVersionId):
         tallySheetVersionId=tallySheetVersionId
     )
 
-    return TallySheetVersionPRE201Schema().dump(result).data
+    return TallySheetVersionCE201Schema().dump(result).data
 
 
 def get_all(tallySheetId):
@@ -26,7 +23,7 @@ def get_all(tallySheetId):
         tallySheetId=tallySheetId
     )
 
-    return TallySheetVersionPRE201Schema(many=True).dump(result).data
+    return TallySheetVersionCE201Schema(many=True).dump(result).data
 
 
 def create(tallySheetId, body):
@@ -35,18 +32,16 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId
     )
 
-    tally_sheet_content = request_body.get("tallySheetContent")
+    tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
-            BallotPaperAccount.create(
-                ballotPaperAccountResultId=tallySheetVersion.ballotPaperAccountResultId,
+            tallySheetVersion.add_row(
                 areaId=party_count_body.get("areaId"),
                 issuedBallotCount=party_count_body.get("issuedBallotCount"),
                 issuedTenderBallotCount=party_count_body.get("issuedTenderBallotCount"),
                 receivedBallotCount=party_count_body.get("receivedBallotCount"),
-                receivedTenderBallotCount=party_count_body.get("receivedTenderBallotCount"),
-                electionId=tallySheetVersion.submission.electionId
+                receivedTenderBallotCount=party_count_body.get("receivedTenderBallotCount")
             )
 
-    return TallySheetVersionPRE201Schema().dump(tallySheetVersion).data
+    return TallySheetVersionCE201Schema().dump(tallySheetVersion).data
