@@ -1,4 +1,5 @@
 import csv
+import os
 from app import db
 from orm.entities import *
 from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD, Report_PRE_30_ED, \
@@ -45,10 +46,10 @@ def get_tallysheet_code(tallysheet_code_string):
 
 def get_object(row, row_key, data_key=None):
     if data_key is None:
-        cell = row[row_key]
+        cell = row[row_key].strip()
         data_key = cell
     else:
-        cell = row[data_key]
+        cell = row[data_key].strip()
         data_key = cell
 
     data_store_key = row_key
@@ -90,11 +91,34 @@ def get_object(row, row_key, data_key=None):
             obj = PollingStation.create(cell, electionId=election.electionId)
 
         elif data_store_key == "TallySheet":
+            countingCentre = get_object(row, "Counting Centre")
+            tallySheetCode = get_tallysheet_code(cell)
+
             obj = TallySheet.create(
-                tallySheetCode=get_tallysheet_code(cell),
+                tallySheetCode=tallySheetCode,
                 electionId=election.electionId,
-                officeId=get_object(row, "Counting Centre").areaId
+                officeId=countingCentre.areaId
             )
+
+            if len(countingCentre.districtCentres) > 0:
+                districtCentres = countingCentre.districtCentres[0]
+
+                sampleTallySheetDataRows = get_rows_from_csv(
+                    'tallysheets/%s/%s/PRE-41.csv' % (districtCentres.areaName, countingCentre.areaName)
+                )
+
+                if len(sampleTallySheetDataRows) > 0:
+                    tallySheetVersion = TallySheetVersionPRE41.create(tallySheetId=obj.tallySheetId)
+
+                    for sampleTallySheetDataRow in sampleTallySheetDataRows:
+                        candidate = get_object(sampleTallySheetDataRow, "Candidate")
+                        CandidateCount.create(
+                            candidateWiseResultId=tallySheetVersion.candidateWiseResultId,
+                            candidateId=candidate.candidateId,
+                            count=sampleTallySheetDataRow["Count"],
+                            countInWords=sampleTallySheetDataRow["Count in words"],
+                            electionId=election.electionId
+                        )
 
         elif data_store_key == "Report":
             areaId = get_object(row, row["Electorate Type"], data_key="Electorate").areaId
@@ -128,9 +152,13 @@ def get_object(row, row_key, data_key=None):
 
 
 def get_rows_from_csv(csv_path):
-    with open("%s/%s" % (csv_dir, csv_path), 'r') as f:
-        reader = csv.DictReader(f, delimiter=',')
-        rows = list(reader)
+    csv_file_path = "%s/%s" % (csv_dir, csv_path)
+    if os.path.exists(csv_file_path) is True:
+        with open(csv_file_path, 'r') as f:
+            reader = csv.DictReader(f, delimiter=',')
+            rows = list(reader)
+    else:
+        rows = []
 
     return rows
 
@@ -169,8 +197,8 @@ for row in get_rows_from_csv('party-candidate.csv'):
 
     election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
 
-for row in get_rows_from_csv('tallysheets.csv'):
-    tallysheet = get_object(row, "TallySheet")
-
 for row in get_rows_from_csv('reports.csv'):
     report = get_object(row, "Report")
+
+for row in get_rows_from_csv('tallysheets.csv'):
+    tallysheet = get_object(row, "TallySheet")
