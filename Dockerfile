@@ -18,8 +18,6 @@ RUN apt-get install -y wkhtmltopdf
 
 # Install requirements
 RUN pip install -r requirements.txt
-RUN python manage.py db init
-RUN python manage.py db migrate
 RUN python manage.py db upgrade
 RUN python build_database.py; exit 0
 
