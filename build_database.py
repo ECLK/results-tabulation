@@ -112,12 +112,10 @@ def get_object(row, row_key, data_key=None):
 
                     for sampleTallySheetDataRow in sampleTallySheetDataRows:
                         candidate = get_object(sampleTallySheetDataRow, "Candidate")
-                        CandidateCount.create(
-                            candidateWiseResultId=tallySheetVersion.candidateWiseResultId,
+                        tallySheetVersion.add_row(
                             candidateId=candidate.candidateId,
                             count=sampleTallySheetDataRow["Count"],
-                            countInWords=sampleTallySheetDataRow["Count in words"],
-                            electionId=election.electionId
+                            countInWords=sampleTallySheetDataRow["Count in words"]
                         )
 
         elif data_store_key == "Report":

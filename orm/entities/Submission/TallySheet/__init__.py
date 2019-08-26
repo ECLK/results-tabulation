@@ -4,7 +4,7 @@ from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
+from orm.entities.SubmissionVersion import TallySheetVersion
 from util import get_paginated_query
 
 from orm.entities import Submission
@@ -29,8 +29,8 @@ class TallySheetModel(db.Model):
 
     @hybrid_property
     def latestVersion(self):
-        return TallySheetVersionPRE41.Model.query.filter(
-            TallySheetVersionPRE41.Model.tallySheetVersionId == self.latestVersionId
+        return TallySheetVersion.Model.query.filter(
+            TallySheetVersion.Model.tallySheetVersionId == self.latestVersionId
         ).one_or_none()
 
     def __init__(self, tallySheetCode, electionId, officeId):

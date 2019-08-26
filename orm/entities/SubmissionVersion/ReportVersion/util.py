@@ -1,13 +1,11 @@
 from app import db
 from orm.entities import Area, Submission, SubmissionVersion, Candidate
 from orm.entities.Election import ElectionCandidate
-from orm.entities.Result import CandidateWiseResult
-from orm.entities.Result.CandidateWiseResult import CandidateCount
 
 from sqlalchemy import func, and_
 
-from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41
 from orm.enums import AreaTypeEnum
 from util import get_array
 
@@ -28,7 +26,7 @@ def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False
     query = db.session.query(
         ElectionCandidate.Model.candidateId,
         Candidate.Model.candidateName,
-        func.sum(CandidateCount.Model.count).label("count")
+        func.sum(TallySheetVersionRow_PRE_41.Model.count).label("count")
     ).join(
         Candidate.Model,
         Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
@@ -49,14 +47,10 @@ def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False
         ),
         isouter=True
     ).join(
-        CandidateWiseResult.Model,
-        CandidateWiseResult.Model.candidateWiseResultId == TallySheetVersionPRE41.Model.candidateWiseResultId,
-        isouter=True
-    ).join(
-        CandidateCount.Model,
+        TallySheetVersionRow_PRE_41.Model,
         and_(
-            CandidateCount.Model.candidateWiseResultId == CandidateWiseResult.Model.candidateWiseResultId,
-            CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId,
+            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == TallySheetVersionPRE41.Model.tallySheetVersionId,
+            TallySheetVersionRow_PRE_41.Model.candidateId == ElectionCandidate.Model.candidateId
         ),
         isouter=True
     ).filter(
@@ -91,7 +85,7 @@ def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subqu
         Candidate.Model.candidateName,
         Area.Model.areaId,
         Area.Model.areaName,
-        func.sum(CandidateCount.Model.count).label("count"),
+        func.sum(TallySheetVersionRow_PRE_41.Model.count).label("count"),
     ).join(
         Candidate.Model,
         Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
@@ -116,14 +110,10 @@ def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subqu
         ),
         isouter=True
     ).join(
-        CandidateWiseResult.Model,
-        CandidateWiseResult.Model.candidateWiseResultId == TallySheetVersionPRE41.Model.candidateWiseResultId,
-        isouter=True
-    ).join(
-        CandidateCount.Model,
+        TallySheetVersionRow_PRE_41.Model,
         and_(
-            CandidateCount.Model.candidateWiseResultId == CandidateWiseResult.Model.candidateWiseResultId,
-            CandidateCount.Model.candidateId == ElectionCandidate.Model.candidateId,
+            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == TallySheetVersionPRE41.Model.tallySheetVersionId,
+            TallySheetVersionRow_PRE_41.Model.candidateId == ElectionCandidate.Model.candidateId
         ),
         isouter=True
     ).filter(

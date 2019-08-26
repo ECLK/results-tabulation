@@ -1,10 +1,7 @@
-from orm.entities.Result.BallotPaperAccountResult import BallotPaperAccount
-from orm.entities.Result.CandidateWiseResult import CandidateCount
 from util import RequestBody
 from schemas import TallySheetVersionPRE201Schema
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201
-from orm.entities.Result.PartyWiseResult import PartyCount
 from exception import NotFoundException
 
 
@@ -39,14 +36,12 @@ def create(tallySheetId, body):
     if tally_sheet_content is not None:
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
-            BallotPaperAccount.create(
-                ballotPaperAccountResultId=tallySheetVersion.ballotPaperAccountResultId,
+            tallySheetVersion.add_row(
                 areaId=party_count_body.get("areaId"),
                 issuedBallotCount=party_count_body.get("issuedBallotCount"),
                 issuedTenderBallotCount=party_count_body.get("issuedTenderBallotCount"),
                 receivedBallotCount=party_count_body.get("receivedBallotCount"),
-                receivedTenderBallotCount=party_count_body.get("receivedTenderBallotCount"),
-                electionId=tallySheetVersion.submission.electionId
+                receivedTenderBallotCount=party_count_body.get("receivedTenderBallotCount")
             )
 
     return TallySheetVersionPRE201Schema().dump(tallySheetVersion).data
