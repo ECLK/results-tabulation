@@ -1867,7 +1867,7 @@ paths:
               schema:
                 type: object
                 required:
-                  - tallySheetContent
+                  - content
                 properties:
                   tallySheetContent:
                     type: array
@@ -1912,7 +1912,7 @@ paths:
             schema:
               type: object
               required:
-                - tallySheetContent
+                - content
               properties:
                 tallySheetContent:
                   type: array
@@ -2006,7 +2006,7 @@ paths:
               schema:
                 type: object
                 required:
-                  - tallySheetContent
+                  - content
                 properties:
                   tallySheetContent:
                     type: array
@@ -2058,7 +2058,7 @@ paths:
             schema:
               type: object
               required:
-                - tallySheetContent
+                - content
               properties:
                 tallySheetContent:
                   type: array

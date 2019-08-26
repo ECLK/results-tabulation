@@ -1,9 +1,7 @@
-from exception import ForbiddenException, NotFoundException, MethodNotAllowedException
+from exception import NotFoundException
 from orm.entities import Report
-from orm.entities.Area.Electorate import PollingDistrict, PollingDivision, ElectoralDistrict
-from orm.entities.Submission import TallySheet
-from orm.enums import ReportCodeEnum, TallySheetCodeEnum
-from sqlalchemy.ext.hybrid import hybrid_property
+from orm.entities.Area.Electorate import ElectoralDistrict
+from orm.enums import ReportCodeEnum
 
 from util import get_paginated_query
 
