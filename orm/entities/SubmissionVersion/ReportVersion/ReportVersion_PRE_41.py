@@ -26,7 +26,7 @@ class ReportVersion_PRE_41_Model(ReportVersion.Model):
         if latestVersion is None:
             raise NotFoundException("No tallysheet data filled yet. (tallySheetId=%d)" % tallySheet.tallySheetId)
 
-        tallySheetContent = latestVersion.tallySheetContent
+        tallySheetContent = latestVersion.content
 
         content = {
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",

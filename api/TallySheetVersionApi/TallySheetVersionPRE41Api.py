@@ -34,7 +34,7 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId
     )
 
-    tally_sheet_content = request_body.get("tallySheetContent")
+    tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
