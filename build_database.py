@@ -7,9 +7,6 @@ from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD, Repo
 
 from orm.enums import TallySheetCodeEnum
 
-# Create the database
-db.create_all()
-
 election = Election.create(electionName="Test Election")
 
 data_stores = {}
