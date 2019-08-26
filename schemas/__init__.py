@@ -125,7 +125,7 @@ class TallySheetVersionSchema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
-            "tallySheetContent"
+            "content"
         )
 
         model = TallySheetVersion.Model
@@ -134,7 +134,6 @@ class TallySheetVersionSchema(ma.ModelSchema):
         sqla_session = db.session
 
     tallySheetCode = EnumField(TallySheetCodeEnum)
-    tallySheetContent = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
 
 
 class AreaSchema(ma.ModelSchema):
@@ -326,7 +325,7 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
-            "tallySheetContent"
+            "content"
         )
 
         model = TallySheetVersionPRE41.Model
@@ -335,17 +334,17 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
         sqla_session = db.session
 
     # submission = ma.Nested(SubmissionSchema)
-    tallySheetContent = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
+    content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
 
 
-class TallySheetVersionPRE201Schema(ma.ModelSchema):
+class TallySheetVersionCE201Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "tallySheetId",
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
-            "tallySheetContent"
+            "content"
         )
 
         model = TallySheetVersionCE201.Model
@@ -354,7 +353,7 @@ class TallySheetVersionPRE201Schema(ma.ModelSchema):
         sqla_session = db.session
 
     # submission = ma.Nested(SubmissionSchema)
-    tallySheetContent = ma.Nested(TallySheetVersionRow_CE_201_Schema, many=True)
+    content = ma.Nested(TallySheetVersionRow_CE_201_Schema, many=True)
 
 
 class TallySheetSchema(ma.ModelSchema):

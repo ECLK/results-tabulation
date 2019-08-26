@@ -36,7 +36,7 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
         )
 
     @hybrid_property
-    def tallySheetContent(self):
+    def content(self):
         return db.session.query(
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
