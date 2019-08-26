@@ -6,16 +6,13 @@
 
 **Virtual Environment**
 
-sudo apt install virtualenv
+`sudo apt install virtualenv`
 
-virtualenv venv --python=python3
+`virtualenv venv --python=python3`
 
-source ./venv/bin/activate
+**My SQL**
 
-
-**Postgresql**
-
-https://www.postgresql.org/download/linux/ubuntu/
+5.7 or above
 
 **wkhtmltopdf**
 
@@ -24,15 +21,19 @@ https://www.postgresql.org/download/linux/ubuntu/
 
 ## Get Started
 
+**Activate the python environment**
+
+`source ./venv/bin/activate`
+
 **Install Dependancies**
 
 `pip install -r requirements.txt`
 
-**Drop (If exists) and Create the Database**
+**Upgrade/create the Database**
 
-`export ENV_CONFIG=./env/dev.cfg && python drop-and-create-database.py`
+`python manage.py db upgrade`
 
-**Build the Database**
+**Build the Database with sample data**
 
 `export ENV_CONFIG=./env/dev.cfg && python build_database.py`
 
@@ -41,3 +42,21 @@ https://www.postgresql.org/download/linux/ubuntu/
 `export ENV_CONFIG=./env/dev.cfg && python index.py`
 
 https://localhost:5000/ui/
+
+## Database Migrations
+
+**Initializa migration**
+
+This is a one time thing which is required only at the project beginning. The information is only for knowledge.
+
+`export ENV_CONFIG=./env/dev.cfg && python manage.py db init`
+
+**Make a revision**
+
+If there are changes identified, a revision file is created at migrations/versions with a hash.
+
+`export ENV_CONFIG=./env/dev.cfg && python manage.py db migrate`
+
+**Upgrade the DB**
+
+`export ENV_CONFIG=./env/dev.cfg && python manage.py db upgrade`
