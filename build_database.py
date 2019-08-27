@@ -4,6 +4,7 @@ from app import db
 from orm.entities import *
 from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD, Report_PRE_30_ED, \
     Report_PRE_ALL_ISLAND_RESULTS
+from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201
 
 from orm.enums import TallySheetCodeEnum
 
@@ -100,20 +101,53 @@ def get_object(row, row_key, data_key=None):
             if len(countingCentre.districtCentres) > 0:
                 districtCentres = countingCentre.districtCentres[0]
 
-                sampleTallySheetDataRows = get_rows_from_csv(
-                    'tallysheets/%s/%s/PRE-41.csv' % (districtCentres.areaName, countingCentre.areaName)
-                )
+                if tallySheetCode is TallySheetCodeEnum.PRE_41:
+                    sampleTallySheetDataRows = get_rows_from_csv(
+                        'tallysheets/%s/%s/PRE-41.csv' % (districtCentres.areaName, countingCentre.areaName)
+                    )
 
-                if len(sampleTallySheetDataRows) > 0:
-                    tallySheetVersion = TallySheetVersionPRE41.create(tallySheetId=obj.tallySheetId)
+                    if len(sampleTallySheetDataRows) > 0:
+                        tallySheetVersion = TallySheetVersionPRE41.create(tallySheetId=obj.tallySheetId)
 
-                    for sampleTallySheetDataRow in sampleTallySheetDataRows:
-                        candidate = get_object(sampleTallySheetDataRow, "Candidate")
-                        tallySheetVersion.add_row(
-                            candidateId=candidate.candidateId,
-                            count=sampleTallySheetDataRow["Count"],
-                            countInWords=sampleTallySheetDataRow["Count in words"]
-                        )
+                        for sampleTallySheetDataRow in sampleTallySheetDataRows:
+                            candidate = get_object(sampleTallySheetDataRow, "Candidate")
+                            tallySheetVersion.add_row(
+                                candidateId=candidate.candidateId,
+                                count=sampleTallySheetDataRow["Count"],
+                                countInWords=sampleTallySheetDataRow["Count in words"]
+                            )
+                elif tallySheetCode is TallySheetCodeEnum.CE_201:
+                    sampleTallySheetDataRows = get_rows_from_csv(
+                        'tallysheets/%s/%s/CE-201.csv' % (districtCentres.areaName, countingCentre.areaName)
+                    )
+
+                    if len(sampleTallySheetDataRows) > 0:
+                        tallySheetVersion = TallySheetVersionCE201.create(tallySheetId=obj.tallySheetId)
+
+                        for sampleTallySheetDataRow in sampleTallySheetDataRows:
+                            pollingStation = get_object(sampleTallySheetDataRow, "Polling Station")
+                            tallySheetVersionRow = tallySheetVersion.add_row(
+                                areaId=pollingStation.areaId,
+                                ballotsIssued=sampleTallySheetDataRow["Issued Ballots"],
+                                ballotsReceived=sampleTallySheetDataRow["Received Ballots"],
+                                ballotsSpoilt=sampleTallySheetDataRow["Spoilt Ballots"],
+                                ballotsUnused=sampleTallySheetDataRow["Unused Ballots"],
+                                boxCountOrdinary=sampleTallySheetDataRow["Box Count - Ordinary Ballots"],
+                                boxCountTendered=sampleTallySheetDataRow["Box Count - Tendered Ballots"],
+                                ballotPaperAccountOrdinary=sampleTallySheetDataRow[
+                                    "Ballot Paper Account - Ordinary Ballots"],
+                                ballotPaperAccountTendered=sampleTallySheetDataRow[
+                                    "Ballot Paper Account - Tendered Ballots"],
+                            )
+
+                            receivedBoxIds = sampleTallySheetDataRow["Received Boxes"].split(",")
+
+                            print("####### receivedBoxIds ### ", receivedBoxIds)
+
+                            for receivedBoxId in receivedBoxIds:
+                                receivedBox = get_object({"Ballot Box": receivedBoxId}, "Ballot Box")
+                                tallySheetVersionRow.add_received_ballot_box(receivedBox.stationaryItemId)
+
 
         elif data_store_key == "Report":
             areaId = get_object(row, row["Electorate Type"], data_key="Electorate").areaId
