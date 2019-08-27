@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from orm.entities.SubmissionVersion import TallySheetVersion
-from util import get_paginated_query
+from util import get_paginated_query, get_tally_sheet_code
 
 from orm.entities import Submission
 
@@ -58,13 +58,6 @@ def get_by_id(tallySheetId):
     ).one_or_none()
 
     return result
-
-
-def get_tally_sheet_code(tallySheetCodeStr):
-    if tallySheetCodeStr == "CE-201":
-        return TallySheetCodeEnum.CE_201
-    elif tallySheetCodeStr == "PRE-41":
-        return TallySheetCodeEnum.PRE_41
 
 
 def get_all(electionId=None, officeId=None, tallySheetCode=None):
