@@ -13,4 +13,4 @@ class ReportCodeEnum(enum.Enum):
     PRE_34_RO = 9
     PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS = 10
     PRE_ALL_ISLAND_RESULTS = 11
-    OrganizationStructure = 12
+    CE_201 = 12
