@@ -7,6 +7,7 @@ from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD, Repo
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201
 
 from orm.enums import TallySheetCodeEnum
+from util import get_tally_sheet_code
 
 election = Election.create(electionName="Test Election")
 
@@ -33,13 +34,6 @@ def get_object_from_data_store(data_key, data_store_key):
 def set_object_to_data_store(data_key, data_store_key, obj):
     data_store = get_data_store(data_store_key)
     data_store[data_key] = obj
-
-
-def get_tallysheet_code(tallysheet_code_string):
-    if tallysheet_code_string == "PRE-41":
-        return TallySheetCodeEnum.PRE_41
-    if tallysheet_code_string == "CE-201":
-        return TallySheetCodeEnum.CE_201
 
 
 def get_object(row, row_key, data_key=None):
@@ -90,7 +84,7 @@ def get_object(row, row_key, data_key=None):
 
         elif data_store_key == "TallySheet":
             countingCentre = get_object(row, "Counting Centre")
-            tallySheetCode = get_tallysheet_code(cell)
+            tallySheetCode = get_tally_sheet_code(cell)
 
             obj = TallySheet.create(
                 tallySheetCode=tallySheetCode,
