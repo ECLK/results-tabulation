@@ -2368,8 +2368,6 @@ paths:
           schema:
             type: string
             enum:
-              - PRE-28
-              - PRE-28-a
               - CE-201
               - PRE-41
               - PRE-30-PD
