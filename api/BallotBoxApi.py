@@ -4,7 +4,7 @@ from schemas import BallotBox_Schema as Schema
 from orm.entities import BallotBox
 
 
-def get_all(ballotBoxId):
+def get_all(ballotBoxId=None):
     result = BallotBox.get_all(
         ballotBoxId=ballotBoxId
     )
