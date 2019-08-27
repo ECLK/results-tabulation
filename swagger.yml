@@ -1702,17 +1702,14 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: code
+        - name: tallySheetCode
           required: false
           in: query
           schema:
             type: string
             enum:
-              - PCE-22
-              - PCE-34
-              - PCE-35
-              - PCE-31
-              - CE-CO-PR-1
+              - CE-201
+              - PRE-41
       responses:
         '200':
           description: Successful operation.
@@ -2465,7 +2462,7 @@ components:
       required:
         - electionId
         - officeId
-        - code
+        - tallySheetCode
       properties:
         id:
           type: integer
@@ -2490,7 +2487,7 @@ components:
         createdAt:
           type: string
           format: date-time
-        code:
+        tallySheetCode:
           type: string
           enum:
             - PCE-22
