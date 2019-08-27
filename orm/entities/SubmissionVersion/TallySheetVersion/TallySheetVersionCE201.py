@@ -19,20 +19,24 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
         'polymorphic_identity': TallySheetCodeEnum.CE_201
     }
 
-    def add_row(self, areaId, issuedBallotCount, issuedTenderBallotCount, receivedBallotCount,
-                receivedTenderBallotCount):
+    def add_row(self, areaId, ballotsIssued, ballotsReceived, ballotsSpoilt, ballotsUnused,
+                 boxCountOrdinary, boxCountTendered, ballotPaperAccountOrdinary, ballotPaperAccountTendered):
         from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201
 
-        TallySheetVersionRow_CE_201.create(
-            tallySheetVersionId=self.tallySheetVersionId,
+        return TallySheetVersionRow_CE_201.create(
+            tallySheetVersion=self,
             areaId=areaId,
-            issuedBallotCount=issuedBallotCount,
-            issuedTenderBallotCount=issuedTenderBallotCount,
-            receivedBallotCount=receivedBallotCount,
-            receivedTenderBallotCount=receivedTenderBallotCount
+            ballotsIssued=ballotsIssued,
+            ballotsReceived=ballotsReceived,
+            ballotsSpoilt=ballotsSpoilt,
+            ballotsUnused=ballotsUnused,
+            boxCountOrdinary=boxCountOrdinary,
+            boxCountTendered=boxCountTendered,
+            ballotPaperAccountOrdinary=ballotPaperAccountOrdinary,
+            ballotPaperAccountTendered=ballotPaperAccountTendered
         )
 
-    tallySheetContent = relationship("TallySheetVersionRow_CE_201_Model")
+    content = relationship("TallySheetVersionRow_CE_201_Model")
 
 
 Model = TallySheetVersionCE201Model

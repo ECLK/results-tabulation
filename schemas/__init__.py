@@ -101,16 +101,25 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "areaId",
-            "issuedBallotCount",
-            "issuedTenderBallotCount",
-            "receivedBallotCount",
-            "receivedTenderBallotCount"
+            "ballotsIssued",
+            "ballotsReceived",
+            "ballotsSpoilt",
+            "ballotsUnused",
+            "boxCountOrdinary",
+            "boxCountTendered",
+            "ballotPaperAccountOrdinary",
+            "ballotPaperAccountTendered",
+            "issuedBallots",
+            "receivedBallots"
         )
 
         model = TallySheetVersionRow_CE_201.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+
+    issuedBallots = ma.Nested("BallotBox_Schema", only=["stationaryItemId", "ballotBoxId"], many=True)
+    receivedBallots = ma.Nested("BallotBox_Schema", only=["stationaryItemId", "ballotBoxId"], many=True)
 
 
 class TallySheetVersionSchema(ma.ModelSchema):

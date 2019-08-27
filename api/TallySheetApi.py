@@ -9,10 +9,11 @@ from schemas import TallySheetSchema as Schema
 from orm.entities.Submission import TallySheet
 
 
-def getAll(electionId=None, officeId=None):
+def getAll(electionId=None, officeId=None, tallySheetCode=None):
     result = TallySheet.get_all(
         electionId=electionId,
-        officeId=officeId
+        officeId=officeId,
+        tallySheetCode=tallySheetCode
     )
 
     return Schema(many=True).dump(result).data

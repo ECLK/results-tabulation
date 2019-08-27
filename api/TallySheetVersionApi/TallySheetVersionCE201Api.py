@@ -34,14 +34,26 @@ def create(tallySheetId, body):
 
     tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
-        for row in tally_sheet_content:
-            party_count_body = RequestBody(row)
-            tallySheetVersion.add_row(
+        for party_count_body in tally_sheet_content:
+            party_count_body = RequestBody(party_count_body)
+            tallySheetVersionRow = tallySheetVersion.add_row(
                 areaId=party_count_body.get("areaId"),
-                issuedBallotCount=party_count_body.get("issuedBallotCount"),
-                issuedTenderBallotCount=party_count_body.get("issuedTenderBallotCount"),
-                receivedBallotCount=party_count_body.get("receivedBallotCount"),
-                receivedTenderBallotCount=party_count_body.get("receivedTenderBallotCount")
+                ballotsIssued=party_count_body.get("ballotsIssued"),
+                ballotsReceived=party_count_body.get("ballotsReceived"),
+                ballotsSpoilt=party_count_body.get("ballotsSpoilt"),
+                ballotsUnused=party_count_body.get("ballotsUnused"),
+                boxCountOrdinary=party_count_body.get("boxCountOrdinary"),
+                boxCountTendered=party_count_body.get("boxCountTendered"),
+                ballotPaperAccountOrdinary=party_count_body.get("ballotPaperAccountOrdinary"),
+                ballotPaperAccountTendered=party_count_body.get("ballotPaperAccountTendered")
             )
+
+            for issued_ballot_body in party_count_body.get("issuedBallots"):
+                issued_ballot_body = RequestBody(issued_ballot_body)
+                tallySheetVersionRow.add_issued_ballot_box(issued_ballot_body.get("stationaryItemId"))
+
+            for received_ballot_body in party_count_body.get("receivedBallots"):
+                received_ballot_body = RequestBody(received_ballot_body)
+                tallySheetVersionRow.add_received_ballot_box(received_ballot_body.get("stationaryItemId"))
 
     return TallySheetVersionCE201Schema().dump(tallySheetVersion).data
