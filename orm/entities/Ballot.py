@@ -8,15 +8,19 @@ from orm.entities import StationaryItem, Election
 
 class BallotModel(db.Model):
     __tablename__ = 'ballot'
-    ballotId = db.Column(db.String(20), primary_key=True)
-    electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), primary_key=True)
     stationaryItemId = db.Column(db.Integer, db.ForeignKey(StationaryItem.Model.__table__.c.stationaryItemId),
-                                 nullable=False, unique=True)
+                                 primary_key=True, nullable=False)
+    ballotId = db.Column(db.String(20), nullable=False)
+    electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
 
     stationaryItem = relationship(StationaryItem.Model, foreign_keys=[stationaryItemId])
     election = relationship(Election.Model, foreign_keys=[electionId])
 
     locked = association_proxy("stationaryItem", "locked")
+
+    __table_args__ = (
+        db.UniqueConstraint('ballotId', 'electionId', name='BallotPerElection'),
+    )
 
     def __init__(self, ballotId, electionId):
         stationary_item = StationaryItem.create(
@@ -24,9 +28,14 @@ class BallotModel(db.Model):
             stationaryItemType=StationaryItemTypeEnum.Ballot
         )
 
-        self.ballotId = ballotId
-        self.electionId = electionId
-        self.stationaryItemId = stationary_item.stationaryItemId
+        super(BallotModel, self).__init__(
+            ballotId=ballotId,
+            electionId=electionId,
+            stationaryItemId=stationary_item.stationaryItemId
+        )
+
+        db.session.add(self)
+        db.session.commit()
 
 
 Model = BallotModel
@@ -49,7 +58,5 @@ def create(ballotId, electionId):
         electionId=electionId,
         ballotId=ballotId,
     )
-    db.session.add(result)
-    db.session.commit()
 
     return result

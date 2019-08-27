@@ -1,3 +1,5 @@
+from sqlalchemy.ext.associationproxy import association_proxy
+
 from util import get_paginated_query
 from app import db
 from sqlalchemy.orm import relationship
@@ -7,15 +9,17 @@ from orm.entities import StationaryItem, Election
 
 class BallotBoxModel(db.Model):
     __tablename__ = 'ballotBox'
-    ballotBoxId = db.Column(db.String(20), primary_key=True)
-    electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), primary_key=True)
+
     stationaryItemId = db.Column(db.Integer, db.ForeignKey(StationaryItem.Model.__table__.c.stationaryItemId),
-                                 nullable=False, unique=True)
+                                 primary_key=True, nullable=False)
+
+    ballotBoxId = db.Column(db.String(20), nullable=False)
+    electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
 
     stationaryItem = relationship(StationaryItem.Model, foreign_keys=[stationaryItemId])
     election = relationship(Election.Model, foreign_keys=[electionId])
 
-    # locked = association_proxy("stationaryItem", "locked")
+    locked = association_proxy("stationaryItem", "locked")
 
     def __init__(self, ballotBoxId, electionId):
         stationary_item = StationaryItem.create(
@@ -23,9 +27,14 @@ class BallotBoxModel(db.Model):
             stationaryItemType=StationaryItemTypeEnum.BallotBox
         )
 
-        self.ballotBoxId = ballotBoxId
-        self.electionId = electionId
-        self.stationaryItemId = stationary_item.stationaryItemId
+        super(BallotBoxModel, self).__init__(
+            ballotBoxId=ballotBoxId,
+            electionId=electionId,
+            stationaryItemId=stationary_item.stationaryItemId
+        )
+
+        db.session.add(self)
+        db.session.commit()
 
 
 Model = BallotBoxModel
@@ -48,7 +57,5 @@ def create(ballotBoxId, electionId):
         electionId=electionId,
         ballotBoxId=ballotBoxId,
     )
-    db.session.add(result)
-    db.session.commit()
 
     return result
