@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from orm.entities.SubmissionVersion import TallySheetVersion
-from util import get_paginated_query
+from util import get_paginated_query, get_tally_sheet_code
 
 from orm.entities import Submission
 
@@ -60,14 +60,20 @@ def get_by_id(tallySheetId):
     return result
 
 
-def get_all(electionId=None, officeId=None):
-    query = Model.query
+def get_all(electionId=None, officeId=None, tallySheetCode=None):
+    query = Model.query.join(
+        Submission.Model,
+        Submission.Model.submissionId == Model.tallySheetId
+    )
 
     if electionId is not None:
-        query = query.filter(Model.submission.electionId == electionId)
+        query = query.filter(Submission.Model.electionId == electionId)
 
     if officeId is not None:
-        query = query.filter(Model.submission.areaId == officeId)
+        query = query.filter(Submission.Model.areaId == officeId)
+
+    if tallySheetCode is not None:
+        query = query.filter(Model.tallySheetCode == get_tally_sheet_code(tallySheetCode))
 
     result = get_paginated_query(query).all()
 

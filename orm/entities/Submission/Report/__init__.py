@@ -7,7 +7,7 @@ from orm.entities import Election, Office, Electorate, Proof, History, Submissio
 from orm.entities.SubmissionVersion import ReportVersion
 from orm.enums import ReportCodeEnum, ProofTypeEnum, SubmissionTypeEnum
 
-from util import get_paginated_query
+from util import get_paginated_query, get_report_code
 
 
 class ReportModel(db.Model):
@@ -72,7 +72,7 @@ def get_all(electionId=None, areaId=None, reportCode=None):
         query = query.filter(Model.areaId == areaId)
 
     if reportCode is not None:
-        query = query.filter(Model.reportCode == reportCode)
+        query = query.filter(Model.reportCode == get_report_code(reportCode))
 
     result = get_paginated_query(query).all()
 

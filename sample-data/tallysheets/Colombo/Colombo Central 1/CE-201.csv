@@ -1,0 +1,11 @@
+Polling Station,Received Boxes,Issued Ballots,Received Ballots,Spoilt Ballots,Unused Ballots,Ballot Paper Account - Ordinary Ballots,Ballot Paper Account - Tendered Ballots,Box Count - Ordinary Ballots,Box Count - Tendered Ballots
+Polling Station 1,"box-1, box-2, box-3",1000,50,100,10,10,90,10,90
+Polling Station 2,"box-1, box-2, box-4",1000,50,100,10,10,90,10,90
+Polling Station 3,"box-1, box-2, box-5",1000,50,100,10,10,90,10,90
+Polling Station 4,"box-1, box-2, box-6",1000,50,100,10,10,90,10,90
+Polling Station 5,"box-1, box-2, box-7",1000,50,100,10,10,90,10,90
+Polling Station 6,"box-1, box-2, box-8",1000,50,100,10,10,90,10,90
+Polling Station 7,"box-1, box-2, box-9",1000,50,100,10,10,90,10,90
+Polling Station 8,"box-1, box-2, box-10",1000,50,100,10,10,90,10,90
+Polling Station 9,"box-1, box-2, box-11",1000,50,100,10,10,90,10,90
+Polling Station 10,"box-1, box-2, box-12",1000,50,100,10,10,90,10,90
