@@ -1869,7 +1869,7 @@ paths:
                 required:
                   - content
                 properties:
-                  tallySheetContent:
+                  content:
                     type: array
                     items:
                       type: object
@@ -1914,7 +1914,7 @@ paths:
               required:
                 - content
               properties:
-                tallySheetContent:
+                content:
                   type: array
                   items:
                     type: object
@@ -1958,7 +1958,62 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TallySheet'
+                type: object
+                required:
+                  - content
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        areaId:
+                          type: integer
+                          format: int64
+                        ballotsIssued:
+                          type: integer
+                          format: int64
+                        ballotsReceived:
+                          type: integer
+                          format: int64
+                        ballotsSpoilt:
+                          type: integer
+                          format: int64
+                        ballotsUnused:
+                          type: integer
+                          format: int64
+                        boxCountOrdinary:
+                          type: integer
+                          format: int64
+                        boxCountTendered:
+                          type: integer
+                          format: int64
+                        ballotPaperAccountOrdinary:
+                          type: integer
+                          format: int64
+                        ballotPaperAccountTendered:
+                          type: integer
+                          format: int64
+                        issuedBallots:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              ballotBoxId:
+                                type: string
+                              stationaryItemId:
+                                type: integer
+                                format: int64
+                        receivedBallots:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              ballotBoxId:
+                                type: string
+                              stationaryItemId:
+                                type: integer
+                                format: int64
         '400':
           description: Bad request.
           content:
@@ -2008,7 +2063,7 @@ paths:
                 required:
                   - content
                 properties:
-                  tallySheetContent:
+                  content:
                     type: array
                     items:
                       type: object
@@ -2016,18 +2071,50 @@ paths:
                         areaId:
                           type: integer
                           format: int64
-                        issuedBallotCount:
+                        ballotsIssued:
                           type: integer
                           format: int64
-                        issuedTenderBallotCount:
+                        ballotsReceived:
                           type: integer
                           format: int64
-                        receivedBallotCount:
+                        ballotsSpoilt:
                           type: integer
                           format: int64
-                        receivedTenderBallotCount:
+                        ballotsUnused:
                           type: integer
                           format: int64
+                        boxCountOrdinary:
+                          type: integer
+                          format: int64
+                        boxCountTendered:
+                          type: integer
+                          format: int64
+                        ballotPaperAccountOrdinary:
+                          type: integer
+                          format: int64
+                        ballotPaperAccountTendered:
+                          type: integer
+                          format: int64
+                        issuedBallots:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              ballotBoxId:
+                                type: string
+                              stationaryItemId:
+                                type: integer
+                                format: int64
+                        receivedBallots:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              ballotBoxId:
+                                type: string
+                              stationaryItemId:
+                                type: integer
+                                format: int64
         '400':
           description: Bad request.
           content:
@@ -2060,7 +2147,7 @@ paths:
               required:
                 - content
               properties:
-                tallySheetContent:
+                content:
                   type: array
                   items:
                     type: object
@@ -2068,18 +2155,46 @@ paths:
                       areaId:
                         type: integer
                         format: int64
-                      issuedBallotCount:
+                      ballotsIssued:
                         type: integer
                         format: int64
-                      issuedTenderBallotCount:
+                      ballotsReceived:
                         type: integer
                         format: int64
-                      receivedBallotCount:
+                      ballotsSpoilt:
                         type: integer
                         format: int64
-                      receivedTenderBallotCount:
+                      ballotsUnused:
                         type: integer
                         format: int64
+                      boxCountOrdinary:
+                        type: integer
+                        format: int64
+                      boxCountTendered:
+                        type: integer
+                        format: int64
+                      ballotPaperAccountOrdinary:
+                        type: integer
+                        format: int64
+                      ballotPaperAccountTendered:
+                        type: integer
+                        format: int64
+                      issuedBallots:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            stationaryItemId:
+                              type: integer
+                              format: int64
+                      receivedBallots:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            stationaryItemId:
+                              type: integer
+                              format: int64
         description: Updated tally sheet object.
         required: true
 

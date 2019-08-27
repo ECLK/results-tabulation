@@ -10,7 +10,7 @@ class BallotModel(db.Model):
     __tablename__ = 'ballot'
     stationaryItemId = db.Column(db.Integer, db.ForeignKey(StationaryItem.Model.__table__.c.stationaryItemId),
                                  primary_key=True, nullable=False)
-    ballotId = db.Column(db.String(20), nullable=False)
+    ballotId = db.Column(db.String(20), nullable=False, primary_key=True)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
 
     stationaryItem = relationship(StationaryItem.Model, foreign_keys=[stationaryItemId])
@@ -39,6 +39,14 @@ class BallotModel(db.Model):
 
 
 Model = BallotModel
+
+
+def get_by_id(stationaryItemId):
+    result = Model.query.filter(
+        Model.stationaryItemId == stationaryItemId
+    ).one_or_none()
+
+    return result
 
 
 def get_all(ballotId=None):

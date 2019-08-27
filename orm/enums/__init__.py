@@ -8,3 +8,4 @@ from orm.enums.ReportCodeEnum import ReportCodeEnum
 from orm.enums.SubmissionTypeEnum import SubmissionTypeEnum
 from orm.enums.AreaTypeEnum import AreaTypeEnum
 from orm.enums.AreaCategoryEnum import AreaCategoryEnum
+from orm.enums.InvoiceStageEnum import InvoiceStageEnum
