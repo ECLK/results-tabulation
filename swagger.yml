@@ -1710,6 +1710,7 @@ paths:
             enum:
               - CE-201
               - PRE-41
+              - PRE-21
       responses:
         '200':
           description: Successful operation.
@@ -1926,6 +1927,145 @@ paths:
                         type: string
         description: Updated tally sheet object.
         required: true
+
+  /tally-sheet/PRE-21/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - tallySheetVersion
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersionPRE21Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TallySheet'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /tally-sheet/PRE-21/{tallySheetId}/version:
+    post:
+      tags:
+        - tallySheetVersion
+      summary: Create tally sheet version
+      operationId: api.TallySheetVersionApi.TallySheetVersionPRE21Api.create
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - content
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        candidateId:
+                          type: integer
+                          format: int64
+                        count:
+                          type: integer
+                          format: int64
+                        countInWords:
+                          type: string
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                        format: int64
+                      invalidVoteCategoryId:
+                        type: integer
+                        format: int64
+        description: Updated tally sheet object.
+        required: true
+
+
+
 
 
   /tally-sheet/CE-201/{tallySheetId}/version/{tallySheetVersionId}:
