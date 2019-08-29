@@ -23,7 +23,7 @@ class ReportVersion_PRE_30_PD_Model(ReportVersion.Model):
             "totalVotes": []
         }
 
-        queryResult, countingCentres, latestTallySheetVersions = get_PRE41_candidate_and_area_wise_aggregated_result(
+        queryResult, countingCentres = get_PRE41_candidate_and_area_wise_aggregated_result(
             electionId=report.electionId,
             areas=report.area,
             subquery=False

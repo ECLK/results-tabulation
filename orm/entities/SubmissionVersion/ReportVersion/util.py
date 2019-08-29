@@ -1,10 +1,9 @@
 from app import db
-from orm.entities import Area, Submission, SubmissionVersion, Candidate
+from orm.entities import Area, Submission, Candidate
 from orm.entities.Election import ElectionCandidate
 
 from sqlalchemy import func, and_
 
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41
 from orm.enums import AreaTypeEnum
 from util import get_array
@@ -13,15 +12,11 @@ from util import get_array
 def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False):
     areas = get_array(areas)
 
-    latestTallySheetVersions = []
     countingCentres = []
 
     for area in areas:
         for countingCentre in area.get_associated_areas(AreaTypeEnum.CountingCentre):
             countingCentres.append(countingCentre)
-            for tallySheet in countingCentre.tallySheets_PRE_41:
-                if tallySheet.latestVersionId is not None:
-                    latestTallySheetVersions.append(tallySheet.latestVersionId)
 
     query = db.session.query(
         ElectionCandidate.Model.candidateId,
@@ -33,23 +28,15 @@ def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False
         isouter=True
     ).join(
         Submission.Model,
-        Submission.Model.electionId == ElectionCandidate.Model.electionId,
-        isouter=True
-    ).join(
-        SubmissionVersion.Model,
-        SubmissionVersion.Model.submissionId == Submission.Model.submissionId,
-        isouter=True
-    ).join(
-        TallySheetVersionPRE41.Model,
         and_(
-            TallySheetVersionPRE41.Model.tallySheetVersionId == SubmissionVersion.Model.submissionVersionId,
-            TallySheetVersionPRE41.Model.tallySheetVersionId.in_(latestTallySheetVersions)
+            Submission.Model.electionId == ElectionCandidate.Model.electionId,
+            Submission.Model.areaId.in_([countingCentre.areaId for countingCentre in countingCentres])
         ),
         isouter=True
     ).join(
         TallySheetVersionRow_PRE_41.Model,
         and_(
-            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == TallySheetVersionPRE41.Model.tallySheetVersionId,
+            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == Submission.Model.latestVersionId,
             TallySheetVersionRow_PRE_41.Model.candidateId == ElectionCandidate.Model.candidateId
         ),
         isouter=True
@@ -62,23 +49,19 @@ def get_PRE41_candidate_wise_aggregated_result(electionId, areas, subquery=False
     )
 
     if subquery is True:
-        return query.subquery(), countingCentres, latestTallySheetVersions
+        return query.subquery(), countingCentres
     else:
-        return query.all(), countingCentres, latestTallySheetVersions
+        return query.all(), countingCentres
 
 
 def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subquery=False):
     areas = get_array(areas)
 
-    latestTallySheetVersions = []
     countingCentres = []
 
     for area in areas:
         for countingCentre in area.get_associated_areas(AreaTypeEnum.CountingCentre):
             countingCentres.append(countingCentre)
-            for tallySheet in countingCentre.tallySheets_PRE_41:
-                if tallySheet.latestVersionId is not None:
-                    latestTallySheetVersions.append(tallySheet.latestVersionId)
 
     query = db.session.query(
         ElectionCandidate.Model.candidateId,
@@ -99,20 +82,9 @@ def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subqu
         Submission.Model.areaId == Area.Model.areaId,
         isouter=True
     ).join(
-        SubmissionVersion.Model,
-        SubmissionVersion.Model.submissionId == Submission.Model.submissionId,
-        isouter=True
-    ).join(
-        TallySheetVersionPRE41.Model,
-        and_(
-            TallySheetVersionPRE41.Model.tallySheetVersionId == SubmissionVersion.Model.submissionVersionId,
-            TallySheetVersionPRE41.Model.tallySheetVersionId.in_(latestTallySheetVersions)
-        ),
-        isouter=True
-    ).join(
         TallySheetVersionRow_PRE_41.Model,
         and_(
-            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == TallySheetVersionPRE41.Model.tallySheetVersionId,
+            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == Submission.Model.latestVersionId,
             TallySheetVersionRow_PRE_41.Model.candidateId == ElectionCandidate.Model.candidateId
         ),
         isouter=True
@@ -128,6 +100,6 @@ def get_PRE41_candidate_and_area_wise_aggregated_result(electionId, areas, subqu
     )
 
     if subquery is True:
-        return query.subquery(), countingCentres, latestTallySheetVersions
+        return query.subquery(), countingCentres
     else:
-        return query.all(), countingCentres, latestTallySheetVersions
+        return query.all(), countingCentres

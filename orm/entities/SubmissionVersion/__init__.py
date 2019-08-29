@@ -22,6 +22,22 @@ class SubmissionVersionModel(db.Model):
     createdBy = association_proxy("historyVersion", "createdBy")
     createdAt = association_proxy("historyVersion", "createdAt")
 
+    def __init__(self, submissionId):
+        submission = Submission.get_by_id(submissionId=submissionId)
+        if submission is None:
+            raise NotFoundException("Submission not found. (submissionId=%d)" % submissionId)
+
+        historyVersion = HistoryVersion.create(submission.submissionHistoryId)
+
+        super(SubmissionVersionModel, self).__init__(
+            submissionId=submissionId,
+            submissionVersionId=historyVersion.historyVersionId,
+        )
+        db.session.add(self)
+        db.session.commit()
+
+        submission.set_latest_version(submissionVersionId=historyVersion.historyVersionId)
+
 
 Model = SubmissionVersionModel
 
@@ -38,17 +54,8 @@ def get_all(submissionId, submissionCode=None):
 
 
 def create(submissionId):
-    submission = Submission.get_by_id(submissionId=submissionId)
-    if submission is None:
-        raise NotFoundException("Submission not found. (submissionId=%d)" % submissionId)
-
-    historyVersion = HistoryVersion.create(submission.submissionHistoryId)
-
     result = Model(
-        submissionId=submissionId,
-        submissionVersionId=historyVersion.historyVersionId,
+        submissionId=submissionId
     )
-    db.session.add(result)
-    db.session.commit()
 
     return result

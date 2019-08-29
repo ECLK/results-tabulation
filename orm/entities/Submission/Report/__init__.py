@@ -22,7 +22,6 @@ class ReportModel(db.Model):
     area = association_proxy("submission", "area")
     areaId = association_proxy("submission", "areaId")
     latestVersionId = association_proxy("submission", "latestVersionId")
-    latestVersion = association_proxy("submission", "latestVersion")
     submissionProofId = association_proxy("submission", "submissionProofId")
     versions = association_proxy("submission", "versions")
 
