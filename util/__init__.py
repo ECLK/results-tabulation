@@ -20,10 +20,13 @@ class Auth:
 
 
 def get_paginated_query(query):
-    limit = connexion.request.args["limit"]
-    offset = connexion.request.args["offset"]
+    if "limit" in connexion.request.args and connexion.request.args["limit"] is not None:
+        query = query.limit(connexion.request.args["limit"])
 
-    return query.limit(limit).offset(offset)
+    if "offset" in connexion.request.args and connexion.request.args["offset"] is not None:
+        query = query.offset(connexion.request.args["offset"])
+
+    return query
 
 
 def get_array(array_or_value):

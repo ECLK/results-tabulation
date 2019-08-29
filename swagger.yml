@@ -226,6 +226,158 @@ paths:
         description: Ballot Object.
         required: True
 
+  /ballot-book:
+    get:
+      tags:
+        - stationary
+      summary: Get all.
+      operationId: api.BallotBookApi.get_all
+      parameters:
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - stationaryItemId
+                    - fromBallotId
+                    - toBallotId
+                    - electionId
+                  properties:
+                    fromBallotId:
+                      type: string
+                    toBallotId:
+                      type: string
+                    stationaryItemId:
+                      type: integer
+                      format: int64
+                    electionId:
+                      type: integer
+                      format: int64
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+    post:
+      tags:
+        - stationary
+      summary: Create.
+      operationId: api.BallotBookApi.create
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - stationaryItemId
+                  - fromBallotId
+                  - toBallotId
+                  - electionId
+                properties:
+                  fromBallotId:
+                    type: string
+                  toBallotId:
+                    type: string
+                  stationaryItemId:
+                    type: integer
+                    format: int64
+                  electionId:
+                    type: integer
+                    format: int64
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      #      security:
+      #        - organization_auth:
+      #            - 'write:org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fromBallotId
+                - toBallotId
+                - electionId
+              properties:
+                fromBallotId:
+                  type: string
+                toBallotId:
+                  type: string
+                electionId:
+                  type: integer
+                  format: int64
+        description: Ballot Object.
+        required: True
+
   /ballot-box:
     get:
       tags:
