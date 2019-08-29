@@ -2,7 +2,7 @@ from marshmallow.fields import Integer, String
 
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
-    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party
+    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook
 from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -10,7 +10,7 @@ from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201, TallySheetVersionRow_PRE_41
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, ReportCodeEnum, \
-    SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum
+    SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum
 
 from marshmallow_enum import EnumField
 
@@ -464,7 +464,7 @@ class StationaryItem_Schema(ma.ModelSchema):
             "stationaryItemId",
             "stationaryItemType",
             "electionId",
-            "locked"
+            "available"
         )
 
         model = StationaryItem.Model
@@ -523,9 +523,10 @@ class Ballot_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "ballotId",
+            "ballotType",
             "electionId",
             "stationaryItemId",
-            "stationaryItem"
+            "available"
         )
 
         model = Ballot.Model
@@ -533,6 +534,7 @@ class Ballot_Schema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
+    ballotType = EnumField(BallotTypeEnum)
     stationaryItem = ma.Nested(StationaryItem_Schema)
 
 
@@ -542,7 +544,7 @@ class BallotBox_Schema(ma.ModelSchema):
             "ballotBoxId",
             "electionId",
             "stationaryItemId",
-            "stationaryItem"
+            "available"
         )
 
         model = BallotBox.Model
@@ -551,3 +553,23 @@ class BallotBox_Schema(ma.ModelSchema):
         sqla_session = db.session
 
     stationaryItem = ma.Nested(StationaryItem_Schema)
+
+
+class BallotBookSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "stationaryItemId",
+            "electionId",
+            "fromBallotId",
+            "toBallotId",
+            "ballots",
+            "available"
+        )
+
+        model = BallotBook.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    stationaryItem = ma.Nested(StationaryItem_Schema)
+    ballots = ma.Nested(Ballot_Schema, only=["ballotId", "stationaryItemId", "ballotType"], many=True)
