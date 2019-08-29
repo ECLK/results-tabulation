@@ -66,11 +66,16 @@ def get_by_id(stationaryItemId):
     return result
 
 
-def get_all(ballotBoxId=None):
+def get_all(ballotBoxId=None, electionId=None):
     query = Model.query
     if ballotBoxId is not None:
         query = query.filter(
             Model.ballotBoxId.like(ballotBoxId)
+        )
+
+    if electionId is not None:
+        query = query.filter(
+            Model.electionId == electionId
         )
 
     query = query.order_by(cast(Model.ballotId, Integer))

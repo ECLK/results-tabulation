@@ -110,6 +110,14 @@ paths:
           in: query
           schema:
             type: string
+        - name: ballotType
+          required: false
+          in: query
+          schema:
+            type: string
+            enum:
+              - Ordinary
+              - Tendered
       responses:
         '200':
           description: Successful operation.
@@ -132,6 +140,11 @@ paths:
                     electionId:
                       type: integer
                       format: int64
+                    ballotType:
+                      type: string
+                      enum:
+                        - Ordinary
+                        - Tendered
         '400':
           description: Bad request.
           content:
@@ -182,6 +195,11 @@ paths:
                   electionId:
                     type: integer
                     format: int64
+                  ballotType:
+                    type: string
+                    enum:
+                      - Ordinary
+                      - Tendered
         '400':
           description: Bad request.
           content:
@@ -223,6 +241,11 @@ paths:
                 electionId:
                   type: integer
                   format: int64
+                ballotType:
+                  type: string
+                  enum:
+                    - Ordinary
+                    - Tendered
         description: Ballot Object.
         required: True
 
