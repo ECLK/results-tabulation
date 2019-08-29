@@ -25,3 +25,4 @@ from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_41, R
 
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_CE_201
 
+from orm.entities.Election import InvalidVoteCategory

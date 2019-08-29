@@ -1,10 +1,7 @@
 from sqlalchemy.orm import relationship
 
 from app import db
-
 from orm.entities import Candidate
-from orm.entities.Election import ElectionCandidate
-from exception import NotFoundException
 from orm.entities.SubmissionVersion import TallySheetVersion
 
 
@@ -12,9 +9,9 @@ class TallySheetVersionRow_PRE_41_Model(db.Model):
     __tablename__ = 'tallySheetVersionRow_PRE_41'
     tallySheetVersionRowId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(TallySheetVersion.Model.__table__.c.tallySheetVersionId),
-                                    primary_key=True)
-    candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.Model.__table__.c.candidateId), primary_key=True)
-    count = db.Column(db.Integer)
+                                    nullable=False)
+    candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.Model.__table__.c.candidateId), nullable=False)
+    count = db.Column(db.Integer, nullable=False)
     countInWords = db.Column(db.String(1000), nullable=True)
 
     candidate = relationship(Candidate.Model, foreign_keys=[candidateId])
