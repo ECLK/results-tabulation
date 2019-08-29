@@ -1,7 +1,7 @@
 from app import db
 from sqlalchemy.orm import relationship
 
-from orm.entities.Election import ElectionParty, ElectionCandidate
+from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
 from util import get_paginated_query
 
 
@@ -10,12 +10,19 @@ class ElectionModel(db.Model):
     electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electionName = db.Column(db.String(100), nullable=False)
     parties = relationship("ElectionPartyModel")
+    invalidVoteCategories = relationship("InvalidVoteCategoryModel")
 
     def __init__(self, electionName):
         super(ElectionModel, self).__init__(electionName=electionName)
 
         db.session.add(self)
         db.session.commit()
+
+    def add_invalid_vote_category(self, categoryDescription):
+        return InvalidVoteCategory.create(
+            electionId=self.electionId,
+            categoryDescription=categoryDescription
+        )
 
     def add_party(self, partyId):
         return ElectionParty.create(

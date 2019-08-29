@@ -1,11 +1,10 @@
-from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy import and_
 
 from app import db
 
-from orm.entities import Area, BallotBox, SubmissionVersion
+from orm.entities import Area, BallotBox
 from exception import NotFoundException
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import InvoiceStageEnum
@@ -14,8 +13,9 @@ from orm.enums import InvoiceStageEnum
 class TallySheetVersionRow_CE_201_Model(db.Model):
     __tablename__ = 'tallySheetVersionRow_CE_201'
     tallySheetVersionRowId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(TallySheetVersion.Model.__table__.c.tallySheetVersionId))
-    areaId = db.Column(db.Integer, db.ForeignKey(Area.Model.__table__.c.areaId))
+    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(TallySheetVersion.Model.__table__.c.tallySheetVersionId),
+                                    nullable=False)
+    areaId = db.Column(db.Integer, db.ForeignKey(Area.Model.__table__.c.areaId), nullable=False)
     ballotsIssued = db.Column(db.Integer, nullable=False)
     ballotsReceived = db.Column(db.Integer, nullable=False)
     ballotsSpoilt = db.Column(db.Integer, nullable=False)

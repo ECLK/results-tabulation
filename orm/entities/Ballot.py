@@ -101,7 +101,7 @@ def get_all(ballotId=None, stationaryItemId=None, electionId=None, ballotType=No
     return result
 
 
-def create(ballotId, electionId, ballotType):
+def create(ballotId, electionId, ballotType=None):
     result = Model(
         electionId=electionId,
         ballotId=ballotId,
