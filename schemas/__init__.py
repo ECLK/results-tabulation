@@ -10,7 +10,7 @@ from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201, TallySheetVersionRow_PRE_41
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, ReportCodeEnum, \
-    SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum
+    SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum
 
 from marshmallow_enum import EnumField
 
@@ -523,6 +523,7 @@ class Ballot_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "ballotId",
+            "ballotType",
             "electionId",
             "stationaryItemId",
             "available"
@@ -533,6 +534,7 @@ class Ballot_Schema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
+    ballotType = EnumField(BallotTypeEnum)
     stationaryItem = ma.Nested(StationaryItem_Schema)
 
 
@@ -570,4 +572,4 @@ class BallotBookSchema(ma.ModelSchema):
         sqla_session = db.session
 
     stationaryItem = ma.Nested(StationaryItem_Schema)
-    ballots = ma.Nested(Ballot_Schema, only=["ballotId", "stationaryItemId"], many=True)
+    ballots = ma.Nested(Ballot_Schema, only=["ballotId", "stationaryItemId", "ballotType"], many=True)

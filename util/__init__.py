@@ -1,6 +1,6 @@
 import connexion
 
-from orm.enums import ReportCodeEnum, TallySheetCodeEnum
+from orm.enums import ReportCodeEnum, TallySheetCodeEnum, BallotTypeEnum
 
 
 class RequestBody:
@@ -36,6 +36,13 @@ def get_array(array_or_value):
         return [array_or_value]
     else:
         return array_or_value
+
+
+def get_ballot_type(ballotTypeStr):
+    if ballotTypeStr == "Ordinary":
+        return BallotTypeEnum.Ordinary
+    elif ballotTypeStr == "Tendered":
+        return BallotTypeEnum.Tendered
 
 
 def get_tally_sheet_code(tallySheetCodeStr):
