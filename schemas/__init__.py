@@ -3,12 +3,14 @@ from marshmallow.fields import Integer, String
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
     Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook
+from orm.entities.Election import InvalidVoteCategory
 from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41, TallySheetVersionPRE21
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201, TallySheetVersionRow_PRE_41 , \
+from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41, \
+    TallySheetVersionPRE21
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201, TallySheetVersionRow_PRE_41, \
     TallySheetVersionRow_PRE_21
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, ReportCodeEnum, \
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum
@@ -73,7 +75,8 @@ class ElectionSchema(ma.ModelSchema):
     class Meta:
         fields = (
             "electionId",
-            "parties"
+            "parties",
+            "invalidVoteCategories"
         )
 
         model = Election.Model
@@ -82,6 +85,7 @@ class ElectionSchema(ma.ModelSchema):
         sqla_session = db.session
 
     parties = ma.Nested(PartySchema, many=True)
+    invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
 
 
 class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
@@ -97,6 +101,7 @@ class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
+
 class TallySheetVersionRow_PRE_21_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -108,6 +113,7 @@ class TallySheetVersionRow_PRE_21_Schema(ma.ModelSchema):
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+
 
 class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
     class Meta:
@@ -357,6 +363,7 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
 
+
 class TallySheetVersionPRE21Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -547,6 +554,19 @@ class Invoice_StationaryItem_Schema(ma.ModelSchema):
     invoice = ma.Nested(Invoice_Schema)
     stationaryItem = ma.Nested(StationaryItem_Schema)
     receivedProof = ma.Nested(Proof_Schema)
+
+
+class InvalidVoteCategory_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "invalidVoteCategoryId",
+            "categoryDescription"
+        )
+
+        model = InvalidVoteCategory.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
 
 
 class Ballot_Schema(ma.ModelSchema):

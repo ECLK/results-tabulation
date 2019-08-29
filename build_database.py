@@ -11,6 +11,10 @@ from util import get_tally_sheet_code
 
 election = Election.create(electionName="Test Election")
 
+# TODO
+election.add_invalid_vote_category("Not having official mark.")
+election.add_invalid_vote_category("Only preferences are given.")
+
 data_stores = {}
 
 csv_dir = "./sample-data"

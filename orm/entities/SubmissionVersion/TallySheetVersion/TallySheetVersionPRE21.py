@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from app import db
 from exception import NotFoundException
 from orm.entities import Candidate, Party
-from orm.entities.Election import ElectionCandidate
+from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_21
 from util import get_paginated_query
@@ -36,31 +36,20 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
 
     @hybrid_property
     def content(self):
-        return []
-        # return db.session.query(
-        #     ElectionCandidate.Model.candidateId,
-        #     Candidate.Model.candidateName,
-        #     Party.Model.partySymbol,
-        #     TallySheetVersionRow_PRE_21.Model.count,
-        #     TallySheetVersionRow_PRE_21.Model.countInWords
-        # ).join(
-        #     TallySheetVersionRow_PRE_21.Model,
-        #     and_(
-        #         TallySheetVersionRow_PRE_21.Model.candidateId == ElectionCandidate.Model.candidateId,
-        #         TallySheetVersionRow_PRE_21.Model.tallySheetVersionId == self.tallySheetVersionId,
-        #     ),
-        #     isouter=True
-        # ).join(
-        #     Candidate.Model,
-        #     Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
-        #     isouter=True
-        # ).join(
-        #     Party.Model,
-        #     Party.Model.partyId == ElectionCandidate.Model.partyId,
-        #     isouter=True
-        # ).filter(
-        #     ElectionCandidate.Model.electionId == self.submission.electionId
-        # ).all()
+        return db.session.query(
+            InvalidVoteCategory.Model.invalidVoteCategoryId,
+            InvalidVoteCategory.Model.categoryDescription,
+            TallySheetVersionRow_PRE_21.Model.count
+        ).join(
+            TallySheetVersionRow_PRE_21.Model,
+            and_(
+                TallySheetVersionRow_PRE_21.Model.invalidVoteCategoryId == InvalidVoteCategory.Model.invalidVoteCategoryId,
+                TallySheetVersionRow_PRE_21.Model.tallySheetVersionId == self.tallySheetVersionId
+            ),
+            isouter=True
+        ).filter(
+            InvalidVoteCategory.Model.electionId == self.submission.electionId
+        )
 
 
 Model = TallySheetVersionPRE21Model
