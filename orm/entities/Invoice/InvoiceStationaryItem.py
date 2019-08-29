@@ -13,7 +13,7 @@ from exception import NotFoundException, ForbiddenException
 class InvoiceStationaryItemModel(db.Model):
     __tablename__ = 'invoice_stationaryItem'
     invoiceId = db.Column(db.Integer, db.ForeignKey(Invoice.Model.__table__.c.invoiceId), primary_key=True)
-    stationaryItemId = db.Column(db.Integer, db.ForeignKey(StationaryItem.Model.__table__.c.stationaryItemId),
+    stationaryItemId = db.Column(db.Integer, db.ForeignKey("stationaryItem.stationaryItemId"),
                                  primary_key=True)
     received = db.Column(db.Boolean, default=False, nullable=False)
     receivedBy = db.Column(db.Integer, nullable=True)
@@ -25,7 +25,7 @@ class InvoiceStationaryItemModel(db.Model):
 
     receivedProof = relationship(Proof.Model, foreign_keys=[receivedProofId])
     receivedOffice = relationship(Office.Model, foreign_keys=[receivedOfficeId])
-    stationaryItem = relationship(StationaryItem.Model, foreign_keys=[stationaryItemId])
+    stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
     invoice = relationship(Invoice.Model, foreign_keys=[invoiceId])
 
     delete = association_proxy('invoice', 'delete')

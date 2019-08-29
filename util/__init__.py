@@ -1,6 +1,6 @@
 import connexion
 
-from orm.enums import ReportCodeEnum, TallySheetCodeEnum
+from orm.enums import ReportCodeEnum, TallySheetCodeEnum, BallotTypeEnum
 
 
 class RequestBody:
@@ -20,10 +20,13 @@ class Auth:
 
 
 def get_paginated_query(query):
-    limit = connexion.request.args["limit"]
-    offset = connexion.request.args["offset"]
+    if "limit" in connexion.request.args and connexion.request.args["limit"] is not None:
+        query = query.limit(connexion.request.args["limit"])
 
-    return query.limit(limit).offset(offset)
+    if "offset" in connexion.request.args and connexion.request.args["offset"] is not None:
+        query = query.offset(connexion.request.args["offset"])
+
+    return query
 
 
 def get_array(array_or_value):
@@ -33,6 +36,13 @@ def get_array(array_or_value):
         return [array_or_value]
     else:
         return array_or_value
+
+
+def get_ballot_type(ballotTypeStr):
+    if ballotTypeStr == "Ordinary":
+        return BallotTypeEnum.Ordinary
+    elif ballotTypeStr == "Tendered":
+        return BallotTypeEnum.Tendered
 
 
 def get_tally_sheet_code(tallySheetCodeStr):
