@@ -78,7 +78,7 @@ def get_all(ballotBoxId=None, electionId=None):
             Model.electionId == electionId
         )
 
-    query = query.order_by(cast(Model.ballotId, Integer))
+    query = query.order_by(cast(Model.ballotBoxId, Integer))
 
     result = get_paginated_query(query).all()
 
