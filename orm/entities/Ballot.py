@@ -1,9 +1,13 @@
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import and_, cast, Integer
+
+from orm.entities.Invoice import InvoiceStationaryItem
 from util import get_paginated_query
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from orm.enums import StationaryItemTypeEnum
-from orm.entities import StationaryItem, Election
+from orm.entities import StationaryItem, Election, Invoice
 
 
 class BallotModel(db.Model):
@@ -37,6 +41,24 @@ class BallotModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    @hybrid_property
+    def available(self):
+        locked_invoices = db.session.query(
+            Invoice.Model.invoiceId
+        ).join(
+            InvoiceStationaryItem.Model,
+            and_(
+                InvoiceStationaryItem.Model.invoiceId == Invoice.Model.invoiceId
+            )
+        ).filter(
+            InvoiceStationaryItem.Model.stationaryItemId == self.stationaryItemId,
+            Invoice.Model.delete == False
+        ).group_by(
+            Invoice.Model.invoiceId
+        ).all()
+
+        return len(locked_invoices) == 0
+
 
 Model = BallotModel
 
@@ -49,15 +71,26 @@ def get_by_id(stationaryItemId):
     return result
 
 
-def get_all(ballotId=None):
+def get_all(ballotId=None, stationaryItemId=None, electionId=None):
     query = Model.query
     if ballotId is not None:
         query = query.filter(
             Model.ballotId.like(ballotId)
         )
 
-    result = get_paginated_query(query).all()
+    if stationaryItemId is not None:
+        query = query.filter(
+            Model.stationaryItemId == stationaryItemId
+        )
 
+    if electionId is not None:
+        query = query.filter(
+            Model.electionId == electionId
+        )
+
+    query = query.order_by(cast(Model.ballotId, Integer))
+
+    result = get_paginated_query(query).all()
     return result
 
 

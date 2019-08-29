@@ -1,10 +1,12 @@
-from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import and_, cast, Integer
 
+from orm.entities.Invoice import InvoiceStationaryItem
 from util import get_paginated_query
 from app import db
 from sqlalchemy.orm import relationship
 from orm.enums import StationaryItemTypeEnum
-from orm.entities import StationaryItem, Election
+from orm.entities import StationaryItem, Election, Invoice
 
 
 class BallotBoxModel(db.Model):
@@ -19,7 +21,23 @@ class BallotBoxModel(db.Model):
     stationaryItem = relationship(StationaryItem.Model, foreign_keys=[stationaryItemId])
     election = relationship(Election.Model, foreign_keys=[electionId])
 
-    locked = association_proxy("stationaryItem", "locked")
+    @hybrid_property
+    def available(self):
+        locked_invoices = db.session.query(
+            Invoice.Model.invoiceId
+        ).join(
+            InvoiceStationaryItem.Model,
+            and_(
+                InvoiceStationaryItem.Model.invoiceId == Invoice.Model.invoiceId
+            )
+        ).filter(
+            InvoiceStationaryItem.Model.stationaryItemId == self.stationaryItemId,
+            Invoice.Model.delete == False
+        ).group_by(
+            Invoice.Model.invoiceId
+        ).all()
+
+        return len(locked_invoices) == 0
 
     def __init__(self, ballotBoxId, electionId):
         stationary_item = StationaryItem.create(
@@ -54,6 +72,8 @@ def get_all(ballotBoxId=None):
         query = query.filter(
             Model.ballotBoxId.like(ballotBoxId)
         )
+
+    query = query.order_by(cast(Model.ballotId, Integer))
 
     result = get_paginated_query(query).all()
 
