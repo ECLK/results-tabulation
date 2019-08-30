@@ -21,8 +21,6 @@ class BallotModel(db.Model):
     stationaryItem = relationship(StationaryItem.Model, foreign_keys=[stationaryItemId])
     election = relationship(Election.Model, foreign_keys=[electionId])
 
-    locked = association_proxy("stationaryItem", "locked")
-
     __table_args__ = (
         db.UniqueConstraint('ballotId', 'electionId', name='BallotPerElection'),
     )
@@ -39,9 +37,6 @@ class BallotModel(db.Model):
             stationaryItemId=stationary_item.stationaryItemId,
             ballotType=ballotType
         )
-
-        db.session.add(self)
-        db.session.commit()
 
     @hybrid_property
     def available(self):
@@ -107,5 +102,8 @@ def create(ballotId, electionId, ballotType=None):
         ballotId=ballotId,
         ballotType=ballotType
     )
+
+    db.session.add(result)
+    db.session.commit()
 
     return result

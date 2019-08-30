@@ -12,7 +12,7 @@ from exception import NotFoundException, ForbiddenException
 
 class InvoiceStationaryItemModel(db.Model):
     __tablename__ = 'invoice_stationaryItem'
-    invoiceId = db.Column(db.Integer, db.ForeignKey(Invoice.Model.__table__.c.invoiceId), primary_key=True)
+    invoiceId = db.Column(db.Integer, db.ForeignKey("invoice.invoiceId"), primary_key=True)
     stationaryItemId = db.Column(db.Integer, db.ForeignKey("stationaryItem.stationaryItemId"),
                                  primary_key=True)
     received = db.Column(db.Boolean, default=False, nullable=False)
@@ -26,7 +26,7 @@ class InvoiceStationaryItemModel(db.Model):
     receivedProof = relationship(Proof.Model, foreign_keys=[receivedProofId])
     receivedOffice = relationship(Office.Model, foreign_keys=[receivedOfficeId])
     stationaryItem = relationship("StationaryItemModel", foreign_keys=[stationaryItemId])
-    invoice = relationship(Invoice.Model, foreign_keys=[invoiceId])
+    invoice = relationship("InvoiceModel", foreign_keys=[invoiceId])
 
     delete = association_proxy('invoice', 'delete')
     receivedScannedFiles = association_proxy("receivedProof", "scannedFiles")
@@ -46,9 +46,6 @@ class InvoiceStationaryItemModel(db.Model):
                 stationaryItemId=stationaryItemId,
                 receivedProofId=received_proof.proofId
             )
-
-            db.session.add(self)
-            db.session.commit()
 
 
 Model = InvoiceStationaryItemModel
@@ -81,6 +78,9 @@ def create(invoiceId, stationaryItemId):
         invoiceId=invoiceId,
         stationaryItemId=stationaryItemId,
     )
+
+    db.session.add(result)
+    db.session.commit()
 
     return result
 
