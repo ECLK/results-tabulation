@@ -1,3 +1,4 @@
+from orm.entities.Invoice import InvoiceStationaryItem
 from util import get_paginated_query
 from datetime import datetime
 from app import db
@@ -38,8 +39,21 @@ class InvoiceModel(db.Model):
             issuedAt=datetime.utcnow()
         )
 
-        db.session.add(self)
-        db.session.commit()
+    def add_stationary_item(self, stationaryItemId):
+        return InvoiceStationaryItem.create(
+            invoiceId=self.invoiceId,
+            stationaryItemId=stationaryItemId
+        )
+
+    def add_stationary_items(self, stationaryItemIds):
+        for stationaryItemId in stationaryItemIds:
+            InvoiceStationaryItem.create(
+                invoiceId=self.invoiceId,
+                stationaryItemId=stationaryItemId
+            )
+
+    def set_confirmed(self):
+        self.confirmed = True
 
 
 Model = InvoiceModel
@@ -85,6 +99,9 @@ def create(electionId, issuingOfficeId, receivingOfficeId, issuedTo):
         receivingOfficeId=receivingOfficeId,
         issuedTo=issuedTo
     )
+
+    db.session.add(result)
+    db.session.commit()
 
     return result
 
