@@ -32,7 +32,7 @@ class ReportVersion_PRE_30_ED_Model(ReportVersion.Model):
 
             content["pollingDivisions"].append(pollingDivision.areaName)
 
-            divisionWiseResult, countingCentres, latestTallySheetVersions = get_PRE41_candidate_wise_aggregated_result(
+            divisionWiseResult, countingCentres = get_PRE41_candidate_wise_aggregated_result(
                 electionId=report.electionId,
                 areas=pollingDivision
             )

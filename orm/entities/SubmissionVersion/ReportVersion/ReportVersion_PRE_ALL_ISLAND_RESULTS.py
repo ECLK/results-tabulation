@@ -20,7 +20,7 @@ class ReportVersion_PRE_ALL_ISLAND_RESULTS_Model(ReportVersion.Model):
             "rejectedVotes": 0,
             "totalVotes": 0
         }
-        candidateWiseResult, countingCentres, latestTallySheetVersions = get_PRE41_candidate_wise_aggregated_result(
+        candidateWiseResult, countingCentres = get_PRE41_candidate_wise_aggregated_result(
             electionId=report.electionId,
             areas=report.area
         )
