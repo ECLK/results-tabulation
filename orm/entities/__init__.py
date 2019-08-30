@@ -26,3 +26,44 @@ from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_41, R
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_CE_201
 
 from orm.entities.Election import InvalidVoteCategory
+
+# import sadisplay
+# import codecs
+#
+# desc = sadisplay.describe([
+#     File.Model, Folder.Model, FolderFile.Model,
+#
+#     Party.Model, Candidate.Model,
+#
+#     Election.Model, Area.Model, ElectionParty.Model, ElectionCandidate.Model,
+#
+#     Invoice.Model,
+#     StationaryItem.Model, BallotBox.Model, Ballot.Model,
+#     InvoiceStationaryItem.Model,
+#
+#     Proof.Model,
+#
+#     History.Model, HistoryVersion.Model,
+#
+#     PartyWiseResult.Model, PartyCount.Model,
+#     CandidateWiseResult.Model, CandidateCount.Model,
+#
+#     Submission.Model, SubmissionVersion.Model,
+#
+#     TallySheet.Model,
+#
+#     TallySheetVersion.Model,
+#     TallySheetVersionPRE41.Model,
+#
+#     Report.Model,
+#     # Report_PRE_41.Model, Report_PRE_30_PD.Model, Report_PRE_30_ED
+#
+#     ReportVersion.Model,
+#     # ReportVersion_PRE_41.Model, ReportVersion_PRE_30_PD.Model, ReportVersion_PRE_30_ED
+# ])
+#
+# with codecs.open('./schemas/schema.plantuml', 'w', encoding='utf-8') as f:
+#     f.write(sadisplay.plantuml(desc))
+#
+# with codecs.open('./schemas/schema.dot', 'w', encoding='utf-8') as f:
+#     f.write(sadisplay.dot(desc))

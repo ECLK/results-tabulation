@@ -19,27 +19,21 @@ class SubmissionModel(db.Model):
     areaId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.areaId), nullable=False)
     submissionProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId), nullable=False)
     submissionHistoryId = db.Column(db.Integer, db.ForeignKey(History.Model.__table__.c.historyId), nullable=False)
+    latestVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     area = relationship(Area.Model, foreign_keys=[areaId])
     submissionProof = relationship(Proof.Model, foreign_keys=[submissionProofId])
     submissionHistory = relationship(History.Model, foreign_keys=[submissionHistoryId])
+    latestVersion = relationship("SubmissionVersionModel", foreign_keys=[latestVersionId])
     versions = relationship("SubmissionVersionModel", order_by="desc(SubmissionVersionModel.submissionVersionId)",
                             primaryjoin="SubmissionModel.submissionId==SubmissionVersionModel.submissionId")
 
-    @hybrid_property
-    def latestVersionId(self):
-        return db.session.query(
-            func.max(SubmissionVersion.Model.submissionVersionId)
-        ).filter(
-            SubmissionVersion.Model.submissionId == self.submissionId
-        ).scalar()
+    def set_latest_version(self, submissionVersionId):
+        self.latestVersionId = submissionVersionId
 
-    @hybrid_property
-    def latestVersion(self):
-        return SubmissionVersion.Model.query.filter(
-            SubmissionVersion.Model.submissionVersionId == self.latestVersionId
-        ).one_or_none()
+        db.session.add(self)
+        db.session.commit()
 
     def __init__(self, submissionType, electionId, areaId):
         submissionProof = Proof.create(proofType=get_submission_proof_type(submissionType=submissionType))
