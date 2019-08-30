@@ -9,16 +9,13 @@ from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE
 
 from orm.enums import TallySheetCodeEnum, BallotTypeEnum
 from util import get_tally_sheet_code
+import sys
 
 election = Election.create(electionName="Test Election")
 
-# TODO
-election.add_invalid_vote_category("Not having official mark.")
-election.add_invalid_vote_category("Only preferences are given.")
-
 data_stores = {}
 
-csv_dir = "./sample-data"
+csv_dir = "./sample-data/%s" % sys.argv[1]
 
 
 def get_data_store(data_store_key):
@@ -274,20 +271,30 @@ for row in get_rows_from_csv('data.csv'):
 
     db.session.commit()
 
-    # invoice = Invoice.create(
-    #     electionId=election.electionId,
-    #     issuingOfficeId=countingCentre.areaId,
-    #     receivingOfficeId=pollingStation.areaId,
-    #     issuedTo=1
-    # )
-    #
-    # invoice.add_stationary_items([stationaryItem.stationaryItemId for stationaryItem in stationaryItems])
-    # db.session.commit()
-    #
-    # invoice.set_confirmed()
-    # db.session.commit()
+    invoice = Invoice.create(
+        electionId=election.electionId,
+        issuingOfficeId=countingCentre.areaId,
+        receivingOfficeId=pollingStation.areaId,
+        issuedTo=1
+    )
+
+    invoice.add_stationary_items([stationaryItem.stationaryItemId for stationaryItem in stationaryItems])
+    db.session.commit()
+
+    invoice.set_confirmed()
+    db.session.commit()
 
     print("[ROW END] ========= ")
+
+for row in get_rows_from_csv('party-candidate.csv'):
+    party = get_object(row, "Party")
+    election.add_party(partyId=party.partyId)
+
+    candidate = get_object(row, "Candidate")
+    election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
+
+for row in get_rows_from_csv('invalid-vote-categories.csv'):
+    election.add_invalid_vote_category(row["Invalid Vote Category Description"])
 
 # for row in get_rows_from_csv('polling-stations.csv'):
 #     country = get_object({"Country": "Sri Lanka"}, "Country")
