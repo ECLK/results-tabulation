@@ -71,7 +71,7 @@ def is_locked(stationaryItemId):
     if entry is None:
         raise NotFoundException("Stationary Item Not Found (stationaryItemId=%d) " % stationaryItemId)
     else:
-        return entry.locked
+        return entry.available is not True
 
 
 Model = Model
