@@ -1,9 +1,9 @@
 <html>
 <head>
+       <meta name="pdfkit-page-size" content="B2"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
-
         .top {
             border-top: 1px solid #000 !important;
         }
@@ -26,71 +26,300 @@
             border-left: 1px solid #000 !important;
             border-right: 1px solid #000 !important;
         }
+
+        .font1 {
+            font-family: serif;
+        }
+
+        .float-right {
+            float: right !important;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .no-padding {
+            padding: 0 !important;
+        }
+
+        .no-padding-left {
+            padding-left: 0 !important;
+        }
+
+        .no-padding-right {
+            padding-right: 0 !important;
+        }
+
+        .no-padding-bottom {
+            padding-bottom: 0 !important;
+        }
+
+        .no-padding-top {
+            padding-top: 0 !important;
+        }
+
+        .group div {
+            display: inline-block;
+        }
+
+        .sub-head {
+            font-style: italic;
+            text-decoration: underline;
+        }
+
+        .indent {
+            margin-left: 20px;
+        }
+
+        /* .group span {
+            margin: 5px 0;
+        } */
+
+        .block, .block1, .block2 {
+            padding: 5px;
+        }
+
     </style>
 </head>
 <body>
 
-<div>
-    <h1>PRE-30-ED</h1>
-    <h2>Electoral District : <small>{{content.electoralDistrict}}</small></h2>
+<div class="font1">
+    <div class="bottom" style="margin-bottom:5px;"><i>Note : This report should be prepared on the basis of PRE/30/PD, PRE/30/PV Reports</i></div>
+
     <table class="table table-borderless">
         <tbody>
-        <tr>
-            <td rowspan="2"></td>
-            <th class="left right top bottom" rowspan="2">Name of the Candidate</th>
-            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}">
-                Name of the Polling Division
-            </th>
-            <th class="left right top bottom" rowspan="2">Total</th>
-            <th class="left right top bottom" rowspan="2">Total No. of Votes in Words</th>
-        </tr>
-        <tr>
-            {% for pollingDivision in content.pollingDivisions %}
-            <th class="left right top bottom">{{pollingDivision}}</th>
+            <tr>
+                <td></td>
+                <td class="bold no-padding-left no-padding-right" colspan="3">
+                    PRESIDENTIAL ELECTION - 08.01.2015
+                    <br/>Detailed Statement of Returning Officer on the number of Votes cast in favour of each Candidate according to the Polling Divisiona and Centers for Postal Votes Counting - Section 55(1)
+                </td>
+                <td class="no-padding-left no-padding-right" colspan="2">
+                    <div class="all float-right"><h1 class="bold">PRE/30/ED</h1></div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="4" class="no-padding-left no-padding-right">
+                  <div class="all" style="width: fit-content; padding: 5px;">
+                      <span class="bold">Name of the Electorate :</span> {{content.electoralDistrict}}
+                  </div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2" class="right" style="border-right: 1px solid #000 !important;"></td>
+                <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2">
+                  <div class="left" style="height:100%;">Name of the Candidate</div>
+                </th>
+                <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}">
+                    Name of the Polling Division
+                </th>
+                <th class="left right top bottom" rowspan="2">Total No. of Votes in Figures</th>
+                <th class="left right top bottom" rowspan="2">Total No. of Votes in Words</th>
+            </tr>
+            <tr>
+                {% for pollingDivision in content.pollingDivisions %}
+                <th class="left right top bottom">{{pollingDivision}}</th>
+                {% endfor %}
+            </tr>
+
+            {% for row in content.data %}
+            <tr>
+                {% for cell in row %}
+                <td class="left right top bottom">{{cell}}</td>
+                {% endfor %}
+                <td class="left right top bottom"></td>
+            </tr>
             {% endfor %}
-        </tr>
 
-        {% for row in content.data %}
-        <tr>
-            {% for cell in row %}
-            <td class="left right top bottom">{{cell}}</td>
-            {% endfor %}
-            <td class="left right top bottom"></td>
-        </tr>
-        {% endfor %}
+            <tr>
+                <td colspan="2"></td>
+            </tr>
 
-        <tr>
-            <td colspan="2"></td>
-        </tr>
+            <tr>
+                <th colspan="2" class="text-right">
+                    No. of Valid Votes
+                </th>
+                {% for validVoteCount in content.validVotes %}
+                <td class="left right top bottom">{{validVoteCount}}</td>
+                {% endfor %}
+            </tr>
 
-        <tr>
-            <th colspan="2" class="text-right">
-                No. of Valid Votes
-            </th>
-            {% for validVoteCount in content.validVotes %}
-            <td class="left right top bottom">{{validVoteCount}}</td>
-            {% endfor %}
-        </tr>
+            <tr>
+                <th colspan="2" class="text-right">
+                    No. of Rejected Votes
+                </th>
+                {% for rejectedVoteCount in content.rejectedVotes %}
+                <td class="left right top bottom">{{rejectedVoteCount}}</td>
+                {% endfor %}
+            </tr>
 
-        <tr>
-            <th colspan="2" class="text-right">
-                No. of Rejected Votes
-            </th>
-            {% for rejectedVoteCount in content.rejectedVotes %}
-            <td class="left right top bottom">{{rejectedVoteCount}}</td>
-            {% endfor %}
-        </tr>
+            <tr>
+                <th colspan="2" class="text-right">
+                    Total No. of Votes Polled <br/>
+                    <small>(Including Rejected)</small>
+                </th>
+                {% for totalVoteCount in content.totalVotes %}
+                <td class="left right top bottom">{{totalVoteCount}}</td>
+                {% endfor %}
+            </tr>
 
-        <tr>
-            <th colspan="2" class="text-right">
-                Total No. of Votes Polled <br/>
-                <small>(Including Rejected)</small>
-            </th>
-            {% for totalVoteCount in content.totalVotes %}
-            <td class="left right top bottom">{{totalVoteCount}}</td>
-            {% endfor %}
-        </tr>
+            <tr>
+                <td></td>
+                <td colspan="2">
+                  <div class="group">
+                      <div class="block1 all">
+                          <div class="sect1">
+                              <span class="sub-head">Prepared by:</span><br/><br/>
+                              <span>Signature .......................</span><br/><br/>
+                              <span>Name ..........................</span><br/><br/>
+                              <span>Designation ........................</span>
+                          </div>
+                          <div class="sect2">
+                              <span class="sub-head">Checked by:</span><br/><br/>
+                              <span class="indent">Signature .......................</span><br/><br/>
+                              <span class="indent">Name ..........................</span><br/><br/>
+                              <span class="indent">Designation ........................</span>
+                          </div>
+                      </div>
+                      <div class="block2 all">
+                          <span class="sub-head">Re-Checked by:</span><br/><br/>
+                          <span>Signature .......................</span><br/><br/>
+                          <span>Name ..........................</span><br/><br/>
+                          <span>Designation ........................</span>
+                      </div>
+                  </div>
+                </td>
+                <td colspan="2" style="vertical-align: bottom;">
+                  <div class="group">
+                      <div>
+                          Time .....................................<br/><br/>
+                          Date .....................................
+                      </div>
+                      <div style="margin-left:20px;">
+                          .....................................<br/><br/>
+                          <span class="bold">Returning Officer</span><br/></br/>
+                      </div>
+                  </div>
+                </td>
+            </tr>
 
+            <tr>
+                <td></td>
+                <td colspan="2">
+                    <div class="group all block" style="width:50%;">
+                        <span class="bold">Witness - Assistant Returning Officer</span><br/><br/>
+                        <span>Name .....................................</span><br/><br/>
+                        <span>Signature .....................................</span>
+                    </div>
+                </td>
+                <td colspan="2">
+                    <div class="group all block" style="width:50%; text-align: center; float: right;">
+                        <br/><br/><br/><br/>
+                        <i>OFFICIAL SEAL</i>
+                    </div>
+                </td>
+            </tr>
+
+            <tr class="bottom">
+                <td></td>
+                <td colspan="4" class="bold no-padding-bottom"><i>* To be included the names of the Polling Divisions</i></td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <table width="100%" class="table2">
+        <tbody>
+            <tr>
+                <th style="text-decoration: underline;">Name of the Agent</th>
+                <th style="text-decoration: underline;">Signature of Agent</th>
+                <th style="text-decoration: underline;">Name of Candidate Represents</th>
+                <th style="text-decoration: underline;">Name of the Agent</th>
+                <th style="text-decoration: underline;">Signature of Agent</th>
+                <th style="text-decoration: underline;">Name of Candidate Represents</th>
+            </tr>
+            <tr>
+                <td><br/>1. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td><br/>11. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+            </tr>
+            <tr>
+                <td><br/>2. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td><br/>12. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+            </tr>
+            <tr>
+                <td><br/>3. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td><br/>13. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+            </tr>
+            <tr>
+                <td><br/>4. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td><br/>14. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+            </tr>
+            <tr>
+                <td><br/>5. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td><br/>15. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+            </tr>
+            <tr>
+                <td><br/>6. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td><br/>16. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+            </tr>
+            <tr>
+                <td><br/>7. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td><br/>17. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+            </tr>
+            <tr>
+                <td><br/>8. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td><br/>18. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+            </tr>
+            <tr>
+                <td><br/>9. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td><br/>19. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+            </tr>
+            <tr>
+                <td><br/>10. ....................</td>
+                <td style="text-align: center;"><br/>....................</td>
+                <td style="text-align: center;"><br/>..........................</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
 </div>
