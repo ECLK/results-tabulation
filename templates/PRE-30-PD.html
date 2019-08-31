@@ -1,9 +1,11 @@
 <html>
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <style>
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
         .top {
             border-top: 1px solid #000 !important;
         }
@@ -26,13 +28,90 @@
             border-left: 1px solid #000 !important;
             border-right: 1px solid #000 !important;
         }
+
+        .font1 {
+            font-family: serif;
+        }
+
+        .float-right {
+            float: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .no-padding {
+            padding: 0 !important;
+        }
+
+        .no-padding-left {
+            padding-left: 0 !important;
+        }
+
+        .no-padding-right {
+            padding-right: 0 !important;
+        }
+
+        .no-padding-bottom {
+            padding-bottom: 0 !important;
+        }
+
+        .group div {
+            display: inline-block;
+        }
+
+        .sub-head {
+            font-style: italic;
+            text-decoration: underline;
+        }
+
+        .indent {
+            margin-left: 20px;
+        }
+
+        /* .group span {
+            margin: 5px 0;
+        } */
+
+        .block, .block1, .block2 {
+            padding: 5px;
+        }
+
+
     </style>
 </head>
 <body>
 
+<div class="font1">
+    <div class="bottom" style="margin-bottom:5px;"><i>Note : This report should be prepared on the basis of reports submitted by Counting Officers under Section 51(7)</i></div>
+    <table class="table table-borderless">
+        <tbody>
+            <tr>
+                <td></td>
+                <td class="bold no-padding-left no-padding-right" colspan="3">
+                    PRESIDENTIAL ELECTION - 08.01.2015
+                    <br/>Detailed Statement of Returning Officer on the number of Votes cast in favour of each Candidate according to the Polling Divisiona and Centers for Postal Votes Counting - Section 55(1)
+                </td>
+                <td class="no-padding-left no-padding-right" colspan="2">
+                    <div class="all float-right"><h1 class="bold">PRE/30/PD</h1></div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="4" class="no-padding-left no-padding-right">
+                  <div class="all" style="width: fit-content; padding: 5px;">
+                      <span class="bold">Name of the Electorate :</span> {{content.electoralDistrict}}
+                  </div>
+                </td>
+                <td class="no-padding-left no-padding-right" colspan="2">
+                        <div class="all float-right"  style="width: fit-content; padding: 5px;">
+                                <span class="bold">Polling Division :</span> {{content.pollingDivisions}}
+                        </div>
+                </td>                
+            </tr>
+
 <div>
-    <h1>PRE-30-PD</h1>
-    <h2>{{content.pollingDistrict}}</h2>
     <table class="table table-borderless">
         <tbody>
         <tr>
@@ -87,6 +166,41 @@
             <td class="left right top bottom">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
+
+        <tr>
+                <td></td>
+                <td colspan="2">
+                    <div class="group">
+                        <div class="block1 all">
+                            <div class="sect1">
+                                <span class="sub-head">Prepared by:</span><br/><br/>
+                                <span>Signature .....................................</span><br/><br/>
+                                <span>Name .....................................</span><br/><br/>
+                                <span>Designation .....................................</span>
+                            </div>
+                            <div class="sect2">
+                                <span class="sub-head">Checked by:</span><br/><br/>
+                                <span class="indent">Signature .....................................</span><br/><br/>
+                                <span class="indent">Name .....................................</span><br/><br/>
+                                <span class="indent">Designation .....................................</span>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td colspan="2" style="vertical-align: bottom;">
+                    <div class="group">
+                        <div>
+                            Time .....................................<br/><br/>
+                            Date .....................................
+                        </div>
+                        <div style="margin-left:20px;">
+                            .....................................<br/><br/>
+                            <span class="bold">Returning Officer</span><br/></br/>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
 
         </tbody>
     </table>
