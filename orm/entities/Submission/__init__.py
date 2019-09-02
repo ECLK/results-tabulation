@@ -33,7 +33,7 @@ class SubmissionModel(db.Model):
         self.latestVersionId = submissionVersionId
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
     def __init__(self, submissionType, electionId, areaId):
         submissionProof = Proof.create(proofType=get_submission_proof_type(submissionType=submissionType))
@@ -48,7 +48,7 @@ class SubmissionModel(db.Model):
         )
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
 
 Model = SubmissionModel

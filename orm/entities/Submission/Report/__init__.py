@@ -37,7 +37,7 @@ class ReportModel(db.Model):
         )
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
     @hybrid_property
     def latestVersion(self):

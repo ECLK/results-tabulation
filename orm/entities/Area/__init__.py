@@ -58,7 +58,7 @@ class AreaModel(db.Model):
             electionId=electionId
         )
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
     def add_parent(self, parentId):
         parentArea = get_by_id(areaId=parentId)
@@ -75,7 +75,7 @@ class AreaModel(db.Model):
         if existing_mapping is None:
             areaParent = AreaAreaModel(parentAreaId=self.areaId, childAreaId=childId)
             db.session.add(areaParent)
-            db.session.commit()
+            db.session.flush()
 
         return self
 

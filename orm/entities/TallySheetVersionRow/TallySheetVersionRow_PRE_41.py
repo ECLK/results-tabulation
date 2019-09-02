@@ -30,7 +30,7 @@ class TallySheetVersionRow_PRE_41_Model(db.Model):
             countInWords=countInWords
         )
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
 
 Model = TallySheetVersionRow_PRE_41_Model

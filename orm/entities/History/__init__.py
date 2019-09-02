@@ -12,7 +12,7 @@ class HistoryModel(db.Model):
         super(HistoryModel, self).__init__()
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
 
 Model = HistoryModel

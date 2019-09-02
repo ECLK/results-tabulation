@@ -30,7 +30,7 @@ class TallySheetVersionRow_PRE_21_Model(db.Model):
             invalidVoteCategoryId=invalidVoteCategoryId
         )
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
 
 Model = TallySheetVersionRow_PRE_21_Model
