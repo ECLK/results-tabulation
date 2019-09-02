@@ -80,7 +80,7 @@ def create(invoiceId, stationaryItemId):
     )
 
     db.session.add(result)
-    db.session.commit()
+    db.session.flush()
 
     return result
 
@@ -125,7 +125,7 @@ def update(invoiceId, stationaryItemId, received=False, receivedFrom=None, recei
         instance.receivedBy = Auth().get_user_id()
         instance.receivedAt = datetime.utcnow()
 
-        db.session.commit()
+        db.session.flush()
 
         return instance
 
@@ -139,6 +139,6 @@ def delete(invoiceId, stationaryItemId):
             Model.stationaryItemId == stationaryItemId
         ).delete()
 
-        db.session.commit()
+        db.session.flush()
 
         return result

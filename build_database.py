@@ -52,6 +52,8 @@ def get_object(row, row_key, data_key=None):
         data_key = "%s-%s" % (row["TallySheet"], row["Counting Centre"])
     elif data_store_key == "Report":
         data_key = "%s-%s-%s" % (row["Report"], row["Electorate Type"], row["Electorate"])
+    elif data_store_key == "Polling District":
+        data_key = "%s-%s" % (row["Polling Division"], row["Polling District"])
 
     obj = get_object_from_data_store(data_key, data_store_key)
 
@@ -269,8 +271,6 @@ for row in get_rows_from_csv('data.csv'):
         # ballot = get_object({"Tendered Ballot": str(ballotId)}, "Tendered Ballot")
         # invoice.add_stationary_item(ballot.stationaryItemId)
 
-    db.session.commit()
-
     invoice = Invoice.create(
         electionId=election.electionId,
         issuingOfficeId=countingCentre.areaId,
@@ -279,10 +279,8 @@ for row in get_rows_from_csv('data.csv'):
     )
 
     invoice.add_stationary_items([stationaryItem.stationaryItemId for stationaryItem in stationaryItems])
-    db.session.commit()
 
     invoice.set_confirmed()
-    db.session.commit()
 
     print("[ROW END] ========= ")
 
@@ -296,42 +294,4 @@ for row in get_rows_from_csv('party-candidate.csv'):
 for row in get_rows_from_csv('invalid-vote-categories.csv'):
     election.add_invalid_vote_category(row["Invalid Vote Category Description"])
 
-# for row in get_rows_from_csv('polling-stations.csv'):
-#     country = get_object({"Country": "Sri Lanka"}, "Country")
-#     electoralDistrict = get_object(row, "Electoral District")
-#     pollingDivision = get_object(row, "Polling Division")
-#     pollingDistrict = get_object(row, "Polling District")
-#     electionCommission = get_object({"Election Commission": "Sri Lanka Election Commission"}, "Election Commission")
-#     districtCentre = get_object(row, "District Centre")
-#     countingCentre = get_object(row, "Counting Centre")
-#     pollingStation = get_object(row, "Polling Station")
-#
-#     country.add_child(electoralDistrict.areaId)
-#     electoralDistrict.add_child(pollingDivision.areaId)
-#     pollingDivision.add_child(pollingDistrict.areaId)
-#     pollingDistrict.add_child(pollingStation.areaId)
-#     electionCommission.add_child(districtCentre.areaId)
-#     districtCentre.add_child(countingCentre.areaId)
-#     countingCentre.add_child(pollingStation.areaId)
-#
-# for row in get_rows_from_csv('parties.csv'):
-#     party = get_object(row, "Party")
-#     election.add_party(partyId=party.partyId)
-#
-# for row in get_rows_from_csv('ballots.csv'):
-#     ballot = get_object(row, "Ballot")
-#
-# for row in get_rows_from_csv('ballot-boxes.csv'):
-#     ballot = get_object(row, "Ballot Box")
-#
-# for row in get_rows_from_csv('party-candidate.csv'):
-#     party = get_object(row, "Party")
-#     candidate = get_object(row, "Candidate")
-#
-#     election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
-#
-# for row in get_rows_from_csv('reports.csv'):
-#     report = get_object(row, "Report")
-#
-# for row in get_rows_from_csv('tallysheets.csv'):
-#     tallysheet = get_object(row, "TallySheet")
+db.session.commit()

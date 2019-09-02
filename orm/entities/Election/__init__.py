@@ -16,7 +16,7 @@ class ElectionModel(db.Model):
         super(ElectionModel, self).__init__(electionName=electionName)
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
     def add_invalid_vote_category(self, categoryDescription):
         return InvalidVoteCategory.create(
