@@ -1,3 +1,4 @@
+from app import db
 from orm.entities.Submission import Report
 from schemas import ReportSchema
 
@@ -20,3 +21,5 @@ def create(reportCode, electionId, electorateId=None, officeId=None, parentRepor
         electorateId=electorateId,
         parentSubmissionId=parentReportId
     )
+
+    db.session.commit()

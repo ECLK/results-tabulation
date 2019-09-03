@@ -1,3 +1,4 @@
+from app import db
 from util import RequestBody, get_ballot_type
 
 from schemas import Ballot_Schema as Schema
@@ -22,5 +23,7 @@ def create(body):
         ballotId=request_body.get("ballotId"),
         ballotType=get_ballot_type(request_body.get("ballotType"))
     )
+
+    db.session.commit()
 
     return Schema().dump(result).data, 201

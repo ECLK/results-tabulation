@@ -1,3 +1,4 @@
+from app import db
 from exception import NotFoundException
 from orm.entities.SubmissionVersion import ReportVersion
 from orm.entities.Submission import Report
@@ -31,5 +32,7 @@ def get_report_version_entity(reportCode):
 def create(reportId):
     report = Report.get_by_id(reportId=reportId)
     result = get_report_version_entity(report.reportCode).create(reportId=reportId)
+
+    db.session.commit()
 
     return ReportVersionSchema().dump(result).data
