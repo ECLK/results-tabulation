@@ -1,3 +1,4 @@
+from app import db
 from util import RequestBody
 from schemas import Ballot_Schema as Schema
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -14,5 +15,7 @@ def create(body):
     result = TallySheetVersion.create(
         tallySheetId=request_body.get("tallySheetId")
     )
+
+    db.session.commit()
 
     return Schema().dump(result).data, 201
