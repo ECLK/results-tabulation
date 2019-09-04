@@ -89,6 +89,10 @@ def get_object(row, row_key, data_key=None):
         elif data_store_key == "Polling Division":
             obj = PollingDivision.create(cell, electionId=election.electionId)
 
+            TallySheet.create(
+                tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=election.electionId, officeId=obj.areaId
+            )
+
             Report_PRE_30_PD.create(
                 electionId=election.electionId,
                 areaId=obj.areaId

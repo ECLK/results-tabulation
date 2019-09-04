@@ -1886,6 +1886,9 @@ paths:
               - CE-201
               - PRE-41
               - PRE-21
+              - PRE-30-PD
+              - PRE-30-ED
+              - PRE-AllIslandReport
       responses:
         '200':
           description: Successful operation.
@@ -2510,93 +2513,66 @@ paths:
         description: Updated tally sheet object.
         required: true
 
-
-  /report/{reportCode}:
-    get:
-      tags:
-        - report
-      summary: Get by ID
-      operationId: api.ReportApi.create
-      parameters:
-        - name: reportCode
-          in: path
-          required: true
-          schema:
-            type: string
-            enum:
-              - PRE-28
-              - PRE-28-a
-              - CE-201
-              - PRE-41
-              - PRE-30-PD
-              - PRE-30-ED
-              - PRE-21
-              - PRE-34-CO
-              - PRE-34-I-RO
-              - PRE-34-II-RO
-              - PRE-34-RO
-              - PRE-AllIslandReportByElectoralDistrict
-              - PRE-AllIslandReport
-        - name: electionId
-          required: true
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: electorateId
-          required: false
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: officeId
-          required: false
-          in: query
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            application/pdf:
-              schema:
-                type: string
-                format: binary
-        '400':
-          description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '404':
-          description: Resource was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '500':
-          description: Unexpected error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-
-
-  /report/{reportId}/version:
+  /tally-sheet/PRE-30-PD/{tallySheetId}/version:
     post:
       tags:
-        - report
-      summary: Get by ID
-      operationId: api.ReportVersionApi.create
+        - tallySheetVersion
+      summary: Create tally sheet version
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_PD_Api.create
       parameters:
-        - name: reportId
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /tally-sheet//{tallySheetId}/version/{tallySheetVersionId}/html:
+    get:
+      tags:
+        - tallysheet
+      summary: Get by ID
+      operationId: api.TallySheetVersionApi.html
+      parameters:
+        - name: tallySheetId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
           required: true
           in: path
           schema:
@@ -2606,10 +2582,9 @@ paths:
         '200':
           description: OK
           content:
-            application/pdf:
+            text/html:
               schema:
-                type: object
-                format: binary
+                type: string
         '400':
           description: Bad request.
           content:
@@ -2635,96 +2610,190 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+#  /report/{reportId}/version:
+#    post:
+#      tags:
+#        - report
+#      summary: Get by ID
+#      operationId: api.ReportVersionApi.create
+#      parameters:
+#        - name: reportId
+#          required: true
+#          in: path
+#          schema:
+#            type: integer
+#            format: int64
+#      responses:
+#        '200':
+#          description: OK
+#          content:
+#            application/pdf:
+#              schema:
+#                type: object
+#                format: binary
+#        '400':
+#          description: Bad request.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '401':
+#          description: Unauthorized.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '404':
+#          description: Resource was not found.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '500':
+#          description: Unexpected error.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
 
-
-
-  /report:
-    get:
-      tags:
-        - report
-      summary: Get by ID
-      operationId: api.ReportApi.get_all
-      parameters:
-        - name: limit
-          in: query
-          description: Limit of the result array.
-          required: false
-          schema:
-            type: integer
-            default: 20
-        - name: offset
-          in: query
-          description: Offset of the result array.
-          required: false
-          schema:
-            type: integer
-            default: 0
-        - name: electionId
-          required: false
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: officeId
-          required: false
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: createdBy
-          required: false
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: reportCode
-          required: false
-          in: query
-          schema:
-            type: string
-            enum:
-              - CE-201
-              - PRE-41
-              - PRE-30-PD
-              - PRE-30-ED
-              - PRE-21
-              - PRE-34-CO
-              - PRE-34-I-RO
-              - PRE-34-II-RO
-              - PRE-34-RO
-              - PRE-AllIslandReportByElectoralDistrict
-              - PRE-AllIslandReport
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-        '400':
-          description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '404':
-          description: Resource was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '500':
-          description: Unexpected error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
+#  /report/{reportId}/version/{reportVersionId}:
+#    get:
+#      tags:
+#        - report
+#      summary: Get by ID
+#      operationId: api.ReportVersionApi.html
+#      parameters:
+#        - name: reportId
+#          required: true
+#          in: path
+#          schema:
+#            type: integer
+#            format: int64
+#        - name: reportVersionId
+#          required: true
+#          in: path
+#          schema:
+#            type: integer
+#            format: int64
+#      responses:
+#        '200':
+#          description: OK
+#          content:
+#            text/html:
+#              schema:
+#                type: string
+#        '400':
+#          description: Bad request.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '401':
+#          description: Unauthorized.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '404':
+#          description: Resource was not found.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '500':
+#          description: Unexpected error.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#
+#  /report:
+#    get:
+#      tags:
+#        - report
+#      summary: Get by ID
+#      operationId: api.ReportApi.get_all
+#      parameters:
+#        - name: limit
+#          in: query
+#          description: Limit of the result array.
+#          required: false
+#          schema:
+#            type: integer
+#            default: 20
+#        - name: offset
+#          in: query
+#          description: Offset of the result array.
+#          required: false
+#          schema:
+#            type: integer
+#            default: 0
+#        - name: electionId
+#          required: false
+#          in: query
+#          schema:
+#            type: integer
+#            format: int64
+#        - name: officeId
+#          required: false
+#          in: query
+#          schema:
+#            type: integer
+#            format: int64
+#        - name: createdBy
+#          required: false
+#          in: query
+#          schema:
+#            type: integer
+#            format: int64
+#        - name: reportCode
+#          required: false
+#          in: query
+#          schema:
+#            type: string
+#            enum:
+#              - CE-201
+#              - PRE-41
+#              - PRE-30-PD
+#              - PRE-30-ED
+#              - PRE-21
+#              - PRE-34-CO
+#              - PRE-34-I-RO
+#              - PRE-34-II-RO
+#              - PRE-34-RO
+#              - PRE-AllIslandReportByElectoralDistrict
+#              - PRE-AllIslandReport
+#      responses:
+#        '200':
+#          description: OK
+#          content:
+#            application/json:
+#              schema:
+#                type: object
+#        '400':
+#          description: Bad request.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '401':
+#          description: Unauthorized.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '404':
+#          description: Resource was not found.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
+#        '500':
+#          description: Unexpected error.
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiResponse'
 
 
 externalDocs:

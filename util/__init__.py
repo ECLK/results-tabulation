@@ -52,6 +52,12 @@ def get_tally_sheet_code(tallySheetCodeStr):
         return TallySheetCodeEnum.PRE_41
     elif tallySheetCodeStr == "PRE-21":
         return TallySheetCodeEnum.PRE_21
+    elif tallySheetCodeStr == "PRE-30-PD":
+        return TallySheetCodeEnum.PRE_30_PD
+    elif tallySheetCodeStr == "PRE-30-ED":
+        return TallySheetCodeEnum.PRE_30_ED
+    elif tallySheetCodeStr == "PRE-AllIslandReport":
+        return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS
 
 
 def get_report_code(tallySheetCodeStr):
