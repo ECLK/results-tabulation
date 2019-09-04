@@ -12,7 +12,7 @@ from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE
     TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201, TallySheetVersionRow_PRE_41, \
     TallySheetVersionRow_PRE_21
-from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, ReportCodeEnum, \
+from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, \
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum
 
 from marshmallow_enum import EnumField
@@ -332,25 +332,6 @@ class TallySheetVersionSchema(ma.ModelSchema):
     submission = EnumField(SubmissionSchema)
 
 
-class ReportVersionSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "reportId",
-            "reportVersionId",
-            "createdBy",
-            "createdAt",
-            "reportFile"
-        )
-
-        model = TallySheetVersion.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    reportFile = ma.Nested(File_Schema)
-
-
 class TallySheetVersionPRE41Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -468,32 +449,6 @@ class TallySheetSchema(ma.ModelSchema):
     office = ma.Nested(AreaSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
     latestVersion = ma.Nested(SubmissionVersionSchema)
-    submissionProof = ma.Nested(Proof_Schema)
-
-
-class ReportSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "reportId",
-            "reportCode",
-            "electionId",
-            "area",
-            "areaId",
-            "latestVersionId",
-            "submissionProofId",
-            "submission",
-            "versions"
-        )
-
-        model = TallySheet.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    reportCode = EnumField(ReportCodeEnum)
-    area = ma.Nested(AreaSchema)
-    versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
-    submission = ma.Nested(SubmissionSchema)
     submissionProof = ma.Nested(Proof_Schema)
 
 

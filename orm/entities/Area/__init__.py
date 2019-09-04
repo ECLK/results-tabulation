@@ -31,16 +31,6 @@ class AreaModel(db.Model):
                            secondaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId"
                            )
 
-    reports = relationship("ReportModel", secondary="submission",
-                           primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
-                           secondaryjoin="SubmissionModel.submissionId==ReportModel.reportId"
-                           )
-
-    reports_PRE_41 = relationship("Report_PRE_41_Model", secondary="submission",
-                                  primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
-                                  secondaryjoin="SubmissionModel.submissionId==Report_PRE_41_Model.reportId"
-                                  )
-
     tallySheets = relationship("TallySheetModel", secondary="submission",
                                primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
                                secondaryjoin="SubmissionModel.submissionId==TallySheetModel.tallySheetId"

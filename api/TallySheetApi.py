@@ -1,7 +1,5 @@
-from app import db
 from orm.entities.Submission.TallySheet import Model as TallySheetModel
 from schemas import TallySheetSchema
-from util import RequestBody
 
 from schemas import TallySheetSchema as Schema
 from orm.entities.Submission import TallySheet

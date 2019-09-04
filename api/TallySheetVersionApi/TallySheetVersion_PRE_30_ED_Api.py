@@ -1,16 +1,9 @@
 from app import db
-from orm.entities import Candidate, Area, Submission, SubmissionVersion
-from orm.entities.Election import ElectionCandidate
-from orm.entities.SubmissionVersion.ReportVersion.util import get_PRE41_candidate_and_area_wise_aggregated_result
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_PRE_30_PD
+from orm.entities import Submission, SubmissionVersion
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD
 from orm.enums import AreaTypeEnum
-from util import RequestBody
-from schemas import TallySheetVersionPRE41Schema, TallySheetVersionSchema, TallySheetVersion_PRE_30_PD_Schema, \
-    TallySheetVersion_PRE_30_ED_Schema
-from orm.entities.Submission import TallySheet
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41, TallySheetVersion_PRE_30_PD, \
-    TallySheetVersion_PRE_30_ED
-from exception import NotFoundException
+from schemas import TallySheetVersion_PRE_30_ED_Schema
+from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersion_PRE_30_ED
 from sqlalchemy import func
 
 
