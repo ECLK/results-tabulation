@@ -1,6 +1,6 @@
 import connexion
 
-from orm.enums import ReportCodeEnum, TallySheetCodeEnum, BallotTypeEnum
+from orm.enums import TallySheetCodeEnum, BallotTypeEnum
 
 
 class RequestBody:
@@ -58,28 +58,3 @@ def get_tally_sheet_code(tallySheetCodeStr):
         return TallySheetCodeEnum.PRE_30_ED
     elif tallySheetCodeStr == "PRE-AllIslandReport":
         return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS
-
-
-def get_report_code(tallySheetCodeStr):
-    if tallySheetCodeStr == "CE-201":
-        return ReportCodeEnum.CE_201
-    elif tallySheetCodeStr == "PRE-41":
-        return ReportCodeEnum.PRE_41
-    elif tallySheetCodeStr == "PRE-30-PD":
-        return ReportCodeEnum.PRE_30_PD
-    elif tallySheetCodeStr == "PRE-30-ED":
-        return ReportCodeEnum.PRE_30_ED
-    elif tallySheetCodeStr == "PRE-21":
-        return ReportCodeEnum.PRE_21
-    elif tallySheetCodeStr == "PRE-34-CO":
-        return ReportCodeEnum.PRE_34_CO
-    elif tallySheetCodeStr == "PRE-34-I_RO":
-        return ReportCodeEnum.PRE_34_I_RO
-    elif tallySheetCodeStr == "PRE-34-II-RO":
-        return ReportCodeEnum.PRE_34_II_RO
-    elif tallySheetCodeStr == "PRE-34-RO":
-        return ReportCodeEnum.PRE_34_RO
-    elif tallySheetCodeStr == "PRE-AllIslandReportByElectoralDistrict":
-        return ReportCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
-    elif tallySheetCodeStr == "PRE-AllIslandReport":
-        return ReportCodeEnum.PRE_ALL_ISLAND_RESULTS

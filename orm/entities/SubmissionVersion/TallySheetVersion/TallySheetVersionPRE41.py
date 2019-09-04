@@ -23,19 +23,19 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
         )
 
     def html(self):
-        report = self.submission
 
         tallySheetContent = self.content
 
         content = {
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
-            "electoralDistrict": Area.get_associated_areas(report.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "countingCentre": Area.get_associated_areas(report.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "electoralDistrict": Area.get_associated_areas(self.submission.area, AreaTypeEnum.ElectoralDistrict)[
+                0].areaName,
+            "countingCentre": Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
             "pollingDistrictNos": ", ".join([
                 pollingDistrict.areaName for pollingDistrict in
-                Area.get_associated_areas(report.area, AreaTypeEnum.PollingDistrict)
+                Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
-            "countingHallNo": report.area.areaName,
+            "countingHallNo": self.submission.area.areaName,
             "data": [
             ],
             "total": 0,
