@@ -81,6 +81,10 @@ def get_object(row, row_key, data_key=None):
         elif data_store_key == "Electoral District":
             obj = ElectoralDistrict.create(cell, electionId=election.electionId)
 
+            TallySheet.create(
+                tallySheetCode=TallySheetCodeEnum.PRE_30_ED, electionId=election.electionId, officeId=obj.areaId
+            )
+
             Report_PRE_30_ED.create(
                 electionId=election.electionId,
                 areaId=obj.areaId

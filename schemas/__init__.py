@@ -102,6 +102,20 @@ class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class TallySheetVersionRow_PRE_30_ED_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "candidateId",
+            "pollingDivisionId",
+            "count"
+        )
+
+        model = TallySheetVersionRow_PRE_41.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class TallySheetVersionRow_PRE_30_PD_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -354,6 +368,25 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
+
+
+class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt",
+            "content"
+        )
+
+        model = TallySheetVersion_PRE_30_PD.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    # submission = ma.Nested(SubmissionSchema)
+    content = ma.Nested(TallySheetVersionRow_PRE_30_ED_Schema, many=True)
 
 
 class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):

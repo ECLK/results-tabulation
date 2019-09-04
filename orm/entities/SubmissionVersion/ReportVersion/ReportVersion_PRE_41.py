@@ -31,7 +31,7 @@ class ReportVersion_PRE_41_Model(ReportVersion.Model):
         content = {
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
             "electoralDistrict": Area.get_associated_areas(report.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": Area.get_associated_areas(report.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "countingCentre": Area.get_associated_areas(report.area, AreaTypeEnum.PollingDivision)[0].areaName,
             "pollingDistrictNos": ", ".join([
                 pollingDistrict.areaName for pollingDistrict in
                 Area.get_associated_areas(report.area, AreaTypeEnum.PollingDistrict)
