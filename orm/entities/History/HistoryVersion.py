@@ -21,7 +21,7 @@ class HistoryVersionModel(db.Model):
         )
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
 
 Model = HistoryVersionModel

@@ -38,7 +38,7 @@ class ElectionPartyModel(db.Model):
         )
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
     def add_candidate(self, candidateId):
         return ElectionCandidate.create(

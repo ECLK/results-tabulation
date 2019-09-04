@@ -66,7 +66,7 @@ def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
     )
 
     db.session.add(result)
-    db.session.commit()
+    db.session.flush()
 
     save_uploaded_file_source(result, fileSource)
 
@@ -84,7 +84,7 @@ def createReport(fileName, html):
     )
 
     db.session.add(file)
-    db.session.commit()
+    db.session.flush()
 
     options = {}
     file_path = os.path.join(FILE_DIRECTORY, str(file.fileId))

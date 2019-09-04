@@ -1,9 +1,5 @@
-from app import db
 from orm.entities.Submission.TallySheet import Model as TallySheetModel
-from orm.entities.History import Model as TallySheetVersionModel
 from schemas import TallySheetSchema
-from api import tallySheetPRE41Api
-from util import RequestBody, Auth
 
 from schemas import TallySheetSchema as Schema
 from orm.entities.Submission import TallySheet
@@ -23,42 +19,6 @@ def get_by_id(tallySheetId):
     tallySheet = TallySheetModel.query.filter(TallySheetModel.tallySheetId == tallySheetId).one_or_none()
 
     return TallySheetSchema().dump(tallySheet).data
-
-
-def create_tallysheet_version(body, tallysheet):
-    new_tallysheet_version = TallySheetVersionModel(
-        tallySheetId=tallysheet.tallySheetId,
-        createdBy=Auth().get_user_id()
-    )
-
-    db.session.add(new_tallysheet_version)
-    db.session.commit()
-
-    tallysheet.latestVersion = new_tallysheet_version
-    db.session.commit()
-
-    if tallysheet.code == "PRE-41":
-        return tallySheetPRE41Api.create(body, new_tallysheet_version)
-    else:
-        return new_tallysheet_version
-
-
-def create(body):
-    request_body = RequestBody(body)
-    new_tallysheet = TallySheetModel(
-        electionId=request_body.get("electionId"),
-        code=request_body.get("code"),
-        officeId=request_body.get("officeId")
-    )
-
-    # Add the entry to the database
-    db.session.add(new_tallysheet)
-    db.session.commit()
-
-    new_tallysheet = create_tallysheet_version(body, new_tallysheet)
-
-    # Serialize and return the newly created entry in the response
-    return get_tallysheet_response(new_tallysheet), 201
 
 
 def get_tallysheet_response(new_tallysheet):

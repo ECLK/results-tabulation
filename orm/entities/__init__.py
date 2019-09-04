@@ -17,13 +17,12 @@ from orm.entities.Area.Electorate import Country, Province, AdministrativeDistri
 from orm.entities.Area.Office import DistrictCentre, CountingCentre, PollingStation, ElectionCommission
 
 from orm.entities import Submission, SubmissionVersion
-from orm.entities.SubmissionVersion import TallySheetVersion, ReportVersion
-from orm.entities.Submission import TallySheet, Report
-from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD
+from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
-from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_41, ReportVersion_PRE_30_PD
 
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_CE_201
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_CE_201, \
+    TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_PRE_30_ED, \
+    TallySheetVersionRow_PRE_ALL_ISLAND_RESULT
 
 from orm.entities.Election import InvalidVoteCategory
 

@@ -46,7 +46,7 @@ class TallySheetModel(db.Model):
         )
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
 
 Model = TallySheetModel

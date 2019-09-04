@@ -1,3 +1,4 @@
+from app import db
 from util import RequestBody
 
 from schemas import BallotBox_Schema as Schema
@@ -19,5 +20,7 @@ def create(body):
         electionId=request_body.get("electionId"),
         ballotBoxId=request_body.get("ballotBoxId")
     )
+
+    db.session.commit()
 
     return Schema().dump(result).data, 201

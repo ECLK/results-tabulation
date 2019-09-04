@@ -95,7 +95,7 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
         )
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
 
 Model = TallySheetVersionRow_CE_201_Model
@@ -129,7 +129,7 @@ class TallySheetVersionRow_CE_201_BallotBox_Model(db.Model):
             ballotBoxStationaryItemId=ballotBoxStationaryItemId
         )
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
 
 class TallySheetVersionRow_CE_201_IssuedBallotBox_Model(TallySheetVersionRow_CE_201_BallotBox_Model):

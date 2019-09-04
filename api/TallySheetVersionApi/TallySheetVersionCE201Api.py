@@ -1,3 +1,4 @@
+from app import db
 from util import RequestBody
 from schemas import TallySheetVersionCE201Schema
 from orm.entities.Submission import TallySheet
@@ -55,5 +56,7 @@ def create(tallySheetId, body):
             for received_ballot_body in party_count_body.get("receivedBallots"):
                 received_ballot_body = RequestBody(received_ballot_body)
                 tallySheetVersionRow.add_received_ballot_box(received_ballot_body.get("stationaryItemId"))
+
+    db.session.commit()
 
     return TallySheetVersionCE201Schema().dump(tallySheetVersion).data

@@ -1,3 +1,6 @@
+from flask import Response
+
+from app import db
 from util import RequestBody
 from schemas import Ballot_Schema as Schema
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -15,4 +18,14 @@ def create(body):
         tallySheetId=request_body.get("tallySheetId")
     )
 
+    db.session.commit()
+
     return Schema().dump(result).data, 201
+
+
+def html(tallySheetId, tallySheetVersionId):
+    tallySheetVersion = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId)
+
+    db.session.commit()
+
+    return Response(tallySheetVersion.html(), mimetype='text/html')

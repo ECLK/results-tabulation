@@ -29,7 +29,7 @@ class ElectionCandidateModel(db.Model):
         )
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
 
 Model = ElectionCandidateModel

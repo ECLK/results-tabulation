@@ -101,7 +101,7 @@ def create(electionId, issuingOfficeId, receivingOfficeId, issuedTo):
     )
 
     db.session.add(result)
-    db.session.commit()
+    db.session.flush()
 
     return result
 
@@ -121,7 +121,7 @@ def update(invoiceId, issuingOfficeId=None, receivingOfficeId=None, issuedTo=Non
         if confirmed is not None:
             instance.confirmed = confirmed
 
-        db.session.commit()
+        db.session.flush()
 
         return instance
 
@@ -145,6 +145,6 @@ def delete(invoiceId):
     else:
         instance.delete = True
 
-        db.session.commit()
+        db.session.flush()
 
         return 1
