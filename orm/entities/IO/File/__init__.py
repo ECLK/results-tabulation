@@ -5,7 +5,6 @@ from util import Auth
 from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
 from flask import Flask, request
-import pdfkit
 
 FILE_DIRECTORY = os.path.join(os.getcwd(), 'data')
 
@@ -47,50 +46,50 @@ def get_by_id(fileId):
     return result
 
 
-def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
-    # TODO validate the
-    #   - file type
-    #   - file size
-    #         etc.
-
-    if fileType is None:
-        fileType = FileTypeEnum.Any
-
-    result = Model(
-        fileType=fileType,
-        fileMimeType=fileSource.mimetype,
-        fileContentLength=fileSource.content_length,
-        fileContentType=fileSource.content_type,
-        fileName=fileSource.filename,
-        fileCreatedBy=Auth().get_user_id()
-    )
-
-    db.session.add(result)
-    db.session.flush()
-
-    save_uploaded_file_source(result, fileSource)
-
-    return result
-
-
-def createReport(fileName, html):
-    file = Model(
-        fileType=FileTypeEnum.Pdf,
-        fileMimeType="application/pdf",
-        fileContentLength=len(html),
-        fileContentType="application/pdf ",
-        fileName=fileName,
-        fileCreatedBy=Auth().get_user_id()
-    )
-
-    db.session.add(file)
-    db.session.flush()
-
-    options = {}
-    file_path = os.path.join(FILE_DIRECTORY, str(file.fileId))
-    pdfkit.from_string(html, file_path, options=options)
-
-    return file
+# def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
+#     # TODO validate the
+#     #   - file type
+#     #   - file size
+#     #         etc.
+#
+#     if fileType is None:
+#         fileType = FileTypeEnum.Any
+#
+#     result = Model(
+#         fileType=fileType,
+#         fileMimeType=fileSource.mimetype,
+#         fileContentLength=fileSource.content_length,
+#         fileContentType=fileSource.content_type,
+#         fileName=fileSource.filename,
+#         fileCreatedBy=Auth().get_user_id()
+#     )
+#
+#     db.session.add(result)
+#     db.session.flush()
+#
+#     save_uploaded_file_source(result, fileSource)
+#
+#     return result
+#
+#
+# def createReport(fileName, html):
+#     file = Model(
+#         fileType=FileTypeEnum.Pdf,
+#         fileMimeType="application/pdf",
+#         fileContentLength=len(html),
+#         fileContentType="application/pdf ",
+#         fileName=fileName,
+#         fileCreatedBy=Auth().get_user_id()
+#     )
+#
+#     db.session.add(file)
+#     db.session.flush()
+#
+#     options = {}
+#     file_path = os.path.join(FILE_DIRECTORY, str(file.fileId))
+#     pdfkit.from_string(html, file_path, options=options)
+#
+#     return file
 
 
 def save_uploaded_file_source(file, fileSource):
