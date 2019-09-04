@@ -25,13 +25,17 @@
 
 `source ./venv/bin/activate`
 
-**Install Dependancies**
+**Install Dependencies**
 
 `pip install -r requirements.txt`
 
+**Configure database connection parameters**
+
+Update `env/dev.cfg` 
+
 **Upgrade/create the Database**
 
-`python manage.py db upgrade`
+`export ENV_CONFIG=./env/dev.cfg && python manage.py db upgrade`
 
 **Build the Database with sample data**
 
@@ -45,7 +49,7 @@ https://localhost:5000/ui/
 
 ## Database Migrations
 
-**Initializa migration**
+**Initialize migration**
 
 This is a one time thing which is required only at the project beginning. The information is only for knowledge.
 
