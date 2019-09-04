@@ -1,13 +1,15 @@
+from api import FileApi
 from app import db
 from exception import NotFoundException
-from orm.entities.SubmissionVersion import ReportVersion
-from orm.entities.Submission import Report
+from orm.entities.SubmissionVersion import ReportVersion, TallySheetVersion
+from orm.entities.Submission import Report, TallySheet
 from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_41, ReportVersion_PRE_30_PD, \
     ReportVersion_PRE_ALL_ISLAND_RESULTS
 from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_30_ED
 from orm.enums import ReportCodeEnum
 
 from schemas import ReportVersionSchema
+from flask import Response
 
 
 def get_all():
@@ -36,3 +38,11 @@ def create(reportId):
     db.session.commit()
 
     return ReportVersionSchema().dump(result).data
+
+
+def html(reportId, reportVersionId):
+    tallySheetVersion = TallySheetVersion.get_by_id(tallySheetVersionId=reportVersionId)
+
+    db.session.commit()
+
+    return Response(tallySheetVersion.html(), mimetype='text/html')

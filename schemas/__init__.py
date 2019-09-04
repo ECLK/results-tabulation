@@ -9,7 +9,7 @@ from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41, \
-    TallySheetVersionPRE21
+    TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201, TallySheetVersionRow_PRE_41, \
     TallySheetVersionRow_PRE_21
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, ReportCodeEnum, \
@@ -102,6 +102,20 @@ class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class TallySheetVersionRow_PRE_30_PD_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "candidateId",
+            "countingCentreId",
+            "count"
+        )
+
+        model = TallySheetVersionRow_PRE_41.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class TallySheetVersionRow_PRE_21_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -138,29 +152,6 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
 
     issuedBallots = ma.Nested("BallotBox_Schema", only=["stationaryItemId", "ballotBoxId"], many=True)
     receivedBallots = ma.Nested("BallotBox_Schema", only=["stationaryItemId", "ballotBoxId"], many=True)
-
-
-class TallySheetVersionSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetCode",
-            # "electionId",
-            # "officeId",
-            # "latestVersionId",
-
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "content"
-        )
-
-        model = TallySheetVersion.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    tallySheetCode = EnumField(TallySheetCodeEnum)
 
 
 class AreaSchema(ma.ModelSchema):
@@ -312,10 +303,11 @@ class SubmissionVersionSchema(ma.ModelSchema):
 class TallySheetVersionSchema(ma.ModelSchema):
     class Meta:
         fields = (
-            "submissionVersionId",
-            "submission",
+            "tallySheetId",
+            "tallySheetVersionId",
             "createdBy",
-            "createdAt"
+            "createdAt",
+            "content"
         )
 
         model = TallySheetVersion.Model
@@ -362,6 +354,25 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
+
+
+class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt",
+            "content"
+        )
+
+        model = TallySheetVersion_PRE_30_PD.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    # submission = ma.Nested(SubmissionSchema)
+    content = ma.Nested(TallySheetVersionRow_PRE_30_PD_Schema, many=True)
 
 
 class TallySheetVersionPRE21Schema(ma.ModelSchema):
@@ -421,7 +432,7 @@ class TallySheetSchema(ma.ModelSchema):
         sqla_session = db.session
 
     tallySheetCode = EnumField(TallySheetCodeEnum)
-    office = ma.Nested(OfficeSchema)
+    office = ma.Nested(AreaSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
     latestVersion = ma.Nested(SubmissionVersionSchema)
     submissionProof = ma.Nested(Proof_Schema)
@@ -477,7 +488,7 @@ class ReportSchema(ma.ModelSchema):
 #             "createdAt",
 #
 #             "electoralDistrictId",
-#             "pollingDivisionId",
+#             "countingCentreId",
 #             "countingCentreId",
 #             "party_wise_results",
 #         )

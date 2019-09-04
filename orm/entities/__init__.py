@@ -23,7 +23,7 @@ from orm.entities.Submission.Report import Report_PRE_41, Report_PRE_30_PD
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from orm.entities.SubmissionVersion.ReportVersion import ReportVersion_PRE_41, ReportVersion_PRE_30_PD
 
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_CE_201
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_CE_201,TallySheetVersionRow_PRE_21,TallySheetVersionRow_PRE_30_PD,TallySheetVersionRow_PRE_30_ED,TallySheetVersionRow_PRE_ALL_ISLAND_RESULT
 
 from orm.entities.Election import InvalidVoteCategory
 

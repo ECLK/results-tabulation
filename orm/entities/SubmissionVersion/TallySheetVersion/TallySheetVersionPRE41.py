@@ -1,16 +1,17 @@
+from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app import db
-from exception import NotFoundException
-from orm.entities import Candidate, Party
+from exception import NotFoundException, ForbiddenException
+from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41
 from util import get_paginated_query
 
 from orm.entities.Submission import TallySheet
-from orm.enums import TallySheetCodeEnum
+from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
 
 
@@ -20,6 +21,59 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
         super(TallySheetVersionPRE41Model, self).__init__(
             tallySheetId=tallySheetId
         )
+
+    def html(self):
+        report = self.submission
+
+        tallySheetContent = self.content
+
+        content = {
+            "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
+            "electoralDistrict": Area.get_associated_areas(report.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "countingCentre": Area.get_associated_areas(report.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "pollingDistrictNos": ", ".join([
+                pollingDistrict.areaName for pollingDistrict in
+                Area.get_associated_areas(report.area, AreaTypeEnum.PollingDistrict)
+            ]),
+            "countingHallNo": report.area.areaName,
+            "data": [
+            ],
+            "total": 0,
+            "rejectedVotes": 0,
+            "grandTotal": 0
+        }
+
+        for row_index in range(len(tallySheetContent)):
+            row = tallySheetContent[row_index]
+            if row.count is not None:
+                content["data"].append([
+                    row_index + 1,
+                    row.candidateName,
+                    row.partySymbol,
+                    row.countInWords,
+                    row.count,
+                    ""
+                ])
+                content["total"] = content["total"] + row.count
+            else:
+                content["data"].append([
+                    row_index + 1,
+                    row.candidateName,
+                    row.partySymbol,
+                    "",
+                    "",
+                    ""
+                ])
+
+        content["rejectedVotes"] = 0  # TODO
+        content["grandTotal"] = content["total"] + content["rejectedVotes"]
+
+        html = render_template(
+            'pre-41.html',
+            content=content
+        )
+
+        return html
 
     __mapper_args__ = {
         'polymorphic_identity': TallySheetCodeEnum.PRE_41
@@ -37,6 +91,7 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
 
     @hybrid_property
     def content(self):
+
         return db.session.query(
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
