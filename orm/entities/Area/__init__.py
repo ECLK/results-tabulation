@@ -31,16 +31,6 @@ class AreaModel(db.Model):
                            secondaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId"
                            )
 
-    reports = relationship("ReportModel", secondary="submission",
-                           primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
-                           secondaryjoin="SubmissionModel.submissionId==ReportModel.reportId"
-                           )
-
-    reports_PRE_41 = relationship("Report_PRE_41_Model", secondary="submission",
-                                  primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
-                                  secondaryjoin="SubmissionModel.submissionId==Report_PRE_41_Model.reportId"
-                                  )
-
     tallySheets = relationship("TallySheetModel", secondary="submission",
                                primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
                                secondaryjoin="SubmissionModel.submissionId==TallySheetModel.tallySheetId"
@@ -58,7 +48,7 @@ class AreaModel(db.Model):
             electionId=electionId
         )
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
     def add_parent(self, parentId):
         parentArea = get_by_id(areaId=parentId)
@@ -75,7 +65,7 @@ class AreaModel(db.Model):
         if existing_mapping is None:
             areaParent = AreaAreaModel(parentAreaId=self.areaId, childAreaId=childId)
             db.session.add(areaParent)
-            db.session.commit()
+            db.session.flush()
 
         return self
 

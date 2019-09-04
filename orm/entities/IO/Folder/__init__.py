@@ -26,6 +26,6 @@ def get_by_id(folderId):
 def create():
     result = Model()
     db.session.add(result)
-    db.session.commit()
+    db.session.flush()
 
     return result

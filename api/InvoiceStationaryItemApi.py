@@ -1,3 +1,4 @@
+from app import db
 from util import RequestBody
 from schemas import Invoice_StationaryItem_Schema as Schema
 from orm.entities.Invoice import InvoiceStationaryItem
@@ -31,6 +32,8 @@ def create(invoiceId, body):
         stationaryItemId=request_body.get("stationaryItemId")
     )
 
+    db.session.commit()
+
     return Schema().dump(result).data, 201
 
 
@@ -45,6 +48,8 @@ def receive(body):
         scannedImages=connexion.request.files['scannedImages']
     )
 
+    db.session.commit()
+
     return Schema().dump(result).data, 201
 
 
@@ -53,5 +58,7 @@ def delete(invoiceId, stationaryItemId):
         invoiceId=invoiceId,
         stationaryItemId=stationaryItemId
     )
+
+    db.session.commit()
 
     return result

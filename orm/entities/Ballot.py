@@ -104,6 +104,6 @@ def create(ballotId, electionId, ballotType=None):
     )
 
     db.session.add(result)
-    db.session.commit()
+    db.session.flush()
 
     return result

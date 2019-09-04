@@ -37,7 +37,7 @@ class TallySheetVersionModel(db.Model):
         )
 
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
     __mapper_args__ = {
         'polymorphic_on': tallySheetVersionCode

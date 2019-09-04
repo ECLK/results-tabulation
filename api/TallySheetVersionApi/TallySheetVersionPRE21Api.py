@@ -1,3 +1,4 @@
+from app import db
 from util import RequestBody
 from schemas import TallySheetVersionPRE21Schema
 from orm.entities.Submission import TallySheet
@@ -42,5 +43,7 @@ def create(tallySheetId, body):
                 count=party_count_body.get("count"),
                 invalidVoteCategoryId=party_count_body.get("invalidVoteCategoryId")
             )
+
+    db.session.commit()
 
     return TallySheetVersionPRE21Schema().dump(tallySheetVersion).data

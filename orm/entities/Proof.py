@@ -41,7 +41,7 @@ def create(proofType):
     )
 
     db.session.add(result)
-    db.session.commit()
+    db.session.flush()
 
     return result
 
@@ -59,7 +59,7 @@ def update(proofId, finished=None):
 
             instance.finished = finished
 
-        db.session.commit()
+        db.session.flush()
 
         return instance
 

@@ -34,7 +34,7 @@ class SubmissionVersionModel(db.Model):
             submissionVersionId=historyVersion.historyVersionId,
         )
         db.session.add(self)
-        db.session.commit()
+        db.session.flush()
 
         submission.set_latest_version(submissionVersionId=historyVersion.historyVersionId)
 
