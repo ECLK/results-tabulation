@@ -47,6 +47,10 @@ Update `env/dev.cfg`
 
 https://localhost:5000/ui/
 
+**Run tests**
+
+`pytest tests`
+
 ## Database Migrations
 
 **Initialize migration**
