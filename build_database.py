@@ -71,6 +71,11 @@ def get_object(row, row_key, data_key=None):
         elif data_store_key == "Country":
             obj = Country.create(cell, electionId=election.electionId)
 
+            TallySheet.create(
+                tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS, electionId=election.electionId,
+                officeId=obj.areaId
+            )
+
 
         elif data_store_key == "Electoral District":
             obj = ElectoralDistrict.create(cell, electionId=election.electionId)
