@@ -76,6 +76,12 @@ def get_object(row, row_key, data_key=None):
                 officeId=obj.areaId
             )
 
+            TallySheet.create(
+                tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS,
+                electionId=election.electionId,
+                officeId=obj.areaId
+            )
+
 
         elif data_store_key == "Electoral District":
             obj = ElectoralDistrict.create(cell, electionId=election.electionId)
