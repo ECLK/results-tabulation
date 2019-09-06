@@ -9,9 +9,10 @@ from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41, \
-    TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD
+    TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_30_ED
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201, TallySheetVersionRow_PRE_41, \
-    TallySheetVersionRow_PRE_21
+    TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_30_ED, \
+    TallySheetVersionRow_PRE_30_PD
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, \
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum
 
@@ -102,6 +103,19 @@ class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "candidateId",
+            "count"
+        )
+
+        model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class TallySheetVersionRow_PRE_30_ED_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -110,7 +124,7 @@ class TallySheetVersionRow_PRE_30_ED_Schema(ma.ModelSchema):
             "count"
         )
 
-        model = TallySheetVersionRow_PRE_41.Model
+        model = TallySheetVersionRow_PRE_30_ED.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -124,7 +138,7 @@ class TallySheetVersionRow_PRE_30_PD_Schema(ma.ModelSchema):
             "count"
         )
 
-        model = TallySheetVersionRow_PRE_41.Model
+        model = TallySheetVersionRow_PRE_30_PD.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -351,6 +365,25 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
     content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
 
 
+class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt",
+            "content"
+        )
+
+        model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    # submission = ma.Nested(SubmissionSchema)
+    content = ma.Nested(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_Schema, many=True)
+
+
 class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -361,7 +394,7 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
             "content"
         )
 
-        model = TallySheetVersion_PRE_30_PD.Model
+        model = TallySheetVersion_PRE_30_ED.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
