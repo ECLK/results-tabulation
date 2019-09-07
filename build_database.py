@@ -13,6 +13,8 @@ election = Election.create(electionName="Test Election")
 
 data_stores = {}
 
+csv_dir = ''
+
 
 def get_data_store(data_store_key):
     if data_store_key not in data_stores:
@@ -180,8 +182,7 @@ def get_object(row, row_key, data_key=None):
     return obj
 
 
-def get_rows_from_csv(dataset, csv_path):
-    csv_dir = "./sample-data/%s" % dataset
+def get_rows_from_csv(csv_path):
     csv_file_path = "%s/%s" % (csv_dir, csv_path)
     if os.path.exists(csv_file_path) is True:
         with open(csv_file_path, 'r') as f:
@@ -194,7 +195,13 @@ def get_rows_from_csv(dataset, csv_path):
 
 
 def build_database(dataset):
-    for row in get_rows_from_csv(dataset, 'data.csv'):
+    global csv_dir
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    sample_data_dir = os.path.join(basedir, 'sample-data')
+    csv_dir = "%s/%s" % (sample_data_dir, dataset)
+
+    for row in get_rows_from_csv('data.csv'):
         print("[ROW] ========= ", row)
         country = get_object({"Country": "Sri Lanka"}, "Country")
         electoralDistrict = get_object(row, "Electoral District")
@@ -249,12 +256,12 @@ def build_database(dataset):
         invoice.set_confirmed()
 
         print("[ROW END] ========= ")
-    for row in get_rows_from_csv(dataset, 'party-candidate.csv'):
+    for row in get_rows_from_csv('party-candidate.csv'):
         party = get_object(row, "Party")
         election.add_party(partyId=party.partyId)
 
         candidate = get_object(row, "Candidate")
         election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
-    for row in get_rows_from_csv(dataset, 'invalid-vote-categories.csv'):
+    for row in get_rows_from_csv('invalid-vote-categories.csv'):
         election.add_invalid_vote_category(row["Invalid Vote Category Description"])
     db.session.commit()

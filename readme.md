@@ -51,7 +51,7 @@ https://localhost:5000/ui/
 
 **Run tests**
 
-`pytest tests`
+`export ENV_CONFIG=./env/test.cfg && pytest tests`
 
 ## Database Migrations
 
