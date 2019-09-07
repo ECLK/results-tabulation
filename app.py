@@ -52,14 +52,18 @@ def create_app():
     # Configure the SQLAlchemy part of the app instance
     app.config['SQLALCHEMY_ECHO'] = True
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = '%s://%s:%s@%s:%s/%s' % (
-        app.config['DATABASE_PLUGIN'],
-        app.config['DATABASE_USERNAME'],
-        app.config['DATABASE_PASSWORD'],
-        app.config['DATABASE_HOST'],
-        app.config['DATABASE_PORT'],
-        app.config['DATABASE_NAME']
-    )
+    if app.config['DATABASE_PLUGIN'] == "sqlite":
+        # this is for unit tests
+        app.config['SQLALCHEMY_DATABASE_URI'] = "%s://" % app.config['DATABASE_PLUGIN']
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = '%s://%s:%s@%s:%s/%s' % (
+            app.config['DATABASE_PLUGIN'],
+            app.config['DATABASE_USERNAME'],
+            app.config['DATABASE_PASSWORD'],
+            app.config['DATABASE_HOST'],
+            app.config['DATABASE_PORT'],
+            app.config['DATABASE_NAME']
+        )
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

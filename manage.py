@@ -21,7 +21,6 @@ def build_database(dataset):
     """
     Populates database with sample dataset.
     """
-    # """Populates database with sample dataset."""
     from build_database import build_database
     build_database(dataset)
 
