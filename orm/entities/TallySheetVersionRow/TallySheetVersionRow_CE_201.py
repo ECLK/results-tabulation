@@ -16,14 +16,16 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(TallySheetVersion.Model.__table__.c.tallySheetVersionId),
                                     nullable=False)
     areaId = db.Column(db.Integer, db.ForeignKey(Area.Model.__table__.c.areaId), nullable=False)
+    # ballotBoxesIssued = db.Column(db.Integer, nullable=False)
+    # ballotBoxesReceived = db.Column(db.Integer, nullable=False)
     ballotsIssued = db.Column(db.Integer, nullable=False)
     ballotsReceived = db.Column(db.Integer, nullable=False)
     ballotsSpoilt = db.Column(db.Integer, nullable=False)
     ballotsUnused = db.Column(db.Integer, nullable=False)
-    boxCountOrdinary = db.Column(db.Integer, nullable=False)
-    boxCountTendered = db.Column(db.Integer, nullable=False)
-    ballotPaperAccountOrdinary = db.Column(db.Integer, nullable=False)
-    ballotPaperAccountTendered = db.Column(db.Integer, nullable=False)
+    ordinaryBallotCountFromBoxCount = db.Column(db.Integer, nullable=False)
+    tenderedBallotCountFromBoxCount = db.Column(db.Integer, nullable=False)
+    ordinaryBallotCountFromBallotPaperAccount = db.Column(db.Integer, nullable=False)
+    tenderedBallotCountFromBallotPaperAccount = db.Column(db.Integer, nullable=False)
 
     area = relationship(Area.Model, foreign_keys=[areaId])
     tallySheetVersion = relationship(TallySheetVersion.Model, foreign_keys=[tallySheetVersionId])
@@ -70,8 +72,10 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
             ballotBoxStationaryItemId=stationaryItemId
         )
 
-    def __init__(self, tallySheetVersion, areaId, ballotsIssued, ballotsReceived, ballotsSpoilt, ballotsUnused,
-                 boxCountOrdinary, boxCountTendered, ballotPaperAccountOrdinary, ballotPaperAccountTendered):
+    def __init__(self, tallySheetVersion, areaId, ballotBoxesIssued, ballotBoxesReceived, ballotsIssued,
+                 ballotsReceived, ballotsSpoilt, ballotsUnused,
+                 ordinaryBallotCountFromBoxCount, tenderedBallotCountFromBoxCount,
+                 ordinaryBallotCountFromBallotPaperAccount, tenderedBallotCountFromBallotPaperAccount):
 
         area = Area.get_by_id(areaId=areaId)
 
@@ -84,14 +88,16 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
         super(TallySheetVersionRow_CE_201_Model, self).__init__(
             tallySheetVersionId=tallySheetVersion.tallySheetVersionId,
             areaId=areaId,
+            # ballotBoxesIssued=ballotBoxesIssued,
+            # ballotBoxesReceived=ballotBoxesReceived,
             ballotsIssued=ballotsIssued,
             ballotsReceived=ballotsReceived,
             ballotsSpoilt=ballotsSpoilt,
             ballotsUnused=ballotsUnused,
-            boxCountOrdinary=boxCountOrdinary,
-            boxCountTendered=boxCountTendered,
-            ballotPaperAccountOrdinary=ballotPaperAccountOrdinary,
-            ballotPaperAccountTendered=ballotPaperAccountTendered
+            ordinaryBallotCountFromBoxCount=ordinaryBallotCountFromBoxCount,
+            tenderedBallotCountFromBoxCount=tenderedBallotCountFromBoxCount,
+            ordinaryBallotCountFromBallotPaperAccount=ordinaryBallotCountFromBallotPaperAccount,
+            tenderedBallotCountFromBallotPaperAccount=tenderedBallotCountFromBallotPaperAccount
         )
 
         db.session.add(self)
@@ -144,19 +150,23 @@ class TallySheetVersionRow_CE_201_ReceivedBallotBox_Model(TallySheetVersionRow_C
     }
 
 
-def create(tallySheetVersion, areaId, ballotsIssued, ballotsReceived, ballotsSpoilt, ballotsUnused,
-           boxCountOrdinary, boxCountTendered, ballotPaperAccountOrdinary, ballotPaperAccountTendered):
+def create(tallySheetVersion, areaId, ballotBoxesIssued, ballotBoxesReceived, ballotsIssued, ballotsReceived,
+           ballotsSpoilt, ballotsUnused,
+           ordinaryBallotCountFromBoxCount, tenderedBallotCountFromBoxCount, ordinaryBallotCountFromBallotPaperAccount,
+           tenderedBallotCountFromBallotPaperAccount):
     result = Model(
         tallySheetVersion=tallySheetVersion,
         areaId=areaId,
+        ballotBoxesIssued=ballotBoxesIssued,
+        ballotBoxesReceived=ballotBoxesReceived,
         ballotsIssued=ballotsIssued,
         ballotsReceived=ballotsReceived,
         ballotsSpoilt=ballotsSpoilt,
         ballotsUnused=ballotsUnused,
-        boxCountOrdinary=boxCountOrdinary,
-        boxCountTendered=boxCountTendered,
-        ballotPaperAccountOrdinary=ballotPaperAccountOrdinary,
-        ballotPaperAccountTendered=ballotPaperAccountTendered
+        ordinaryBallotCountFromBoxCount=ordinaryBallotCountFromBoxCount,
+        tenderedBallotCountFromBoxCount=tenderedBallotCountFromBoxCount,
+        ordinaryBallotCountFromBallotPaperAccount=ordinaryBallotCountFromBallotPaperAccount,
+        tenderedBallotCountFromBallotPaperAccount=tenderedBallotCountFromBallotPaperAccount
     )
 
     return result

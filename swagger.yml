@@ -2286,6 +2286,14 @@ paths:
                         areaId:
                           type: integer
                           format: int64
+                        ballotBoxesIssued:
+                          type: array
+                          items:
+                            type: string
+                        ballotBoxesReceived:
+                          type: array
+                          items:
+                            type: string
                         ballotsIssued:
                           type: integer
                           format: int64
@@ -2298,38 +2306,18 @@ paths:
                         ballotsUnused:
                           type: integer
                           format: int64
-                        boxCountOrdinary:
+                        ordinaryBallotCountFromBoxCount:
                           type: integer
                           format: int64
-                        boxCountTendered:
+                        tenderedBallotCountFromBoxCount:
                           type: integer
                           format: int64
-                        ballotPaperAccountOrdinary:
+                        ordinaryBallotCountFromBallotPaperAccount:
                           type: integer
                           format: int64
-                        ballotPaperAccountTendered:
+                        tenderedBallotCountFromBallotPaperAccount:
                           type: integer
                           format: int64
-                        issuedBallots:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              ballotBoxId:
-                                type: string
-                              stationaryItemId:
-                                type: integer
-                                format: int64
-                        receivedBallots:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              ballotBoxId:
-                                type: string
-                              stationaryItemId:
-                                type: integer
-                                format: int64
         '400':
           description: Bad request.
           content:
@@ -2387,6 +2375,14 @@ paths:
                         areaId:
                           type: integer
                           format: int64
+                        ballotBoxesIssued:
+                          type: array
+                          items:
+                            type: string
+                        ballotBoxesReceived:
+                          type: array
+                          items:
+                            type: string
                         ballotsIssued:
                           type: integer
                           format: int64
@@ -2399,38 +2395,18 @@ paths:
                         ballotsUnused:
                           type: integer
                           format: int64
-                        boxCountOrdinary:
+                        ordinaryBallotCountFromBoxCount:
                           type: integer
                           format: int64
-                        boxCountTendered:
+                        tenderedBallotCountFromBoxCount:
                           type: integer
                           format: int64
-                        ballotPaperAccountOrdinary:
+                        ordinaryBallotCountFromBallotPaperAccount:
                           type: integer
                           format: int64
-                        ballotPaperAccountTendered:
+                        tenderedBallotCountFromBallotPaperAccount:
                           type: integer
                           format: int64
-                        issuedBallots:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              ballotBoxId:
-                                type: string
-                              stationaryItemId:
-                                type: integer
-                                format: int64
-                        receivedBallots:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              ballotBoxId:
-                                type: string
-                              stationaryItemId:
-                                type: integer
-                                format: int64
         '400':
           description: Bad request.
           content:
@@ -2466,51 +2442,43 @@ paths:
                 content:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      areaId:
-                        type: integer
-                        format: int64
-                      ballotsIssued:
-                        type: integer
-                        format: int64
-                      ballotsReceived:
-                        type: integer
-                        format: int64
-                      ballotsSpoilt:
-                        type: integer
-                        format: int64
-                      ballotsUnused:
-                        type: integer
-                        format: int64
-                      boxCountOrdinary:
-                        type: integer
-                        format: int64
-                      boxCountTendered:
-                        type: integer
-                        format: int64
-                      ballotPaperAccountOrdinary:
-                        type: integer
-                        format: int64
-                      ballotPaperAccountTendered:
-                        type: integer
-                        format: int64
-                      issuedBallots:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            stationaryItemId:
-                              type: integer
-                              format: int64
-                      receivedBallots:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            stationaryItemId:
-                              type: integer
-                              format: int64
+                      type: object
+                      properties:
+                        areaId:
+                          type: integer
+                          format: int64
+                        ballotBoxesIssued:
+                          type: array
+                          items:
+                            type: string
+                        ballotBoxesReceived:
+                          type: array
+                          items:
+                            type: string
+                        ballotsIssued:
+                          type: integer
+                          format: int64
+                        ballotsReceived:
+                          type: integer
+                          format: int64
+                        ballotsSpoilt:
+                          type: integer
+                          format: int64
+                        ballotsUnused:
+                          type: integer
+                          format: int64
+                        ordinaryBallotCountFromBoxCount:
+                          type: integer
+                          format: int64
+                        tenderedBallotCountFromBoxCount:
+                          type: integer
+                          format: int64
+                        ordinaryBallotCountFromBallotPaperAccount:
+                          type: integer
+                          format: int64
+                        tenderedBallotCountFromBallotPaperAccount:
+                          type: integer
+                          format: int64
         description: Updated tally sheet object.
         required: true
 
