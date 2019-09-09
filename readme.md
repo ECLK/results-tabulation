@@ -14,11 +14,6 @@
 
 5.7 or above
 
-**wkhtmltopdf**
-
-`sudo apt-get install wkhtmltopdf`
-
-
 ## Get Started
 
 **Activate the python environment**
