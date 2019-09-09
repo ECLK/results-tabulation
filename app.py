@@ -2,14 +2,13 @@ import os
 import connexion
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_cors import CORS
 
 from connexion.exceptions import ProblemException
 import json
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-# Create the Connexion application instance
-connex_app = connexion.App(__name__, specification_dir=basedir)
+db = SQLAlchemy()
+ma = Marshmallow()
 
 
 def render_exception(exception):
@@ -35,33 +34,50 @@ def render_connexion_problem_exception(connexion_exception):
     }, indent=2), connexion_exception.status
 
 
-connex_app.add_error_handler(Exception, render_exception)
-connex_app.add_error_handler(ProblemException, render_connexion_problem_exception)
+def create_app():
+    basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Get the underlying Flask app instance
-app = connex_app.app
+    # Create the Connexion application instance
+    connex_app = connexion.App(__name__, specification_dir=basedir)
 
-app.config.from_envvar('ENV_CONFIG')
+    connex_app.add_error_handler(Exception, render_exception)
+    connex_app.add_error_handler(
+        ProblemException, render_connexion_problem_exception)
 
-# Configure the SQLAlchemy part of the app instance
-app.config['SQLALCHEMY_ECHO'] = True
+    # Get the underlying Flask app instance
+    app = connex_app.app
 
-app.config['SQLALCHEMY_DATABASE_URI'] = '%s://%s:%s@%s:%s/%s' % (
-    app.config['DATABASE_PLUGIN'],
-    app.config['DATABASE_USERNAME'],
-    app.config['DATABASE_PASSWORD'],
-    app.config['DATABASE_HOST'],
-    app.config['DATABASE_PORT'],
-    app.config['DATABASE_NAME']
-)
+    app.config.from_envvar('ENV_CONFIG')
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # Configure the SQLAlchemy part of the app instance
+    app.config['SQLALCHEMY_ECHO'] = True
 
-# Create the SQLAlchemy db instance
-db = SQLAlchemy(app)
+    if app.config['DATABASE_PLUGIN'] == "sqlite":
+        # this is for unit tests
+        app.config['SQLALCHEMY_DATABASE_URI'] = "%s://" % app.config['DATABASE_PLUGIN']
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = '%s://%s:%s@%s:%s/%s' % (
+            app.config['DATABASE_PLUGIN'],
+            app.config['DATABASE_USERNAME'],
+            app.config['DATABASE_PASSWORD'],
+            app.config['DATABASE_HOST'],
+            app.config['DATABASE_PORT'],
+            app.config['DATABASE_NAME']
+        )
 
-# Initialize Marshmallow
-ma = Marshmallow(app)
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Read the swagger.yml file to configure the endpoints
-connex_app.add_api("swagger.yml", strict_validation=True, validate_responses=False)
+    # Create the SQLAlchemy db instance
+    db.init_app(app)
+
+    # Initialize Marshmallow
+    ma.init_app(app)
+
+    # add CORS support
+    CORS(app)
+
+    # Read the swagger.yml file to configure the endpoints
+    connex_app.add_api("swagger.yml", strict_validation=True,
+                       validate_responses=False)
+
+    return connex_app

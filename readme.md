@@ -14,11 +14,6 @@
 
 5.7 or above
 
-**wkhtmltopdf**
-
-`sudo apt-get install wkhtmltopdf`
-
-
 ## Get Started
 
 **Activate the python environment**
@@ -39,13 +34,19 @@ Update `env/dev.cfg`
 
 **Build the Database with sample data**
 
-`export ENV_CONFIG=./env/dev.cfg && python build_database.py`
+`export ENV_CONFIG=./env/dev.cfg && python manage.py build_database <dataset>`
+
+`dataset` could be `mock-election`, `test` or `test-small`
 
 **Run local server**
 
 `export ENV_CONFIG=./env/dev.cfg && python index.py`
 
 https://localhost:5000/ui/
+
+**Run tests**
+
+`export ENV_CONFIG=./env/test.cfg && pytest tests`
 
 ## Database Migrations
 
