@@ -165,15 +165,15 @@ def get_object(row, row_key, data_key=None):
                             pollingStation = get_object(sampleTallySheetDataRow, "Polling Station")
                             tallySheetVersionRow = tallySheetVersion.add_row(
                                 areaId=pollingStation.areaId,
-                                ballotsIssued=sampleTallySheetDataRow["Issued Ballots"],
-                                ballotsReceived=sampleTallySheetDataRow["Received Ballots"],
+                                ballotBoxesIssued=sampleTallySheetDataRow["Issued Ballots"],
+                                ballotBoxesReceived=sampleTallySheetDataRow["Received Ballots"],
                                 ballotsSpoilt=sampleTallySheetDataRow["Spoilt Ballots"],
                                 ballotsUnused=sampleTallySheetDataRow["Unused Ballots"],
-                                boxCountOrdinary=sampleTallySheetDataRow["Box Count - Ordinary Ballots"],
-                                boxCountTendered=sampleTallySheetDataRow["Box Count - Tendered Ballots"],
-                                ballotPaperAccountOrdinary=sampleTallySheetDataRow[
+                                ordinaryBallotCountFromBoxCount=sampleTallySheetDataRow["Box Count - Ordinary Ballots"],
+                                tenderedBallotCountFromBoxCount=sampleTallySheetDataRow["Box Count - Tendered Ballots"],
+                                ordinaryBallotCountFromBallotPaperAccount=sampleTallySheetDataRow[
                                     "Ballot Paper Account - Ordinary Ballots"],
-                                ballotPaperAccountTendered=sampleTallySheetDataRow[
+                                tenderedBallotCountFromBallotPaperAccount=sampleTallySheetDataRow[
                                     "Ballot Paper Account - Tendered Ballots"],
                             )
 
