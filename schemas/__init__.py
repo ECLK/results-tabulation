@@ -161,14 +161,17 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "areaId",
+            "areaName",
+            # "ballotBoxesIssued",
+            # "ballotBoxesReceived",
             "ballotsIssued",
             "ballotsReceived",
             "ballotsSpoilt",
             "ballotsUnused",
-            "boxCountOrdinary",
-            "boxCountTendered",
-            "ballotPaperAccountOrdinary",
-            "ballotPaperAccountTendered",
+            "ordinaryBallotCountFromBoxCount",
+            "tenderedBallotCountFromBoxCount",
+            "ordinaryBallotCountFromBallotPaperAccount",
+            "tenderedBallotCountFromBallotPaperAccount",
             "issuedBallots",
             "receivedBallots"
         )
