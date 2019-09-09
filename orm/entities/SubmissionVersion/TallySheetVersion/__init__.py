@@ -29,6 +29,8 @@ class TallySheetVersionModel(db.Model):
         tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
         if tallySheet is None:
             raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+        elif tallySheet.tallySheetCode is not self.tallySheetVersionCode:
+            raise NotFoundException("Invalid tally sheet. (tallySheetId=%d)" % tallySheetId)
 
         submissionVersion = SubmissionVersion.create(submissionId=tallySheetId)
 
