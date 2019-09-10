@@ -1969,58 +1969,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /tally-sheet/PRE-41/{tallySheetId}/version/{tallySheetVersionId}:
-    get:
-      tags:
-        - tallySheetVersion
-      summary: Get tally sheet version by ID
-      operationId: api.TallySheetVersionApi.TallySheetVersionPRE41Api.get_by_id
-      parameters:
-        - name: tallySheetId
-          in: path
-          description: Tally sheet ID
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: tallySheetVersionId
-          in: path
-          description: Tally sheet ID
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TallySheet'
-        '400':
-          description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '404':
-          description: Resource was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '500':
-          description: Unexpected error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
 
   /tally-sheet/PRE-41/{tallySheetId}/version:
     post:
@@ -2106,13 +2054,12 @@ paths:
                         type: string
         description: Updated tally sheet object.
         required: true
-
-  /tally-sheet/PRE-21/{tallySheetId}/version/{tallySheetVersionId}:
+  /tally-sheet/PRE-41/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
         - tallySheetVersion
       summary: Get tally sheet version by ID
-      operationId: api.TallySheetVersionApi.TallySheetVersionPRE21Api.get_by_id
+      operationId: api.TallySheetVersionApi.TallySheetVersionPRE41Api.get_by_id
       parameters:
         - name: tallySheetId
           in: path
@@ -2159,6 +2106,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
 
   /tally-sheet/PRE-21/{tallySheetId}/version:
     post:
@@ -2242,17 +2190,12 @@ paths:
                         format: int64
         description: Updated tally sheet object.
         required: true
-
-
-
-
-
-  /tally-sheet/CE-201/{tallySheetId}/version/{tallySheetVersionId}:
+  /tally-sheet/PRE-21/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
         - tallySheetVersion
       summary: Get tally sheet version by ID
-      operationId: api.TallySheetVersionApi.TallySheetVersionCE201Api.get_by_id
+      operationId: api.TallySheetVersionApi.TallySheetVersionPRE21Api.get_by_id
       parameters:
         - name: tallySheetId
           in: path
@@ -2274,50 +2217,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - content
-                properties:
-                  content:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        areaId:
-                          type: integer
-                          format: int64
-                        ballotBoxesIssued:
-                          type: array
-                          items:
-                            type: string
-                        ballotBoxesReceived:
-                          type: array
-                          items:
-                            type: string
-                        ballotsIssued:
-                          type: integer
-                          format: int64
-                        ballotsReceived:
-                          type: integer
-                          format: int64
-                        ballotsSpoilt:
-                          type: integer
-                          format: int64
-                        ballotsUnused:
-                          type: integer
-                          format: int64
-                        ordinaryBallotCountFromBoxCount:
-                          type: integer
-                          format: int64
-                        tenderedBallotCountFromBoxCount:
-                          type: integer
-                          format: int64
-                        ordinaryBallotCountFromBallotPaperAccount:
-                          type: integer
-                          format: int64
-                        tenderedBallotCountFromBallotPaperAccount:
-                          type: integer
-                          format: int64
+                $ref: '#/components/schemas/TallySheet'
         '400':
           description: Bad request.
           content:
@@ -2342,6 +2242,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
+
 
   /tally-sheet/CE-201/{tallySheetId}/version:
     post:
@@ -2442,6 +2344,79 @@ paths:
                 content:
                   type: array
                   items:
+                    type: object
+                    properties:
+                      areaId:
+                        type: integer
+                        format: int64
+                      ballotBoxesIssued:
+                        type: array
+                        items:
+                          type: string
+                      ballotBoxesReceived:
+                        type: array
+                        items:
+                          type: string
+                      ballotsIssued:
+                        type: integer
+                        format: int64
+                      ballotsReceived:
+                        type: integer
+                        format: int64
+                      ballotsSpoilt:
+                        type: integer
+                        format: int64
+                      ballotsUnused:
+                        type: integer
+                        format: int64
+                      ordinaryBallotCountFromBoxCount:
+                        type: integer
+                        format: int64
+                      tenderedBallotCountFromBoxCount:
+                        type: integer
+                        format: int64
+                      ordinaryBallotCountFromBallotPaperAccount:
+                        type: integer
+                        format: int64
+                      tenderedBallotCountFromBallotPaperAccount:
+                        type: integer
+                        format: int64
+        description: Updated tally sheet object.
+        required: true
+  /tally-sheet/CE-201/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - tallySheetVersion
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersionCE201Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - content
+                properties:
+                  content:
+                    type: array
+                    items:
                       type: object
                       properties:
                         areaId:
@@ -2479,8 +2454,31 @@ paths:
                         tenderedBallotCountFromBallotPaperAccount:
                           type: integer
                           format: int64
-        description: Updated tally sheet object.
-        required: true
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
 
   /tally-sheet/PRE-30-PD/{tallySheetId}/version:
     post:
@@ -2490,6 +2488,58 @@ paths:
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_PD_Api.create
       parameters:
         - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /tally-sheet/PRE-30-PD/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - tallySheetVersion
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_PD_Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
           in: path
           description: Tally sheet ID
           required: true
@@ -2574,6 +2624,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+  /tally-sheet/PRE-30-ED/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - tallySheetVersion
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_ED_Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
 
   /tally-sheet/PRE_ALL_ISLAND_RESULT/{tallySheetId}/version:
@@ -2584,6 +2686,58 @@ paths:
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULT_Api.create
       parameters:
         - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /tally-sheet/PRE_ALL_ISLAND_RESULT/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - tallySheetVersion
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULT_Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
           in: path
           description: Tally sheet ID
           required: true
@@ -2668,6 +2822,59 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+  /tally-sheet/PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - tallySheetVersion
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
 
   /tally-sheet/{tallySheetId}/version/{tallySheetVersionId}/html:
     get:
