@@ -26,22 +26,26 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
 
         tallySheetContent = self.content
 
+        print("############# heyyyyy")
+
         content = {
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
-            "electoralDistrict": Area.get_associated_areas(self.submission.area, AreaTypeEnum.ElectoralDistrict)[
-                0].areaName,
-            "countingCentre": Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "electoralDistrict": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "countingCentre": self.submission.area.areaName,
             "pollingDistrictNos": ", ".join([
                 pollingDistrict.areaName for pollingDistrict in
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
-            "countingHallNo": self.submission.area.areaName,
             "data": [
             ],
             "total": 0,
             "rejectedVotes": 0,
             "grandTotal": 0
         }
+
 
         for row_index in range(len(tallySheetContent)):
             row = tallySheetContent[row_index]
@@ -68,10 +72,12 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
         content["rejectedVotes"] = 0  # TODO
         content["grandTotal"] = content["total"] + content["rejectedVotes"]
 
+        print("############# Huuui ", content)
         html = render_template(
-            'pre-41.html',
+            'PRE-41.html',
             content=content
         )
+        print("############# html ", html)
 
         return html
 
