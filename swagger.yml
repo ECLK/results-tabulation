@@ -2678,7 +2678,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
 
-  /tally-sheet/PRE_ALL_ISLAND_RESULT/{tallySheetId}/version:
+  /tally-sheet/PRE_ALL_ISLAND_RESULTS/{tallySheetId}/version:
     post:
       tags:
         - tallySheetVersion
@@ -2723,7 +2723,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-  /tally-sheet/PRE_ALL_ISLAND_RESULT/{tallySheetId}/version/{tallySheetVersionId}:
+  /tally-sheet/PRE_ALL_ISLAND_RESULTS/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
         - tallySheetVersion

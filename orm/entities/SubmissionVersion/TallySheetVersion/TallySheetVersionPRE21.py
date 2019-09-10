@@ -1,16 +1,17 @@
+from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app import db
 from exception import NotFoundException
-from orm.entities import Candidate, Party
+from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_21
-from util import get_paginated_query
+from util import get_paginated_query, to_empty_string_or_value
 
 from orm.entities.Submission import TallySheet
-from orm.enums import TallySheetCodeEnum
+from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
 
 
@@ -50,6 +51,38 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
         ).filter(
             InvalidVoteCategory.Model.electionId == self.submission.electionId
         )
+
+    def html(self):
+        tallySheetContent = self.content.all()
+
+        content = {
+            "electoralDistrict": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "countingCentre": self.submission.area.areaName,
+            "pollingDistrictNos": ", ".join([
+                pollingDistrict.areaName for pollingDistrict in
+                Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
+            ]),
+            "data": [
+            ]
+        }
+
+        for row_index in range(len(tallySheetContent)):
+            row = tallySheetContent[row_index]
+            data_row = []
+            content["data"].append(data_row)
+
+            data_row.append(row.categoryDescription)
+            data_row.append(to_empty_string_or_value(row.count))
+
+        html = render_template(
+            'PRE-21.html',
+            content=content
+        )
+
+        return html
 
 
 Model = TallySheetVersionPRE21Model
