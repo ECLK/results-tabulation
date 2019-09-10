@@ -338,7 +338,8 @@ class TallySheetVersionSchema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
-            "content"
+            "htmlUrl",
+            "contentUrl"
         )
 
         model = TallySheetVersion.Model
@@ -356,6 +357,7 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
+            "htmlUrl",
             "content"
         )
 
@@ -375,6 +377,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
+            "htmlUrl",
             "content"
         )
 
@@ -394,6 +397,7 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
+            "htmlUrl",
             "content"
         )
 
@@ -413,6 +417,7 @@ class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
+            "htmlUrl",
             "content"
         )
 
@@ -432,6 +437,7 @@ class TallySheetVersionPRE21Schema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
+            "htmlUrl",
             "content"
         )
 
@@ -451,6 +457,7 @@ class TallySheetVersionCE201Schema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
+            "htmlUrl",
             "content"
         )
 
