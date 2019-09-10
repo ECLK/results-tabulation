@@ -60,8 +60,7 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
             "pollingDivision": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
-            "countingCentre": Area.get_associated_areas(
-                self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "countingCentre": self.submission.area.areaName,
             "pollingDistrictNos": ", ".join([
                 pollingDistrict.areaName for pollingDistrict in
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
