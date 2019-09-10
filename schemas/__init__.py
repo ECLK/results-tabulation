@@ -148,7 +148,8 @@ class TallySheetVersionRow_PRE_21_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "count",
-            "invalidVoteCategoryId"
+            "invalidVoteCategoryId",
+            "categoryDescription"
         )
 
         model = TallySheetVersionRow_PRE_21.Model
