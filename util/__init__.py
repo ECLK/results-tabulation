@@ -38,28 +38,45 @@ def get_array(array_or_value):
         return array_or_value
 
 
-def get_ballot_type(ballotTypeStr):
-    if ballotTypeStr == "Ordinary":
+def get_ballot_type(ballot_type_str):
+    if ballot_type_str == "Ordinary":
         return BallotTypeEnum.Ordinary
-    elif ballotTypeStr == "Tendered":
+    elif ballot_type_str == "Tendered":
         return BallotTypeEnum.Tendered
 
 
-def get_tally_sheet_code(tallySheetCodeStr):
-    if tallySheetCodeStr == "CE-201":
+def get_tally_sheet_code(tally_sheet_code_str):
+    if tally_sheet_code_str == "CE-201":
         return TallySheetCodeEnum.CE_201
-    elif tallySheetCodeStr == "PRE-41":
+    elif tally_sheet_code_str == "PRE-41":
         return TallySheetCodeEnum.PRE_41
-    elif tallySheetCodeStr == "PRE-21":
+    elif tally_sheet_code_str == "PRE-21":
         return TallySheetCodeEnum.PRE_21
-    elif tallySheetCodeStr == "PRE-30-PD":
+    elif tally_sheet_code_str == "PRE-30-PD":
         return TallySheetCodeEnum.PRE_30_PD
-    elif tallySheetCodeStr == "PRE-30-ED":
+    elif tally_sheet_code_str == "PRE-30-ED":
         return TallySheetCodeEnum.PRE_30_ED
-    elif tallySheetCodeStr == "PRE_ALL_ISLAND_RESULTS":
+    elif tally_sheet_code_str == "PRE_ALL_ISLAND_RESULTS":
         return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS
-    elif tallySheetCodeStr == "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS":
+    elif tally_sheet_code_str == "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS":
         return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+
+
+def get_tally_sheet_code_string(tally_sheet_code):
+    if tally_sheet_code is TallySheetCodeEnum.CE_201:
+        return "CE-201"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_41:
+        return "PRE-41"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_21:
+        return "PRE-21"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_30_PD:
+        return "PRE-30-PD"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_30_ED:
+        return "PRE-30-ED"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS:
+        return "PRE_ALL_ISLAND_RESULTS"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS:
+        return "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS"
 
 
 def to_empty_string_or_value(value):
