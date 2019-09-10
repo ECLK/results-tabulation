@@ -12,8 +12,6 @@ def get_by_id(tallySheetId, tallySheetVersionId):
         tallySheetVersionId=tallySheetVersionId
     )
 
-    print("\n\n\n ####### result ##### ", result)
-
     return TallySheetVersionPRE21Schema().dump(result).data
 
 
