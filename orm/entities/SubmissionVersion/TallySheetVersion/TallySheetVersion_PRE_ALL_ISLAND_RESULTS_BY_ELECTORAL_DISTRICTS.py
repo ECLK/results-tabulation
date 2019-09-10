@@ -133,6 +133,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
 
             data_row.append(total_count_per_candidate)
 
+            # total_count_per_candidate in words
+            data_row.append("")
+
         content["validVotes"].append(sum(content["validVotes"]))
         content["rejectedVotes"].append(sum(content["rejectedVotes"]))
         content["totalVotes"].append(sum(content["totalVotes"]))

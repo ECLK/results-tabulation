@@ -2,10 +2,19 @@ from app import db
 from orm.entities import Submission, SubmissionVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED
 from orm.enums import AreaTypeEnum
-from schemas import TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema
+from schemas import TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema, TallySheetVersionSchema
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersion_PRE_ALL_ISLAND_RESULT, \
     TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
 from sqlalchemy import func
+
+
+def get_by_id(tallySheetId, tallySheetVersionId):
+    result = TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema.get_by_id(
+        tallySheetId=tallySheetId,
+        tallySheetVersionId=tallySheetVersionId
+    )
+
+    return TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema().dump(result).data
 
 
 def create(tallySheetId):
@@ -45,4 +54,4 @@ def create(tallySheetId):
 
     db.session.commit()
 
-    return TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema().dump(tallySheetVersion).data
+    return TallySheetVersionSchema().dump(tallySheetVersion).data

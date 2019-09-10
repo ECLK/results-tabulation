@@ -1,15 +1,17 @@
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from app import db
 from sqlalchemy.orm import relationship
 
 from orm.enums import TallySheetCodeEnum
-from util import get_paginated_query
+from util import get_paginated_query, get_tally_sheet_code_string
 
 from orm.entities import SubmissionVersion
 from orm.entities.Submission import TallySheet
 
 from exception import NotFoundException
+from flask import request
 
 
 class TallySheetVersionModel(db.Model):
@@ -24,6 +26,19 @@ class TallySheetVersionModel(db.Model):
     tallySheetId = association_proxy("submissionVersion", "submissionId")
     createdBy = association_proxy("submissionVersion", "createdBy")
     createdAt = association_proxy("submissionVersion", "createdAt")
+
+    @hybrid_property
+    def htmlUrl(self):
+        return "%stally-sheet/%d/version/%d/html" % (request.host_url, self.tallySheetId, self.tallySheetVersionId)
+
+    @hybrid_property
+    def contentUrl(self):
+        return "%stally-sheet/%s/%d/version/%d" % (
+            request.host_url,
+            get_tally_sheet_code_string(tally_sheet_code=self.tallySheetVersionCode),
+            self.tallySheetId,
+            self.tallySheetVersionId
+        )
 
     def __init__(self, tallySheetId):
         tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
