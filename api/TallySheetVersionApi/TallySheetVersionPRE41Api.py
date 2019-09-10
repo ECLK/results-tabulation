@@ -1,6 +1,6 @@
 from app import db
 from util import RequestBody
-from schemas import TallySheetVersionPRE41Schema
+from schemas import TallySheetVersionPRE41Schema, TallySheetVersionSchema
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 from exception import NotFoundException
@@ -11,8 +11,6 @@ def get_by_id(tallySheetId, tallySheetVersionId):
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     )
-
-    print("\n\n\n ####### result ##### ", result)
 
     return TallySheetVersionPRE41Schema().dump(result).data
 
@@ -47,4 +45,4 @@ def create(tallySheetId, body):
 
     db.session.commit()
 
-    return TallySheetVersionPRE41Schema().dump(tallySheetVersion).data
+    return TallySheetVersionSchema().dump(tallySheetVersion).data
