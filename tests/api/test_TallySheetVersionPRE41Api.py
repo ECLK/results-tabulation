@@ -2,6 +2,7 @@ import random
 
 from flask import Response
 
+from app import db
 from orm.entities.Submission.TallySheet import TallySheetModel
 from util import get_tally_sheet_code
 
@@ -35,25 +36,18 @@ class TestTallySheetVersionPRE41Api:
         random_tally_sheet: TallySheetModel = self.tally_sheets[random.randint(0, len(self.tally_sheets))]
         tally_sheet_id = random_tally_sheet.tallySheetId
 
-        # create tally sheet and query for the same
         candidate_id = 2
         count = 200
         count_in_words = "Two hundred"
 
-        payload = {
-            "content": [
-                {
-                    "candidateId": candidate_id,
-                    "count": count,
-                    "countInWords": count_in_words
-                }
-            ]
-        }
+        from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
 
-        response: Response = test_client.post(f"/tally-sheet/PRE-41/{tally_sheet_id}/version", json=payload)
-        tally_sheet_version_id = response.get_json().get('tallySheetVersionId')
+        tally_sheet_version = TallySheetVersionPRE41.create(tallySheetId=tally_sheet_id)
+        tally_sheet_version.add_row(candidateId=candidate_id, count=count, countInWords=count_in_words)
+        db.session.commit()
 
-        response: Response = test_client.get(f"/tally-sheet/PRE-41/{tally_sheet_id}/version/{tally_sheet_version_id}")
+        response: Response = test_client.get(
+            f"/tally-sheet/PRE-41/{tally_sheet_id}/version/{tally_sheet_version.tallySheetVersionId}")
         assert response.status_code == 200
         json_response = response.get_json()
         assert len(json_response) > 0
