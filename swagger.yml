@@ -1675,6 +1675,89 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+
+  /area:
+    get:
+      tags:
+        - Office
+      summary: Get by ID
+      operationId: api.AreaApi.get_all
+      parameters:
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: associatedAreaId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: areaType
+          required: false
+          in: query
+          schema:
+            type: string
+            enum:
+              - ElectionCommission
+              - DistrictCentre
+              - CountingCentre
+              - PollingStation
+              - Country
+              - Province
+              - AdministrativeDistrict
+              - ElectoralDistrict
+              - PollingDivision
+              - PollingDistrict
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /office:
     get:
       tags:

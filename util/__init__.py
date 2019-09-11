@@ -1,6 +1,6 @@
 import connexion
 
-from orm.enums import TallySheetCodeEnum, BallotTypeEnum
+from orm.enums import TallySheetCodeEnum, BallotTypeEnum, AreaTypeEnum
 
 
 class RequestBody:
@@ -77,6 +77,27 @@ def get_tally_sheet_code_string(tally_sheet_code):
         return "PRE_ALL_ISLAND_RESULTS"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS:
         return "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS"
+
+
+def get_area_type(area_type):
+    if area_type == "Country":
+        return AreaTypeEnum.Country
+    elif area_type == "ElectoralDistrict":
+        return AreaTypeEnum.ElectoralDistrict
+    elif area_type == "PollingDivision":
+        return AreaTypeEnum.PollingDivision
+    elif area_type == "PollingDistrict":
+        return AreaTypeEnum.PollingDistrict
+    elif area_type == "PollingStation":
+        return AreaTypeEnum.PollingStation
+    elif area_type == "CountingCentre":
+        return AreaTypeEnum.CountingCentre
+    elif area_type == "DistrictCentre":
+        return AreaTypeEnum.DistrictCentre
+    elif area_type == "ElectionCommission":
+        return AreaTypeEnum.ElectionCommission
+    elif area_type == "AdministrativeDistrict":
+        return AreaTypeEnum.AdministrativeDistrict
 
 
 def to_empty_string_or_value(value):
