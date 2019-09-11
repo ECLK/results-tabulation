@@ -16,3 +16,4 @@ class AreaTypeEnum(enum.Enum):
 
     Electorate = 11
     Office = 12
+    PostalVoteCountingCentre = 13
