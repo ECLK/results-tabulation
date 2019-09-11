@@ -1,11 +1,13 @@
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from app import db
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, aliased
+from sqlalchemy import and_
+
 from orm.enums import AreaTypeEnum, AreaCategoryEnum
 from orm.entities import Election
 from sqlalchemy.ext.hybrid import hybrid_property
-from util import get_paginated_query, get_array
+from util import get_paginated_query, get_array, get_area_type
 
 
 class AreaModel(db.Model):
@@ -106,62 +108,222 @@ class AreaAreaModel(db.Model):
 Model = AreaModel
 
 
+def get_presidential_area_map_query():
+    election_commission_mapping = aliased(AreaAreaModel)
+    district_centre_mapping = aliased(AreaAreaModel)
+    counting_centre_mapping = aliased(AreaAreaModel)
+    # polling_station_mapping = aliased(AreaAreaModel)
+    polling_district_mapping = aliased(AreaAreaModel)
+    polling_division_mapping = aliased(AreaAreaModel)
+    electoral_district_mapping = aliased(AreaAreaModel)
+    country_mapping = aliased(AreaAreaModel)
+
+    election_commission = aliased(AreaModel)
+    district_centre = aliased(AreaModel)
+    counting_centre = aliased(AreaModel)
+    polling_station = aliased(AreaModel)
+    polling_district = aliased(AreaModel)
+    polling_division = aliased(AreaModel)
+    electoral_district = aliased(AreaModel)
+    country = aliased(AreaModel)
+
+    presidential_area_map_query = db.session.query(
+        polling_station.areaId.label("pollingStationId"),
+        counting_centre.areaId.label("countingCentreId"),
+        district_centre.areaId.label("districtCentreId"),
+        election_commission.areaId.label("electionCommissionId"),
+        polling_district.areaId.label("pollingDistrictId"),
+        polling_division.areaId.label("pollingDivisionId"),
+        electoral_district.areaId.label("electoralDistrictId"),
+        country.areaId.label("countryId")
+    ).join(
+        counting_centre_mapping,
+        counting_centre_mapping.childAreaId == polling_station.areaId
+    ).join(
+        counting_centre,
+        and_(
+            counting_centre.areaId == counting_centre_mapping.parentAreaId,
+            counting_centre.areaType == AreaTypeEnum.CountingCentre
+        )
+    ).join(
+        district_centre_mapping,
+        district_centre_mapping.childAreaId == counting_centre.areaId
+    ).join(
+        district_centre,
+        and_(
+            district_centre.areaId == district_centre_mapping.parentAreaId,
+            district_centre.areaType == AreaTypeEnum.DistrictCentre
+        )
+    ).join(
+        election_commission_mapping,
+        election_commission_mapping.childAreaId == district_centre.areaId
+    ).join(
+        election_commission,
+        and_(
+            election_commission.areaId == election_commission_mapping.parentAreaId,
+            election_commission.areaType == AreaTypeEnum.ElectionCommission
+        )
+    ).join(
+        polling_district_mapping,
+        polling_district_mapping.childAreaId == polling_station.areaId
+    ).join(
+        polling_district,
+        and_(
+            polling_district.areaId == polling_district_mapping.parentAreaId,
+            polling_district.areaType == AreaTypeEnum.PollingDistrict
+        )
+    ).join(
+        polling_division_mapping,
+        polling_division_mapping.childAreaId == polling_district.areaId
+    ).join(
+        polling_division,
+        and_(
+            polling_division.areaId == polling_division_mapping.parentAreaId,
+            polling_division.areaType == AreaTypeEnum.PollingDivision
+        )
+    ).join(
+        electoral_district_mapping,
+        electoral_district_mapping.childAreaId == polling_division.areaId
+    ).join(
+        electoral_district,
+        and_(
+            electoral_district.areaId == electoral_district_mapping.parentAreaId,
+            electoral_district.areaType == AreaTypeEnum.ElectoralDistrict
+        )
+    ).join(
+        country_mapping,
+        country_mapping.childAreaId == electoral_district.areaId
+    ).join(
+        country,
+        and_(
+            country.areaId == country_mapping.parentAreaId,
+            country.areaType == AreaTypeEnum.Country
+        )
+    )
+
+    return presidential_area_map_query
+
+
+def get_associated_areas_query(area, areaType):
+    presidential_area_map_sub_query = get_presidential_area_map_query().subquery()
+
+    query = db.session.query(
+        AreaModel
+    )
+
+    if areaType is AreaTypeEnum.PollingStation:
+        query = query.join(
+            presidential_area_map_sub_query,
+            presidential_area_map_sub_query.c.pollingStationId == AreaModel.areaId
+        )
+    elif areaType is AreaTypeEnum.CountingCentre:
+        query = query.join(
+            presidential_area_map_sub_query,
+            presidential_area_map_sub_query.c.countingCentreId == AreaModel.areaId
+        )
+    elif areaType is AreaTypeEnum.DistrictCentre:
+        query = query.join(
+            presidential_area_map_sub_query,
+            presidential_area_map_sub_query.c.districtCentreId == AreaModel.areaId
+        )
+    elif areaType is AreaTypeEnum.ElectionCommission:
+        query = query.join(
+            presidential_area_map_sub_query,
+            presidential_area_map_sub_query.c.electionCommissionId == AreaModel.areaId
+        )
+    elif areaType is AreaTypeEnum.PollingDistrict:
+        query = query.join(
+            presidential_area_map_sub_query,
+            presidential_area_map_sub_query.c.pollingDistrictId == AreaModel.areaId
+        )
+    elif areaType is AreaTypeEnum.PollingDivision:
+        query = query.join(
+            presidential_area_map_sub_query,
+            presidential_area_map_sub_query.c.pollingDivisionId == AreaModel.areaId
+        )
+    elif areaType is AreaTypeEnum.ElectoralDistrict:
+        query = query.join(
+            presidential_area_map_sub_query,
+            presidential_area_map_sub_query.c.electoralDistrictId == AreaModel.areaId
+        )
+    elif areaType is AreaTypeEnum.Country:
+        query = query.join(
+            presidential_area_map_sub_query,
+            presidential_area_map_sub_query.c.countryId == AreaModel.areaId
+        )
+
+    query = query.group_by(AreaModel.areaId)
+
+    if area.areaType is AreaTypeEnum.PollingStation:
+        query = query.filter(
+            presidential_area_map_sub_query.c.pollingStationId == area.areaId
+        )
+    elif area.areaType is AreaTypeEnum.CountingCentre:
+        query = query.filter(
+            presidential_area_map_sub_query.c.countingCentreId == area.areaId
+        )
+    elif area.areaType is AreaTypeEnum.DistrictCentre:
+        query = query.filter(
+            presidential_area_map_sub_query.c.districtCentreId == area.areaId
+        )
+    elif area.areaType is AreaTypeEnum.ElectionCommission:
+        query = query.filter(
+            presidential_area_map_sub_query.c.electionCommissionId == area.areaId
+        )
+    elif area.areaType is AreaTypeEnum.PollingDistrict:
+        query = query.filter(
+            presidential_area_map_sub_query.c.pollingDistrictId == area.areaId
+        )
+    elif area.areaType is AreaTypeEnum.PollingDivision:
+        query = query.filter(
+            presidential_area_map_sub_query.c.pollingDivisionId == area.areaId
+        )
+    elif area.areaType is AreaTypeEnum.ElectoralDistrict:
+        query = query.filter(
+            presidential_area_map_sub_query.c.electoralDistrictId == area.areaId
+        )
+    elif area.areaType is AreaTypeEnum.Country:
+        query = query.filter(
+            presidential_area_map_sub_query.c.countryId == area.areaId
+        )
+
+    return query
+
+
 def get_associated_areas(area, areaType):
-    return get_child_areas(area, areaType, []) + get_parent_areas(area, areaType, [])
-
-
-def get_child_areas(area, areaType, visitedAreas=[]):
-    result = []
-
-    if area.areaId not in visitedAreas:
-        if len(visitedAreas) > 0 and area.areaType is areaType:
-            # Avoid the source area being the result
-            visitedAreas.append(area.areaId)
-            result.append(area)
-            return result
-        elif len(visitedAreas) > 0 and area.areaType is AreaTypeEnum.PollingStation:
-            # Redirecting to parents since polling stations has not children because it
-            # an entity between electorates and other offices.
-            result = get_parent_areas(area, areaType, visitedAreas)
-            return result
-        else:
-            visitedAreas.append(area.areaId)
-            for child in area.children:
-                result = result + get_child_areas(child, areaType, visitedAreas=visitedAreas)
+    result = get_associated_areas_query(area=area, areaType=areaType).all()
 
     return result
 
 
-def get_parent_areas(area, areaType, visitedAreas=[]):
-    result = []
-
-    if area.areaId not in visitedAreas:
-        if len(visitedAreas) > 0 and area.areaType is areaType:
-            # Avoid the source area being the result
-            visitedAreas.append(area.areaId)
-            result.append(area)
-            return result
-        else:
-            visitedAreas.append(area.areaId)
-            for parent in area.parents:
-                result = result + get_parent_areas(parent, areaType, visitedAreas=visitedAreas)
-
-    return result
-
-
-def create(areaName, areaType, electionId):
+def create(areaName, electionId):
     area = Model(
         areaName=areaName,
-        areaType=areaType,
         electionId=electionId
     )
 
     return area
 
 
-def get_all():
-    query = Model.query
-    result = query.all()
+def get_all(election_id=None, area_name=None, associated_area_id=None, area_type=None):
+    if associated_area_id is not None and area_type is not None:
+        associated_area = get_by_id(areaId=associated_area_id)
+        query = get_associated_areas_query(area=associated_area, areaType=area_type)
+    else:
+        query = Model.query
+
+    if area_name is not None:
+        query = query.filter(Model.areaName.like(area_name))
+
+    if election_id is not None:
+        query = query.filter(Model.electionId == election_id)
+
+    if area_type is not None:
+        query = query.filter(Model.areaType == area_type)
+
+    query = query.order_by(Model.areaId)
+
+    result = get_paginated_query(query).all()
 
     return result
 
