@@ -1718,6 +1718,7 @@ paths:
               - ElectionCommission
               - DistrictCentre
               - CountingCentre
+              - PostalVoteCountingCentre
               - PollingStation
               - Country
               - Province
@@ -1805,6 +1806,7 @@ paths:
               - ElectionCommission
               - DistrictCentre
               - CountingCentre
+              - PostalVoteCountingCentre
               - PollingStation
 
       responses:

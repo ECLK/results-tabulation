@@ -92,6 +92,8 @@ def get_area_type(area_type):
         return AreaTypeEnum.PollingStation
     elif area_type == "CountingCentre":
         return AreaTypeEnum.CountingCentre
+    elif area_type == "PostalVoteCountingCentre":
+        return AreaTypeEnum.PostalVoteCountingCentre
     elif area_type == "DistrictCentre":
         return AreaTypeEnum.DistrictCentre
     elif area_type == "ElectionCommission":
