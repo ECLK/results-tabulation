@@ -31,6 +31,9 @@ class TestTallySheetVersionPRE41Api:
 
         response: Response = test_client.post(f"/tally-sheet/PRE-41/{tally_sheet_id}/version", json=payload)
         assert response.status_code == 200
+        json_response = response.get_json()
+        for key in ["contentUrl", "createdAt", "createdBy", "htmlUrl", "tallySheetId", "tallySheetVersionId"]:
+            assert key in json_response.keys()
 
     def test_get_by_id(self, test_client):
         random_tally_sheet: TallySheetModel = self.tally_sheets[random.randint(0, len(self.tally_sheets))]
@@ -52,5 +55,6 @@ class TestTallySheetVersionPRE41Api:
         json_response = response.get_json()
         assert len(json_response) > 0
         match_element = [x for x in json_response.get('content') if x.get('candidateId') == candidate_id][0]
+        assert match_element.get("candidateId") == candidate_id
         assert match_element.get("count") == count
         assert match_element.get("countInWords") == count_in_words
