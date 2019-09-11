@@ -20,27 +20,28 @@ class StationaryItemModel(db.Model):
 
     @hybrid_property
     def available(self):
-        locked_invoices = db.session.query(
-            Invoice.Model.invoiceId
-        ).join(
-            InvoiceStationaryItem.Model,
-            and_(
-                InvoiceStationaryItem.Model.invoiceId == Invoice.Model.invoiceId
-            )
-        ).filter(
-            InvoiceStationaryItem.Model.stationaryItemId == self.stationaryItemId,
-            Invoice.Model.delete == False
-        ).group_by(
-            Invoice.Model.invoiceId
-        ).all()
-
-        return len(locked_invoices) == 0
+        return False
+        # locked_invoices = db.session.query(
+        #     Invoice.Model.invoiceId
+        # ).join(
+        #     InvoiceStationaryItem.Model,
+        #     and_(
+        #         InvoiceStationaryItem.Model.invoiceId == Invoice.Model.invoiceId
+        #     )
+        # ).filter(
+        #     InvoiceStationaryItem.Model.stationaryItemId == self.stationaryItemId,
+        #     Invoice.Model.delete == False
+        # ).group_by(
+        #     Invoice.Model.invoiceId
+        # ).all()
+        #
+        # return len(locked_invoices) == 0
 
 
 Model = StationaryItemModel
 
 
-def get_all():
+def get_all(areaId=None):
     result = Model.query.all()
 
     return result
@@ -66,6 +67,8 @@ def get_by_id(stationaryItemId):
 
 
 def is_locked(stationaryItemId):
+    return False
+
     entry = get_by_id(stationaryItemId)
 
     if entry is None:
