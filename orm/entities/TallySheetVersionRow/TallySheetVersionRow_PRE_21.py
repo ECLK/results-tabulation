@@ -20,7 +20,7 @@ class TallySheetVersionRow_PRE_21_Model(db.Model):
     tallySheetVersion = relationship(TallySheetVersion.Model, foreign_keys=[tallySheetVersionId])
 
     __table_args__ = (
-        db.UniqueConstraint('tallySheetVersionId'),
+        db.UniqueConstraint('tallySheetVersionId', 'invalidVoteCategoryId', name='PRE_21_row'),
     )
 
     def __init__(self, tallySheetVersionId, count, invalidVoteCategoryId):
