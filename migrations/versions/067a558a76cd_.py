@@ -218,8 +218,8 @@ def upgrade():
     )
     op.create_table('tallySheetVersionRow_CE_201',
     sa.Column('tallySheetVersionRowId', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('tallySheetVersionId', sa.Integer(), nullable=True),
-    sa.Column('areaId', sa.Integer(), nullable=True),
+    sa.Column('tallySheetVersionId', sa.Integer(), nullable=False),
+    sa.Column('areaId', sa.Integer(), nullable=False),
     sa.Column('ballotsIssued', sa.Integer(), nullable=False),
     sa.Column('ballotsReceived', sa.Integer(), nullable=False),
     sa.Column('ballotsSpoilt', sa.Integer(), nullable=False),
