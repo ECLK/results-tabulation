@@ -8,15 +8,16 @@ from util import get_tally_sheet_code
 
 
 class TestTallySheetVersionPRE41Api:
+    tally_sheet_code = "PRE-41"
     tally_sheets = []
 
     @classmethod
     def setup_class(cls):
         cls.tally_sheets = TallySheetModel.query.filter(
-            TallySheetModel.tallySheetCode == get_tally_sheet_code("PRE-41")).all()
+            TallySheetModel.tallySheetCode == get_tally_sheet_code(f"{cls.tally_sheet_code}")).all()
 
     def test_create(self, test_client):
-        random_tally_sheet: TallySheetModel = self.tally_sheets[random.randint(0, len(self.tally_sheets))]
+        random_tally_sheet: TallySheetModel = random.choice(self.tally_sheets)
         tally_sheet_id = random_tally_sheet.tallySheetId
 
         payload = {
@@ -29,14 +30,15 @@ class TestTallySheetVersionPRE41Api:
             ]
         }
 
-        response: Response = test_client.post(f"/tally-sheet/PRE-41/{tally_sheet_id}/version", json=payload)
+        response: Response = test_client.post(f"/tally-sheet/{self.tally_sheet_code}/{tally_sheet_id}/version",
+                                              json=payload)
         assert response.status_code == 200
         json_response = response.get_json()
         for key in ["contentUrl", "createdAt", "createdBy", "htmlUrl", "tallySheetId", "tallySheetVersionId"]:
             assert key in json_response.keys()
 
     def test_get_by_id(self, test_client):
-        random_tally_sheet: TallySheetModel = self.tally_sheets[random.randint(0, len(self.tally_sheets))]
+        random_tally_sheet: TallySheetModel = random.choice(self.tally_sheets)
         tally_sheet_id = random_tally_sheet.tallySheetId
 
         candidate_id = 2
@@ -50,7 +52,7 @@ class TestTallySheetVersionPRE41Api:
         db.session.commit()
 
         response: Response = test_client.get(
-            f"/tally-sheet/PRE-41/{tally_sheet_id}/version/{tally_sheet_version.tallySheetVersionId}")
+            f"/tally-sheet/{self.tally_sheet_code}/{tally_sheet_id}/version/{tally_sheet_version.tallySheetVersionId}")
         assert response.status_code == 200
         json_response = response.get_json()
         assert len(json_response) > 0
