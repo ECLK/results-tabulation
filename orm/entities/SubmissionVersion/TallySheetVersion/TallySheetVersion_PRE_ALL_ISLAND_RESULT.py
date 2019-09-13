@@ -67,31 +67,31 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
         content = {
             "data": [
             ],
-            "total": 0,
-            "rejectedVotes": 0,
-            "grandTotal": 0
+            "total": [0, 23],
+            "rejectedVotes": [0, 0],
+            "grandTotal": [0, 0]
         }
 
         for row_index in range(len(tallySheetContent)):
             row = tallySheetContent[row_index]
             if row.count is not None:
                 content["data"].append([
-                    row_index + 1,
                     row.candidateName,
+                    "ABR",
                     row.count,
-                    ""
+                    "0%"
                 ])
-                content["total"] = content["total"] + row.count
+                content["total"][0] = content["total"][0] + row.count
             else:
                 content["data"].append([
-                    row_index + 1,
                     row.candidateName,
+                    "ABR",
                     "",
-                    ""
+                    "0%"
                 ])
 
-        content["rejectedVotes"] = 0  # TODO
-        content["grandTotal"] = content["total"] + content["rejectedVotes"]
+        content["rejectedVotes"][0] = 0  # TODO
+        content["grandTotal"][0] = content["total"][0] + content["rejectedVotes"][0]
 
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS.html',
