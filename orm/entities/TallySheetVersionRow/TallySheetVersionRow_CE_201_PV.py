@@ -12,22 +12,21 @@ class TallySheetVersionRow_CE_201_PV_Model(db.Model):
     __tablename__ = 'tallySheetVersionRow_CE_201_PV'
     tallySheetVersionRowId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(TallySheetVersion.Model.__table__.c.tallySheetVersionId))
+    ballotBoxStationaryItemId = db.Column(db.Integer, nullable=False)
+    numberOfPacketsInserted = db.Column(db.Integer, nullable=False)
+    numberOfAPacketsFound = db.Column(db.Integer, nullable=False)
 
     tallySheetVersion = relationship(TallySheetVersion.Model, foreign_keys=[tallySheetVersionId])
 
     __table_args__ = (
-        db.UniqueConstraint('tallySheetVersionId'),
+        db.UniqueConstraint('tallySheetVersionId', 'ballotBoxStationaryItemId', name='BallotBoxPerCE201PV'),
     )
 
-    serialNumber = db.Column(db.Integer, nullable=False)
-    numberOfBPacketsInserted = db.Column(db.Integer, nullable=False)
-    numberOfAPacketsFound = db.Column(db.Integer, nullable=False)
-
-    def __init__(self, tallySheetVersionId, serialNumber, numberOfBPacketsInserted, numberOfAPacketsFound):
+    def __init__(self, tallySheetVersionId, ballotBoxStationaryItemId, numberOfPacketsInserted, numberOfAPacketsFound):
         super(TallySheetVersionRow_CE_201_PV_Model, self).__init__(
             tallySheetVersionId=tallySheetVersionId,
-            serialNumber=serialNumber,
-            numberOfBPacketsInserted=numberOfBPacketsInserted,
+            ballotBoxStationaryItemId=ballotBoxStationaryItemId,
+            numberOfPacketsInserted=numberOfPacketsInserted,
             numberOfAPacketsFound=numberOfAPacketsFound
         )
         db.session.add(self)
@@ -37,11 +36,11 @@ class TallySheetVersionRow_CE_201_PV_Model(db.Model):
 Model = TallySheetVersionRow_CE_201_PV_Model
 
 
-def create(tallySheetVersionId, serialNumber, numberOfBPacketsInserted, numberOfAPacketsFound):
+def create(tallySheetVersionId, ballotBoxStationaryItemId, numberOfPacketsInserted, numberOfAPacketsFound):
     result = Model(
         tallySheetVersionId=tallySheetVersionId,
-        serialNumber=serialNumber,
-        numberOfBPacketsInserted=numberOfBPacketsInserted,
+        ballotBoxStationaryItemId=ballotBoxStationaryItemId,
+        numberOfPacketsInserted=numberOfPacketsInserted,
         numberOfAPacketsFound=numberOfAPacketsFound
     )
 

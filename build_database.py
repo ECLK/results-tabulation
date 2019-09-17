@@ -131,7 +131,7 @@ def get_object(row, row_key, data_key=None):
             )
 
             TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, officeId=obj.areaId
+                tallySheetCode=TallySheetCodeEnum.CE_201_PV, electionId=election.electionId, officeId=obj.areaId
             )
 
         elif data_store_key == "Polling Station":

@@ -7,7 +7,7 @@ from exception import NotFoundException
 from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201_PV_CC
 from util import get_paginated_query, to_empty_string_or_value
 
 from orm.entities.Submission import TallySheet
@@ -26,32 +26,43 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
         'polymorphic_identity': TallySheetCodeEnum.CE_201_PV
     }
 
-    def add_row(self, serialNumber, numberOfBPacketsInserted, numberOfAPacketsFound):
-        from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV
-
-        TallySheetVersionRow_CE_201_PV.create(
+    def add_summary(self, situation, timeOfCommencementOfCount, numberOfAPacketsFound, numberOfACoversRejected,
+                    numberOfBCoversRejected, numberOfValidBallotPapers):
+        return TallySheetVersionRow_CE_201_PV_CC.create(
             tallySheetVersionId=self.tallySheetVersionId,
-            serialNumber=serialNumber,
-            numberOfBPacketsInserted=numberOfBPacketsInserted,
+            countingCentreId=self.submission.area.areaId,
+            situation=situation,
+            timeOfCommencementOfCount=timeOfCommencementOfCount,
+            numberOfAPacketsFound=numberOfAPacketsFound,
+            numberOfACoversRejected=numberOfACoversRejected,
+            numberOfBCoversRejected=numberOfBCoversRejected,
+            numberOfValidBallotPapers=numberOfValidBallotPapers
+        )
+
+    def add_row(self, ballotBoxStationaryItemId, numberOfPacketsInserted, numberOfAPacketsFound):
+        return TallySheetVersionRow_CE_201_PV.create(
+            tallySheetVersionId=self.tallySheetVersionId,
+            ballotBoxStationaryItemId=ballotBoxStationaryItemId,
+            numberOfPacketsInserted=numberOfPacketsInserted,
             numberOfAPacketsFound=numberOfAPacketsFound
         )
 
     @hybrid_property
     def content(self):
+        #return []
         return db.session.query(
-            InvalidVoteCategory.Model.invalidVoteCategoryId,
-            InvalidVoteCategory.Model.categoryDescription,
-            TallySheetVersionRow_CE_201_PV.Model.count
-        ).join(
-            TallySheetVersionRow_CE_201_PV.Model,
-            and_(
-                TallySheetVersionRow_CE_201_PV.Model.invalidVoteCategoryId == InvalidVoteCategory.Model.invalidVoteCategoryId,
-                TallySheetVersionRow_CE_201_PV.Model.tallySheetVersionId == self.tallySheetVersionId
-            ),
-            isouter=True
+            TallySheetVersionRow_CE_201_PV.Model
         ).filter(
-            InvalidVoteCategory.Model.electionId == self.submission.electionId
+            TallySheetVersionRow_CE_201_PV.Model.tallySheetVersionId == self.tallySheetVersionId
         )
+
+    @hybrid_property
+    def summary(self):
+        return db.session.query(
+            TallySheetVersionRow_CE_201_PV_CC.Model
+        ).filter(
+            TallySheetVersionRow_CE_201_PV_CC.Model.tallySheetVersionId == self.tallySheetVersionId
+        ).one_or_none()
 
     def html(self):
         tallySheetContent = self.content.all()
