@@ -48,6 +48,8 @@ def get_ballot_type(ballot_type_str):
 def get_tally_sheet_code(tally_sheet_code_str):
     if tally_sheet_code_str == "CE-201":
         return TallySheetCodeEnum.CE_201
+    elif tally_sheet_code_str == "CE-201-PV":
+        return TallySheetCodeEnum.CE_201_PV
     elif tally_sheet_code_str == "PRE-41":
         return TallySheetCodeEnum.PRE_41
     elif tally_sheet_code_str == "PRE-21":
@@ -65,6 +67,8 @@ def get_tally_sheet_code(tally_sheet_code_str):
 def get_tally_sheet_code_string(tally_sheet_code):
     if tally_sheet_code is TallySheetCodeEnum.CE_201:
         return "CE-201"
+    elif tally_sheet_code is TallySheetCodeEnum.CE_201_PV:
+        return "CE-201-PV"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_41:
         return "PRE-41"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_21:
@@ -92,6 +96,8 @@ def get_area_type(area_type):
         return AreaTypeEnum.PollingStation
     elif area_type == "CountingCentre":
         return AreaTypeEnum.CountingCentre
+    elif area_type == "PostalVoteCountingCentre":
+        return AreaTypeEnum.PostalVoteCountingCentre
     elif area_type == "DistrictCentre":
         return AreaTypeEnum.DistrictCentre
     elif area_type == "ElectionCommission":
