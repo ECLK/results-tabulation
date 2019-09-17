@@ -4,6 +4,7 @@ import os
 from app import db
 from orm.entities import *
 from orm.entities import Invoice
+from orm.entities.Area.Office import PostalVoteCountingCentre
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201
 from orm.enums import TallySheetCodeEnum, BallotTypeEnum
@@ -118,7 +119,20 @@ def get_object(row, row_key, data_key=None):
             TallySheet.create(
                 tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, officeId=obj.areaId
             )
+        elif data_store_key == "Postal Vote Counting Centre":
+            obj = PostalVoteCountingCentre.create(cell, electionId=election.electionId)
 
+            TallySheet.create(
+                tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, officeId=obj.areaId
+            )
+
+            TallySheet.create(
+                tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=election.electionId, officeId=obj.areaId
+            )
+
+            TallySheet.create(
+                tallySheetCode=TallySheetCodeEnum.CE_201_PV, electionId=election.electionId, officeId=obj.areaId
+            )
 
         elif data_store_key == "Polling Station":
             obj = PollingStation.create(cell, electionId=election.electionId)
@@ -221,6 +235,7 @@ def build_database(dataset):
         electionCommission = get_object({"Election Commission": "Sri Lanka Election Commission"}, "Election Commission")
         districtCentre = get_object(row, "District Centre")
         countingCentre = get_object(row, "Counting Centre")
+
         pollingStation = get_object({"Polling Station": row["Polling Station (English)"]}, "Polling Station")
 
         country.add_child(electoralDistrict.areaId)
@@ -230,6 +245,12 @@ def build_database(dataset):
         electionCommission.add_child(districtCentre.areaId)
         districtCentre.add_child(countingCentre.areaId)
         countingCentre.add_child(pollingStation.areaId)
+
+        postalVoteCountingCentre = get_object({
+            "Postal Vote Counting Centre": row["Counting Centre"]
+        }, "Postal Vote Counting Centre")
+        pollingDivision.add_child(postalVoteCountingCentre.areaId)
+        districtCentre.add_child(postalVoteCountingCentre.areaId)
 
         stationaryItems = []
 

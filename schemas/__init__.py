@@ -10,9 +10,10 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41, \
     TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_30_ED
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201, TallySheetVersionRow_PRE_41, \
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201, \
+    TallySheetVersionRow_PRE_41, \
     TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_30_ED, \
-    TallySheetVersionRow_PRE_30_PD
+    TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_CE_201_PV_CC
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, \
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum
 
@@ -125,6 +126,42 @@ class TallySheetVersionRow_PRE_30_ED_Schema(ma.ModelSchema):
         )
 
         model = TallySheetVersionRow_PRE_30_ED.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class TallySheetVersionRow_CE_201_PV_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetVersionRowId",
+            "tallySheetVersionId",
+            "ballotBoxStationaryItemId",
+            "numberOfPacketsInserted",
+            "numberOfAPacketsFound"
+        )
+
+        model = TallySheetVersionRow_CE_201_PV.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class TallySheetVersionRow_CE_201_PV_CC_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetVersionRowId",
+            "tallySheetVersionId",
+            "countingCentreId",
+            "situation",
+            "timeOfCommencementOfCount",
+            "numberOfAPacketsFound",
+            "numberOfACoversRejected",
+            "numberOfBCoversRejected",
+            "numberOfValidBallotPapers"
+        )
+
+        model = TallySheetVersionRow_CE_201_PV_CC.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -389,6 +426,28 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_Schema, many=True)
+
+
+class TallySheetVersion_CE_201_PV_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt",
+            "htmlUrl",
+            "content",
+            "summary"
+        )
+
+        model = TallySheetVersionRow_CE_201_PV.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    # submission = ma.Nested(SubmissionSchema)
+    content = ma.Nested(TallySheetVersionRow_CE_201_PV_Schema, many=True)
+    summary = ma.Nested(TallySheetVersionRow_CE_201_PV_CC_Schema)
 
 
 class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
