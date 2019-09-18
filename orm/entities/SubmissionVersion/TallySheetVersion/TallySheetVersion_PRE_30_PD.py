@@ -38,9 +38,15 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
     # content = relationship("TallySheetVersionRow_PRE_30_PD_Model")
 
+
+    @hybrid_property
+    def countingCentres(self):
+        return self.submission.area.get_associated_areas(AreaTypeEnum.CountingCentre)
+
+
     @hybrid_property
     def content(self):
-        countingCentres = self.submission.area.get_associated_areas(AreaTypeEnum.CountingCentre)
+        countingCentres = self.countingCentres
 
         return db.session.query(
             ElectionCandidate.Model.candidateId,
