@@ -135,7 +135,10 @@ def get_object(row, row_key, data_key=None):
             )
 
         elif data_store_key == "Polling Station":
-            obj = PollingStation.create(cell, electionId=election.electionId)
+            obj = PollingStation.create(
+                cell, electionId=election.electionId,
+                registeredVotersCount=row["Registered Voters"]
+            )
 
         elif data_store_key == "TallySheet":
             countingCentre = get_object(row, "Counting Centre")
@@ -236,7 +239,10 @@ def build_database(dataset):
         districtCentre = get_object(row, "District Centre")
         countingCentre = get_object(row, "Counting Centre")
 
-        pollingStation = get_object({"Polling Station": row["Polling Station (English)"]}, "Polling Station")
+        pollingStation = get_object({
+            "Polling Station": row["Polling Station (English)"],
+            "Registered Voters": row["Registered Voters"].replace(",", "")
+        }, "Polling Station")
 
         country.add_child(electoralDistrict.areaId)
         electoralDistrict.add_child(pollingDivision.areaId)
