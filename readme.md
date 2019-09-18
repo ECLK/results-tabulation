@@ -70,6 +70,10 @@ If there are changes identified, a revision file is created at migrations/versio
 
 `export ENV_CONFIG=./env/dev.cfg && python manage.py db upgrade`
 
+**Merge heads**
+
+`export ENV_CONFIG=./env/dev.cfg && python manage.py db merge heads`
+
 **Drop database**
 
 `export ENV_CONFIG=./env/dev.cfg && python manage.py drop_database`
