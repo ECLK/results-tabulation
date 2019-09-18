@@ -19,7 +19,7 @@ class InvoiceModel(db.Model):
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
     issuedBy = db.Column(db.Integer, nullable=False)
     issuedTo = db.Column(db.Integer, nullable=False)
-    issuedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    issuedAt = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
     delete = db.Column(db.Boolean, default=False)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
@@ -36,7 +36,7 @@ class InvoiceModel(db.Model):
             receivingOfficeId=receivingOfficeId,
             issuedTo=issuedTo,
             issuedBy=Auth().get_user_id(),
-            issuedAt=datetime.utcnow()
+            issuedAt=datetime.now()
         )
 
     def add_stationary_item(self, stationaryItemId):
