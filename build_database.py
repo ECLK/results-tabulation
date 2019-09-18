@@ -63,7 +63,7 @@ def get_object(row, row_key, data_key=None):
             obj = BallotBox.create(ballotBoxId=cell, electionId=election.electionId)
 
         elif data_store_key == "Party":
-            obj = Party.create(partyName=cell, partySymbol=row["Party Symbol"])
+            obj = Party.create(partyName=cell, partySymbol=row["Party Symbol"], partyAbbreviation=row["Party Abbreviation"])
         elif data_store_key == "Candidate":
             obj = Candidate.create(candidateName=cell)
 
