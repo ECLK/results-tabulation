@@ -16,3 +16,4 @@ class TallySheetCodeEnum(enum.Enum):
     PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS = 10
     PRE_ALL_ISLAND_RESULTS = 11
     CE_201_PV = 12
+    PRE_30_PD_PV = 13
