@@ -2,7 +2,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from app import db
 from sqlalchemy.orm import relationship, aliased
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 
 from orm.enums import AreaTypeEnum, AreaCategoryEnum
 from orm.entities import Election
@@ -17,6 +17,8 @@ class AreaModel(db.Model):
     areaType = db.Column(db.Enum(AreaTypeEnum), nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
     # parentAreaId = db.Column(db.Integer, db.ForeignKey(areaId), nullable=True)
+
+    _registeredVotersCount = db.Column(db.Integer(), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     # parentArea = relationship("AreaModel", remote_side=[areaId])
@@ -93,6 +95,16 @@ class AreaModel(db.Model):
     def districtCentres(self):
         # return []
         return get_associated_areas(self, AreaTypeEnum.DistrictCentre)
+
+    @hybrid_property
+    def registeredVotersCount(self):
+        polling_stations_subquery = get_associated_areas_query(self, areaType=AreaTypeEnum.PollingStation).subquery()
+
+        total_registered_voters_count = db.session.query(
+            func.sum(polling_stations_subquery.c._registeredVotersCount)
+        ).scalar()
+
+        return total_registered_voters_count
 
     __mapper_args__ = {
         'polymorphic_on': areaType

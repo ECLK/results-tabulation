@@ -19,7 +19,7 @@ class FileModel(db.Model):
     fileContentType = db.Column(db.String(100), nullable=False)
 
     fileCreatedBy = db.Column(db.Integer, nullable=False)
-    fileCreatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    fileCreatedAt = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
 
     @hybrid_property
     def urlInline(self):

@@ -13,7 +13,7 @@ class ProofModel(db.Model):
     __tablename__ = 'proof'
     proofId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     proofType = db.Column(db.Enum(ProofTypeEnum), nullable=False)
-    createdAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow, nullable=True)
+    createdAt = db.Column(db.DateTime, default=None, onupdate=datetime.now, nullable=True)
     scannedFilesFolderId = db.Column(db.Integer, db.ForeignKey(Folder.Model.__table__.c.folderId),
                                      nullable=False)
     finished = db.Column(db.Boolean, default=False)

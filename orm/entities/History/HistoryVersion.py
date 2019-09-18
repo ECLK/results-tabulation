@@ -12,7 +12,7 @@ class HistoryVersionModel(db.Model):
     historyVersionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     historyId = db.Column(db.Integer, db.ForeignKey(History.Model.__table__.c.historyId))
     createdBy = db.Column(db.Integer, nullable=False)
-    createdAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    createdAt = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
 
     def __init__(self, historyId):
         super(HistoryVersionModel, self).__init__(
