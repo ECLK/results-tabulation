@@ -1,3 +1,5 @@
+import datetime
+
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -65,6 +67,8 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
         tallySheetContent = self.content
 
         content = {
+            "date": self.submissionVersion.createdAt.strftime("%d/%m/%Y"),
+            "time": self.submissionVersion.createdAt.strftime("%H:%M:%S %p"),
             "data": [
             ],
             "validVotes": [0, 0],
