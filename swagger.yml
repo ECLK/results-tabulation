@@ -1969,10 +1969,11 @@ paths:
             type: string
             enum:
               - CE-201
-              - CE-201_PV
+              - CE-201-PV
               - PRE-41
               - PRE-21
               - PRE-30-PD
+              - PRE-30-PD-PV
               - PRE-30-ED
               - PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
               - PRE_ALL_ISLAND_RESULTS
@@ -2863,6 +2864,103 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /tally-sheet/PRE-30-PD-PV/{tallySheetId}/version:
+    post:
+      tags:
+        - tallySheetVersion
+      summary: Create tally sheet version
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_PD_PV_Api.create
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /tally-sheet/PRE-30-PD-PV/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - tallySheetVersion
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_PD_PV_Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /tally-sheet/PRE-30-ED/{tallySheetId}/version:
     post:
