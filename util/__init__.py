@@ -56,6 +56,8 @@ def get_tally_sheet_code(tally_sheet_code_str):
         return TallySheetCodeEnum.PRE_21
     elif tally_sheet_code_str == "PRE-30-PD":
         return TallySheetCodeEnum.PRE_30_PD
+    elif tally_sheet_code_str == "PRE-30-PD-PV":
+        return TallySheetCodeEnum.PRE_30_PD_PV
     elif tally_sheet_code_str == "PRE-30-ED":
         return TallySheetCodeEnum.PRE_30_ED
     elif tally_sheet_code_str == "PRE_ALL_ISLAND_RESULTS":
@@ -75,6 +77,8 @@ def get_tally_sheet_code_string(tally_sheet_code):
         return "PRE-21"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_30_PD:
         return "PRE-30-PD"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_30_PD_PV:
+        return "PRE-30-PD-PV"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_30_ED:
         return "PRE-30-ED"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS:

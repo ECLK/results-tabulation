@@ -97,6 +97,10 @@ def get_object(row, row_key, data_key=None):
                 tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=election.electionId, officeId=obj.areaId
             )
 
+            TallySheet.create(
+                tallySheetCode=TallySheetCodeEnum.PRE_30_PD_PV, electionId=election.electionId, officeId=obj.areaId
+            )
+
 
         elif data_store_key == "Polling District":
             obj = PollingDistrict.create(cell, electionId=election.electionId)
