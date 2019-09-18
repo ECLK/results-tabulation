@@ -67,9 +67,10 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
         content = {
             "data": [
             ],
-            "total": [0, 23],
+            "validVotes": [0, 0],
             "rejectedVotes": [0, 0],
-            "grandTotal": [0, 0]
+            "totalPolled": [0, 0],
+            "registeredVoters": [self.submission.area.registeredVotersCount, 100]
         }
 
         for row_index in range(len(tallySheetContent)):
@@ -77,21 +78,40 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             if row.count is not None:
                 content["data"].append([
                     row.candidateName,
-                    "ABR",
+                    "",  # Party abbreviation
                     row.count,
-                    "0%"
+                    0
                 ])
-                content["total"][0] = content["total"][0] + row.count
+                content["validVotes"][0] = content["validVotes"][0] + row.count
             else:
                 content["data"].append([
                     row.candidateName,
-                    "ABR",
+                    "",  # Party abbreviation
                     "",
-                    "0%"
+                    0
                 ])
 
+        # Calculate the candidate wise votes percentage based on total valid votes.
+        for row_index in range(len(content["data"])):
+            if content["data"][row_index][2] is not "":
+                content["data"][row_index][3] = round(
+                    (content["data"][row_index][2] / content["validVotes"][0]) * 100, 2
+                )
+
+        # TODO append the rejected votes count.
         content["rejectedVotes"][0] = 0  # TODO
-        content["grandTotal"][0] = content["total"][0] + content["rejectedVotes"][0]
+
+        # Calculate the total polled.
+        content["totalPolled"][0] = content["validVotes"][0] + content["rejectedVotes"][0]
+
+        # Calculate the percentage of valid votes based on total registered voters.
+        content["validVotes"][1] = round((content["validVotes"][0] / content["registeredVoters"][0]) * 100, 2)
+
+        # Calculate the percentage of rejected votes based on total registered voters.
+        content["rejectedVotes"][1] = round((content["rejectedVotes"][0] / content["registeredVoters"][0]) * 100, 2)
+
+        # Calculate the percentage of total polled based on total registered voters.
+        content["totalPolled"][1] = round((content["totalPolled"][0] / content["registeredVoters"][0]) * 100, 2)
 
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS.html',
