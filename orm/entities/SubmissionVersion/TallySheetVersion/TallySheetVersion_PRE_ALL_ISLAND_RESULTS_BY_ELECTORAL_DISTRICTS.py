@@ -137,8 +137,16 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
             data_row.append("")
 
         content["validVotes"].append(sum(content["validVotes"]))
+        # total validVotes in words
+        content["validVotes"].append("")
+
         content["rejectedVotes"].append(sum(content["rejectedVotes"]))
+        # total rejectedVotes in words
+        content["rejectedVotes"].append("")
+
         content["totalVotes"].append(sum(content["totalVotes"]))
+        # totalVotes in words
+        content["totalVotes"].append("")
 
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.html',

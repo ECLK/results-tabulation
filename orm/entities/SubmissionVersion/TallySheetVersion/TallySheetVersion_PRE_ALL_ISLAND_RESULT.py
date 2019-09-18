@@ -1,3 +1,5 @@
+import datetime
+
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -65,33 +67,55 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
         tallySheetContent = self.content
 
         content = {
+            "date": self.submissionVersion.createdAt.strftime("%d/%m/%Y"),
+            "time": self.submissionVersion.createdAt.strftime("%H:%M:%S %p"),
             "data": [
             ],
-            "total": 0,
-            "rejectedVotes": 0,
-            "grandTotal": 0
+            "validVotes": [0, 0],
+            "rejectedVotes": [0, 0],
+            "totalPolled": [0, 0],
+            "registeredVoters": [self.submission.area.registeredVotersCount, 100]
         }
 
         for row_index in range(len(tallySheetContent)):
             row = tallySheetContent[row_index]
             if row.count is not None:
                 content["data"].append([
-                    row_index + 1,
                     row.candidateName,
+                    "",  # Party abbreviation
                     row.count,
-                    ""
+                    0
                 ])
-                content["total"] = content["total"] + row.count
+                content["validVotes"][0] = content["validVotes"][0] + row.count
             else:
                 content["data"].append([
-                    row_index + 1,
                     row.candidateName,
+                    "",  # Party abbreviation
                     "",
-                    ""
+                    0
                 ])
 
-        content["rejectedVotes"] = 0  # TODO
-        content["grandTotal"] = content["total"] + content["rejectedVotes"]
+        # Calculate the candidate wise votes percentage based on total valid votes.
+        for row_index in range(len(content["data"])):
+            if content["data"][row_index][2] is not "":
+                content["data"][row_index][3] = round(
+                    (content["data"][row_index][2] / content["validVotes"][0]) * 100, 2
+                )
+
+        # TODO append the rejected votes count.
+        content["rejectedVotes"][0] = 0  # TODO
+
+        # Calculate the total polled.
+        content["totalPolled"][0] = content["validVotes"][0] + content["rejectedVotes"][0]
+
+        # Calculate the percentage of valid votes based on total registered voters.
+        content["validVotes"][1] = round((content["validVotes"][0] / content["registeredVoters"][0]) * 100, 2)
+
+        # Calculate the percentage of rejected votes based on total registered voters.
+        content["rejectedVotes"][1] = round((content["rejectedVotes"][0] / content["registeredVoters"][0]) * 100, 2)
+
+        # Calculate the percentage of total polled based on total registered voters.
+        content["totalPolled"][1] = round((content["totalPolled"][0] / content["registeredVoters"][0]) * 100, 2)
 
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS.html',
