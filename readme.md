@@ -26,9 +26,13 @@
 
 **Configure database connection parameters**
 
-Update `env/dev.cfg` 
+Update `env/dev.cfg`
 
-**Upgrade/create the Database**
+**Create Database**
+
+`export ENV_CONFIG=./env/dev.cfg && python manage.py create_database`
+
+**Upgrade the Database**
 
 `export ENV_CONFIG=./env/dev.cfg && python manage.py db upgrade`
 
@@ -48,7 +52,7 @@ https://localhost:5000/ui/
 
 `export ENV_CONFIG=./env/test.cfg && pytest tests`
 
-## Database Migrations
+## Database Operations
 
 **Initialize migration**
 
@@ -62,6 +66,10 @@ If there are changes identified, a revision file is created at migrations/versio
 
 `export ENV_CONFIG=./env/dev.cfg && python manage.py db migrate`
 
-**Upgrade the DB**
+**Upgrade database**
 
 `export ENV_CONFIG=./env/dev.cfg && python manage.py db upgrade`
+
+**Drop database**
+
+`export ENV_CONFIG=./env/dev.cfg && python manage.py drop_database`
