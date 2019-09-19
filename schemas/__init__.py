@@ -77,8 +77,10 @@ class ElectionSchema(ma.ModelSchema):
     class Meta:
         fields = (
             "electionId",
+            "electionName",
             "parties",
-            "invalidVoteCategories"
+            "invalidVoteCategories",
+            "subElections"
         )
 
         model = Election.Model
@@ -88,6 +90,7 @@ class ElectionSchema(ma.ModelSchema):
 
     parties = ma.Nested(PartySchema, many=True)
     invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
+    subElections = ma.Nested("self", only=["electionId", "electionName", "subElections"], many=True)
 
 
 class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
