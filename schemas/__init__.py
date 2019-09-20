@@ -15,7 +15,7 @@ from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, Ta
     TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_30_ED, \
     TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_CE_201_PV_CC
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, \
-    SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum
+    SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum, VoteTypeEnum
 
 from marshmallow_enum import EnumField
 
@@ -80,7 +80,8 @@ class ElectionSchema(ma.ModelSchema):
             "electionName",
             "parties",
             "invalidVoteCategories",
-            "subElections"
+            "subElections",
+            "voteType"
         )
 
         model = Election.Model
@@ -88,9 +89,10 @@ class ElectionSchema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
+    voteType = EnumField(VoteTypeEnum)
     parties = ma.Nested(PartySchema, many=True)
     invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
-    subElections = ma.Nested("self", only=["electionId", "electionName", "subElections"], many=True)
+    subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType"], many=True)
 
 
 class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
@@ -125,13 +127,17 @@ class TallySheetVersionRow_PRE_30_ED_Schema(ma.ModelSchema):
         fields = (
             "candidateId",
             "pollingDivisionId",
-            "count"
+            "count",
+            "electionId",
+            "voteType"
         )
 
         model = TallySheetVersionRow_PRE_30_ED.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+
+    voteType = EnumField(VoteTypeEnum)
 
 
 class TallySheetVersionRow_CE_201_PV_Schema(ma.ModelSchema):

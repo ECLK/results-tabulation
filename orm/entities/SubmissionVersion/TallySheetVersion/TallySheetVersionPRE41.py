@@ -46,7 +46,6 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             "grandTotal": 0
         }
 
-
         for row_index in range(len(tallySheetContent)):
             row = tallySheetContent[row_index]
             if row.count is not None:
@@ -120,7 +119,7 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             Party.Model.partyId == ElectionCandidate.Model.partyId,
             isouter=True
         ).filter(
-            ElectionCandidate.Model.electionId == self.submission.electionId
+            ElectionCandidate.Model.electionId == self.submission.election.parentElectionId
         ).all()
 
 

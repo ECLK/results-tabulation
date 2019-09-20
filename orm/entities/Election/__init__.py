@@ -4,6 +4,7 @@ from app import db
 from sqlalchemy.orm import relationship
 
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
+from orm.enums import VoteTypeEnum
 from util import get_paginated_query
 
 
@@ -12,16 +13,18 @@ class ElectionModel(db.Model):
     electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electionName = db.Column(db.String(100), nullable=False)
     parentElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=True)
+    voteType = db.Column(db.Enum(VoteTypeEnum), nullable=False)
     _parties = relationship("ElectionPartyModel")
     _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
 
     subElections = relationship("ElectionModel")
     parentElection = relationship("ElectionModel", remote_side=[electionId])
 
-    def __init__(self, electionName, parentElectionId):
+    def __init__(self, electionName, parentElectionId, voteType):
         super(ElectionModel, self).__init__(
             electionName=electionName,
-            parentElectionId=parentElectionId
+            parentElectionId=parentElectionId,
+            voteType=voteType
         )
 
         db.session.add(self)
@@ -41,10 +44,11 @@ class ElectionModel(db.Model):
         else:
             return self.parentElection.invalidVoteCategories
 
-    def add_sub_election(self, electionName):
+    def add_sub_election(self, electionName, voteType):
         return create(
             electionName=electionName,
-            parentElectionId=self.electionId
+            parentElectionId=self.electionId,
+            voteType=voteType
         )
 
     def add_invalid_vote_category(self, categoryDescription):
@@ -70,10 +74,11 @@ class ElectionModel(db.Model):
 Model = ElectionModel
 
 
-def create(electionName, parentElectionId=None):
+def create(electionName, parentElectionId=None, voteType=VoteTypeEnum.PostalAndNonPostal):
     result = Model(
         electionName=electionName,
-        parentElectionId=parentElectionId
+        parentElectionId=parentElectionId,
+        voteType=voteType
     )
 
     return result
