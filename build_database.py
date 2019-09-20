@@ -7,13 +7,13 @@ from orm.entities import Invoice
 from orm.entities.Area.Office import PostalVoteCountingCentre
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201
-from orm.enums import TallySheetCodeEnum, BallotTypeEnum
+from orm.enums import TallySheetCodeEnum, BallotTypeEnum, VoteTypeEnum
 from util import get_tally_sheet_code
 
-root_election = Election.create(electionName="Presidential Election 2019")
+root_election = Election.create(electionName="Presidential Election 2019", voteType=VoteTypeEnum.PostalAndNonPostal)
 
-postal_election = root_election.add_sub_election(electionName="Postal")
-ordinary_election = root_election.add_sub_election(electionName="Ordinary")
+postal_election = root_election.add_sub_election(electionName="Postal", voteType=VoteTypeEnum.Postal)
+ordinary_election = root_election.add_sub_election(electionName="Ordinary", voteType=VoteTypeEnum.NonPostal)
 
 data_stores = {}
 
@@ -103,7 +103,7 @@ def get_object(election, row, row_key, data_key=None):
             )
 
             TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_30_PD_PV, electionId=postal_election.electionId,
+                tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=postal_election.electionId,
                 officeId=obj.areaId
             )
 
@@ -116,7 +116,7 @@ def get_object(election, row, row_key, data_key=None):
         elif data_store_key == "District Centre":
             obj = DistrictCentre.create(cell, electionId=election.electionId)
         elif data_store_key == "Counting Centre":
-            obj = CountingCentre.create(cell, electionId=election.electionId)
+            obj = CountingCentre.create(cell, electionId=ordinary_election.electionId)
 
             TallySheet.create(
                 tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=ordinary_election.electionId, officeId=obj.areaId
@@ -130,7 +130,7 @@ def get_object(election, row, row_key, data_key=None):
                 tallySheetCode=TallySheetCodeEnum.CE_201, electionId=ordinary_election.electionId, officeId=obj.areaId
             )
         elif data_store_key == "Postal Vote Counting Centre":
-            obj = PostalVoteCountingCentre.create(cell, electionId=election.electionId)
+            obj = CountingCentre.create(cell, electionId=postal_election.electionId)
 
             TallySheet.create(
                 tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=postal_election.electionId, officeId=obj.areaId
@@ -186,9 +186,9 @@ def build_database(dataset):
         electionCommission = get_object(root_election, {"Election Commission": "Sri Lanka Election Commission"},
                                         "Election Commission")
         districtCentre = get_object(root_election, row, "District Centre")
-        countingCentre = get_object(root_election, row, "Counting Centre")
+        countingCentre = get_object(ordinary_election, row, "Counting Centre")
 
-        pollingStation = get_object(root_election, {
+        pollingStation = get_object(ordinary_election, {
             "Polling Station": row["Polling Station (English)"],
             "Registered Voters": row["Registered Voters"].replace(",", "")
         }, "Polling Station")
@@ -201,7 +201,7 @@ def build_database(dataset):
         districtCentre.add_child(countingCentre.areaId)
         countingCentre.add_child(pollingStation.areaId)
 
-        postalVoteCountingCentre = get_object(root_election, {
+        postalVoteCountingCentre = get_object(postal_election, {
             "Postal Vote Counting Centre": row["Counting Centre"]
         }, "Postal Vote Counting Centre")
         pollingDivision.add_child(postalVoteCountingCentre.areaId)

@@ -22,7 +22,9 @@ def create(tallySheetId):
         tallySheetId=tallySheetId
     )
 
-    electoralDistricts = tallySheetVersion.submission.area.get_associated_areas(AreaTypeEnum.ElectoralDistrict)
+    electoralDistricts = tallySheetVersion.submission.area.get_associated_areas(
+        areaType=AreaTypeEnum.ElectoralDistrict, electionId=tallySheetVersion.submission.electionId
+    )
 
     query = db.session.query(
         TallySheetVersionRow_PRE_30_ED.Model.candidateId,

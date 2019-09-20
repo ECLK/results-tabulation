@@ -21,7 +21,9 @@ def create(tallySheetId):
         tallySheetId=tallySheetId
     )
 
-    countingCentres = tallySheetVersion.submission.area.get_associated_areas(AreaTypeEnum.PostalVoteCountingCentre)
+    countingCentres = tallySheetVersion.submission.area.get_associated_areas(
+        areaType=AreaTypeEnum.PostalVoteCountingCentre, electionId=tallySheetVersion.submission.electionId
+    )
 
     query = db.session.query(
         TallySheetVersionRow_PRE_41.Model.candidateId,

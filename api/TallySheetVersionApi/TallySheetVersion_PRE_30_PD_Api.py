@@ -1,5 +1,5 @@
 from app import db
-from orm.entities import Submission, SubmissionVersion
+from orm.entities import Submission, SubmissionVersion, Area
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41
 from orm.enums import AreaTypeEnum
 from schemas import TallySheetVersion_PRE_30_PD_Schema, TallySheetVersionSchema
@@ -21,7 +21,9 @@ def create(tallySheetId):
         tallySheetId=tallySheetId
     )
 
-    countingCentres = tallySheetVersion.submission.area.get_associated_areas(AreaTypeEnum.CountingCentre)
+    countingCentres = tallySheetVersion.submission.area.get_associated_areas(
+        areaType=AreaTypeEnum.CountingCentre, electionId=tallySheetVersion.submission.electionId
+    )
 
     query = db.session.query(
         TallySheetVersionRow_PRE_41.Model.candidateId,
