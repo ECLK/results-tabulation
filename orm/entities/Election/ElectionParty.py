@@ -26,6 +26,7 @@ class ElectionPartyModel(db.Model):
     partySymbolFileId = association_proxy("party", "partySymbolFileId")
     partySymbolFile = association_proxy("party", "partySymbolFile")
     partySymbol = association_proxy("party", "partySymbol")
+    partyAbbreviation = association_proxy("party", "partyAbbreviation")
 
     __table_args__ = (
         db.UniqueConstraint('electionId', 'partyId', name='PartyPerElection'),
