@@ -14,8 +14,7 @@ from orm.entities.Area import Office
 from orm.entities.Area.Electorate import Country, Province, AdministrativeDistrict, ElectoralDistrict, PollingDivision, \
     PollingDistrict
 
-from orm.entities.Area.Office import DistrictCentre, CountingCentre, PollingStation, ElectionCommission, \
-    PostalVoteCountingCentre
+from orm.entities.Area.Office import DistrictCentre, CountingCentre, PollingStation, ElectionCommission
 
 from orm.entities import Submission, SubmissionVersion
 from orm.entities.SubmissionVersion import TallySheetVersion

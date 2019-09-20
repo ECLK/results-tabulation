@@ -4,11 +4,8 @@ import os
 from app import db
 from orm.entities import *
 from orm.entities import Invoice
-from orm.entities.Area.Office import PostalVoteCountingCentre
 from orm.entities.Submission import TallySheet
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201
 from orm.enums import TallySheetCodeEnum, BallotTypeEnum, VoteTypeEnum
-from util import get_tally_sheet_code
 
 root_election = Election.create(electionName="Presidential Election 2019", voteType=VoteTypeEnum.PostalAndNonPostal)
 
