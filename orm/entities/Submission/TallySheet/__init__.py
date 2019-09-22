@@ -1,4 +1,5 @@
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import or_
 
 from app import db
 from sqlalchemy.orm import relationship
@@ -7,7 +8,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from orm.entities.SubmissionVersion import TallySheetVersion
 from util import get_paginated_query, get_tally_sheet_code
 
-from orm.entities import Submission
+from orm.entities import Submission, Election
 
 from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum
 
@@ -64,10 +65,18 @@ def get_all(electionId=None, officeId=None, tallySheetCode=None):
     query = Model.query.join(
         Submission.Model,
         Submission.Model.submissionId == Model.tallySheetId
+    ).join(
+        Election.Model,
+        Election.Model.electionId == Submission.Model.electionId
     )
 
     if electionId is not None:
-        query = query.filter(Submission.Model.electionId == electionId)
+        query = query.filter(
+            or_(
+                Election.Model.electionId == electionId,
+                Election.Model.parentElectionId == electionId
+            )
+        )
 
     if officeId is not None:
         query = query.filter(Submission.Model.areaId == officeId)
