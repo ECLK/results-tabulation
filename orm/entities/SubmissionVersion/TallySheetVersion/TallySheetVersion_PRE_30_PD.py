@@ -12,7 +12,7 @@ from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD
 from util import get_paginated_query
 
 from orm.entities.Submission import TallySheet
-from orm.enums import TallySheetCodeEnum, AreaTypeEnum
+from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 
 
 class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
@@ -97,7 +97,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             "totalVotes": []
         }
 
-        if self.submission.election.electionName == "Postal":
+        if self.submission.election.voteType == VoteTypeEnum.Postal:
             content["tallySheetCode"] = "PRE/30/PV"
 
         parties = self.submission.election.parties
