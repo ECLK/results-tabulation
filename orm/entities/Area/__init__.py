@@ -243,6 +243,7 @@ def get_presidential_area_map_query():
 
 def get_associated_areas_query(area, areaType, electionId=None):
     presidential_area_map_sub_query = get_presidential_area_map_query().subquery()
+    election = Election.get_by_id(electionId=electionId)
 
     query = db.session.query(
         AreaModel
@@ -338,10 +339,7 @@ def get_associated_areas_query(area, areaType, electionId=None):
 
     if electionId is not None:
         query = query.filter(
-            or_(
-                AreaModel.electionId == electionId,
-                Election.Model.parentElectionId == electionId
-            )
+            AreaModel.electionId.in_(election.mappedElectionIds)
         )
 
     return query
