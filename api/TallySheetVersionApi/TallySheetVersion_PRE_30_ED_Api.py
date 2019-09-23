@@ -25,6 +25,7 @@ def create(tallySheetId):
 
     query = db.session.query(
         TallySheetVersionRow_PRE_30_PD.Model.candidateId,
+        Submission.Model.electionId,
         Submission.Model.areaId,
         func.sum(TallySheetVersionRow_PRE_30_PD.Model.count).label("count"),
     ).join(
@@ -38,9 +39,11 @@ def create(tallySheetId):
         Submission.Model.areaId.in_([area.areaId for area in pollingDivisions])
     ).group_by(
         TallySheetVersionRow_PRE_30_PD.Model.candidateId,
+        Submission.Model.electionId,
         Submission.Model.areaId
     ).order_by(
         TallySheetVersionRow_PRE_30_PD.Model.candidateId,
+        Submission.Model.electionId,
         Submission.Model.areaId
     ).all()
 
@@ -48,8 +51,10 @@ def create(tallySheetId):
         tallySheetVersion.add_row(
             candidateId=row.candidateId,
             pollingDivisionId=row.areaId,
-            count=row.count
+            count=row.count,
+            electionId=row.electionId
         )
+
 
     db.session.commit()
 

@@ -27,7 +27,7 @@ class SubmissionVersionModel(db.Model):
         if submission is None:
             raise NotFoundException("Submission not found. (submissionId=%d)" % submissionId)
 
-        historyVersion = HistoryVersion.create(submission.submissionHistoryId)
+        historyVersion = HistoryVersion.create(submissionId)
 
         super(SubmissionVersionModel, self).__init__(
             submissionId=submissionId,

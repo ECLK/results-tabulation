@@ -1,3 +1,4 @@
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from app import db
@@ -13,18 +14,17 @@ from orm.enums import SubmissionTypeEnum, ProofTypeEnum
 
 class SubmissionModel(db.Model):
     __tablename__ = 'submission'
-    submissionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    submissionId = db.Column(db.Integer, db.ForeignKey(History.Model.__table__.c.historyId), primary_key=True)
     submissionType = db.Column(db.Enum(SubmissionTypeEnum), nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
     areaId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.areaId), nullable=False)
     submissionProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId), nullable=False)
-    submissionHistoryId = db.Column(db.Integer, db.ForeignKey(History.Model.__table__.c.historyId), nullable=False)
     latestVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     area = relationship(Area.Model, foreign_keys=[areaId])
     submissionProof = relationship(Proof.Model, foreign_keys=[submissionProofId])
-    submissionHistory = relationship(History.Model, foreign_keys=[submissionHistoryId])
+    submissionHistory = relationship(History.Model, foreign_keys=[submissionId])
     latestVersion = relationship("SubmissionVersionModel", foreign_keys=[latestVersionId])
     versions = relationship("SubmissionVersionModel", order_by="desc(SubmissionVersionModel.submissionVersionId)",
                             primaryjoin="SubmissionModel.submissionId==SubmissionVersionModel.submissionId")
@@ -40,11 +40,11 @@ class SubmissionModel(db.Model):
         submissionHistory = History.create()
 
         super(SubmissionModel, self).__init__(
+            submissionId=submissionHistory.historyId,
             electionId=electionId,
             submissionType=submissionType,
             areaId=areaId,
-            submissionProofId=submissionProof.proofId,
-            submissionHistoryId=submissionHistory.historyId
+            submissionProofId=submissionProof.proofId
         )
 
         db.session.add(self)

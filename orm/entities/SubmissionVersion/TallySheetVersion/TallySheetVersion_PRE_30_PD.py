@@ -1,7 +1,7 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, or_
 
 from app import db
 from exception import NotFoundException
@@ -12,7 +12,7 @@ from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD
 from util import get_paginated_query
 
 from orm.entities.Submission import TallySheet
-from orm.enums import TallySheetCodeEnum, AreaTypeEnum
+from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 
 
 class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
@@ -41,7 +41,9 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
     @hybrid_property
     def countingCentres(self):
-        return self.submission.area.get_associated_areas(AreaTypeEnum.CountingCentre)
+        return self.submission.area.get_associated_areas(
+            areaType=AreaTypeEnum.CountingCentre, electionId=self.submission.electionId
+        )
 
 
     @hybrid_property
@@ -62,10 +64,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             Party.Model.partyId == ElectionCandidate.Model.partyId
         ).join(
             Area.Model,
-            and_(
-                Area.Model.electionId == ElectionCandidate.Model.electionId,
-                Area.Model.areaId.in_([area.areaId for area in countingCentres])
-            )
+            Area.Model.areaId.in_([area.areaId for area in countingCentres])
         ).join(
             TallySheetVersionRow_PRE_30_PD.Model,
             and_(
@@ -75,7 +74,10 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             ),
             isouter=True
         ).filter(
-            ElectionCandidate.Model.electionId == self.submission.electionId
+            or_(
+                ElectionCandidate.Model.electionId == self.submission.electionId,
+                ElectionCandidate.Model.electionId == self.submission.election.parentElectionId
+            )
         ).group_by(
             ElectionCandidate.Model.candidateId,
             Area.Model.areaId
@@ -87,12 +89,16 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
     def html(self):
 
         content = {
+            "tallySheetCode": "PRE/30/PD",
             "data": [],
             "countingCentres": [],
             "validVotes": [],
             "rejectedVotes": [],
             "totalVotes": []
         }
+
+        if self.submission.election.voteType == VoteTypeEnum.Postal:
+            content["tallySheetCode"] = "PRE/30/PV"
 
         parties = self.submission.election.parties
         queryResult = self.content

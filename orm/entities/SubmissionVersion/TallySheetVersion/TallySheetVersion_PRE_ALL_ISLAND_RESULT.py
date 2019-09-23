@@ -43,6 +43,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
             Party.Model.partySymbol,
+            Party.Model.partyAbbreviation,
             TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.count
         ).join(
             TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model,
@@ -82,7 +83,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             if row.count is not None:
                 content["data"].append([
                     row.candidateName,
-                    "",  # Party abbreviation
+                    row.partyAbbreviation,
                     row.count,
                     0
                 ])
@@ -90,7 +91,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             else:
                 content["data"].append([
                     row.candidateName,
-                    "",  # Party abbreviation
+                    row.partyAbbreviation,
                     "",
                     0
                 ])
