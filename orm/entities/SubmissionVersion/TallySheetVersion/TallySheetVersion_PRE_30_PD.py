@@ -74,10 +74,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             ),
             isouter=True
         ).filter(
-            or_(
-                ElectionCandidate.Model.electionId == self.submission.electionId,
-                ElectionCandidate.Model.electionId == self.submission.election.parentElectionId
-            )
+            ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
         ).group_by(
             ElectionCandidate.Model.candidateId,
             Area.Model.areaId

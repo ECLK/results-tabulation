@@ -31,6 +31,23 @@ class ElectionModel(db.Model):
         db.session.flush()
 
     @hybrid_property
+    def mappedElectionIds(self):
+
+        # TODO
+
+        if self.parentElectionId is None:
+            return [self.electionId]
+        else:
+            return [self.electionId, self.parentElectionId]
+
+    @hybrid_property
+    def subElectionIds(self):
+
+        # TODO
+
+        return [subElection.electionId for subElection in self.subElections]
+
+    @hybrid_property
     def parties(self):
         if self.parentElectionId is None:
             return self._parties

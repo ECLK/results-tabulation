@@ -1,6 +1,5 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
 from sqlalchemy import and_
 
 from app import db
@@ -25,7 +24,7 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
         'polymorphic_identity': TallySheetCodeEnum.CE_201
     }
 
-    def add_row(self, areaId, ballotBoxesIssued, ballotBoxesReceived, ballotsIssued, ballotsReceived, ballotsSpoilt,
+    def add_row(self, areaId, ballotsIssued, ballotsReceived, ballotsSpoilt,
                 ballotsUnused,
                 ordinaryBallotCountFromBoxCount, tenderedBallotCountFromBoxCount,
                 ordinaryBallotCountFromBallotPaperAccount, tenderedBallotCountFromBallotPaperAccount):
@@ -34,8 +33,6 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
         return TallySheetVersionRow_CE_201.create(
             tallySheetVersion=self,
             areaId=areaId,
-            ballotBoxesIssued=ballotBoxesIssued,
-            ballotBoxesReceived=ballotBoxesReceived,
             ballotsIssued=ballotsIssued,
             ballotsReceived=ballotsReceived,
             ballotsSpoilt=ballotsSpoilt,
@@ -47,7 +44,6 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
         )
 
     def html(self):
-
         tallySheetContent = self.content
 
         content = {
@@ -61,20 +57,21 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
             content["data"].append(data_row)
 
             # polling division
-            data_row.append("")
+            data_row.append(
+                ", ".join(
+                    area.areaName for area in row.area.get_associated_areas(AreaTypeEnum.PollingDistrict)
+                )
+            )
 
             # polling station
             data_row.append(row.areaName)
 
             # three ballot boxes
-            data_row.append("")
-            data_row.append("")
-            data_row.append("")
-            # for ballotBoxIndex in range(3):
-            #     if ballotBoxIndex < len(row.ballotBoxesReceived):
-            #         data_row.append(row.ballotBoxesReceived[ballotBoxIndex])
-            #     else:
-            #         data_row.append("")
+            for ballotBoxIndex in range(3):
+                if ballotBoxIndex < len(row.ballotBoxesReceived):
+                    data_row.append(row.ballotBoxesReceived[ballotBoxIndex].ballotBoxId)
+                else:
+                    data_row.append("")
 
             data_row.append(to_empty_string_or_value(row.ballotsReceived))
             data_row.append(to_empty_string_or_value(row.ballotsSpoilt))
@@ -83,11 +80,11 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
 
             data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBallotPaperAccount))
             data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBoxCount))
-            data_row.append("")
+            data_row.append(abs(row.ordinaryBallotCountFromBallotPaperAccount - row.ordinaryBallotCountFromBoxCount))
 
             data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBallotPaperAccount))
             data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBoxCount))
-            data_row.append("")
+            data_row.append(abs(row.tenderedBallotCountFromBallotPaperAccount - row.tenderedBallotCountFromBoxCount))
 
         html = render_template(
             'CE-201.html',
@@ -98,35 +95,24 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
 
     @hybrid_property
     def content(self):
-        print("########### CE-201 content ###################################")
-
         pollingStations = self.submission.area.get_associated_areas(AreaTypeEnum.PollingStation)
 
-        return db.session.query(
-            Area.Model.areaId,
-            Area.Model.areaName,
-            # TallySheetVersionRow_CE_201.Model.ballotBoxesIssued,
-            # TallySheetVersionRow_CE_201.Model.ballotBoxesReceived,
-            TallySheetVersionRow_CE_201.Model.ballotsIssued,
-            TallySheetVersionRow_CE_201.Model.ballotsReceived,
-            TallySheetVersionRow_CE_201.Model.ballotsSpoilt,
-            TallySheetVersionRow_CE_201.Model.ballotsUnused,
-            TallySheetVersionRow_CE_201.Model.ordinaryBallotCountFromBoxCount,
-            TallySheetVersionRow_CE_201.Model.tenderedBallotCountFromBoxCount,
-            TallySheetVersionRow_CE_201.Model.ordinaryBallotCountFromBallotPaperAccount,
-            TallySheetVersionRow_CE_201.Model.tenderedBallotCountFromBallotPaperAccount
+        # TODO
+        result = db.session.query(
+            TallySheetVersionRow_CE_201.Model
         ).join(
-            TallySheetVersionRow_CE_201.Model,
+            Area.Model,
             and_(
-                TallySheetVersionRow_CE_201.Model.tallySheetVersionId == self.tallySheetVersionId,
-                TallySheetVersionRow_CE_201.Model.areaId == Area.Model.areaId
-            ),
-            isouter=True
+                TallySheetVersionRow_CE_201.Model.areaId == Area.Model.areaId,
+                Area.Model.areaId.in_([area.areaId for area in pollingStations])
+            )
         ).filter(
-            Area.Model.areaId.in_([area.areaId for area in pollingStations])
+            TallySheetVersionRow_CE_201.Model.tallySheetVersionId == self.tallySheetVersionId
         ).order_by(
             Area.Model.areaId
         ).all()
+
+        return result
 
 
 Model = TallySheetVersionCE201Model
