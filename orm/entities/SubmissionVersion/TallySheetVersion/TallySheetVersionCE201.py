@@ -25,7 +25,7 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
         'polymorphic_identity': TallySheetCodeEnum.CE_201
     }
 
-    def add_row(self, areaId, ballotBoxesIssued, ballotBoxesReceived, ballotsIssued, ballotsReceived, ballotsSpoilt,
+    def add_row(self, areaId, ballotsIssued, ballotsReceived, ballotsSpoilt,
                 ballotsUnused,
                 ordinaryBallotCountFromBoxCount, tenderedBallotCountFromBoxCount,
                 ordinaryBallotCountFromBallotPaperAccount, tenderedBallotCountFromBallotPaperAccount):
@@ -34,8 +34,6 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
         return TallySheetVersionRow_CE_201.create(
             tallySheetVersion=self,
             areaId=areaId,
-            ballotBoxesIssued=ballotBoxesIssued,
-            ballotBoxesReceived=ballotBoxesReceived,
             ballotsIssued=ballotsIssued,
             ballotsReceived=ballotsReceived,
             ballotsSpoilt=ballotsSpoilt,
@@ -47,7 +45,6 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
         )
 
     def html(self):
-
         tallySheetContent = self.content
 
         content = {
