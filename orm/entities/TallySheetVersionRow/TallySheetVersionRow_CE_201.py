@@ -1,6 +1,6 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-from sqlalchemy import and_
+from sqlalchemy import and_, select, func
 
 from app import db
 
@@ -16,8 +16,8 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(TallySheetVersion.Model.__table__.c.tallySheetVersionId),
                                     nullable=False)
     areaId = db.Column(db.Integer, db.ForeignKey(Area.Model.__table__.c.areaId), nullable=False)
-    # ballotBoxesIssued = db.Column(db.Integer, nullable=False)
-    # ballotBoxesReceived = db.Column(db.Integer, nullable=False)
+    # ballotBoxesIssued = relationship("TallySheetVersionRow_CE_201_IssuedBallotBox_Model")
+    # ballotBoxesReceived = relationship("TallySheetVersionRow_CE_201_ReceivedBallotBox_Model")
     ballotsIssued = db.Column(db.Integer, nullable=False)
     ballotsReceived = db.Column(db.Integer, nullable=False)
     ballotsSpoilt = db.Column(db.Integer, nullable=False)
@@ -31,7 +31,7 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
     tallySheetVersion = relationship(TallySheetVersion.Model, foreign_keys=[tallySheetVersionId])
 
     @hybrid_property
-    def issuedBallots(self):
+    def ballotBoxesIssued(self):
         return db.session.query(
             BallotBox.Model.stationaryItemId,
             BallotBox.Model.ballotBoxId
@@ -44,7 +44,7 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
         ).all()
 
     @hybrid_property
-    def receivedBallots(self):
+    def ballotBoxesReceived(self):
         return db.session.query(
             BallotBox.Model.stationaryItemId,
             BallotBox.Model.ballotBoxId

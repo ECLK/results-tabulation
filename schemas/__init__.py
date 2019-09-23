@@ -207,11 +207,12 @@ class TallySheetVersionRow_PRE_21_Schema(ma.ModelSchema):
 
 class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
     class Meta:
+
         fields = (
             "areaId",
             "areaName",
-            # "ballotBoxesIssued",
-            # "ballotBoxesReceived",
+            "ballotBoxesIssued",
+            "ballotBoxesReceived",
             "ballotsIssued",
             "ballotsReceived",
             "ballotsSpoilt",
@@ -219,9 +220,7 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
             "ordinaryBallotCountFromBoxCount",
             "tenderedBallotCountFromBoxCount",
             "ordinaryBallotCountFromBallotPaperAccount",
-            "tenderedBallotCountFromBallotPaperAccount",
-            "issuedBallots",
-            "receivedBallots"
+            "tenderedBallotCountFromBallotPaperAccount"
         )
 
         model = TallySheetVersionRow_CE_201.Model
@@ -229,8 +228,8 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    issuedBallots = ma.Nested("BallotBox_Schema", only=["stationaryItemId", "ballotBoxId"], many=True)
-    receivedBallots = ma.Nested("BallotBox_Schema", only=["stationaryItemId", "ballotBoxId"], many=True)
+    ballotBoxesIssued = ma.Nested("BallotBox_Schema", many=True)
+    ballotBoxesReceived = ma.Nested("BallotBox_Schema", many=True)
 
 
 class AreaSchema(ma.ModelSchema):
