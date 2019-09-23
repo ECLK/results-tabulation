@@ -119,7 +119,7 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             Party.Model.partyId == ElectionCandidate.Model.partyId,
             isouter=True
         ).filter(
-            ElectionCandidate.Model.electionId == self.submission.election.parentElectionId
+            ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
         ).all()
 
 

@@ -2366,11 +2366,19 @@ paths:
                         ballotBoxesIssued:
                           type: array
                           items:
-                            type: string
+                            type: object
+                            properties:
+                              stationaryItemId:
+                                type: integer
+                                format: int64
                         ballotBoxesReceived:
                           type: array
                           items:
-                            type: string
+                            type: object
+                            properties:
+                              stationaryItemId:
+                                type: integer
+                                format: int64
                         ballotsIssued:
                           type: integer
                           format: int64
@@ -2438,11 +2446,19 @@ paths:
                       ballotBoxesIssued:
                         type: array
                         items:
-                          type: string
+                          type: object
+                          properties:
+                            stationaryItemId:
+                              type: integer
+                              format: int64
                       ballotBoxesReceived:
                         type: array
                         items:
-                          type: string
+                          type: object
+                          properties:
+                            stationaryItemId:
+                              type: integer
+                              format: int64
                       ballotsIssued:
                         type: integer
                         format: int64
@@ -2511,11 +2527,19 @@ paths:
                         ballotBoxesIssued:
                           type: array
                           items:
-                            type: string
+                            type: object
+                            properties:
+                              stationaryItemId:
+                                type: integer
+                                format: int64
                         ballotBoxesReceived:
                           type: array
                           items:
-                            type: string
+                            type: object
+                            properties:
+                              stationaryItemId:
+                                type: integer
+                                format: int64
                         ballotsIssued:
                           type: integer
                           format: int64

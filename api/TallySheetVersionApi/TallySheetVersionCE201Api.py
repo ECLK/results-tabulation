@@ -39,8 +39,6 @@ def create(tallySheetId, body):
             party_count_body = RequestBody(party_count_body)
             tallySheetVersionRow = tallySheetVersion.add_row(
                 areaId=party_count_body.get("areaId"),
-                ballotBoxesIssued=party_count_body.get("ballotBoxesIssued"),
-                ballotBoxesReceived=party_count_body.get("ballotBoxesReceived"),
                 ballotsIssued=party_count_body.get("ballotsIssued"),
                 ballotsReceived=party_count_body.get("ballotsReceived"),
                 ballotsSpoilt=party_count_body.get("ballotsSpoilt"),
@@ -53,13 +51,13 @@ def create(tallySheetId, body):
                     "tenderedBallotCountFromBallotPaperAccount")
             )
 
-            # for issued_ballot_body in party_count_body.get("issuedBallots"):
-            #     issued_ballot_body = RequestBody(issued_ballot_body)
-            #     tallySheetVersionRow.add_issued_ballot_box(issued_ballot_body.get("stationaryItemId"))
-            #
-            # for received_ballot_body in party_count_body.get("receivedBallots"):
-            #     received_ballot_body = RequestBody(received_ballot_body)
-            #     tallySheetVersionRow.add_received_ballot_box(received_ballot_body.get("stationaryItemId"))
+            for issued_ballot_body in party_count_body.get("ballotBoxesIssued"):
+                issued_ballot_body = RequestBody(issued_ballot_body)
+                tallySheetVersionRow.add_issued_ballot_box(issued_ballot_body.get("stationaryItemId"))
+
+            for received_ballot_body in party_count_body.get("ballotBoxesReceived"):
+                received_ballot_body = RequestBody(received_ballot_body)
+                tallySheetVersionRow.add_received_ballot_box(received_ballot_body.get("stationaryItemId"))
 
     db.session.commit()
 
