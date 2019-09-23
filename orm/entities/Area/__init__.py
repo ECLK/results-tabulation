@@ -361,6 +361,8 @@ def create(areaName, electionId):
 
 
 def get_all(election_id=None, area_name=None, associated_area_id=None, area_type=None):
+    election = Election.get_by_id(electionId=election_id)
+
     if associated_area_id is not None and area_type is not None:
         associated_area = get_by_id(areaId=associated_area_id)
         query = get_associated_areas_query(area=associated_area, areaType=area_type, electionId=election_id)
@@ -370,13 +372,13 @@ def get_all(election_id=None, area_name=None, associated_area_id=None, area_type
     if area_name is not None:
         query = query.filter(Model.areaName.like(area_name))
 
-    # if election_id is not None:
-    #     query = query.filter(
-    #         or_(
-    #             Election.Model.electionId == election_id,
-    #             Election.Model.parentElectionId == election_id
-    #         )
-    #     )
+    if election is not None:
+        query = query.filter(
+            or_(
+                Model.electionId.in_(election.mappedElectionIds),
+                Model.electionId.in_(election.subElectionIds)
+            )
+        )
 
     if area_type is not None:
         query = query.filter(Model.areaType == area_type)
