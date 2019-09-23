@@ -1,6 +1,5 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
 from sqlalchemy import and_
 
 from app import db
@@ -95,15 +94,14 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
 
     @hybrid_property
     def content(self):
-        print("########### CE-201 content ###################################")
-
         pollingStations = self.submission.area.get_associated_areas(AreaTypeEnum.PollingStation)
 
-        return db.session.query(
+
+        result = db.session.query(
             Area.Model.areaId,
             Area.Model.areaName,
-            # TallySheetVersionRow_CE_201.Model.ballotBoxesIssued,
-            # TallySheetVersionRow_CE_201.Model.ballotBoxesReceived,
+            # TallySheetVersionRow_CE_201.Model.ballotBoxesIssued, # TODO
+            # TallySheetVersionRow_CE_201.Model.ballotBoxesReceived, # TODO
             TallySheetVersionRow_CE_201.Model.ballotsIssued,
             TallySheetVersionRow_CE_201.Model.ballotsReceived,
             TallySheetVersionRow_CE_201.Model.ballotsSpoilt,
@@ -124,6 +122,8 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
         ).order_by(
             Area.Model.areaId
         ).all()
+
+        return result
 
 
 Model = TallySheetVersionCE201Model
