@@ -1,8 +1,8 @@
 from flask import send_from_directory
 
 from schemas import File_Schema as Schema
-from orm.entities import File as Model
-from orm.entities.File import FILE_DIRECTORY
+from orm.entities.IO import File as Model
+from orm.entities.IO.File import FILE_DIRECTORY
 
 
 def get_by_id(fileId):
@@ -13,19 +13,31 @@ def get_by_id(fileId):
     return Schema().dump(result).data
 
 
-def get_inline_file(fileId):
+def response_file(fileId, as_attachment):
     file = Model.get_by_id(
         fileId=fileId
     )
 
-    return send_from_directory(directory=FILE_DIRECTORY, filename=str(file.fileId), mimetype=file.fileMimeType,
-                               attachment_filename=file.fileName)
+    fileName = "%d-%s" % (file.fileId, file.fileName)
+
+    return send_from_directory(
+        directory=FILE_DIRECTORY,
+        filename=str(file.fileId),
+        mimetype=file.fileMimeType,
+        attachment_filename=fileName,
+        as_attachment=as_attachment
+    )
+
+
+def get_inline_file(fileId):
+    return response_file(
+        fileId=fileId,
+        as_attachment=False
+    )
 
 
 def get_download_file(fileId):
-    file = Model.get_by_id(
-        fileId=fileId
+    return response_file(
+        fileId=fileId,
+        as_attachment=True
     )
-
-    return send_from_directory(directory=FILE_DIRECTORY, filename=str(file.fileId), mimetype=file.fileMimeType,
-                               attachment_filename=file.fileName, as_attachment=True)

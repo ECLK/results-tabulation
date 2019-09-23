@@ -1,9 +1,12 @@
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import and_
+
+from orm.entities.Invoice import InvoiceStationaryItem
 from orm.enums import StationaryItemTypeEnum
 from exception import NotFoundException
-from orm.entities import Election
+from orm.entities import Election, Invoice
 
 
 class StationaryItemModel(db.Model):
@@ -16,18 +19,29 @@ class StationaryItemModel(db.Model):
     invoiceStationaryItems = relationship("InvoiceStationaryItemModel")
 
     @hybrid_property
-    def lockedInvoices(self):
-        return [i for i in self.invoiceStationaryItems if i.delete == False]
-
-    @hybrid_property
-    def locked(self):
-        return len([i for i in self.invoiceStationaryItems if i.delete == False]) > 0
+    def available(self):
+        return False
+        # locked_invoices = db.session.query(
+        #     Invoice.Model.invoiceId
+        # ).join(
+        #     InvoiceStationaryItem.Model,
+        #     and_(
+        #         InvoiceStationaryItem.Model.invoiceId == Invoice.Model.invoiceId
+        #     )
+        # ).filter(
+        #     InvoiceStationaryItem.Model.stationaryItemId == self.stationaryItemId,
+        #     Invoice.Model.delete == False
+        # ).group_by(
+        #     Invoice.Model.invoiceId
+        # ).all()
+        #
+        # return len(locked_invoices) == 0
 
 
 Model = StationaryItemModel
 
 
-def get_all():
+def get_all(areaId=None):
     result = Model.query.all()
 
     return result
@@ -39,7 +53,7 @@ def create(electionId, stationaryItemType):
         stationaryItemType=stationaryItemType,
     )
     db.session.add(result)
-    db.session.commit()
+    db.session.flush()
 
     return result
 
@@ -53,12 +67,14 @@ def get_by_id(stationaryItemId):
 
 
 def is_locked(stationaryItemId):
+    return False
+
     entry = get_by_id(stationaryItemId)
 
     if entry is None:
         raise NotFoundException("Stationary Item Not Found (stationaryItemId=%d) " % stationaryItemId)
     else:
-        return entry.locked
+        return entry.available is not True
 
 
 Model = Model

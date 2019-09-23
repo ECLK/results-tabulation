@@ -14,8 +14,11 @@ ADD . /app
 
 RUN apt-get update
 RUN apt-get install -y apt-utils libpq-dev python-dev
+RUN apt-get install -y wkhtmltopdf
 
 # Install requirements
 RUN pip install -r requirements.txt
-# RUN python build_database.py; exit 0
-RUN python index.py; exit 0
+RUN export ENV_CONFIG=./env/dev.cfg
+RUN python manage.py db upgrade; exit 0
+
+CMD [ "python", "index.py" ]

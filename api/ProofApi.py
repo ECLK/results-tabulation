@@ -1,3 +1,4 @@
+from app import db
 from util import RequestBody
 import connexion
 
@@ -28,6 +29,8 @@ def upload_file(body):
         fileType=FileTypeEnum.Image
     )
 
+    db.session.commit()
+
     return Schema().dump(result).data, 201
 
 
@@ -36,5 +39,7 @@ def finish(proofId):
         finished=True,
         proofId=proofId
     )
+
+    db.session.commit()
 
     return Schema().dump(result).data, 201
