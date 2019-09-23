@@ -49,7 +49,7 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
 
     @hybrid_property
     def content(self):
-        #return []
+        # return []
         return db.session.query(
             TallySheetVersionRow_CE_201_PV.Model
         ).filter(
@@ -66,6 +66,7 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
 
     def html(self):
         tallySheetContent = self.content.all()
+        tallySheetContentSummary = self.summary
 
         content = {
             "electoralDistrict": Area.get_associated_areas(
@@ -77,8 +78,16 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
                 pollingDistrict.areaName for pollingDistrict in
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
+
+            "situation": tallySheetContentSummary.situation,
+            "timeOfCommencementOfCount": tallySheetContentSummary.timeOfCommencementOfCount,
+            "numberOfAPacketsFound": tallySheetContentSummary.numberOfAPacketsFound,
+            "numberOfACoversRejected": tallySheetContentSummary.situation,
+            "numberOfBCoversRejected": tallySheetContentSummary.timeOfCommencementOfCount,
+            "numberOfValidBallotPapers": tallySheetContentSummary.numberOfAPacketsFound,
+
             "data": [
-            ]
+            ],
         }
 
         for row_index in range(len(tallySheetContent)):
@@ -86,11 +95,12 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
             data_row = []
             content["data"].append(data_row)
 
-            data_row.append(row.categoryDescription)
-            data_row.append(to_empty_string_or_value(row.count))
+            data_row.append(row.ballotBox.ballotBoxId)
+            data_row.append(to_empty_string_or_value(row.numberOfPacketsInserted))
+            data_row.append(to_empty_string_or_value(row.numberOfAPacketsFound))
 
         html = render_template(
-            'PRE-21.html',
+            'CE-201.html',
             content=content
         )
 
