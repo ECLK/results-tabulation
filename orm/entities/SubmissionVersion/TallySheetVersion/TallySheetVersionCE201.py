@@ -57,20 +57,21 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
             content["data"].append(data_row)
 
             # polling division
-            data_row.append("")
+            data_row.append(
+                ", ".join(
+                    area.areaName for area in row.area.get_associated_areas(AreaTypeEnum.PollingDistrict)
+                )
+            )
 
             # polling station
             data_row.append(row.areaName)
 
             # three ballot boxes
-            data_row.append("")
-            data_row.append("")
-            data_row.append("")
-            # for ballotBoxIndex in range(3):
-            #     if ballotBoxIndex < len(row.ballotBoxesReceived):
-            #         data_row.append(row.ballotBoxesReceived[ballotBoxIndex])
-            #     else:
-            #         data_row.append("")
+            for ballotBoxIndex in range(3):
+                if ballotBoxIndex < len(row.ballotBoxesReceived):
+                    data_row.append(row.ballotBoxesReceived[ballotBoxIndex].ballotBoxId)
+                else:
+                    data_row.append("")
 
             data_row.append(to_empty_string_or_value(row.ballotsReceived))
             data_row.append(to_empty_string_or_value(row.ballotsSpoilt))
@@ -79,11 +80,11 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
 
             data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBallotPaperAccount))
             data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBoxCount))
-            data_row.append("")
+            data_row.append(abs(row.ordinaryBallotCountFromBallotPaperAccount - row.ordinaryBallotCountFromBoxCount))
 
             data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBallotPaperAccount))
             data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBoxCount))
-            data_row.append("")
+            data_row.append(abs(row.tenderedBallotCountFromBallotPaperAccount - row.tenderedBallotCountFromBoxCount))
 
         html = render_template(
             'CE-201.html',
