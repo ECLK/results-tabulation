@@ -1,3 +1,4 @@
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy import and_, select, func
@@ -30,11 +31,13 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
     area = relationship(Area.Model, foreign_keys=[areaId])
     tallySheetVersion = relationship(TallySheetVersion.Model, foreign_keys=[tallySheetVersionId])
 
+    areaName = association_proxy("area", "areaName")
+    electionId = association_proxy("tallySheetVersion", "electionId")
+
     @hybrid_property
     def ballotBoxesIssued(self):
         return db.session.query(
-            BallotBox.Model.stationaryItemId,
-            BallotBox.Model.ballotBoxId
+            BallotBox.Model
         ).join(
             TallySheetVersionRow_CE_201_IssuedBallotBox_Model,
             and_(
@@ -46,8 +49,7 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
     @hybrid_property
     def ballotBoxesReceived(self):
         return db.session.query(
-            BallotBox.Model.stationaryItemId,
-            BallotBox.Model.ballotBoxId
+            BallotBox.Model
         ).join(
             TallySheetVersionRow_CE_201_ReceivedBallotBox_Model,
             and_(
