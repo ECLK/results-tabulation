@@ -96,29 +96,17 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
     def content(self):
         pollingStations = self.submission.area.get_associated_areas(AreaTypeEnum.PollingStation)
 
-
+        # TODO
         result = db.session.query(
-            Area.Model.areaId,
-            Area.Model.areaName,
-            # TallySheetVersionRow_CE_201.Model.ballotBoxesIssued, # TODO
-            # TallySheetVersionRow_CE_201.Model.ballotBoxesReceived, # TODO
-            TallySheetVersionRow_CE_201.Model.ballotsIssued,
-            TallySheetVersionRow_CE_201.Model.ballotsReceived,
-            TallySheetVersionRow_CE_201.Model.ballotsSpoilt,
-            TallySheetVersionRow_CE_201.Model.ballotsUnused,
-            TallySheetVersionRow_CE_201.Model.ordinaryBallotCountFromBoxCount,
-            TallySheetVersionRow_CE_201.Model.tenderedBallotCountFromBoxCount,
-            TallySheetVersionRow_CE_201.Model.ordinaryBallotCountFromBallotPaperAccount,
-            TallySheetVersionRow_CE_201.Model.tenderedBallotCountFromBallotPaperAccount
+            TallySheetVersionRow_CE_201.Model
         ).join(
-            TallySheetVersionRow_CE_201.Model,
+            Area.Model,
             and_(
-                TallySheetVersionRow_CE_201.Model.tallySheetVersionId == self.tallySheetVersionId,
-                TallySheetVersionRow_CE_201.Model.areaId == Area.Model.areaId
-            ),
-            isouter=True
+                TallySheetVersionRow_CE_201.Model.areaId == Area.Model.areaId,
+                Area.Model.areaId.in_([area.areaId for area in pollingStations])
+            )
         ).filter(
-            Area.Model.areaId.in_([area.areaId for area in pollingStations])
+            TallySheetVersionRow_CE_201.Model.tallySheetVersionId == self.tallySheetVersionId
         ).order_by(
             Area.Model.areaId
         ).all()
