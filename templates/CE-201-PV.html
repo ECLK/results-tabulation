@@ -1,0 +1,135 @@
+<html>
+<head>
+    <meta name="pdfkit-page-size" content="B2"/>
+    <meta name="pdfkit-orientation" content="Landscape"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        .top {
+            border-top: 1px solid #000 !important;
+        }
+
+        .bottom {
+            border-bottom: 1px solid #000 !important;
+        }
+
+        .left {
+            border-left: 1px solid #000 !important;
+        }
+
+        .right {
+            border-right: 1px solid #000 !important;
+        }
+
+        .all {
+            border-top: 1px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .font1 {
+            font-family: serif;
+        }
+
+        .float-right {
+            float: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .no-padding {
+            padding: 0 !important;
+        }
+
+        .no-padding-left {
+            padding-left: 0 !important;
+        }
+
+        .no-padding-right {
+            padding-right: 0 !important;
+        }
+
+        .no-padding-bottom {
+            padding-bottom: 0 !important;
+        }
+
+        .group div {
+            display: inline-block;
+        }
+
+        .sub-head {
+            font-style: italic;
+            text-decoration: underline;
+        }
+
+        .indent {
+            margin-left: 20px;
+        }
+
+        /* .group span {
+            margin: 5px 0;
+        } */
+
+        .block, .block1, .block2 {
+            padding: 5px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div class="font1">
+    <div class="bottom" style="margin-bottom:5px;"><i>Note : This report should be prepared on the basis of reports
+        submitted by Counting Officers under Section 51(7)</i></div>
+    <table class="table table-borderless">
+        <tbody>
+        <tr>
+            <td class="no-padding-left no-padding-right" colspan="2">
+                <div class="all float-right"><h1 class="bold">CE-201</h1></div>
+            </td>
+        </tr>
+
+        <div>
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="left right top bottom" rowspan="2">No. of the Polling District</th>
+                    <th class="left right top bottom" rowspan="2">Name of the Polling Station</th>
+                    <th class="left right top bottom" rowspan="2" colspan="3">Stenciled Nos. of the Ballot Boxes</th>
+                    <th class="left right top bottom" rowspan="2">No. of ballot papers received</th>
+                    <th class="left right top bottom" rowspan="2">No. of spoilt ballot papers</th>
+                    <th class="left right top bottom" rowspan="2">No. of issued ballot papers</th>
+                    <th class="left right top bottom" rowspan="2">No. of unused ballot papers</th>
+                    <th class="left right top bottom" colspan="3">Ordinary Ballot Papers</th>
+                    <th class="left right top bottom" colspan="3">Tendered Ballot Papers</th>
+                </tr>
+                <tr>
+                    <th class="left right top bottom">Ballot Paper Account</th>
+                    <th class="left right top bottom">Ballot Box</th>
+                    <th class="left right top bottom">Differences if any</th>
+                    <th class="left right top bottom">Ballot Paper Account</th>
+                    <th class="left right top bottom">Ballot Box</th>
+                    <th class="left right top bottom">Differences if any</th>
+                </tr>
+
+                {% for row in content.data %}
+                <tr>
+                    {% for cell in row %}
+                    <td class="left right top bottom">{{cell}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+
+</body>
+</html>
