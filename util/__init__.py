@@ -1,5 +1,7 @@
 import connexion
 
+from orm.enums import TallySheetCodeEnum, BallotTypeEnum, AreaTypeEnum
+
 
 class RequestBody:
     def __init__(self, body):
@@ -18,7 +20,98 @@ class Auth:
 
 
 def get_paginated_query(query):
-    limit = connexion.request.args["limit"]
-    offset = connexion.request.args["offset"]
+    if "limit" in connexion.request.args and connexion.request.args["limit"] is not None:
+        query = query.limit(connexion.request.args["limit"])
 
-    return query.limit(limit).offset(offset)
+    if "offset" in connexion.request.args and connexion.request.args["offset"] is not None:
+        query = query.offset(connexion.request.args["offset"])
+
+    return query
+
+
+def get_array(array_or_value):
+    if array_or_value is None:
+        return []
+    elif isinstance(array_or_value, list) is False:
+        return [array_or_value]
+    else:
+        return array_or_value
+
+
+def get_ballot_type(ballot_type_str):
+    if ballot_type_str == "Ordinary":
+        return BallotTypeEnum.Ordinary
+    elif ballot_type_str == "Tendered":
+        return BallotTypeEnum.Tendered
+
+
+def get_tally_sheet_code(tally_sheet_code_str):
+    if tally_sheet_code_str == "CE-201":
+        return TallySheetCodeEnum.CE_201
+    elif tally_sheet_code_str == "CE-201-PV":
+        return TallySheetCodeEnum.CE_201_PV
+    elif tally_sheet_code_str == "PRE-41":
+        return TallySheetCodeEnum.PRE_41
+    elif tally_sheet_code_str == "PRE-21":
+        return TallySheetCodeEnum.PRE_21
+    elif tally_sheet_code_str == "PRE-30-PD":
+        return TallySheetCodeEnum.PRE_30_PD
+    elif tally_sheet_code_str == "PRE-30-PD-PV":
+        return TallySheetCodeEnum.PRE_30_PD_PV
+    elif tally_sheet_code_str == "PRE-30-ED":
+        return TallySheetCodeEnum.PRE_30_ED
+    elif tally_sheet_code_str == "PRE_ALL_ISLAND_RESULTS":
+        return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS
+    elif tally_sheet_code_str == "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS":
+        return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+
+
+def get_tally_sheet_code_string(tally_sheet_code):
+    if tally_sheet_code is TallySheetCodeEnum.CE_201:
+        return "CE-201"
+    elif tally_sheet_code is TallySheetCodeEnum.CE_201_PV:
+        return "CE-201-PV"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_41:
+        return "PRE-41"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_21:
+        return "PRE-21"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_30_PD:
+        return "PRE-30-PD"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_30_PD_PV:
+        return "PRE-30-PD-PV"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_30_ED:
+        return "PRE-30-ED"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS:
+        return "PRE_ALL_ISLAND_RESULTS"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS:
+        return "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS"
+
+
+def get_area_type(area_type):
+    if area_type == "Country":
+        return AreaTypeEnum.Country
+    elif area_type == "ElectoralDistrict":
+        return AreaTypeEnum.ElectoralDistrict
+    elif area_type == "PollingDivision":
+        return AreaTypeEnum.PollingDivision
+    elif area_type == "PollingDistrict":
+        return AreaTypeEnum.PollingDistrict
+    elif area_type == "PollingStation":
+        return AreaTypeEnum.PollingStation
+    elif area_type == "CountingCentre":
+        return AreaTypeEnum.CountingCentre
+    elif area_type == "PostalVoteCountingCentre":
+        return AreaTypeEnum.PostalVoteCountingCentre
+    elif area_type == "DistrictCentre":
+        return AreaTypeEnum.DistrictCentre
+    elif area_type == "ElectionCommission":
+        return AreaTypeEnum.ElectionCommission
+    elif area_type == "AdministrativeDistrict":
+        return AreaTypeEnum.AdministrativeDistrict
+
+
+def to_empty_string_or_value(value):
+    if value is None:
+        return ""
+    else:
+        return value

@@ -3,7 +3,8 @@ from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from util import get_paginated_query
-from orm.entities import Folder, FolderFile, File
+from orm.entities.IO import File, Folder
+from orm.entities.IO.Folder import FolderFile
 from orm.enums import ProofTypeEnum
 from exception import NotFoundException, ForbiddenException
 
@@ -12,7 +13,7 @@ class ProofModel(db.Model):
     __tablename__ = 'proof'
     proofId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     proofType = db.Column(db.Enum(ProofTypeEnum), nullable=False)
-    createdAt = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow, nullable=True)
+    createdAt = db.Column(db.DateTime, default=None, onupdate=datetime.now, nullable=True)
     scannedFilesFolderId = db.Column(db.Integer, db.ForeignKey(Folder.Model.__table__.c.folderId),
                                      nullable=False)
     finished = db.Column(db.Boolean, default=False)
@@ -40,7 +41,7 @@ def create(proofType):
     )
 
     db.session.add(result)
-    db.session.commit()
+    db.session.flush()
 
     return result
 
@@ -58,7 +59,7 @@ def update(proofId, finished=None):
 
             instance.finished = finished
 
-        db.session.commit()
+        db.session.flush()
 
         return instance
 
@@ -71,7 +72,7 @@ def upload_file(proofId, fileSource, fileType):
     elif proof.finished is True:
         raise ForbiddenException("No more evidence is accepted for this proof (proofId=%d)" % proofId)
     else:
-        file = File.create(
+        file = File.createFromFileSource(
             fileSource=fileSource,
             fileType=fileType
         )

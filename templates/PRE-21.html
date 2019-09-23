@@ -1,0 +1,117 @@
+<html>
+<head>
+    <meta name="pdfkit-page-size" content="B2"/>
+    <meta name="pdfkit-orientation" content="Landscape"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        .top {
+            border-top: 1px solid #000 !important;
+        }
+
+        .bottom {
+            border-bottom: 1px solid #000 !important;
+        }
+
+        .left {
+            border-left: 1px solid #000 !important;
+        }
+
+        .right {
+            border-right: 1px solid #000 !important;
+        }
+
+        .all {
+            border-top: 1px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .font1 {
+            font-family: serif;
+        }
+
+        .float-right {
+            float: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .no-padding {
+            padding: 0 !important;
+        }
+
+        .no-padding-left {
+            padding-left: 0 !important;
+        }
+
+        .no-padding-right {
+            padding-right: 0 !important;
+        }
+
+        .no-padding-bottom {
+            padding-bottom: 0 !important;
+        }
+
+        .group div {
+            display: inline-block;
+        }
+
+        .sub-head {
+            font-style: italic;
+            text-decoration: underline;
+        }
+
+        .indent {
+            margin-left: 20px;
+        }
+
+        /* .group span {
+            margin: 5px 0;
+        } */
+
+        .block, .block1, .block2 {
+            padding: 5px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div class="font1">
+    <div class="all float-right"><h1 class="bold">PRE-21</h1></div>
+    <div class="float-left">
+        <strong>Electoral District : </strong>{{content.electoralDistrict}} <br/>
+        <strong>Polling Division : </strong>{{content.pollingDivision}} <br/>
+        <strong>Counting Centre : </strong>{{content.countingCentre}} <br/>
+    </div>
+
+    <div>
+        <table class="table table-borderless">
+            <tbody>
+            <tr>
+                <th class="left right top bottom">Grounds for Rejection</th>
+                <th class="left right top bottom">Number of Ballot Papers Rejected</th>
+            </tr>
+
+            {% for row in content.data %}
+            <tr>
+                {% for cell in row %}
+                <td class="left right top bottom">{{cell}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+
+</body>
+</html>

@@ -1,10 +1,9 @@
-from util import RequestBody
-from schemas import Ballot_Schema as Schema, TallySheetVersionPRE41Schema
-from orm.entities import TallySheetVersion
-from orm.entities.TallySheetVersion import PRE41
-from orm.entities.Result.PartyWiseResult import PartyCount
-from orm.enums import TallySheetCodeEnum
+from flask import Response
 
+from app import db
+from util import RequestBody
+from schemas import Ballot_Schema as Schema
+from orm.entities.SubmissionVersion import TallySheetVersion
 
 
 def get_all(tallySheetId):
@@ -19,4 +18,14 @@ def create(body):
         tallySheetId=request_body.get("tallySheetId")
     )
 
+    db.session.commit()
+
     return Schema().dump(result).data, 201
+
+
+def html(tallySheetId, tallySheetVersionId):
+    tallySheetVersion = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId)
+
+    db.session.commit()
+
+    return Response(tallySheetVersion.html(), mimetype='text/html')

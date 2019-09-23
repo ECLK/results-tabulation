@@ -2,6 +2,8 @@ import enum
 
 
 class TallySheetCodeEnum(enum.Enum):
+    CE_201 = 1
+
     PRE_28 = 1
     PRE_41 = 2
     PRE_30_PD = 3
@@ -13,3 +15,5 @@ class TallySheetCodeEnum(enum.Enum):
     PRE_34_RO = 9
     PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS = 10
     PRE_ALL_ISLAND_RESULTS = 11
+    CE_201_PV = 12
+    PRE_30_PD_PV = 13

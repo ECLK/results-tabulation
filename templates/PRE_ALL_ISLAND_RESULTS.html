@@ -1,0 +1,166 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+
+        .top {
+            border-top: 1px solid #000 !important;
+        }
+
+        .bottom {
+            border-bottom: 1px solid #000 !important;
+        }
+
+        .left {
+            border-left: 1px solid #000 !important;
+        }
+
+        .right {
+            border-right: 1px solid #000 !important;
+        }
+
+        .all {
+            border-top: 1px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        .report-header span {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .no-padding-bottom {
+            padding-bottom: 0 !important;
+        }
+
+        .no-padding-top {
+            padding-top: 0 !important;
+        }
+
+        .no-padding-left {
+            padding-left: 0 !important;
+        }
+
+        .no-padding-right {
+            padding-right: 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <table class="table table-borderless">
+      <tbody>
+        <tr>
+          <td style="width:15%; font-size:12px; font-weight:bold;">OFFICIAL RESULTS</td>
+          <td style="text-align:center; vertical-align:middle; width:70%;" rowspan="2" class="report-header">
+            <span style="font-size:12px;">DEPARTMENT OF ELECTIONS</span>
+            <span style="font-weight:bold;">PRESIDENTIAL ELECTION - 08/01/2015</span>
+            <span style="font-weight:bold;">ALL ISLAND RESULT</span>
+            <span style="font-size:12px;">VOTES RECEIVED BY EACH CANDIDATE</span>
+          </td>
+          <td style="text-align:right; width:15%; font-size:12px; font-weight:bold;" rowspan="2">UCSC Copy</td>
+        </tr>
+        <tr>
+          <td style="width:15%; text-align:center;" class="no-padding-bottom no-padding-top">
+            <img src={{ url_for('static', filename='Emblem_of_Sri_Lanka.png') }} width="72" height="75"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <table class="table table-borderless">
+        <tbody>
+            <tr>
+                <td><u><i>Name of the Candidate</i></u></td>
+                <td style="text-align:center;"><u><i>Party Abbreviation</i></u></td>
+                <td style="text-align:center;"><u><i>Votes Recieved</i></u></td>
+                <td style="text-align:center;"><u><i>Percentage</i></u></td>
+            </tr>
+
+            {% for row in content.data %}
+              <tr>
+                  <td class="all">{{row[0]}}</td>
+                  <td class="all" style="text-align:center;">{{row[1]}}</td>
+                  <td class="all" style="text-align:center;"><b>{{row[2]}}</b></td>
+                  <td class="all" style="text-align:center;">{{row[3]}}%</td>
+              </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td><b>Total Valid Votes</b></td>
+                <td style="text-align:center;"><b>{{content.validVotes[0]}}</b></td>
+                <td style="text-align:center;">{{content.validVotes[1]}}%</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>Rejected Votes</b></td>
+                <td style="text-align:center;"><b>{{content.rejectedVotes[0]}}</b></td>
+                <td style="text-align:center;">{{content.rejectedVotes[1]}}%</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>Total Polled</b></td>
+                <td style="text-align:center;"><b>{{content.totalPolled[0]}}</b></td>
+                <td style="text-align:center;">{{content.totalPolled[1]}}%</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>Registered No. of Electors</b></td>
+                <td style="text-align:center;"><b>{{content.registeredVoters[0]}}</b></td>
+                <td style="text-align:center;"></td>
+            </tr>
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>Time:    {{content.time}}</b></td>
+                <td colspan="2" style="text-align:center;">................................................</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><b>Date:    {{content.date}}</b></td>
+                <td colspan="2" style="text-align:center;">
+                    <b>Mahinda Deshapriya</b>
+                    <br/>
+                    Commissioner of Elections
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="4" rowspan="4"></td>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+
+            <tr>
+                <td style="vertical-align:middle; font-size: 11px; font-weight: bold;">
+                    Election Secretariat, Sarana Mawatha, Rajagiriya.
+                </td>
+                <td></td>
+                <td style="vertical-align:middle; text-align:right; font-size: 11px;">
+                    University of Colombo School of Computing
+                </td>
+                <td style="vertical-align:middle;">
+                    <img src={{ url_for('static', filename='ucsc.jpg') }} width="50" height="52"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
+
+</body>
+</html>

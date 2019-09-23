@@ -1,0 +1,100 @@
+<html>
+<head>
+    <meta name="pdfkit-page-size" content="B2"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        .top {
+            border-top: 1px solid #000 !important;
+        }
+
+        .bottom {
+            border-bottom: 1px solid #000 !important;
+        }
+
+        .left {
+            border-left: 1px solid #000 !important;
+        }
+
+        .right {
+            border-right: 1px solid #000 !important;
+        }
+
+        .all {
+            border-top: 1px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+        }
+
+    </style>
+</head>
+<body>
+
+<div>
+
+    <div style="text-align: center; margin-bottom: 10px;">
+        <b>PRESIDENTIAL ELECTION - 08.01.2015</b>
+        <br/><br/>
+        Detailed statement on the number of votes cast in favour of each candidate according to each Electoral
+        District
+        <br/>
+        ALL ISLAND RESULTS
+    </div>
+
+
+    <table class="table table-borderless">
+        <tbody>
+
+        <tr>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2">
+                Name of the Candidate (According to the order in the Ballot Paper)
+            </th>
+            <th class="left right top bottom" colspan="{{content.electoralDistricts|length}}">
+                ELECTORAL DISTRICT
+            </th>
+            <th class="left right top bottom" rowspan="2">TOTAL</th>
+            <th class="left right top bottom" rowspan="2">TOTAL NUMBER OF VOTES IN WORDS</th>
+        </tr>
+        <tr>
+            {% for electoralDistrict in content.electoralDistricts %}
+            <th class="left right top bottom">{{electoralDistrict}}</th>
+            {% endfor %}
+        </tr>
+
+        {% for row in content.data %}
+        <tr>
+            {% for cell in row %}
+            <td class="left right top bottom">{{cell}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td class="left right top bottom">NO OF VALID VOTES</td>
+            {% for cell in content.validVotes %}
+            <td class="left right top bottom">{{cell}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <td class="left right top bottom">NO OF REJECTED VOTES</td>
+            {% for cell in content.rejectedVotes %}
+              <td class="left right top bottom">{{cell}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <td class="left right top bottom">TOTAL NO OF VOTES POLLED (INCLUDING REJECTED VOTES)</td>
+            {% for cell in content.totalVotes %}
+              <td class="left right top bottom">{{cell}}</td>
+            {% endfor %}
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+</html>

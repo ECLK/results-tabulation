@@ -1,3 +1,4 @@
+from app import db
 from util import RequestBody
 
 from schemas import Invoice_Schema as Schema
@@ -34,6 +35,8 @@ def create(body):
         issuedTo=request_body.get("issuedTo"),
     )
 
+    db.session.commit()
+
     return Schema().dump(result).data
 
 
@@ -47,6 +50,8 @@ def confirm(invoiceId):
         confirmed=True
     )
 
+    db.session.commit()
+
     return Schema().dump(result).data
 
 
@@ -54,5 +59,7 @@ def delete(invoiceId):
     result = Model.delete(
         invoiceId=invoiceId
     )
+
+    db.session.commit()
 
     return result
