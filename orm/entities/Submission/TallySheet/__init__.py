@@ -62,6 +62,8 @@ def get_by_id(tallySheetId):
 
 
 def get_all(electionId=None, officeId=None, tallySheetCode=None):
+    election = Election.get_by_id(electionId=electionId)
+
     query = Model.query.join(
         Submission.Model,
         Submission.Model.submissionId == Model.tallySheetId
@@ -72,10 +74,7 @@ def get_all(electionId=None, officeId=None, tallySheetCode=None):
 
     if electionId is not None:
         query = query.filter(
-            or_(
-                Election.Model.electionId == electionId,
-                Election.Model.parentElectionId == electionId
-            )
+            Election.Model.electionId.in_(election.mappedElectionIds)
         )
 
     if officeId is not None:
