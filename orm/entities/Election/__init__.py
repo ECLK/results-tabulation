@@ -41,6 +41,13 @@ class ElectionModel(db.Model):
             return [self.electionId, self.parentElectionId]
 
     @hybrid_property
+    def subElectionIds(self):
+
+        # TODO
+
+        return [subElection.electionId for subElection in self.subElections]
+
+    @hybrid_property
     def parties(self):
         if self.parentElectionId is None:
             return self._parties
