@@ -82,9 +82,9 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
             "situation": tallySheetContentSummary.situation,
             "timeOfCommencementOfCount": tallySheetContentSummary.timeOfCommencementOfCount,
             "numberOfAPacketsFound": tallySheetContentSummary.numberOfAPacketsFound,
-            "numberOfACoversRejected": tallySheetContentSummary.situation,
-            "numberOfBCoversRejected": tallySheetContentSummary.timeOfCommencementOfCount,
-            "numberOfValidBallotPapers": tallySheetContentSummary.numberOfAPacketsFound,
+            "numberOfACoversRejected": tallySheetContentSummary.numberOfACoversRejected,
+            "numberOfBCoversRejected": tallySheetContentSummary.numberOfBCoversRejected,
+            "numberOfValidBallotPapers": tallySheetContentSummary.numberOfValidBallotPapers,
 
             "data": [
             ],
@@ -100,7 +100,7 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
             data_row.append(to_empty_string_or_value(row.numberOfAPacketsFound))
 
         html = render_template(
-            'CE-201.html',
+            'CE-201-PV.html',
             content=content
         )
 
