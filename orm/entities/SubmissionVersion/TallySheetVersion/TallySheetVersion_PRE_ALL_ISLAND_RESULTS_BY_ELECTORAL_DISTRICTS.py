@@ -14,6 +14,7 @@ from util import get_paginated_query
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
+from num2words import num2words
 
 
 class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(TallySheetVersion.Model):
@@ -134,19 +135,23 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
             data_row.append(total_count_per_candidate)
 
             # total_count_per_candidate in words
-            data_row.append("")
+            total_count_per_candidate_words = num2words (total_count_per_candidate)
+            data_row.append(total_count_per_candidate_words)
 
         content["validVotes"].append(sum(content["validVotes"]))
         # total validVotes in words
-        content["validVotes"].append("")
+        validVotes_words = num2words (sum(content["validVotes"]))
+        content["validVotes"].append(validVotes_words)
 
         content["rejectedVotes"].append(sum(content["rejectedVotes"]))
         # total rejectedVotes in words
-        content["rejectedVotes"].append("")
+        rejectedVotes_words = num2words (sum(content["rejectedVotes"]))
+        content["rejectedVotes"].append(rejectedVotes_words)
 
         content["totalVotes"].append(sum(content["totalVotes"]))
         # totalVotes in words
-        content["totalVotes"].append("")
+        totalVotes_words = num2words (sum(content["totalVotes"]))
+        content["totalVotes"].append(totalVotes_words)
 
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.html',
