@@ -49,7 +49,7 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
             ),
             isouter=True
         ).filter(
-            InvalidVoteCategory.Model.electionId == self.submission.electionId
+            InvalidVoteCategory.Model.electionId.in_(self.submission.election.mappedElectionIds)
         )
 
     def html(self):
