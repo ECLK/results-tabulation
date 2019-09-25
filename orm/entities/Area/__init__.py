@@ -13,7 +13,7 @@ from util import get_paginated_query, get_array, get_area_type
 class AreaModel(db.Model):
     __tablename__ = 'area'
     areaId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    areaName = db.Column(db.String(100), nullable=False)
+    areaName = db.Column(db.String(300), nullable=False)
     areaType = db.Column(db.Enum(AreaTypeEnum), nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
     # parentAreaId = db.Column(db.Integer, db.ForeignKey(areaId), nullable=True)
