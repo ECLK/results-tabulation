@@ -381,6 +381,17 @@ def get_all(election_id=None, area_name=None, associated_area_id=None, area_type
     if area_name is not None:
         query = query.filter(Model.areaName.like(area_name))
 
+    if election is not None:
+        query = query.filter(
+            or_(
+                Model.electionId.in_(election.mappedElectionIds),
+                Model.electionId.in_(election.subElectionIds)
+            )
+        )
+
+    if area_type is not None:
+        query = query.filter(Model.areaType == area_type)
+
     query = query.order_by(Model.areaId)
 
     result = get_paginated_query(query).all()
