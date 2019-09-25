@@ -209,143 +209,29 @@
                     </td>
                 </tr>
 
+                {% for row in content.data %}
                 <tr class="no-padding-bottom no-padding-top">
                     <td class="no-padding-right" style="vertical-align: middle;">(i)</td>
                     <td class="no-padding-bottom no-padding-top no-padding-left">
                         <div class="font1 group">
                             <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
                             <div>
-                                sinhala<br/>
-                                tamil<br/>
-                                Does not bear the official mark
+                                -- sinhala --<br/>
+                                -- tamil --<br/>
+                                {{row[0]}}
                             </div>
                         </div>
                     </td>
                     <td class="no-padding-bottom no-padding-top">
                         <div class="font1 group">
                             <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
-                            <div>
-                                <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.officialMark}}</span>
+                            <div style="text-align: center; padding-left: 150px;">
+                                {{row[1]}}
                             </div>
                         </div>
                     </td>
                 </tr>
-
-
-                <tr class="no-padding-bottom no-padding-top">
-                    <td class="no-padding-right" style="vertical-align: middle;">(ii)</td>
-                    <td class="no-padding-bottom no-padding-top no-padding-left">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
-                            <div>
-                                sinhala<br/>
-                                tamil<br/>
-                                Voted for more than one candidate
-                            </div>
-                        </div>
-                    </td>
-                    <td class="no-padding-bottom no-padding-top">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
-                            <div>
-                                <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.candidate}}</span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-
-
-
-                <tr class="no-padding-bottom no-padding-top">
-                    <td class="no-padding-right" style="vertical-align: middle;">(iii)</td>
-                    <td class="no-padding-bottom no-padding-top no-padding-left">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
-                            <div>
-                                sinhala<br/>
-                                tamil<br/>
-                                Specified a second preference or a third preference only or both such preferences only
-                            </div>
-                        </div>
-                    </td>
-                    <td class="no-padding-bottom no-padding-top">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
-                            <div>
-                                <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.preference}}</span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-
-
-                <tr class="no-padding-bottom no-padding-top">
-                    <td class="no-padding-right" style="vertical-align: middle;">(iv)</td>
-                    <td class="no-padding-bottom no-padding-top no-padding-left">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
-                            <div>
-                                sinhala<br/>
-                                tamil<br/>
-                                Something is written or marked by which the voter can be identified
-                            </div>
-                        </div>
-                    </td>
-                    <td class="no-padding-bottom no-padding-top">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
-                            <div>
-                                <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.identified}}</span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-
-
-                <tr class="no-padding-bottom no-padding-top">
-                    <td class="no-padding-right" style="vertical-align: middle;">(v)</td>
-                    <td class="no-padding-bottom no-padding-top no-padding-left">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
-                            <div>
-                                sinhala<br/>
-                                tamil<br/>
-                                unmarked
-                            </div>
-                        </div>
-                    </td>
-                    <td class="no-padding-bottom no-padding-top">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
-                            <div>
-                                <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.unmarked}}</span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-
-
-                <tr class="no-padding-bottom no-padding-top">
-                    <td class="no-padding-right" style="vertical-align: middle;">(vi)</td>
-                    <td class="no-padding-bottom no-padding-top no-padding-left">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
-                            <div>
-                                sinhala<br/>
-                                tamil<br/>
-                                Void for Uncertainity
-                            </div>
-                        </div>
-                    </td>
-                    <td class="no-padding-bottom no-padding-top">
-                        <div class="font1 group">
-                            <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
-                            <div>
-                                <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.Uncertainity}}</span>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
+                {% endfor %}
 
 
                 <tr class="no-padding-bottom no-padding-top">
@@ -358,7 +244,7 @@
                             </div>
                             <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
                             <div>
-                                <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.TotalRejected}}</span>
+                                <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.totalRejected}}</span>
                             </div>
                         </div>
                     </td>
