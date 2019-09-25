@@ -74,7 +74,7 @@ class AreaModel(db.Model):
         return self
 
     def get_associated_areas(self, areaType, electionId=None):
-        return get_associated_areas(self, areaType, electionId)
+        return get_associated_areas_query(area=self, areaType=areaType, electionId=electionId).all()
 
     def get_submissions(self, submissionType):
         return [submission for submission in self.submissions if submission.submissionType is submissionType]
@@ -242,6 +242,8 @@ def get_presidential_area_map_query():
 
 
 def get_associated_areas_query(area, areaType, electionId=None):
+    print("############ get_associated_areas_query ##############", [area, areaType, electionId])
+
     presidential_area_map_sub_query = get_presidential_area_map_query().subquery()
     election = Election.get_by_id(electionId=electionId)
 
@@ -339,8 +341,15 @@ def get_associated_areas_query(area, areaType, electionId=None):
 
     if electionId is not None:
         query = query.filter(
-            AreaModel.electionId.in_(election.mappedElectionIds)
+            or_(
+                Model.electionId.in_(election.mappedElectionIds),
+                Model.electionId.in_(election.subElectionIds)
+            )
         )
+
+    query = query.filter(
+        AreaModel.areaType == areaType
+    )
 
     return query
 
@@ -371,17 +380,6 @@ def get_all(election_id=None, area_name=None, associated_area_id=None, area_type
 
     if area_name is not None:
         query = query.filter(Model.areaName.like(area_name))
-
-    if election is not None:
-        query = query.filter(
-            or_(
-                Model.electionId.in_(election.mappedElectionIds),
-                Model.electionId.in_(election.subElectionIds)
-            )
-        )
-
-    if area_type is not None:
-        query = query.filter(Model.areaType == area_type)
 
     query = query.order_by(Model.areaId)
 
