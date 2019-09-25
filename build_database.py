@@ -63,7 +63,8 @@ def get_object(election, row, row_key, data_key=None):
             obj = BallotBox.create(ballotBoxId=cell, electionId=election.electionId)
 
         elif data_store_key == "Party":
-            obj = Party.create(partyName=cell, partySymbol=row["Party Symbol"], partyAbbreviation=row["Party Abbreviation"])
+            obj = Party.create(partyName=cell, partySymbol=row["Party Symbol"],
+                               partyAbbreviation=row["Party Abbreviation"])
         elif data_store_key == "Candidate":
             obj = Candidate.create(candidateName=cell)
 
@@ -174,6 +175,16 @@ def build_database(dataset):
     sample_data_dir = os.path.join(basedir, 'sample-data')
     csv_dir = "%s/%s" % (sample_data_dir, dataset)
 
+    for row in get_rows_from_csv('party-candidate.csv'):
+        party = get_object(root_election, row, "Party")
+        root_election.add_party(partyId=party.partyId)
+
+        candidate = get_object(root_election, row, "Candidate")
+        root_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
+
+    for row in get_rows_from_csv('invalid-vote-categories.csv'):
+        root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
+
     for row in get_rows_from_csv('data.csv'):
         print("[ROW] ========= ", row)
         country = get_object(root_election, {"Country": "Sri Lanka"}, "Country")
@@ -185,9 +196,14 @@ def build_database(dataset):
         districtCentre = get_object(root_election, row, "District Centre")
         countingCentre = get_object(ordinary_election, row, "Counting Centre")
 
+        if row["Registered Voters"] is None or len(row["Registered Voters"]) is 0:
+            registered_voters = 0
+        else:
+            registered_voters = row["Registered Voters"].replace(",", "")
+
         pollingStation = get_object(ordinary_election, {
             "Polling Station": row["Polling Station (English)"],
-            "Registered Voters": row["Registered Voters"].replace(",", "")
+            "Registered Voters": registered_voters
         }, "Polling Station")
 
         country.add_child(electoralDistrict.areaId)
@@ -198,36 +214,33 @@ def build_database(dataset):
         districtCentre.add_child(countingCentre.areaId)
         countingCentre.add_child(pollingStation.areaId)
 
-        postalVoteCountingCentre = get_object(postal_election, {
-            "Postal Vote Counting Centre": row["Counting Centre"]
-        }, "Postal Vote Counting Centre")
-        pollingDivision.add_child(postalVoteCountingCentre.areaId)
-        districtCentre.add_child(postalVoteCountingCentre.areaId)
-
         stationaryItems = []
 
         for i in range(1, 4):
             box_key = "Ballot Box %d" % i
             if box_key in row and row[box_key] is not None and len(row[box_key]) > 0:
-                ballotBox = BallotBox.Model(ballotBoxId=row[box_key], electionId=root_election.electionId)
-                db.session.add(ballotBox)
-                stationaryItems.append(ballotBox)
-                # ballotBox = get_object({"Ballot Box": row[box_key]}, "Ballot Box")
+                if row[box_key] is not None and len(row[box_key]) > 0:
+                    ballotBox = BallotBox.Model(ballotBoxId=row[box_key], electionId=root_election.electionId)
+                    db.session.add(ballotBox)
+                    stationaryItems.append(ballotBox)
+                    # ballotBox = get_object({"Ballot Box": row[box_key]}, "Ballot Box")
 
-        for ballotId in range(int(row["Ballot - start"]), int(row["Ballot - end"]) + 1):
-            ballot = Ballot.Model(ballotId=ballotId, electionId=root_election.electionId)
-            db.session.add(ballot)
-            stationaryItems.append(ballot)
-            # ballot = get_object({"Ballot": str(ballotId)}, "Ballot")
-            # invoice.add_stationary_item(ballot.stationaryItemId)
+        if len(row["Ballot - start"]) is not 0 and len(row["Ballot - end"]) is not 0:
+            for ballotId in range(int(row["Ballot - start"]), int(row["Ballot - end"]) + 1):
+                ballot = Ballot.Model(ballotId=ballotId, electionId=root_election.electionId)
+                db.session.add(ballot)
+                stationaryItems.append(ballot)
+                # ballot = get_object({"Ballot": str(ballotId)}, "Ballot")
+                # invoice.add_stationary_item(ballot.stationaryItemId)
 
-        for ballotId in range(int(row["Tendered Ballot - start"]), int(row["Tendered Ballot - end"]) + 1):
-            ballot = Ballot.Model(ballotId=ballotId, ballotType=BallotTypeEnum.Tendered,
-                                  electionId=root_election.electionId)
-            db.session.add(ballot)
-            stationaryItems.append(ballot)
-            # ballot = get_object({"Tendered Ballot": str(ballotId)}, "Tendered Ballot")
-            # invoice.add_stationary_item(ballot.stationaryItemId)
+        if len(row["Tendered Ballot - start"]) is not 0 and len(row["Tendered Ballot - end"]) is not 0:
+            for ballotId in range(int(row["Tendered Ballot - start"]), int(row["Tendered Ballot - end"]) + 1):
+                ballot = Ballot.Model(ballotId=ballotId, ballotType=BallotTypeEnum.Tendered,
+                                      electionId=root_election.electionId)
+                db.session.add(ballot)
+                stationaryItems.append(ballot)
+                # ballot = get_object({"Tendered Ballot": str(ballotId)}, "Tendered Ballot")
+                # invoice.add_stationary_item(ballot.stationaryItemId)
 
         invoice = Invoice.create(
             electionId=root_election.electionId,
@@ -242,14 +255,22 @@ def build_database(dataset):
 
         print("[ROW END] ========= ")
 
-    for row in get_rows_from_csv('party-candidate.csv'):
-        party = get_object(root_election, row, "Party")
-        root_election.add_party(partyId=party.partyId)
+    for row in get_rows_from_csv('postal-data.csv'):
+        print("[POSTAL ROW] ========= ", row)
+        country = get_object(root_election, {"Country": "Sri Lanka"}, "Country")
+        electoralDistrict = get_object(root_election, row, "Electoral District")
+        pollingDivision = get_object(root_election, row, "Polling Division")
+        electionCommission = get_object(root_election, {"Election Commission": "Sri Lanka Election Commission"},
+                                        "Election Commission")
+        districtCentre = get_object(root_election, row, "District Centre")
+        countingCentre = get_object(postal_election, row, "Postal Vote Counting Centre")
 
-        candidate = get_object(root_election, row, "Candidate")
-        root_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
+        country.add_child(electoralDistrict.areaId)
+        electoralDistrict.add_child(pollingDivision.areaId)
+        pollingDivision.add_child(countingCentre.areaId)
+        districtCentre.add_child(countingCentre.areaId)
+        electionCommission.add_child(districtCentre.areaId)
 
-    for row in get_rows_from_csv('invalid-vote-categories.csv'):
-        root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
+        print("[POSTAL ROW END] ========= ")
 
     db.session.commit()
