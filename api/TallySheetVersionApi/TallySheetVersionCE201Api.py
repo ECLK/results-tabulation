@@ -51,13 +51,11 @@ def create(tallySheetId, body):
                     "tenderedBallotCountFromBallotPaperAccount")
             )
 
-            for issued_ballot_body in party_count_body.get("ballotBoxesIssued"):
-                issued_ballot_body = RequestBody(issued_ballot_body)
-                tallySheetVersionRow.add_issued_ballot_box(issued_ballot_body.get("stationaryItemId"))
+            for issued_ballot_box_id in party_count_body.get("ballotBoxesIssued"):
+                tallySheetVersionRow.add_issued_ballot_box(issued_ballot_box_id)
 
-            for received_ballot_body in party_count_body.get("ballotBoxesReceived"):
-                received_ballot_body = RequestBody(received_ballot_body)
-                tallySheetVersionRow.add_received_ballot_box(received_ballot_body.get("stationaryItemId"))
+            for received_ballot_box_id in party_count_body.get("ballotBoxesReceived"):
+                tallySheetVersionRow.add_received_ballot_box(received_ballot_box_id)
 
     db.session.commit()
 
