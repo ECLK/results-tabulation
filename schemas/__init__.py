@@ -13,7 +13,7 @@ from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201, \
     TallySheetVersionRow_PRE_41, \
     TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_30_ED, \
-    TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_CE_201_PV_CC
+    TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_CE_201_PV_CC, TallySheetVersionRow_RejectedVoteCount
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, \
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum, VoteTypeEnum
 
@@ -105,6 +105,18 @@ class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
         )
 
         model = TallySheetVersionRow_PRE_41.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class TallySheetVersionRow_PRE_41_Summary_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "rejectedVoteCount",
+        )
+
+        model = TallySheetVersionRow_RejectedVoteCount.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -404,7 +416,8 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content"
+            "content",
+            "summary"
         )
 
         model = TallySheetVersionPRE41.Model
@@ -414,6 +427,7 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
+    summary = ma.Nested(TallySheetVersionRow_PRE_41_Summary_Schema)
 
 
 class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
