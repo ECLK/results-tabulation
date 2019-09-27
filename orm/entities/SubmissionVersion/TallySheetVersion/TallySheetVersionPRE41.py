@@ -7,7 +7,7 @@ from exception import NotFoundException, ForbiddenException
 from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_RejectedVoteCount
 from util import get_paginated_query
 
 from orm.entities.Submission import TallySheet
@@ -94,6 +94,13 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             countInWords=countInWords
         )
 
+    def add_invalid_vote_count(self, electionId, rejectedVoteCount):
+        TallySheetVersionRow_RejectedVoteCount.create(
+            electionId=electionId,
+            tallySheetVersionId=self.tallySheetVersionId,
+            rejectedVoteCount=rejectedVoteCount
+        )
+
     @hybrid_property
     def content(self):
 
@@ -121,6 +128,17 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
         ).filter(
             ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
         ).all()
+
+    @hybrid_property
+    def summary(self):
+
+        return db.session.query(
+            TallySheetVersionRow_RejectedVoteCount.Model
+        ).filter(
+            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
+            TallySheetVersionRow_RejectedVoteCount.Model.areaId == None,
+            TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
+        ).one_or_none()
 
 
 Model = TallySheetVersionPRE41Model
