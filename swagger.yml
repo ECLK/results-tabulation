@@ -2140,6 +2140,8 @@ paths:
                         type: string
         description: Updated tally sheet object.
         required: true
+      security:
+        - jwt: ['dataEditor']
   /tally-sheet/PRE-41/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
@@ -3230,6 +3232,11 @@ components:
       type: apiKey
       name: api_key
       in: header
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: auth.decode_token
   schemas:
     ApiResponse:
       type: object
