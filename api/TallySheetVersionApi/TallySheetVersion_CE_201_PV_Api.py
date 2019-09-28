@@ -1,6 +1,8 @@
 import datetime
 
 from app import db
+from auth import authorize
+from auth.AuthConstants import DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE
 from util import RequestBody
 from schemas import TallySheetVersion_CE_201_PV_Schema, TallySheetVersionSchema
 from orm.entities.Submission import TallySheet
@@ -8,6 +10,7 @@ from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersion_C
 from exception import NotFoundException
 
 
+@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
     result = TallySheetVersion_CE_201_PV.get_by_id(
         tallySheetId=tallySheetId,
@@ -17,6 +20,7 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     return TallySheetVersion_CE_201_PV_Schema().dump(result).data
 
 
+@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
 def get_all(tallySheetId):
     tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
     if tallySheet is None:
@@ -29,6 +33,7 @@ def get_all(tallySheetId):
     return TallySheetVersion_CE_201_PV_Schema(many=True).dump(result).data
 
 
+@authorize(required_roles=[DATA_EDITOR_ROLE])
 def create(tallySheetId, body):
     request_body = RequestBody(body)
     tallySheetVersion = TallySheetVersion_CE_201_PV.create(
