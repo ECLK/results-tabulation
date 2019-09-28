@@ -2140,8 +2140,6 @@ paths:
                         type: string
         description: Updated tally sheet object.
         required: true
-      security:
-        - jwt: ['dataEditor']
   /tally-sheet/PRE-41/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
@@ -3465,3 +3463,5 @@ components:
               voteCount:
                 type: integer
                 format: int64
+security:
+  - jwt: []
