@@ -67,10 +67,11 @@ def create(tallySheetId):
     ).all()
 
     for row in rejected_vote_count_query:
-        tallySheetVersion.add_invalid_vote_count(
-            electionId=tallySheetVersion.submission.electionId,
-            rejectedVoteCount=row.rejectedVoteCount
-        )
+        if row.areaCount > 0:
+            tallySheetVersion.add_invalid_vote_count(
+                electionId=tallySheetVersion.submission.electionId,
+                rejectedVoteCount=row.rejectedVoteCount
+            )
 
     db.session.commit()
 
