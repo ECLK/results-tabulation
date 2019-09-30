@@ -9,7 +9,7 @@ from orm.entities import Area, Candidate, Party, Submission
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query
+from util import get_paginated_query, to_empty_string_or_value
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
@@ -158,77 +158,76 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
         ).one_or_none()
 
     def html(self):
+        print("############ TTTTTTT")
 
-        content = {
-            "tallySheetCode": "PRE/30/PD",
-            "electoralDistrict": Area.get_associated_areas(
-                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": self.submission.area.areaName,
-            "data": [],
-            "countingCentres": [],
-            "validVotes": [],
-            "rejectedVotes": [],
-            "totalVotes": []
-        }
+        try:
+            area_wise_summary = self.areaWiseSummary
+            summary = self.summary
 
-        if self.submission.election.voteType == VoteTypeEnum.Postal:
-            content["tallySheetCode"] = "PRE/30/PV"
+            content = {
+                "tallySheetCode": "PRE/30/PD",
+                "electoralDistrict": Area.get_associated_areas(
+                    self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "pollingDivision": self.submission.area.areaName,
+                "data": [],
+                "countingCentres": [],
+                "validVoteCounts": [],
+                "rejectedVoteCounts": [],
+                "totalVoteCounts": []
+            }
 
-        parties = self.submission.election.parties
-        queryResult = self.content
-        countingCentreCount = int(len(queryResult) / len(parties))
+            # Append the area wise column totals
+            for area_wise_summary_item in area_wise_summary:
+                content["countingCentres"].append(to_empty_string_or_value(area_wise_summary_item.areaName))
+                content["validVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.validVoteCount))
+                content["rejectedVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.rejectedVoteCount))
+                content["totalVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.totalVoteCount))
 
-        # Fill the validVotes, rejectedVotes and totalVotes with zeros.
-        for i in range(0, countingCentreCount):
-            content["countingCentres"].append(queryResult[i].countingCentreName)
+            # Append the grand totals
+            content["validVoteCounts"].append(to_empty_string_or_value(summary.validVoteCount))
+            content["rejectedVoteCounts"].append(to_empty_string_or_value(summary.rejectedVoteCount))
+            content["totalVoteCounts"].append(to_empty_string_or_value(summary.totalVoteCount))
 
-            content["validVotes"].append(0)
-            content["rejectedVotes"].append(0)
-            content["totalVotes"].append(0)
+            if self.submission.election.voteType == VoteTypeEnum.Postal:
+                content["tallySheetCode"] = "PRE/30/PV"
 
-        # Iterate by candidates.
-        for i in range(len(parties)):
-            # Append candidate details.
-            data_row = [i + 1, queryResult[i * countingCentreCount].candidateName]
-            content["data"].append(data_row)
-            total_count_per_candidate = 0
+            countingCentreCount = len(content["countingCentres"])
+            queryResult = self.content
+            parties = int(len(queryResult) / countingCentreCount)
 
-            # Iterate by counting centres.
-            for j in range(countingCentreCount):
-                # Determine the result index mapping with the counting centre and candidate.
-                query_result_index = (i * countingCentreCount) + j
+            # Iterate by candidates.
+            for i in range(parties):
+                # Append candidate details.
+                data_row = [i + 1, queryResult[i * countingCentreCount].candidateName]
+                content["data"].append(data_row)
+                total_count_per_candidate = 0
 
-                count = queryResult[query_result_index].count
+                # Iterate by counting centres.
+                for j in range(countingCentreCount):
+                    # Determine the result index mapping with the counting centre and candidate.
+                    query_result_index = (i * countingCentreCount) + j
 
-                if count is None:
-                    data_row.append("")
-                else:
-                    # Append the count of votes of the counting centre.
-                    data_row.append(count)
+                    count = queryResult[query_result_index].count
 
-                    # Calculate the candidate wise total votes.
-                    total_count_per_candidate = total_count_per_candidate + count
+                    if count is None:
+                        data_row.append("")
+                    else:
+                        # Append the count of votes of the counting centre.
+                        data_row.append(count)
 
-                    # Calculate valid votes count.
-                    content["validVotes"][j] = content["validVotes"][j] + count
+                        # Calculate the candidate wise total votes.
+                        total_count_per_candidate = total_count_per_candidate + count
 
-                    # Calculate validVotes count.
-                    content["rejectedVotes"][j] = 0  # TODO
+                data_row.append(total_count_per_candidate)
 
-                    content["totalVotes"][j] = content["validVotes"][j] + content["rejectedVotes"][j]
+            html = render_template(
+                'PRE-30-PD.html',
+                content=content
+            )
 
-            data_row.append(total_count_per_candidate)
-
-        content["validVotes"].append(sum(content["validVotes"]))
-        content["rejectedVotes"].append(sum(content["rejectedVotes"]))
-        content["totalVotes"].append(sum(content["totalVotes"]))
-
-        html = render_template(
-            'PRE-30-PD.html',
-            content=content
-        )
-
-        return html
+            return html
+        except Exception as e:
+            print("####### Errror #### ", e)
 
 
 Model = TallySheetVersion_PRE_30_PD_Model

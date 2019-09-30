@@ -144,7 +144,7 @@
             <th colspan="2" class="text-right">
                 No. of Valid Votes
             </th>
-            {% for validVoteCount in content.validVotes %}
+            {% for validVoteCount in content.validVoteCounts %}
             <td class="left right top bottom">{{validVoteCount}}</td>
             {% endfor %}
         </tr>
@@ -153,7 +153,7 @@
             <th colspan="2" class="text-right">
                 No. of Rejected Votes
             </th>
-            {% for rejectedVoteCount in content.rejectedVotes %}
+            {% for rejectedVoteCount in content.rejectedVoteCounts %}
             <td class="left right top bottom">{{rejectedVoteCount}}</td>
             {% endfor %}
         </tr>
@@ -163,7 +163,7 @@
                 Total No. of Votes Polled <br/>
                 <small>(Including Rejected)</small>
             </th>
-            {% for totalVoteCount in content.totalVotes %}
+            {% for totalVoteCount in content.totalVoteCounts %}
             <td class="left right top bottom">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
