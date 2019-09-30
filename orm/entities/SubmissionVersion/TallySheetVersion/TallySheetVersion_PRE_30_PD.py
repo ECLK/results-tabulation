@@ -78,7 +78,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             Area.Model.areaId
         ).order_by(
             ElectionCandidate.Model.candidateId,
-            Area.Model.areaId
+            func.cast(Area.Model.areaName, db.Integer)
         ).all()
 
     def area_wise_valid_vote_count(self):
@@ -126,6 +126,8 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             isouter=True
         ).group_by(
             Area.Model.areaId
+        ).order_by(
+            func.cast(Area.Model.areaName, db.Integer)
         ).filter(
             Area.Model.areaId.in_([area.areaId for area in self.countingCentres])
         ).all()
