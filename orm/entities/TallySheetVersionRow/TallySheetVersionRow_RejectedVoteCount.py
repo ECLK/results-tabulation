@@ -1,3 +1,4 @@
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -18,6 +19,8 @@ class TallySheetVersionRow_RejectedVoteCount_Model(db.Model):
     candidate = relationship(Candidate.Model, foreign_keys=[candidateId])
     area = relationship(Area.Model, foreign_keys=[areaId])
     election = relationship(Election.Model, foreign_keys=[electionId])
+
+    areaName = association_proxy("area", "areaName")
 
     __table_args__ = (
         db.UniqueConstraint('tallySheetVersionId', 'areaId', 'candidateId',

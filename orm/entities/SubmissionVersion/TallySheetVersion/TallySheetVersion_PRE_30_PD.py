@@ -8,7 +8,7 @@ from exception import NotFoundException
 from orm.entities import Area, Candidate, Party, Submission
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_RejectedVoteCount
 from util import get_paginated_query
 
 from orm.entities.Submission import TallySheet
@@ -36,15 +36,21 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             count=count
         )
 
-    # content = relationship("TallySheetVersionRow_PRE_30_PD_Model")
+    def add_invalid_vote_count(self, electionId, areaId, rejectedVoteCount):
+        TallySheetVersionRow_RejectedVoteCount.createAreaWiseCount(
+            electionId=electionId,
+            tallySheetVersionId=self.tallySheetVersionId,
+            areaId=areaId,
+            rejectedVoteCount=rejectedVoteCount
+        )
 
+    # content = relationship("TallySheetVersionRow_PRE_30_PD_Model")
 
     @hybrid_property
     def countingCentres(self):
         return self.submission.area.get_associated_areas(
             areaType=AreaTypeEnum.CountingCentre, electionId=self.submission.electionId
         )
-
 
     @hybrid_property
     def content(self):
@@ -82,6 +88,69 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             ElectionCandidate.Model.candidateId,
             Area.Model.areaId
         ).all()
+
+    @hybrid_property
+    def areaWiseSummary(self):
+
+        return db.session.query(
+            Area.Model.areaId,
+            Area.Model.areaName,
+            func.sum(TallySheetVersionRow_PRE_30_PD.Model.count).label("validVoteCount"),
+            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                TallySheetVersionRow_PRE_30_PD.Model.count +
+                TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount
+            ).label("totalVoteCount")
+        ).join(
+            TallySheetVersionRow_RejectedVoteCount.Model,
+            and_(
+                TallySheetVersionRow_RejectedVoteCount.Model.areaId == Area.Model.areaId,
+                TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
+                TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
+            ),
+            isouter=True
+        ).join(
+            TallySheetVersionRow_PRE_30_PD.Model,
+            and_(
+                TallySheetVersionRow_PRE_30_PD.Model.tallySheetVersionId == self.tallySheetVersionId,
+                TallySheetVersionRow_PRE_30_PD.Model.countingCentreId == Area.Model.areaId
+            ),
+            isouter=True
+        ).group_by(
+            Area.Model.areaId
+        ).filter(
+            Area.Model.areaId.in_([area.areaId for area in self.countingCentres])
+        )
+
+    @hybrid_property
+    def summary(self):
+
+        return db.session.query(
+            func.count(Area.Model.areaId).label("countingCentreCount"),
+            func.sum(TallySheetVersionRow_PRE_30_PD.Model.count).label("validVoteCount"),
+            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                TallySheetVersionRow_PRE_30_PD.Model.count +
+                TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount
+            ).label("totalVoteCount")
+        ).join(
+            TallySheetVersionRow_RejectedVoteCount.Model,
+            and_(
+                TallySheetVersionRow_RejectedVoteCount.Model.areaId == Area.Model.areaId,
+                TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
+                TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
+            ),
+            isouter=True
+        ).join(
+            TallySheetVersionRow_PRE_30_PD.Model,
+            and_(
+                TallySheetVersionRow_PRE_30_PD.Model.tallySheetVersionId == self.tallySheetVersionId,
+                TallySheetVersionRow_PRE_30_PD.Model.countingCentreId == Area.Model.areaId
+            ),
+            isouter=True
+        ).filter(
+            Area.Model.areaId.in_([area.areaId for area in self.countingCentres])
+        ).one_or_none()
 
     def html(self):
 
