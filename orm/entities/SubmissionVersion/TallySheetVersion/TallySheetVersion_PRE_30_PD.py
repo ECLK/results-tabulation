@@ -159,6 +159,9 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
         content = {
             "tallySheetCode": "PRE/30/PD",
+            "electoralDistrict": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": self.submission.area.areaName,
             "data": [],
             "countingCentres": [],
             "validVotes": [],
