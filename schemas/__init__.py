@@ -203,6 +203,37 @@ class TallySheetVersionRow_PRE_30_PD_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class TallySheetVersionRow_PRE_30_PD_areaWiseSummary_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "areaId",
+            "areaName",
+            "rejectedVoteCount",
+            "validVoteCount",
+            "totalVoteCount",
+        )
+
+        model = TallySheetVersionRow_RejectedVoteCount.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class TallySheetVersionRow_PRE_30_PD_Summary_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "countingCentreCount",
+            "rejectedVoteCount",
+            "validVoteCount",
+            "totalVoteCount",
+        )
+
+        model = TallySheetVersionRow_RejectedVoteCount.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class TallySheetVersionRow_PRE_21_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -500,7 +531,9 @@ class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content"
+            "content",
+            "areaWiseSummary",
+            "summary"
         )
 
         model = TallySheetVersion_PRE_30_PD.Model
@@ -510,6 +543,8 @@ class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_30_PD_Schema, many=True)
+    areaWiseSummary = ma.Nested(TallySheetVersionRow_PRE_30_PD_areaWiseSummary_Schema, many=True)
+    summary = ma.Nested(TallySheetVersionRow_PRE_30_PD_Summary_Schema, many=False)
 
 
 class TallySheetVersionPRE21Schema(ma.ModelSchema):
