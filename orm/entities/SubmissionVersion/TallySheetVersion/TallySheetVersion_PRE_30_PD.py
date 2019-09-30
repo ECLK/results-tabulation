@@ -126,7 +126,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
     def summary(self):
 
         return db.session.query(
-            func.count(Area.Model.areaId).label("countingCentreCount"),
+            func.count(Area.Model.areaId).label("areaCount"),
             func.sum(TallySheetVersionRow_PRE_30_PD.Model.count).label("validVoteCount"),
             func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
             func.sum(
