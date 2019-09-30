@@ -10,7 +10,7 @@ from orm.entities.Submission.TallySheet import TallySheetModel
 
 JWT_SECRET = "jwt_secret"
 CLAIM_PREFIX = "areaAssignment/"
-AREA_ID = "areaID"
+AREA_ID = "areaId"
 
 
 def get_unauthorized_msg(detail):
