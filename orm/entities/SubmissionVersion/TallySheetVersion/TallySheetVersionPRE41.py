@@ -26,6 +26,7 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
     def html(self):
 
         tallySheetContent = self.content
+        summary = self.summary
 
         print("############# heyyyyy")
 
@@ -42,9 +43,9 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             ]),
             "data": [
             ],
-            "total": 0,
-            "rejectedVotes": 0,
-            "grandTotal": 0
+            "total": summary.validVoteCount,
+            "rejectedVotes": summary.rejectedVoteCount,
+            "grandTotal": summary.totalVoteCount
         }
 
         for row_index in range(len(tallySheetContent)):
@@ -58,7 +59,6 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
                     row.count,
                     ""
                 ])
-                content["total"] = content["total"] + row.count
             else:
                 content["data"].append([
                     row_index + 1,
@@ -69,15 +69,10 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
                     ""
                 ])
 
-        content["rejectedVotes"] = 0  # TODO
-        content["grandTotal"] = content["total"] + content["rejectedVotes"]
-
-        print("############# Huuui ", content)
         html = render_template(
             'PRE-41.html',
             content=content
         )
-        print("############# html ", html)
 
         return html
 
