@@ -57,8 +57,13 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         return db.session.query(
             TallySheetVersionRow_RejectedVoteCount.Model.areaId,
             func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+        ).join(
+            Area.Model,
+            Area.Model.areaId == TallySheetVersionRow_RejectedVoteCount.Model.areaId
         ).group_by(
             TallySheetVersionRow_RejectedVoteCount.Model.areaId,
+        ).order_by(
+            Area.Model.areaName
         ).filter(
             TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
             TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
@@ -88,6 +93,8 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             isouter=True
         ).group_by(
             Area.Model.areaId
+        ).order_by(
+            Area.Model.areaName
         ).filter(
             Area.Model.areaId.in_([area.areaId for area in self.pollingDivisions])
         ).all()
@@ -161,7 +168,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         ).order_by(
             Election.Model.electionName,
             ElectionCandidate.Model.candidateId,
-            Area.Model.areaId
+            Area.Model.areaName
         )
 
     def html(self):
