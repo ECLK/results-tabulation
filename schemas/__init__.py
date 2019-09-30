@@ -111,18 +111,6 @@ class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
-class TallySheetVersionRow_PRE_41_Summary_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "rejectedVoteCount",
-        )
-
-        model = TallySheetVersionRow_RejectedVoteCount.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
 class TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -474,7 +462,7 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_PRE_41_Summary_Schema)
+    summary = ma.Nested(TallySheetVersionRow_Summary_Schema)
 
 
 class TallySheetVersion_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.ModelSchema):
