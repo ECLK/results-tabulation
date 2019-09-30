@@ -5,16 +5,13 @@ from decorator import decorator
 from jose import jwt
 
 from auth.AuthConstants import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_GENERATOR_ROLE, NATIONAL_REPORT_VIEWER_ROLE
+from exception import UnauthorizedException
 from orm.entities.Submission import TallySheet
 from orm.entities.Submission.TallySheet import TallySheetModel
 
 JWT_SECRET = "jwt_secret"
 CLAIM_PREFIX = "areaAssignment/"
 AREA_ID = "areaId"
-
-
-def get_unauthorized_msg(detail):
-    return connexion.problem(401, "Unauthorized", detail)
 
 
 def decode_token(token):
@@ -60,7 +57,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
         return func(*args, **kwargs)
 
     if 'token_info' not in connexion.context.keys():
-        return get_unauthorized_msg("No claims found.")
+        UnauthorizedException("No claims found.")
 
     claims: Dict = get_role_claims()
 
@@ -97,6 +94,6 @@ def authorize(func, required_roles=None, *args, **kwargs):
                     return func(*args, **kwargs)
 
     if not claim_found:
-        return get_unauthorized_msg("No matching claim found.")
+        UnauthorizedException("No matching claim found.")
     else:
-        return get_unauthorized_msg("Failed to authorize based on user access area information.")
+        UnauthorizedException("Failed to authorize based on user access area information.")
