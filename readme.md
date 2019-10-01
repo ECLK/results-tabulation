@@ -77,3 +77,25 @@ If there are changes identified, a revision file is created at migrations/versio
 **Drop database**
 
 `export ENV_CONFIG=./env/dev.cfg && python manage.py drop_database`
+
+## API Invocation ##
+
+**JWT generation sample**
+
+```
+from jose import jwt
+
+key = "jwt_secret"
+payload = {
+    'areaAssignment/dataEditor': [
+        {
+            "areaName": "1",
+            "areaId": 7
+        }
+    ],
+    'areaAssignment/ECLeadership': [
+    ]
+}
+encoded = jwt.encode(payload, key)
+print(encoded)
+```
