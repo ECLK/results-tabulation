@@ -1,9 +1,11 @@
 from flask import Response
 
 from app import db
-from util import RequestBody
-from schemas import Ballot_Schema as Schema
+from auth import authorize
+from auth.AuthConstants import ALL_ROLES
 from orm.entities.SubmissionVersion import TallySheetVersion
+from schemas import Ballot_Schema as Schema
+from util import RequestBody
 
 
 def get_all(tallySheetId):
@@ -23,6 +25,7 @@ def create(body):
     return Schema().dump(result).data, 201
 
 
+@authorize(required_roles=ALL_ROLES)
 def html(tallySheetId, tallySheetVersionId):
     tallySheetVersion = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId)
 

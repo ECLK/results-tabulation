@@ -3261,6 +3261,11 @@ components:
       type: apiKey
       name: api_key
       in: header
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: auth.decode_token
   schemas:
     ApiResponse:
       type: object
@@ -3489,3 +3494,5 @@ components:
               voteCount:
                 type: integer
                 format: int64
+security:
+  - jwt: []

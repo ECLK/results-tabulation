@@ -1,4 +1,6 @@
 from app import db
+from auth import authorize
+from auth.AuthConstants import POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE
 from orm.entities import Submission, SubmissionVersion, Area
 from orm.entities.Submission import TallySheet
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_RejectedVoteCount
@@ -8,6 +10,7 @@ from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersion_P
 from sqlalchemy import func
 
 
+@authorize(required_roles=[POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
     result = TallySheetVersion_PRE_30_PD.get_by_id(
         tallySheetId=tallySheetId,
@@ -17,6 +20,7 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     return TallySheetVersion_PRE_30_PD_Schema().dump(result).data
 
 
+@authorize(required_roles=[POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
 def create(tallySheetId):
     tallySheetVersion = TallySheetVersion_PRE_30_PD.create(
         tallySheetId=tallySheetId
