@@ -3,17 +3,19 @@ import datetime
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
+from sqlalchemy import func
 
 from app import db
 from exception import NotFoundException
-from orm.entities import Candidate, Party
+from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAND_RESULT
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, \
+    TallySheetVersionRow_RejectedVoteCount
 from util import get_paginated_query
 
 from orm.entities.Submission import TallySheet
-from orm.enums import TallySheetCodeEnum
+from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
 
 
@@ -36,6 +38,59 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             candidateId=candidateId,
             count=count
         )
+
+    @hybrid_property
+    def electoralDistricts(self):
+        return self.submission.area.get_associated_areas(
+            areaType=AreaTypeEnum.ElectoralDistrict, electionId=self.submission.electionId
+        )
+
+    def area_wise_valid_vote_count(self):
+        return db.session.query(
+            TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.tallySheetVersionId,
+            func.sum(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.count).label(
+                "validVoteCount")
+        ).group_by(
+            TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.tallySheetVersionId
+        ).filter(
+            TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.tallySheetVersionId == self.tallySheetVersionId
+        )
+
+    def area_wise_rejected_vote_count(self):
+        return db.session.query(
+            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId,
+            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+        ).group_by(
+            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId
+        ).filter(
+            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
+            TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
+        )
+
+    @hybrid_property
+    def summary(self):
+        area_wise_valid_vote_count_subquery = self.area_wise_valid_vote_count().subquery()
+        area_wise_rejected_vote_count_subquery = self.area_wise_rejected_vote_count().subquery()
+
+        return db.session.query(
+            func.count(TallySheetVersion.Model.tallySheetVersionId).label("areaCount"),
+            func.sum(area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
+            func.sum(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                area_wise_valid_vote_count_subquery.c.validVoteCount +
+                area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+            ).label("totalVoteCount")
+        ).join(
+            area_wise_valid_vote_count_subquery,
+            area_wise_valid_vote_count_subquery.c.tallySheetVersionId == TallySheetVersion.Model.tallySheetVersionId,
+            isouter=True
+        ).join(
+            area_wise_rejected_vote_count_subquery,
+            area_wise_rejected_vote_count_subquery.c.tallySheetVersionId == TallySheetVersion.Model.tallySheetVersionId,
+            isouter=True
+        ).filter(
+            TallySheetVersion.Model.tallySheetVersionId == self.tallySheetVersionId
+        ).one_or_none()
 
     @hybrid_property
     def content(self):

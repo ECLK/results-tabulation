@@ -1,7 +1,8 @@
 from app import db
 from orm.entities import Submission, SubmissionVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED
-from orm.enums import AreaTypeEnum
+from orm.entities.Submission import TallySheet
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount
+from orm.enums import AreaTypeEnum, TallySheetCodeEnum
 from schemas import TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema, TallySheetVersionSchema
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersion_PRE_ALL_ISLAND_RESULT
 from sqlalchemy import func
@@ -48,6 +49,29 @@ def create(tallySheetId):
             candidateId=row.candidateId,
             count=row.count
         )
+
+    rejected_vote_count_query = db.session.query(
+        func.count(Submission.Model.areaId).label("areaCount"),
+        func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+    ).join(
+        TallySheet.Model,
+        TallySheet.Model.tallySheetId == Submission.Model.submissionId
+    ).join(
+        TallySheetVersionRow_RejectedVoteCount.Model,
+        TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.latestVersionId
+    ).filter(
+        Submission.Model.areaId.in_([area.areaId for area in electoralDistricts]),
+        TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_30_ED
+    ).order_by(
+        Submission.Model.areaId
+    ).all()
+
+    for row in rejected_vote_count_query:
+        if row.areaCount > 0:
+            tallySheetVersion.add_invalid_vote_count(
+                electionId=tallySheetVersion.submission.electionId,
+                rejectedVoteCount=row.rejectedVoteCount
+            )
 
     db.session.commit()
 

@@ -8,7 +8,7 @@ from exception import NotFoundException
 from orm.entities import Area, Candidate, Party, Election, Submission, SubmissionVersion
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount
 from util import get_paginated_query
 
 from orm.entities.Submission import TallySheet
@@ -38,12 +38,94 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         )
 
     @hybrid_property
-    def content(self):
-        pollingDivisions = self.submission.area.get_associated_areas(
-            areaType=AreaTypeEnum.PollingDivision,
-            electionId=self.submission.electionId
+    def pollingDivisions(self):
+        return self.submission.area.get_associated_areas(
+            areaType=AreaTypeEnum.PollingDivision, electionId=self.submission.electionId
         )
 
+    def area_wise_valid_vote_count(self):
+        return db.session.query(
+            TallySheetVersionRow_PRE_30_ED.Model.pollingDivisionId.label("areaId"),
+            func.sum(TallySheetVersionRow_PRE_30_ED.Model.count).label("validVoteCount")
+        ).group_by(
+            TallySheetVersionRow_PRE_30_ED.Model.pollingDivisionId
+        ).filter(
+            TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == self.tallySheetVersionId
+        )
+
+    def area_wise_rejected_vote_count(self):
+        return db.session.query(
+            TallySheetVersionRow_RejectedVoteCount.Model.areaId,
+            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+        ).join(
+            Area.Model,
+            Area.Model.areaId == TallySheetVersionRow_RejectedVoteCount.Model.areaId
+        ).group_by(
+            TallySheetVersionRow_RejectedVoteCount.Model.areaId,
+        ).order_by(
+            Area.Model.areaName
+        ).filter(
+            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
+            TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
+        )
+
+    @hybrid_property
+    def areaWiseSummary(self):
+        area_wise_valid_vote_count_subquery = self.area_wise_valid_vote_count().subquery()
+        area_wise_rejected_vote_count_subquery = self.area_wise_rejected_vote_count().subquery()
+
+        return db.session.query(
+            Area.Model.areaId,
+            Area.Model.areaName,
+            func.sum(area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
+            func.sum(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                area_wise_valid_vote_count_subquery.c.validVoteCount +
+                area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+            ).label("totalVoteCount")
+        ).join(
+            area_wise_valid_vote_count_subquery,
+            area_wise_valid_vote_count_subquery.c.areaId == Area.Model.areaId,
+            isouter=True
+        ).join(
+            area_wise_rejected_vote_count_subquery,
+            area_wise_rejected_vote_count_subquery.c.areaId == Area.Model.areaId,
+            isouter=True
+        ).group_by(
+            Area.Model.areaId
+        ).order_by(
+            Area.Model.areaName
+        ).filter(
+            Area.Model.areaId.in_([area.areaId for area in self.pollingDivisions])
+        ).all()
+
+    @hybrid_property
+    def summary(self):
+        area_wise_valid_vote_count_subquery = self.area_wise_valid_vote_count().subquery()
+        area_wise_rejected_vote_count_subquery = self.area_wise_rejected_vote_count().subquery()
+
+        return db.session.query(
+            func.count(Area.Model.areaId).label("areaCount"),
+            func.sum(area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
+            func.sum(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                area_wise_valid_vote_count_subquery.c.validVoteCount +
+                area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+            ).label("totalVoteCount")
+        ).join(
+            area_wise_valid_vote_count_subquery,
+            area_wise_valid_vote_count_subquery.c.areaId == Area.Model.areaId,
+            isouter=True
+        ).join(
+            area_wise_rejected_vote_count_subquery,
+            area_wise_rejected_vote_count_subquery.c.areaId == Area.Model.areaId,
+            isouter=True
+        ).filter(
+            Area.Model.areaId.in_([area.areaId for area in self.pollingDivisions])
+        ).one_or_none()
+
+    @hybrid_property
+    def content(self):
         return db.session.query(
             ElectionCandidate.Model.candidateId,
             Election.Model.electionId,
@@ -63,7 +145,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             Area.Model,
             and_(
                 Area.Model.electionId == ElectionCandidate.Model.electionId,
-                Area.Model.areaId.in_([area.areaId for area in pollingDivisions])
+                Area.Model.areaId.in_([area.areaId for area in self.pollingDivisions])
             )
         ).join(
             Election.Model,
@@ -86,7 +168,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         ).order_by(
             Election.Model.electionName,
             ElectionCandidate.Model.candidateId,
-            Area.Model.areaId
+            Area.Model.areaName
         )
 
     def html(self):
