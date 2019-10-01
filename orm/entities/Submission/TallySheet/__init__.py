@@ -1,6 +1,10 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import or_
 
+from typing import Set
+
+from auth import get_user_access_area_ids, authorize
+
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -54,9 +58,18 @@ Model = TallySheetModel
 
 
 def get_by_id(tallySheetId):
-    result = Model.query.filter(
+    query = Model.query.join(
+        Submission.Model,
+        Submission.Model.submissionId == Model.tallySheetId
+    ).filter(
         Model.tallySheetId == tallySheetId
-    ).one_or_none()
+    )
+
+    # Filter by authorized areas
+    user_access_area_ids: Set[int] = get_user_access_area_ids()
+    query = query.filter(Submission.Model.areaId.in_(user_access_area_ids))
+
+    result = query.one_or_none()
 
     return result
 
@@ -82,6 +95,10 @@ def get_all(electionId=None, officeId=None, tallySheetCode=None):
 
     if tallySheetCode is not None:
         query = query.filter(Model.tallySheetCode == get_tally_sheet_code(tallySheetCode))
+
+    # Filter by authorized areas
+    user_access_area_ids: Set[int] = get_user_access_area_ids()
+    query = query.filter(Submission.Model.areaId.in_(user_access_area_ids))
 
     result = get_paginated_query(query).all()
 
