@@ -43,6 +43,13 @@ def create(tallySheetId, body):
                 countInWords=party_count_body.get("countInWords")
             )
 
+    tally_sheet_summary_body = request_body.get("summary")
+    if tally_sheet_summary_body is not None:
+        tallySheetVersion.add_invalid_vote_count(
+            electionId=tallySheetVersion.submission.electionId,
+            rejectedVoteCount=tally_sheet_summary_body.get("rejectedVoteCount")
+        )
+
     db.session.commit()
 
     return TallySheetVersionSchema().dump(tallySheetVersion).data
