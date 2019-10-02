@@ -40,7 +40,7 @@ def create(tallySheetId):
         Submission.Model,
         Submission.Model.submissionId == SubmissionVersion.Model.submissionId
     ).filter(
-        TallySheetVersionRow_PRE_30_PD.Model.tallySheetVersionId == Submission.Model.latestVersionId,
+        TallySheetVersionRow_PRE_30_PD.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
         Submission.Model.areaId.in_([area.areaId for area in pollingDivisions])
     ).group_by(
         TallySheetVersionRow_PRE_30_PD.Model.candidateId,
@@ -69,7 +69,7 @@ def create(tallySheetId):
         TallySheet.Model.tallySheetId == Submission.Model.submissionId
     ).join(
         TallySheetVersionRow_RejectedVoteCount.Model,
-        TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.latestVersionId
+        TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.lockedVersionId
     ).filter(
         Submission.Model.areaId.in_([area.areaId for area in pollingDivisions]),
         TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_30_PD
