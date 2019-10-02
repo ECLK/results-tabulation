@@ -194,24 +194,14 @@ def get_presidential_area_map_query():
         ),
         isouter=True
     ).join(
-        postal_vote_counting_centre_mapping,
-        postal_vote_counting_centre_mapping.childAreaId == counting_centre.areaId,
-        isouter=True
-    ).join(
         polling_division_mapping,
         polling_division_mapping.childAreaId == polling_district.areaId,
         isouter=True
     ).join(
         polling_division,
-        or_(
-            and_(
-                polling_division.areaId == polling_division_mapping.parentAreaId,
-                polling_division.areaType == AreaTypeEnum.PollingDivision
-            ),
-            and_(
-                polling_division.areaId == postal_vote_counting_centre_mapping.parentAreaId,
-                polling_division.areaType == AreaTypeEnum.PollingDivision
-            ),
+        and_(
+            polling_division.areaId == polling_division_mapping.parentAreaId,
+            polling_division.areaType == AreaTypeEnum.PollingDivision
         ),
         isouter=True
     ).join(
@@ -219,10 +209,20 @@ def get_presidential_area_map_query():
         electoral_district_mapping.childAreaId == polling_division.areaId,
         isouter=True
     ).join(
+        postal_vote_counting_centre_mapping,
+        postal_vote_counting_centre_mapping.childAreaId == counting_centre.areaId,
+        isouter=True
+    ).join(
         electoral_district,
-        and_(
-            electoral_district.areaId == electoral_district_mapping.parentAreaId,
-            electoral_district.areaType == AreaTypeEnum.ElectoralDistrict
+        or_(
+            and_(
+                electoral_district.areaId == electoral_district_mapping.parentAreaId,
+                electoral_district.areaType == AreaTypeEnum.ElectoralDistrict
+            ),
+            and_(
+                electoral_district.areaId == postal_vote_counting_centre_mapping.parentAreaId,
+                electoral_district.areaType == AreaTypeEnum.ElectoralDistrict
+            ),
         ),
         isouter=True
     ).join(
@@ -242,8 +242,6 @@ def get_presidential_area_map_query():
 
 
 def get_associated_areas_query(area, areaType, electionId=None):
-    print("############ get_associated_areas_query ##############", [area, areaType, electionId])
-
     presidential_area_map_sub_query = get_presidential_area_map_query().subquery()
     election = Election.get_by_id(electionId=electionId)
 
