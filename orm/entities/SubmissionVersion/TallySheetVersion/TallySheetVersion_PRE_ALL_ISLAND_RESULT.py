@@ -157,6 +157,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
                 content["data"][row_index][3] = round(
                     (content["data"][row_index][2] / content["validVotes"][0]) * 100, 2
                 )
+                content["data"][row_index][2] = f'{content["data"][row_index][2]:,}'
+
+
 
         # TODO append the rejected votes count.
         content["rejectedVotes"][0] = 0  # TODO
