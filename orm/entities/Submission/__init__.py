@@ -37,26 +37,33 @@ class SubmissionModel(db.Model):
         return self.lockedVersionId is not None
 
     def set_latest_version(self, submissionVersion: SubmissionVersion):
-        if submissionVersion.submissionId is not self.submissionId:
-            MethodNotAllowedException(
-                "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
-                    self.submissionType.name, self.submissionType.name, self.submissionId,
-                    submissionVersion.submissionVersionId
-                ))
+        if submissionVersion is None:
+            self.latestVersionId = None
+        else:
+            if submissionVersion.submissionId is not self.submissionId:
+                raise MethodNotAllowedException(
+                    "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
+                        self.submissionType.name, self.submissionType.name, self.submissionId,
+                        submissionVersion.submissionVersionId
+                    ))
 
-        self.latestVersionId = submissionVersion.submissionVersionId
+            self.latestVersionId = submissionVersion.submissionVersionId
 
         db.session.add(self)
         db.session.flush()
 
     def set_locked_version(self, submissionVersion: SubmissionVersion):
-        if submissionVersion.submissionId is not self.submissionId:
-            MethodNotAllowedException(
-                "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
-                    self.submissionType.name, self.submissionType.name, self.submissionId,
-                    submissionVersion.submissionVersionId
-                ))
-        self.lockedVersionId = submissionVersion.submissionVersionId
+        if submissionVersion is None:
+            self.lockedVersionId = None
+        else:
+            if submissionVersion.submissionId is not self.submissionId:
+                raise MethodNotAllowedException(
+                    "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
+                        self.submissionType.name, self.submissionType.name, self.submissionId,
+                        submissionVersion.submissionVersionId
+                    ))
+
+            self.lockedVersionId = submissionVersion.submissionVersionId
 
         db.session.add(self)
         db.session.flush()

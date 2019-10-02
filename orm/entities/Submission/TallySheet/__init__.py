@@ -36,10 +36,16 @@ class TallySheetModel(db.Model):
     versions = association_proxy("submission", "versions")
 
     def set_latest_version(self, tallySheetVersion: TallySheetVersion):
-        self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
+        if tallySheetVersion is None:
+            self.submission.set_latest_version(submissionVersion=None)
+        else:
+            self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     def set_locked_version(self, tallySheetVersion: TallySheetVersion):
-        self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
+        if tallySheetVersion is None:
+            self.submission.set_locked_version(submissionVersion=None)
+        else:
+            self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     @hybrid_property
     def latestVersion(self):
