@@ -107,6 +107,11 @@ def get_object(election, row, row_key, data_key=None):
                 tallySheetCode=TallySheetCodeEnum.PRE_30_ED, electionId=election.electionId, officeId=obj.areaId
             )
 
+            TallySheet.create(
+                tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=postal_election.electionId,
+                officeId=obj.areaId
+            )
+
             jwt_payload["areaAssignment/electoralDistrictReportViewer"].append({
                 "areaId": obj.areaId,
                 "areaName": obj.areaName
@@ -123,11 +128,6 @@ def get_object(election, row, row_key, data_key=None):
 
             TallySheet.create(
                 tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=ordinary_election.electionId,
-                officeId=obj.areaId
-            )
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=postal_election.electionId,
                 officeId=obj.areaId
             )
 
@@ -152,7 +152,7 @@ def get_object(election, row, row_key, data_key=None):
             obj = DistrictCentre.create(cell, electionId=election.electionId)
 
         elif data_store_key == "Counting Centre":
-            obj = CountingCentre.create(cell, electionId=ordinary_election.electionId)
+            obj = CountingCentre.create(cell, electionId=election.electionId)
 
             TallySheet.create(
                 tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, officeId=obj.areaId
@@ -290,7 +290,6 @@ def build_database(dataset):
         print("[POSTAL ROW] ========= ", row)
         country = get_object(root_election, {"Country": "Sri Lanka"}, "Country")
         electoralDistrict = get_object(root_election, row, "Electoral District")
-        pollingDivision = get_object(root_election, row, "Polling Division")
         electionCommission = get_object(root_election, {"Election Commission": "Sri Lanka Election Commission"},
                                         "Election Commission")
         districtCentre = get_object(root_election, row, "District Centre")
@@ -299,8 +298,7 @@ def build_database(dataset):
         }, "Counting Centre")
 
         country.add_child(electoralDistrict.areaId)
-        electoralDistrict.add_child(pollingDivision.areaId)
-        pollingDivision.add_child(countingCentre.areaId)
+        electoralDistrict.add_child(countingCentre.areaId)
         districtCentre.add_child(countingCentre.areaId)
         electionCommission.add_child(districtCentre.areaId)
 

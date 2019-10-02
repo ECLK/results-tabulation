@@ -158,76 +158,71 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
         ).one_or_none()
 
     def html(self):
-        print("############ TTTTTTT")
+        area_wise_summary = self.areaWiseSummary
+        summary = self.summary
 
-        try:
-            area_wise_summary = self.areaWiseSummary
-            summary = self.summary
+        content = {
+            "tallySheetCode": "PRE/30/PD",
+            "electoralDistrict": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": self.submission.area.areaName,
+            "data": [],
+            "countingCentres": [],
+            "validVoteCounts": [],
+            "rejectedVoteCounts": [],
+            "totalVoteCounts": []
+        }
 
-            content = {
-                "tallySheetCode": "PRE/30/PD",
-                "electoralDistrict": Area.get_associated_areas(
-                    self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "pollingDivision": self.submission.area.areaName,
-                "data": [],
-                "countingCentres": [],
-                "validVoteCounts": [],
-                "rejectedVoteCounts": [],
-                "totalVoteCounts": []
-            }
+        # Append the area wise column totals
+        for area_wise_summary_item in area_wise_summary:
+            content["countingCentres"].append(to_empty_string_or_value(area_wise_summary_item.areaName))
+            content["validVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.validVoteCount))
+            content["rejectedVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.rejectedVoteCount))
+            content["totalVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.totalVoteCount))
 
-            # Append the area wise column totals
-            for area_wise_summary_item in area_wise_summary:
-                content["countingCentres"].append(to_empty_string_or_value(area_wise_summary_item.areaName))
-                content["validVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.validVoteCount))
-                content["rejectedVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.rejectedVoteCount))
-                content["totalVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.totalVoteCount))
+        # Append the grand totals
+        content["validVoteCounts"].append(to_empty_string_or_value(summary.validVoteCount))
+        content["rejectedVoteCounts"].append(to_empty_string_or_value(summary.rejectedVoteCount))
+        content["totalVoteCounts"].append(to_empty_string_or_value(summary.totalVoteCount))
 
-            # Append the grand totals
-            content["validVoteCounts"].append(to_empty_string_or_value(summary.validVoteCount))
-            content["rejectedVoteCounts"].append(to_empty_string_or_value(summary.rejectedVoteCount))
-            content["totalVoteCounts"].append(to_empty_string_or_value(summary.totalVoteCount))
+        if self.submission.election.voteType == VoteTypeEnum.Postal:
+            content["tallySheetCode"] = "PRE/30/PV"
 
-            if self.submission.election.voteType == VoteTypeEnum.Postal:
-                content["tallySheetCode"] = "PRE/30/PV"
+        countingCentreCount = len(content["countingCentres"])
+        queryResult = self.content
+        parties = int(len(queryResult) / countingCentreCount)
 
-            countingCentreCount = len(content["countingCentres"])
-            queryResult = self.content
-            parties = int(len(queryResult) / countingCentreCount)
+        # Iterate by candidates.
+        for i in range(parties):
+            # Append candidate details.
+            data_row = [i + 1, queryResult[i * countingCentreCount].candidateName]
+            content["data"].append(data_row)
+            total_count_per_candidate = 0
 
-            # Iterate by candidates.
-            for i in range(parties):
-                # Append candidate details.
-                data_row = [i + 1, queryResult[i * countingCentreCount].candidateName]
-                content["data"].append(data_row)
-                total_count_per_candidate = 0
+            # Iterate by counting centres.
+            for j in range(countingCentreCount):
+                # Determine the result index mapping with the counting centre and candidate.
+                query_result_index = (i * countingCentreCount) + j
 
-                # Iterate by counting centres.
-                for j in range(countingCentreCount):
-                    # Determine the result index mapping with the counting centre and candidate.
-                    query_result_index = (i * countingCentreCount) + j
+                count = queryResult[query_result_index].count
 
-                    count = queryResult[query_result_index].count
+                if count is None:
+                    data_row.append("")
+                else:
+                    # Append the count of votes of the counting centre.
+                    data_row.append(count)
 
-                    if count is None:
-                        data_row.append("")
-                    else:
-                        # Append the count of votes of the counting centre.
-                        data_row.append(count)
+                    # Calculate the candidate wise total votes.
+                    total_count_per_candidate = total_count_per_candidate + count
 
-                        # Calculate the candidate wise total votes.
-                        total_count_per_candidate = total_count_per_candidate + count
+            data_row.append(total_count_per_candidate)
 
-                data_row.append(total_count_per_candidate)
+        html = render_template(
+            'PRE-30-PD.html',
+            content=content
+        )
 
-            html = render_template(
-                'PRE-30-PD.html',
-                content=content
-            )
-
-            return html
-        except Exception as e:
-            print("####### Errror #### ", e)
+        return html
 
 
 Model = TallySheetVersion_PRE_30_PD_Model
