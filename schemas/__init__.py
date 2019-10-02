@@ -629,6 +629,8 @@ class TallySheetSchema(ma.ModelSchema):
             "electionId",
             "office",
             "latestVersionId",
+            "lockedVersionId",
+            "locked",
             # "latestVersion",
             "submissionProofId",
             "versions"

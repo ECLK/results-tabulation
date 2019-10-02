@@ -10,7 +10,7 @@ from util import get_paginated_query, get_tally_sheet_code_string
 from orm.entities import SubmissionVersion
 from orm.entities.Submission import TallySheet
 
-from exception import NotFoundException
+from exception import NotFoundException, MethodNotAllowedException
 from flask import request
 
 
@@ -26,6 +26,9 @@ class TallySheetVersionModel(db.Model):
     tallySheetId = association_proxy("submissionVersion", "submissionId")
     createdBy = association_proxy("submissionVersion", "createdBy")
     createdAt = association_proxy("submissionVersion", "createdAt")
+
+    def set_locked(self):
+        self.submissionVersion.set_locked()
 
     @hybrid_property
     def htmlUrl(self):
@@ -44,6 +47,8 @@ class TallySheetVersionModel(db.Model):
         tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
         if tallySheet is None:
             raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+        if tallySheet.locked is True:
+            raise MethodNotAllowedException("Tally sheet is Locked. (tallySheetId=%d)" % tallySheetId)
         elif tallySheet.tallySheetCode is not self.tallySheetVersionCode:
             raise NotFoundException("Invalid tally sheet. (tallySheetId=%d)" % tallySheetId)
 
