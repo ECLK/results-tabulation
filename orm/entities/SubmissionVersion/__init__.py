@@ -1,3 +1,5 @@
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -22,6 +24,11 @@ class SubmissionVersionModel(db.Model):
     createdBy = association_proxy("historyVersion", "createdBy")
     createdAt = association_proxy("historyVersion", "createdAt")
 
+    def set_locked(self):
+        self.submission.set_locked_version(self.submissionVersionId)
+        db.session.add(self)
+        db.session.flush()
+
     def __init__(self, submissionId):
         submission = Submission.get_by_id(submissionId=submissionId)
         if submission is None:
@@ -36,7 +43,7 @@ class SubmissionVersionModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-        submission.set_latest_version(submissionVersionId=historyVersion.historyVersionId)
+        submission.set_latest_version(submissionVersion=self)
 
 
 Model = SubmissionVersionModel
