@@ -67,17 +67,9 @@ def authorize(func, required_roles=None, *args, **kwargs):
         if claim not in claims.keys():
             continue
 
-        if role in [EC_LEADERSHIP_ROLE, NATIONAL_REPORT_GENERATOR_ROLE, NATIONAL_REPORT_VIEWER_ROLE]:
-            return func(*args, **kwargs)
-
         claim_found = True
-
-        claim_values = claims.get(claim)
-
-        if not claim_values:
-            return func(*args, **kwargs)
 
     if not claim_found:
         UnauthorizedException("No matching claim found.")
     else:
-        UnauthorizedException("Failed to authorize based on user access area information.")
+        return func(*args, **kwargs)

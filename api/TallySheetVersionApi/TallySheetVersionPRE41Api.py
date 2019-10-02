@@ -10,6 +10,10 @@ from util import RequestBody
 
 @authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
+    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    if tallySheet is None:
+        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+
     result = TallySheetVersionPRE41.get_by_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
@@ -33,6 +37,10 @@ def get_all(tallySheetId):
 
 @authorize(required_roles=[DATA_EDITOR_ROLE])
 def create(tallySheetId, body):
+    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    if tallySheet is None:
+        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+
     request_body = RequestBody(body)
     tallySheetVersion = TallySheetVersionPRE41.create(
         tallySheetId=tallySheetId
