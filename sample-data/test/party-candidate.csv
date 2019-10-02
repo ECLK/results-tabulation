@@ -1,20 +1,20 @@
-Party,Party Symbol,Candidate,Party Abbreviation
-IG1 - Badhoor Jamal Mohomad Nasrulla,,Aithurus Mohamed Illias,IG1
-United Peace Alliance,,Ibrahim Miflar,UPA
-Democratic National Movement,,Prasanna Priyankara,DNM
-Sri Lanka Jathika Peramuna,,Wimal Geeganage,SLJP
-United Socialist Party,,Sirithunga Jayasuriya,USP
-Okkoma Wasiyo Okkoma Rajawaru Sanvidanaya,,M. B. Theminimulla,OWORS
-Socialist Equality Party,,Pani Wijesiriwardane,SEP
-Sri Lanka Progressive Front,,Duminda Nagamuwa,SLPF
-Sri Lanka Labour Party,,Panagoda Don Prince Soloman Anura Liyanage,SLLP
-United Democratic Front,,Maithripala Sirisena,UDF
-Eksath Lanka Podujana Pakshaya,,Ruwanthilaka Peduru Arachchi,ELPP
-IG2 - Maylan Achchige Don Asanka Nandana Srinath,,Anuruddha Polgampala,IG2
-Jana Setha Peramuna,,Baththaramulle Seelarathana Thero,JSP
-Nawa Sihala Urumaya,,Sarath Manamendra,NSU
-Deshapremi Jathika Peramuna,,Arachchige Rathnayaka Sirisena,DJP
-United People's Freedom Alliance,,Mahinda Rajapaksa,UPFA
-Our National Front,,Namal Rajapaksa,ONF
-Nawa Sama Samaja Party,,Sundaram Mahendran,NSSP
-Eksath Lanka Maha Saba Party,,Jayantha Kulathunga,ELMSP
+0,Party,Party Symbol,Candidate,Party Abbreviation
+1,IG1 - Badhoor Jamal Mohomad Nasrulla,Double Flags,Aithurus Mohamed Illias,
+2,United Peace Alliance,Butterfly,Ibrahim Miflar,
+3,Democratic National Movement,Motor Car,Prasanna Priyankara,
+4,Sri Lanka Jathika Peramuna,Cricket Bat,Wimal Geeganage,
+5,United Socialist Party,Tri-shaw,Sirithunga Jayasuriya,
+6,Okkoma Wasiyo Okkoma Rajawaru Sanvidanaya,Till,M. B. Theminimulla,
+7,Socialist Equality Party,Pair of Scissors,Pani Wijesiriwardane,
+8,Sri Lanka Progressive Front,Lantern,Duminda Nagamuwa,
+9,Sri Lanka Labour Party,Kangaroo,Panagoda Don Prince Soloman Anura Liyanage,
+10,United Democratic Front,Swan,Maithripala Sirisena,
+11,Eksath Lanka Podujana Pakshaya,Cup,Ruwanthilaka Peduru Arachchi,
+12,IG2 - Maylan Achchige Don Asanka Nandana Srinath,Pair of Spectacles,Anuruddha Polgampala,
+13,Jana Setha Peramuna,Tractor ,Baththaramulle Seelarathana Thero,
+14,Nawa Sihala Urumaya,Bow and Arrow,Sarath Manamendra,
+15,Deshapremi Jathika Peramuna,Flag,Arachchige Rathnayaka Sirisena,
+16,United People's Freedom Alliance,Betel Leaf,Mahinda Rajapaksa,
+17,Our National Front,Telephone,Namal Rajapaksa,
+18,Nawa Sama Samaja Party,Table,Sundaram Mahendran,
+19,Eksath Lanka Maha Saba Party,Fountain Pen,Jayantha Kulathunga,

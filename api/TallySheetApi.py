@@ -1,10 +1,14 @@
+from typing import Set
+
+from auth import authorize
+from auth.AuthConstants import ALL_ROLES
+from exception import NotFoundException
+from orm.entities.Submission import TallySheet
 from orm.entities.Submission.TallySheet import Model as TallySheetModel
 from schemas import TallySheetSchema
 
-from schemas import TallySheetSchema as Schema
-from orm.entities.Submission import TallySheet
 
-
+@authorize(required_roles=ALL_ROLES)
 def getAll(electionId=None, officeId=None, tallySheetCode=None):
     result = TallySheet.get_all(
         electionId=electionId,
@@ -12,17 +16,14 @@ def getAll(electionId=None, officeId=None, tallySheetCode=None):
         tallySheetCode=tallySheetCode
     )
 
-    return Schema(many=True).dump(result).data
+    return TallySheetSchema(many=True).dump(result).data
 
 
+@authorize(required_roles=ALL_ROLES)
 def get_by_id(tallySheetId):
-    tallySheet = TallySheetModel.query.filter(TallySheetModel.tallySheetId == tallySheetId).one_or_none()
+    tally_sheet = TallySheetModel.get_by_id(tallySheetId=tallySheetId)
 
-    return TallySheetSchema().dump(tallySheet).data
+    if tally_sheet is None:
+        NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
 
-
-def get_tallysheet_response(new_tallysheet):
-    if new_tallysheet.code == "PRE-41":
-        return TallySheetSchema().dump(new_tallysheet).data
-    else:
-        return TallySheetSchema().dump(new_tallysheet).data
+    return TallySheetSchema().dump(tally_sheet).data

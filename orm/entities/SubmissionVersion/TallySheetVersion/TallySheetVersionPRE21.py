@@ -49,7 +49,7 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
             ),
             isouter=True
         ).filter(
-            InvalidVoteCategory.Model.electionId == self.submission.electionId
+            InvalidVoteCategory.Model.electionId.in_(self.submission.election.mappedElectionIds)
         )
 
     def html(self):
@@ -66,7 +66,8 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
             "data": [
-            ]
+            ],
+            "totalRejected": 0
         }
 
         for row_index in range(len(tallySheetContent)):
@@ -76,6 +77,9 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
 
             data_row.append(row.categoryDescription)
             data_row.append(to_empty_string_or_value(row.count))
+
+            if row.count is not None:
+                content["totalRejected"] = content["totalRejected"] + row.count
 
         html = render_template(
             'PRE-21.html',

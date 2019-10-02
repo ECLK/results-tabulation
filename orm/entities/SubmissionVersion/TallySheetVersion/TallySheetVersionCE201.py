@@ -84,7 +84,7 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
             # three ballot boxes
             for ballotBoxIndex in range(3):
                 if ballotBoxIndex < len(row.ballotBoxesReceived):
-                    data_row.append(row.ballotBoxesReceived[ballotBoxIndex].ballotBoxId)
+                    data_row.append(row.ballotBoxesReceived[ballotBoxIndex])
                 else:
                     data_row.append("")
 

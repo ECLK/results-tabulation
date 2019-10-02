@@ -19,10 +19,10 @@ def create_database():
     database_name = app.config['DATABASE_NAME']
 
     try:
-        conn.execute(f"create database {database_name}")
-        print(f"Database '{database_name}' CREATED")
+        conn.execute("create database %s" % database_name)
+        print("Database '%s' CREATED" % database_name)
     except:
-        print(f"Database '{database_name}' creation FAILED")
+        print("Database '%s' creation FAILED" % database_name)
     conn.close()
 
 
@@ -31,9 +31,9 @@ def drop_database():
     database_name = app.config['DATABASE_NAME']
 
     try:
-        conn.execute(f"drop database {database_name}")
-        print(f"Database '{database_name}' DROPPED")
+        conn.execute("drop database %s" % database_name)
+        print("Database '%s' DROPPED" % database_name)
     except:
-        print(f"Database '{database_name}' not found")
+        print("Database '%s' not found" % database_name)
 
     conn.close()
