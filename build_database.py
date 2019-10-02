@@ -6,6 +6,7 @@ from orm.entities import *
 from orm.entities import Invoice
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, BallotTypeEnum, VoteTypeEnum
+from jose import jwt
 
 root_election = Election.create(electionName="Presidential Election 2019", voteType=VoteTypeEnum.PostalAndNonPostal)
 
@@ -15,6 +16,16 @@ ordinary_election = root_election.add_sub_election(electionName="Ordinary", vote
 data_stores = {}
 
 csv_dir = ''
+
+jwt_payload = {
+    'areaAssignment/dataEditor': [],
+    'areaAssignment/pollingDivisionReportViewer': [],
+    'areaAssignment/pollingDivisionReportGenerator': [],
+    'areaAssignment/electoralDistrictReportViewer': [],
+    'areaAssignment/electoralDistrictReportGenerator': [],
+    'areaAssignment/nationalReportViewer': [],
+    'areaAssignment/ECLeadership': []
+}
 
 
 def get_data_store(data_store_key):
@@ -83,6 +94,11 @@ def get_object(election, row, row_key, data_key=None):
                 officeId=obj.areaId
             )
 
+            jwt_payload["areaAssignment/nationalReportViewer"].append({
+                "areaId": obj.areaId,
+                "areaName": obj.areaName
+            })
+
 
         elif data_store_key == "Electoral District":
             obj = ElectoralDistrict.create(cell, electionId=election.electionId)
@@ -90,6 +106,16 @@ def get_object(election, row, row_key, data_key=None):
             TallySheet.create(
                 tallySheetCode=TallySheetCodeEnum.PRE_30_ED, electionId=election.electionId, officeId=obj.areaId
             )
+
+            jwt_payload["areaAssignment/electoralDistrictReportViewer"].append({
+                "areaId": obj.areaId,
+                "areaName": obj.areaName
+            })
+
+            jwt_payload["areaAssignment/electoralDistrictReportGenerator"].append({
+                "areaId": obj.areaId,
+                "areaName": obj.areaName
+            })
 
 
         elif data_store_key == "Polling Division":
@@ -105,48 +131,53 @@ def get_object(election, row, row_key, data_key=None):
                 officeId=obj.areaId
             )
 
+            jwt_payload["areaAssignment/pollingDivisionReportViewer"].append({
+                "areaId": obj.areaId,
+                "areaName": obj.areaName
+            })
+
+            jwt_payload["areaAssignment/pollingDivisionReportGenerator"].append({
+                "areaId": obj.areaId,
+                "areaName": obj.areaName
+            })
+
 
         elif data_store_key == "Polling District":
             obj = PollingDistrict.create(cell, electionId=election.electionId)
 
         elif data_store_key == "Election Commission":
             obj = ElectionCommission.create(cell, electionId=election.electionId)
+
         elif data_store_key == "District Centre":
             obj = DistrictCentre.create(cell, electionId=election.electionId)
+
         elif data_store_key == "Counting Centre":
             obj = CountingCentre.create(cell, electionId=ordinary_election.electionId)
 
             TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=ordinary_election.electionId, officeId=obj.areaId
+                tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, officeId=obj.areaId
             )
 
             TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=ordinary_election.electionId, officeId=obj.areaId
+                tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=election.electionId, officeId=obj.areaId
             )
 
             TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.CE_201, electionId=ordinary_election.electionId, officeId=obj.areaId
-            )
-        elif data_store_key == "Postal Vote Counting Centre":
-            obj = CountingCentre.create(cell, electionId=postal_election.electionId)
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=postal_election.electionId, officeId=obj.areaId
+                tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, officeId=obj.areaId
             )
 
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=postal_election.electionId, officeId=obj.areaId
-            )
+            jwt_payload["areaAssignment/dataEditor"].append({
+                "areaId": obj.areaId,
+                "areaName": obj.areaName
+            })
 
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.CE_201_PV, electionId=postal_election.electionId, officeId=obj.areaId
-            )
 
         elif data_store_key == "Polling Station":
             obj = PollingStation.create(
                 cell, electionId=election.electionId,
                 registeredVotersCount=row["Registered Voters"]
             )
+
 
         else:
             print("-------------  Not supported yet : *%s*" % data_store_key)
@@ -263,7 +294,9 @@ def build_database(dataset):
         electionCommission = get_object(root_election, {"Election Commission": "Sri Lanka Election Commission"},
                                         "Election Commission")
         districtCentre = get_object(root_election, row, "District Centre")
-        countingCentre = get_object(postal_election, row, "Postal Vote Counting Centre")
+        countingCentre = get_object(postal_election, {
+            "Counting Centre": row["Postal Vote Counting Centre"]
+        }, "Counting Centre")
 
         country.add_child(electoralDistrict.areaId)
         electoralDistrict.add_child(pollingDivision.areaId)
@@ -274,3 +307,16 @@ def build_database(dataset):
         print("[POSTAL ROW END] ========= ")
 
     db.session.commit()
+
+    # Generate a token with claims for everything.
+    key = "jwt_secret"
+    encoded_jwt_token = jwt.encode(jwt_payload, key)
+    print("""
+##########################################################
+
+JWT_PAYLOAD = %s
+
+JWT_TOKEN = %s
+
+##########################################################
+    """ % (jwt_payload, encoded_jwt_token))
