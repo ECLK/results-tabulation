@@ -6,8 +6,6 @@ from jose import jwt
 
 from auth.AuthConstants import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_GENERATOR_ROLE, NATIONAL_REPORT_VIEWER_ROLE
 from exception import UnauthorizedException
-from orm.entities.Submission import TallySheet
-from orm.entities.Submission.TallySheet import TallySheetModel
 
 JWT_SECRET = "jwt_secret"
 CLAIM_PREFIX = "areaAssignment/"
@@ -78,20 +76,6 @@ def authorize(func, required_roles=None, *args, **kwargs):
 
         if not claim_values:
             return func(*args, **kwargs)
-
-        if connexion.request.path.split("/")[1] == "tally-sheet":
-            tally_sheet_id = connexion.request.view_args.get("tallySheetId")
-
-            # tally sheet get all
-            if not tally_sheet_id:
-                return func(*args, **kwargs)
-
-            tally_sheet: TallySheetModel = TallySheet.get_by_id(tally_sheet_id)
-            tally_sheet_area_id = tally_sheet.officeId
-
-            for claim_value in claim_values:
-                if tally_sheet_area_id == claim_value.get(AREA_ID):
-                    return func(*args, **kwargs)
 
     if not claim_found:
         UnauthorizedException("No matching claim found.")
