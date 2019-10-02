@@ -8,8 +8,8 @@ from exception import NotFoundException
 from orm.entities import Area, Candidate, Party, Submission
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD
-from util import get_paginated_query
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_RejectedVoteCount
+from util import get_paginated_query, to_empty_string_or_value
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
@@ -38,13 +38,11 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
     # content = relationship("TallySheetVersionRow_PRE_30_PD_Model")
 
-
     @hybrid_property
     def countingCentres(self):
         return self.submission.area.get_associated_areas(
             areaType=AreaTypeEnum.CountingCentre, electionId=self.submission.electionId
         )
-
 
     @hybrid_property
     def content(self):
@@ -80,37 +78,122 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             Area.Model.areaId
         ).order_by(
             ElectionCandidate.Model.candidateId,
-            Area.Model.areaId
+            func.cast(Area.Model.areaName, db.Integer)
         ).all()
 
+    def area_wise_valid_vote_count(self):
+        return db.session.query(
+            TallySheetVersionRow_PRE_30_PD.Model.countingCentreId.label("areaId"),
+            func.sum(TallySheetVersionRow_PRE_30_PD.Model.count).label("validVoteCount")
+        ).group_by(
+            TallySheetVersionRow_PRE_30_PD.Model.countingCentreId
+        ).filter(
+            TallySheetVersionRow_PRE_30_PD.Model.tallySheetVersionId == self.tallySheetVersionId
+        )
+
+    def area_wise_rejected_vote_count(self):
+        return db.session.query(
+            TallySheetVersionRow_RejectedVoteCount.Model.areaId,
+            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+        ).group_by(
+            TallySheetVersionRow_RejectedVoteCount.Model.areaId,
+        ).filter(
+            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
+            TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
+        )
+
+    @hybrid_property
+    def areaWiseSummary(self):
+        area_wise_valid_vote_count_subquery = self.area_wise_valid_vote_count().subquery()
+        area_wise_rejected_vote_count_subquery = self.area_wise_rejected_vote_count().subquery()
+
+        return db.session.query(
+            Area.Model.areaId,
+            Area.Model.areaName,
+            func.sum(area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
+            func.sum(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                area_wise_valid_vote_count_subquery.c.validVoteCount +
+                area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+            ).label("totalVoteCount")
+        ).join(
+            area_wise_valid_vote_count_subquery,
+            area_wise_valid_vote_count_subquery.c.areaId == Area.Model.areaId,
+            isouter=True
+        ).join(
+            area_wise_rejected_vote_count_subquery,
+            area_wise_rejected_vote_count_subquery.c.areaId == Area.Model.areaId,
+            isouter=True
+        ).group_by(
+            Area.Model.areaId
+        ).order_by(
+            func.cast(Area.Model.areaName, db.Integer)
+        ).filter(
+            Area.Model.areaId.in_([area.areaId for area in self.countingCentres])
+        ).all()
+
+    @hybrid_property
+    def summary(self):
+        area_wise_valid_vote_count_subquery = self.area_wise_valid_vote_count().subquery()
+        area_wise_rejected_vote_count_subquery = self.area_wise_rejected_vote_count().subquery()
+
+        return db.session.query(
+            func.count(Area.Model.areaId).label("areaCount"),
+            func.sum(area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
+            func.sum(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                area_wise_valid_vote_count_subquery.c.validVoteCount +
+                area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+            ).label("totalVoteCount")
+        ).join(
+            area_wise_valid_vote_count_subquery,
+            area_wise_valid_vote_count_subquery.c.areaId == Area.Model.areaId,
+            isouter=True
+        ).join(
+            area_wise_rejected_vote_count_subquery,
+            area_wise_rejected_vote_count_subquery.c.areaId == Area.Model.areaId,
+            isouter=True
+        ).filter(
+            Area.Model.areaId.in_([area.areaId for area in self.countingCentres])
+        ).one_or_none()
+
     def html(self):
+        area_wise_summary = self.areaWiseSummary
+        summary = self.summary
 
         content = {
             "tallySheetCode": "PRE/30/PD",
+            "electoralDistrict": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": self.submission.area.areaName,
             "data": [],
             "countingCentres": [],
-            "validVotes": [],
-            "rejectedVotes": [],
-            "totalVotes": []
+            "validVoteCounts": [],
+            "rejectedVoteCounts": [],
+            "totalVoteCounts": []
         }
+
+        # Append the area wise column totals
+        for area_wise_summary_item in area_wise_summary:
+            content["countingCentres"].append(to_empty_string_or_value(area_wise_summary_item.areaName))
+            content["validVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.validVoteCount))
+            content["rejectedVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.rejectedVoteCount))
+            content["totalVoteCounts"].append(to_empty_string_or_value(area_wise_summary_item.totalVoteCount))
+
+        # Append the grand totals
+        content["validVoteCounts"].append(to_empty_string_or_value(summary.validVoteCount))
+        content["rejectedVoteCounts"].append(to_empty_string_or_value(summary.rejectedVoteCount))
+        content["totalVoteCounts"].append(to_empty_string_or_value(summary.totalVoteCount))
 
         if self.submission.election.voteType == VoteTypeEnum.Postal:
             content["tallySheetCode"] = "PRE/30/PV"
 
-        parties = self.submission.election.parties
+        countingCentreCount = len(content["countingCentres"])
         queryResult = self.content
-        countingCentreCount = int(len(queryResult) / len(parties))
-
-        # Fill the validVotes, rejectedVotes and totalVotes with zeros.
-        for i in range(0, countingCentreCount):
-            content["countingCentres"].append(queryResult[i].countingCentreName)
-
-            content["validVotes"].append(0)
-            content["rejectedVotes"].append(0)
-            content["totalVotes"].append(0)
+        parties = int(len(queryResult) / countingCentreCount)
 
         # Iterate by candidates.
-        for i in range(len(parties)):
+        for i in range(parties):
             # Append candidate details.
             data_row = [i + 1, queryResult[i * countingCentreCount].candidateName]
             content["data"].append(data_row)
@@ -132,19 +215,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
                     # Calculate the candidate wise total votes.
                     total_count_per_candidate = total_count_per_candidate + count
 
-                    # Calculate valid votes count.
-                    content["validVotes"][j] = content["validVotes"][j] + count
-
-                    # Calculate validVotes count.
-                    content["rejectedVotes"][j] = 0  # TODO
-
-                    content["totalVotes"][j] = content["validVotes"][j] + content["rejectedVotes"][j]
-
             data_row.append(total_count_per_candidate)
-
-        content["validVotes"].append(sum(content["validVotes"]))
-        content["rejectedVotes"].append(sum(content["rejectedVotes"]))
-        content["totalVotes"].append(sum(content["totalVotes"]))
 
         html = render_template(
             'PRE-30-PD.html',

@@ -2079,6 +2079,7 @@ paths:
                 type: object
                 required:
                   - content
+                  - summary
                 properties:
                   content:
                     type: array
@@ -2090,9 +2091,13 @@ paths:
                           format: int64
                         count:
                           type: integer
-                          format: int64
                         countInWords:
                           type: string
+                  summary:
+                    type: object
+                    properties:
+                      rejectedVoteCount:
+                        type: integer
         '400':
           description: Bad request.
           content:
@@ -2124,6 +2129,7 @@ paths:
               type: object
               required:
                 - content
+                - summary
               properties:
                 content:
                   type: array
@@ -2135,9 +2141,13 @@ paths:
                         format: int64
                       count:
                         type: integer
-                        format: int64
                       countInWords:
                         type: string
+                summary:
+                  type: object
+                  properties:
+                    rejectedVoteCount:
+                      type: integer
         description: Updated tally sheet object.
         required: true
   /tally-sheet/PRE-41/{tallySheetId}/version/{tallySheetVersionId}:
@@ -2167,7 +2177,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TallySheet'
+                type: object
+                required:
+                  - content
+                  - summary
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        candidateId:
+                          type: integer
+                          format: int64
+                        count:
+                          type: integer
+                        countInWords:
+                          type: string
+                  summary:
+                    type: object
+                    properties:
+                      rejectedVoteCount:
+                        type: integer
         '400':
           description: Bad request.
           content:
@@ -2366,19 +2397,11 @@ paths:
                         ballotBoxesIssued:
                           type: array
                           items:
-                            type: object
-                            properties:
-                              stationaryItemId:
-                                type: integer
-                                format: int64
+                            type: string
                         ballotBoxesReceived:
                           type: array
                           items:
-                            type: object
-                            properties:
-                              stationaryItemId:
-                                type: integer
-                                format: int64
+                            type: string
                         ballotsIssued:
                           type: integer
                           format: int64
@@ -2446,19 +2469,11 @@ paths:
                       ballotBoxesIssued:
                         type: array
                         items:
-                          type: object
-                          properties:
-                            stationaryItemId:
-                              type: integer
-                              format: int64
+                          type: string
                       ballotBoxesReceived:
                         type: array
                         items:
-                          type: object
-                          properties:
-                            stationaryItemId:
-                              type: integer
-                              format: int64
+                          type: string
                       ballotsIssued:
                         type: integer
                         format: int64
@@ -2527,19 +2542,11 @@ paths:
                         ballotBoxesIssued:
                           type: array
                           items:
-                            type: object
-                            properties:
-                              stationaryItemId:
-                                type: integer
-                                format: int64
+                            type: string
                         ballotBoxesReceived:
                           type: array
                           items:
-                            type: object
-                            properties:
-                              stationaryItemId:
-                                type: integer
-                                format: int64
+                            type: string
                         ballotsIssued:
                           type: integer
                           format: int64
@@ -3254,6 +3261,11 @@ components:
       type: apiKey
       name: api_key
       in: header
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: auth.decode_token
   schemas:
     ApiResponse:
       type: object
@@ -3482,3 +3494,5 @@ components:
               voteCount:
                 type: integer
                 format: int64
+security:
+  - jwt: []
