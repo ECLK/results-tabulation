@@ -10,6 +10,7 @@ from exception import UnauthorizedException
 JWT_SECRET = "jwt_secret"
 CLAIM_PREFIX = "areaAssignment/"
 AREA_ID = "areaId"
+USER_ACCESS_AREA_IDS = "userAccessAreaIds"
 
 
 def decode_token(token):
@@ -32,21 +33,13 @@ def get_role_claims() -> Dict[str, Dict]:
     return role_claims
 
 
-def get_user_access_area_ids(claim_id: str = None) -> Set[int]:
+def get_user_access_area_ids() -> Set[int]:
     """
-    Gets all area ids the user has access to.
+    Gets user access area ids from connexion context.
 
-    :param claim_id: optional, if provided, area ids are limited to the ones in this claim only.
-    :return:
+    :return: set of user access area ids
     """
-    claims: Dict = get_role_claims()
-    if claim_id:
-        return set([x.get(AREA_ID) for x in claims.get(claim_id)])
-
-    user_area_ids = []
-    for claim_value in claims.values():
-        user_area_ids.extend([x.get(AREA_ID) for x in claim_value])
-    return set(user_area_ids)
+    return connexion.context[USER_ACCESS_AREA_IDS]
 
 
 @decorator
@@ -60,6 +53,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
     claims: Dict = get_role_claims()
 
     claim_found = False
+    user_access_area_ids = []
 
     for role in required_roles:
         claim = CLAIM_PREFIX + role
@@ -68,8 +62,10 @@ def authorize(func, required_roles=None, *args, **kwargs):
             continue
 
         claim_found = True
+        user_access_area_ids.extend([x.get(AREA_ID) for x in claims.get(claim)])
 
     if not claim_found:
         UnauthorizedException("No matching claim found.")
     else:
+        connexion.context[USER_ACCESS_AREA_IDS] = set(user_access_area_ids)
         return func(*args, **kwargs)
