@@ -46,30 +46,32 @@ def get_by_id(fileId):
     return result
 
 
-# def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
-#     # TODO validate the
-#     #   - file type
-#     #   - file size
-#     #         etc.
-#
-#     if fileType is None:
-#         fileType = FileTypeEnum.Any
-#
-#     result = Model(
-#         fileType=fileType,
-#         fileMimeType=fileSource.mimetype,
-#         fileContentLength=fileSource.content_length,
-#         fileContentType=fileSource.content_type,
-#         fileName=fileSource.filename,
-#         fileCreatedBy=Auth().get_user_id()
-#     )
-#
-#     db.session.add(result)
-#     db.session.flush()
-#
-#     save_uploaded_file_source(result, fileSource)
-#
-#     return result
+def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
+    # TODO validate the
+    #   - file type
+    #   - file size
+    #         etc.
+
+    if fileType is None:
+        fileType = FileTypeEnum.Any
+
+    result = Model(
+        fileType=fileType,
+        fileMimeType=fileSource.mimetype,
+        fileContentLength=fileSource.content_length,
+        fileContentType=fileSource.content_type,
+        fileName=fileSource.filename,
+        fileCreatedBy=Auth().get_user_id()
+    )
+
+    db.session.add(result)
+    db.session.flush()
+
+    save_uploaded_file_source(result, fileSource)
+
+    return result
+
+
 #
 #
 # def createReport(fileName, html):
