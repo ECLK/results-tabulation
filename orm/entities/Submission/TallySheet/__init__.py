@@ -1,21 +1,15 @@
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import or_
-
 from typing import Set
 
-from auth import get_user_access_area_ids, authorize
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from app import db
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.associationproxy import association_proxy
-
-from exception import NotFoundException, MethodNotAllowedException
-from orm.entities.SubmissionVersion import TallySheetVersion
-from util import get_paginated_query, get_tally_sheet_code
-
+from auth import get_user_access_area_ids
 from orm.entities import Submission, Election
-
+from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum
+from util import get_paginated_query, get_tally_sheet_code
 
 
 class TallySheetModel(db.Model):
