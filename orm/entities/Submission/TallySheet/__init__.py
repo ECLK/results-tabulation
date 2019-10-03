@@ -9,6 +9,7 @@ from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
+from exception import NotFoundException, MethodNotAllowedException
 from orm.entities.SubmissionVersion import TallySheetVersion
 from util import get_paginated_query, get_tally_sheet_code
 
@@ -29,8 +30,22 @@ class TallySheetModel(db.Model):
     officeId = association_proxy("submission", "areaId")
     office = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
+    lockedVersionId = association_proxy("submission", "lockedVersionId")
+    locked = association_proxy("submission", "locked")
     submissionProofId = association_proxy("submission", "submissionProofId")
     versions = association_proxy("submission", "versions")
+
+    def set_latest_version(self, tallySheetVersion: TallySheetVersion):
+        if tallySheetVersion is None:
+            self.submission.set_latest_version(submissionVersion=None)
+        else:
+            self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
+
+    def set_locked_version(self, tallySheetVersion: TallySheetVersion):
+        if tallySheetVersion is None:
+            self.submission.set_locked_version(submissionVersion=None)
+        else:
+            self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     @hybrid_property
     def latestVersion(self):
