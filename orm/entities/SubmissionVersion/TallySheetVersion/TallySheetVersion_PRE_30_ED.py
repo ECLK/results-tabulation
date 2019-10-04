@@ -92,93 +92,94 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         )
 
     def area_and_election_wise_rejected_vote_count_query(self):
-
         return self.rejected_vote_count_query()
 
     def area_wise_rejected_vote_count_query(self):
-        try:
-            rejected_vote_count_subquery = self.rejected_vote_count_query().subquery()
+        rejected_vote_count_subquery = self.rejected_vote_count_query().subquery()
 
-            return db.session.query(
-                rejected_vote_count_subquery.c.areaId,
-                rejected_vote_count_subquery.c.areaName,
-                func.sum(rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount")
-            ).group_by(
-                rejected_vote_count_subquery.c.areaId
-            )
-
-            print("#### [area_wise_rejected_vote_count_query] result ### ", result.all())
-        except Exception as e:
-            print("### [area_wise_rejected_vote_count_query] Error ### ", e)
+        return db.session.query(
+            rejected_vote_count_subquery.c.areaId,
+            rejected_vote_count_subquery.c.areaName,
+            func.sum(rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount")
+        ).group_by(
+            rejected_vote_count_subquery.c.areaId
+        )
 
     def valid_vote_count_query(self):
-        try:
-            polling_division_and_electoral_district_subquery = self.polling_division_and_electoral_district_query().subquery()
+        polling_division_and_electoral_district_subquery = self.polling_division_and_electoral_district_query().subquery()
 
-            return db.session.query(
-                polling_division_and_electoral_district_subquery.c.areaId,
-                polling_division_and_electoral_district_subquery.c.areaName,
-                Election.Model.electionId,
-                ElectionCandidate.Model.candidateId,
-                func.sum(TallySheetVersionRow_PRE_30_ED.Model.count).label("validVoteCount")
-            ).join(
-                Election.Model,
-                Election.Model.parentElectionId == polling_division_and_electoral_district_subquery.c.electionId
-            ).join(
-                ElectionCandidate.Model,
-                ElectionCandidate.Model.electionId == polling_division_and_electoral_district_subquery.c.electionId
-            ).join(
-                TallySheetVersionRow_PRE_30_ED.Model,
-                and_(
-                    TallySheetVersionRow_PRE_30_ED.Model.pollingDivisionId == polling_division_and_electoral_district_subquery.c.areaId,
-                    TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == self.tallySheetVersionId,
-                    TallySheetVersionRow_PRE_30_ED.Model.electionId == Election.Model.electionId,
-                    TallySheetVersionRow_PRE_30_ED.Model.candidateId == ElectionCandidate.Model.candidateId
-                ),
-                isouter=True
-            ).group_by(
-                polling_division_and_electoral_district_subquery.c.areaId,
-                Election.Model.electionId,
-                ElectionCandidate.Model.candidateId
-            )
+        return db.session.query(
+            polling_division_and_electoral_district_subquery.c.areaId,
+            polling_division_and_electoral_district_subquery.c.areaName,
+            Election.Model.electionId,
+            ElectionCandidate.Model.candidateId,
+            func.sum(TallySheetVersionRow_PRE_30_ED.Model.count).label("validVoteCount")
+        ).join(
+            Election.Model,
+            Election.Model.parentElectionId == polling_division_and_electoral_district_subquery.c.electionId
+        ).join(
+            ElectionCandidate.Model,
+            ElectionCandidate.Model.electionId == polling_division_and_electoral_district_subquery.c.electionId
+        ).join(
+            TallySheetVersionRow_PRE_30_ED.Model,
+            and_(
+                TallySheetVersionRow_PRE_30_ED.Model.pollingDivisionId == polling_division_and_electoral_district_subquery.c.areaId,
+                TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == self.tallySheetVersionId,
+                TallySheetVersionRow_PRE_30_ED.Model.electionId == Election.Model.electionId,
+                TallySheetVersionRow_PRE_30_ED.Model.candidateId == ElectionCandidate.Model.candidateId
+            ),
+            isouter=True
+        ).group_by(
+            polling_division_and_electoral_district_subquery.c.areaId,
+            Election.Model.electionId,
+            ElectionCandidate.Model.candidateId
+        )
 
-            print("##### Haaaaaai result ### ", result.all())
-        except Exception as e:
-            print("#### [valid_vote_count_query] Error ### ", e)
+    def candidate_wise_valid_vote_count_query(self):
+        valid_vote_count_subquery = self.valid_vote_count_query().subquery()
+
+        return db.session.query(
+            valid_vote_count_subquery.c.candidateId,
+            func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
+        ).group_by(
+            valid_vote_count_subquery.c.candidateId
+        )
+
+    def candidate_and_election_wise_valid_vote_count_query(self):
+        valid_vote_count_subquery = self.valid_vote_count_query().subquery()
+
+        return db.session.query(
+            valid_vote_count_subquery.c.candidateId,
+            valid_vote_count_subquery.c.electionId,
+            func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
+        ).group_by(
+            valid_vote_count_subquery.c.candidateId,
+            valid_vote_count_subquery.c.electionId,
+        )
 
     def area_and_election_wise_valid_vote_count_query(self):
-        try:
-            valid_vote_count_subquery = self.valid_vote_count_query().subquery()
+        valid_vote_count_subquery = self.valid_vote_count_query().subquery()
 
-            return db.session.query(
-                valid_vote_count_subquery.c.areaId,
-                valid_vote_count_subquery.c.areaName,
-                valid_vote_count_subquery.c.electionId,
-                func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
-            ).group_by(
-                valid_vote_count_subquery.c.areaId,
-                valid_vote_count_subquery.c.electionId,
-            )
-
-            print("#### Huuu result ### ", result.all())
-        except Exception as e:
-            print("### [area_and_election_wise_valid_vote_count_query] Error ### ", e)
+        return db.session.query(
+            valid_vote_count_subquery.c.areaId,
+            valid_vote_count_subquery.c.areaName,
+            valid_vote_count_subquery.c.electionId,
+            func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
+        ).group_by(
+            valid_vote_count_subquery.c.areaId,
+            valid_vote_count_subquery.c.electionId,
+        )
 
     def area_wise_valid_vote_count_query(self):
-        try:
-            valid_vote_count_subquery = self.valid_vote_count_query().subquery()
+        valid_vote_count_subquery = self.valid_vote_count_query().subquery()
 
-            return db.session.query(
-                valid_vote_count_subquery.c.areaId,
-                valid_vote_count_subquery.c.areaName,
-                func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
-            ).group_by(
-                valid_vote_count_subquery.c.areaId
-            )
-
-            print("#### [area_wise_valid_vote_count_query] result ### ", result.all())
-        except Exception as e:
-            print("### [area_wise_valid_vote_count_query] Error ### ", e)
+        return db.session.query(
+            valid_vote_count_subquery.c.areaId,
+            valid_vote_count_subquery.c.areaName,
+            func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
+        ).group_by(
+            valid_vote_count_subquery.c.areaId
+        )
 
     def area_and_election_wise_vote_count_query(self):
         area_and_election_wise_valid_vote_count_subquery = self.area_and_election_wise_valid_vote_count_query().subquery()
@@ -210,46 +211,30 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         )
 
     def area_wise_vote_count_query(self):
-        try:
+        area_and_election_wise_valid_vote_count_subquery = self.area_and_election_wise_valid_vote_count_query().subquery()
+        area_and_election_wise_rejected_vote_count_subquery = self.area_and_election_wise_rejected_vote_count_query().subquery()
 
-            # polling_division_and_electoral_district_subquery = self.polling_division_and_electoral_district_query().subquery()
-            # area_and_election_wise_valid_vote_count_subquery = self.area_wise_valid_vote_count_query().subquery()
-            # area_and_election_wise_rejected_vote_count_subquery = self.area_wise_rejected_vote_count_query().subquery()
-
-            area_and_election_wise_valid_vote_count_subquery = self.area_and_election_wise_valid_vote_count_query().subquery()
-            area_and_election_wise_rejected_vote_count_subquery = self.area_and_election_wise_rejected_vote_count_query().subquery()
-
-            print("\n\n\n\n ####### self.area_and_election_wise_valid_vote_count_query() #### ",
-                  self.area_and_election_wise_valid_vote_count_query().all())
-            print("\n\n\n\n ####### self.area_and_election_wise_rejected_vote_count_query() #### ",
-                  self.area_and_election_wise_rejected_vote_count_query().all())
-
-            return db.session.query(
-                area_and_election_wise_valid_vote_count_subquery.c.areaId,
-                area_and_election_wise_valid_vote_count_subquery.c.areaName,
-                func.sum(area_and_election_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-                func.sum(area_and_election_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label(
-                    "rejectedVoteCount"),
-                func.sum(
-                    area_and_election_wise_valid_vote_count_subquery.c.validVoteCount +
-                    area_and_election_wise_rejected_vote_count_subquery.c.rejectedVoteCount
-                ).label("totalVoteCount")
-            ).join(
-                area_and_election_wise_rejected_vote_count_subquery,
-                and_(
-                    area_and_election_wise_rejected_vote_count_subquery.c.areaId == area_and_election_wise_valid_vote_count_subquery.c.areaId,
-                    area_and_election_wise_rejected_vote_count_subquery.c.electionId == area_and_election_wise_valid_vote_count_subquery.c.electionId,
-                )
-                # isouter=True
-            ).group_by(
-                area_and_election_wise_valid_vote_count_subquery.c.areaId
-            ).order_by(
-                area_and_election_wise_valid_vote_count_subquery.c.areaName
+        return db.session.query(
+            area_and_election_wise_valid_vote_count_subquery.c.areaId,
+            area_and_election_wise_valid_vote_count_subquery.c.areaName,
+            func.sum(area_and_election_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
+            func.sum(area_and_election_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label(
+                "rejectedVoteCount"),
+            func.sum(
+                area_and_election_wise_valid_vote_count_subquery.c.validVoteCount +
+                area_and_election_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+            ).label("totalVoteCount")
+        ).join(
+            area_and_election_wise_rejected_vote_count_subquery,
+            and_(
+                area_and_election_wise_rejected_vote_count_subquery.c.areaId == area_and_election_wise_valid_vote_count_subquery.c.areaId,
+                area_and_election_wise_rejected_vote_count_subquery.c.electionId == area_and_election_wise_valid_vote_count_subquery.c.electionId,
             )
-
-            print("##### Heyy Result ####", self.area_and_election_wise_rejected_vote_count_query().all())
-        except Exception as e:
-            print("#### [area_wise_vote_count_query] Error #### ", e)
+        ).group_by(
+            area_and_election_wise_valid_vote_count_subquery.c.areaId
+        ).order_by(
+            area_and_election_wise_valid_vote_count_subquery.c.areaName
+        )
 
     def vote_count_query(self):
         area_wise_vote_count_subquery = self.area_and_election_wise_vote_count_query().subquery()
@@ -267,6 +252,10 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         ).group_by(
             area_wise_vote_count_subquery.c.electionId
         ).one_or_none()
+
+    @hybrid_property
+    def candidateWiseSummary(self):
+        return self.candidate_wise_valid_vote_count_query().all()
 
     @hybrid_property
     def areaWiseSummary(self):
