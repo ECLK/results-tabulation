@@ -1,7 +1,7 @@
 from app import db
 from auth import authorize
 from auth.AuthConstants import ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE
-from orm.entities import Submission, SubmissionVersion
+from orm.entities import Submission, SubmissionVersion, Area
 from orm.entities.Submission import TallySheet
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_RejectedVoteCount
 from orm.enums import AreaTypeEnum, TallySheetCodeEnum
@@ -26,22 +26,22 @@ def create(tallySheetId):
         tallySheetId=tallySheetId
     )
 
-    pollingDivisions = tallySheetVersion.submission.area.get_associated_areas(AreaTypeEnum.PollingDivision)
+    polling_division_and_electoral_district_query = tallySheetVersion.polling_division_and_electoral_district_query()
 
     query = db.session.query(
+        polling_division_and_electoral_district_query.c.areaId,
         TallySheetVersionRow_PRE_30_PD.Model.candidateId,
         Submission.Model.electionId,
-        Submission.Model.areaId,
         func.sum(TallySheetVersionRow_PRE_30_PD.Model.count).label("count"),
     ).join(
         SubmissionVersion.Model,
         SubmissionVersion.Model.submissionVersionId == TallySheetVersionRow_PRE_30_PD.Model.tallySheetVersionId
     ).join(
         Submission.Model,
-        Submission.Model.submissionId == SubmissionVersion.Model.submissionId
+        Submission.Model.submissionId == SubmissionVersion.Model.submissionId,
+        Submission.Model.areaId == polling_division_and_electoral_district_query.c.areaId
     ).filter(
-        TallySheetVersionRow_PRE_30_PD.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
-        Submission.Model.areaId.in_([area.areaId for area in pollingDivisions])
+        TallySheetVersionRow_PRE_30_PD.Model.tallySheetVersionId == Submission.Model.lockedVersionId
     ).group_by(
         TallySheetVersionRow_PRE_30_PD.Model.candidateId,
         Submission.Model.electionId,
@@ -61,8 +61,8 @@ def create(tallySheetId):
         )
 
     rejected_vote_count_query = db.session.query(
+        polling_division_and_electoral_district_query.c.areaId,
         Submission.Model.electionId,
-        Submission.Model.areaId,
         func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
     ).join(
         TallySheet.Model,
@@ -71,10 +71,10 @@ def create(tallySheetId):
         TallySheetVersionRow_RejectedVoteCount.Model,
         TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.lockedVersionId
     ).filter(
-        Submission.Model.areaId.in_([area.areaId for area in pollingDivisions]),
+        Submission.Model.areaId == polling_division_and_electoral_district_query.c.areaId,
         TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_30_PD
     ).group_by(
-        Submission.Model.areaId,
+        polling_division_and_electoral_district_query.c.areaId,
         Submission.Model.electionId
     ).order_by(
         Submission.Model.areaId

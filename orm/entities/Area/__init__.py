@@ -73,8 +73,11 @@ class AreaModel(db.Model):
 
         return self
 
+    def get_associated_areas_query(self, areaType, electionId=None):
+        return get_associated_areas_query(area=self, areaType=areaType, electionId=electionId)
+
     def get_associated_areas(self, areaType, electionId=None):
-        return get_associated_areas_query(area=self, areaType=areaType, electionId=electionId).all()
+        return self.get_associated_areas_query(areaType, electionId).all()
 
     def get_submissions(self, submissionType):
         return [submission for submission in self.submissions if submission.submissionType is submissionType]
