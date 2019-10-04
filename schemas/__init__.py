@@ -223,6 +223,21 @@ class TallySheetVersionRow_AreaWiseSummary_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class TallySheetVersionRow_CandidateWiseSummary_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "candidateId",
+            "validVoteCount"
+        )
+
+        model = TallySheetVersionRow_RejectedVoteCount.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    voteType = EnumField(VoteTypeEnum)
+
+
 class TallySheetVersionRow_ElectionWiseSummary_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -564,6 +579,7 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
             "areaWiseSummary",
             "summary",
             "subElectionWiseSummary",
+            "candidateWiseSummary",
             # "areas",
         )
 
@@ -578,7 +594,7 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
     areas = ma.Nested(AreaSchema, many=True)
     summary = ma.Nested(TallySheetVersionRow_Summary_Schema, many=False)
     subElectionWiseSummary = ma.Nested(TallySheetVersionRow_ElectionWiseSummary_Schema, many=True)
-    candidateWiseSummary = ma.Nested(TallySheetVersionRow_ElectionWiseSummary_Schema, many=True)
+    candidateWiseSummary = ma.Nested(TallySheetVersionRow_CandidateWiseSummary_Schema, many=True)
     candidateSubElectionWiseSummary = ma.Nested(TallySheetVersionRow_ElectionWiseSummary_Schema, many=True)
 
 
