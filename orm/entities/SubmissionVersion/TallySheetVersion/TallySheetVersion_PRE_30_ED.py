@@ -26,13 +26,13 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         'polymorphic_identity': TallySheetCodeEnum.PRE_30_ED
     }
 
-    def add_row(self, pollingDivisionId, candidateId, count, electionId):
+    def add_row(self, areaId, candidateId, count, electionId):
         from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED
 
         TallySheetVersionRow_PRE_30_ED.create(
             tallySheetVersionId=self.tallySheetVersionId,
             candidateId=candidateId,
-            pollingDivisionId=pollingDivisionId,
+            areaId=areaId,
             count=count,
             electionId=electionId
         )
@@ -42,10 +42,6 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         return self.submission.area.get_associated_areas(
             areaType=AreaTypeEnum.PollingDivision, electionId=self.submission.electionId
         )
-
-    @hybrid_property
-    def areas(self):
-        return self.polling_division_and_electoral_district_query().all()
 
     def polling_division_and_electoral_district_query(self):
         electoral_district = self.submission.area
@@ -66,233 +62,251 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             )
         )
 
-    def rejected_vote_count_query(self):
-        polling_division_and_electoral_district_subquery = self.polling_division_and_electoral_district_query().subquery()
-
+    def non_postal_area_wise_rejected_vote_count_query(self):
         return db.session.query(
-            polling_division_and_electoral_district_subquery.c.areaId,
-            polling_division_and_electoral_district_subquery.c.areaName,
-            Election.Model.electionId,
-            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount")
+            Election.Model.voteType,
+            Area.Model.areaId,
+            Area.Model.areaName,
+            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
         ).join(
-            Election.Model,
-            Election.Model.parentElectionId == polling_division_and_electoral_district_subquery.c.electionId
+            Area.Model,
+            and_(
+                Area.Model.electionId == Election.Model.parentElectionId,
+                Area.Model.areaId.in_([area.areaId for area in self.pollingDivisions])
+            )
         ).join(
             TallySheetVersionRow_RejectedVoteCount.Model,
             and_(
-                TallySheetVersionRow_RejectedVoteCount.Model.areaId == polling_division_and_electoral_district_subquery.c.areaId,
+                TallySheetVersionRow_RejectedVoteCount.Model.electionId == Election.Model.electionId,
                 TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
-                TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None,
-                TallySheetVersionRow_RejectedVoteCount.Model.electionId == Election.Model.electionId
+                TallySheetVersionRow_RejectedVoteCount.Model.areaId == Area.Model.areaId,
+                TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
             ),
             isouter=True
+        ).filter(
+            Election.Model.parentElectionId == self.submission.electionId,
+            Election.Model.voteType == VoteTypeEnum.NonPostal,
         ).group_by(
-            polling_division_and_electoral_district_subquery.c.areaId,
-            Election.Model.electionId
+            Area.Model.areaId
+        ).order_by(
+            Area.Model.areaName
         )
 
-    def area_and_election_wise_rejected_vote_count_query(self):
-        return self.rejected_vote_count_query()
-
-    def area_wise_rejected_vote_count_query(self):
-        rejected_vote_count_subquery = self.rejected_vote_count_query().subquery()
-
+    def postal_area_wise_rejected_vote_count_query(self):
         return db.session.query(
-            rejected_vote_count_subquery.c.areaId,
-            rejected_vote_count_subquery.c.areaName,
-            func.sum(rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount")
+            Election.Model.voteType,
+            Area.Model.areaId,
+            Area.Model.areaName,
+            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+        ).join(
+            Area.Model,
+            and_(
+                Area.Model.electionId == Election.Model.parentElectionId,
+                Area.Model.areaId == self.submission.areaId
+            )
+        ).join(
+            TallySheetVersionRow_RejectedVoteCount.Model,
+            and_(
+                TallySheetVersionRow_RejectedVoteCount.Model.electionId == Election.Model.electionId,
+                TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
+                TallySheetVersionRow_RejectedVoteCount.Model.areaId == Area.Model.areaId,
+                TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
+            ),
+            isouter=True
+        ).filter(
+            Election.Model.parentElectionId == self.submission.electionId,
+            Election.Model.voteType == VoteTypeEnum.Postal,
         ).group_by(
-            rejected_vote_count_subquery.c.areaId
+            Area.Model.areaId
+        ).order_by(
+            Area.Model.areaName
         )
 
-    def valid_vote_count_query(self):
-        polling_division_and_electoral_district_subquery = self.polling_division_and_electoral_district_query().subquery()
-
+    def non_postal_candidate_and_area_wise_valid_vote_count_query(self):
         return db.session.query(
-            polling_division_and_electoral_district_subquery.c.areaId,
-            polling_division_and_electoral_district_subquery.c.areaName,
-            Election.Model.electionId,
             ElectionCandidate.Model.candidateId,
-            func.sum(TallySheetVersionRow_PRE_30_ED.Model.count).label("validVoteCount")
+            Candidate.Model.candidateName,
+            Area.Model.areaId,
+            Area.Model.areaName,
+            func.sum(TallySheetVersionRow_PRE_30_ED.Model.count).label("validVoteCount"),
+        ).join(
+            Candidate.Model,
+            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
+        ).join(
+            Party.Model,
+            Party.Model.partyId == ElectionCandidate.Model.partyId
+        ).join(
+            Area.Model,
+            and_(
+                Area.Model.electionId == ElectionCandidate.Model.electionId,
+                Area.Model.areaId.in_([area.areaId for area in self.pollingDivisions])
+            )
         ).join(
             Election.Model,
-            Election.Model.parentElectionId == polling_division_and_electoral_district_subquery.c.electionId
-        ).join(
-            ElectionCandidate.Model,
-            ElectionCandidate.Model.electionId == polling_division_and_electoral_district_subquery.c.electionId
+            Election.Model.parentElectionId == ElectionCandidate.Model.electionId
         ).join(
             TallySheetVersionRow_PRE_30_ED.Model,
             and_(
-                TallySheetVersionRow_PRE_30_ED.Model.pollingDivisionId == polling_division_and_electoral_district_subquery.c.areaId,
-                TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == self.tallySheetVersionId,
                 TallySheetVersionRow_PRE_30_ED.Model.electionId == Election.Model.electionId,
+                TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == self.tallySheetVersionId,
+                TallySheetVersionRow_PRE_30_ED.Model.areaId == Area.Model.areaId,
                 TallySheetVersionRow_PRE_30_ED.Model.candidateId == ElectionCandidate.Model.candidateId
             ),
             isouter=True
+        ).filter(
+            ElectionCandidate.Model.electionId == self.submission.electionId,
+            Election.Model.voteType == VoteTypeEnum.NonPostal,
         ).group_by(
-            polling_division_and_electoral_district_subquery.c.areaId,
-            Election.Model.electionId,
-            ElectionCandidate.Model.candidateId
+            ElectionCandidate.Model.candidateId,
+            Area.Model.areaId
+        ).order_by(
+            ElectionCandidate.Model.candidateId,
+            Area.Model.areaName
         )
 
-    def candidate_wise_valid_vote_count_query(self):
-        valid_vote_count_subquery = self.valid_vote_count_query().subquery()
+    def non_postal_area_wise_valid_vote_count_query(self):
+        non_postal_candidate_and_area_wise_valid_vote_count_subquery = self.non_postal_candidate_and_area_wise_valid_vote_count_query().subquery()
 
         return db.session.query(
-            valid_vote_count_subquery.c.candidateId,
-            func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
+            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaId,
+            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaName,
+            func.sum(non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
+                "validVoteCount"),
         ).group_by(
-            valid_vote_count_subquery.c.candidateId
+            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaId
+        ).order_by(
+            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaName
         )
 
-    def candidate_and_election_wise_valid_vote_count_query(self):
-        valid_vote_count_subquery = self.valid_vote_count_query().subquery()
-
+    def postal_candidate_and_area_wise_valid_vote_count_query(self):
         return db.session.query(
-            valid_vote_count_subquery.c.candidateId,
-            valid_vote_count_subquery.c.electionId,
-            func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
+            ElectionCandidate.Model.candidateId,
+            Candidate.Model.candidateName,
+            Area.Model.areaId,
+            Area.Model.areaName,
+            func.sum(TallySheetVersionRow_PRE_30_ED.Model.count).label("validVoteCount"),
+        ).join(
+            Candidate.Model,
+            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
+        ).join(
+            Party.Model,
+            Party.Model.partyId == ElectionCandidate.Model.partyId
+        ).join(
+            Area.Model,
+            and_(
+                Area.Model.electionId == ElectionCandidate.Model.electionId,
+                Area.Model.areaId == self.submission.areaId
+            )
+        ).join(
+            Election.Model,
+            Election.Model.parentElectionId == ElectionCandidate.Model.electionId
+        ).join(
+            TallySheetVersionRow_PRE_30_ED.Model,
+            and_(
+                TallySheetVersionRow_PRE_30_ED.Model.electionId == Election.Model.electionId,
+                TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == self.tallySheetVersionId,
+                TallySheetVersionRow_PRE_30_ED.Model.areaId == Area.Model.areaId,
+                TallySheetVersionRow_PRE_30_ED.Model.candidateId == ElectionCandidate.Model.candidateId
+            ),
+            isouter=True
+        ).filter(
+            ElectionCandidate.Model.electionId == self.submission.electionId,
+            Election.Model.voteType == VoteTypeEnum.Postal,
         ).group_by(
-            valid_vote_count_subquery.c.candidateId,
-            valid_vote_count_subquery.c.electionId,
+            ElectionCandidate.Model.candidateId,
+            Area.Model.areaId
+        ).order_by(
+            ElectionCandidate.Model.candidateId,
+            Area.Model.areaName
         )
 
-    def area_and_election_wise_valid_vote_count_query(self):
-        valid_vote_count_subquery = self.valid_vote_count_query().subquery()
+    def postal_area_wise_valid_vote_count_query(self):
+        postal_candidate_and_area_wise_valid_vote_count_subquery = self.postal_candidate_and_area_wise_valid_vote_count_query().subquery()
 
         return db.session.query(
-            valid_vote_count_subquery.c.areaId,
-            valid_vote_count_subquery.c.areaName,
-            valid_vote_count_subquery.c.electionId,
-            func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
+            postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaId,
+            postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaName,
+            func.sum(postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
         ).group_by(
-            valid_vote_count_subquery.c.areaId,
-            valid_vote_count_subquery.c.electionId,
+            postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaId
+        ).order_by(
+            postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaName
         )
 
-    def area_wise_valid_vote_count_query(self):
-        valid_vote_count_subquery = self.valid_vote_count_query().subquery()
+    def postal_area_wise_vote_count_query(self):
+        postal_area_wise_valid_vote_count_subquery = self.postal_area_wise_valid_vote_count_query().subquery()
+        postal_area_wise_rejected_vote_count_subquery = self.postal_area_wise_rejected_vote_count_query().subquery()
 
         return db.session.query(
-            valid_vote_count_subquery.c.areaId,
-            valid_vote_count_subquery.c.areaName,
-            func.sum(valid_vote_count_subquery.c.validVoteCount).label("validVoteCount")
-        ).group_by(
-            valid_vote_count_subquery.c.areaId
-        )
-
-    def area_and_election_wise_vote_count_query(self):
-        area_and_election_wise_valid_vote_count_subquery = self.area_and_election_wise_valid_vote_count_query().subquery()
-        area_and_election_wise_rejected_vote_count_subquery = self.area_and_election_wise_rejected_vote_count_query().subquery()
-
-        return db.session.query(
-            area_and_election_wise_valid_vote_count_subquery.c.areaId,
-            area_and_election_wise_valid_vote_count_subquery.c.areaName,
-            area_and_election_wise_valid_vote_count_subquery.c.electionId,
-            func.sum(area_and_election_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-            func.sum(area_and_election_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label(
-                "rejectedVoteCount"),
+            postal_area_wise_valid_vote_count_subquery.c.areaId,
+            postal_area_wise_valid_vote_count_subquery.c.areaName,
+            func.sum(postal_area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
+            func.sum(postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
             func.sum(
-                area_and_election_wise_valid_vote_count_subquery.c.validVoteCount +
-                area_and_election_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+                postal_area_wise_valid_vote_count_subquery.c.validVoteCount +
+                postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
             ).label("totalVoteCount")
         ).join(
-            area_and_election_wise_rejected_vote_count_subquery,
-            and_(
-                area_and_election_wise_rejected_vote_count_subquery.c.areaId == area_and_election_wise_valid_vote_count_subquery.c.areaId,
-                area_and_election_wise_rejected_vote_count_subquery.c.electionId == area_and_election_wise_valid_vote_count_subquery.c.electionId
-            )
+            postal_area_wise_rejected_vote_count_subquery,
+            postal_area_wise_rejected_vote_count_subquery.c.areaId == postal_area_wise_valid_vote_count_subquery.c.areaId
         ).group_by(
-            area_and_election_wise_valid_vote_count_subquery.c.electionId,
-            area_and_election_wise_valid_vote_count_subquery.c.areaId
-        ).order_by(
-            area_and_election_wise_valid_vote_count_subquery.c.electionId,
-            area_and_election_wise_valid_vote_count_subquery.c.areaName
+            postal_area_wise_valid_vote_count_subquery.c.areaId
         )
 
-    def area_wise_vote_count_query(self):
-        area_and_election_wise_valid_vote_count_subquery = self.area_and_election_wise_valid_vote_count_query().subquery()
-        area_and_election_wise_rejected_vote_count_subquery = self.area_and_election_wise_rejected_vote_count_query().subquery()
+    def non_postal_area_wise_vote_count_query(self):
+        non_postal_area_wise_valid_vote_count_subquery = self.non_postal_area_wise_valid_vote_count_query().subquery()
+        non_postal_area_wise_rejected_vote_count_subquery = self.non_postal_area_wise_rejected_vote_count_query().subquery()
 
         return db.session.query(
-            area_and_election_wise_valid_vote_count_subquery.c.areaId,
-            area_and_election_wise_valid_vote_count_subquery.c.areaName,
-            func.sum(area_and_election_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-            func.sum(area_and_election_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label(
-                "rejectedVoteCount"),
+            non_postal_area_wise_valid_vote_count_subquery.c.areaId,
+            non_postal_area_wise_valid_vote_count_subquery.c.areaName,
+            func.sum(non_postal_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
+                "validVoteCount"),
+            func.sum(non_postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
             func.sum(
-                area_and_election_wise_valid_vote_count_subquery.c.validVoteCount +
-                area_and_election_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+                non_postal_area_wise_valid_vote_count_subquery.c.validVoteCount +
+                non_postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
             ).label("totalVoteCount")
         ).join(
-            area_and_election_wise_rejected_vote_count_subquery,
-            and_(
-                area_and_election_wise_rejected_vote_count_subquery.c.areaId == area_and_election_wise_valid_vote_count_subquery.c.areaId,
-                area_and_election_wise_rejected_vote_count_subquery.c.electionId == area_and_election_wise_valid_vote_count_subquery.c.electionId,
-            )
+            non_postal_area_wise_rejected_vote_count_subquery,
+            non_postal_area_wise_rejected_vote_count_subquery.c.areaId == non_postal_area_wise_valid_vote_count_subquery.c.areaId
         ).group_by(
-            area_and_election_wise_valid_vote_count_subquery.c.areaId
-        ).order_by(
-            area_and_election_wise_valid_vote_count_subquery.c.areaName
+            non_postal_area_wise_valid_vote_count_subquery.c.areaId
+        )
+
+    def candidate_wise_vote_count(self):
+        non_postal_candidate_and_area_wise_valid_vote_count_subquery = self.non_postal_candidate_and_area_wise_valid_vote_count_query().subquery()
+        postal_candidate_and_area_wise_valid_vote_count_subquery = self.postal_candidate_and_area_wise_valid_vote_count_query().subquery()
+
+        return db.session.query(
+            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId,
+            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateName,
+            func.sum(non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
+                "nonPostalValidVoteCount"),
+            func.sum(postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
+                "postalValidVoteCount"),
+            func.sum(
+                non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount +
+                postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount
+            ).label("validVoteCount")
+        ).join(
+            postal_candidate_and_area_wise_valid_vote_count_subquery,
+            postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId == non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
+        ).group_by(
+            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
+        ).group_by(
+            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
         )
 
     def vote_count_query(self):
-        area_wise_vote_count_subquery = self.area_and_election_wise_vote_count_query().subquery()
+        area_wise_vote_count_subquery = self.non_postal_area_wise_vote_count_query().union(
+            self.postal_area_wise_vote_count_query()).subquery()
 
         return db.session.query(
-            area_wise_vote_count_subquery.c.electionId,
-            func.count(area_wise_vote_count_subquery.c.areaId).label("areaCount"),
             func.sum(area_wise_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-            func.sum(area_wise_vote_count_subquery.c.rejectedVoteCount).label(
-                "rejectedVoteCount"),
-            func.sum(
-                area_wise_vote_count_subquery.c.validVoteCount +
-                area_wise_vote_count_subquery.c.rejectedVoteCount
-            ).label("totalVoteCount")
-        ).group_by(
-            area_wise_vote_count_subquery.c.electionId
-        ).one_or_none()
-
-    @hybrid_property
-    def candidateWiseSummary(self):
-        return self.candidate_wise_valid_vote_count_query().all()
-
-    @hybrid_property
-    def areaWiseSummary(self):
-        return self.area_wise_vote_count_query().all()
-
-    @hybrid_property
-    def summary(self):
-        area_wise_vote_count_subquery = self.area_and_election_wise_vote_count_query().subquery()
-
-        return db.session.query(
-            func.count(area_wise_vote_count_subquery.c.areaId).label("areaCount"),
-            func.sum(area_wise_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-            func.sum(area_wise_vote_count_subquery.c.rejectedVoteCount).label(
-                "rejectedVoteCount"),
-            func.sum(
-                area_wise_vote_count_subquery.c.validVoteCount +
-                area_wise_vote_count_subquery.c.rejectedVoteCount
-            ).label("totalVoteCount")
-        ).one_or_none()
-
-    @hybrid_property
-    def subElectionWiseSummary(self):
-        area_wise_vote_count_subquery = self.area_and_election_wise_vote_count_query().subquery()
-
-        return db.session.query(
-            area_wise_vote_count_subquery.c.electionId,
-            func.count(area_wise_vote_count_subquery.c.areaId).label("areaCount"),
-            func.sum(area_wise_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-            func.sum(area_wise_vote_count_subquery.c.rejectedVoteCount).label(
-                "rejectedVoteCount"),
-            func.sum(
-                area_wise_vote_count_subquery.c.validVoteCount +
-                area_wise_vote_count_subquery.c.rejectedVoteCount
-            ).label("totalVoteCount")
-        ).group_by(
-            area_wise_vote_count_subquery.c.electionId
-        ).all()
+            func.sum(area_wise_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(area_wise_vote_count_subquery.c.totalVoteCount).label("totalVoteCount")
+        )
 
     @hybrid_property
     def content(self):
@@ -301,8 +315,8 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             Election.Model.electionId,
             Election.Model.electionName,
             Candidate.Model.candidateName,
-            Area.Model.areaId.label("pollingDivisionId"),
-            Area.Model.areaName.label("pollingDivisionName"),
+            Area.Model.areaId,
+            Area.Model.areaName,
             func.sum(TallySheetVersionRow_PRE_30_ED.Model.count).label("count"),
         ).join(
             Candidate.Model,
@@ -324,7 +338,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             and_(
                 TallySheetVersionRow_PRE_30_ED.Model.electionId == Election.Model.electionId,
                 TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == self.tallySheetVersionId,
-                TallySheetVersionRow_PRE_30_ED.Model.pollingDivisionId == Area.Model.areaId,
+                TallySheetVersionRow_PRE_30_ED.Model.areaId == Area.Model.areaId,
                 TallySheetVersionRow_PRE_30_ED.Model.candidateId == ElectionCandidate.Model.candidateId
             ),
             isouter=True
@@ -346,104 +360,70 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             "electoralDistrict": self.submission.area.areaName,
             "pollingDivisions": [],
             "data": [],
-            "validVotes": [],
-            "rejectedVotes": [],
-            "totalVotes": []
+            "validVoteCounts": [],
+            "rejectedVoteCounts": [],
+            "totalVoteCounts": []
         }
 
-        tally_sheet_content_subquery = self.content.subquery()
+        non_postal_candidate_and_area_wise_valid_vote_count_result = self.non_postal_candidate_and_area_wise_valid_vote_count_query().all()
+        postal_candidate_and_area_wise_valid_vote_count_result = self.postal_candidate_and_area_wise_valid_vote_count_query().all()
+        candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
+        non_postal_area_wise_vote_count_result = self.non_postal_area_wise_vote_count_query().all()
+        postal_area_wise_vote_count_result = self.postal_area_wise_vote_count_query().all()
+        vote_count_result = self.vote_count_query().one_or_none()
 
-        postal_vote_results = db.session.query(
-            tally_sheet_content_subquery.c.candidateId,
-            tally_sheet_content_subquery.c.candidateName,
-            func.sum(tally_sheet_content_subquery.c.count).label("count")
-        ).group_by(
-            tally_sheet_content_subquery.c.candidateId
-        ).filter(
-            tally_sheet_content_subquery.c.voteType == VoteTypeEnum.Postal
-        ).order_by(
-            tally_sheet_content_subquery.c.candidateId
-        ).all()
+        polling_division_count = len(non_postal_area_wise_vote_count_result)
+        postal_polling_division_count = len(postal_area_wise_vote_count_result)
+        number_of_candidates = len(candidate_wise_vote_count_result)
 
-        non_postal_vote_results = db.session.query(
-            tally_sheet_content_subquery.c.candidateId,
-            tally_sheet_content_subquery.c.candidateName,
-            tally_sheet_content_subquery.c.pollingDivisionId,
-            tally_sheet_content_subquery.c.pollingDivisionName,
-            func.sum(tally_sheet_content_subquery.c.count).label("count")
-        ).group_by(
-            tally_sheet_content_subquery.c.candidateId,
-            tally_sheet_content_subquery.c.pollingDivisionId
-        ).filter(
-            tally_sheet_content_subquery.c.voteType == VoteTypeEnum.NonPostal
-        ).order_by(
-            tally_sheet_content_subquery.c.candidateId,
-            tally_sheet_content_subquery.c.pollingDivisionId
-        ).all()
+        for polling_division_index in range(polling_division_count):
+            non_postal_area_wise_vote_count_result_item = non_postal_area_wise_vote_count_result[
+                polling_division_index]
+            content["pollingDivisions"].append(non_postal_area_wise_vote_count_result_item.areaName)
+            content["rejectedVoteCounts"].append(non_postal_area_wise_vote_count_result_item.rejectedVoteCount)
+            content["validVoteCounts"].append(non_postal_area_wise_vote_count_result_item.validVoteCount)
+            content["totalVoteCounts"].append(non_postal_area_wise_vote_count_result_item.totalVoteCount)
 
-        countingCentreCount = int(len(non_postal_vote_results) / len(postal_vote_results))
+        for postal_polling_division_index in range(postal_polling_division_count):
+            postal_area_wise_vote_count_result_item = postal_area_wise_vote_count_result[
+                postal_polling_division_index]
+            content["rejectedVoteCounts"].append(postal_area_wise_vote_count_result_item.rejectedVoteCount)
+            content["validVoteCounts"].append(postal_area_wise_vote_count_result_item.validVoteCount)
+            content["totalVoteCounts"].append(postal_area_wise_vote_count_result_item.totalVoteCount)
 
-        # Fill the validVotes, rejectedVotes and totalVotes with zeros.
-        for i in range(0, countingCentreCount):
-            content["pollingDivisions"].append(non_postal_vote_results[i].pollingDivisionName)
+        content["rejectedVoteCounts"].append(vote_count_result.rejectedVoteCount)
+        content["validVoteCounts"].append(vote_count_result.validVoteCount)
+        content["totalVoteCounts"].append(vote_count_result.totalVoteCount)
 
-            content["validVotes"].append(0)
-            content["rejectedVotes"].append(0)
-            content["totalVotes"].append(0)
+        for candidate_wise_vote_count_result_item_index in range(number_of_candidates):
+            data_row = []
 
-        total_postal_vote_count = 0
-        # Iterate by candidates.
-        for i in range(len(postal_vote_results)):
-            postal_vote_counts_row = postal_vote_results[i]
+            data_row_number = candidate_wise_vote_count_result_item_index + 1
+            data_row.append(data_row_number)
 
-            # Append candidate details.
-            data_row = [
-                i + 1,
-                postal_vote_counts_row.candidateName
+            candidate_wise_vote_count_result_item = candidate_wise_vote_count_result[
+                candidate_wise_vote_count_result_item_index
             ]
+            data_row.append(candidate_wise_vote_count_result_item.candidateName)
+
+            for polling_division_index in range(polling_division_count):
+                non_postal_area_wise_valid_vote_count_result_item_index = (
+                                                                                  candidate_wise_vote_count_result_item_index *
+                                                                                  polling_division_count) + polling_division_index
+                non_postal_candidate_and_area_wise_valid_vote_count_result_item = \
+                    non_postal_candidate_and_area_wise_valid_vote_count_result[
+                        non_postal_area_wise_valid_vote_count_result_item_index
+                    ]
+                data_row.append(non_postal_candidate_and_area_wise_valid_vote_count_result_item.validVoteCount)
+
+            postal_candidate_and_area_wise_valid_vote_count_result_item = \
+                postal_candidate_and_area_wise_valid_vote_count_result[
+                    candidate_wise_vote_count_result_item_index
+                ]
+            data_row.append(postal_candidate_and_area_wise_valid_vote_count_result_item.validVoteCount)
+            data_row.append(candidate_wise_vote_count_result_item.validVoteCount)
+
             content["data"].append(data_row)
-            total_count_per_candidate = 0
-
-            # Iterate by counting centres.
-            for j in range(countingCentreCount):
-                # Determine the result index mapping with the counting centre and candidate.
-                query_result_index = (i * countingCentreCount) + j
-
-                count = non_postal_vote_results[query_result_index].count
-
-                if count is None:
-                    data_row.append("")
-                else:
-                    # Append the count of votes of the counting centre.
-                    data_row.append(count)
-
-                    # Calculate the candidate wise total votes.
-                    total_count_per_candidate = total_count_per_candidate + count
-
-                    # Calculate valid votes count.
-                    content["validVotes"][j] = content["validVotes"][j] + count
-
-                    # Calculate validVotes count.
-                    content["rejectedVotes"][j] = 0  # TODO
-
-                    content["totalVotes"][j] = content["validVotes"][j] + content["rejectedVotes"][j]
-
-            total_postal_vote_count_per_candidate = ""
-            if postal_vote_counts_row.count is not None:
-                total_postal_vote_count_per_candidate = postal_vote_counts_row.count
-                total_count_per_candidate = total_count_per_candidate + total_postal_vote_count_per_candidate
-                total_postal_vote_count = total_postal_vote_count + total_postal_vote_count_per_candidate
-            data_row.append(total_postal_vote_count_per_candidate)
-
-            data_row.append(total_count_per_candidate)
-
-        content["validVotes"].append(total_postal_vote_count)
-        content["rejectedVotes"].append(0)  # TODO
-        content["totalVotes"].append(total_postal_vote_count + 0)  # TODO
-
-        content["validVotes"].append(sum(content["validVotes"]))
-        content["rejectedVotes"].append(sum(content["rejectedVotes"]))
-        content["totalVotes"].append(sum(content["totalVotes"]))
 
         html = render_template(
             'PRE-30-ED.html',

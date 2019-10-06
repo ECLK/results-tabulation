@@ -143,7 +143,7 @@ class TallySheetVersionRow_PRE_30_ED_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "candidateId",
-            "pollingDivisionId",
+            "areaId",
             "count",
             "electionId",
             "voteType"
@@ -579,8 +579,7 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
             "areaWiseSummary",
             "summary",
             "subElectionWiseSummary",
-            "candidateWiseSummary",
-            # "areas",
+            "candidateWiseSummary"
         )
 
         model = TallySheetVersion_PRE_30_ED.Model
