@@ -12,7 +12,7 @@ from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, \
     TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query
+from util import get_paginated_query, to_comma_seperated_num, to_percentage
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
@@ -178,7 +178,10 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             "validVoteCounts": [0, 0],
             "rejectedVoteCounts": [0, 0],
             "totalVoteCounts": [0, 0],
-            "registeredVoters": [self.submission.area.registeredVotersCount, 100]
+            "registeredVoters": [
+                to_comma_seperated_num(self.submission.area.registeredVotersCount),
+                100
+            ]
         }
 
         candidate_wise_valid_vote_count_result = self.candidate_wise_valid_vote_count_query().all()
@@ -188,23 +191,23 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             content["data"].append([
                 candidate_wise_valid_vote_count_result_item.candidateName,
                 candidate_wise_valid_vote_count_result_item.partyAbbreviation,
-                candidate_wise_valid_vote_count_result_item.validVoteCount,
-                candidate_wise_valid_vote_count_result_item.validVotePercentage,
+                to_comma_seperated_num(candidate_wise_valid_vote_count_result_item.validVoteCount),
+                to_percentage(candidate_wise_valid_vote_count_result_item.validVotePercentage)
             ])
 
         content["validVoteCounts"] = [
-            vote_count_result["validVoteCount"],
-            vote_count_result["validVoteCountPercentage"]
+            to_comma_seperated_num(vote_count_result["validVoteCount"]),
+            to_percentage(vote_count_result["validVoteCountPercentage"])
         ]
 
         content["rejectedVoteCounts"] = [
-            vote_count_result["rejectedVoteCount"],
-            vote_count_result["rejectedVoteCountPercentage"]
+            to_comma_seperated_num(vote_count_result["rejectedVoteCount"]),
+            to_percentage(vote_count_result["rejectedVoteCountPercentage"])
         ]
 
         content["totalVoteCounts"] = [
-            vote_count_result["totalVoteCount"],
-            vote_count_result["totalVoteCountPercentage"]
+            to_comma_seperated_num(vote_count_result["totalVoteCount"]),
+            to_percentage(vote_count_result["totalVoteCountPercentage"])
         ]
 
         # for row_index in range(len(tallySheetContent)):
