@@ -82,10 +82,6 @@
             margin-left: 20px;
         }
 
-        /* .group span {
-            margin: 5px 0;
-        } */
-
         .block, .block1, .block2 {
             padding: 5px;
         }
@@ -139,9 +135,19 @@
             </tr>
             {% for row in content.data %}
             <tr>
-                {% for cell in row %}
-                <td class="all align-middle">{{cell}}</td>
-                {% endfor %}
+                <td class="all align-middle" style="text-align: right;">{{row[0]}}</td>
+                <td class="all align-middle">{{row[1]}}</td>
+                <td class="all align-middle" colspan="3" style="text-align: right;">{{row[2]}}</td>
+                <td class="all align-middle" style="text-align: right;">{{row[3]}}</td>
+                <td class="all align-middle" style="text-align: right;">{{row[4]}}</td>
+                <td class="all align-middle" style="text-align: right;">{{row[5]}}</td>
+                <td class="all align-middle" style="text-align: right;">{{row[6]}}</td>
+                <td class="all align-middle">{{row[7]}}</td>
+                <td class="all align-middle">{{row[8]}}</td>
+                <td class="all align-middle">{{row[9]}}</td>
+                <td class="all align-middle">{{row[10]}}</td>
+                <td class="all align-middle">{{row[11]}}</td>
+                <td class="all align-middle">{{row[12]}}</td>
             </tr>
             {% endfor %}
 

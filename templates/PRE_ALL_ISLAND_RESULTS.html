@@ -86,8 +86,8 @@
               <tr>
                   <td class="all">{{row[0]}}</td>
                   <td class="all" style="text-align:center;">{{row[1]}}</td>
-                  <td class="all" style="text-align:center;"><b>{{row[2]}}</b></td>
-                  <td class="all" style="text-align:center;">{{row[3]}}%</td>
+                  <td class="all" style="text-align:right;"><b>{{row[2]}}</b></td>
+                  <td class="all" style="text-align:right;">{{row[3]}}%</td>
               </tr>
             {% endfor %}
 
@@ -98,26 +98,26 @@
             <tr>
                 <td></td>
                 <td><b>Total Valid Votes</b></td>
-                <td style="text-align:center;"><b>{{content.validVoteCounts[0]}}</b></td>
-                <td style="text-align:center;">{{content.validVoteCounts[1]}}%</td>
+                <td style="text-align:right;"><b>{{content.validVoteCounts[0]}}</b></td>
+                <td style="text-align:right;">{{content.validVoteCounts[1]}}%</td>
             </tr>
             <tr>
                 <td></td>
                 <td><b>Rejected Votes</b></td>
-                <td style="text-align:center;"><b>{{content.rejectedVoteCounts[0]}}</b></td>
-                <td style="text-align:center;">{{content.rejectedVoteCounts[1]}}%</td>
+                <td style="text-align:right;"><b>{{content.rejectedVoteCounts[0]}}</b></td>
+                <td style="text-align:right;">{{content.rejectedVoteCounts[1]}}%</td>
             </tr>
             <tr>
                 <td></td>
                 <td><b>Total Polled</b></td>
-                <td style="text-align:center;"><b>{{content.totalVoteCounts[0]}}</b></td>
-                <td style="text-align:center;">{{content.totalVoteCounts[1]}}%</td>
+                <td style="text-align:right;"><b>{{content.totalVoteCounts[0]}}</b></td>
+                <td style="text-align:right;">{{content.totalVoteCounts[1]}}%</td>
             </tr>
             <tr>
                 <td></td>
                 <td><b>Registered No. of Electors</b></td>
-                <td style="text-align:center;"><b>{{content.registeredVoters[0]}}</b></td>
-                <td style="text-align:center;"></td>
+                <td style="text-align:right"><b>{{content.registeredVoters[0]}}</b></td>
+                <td style="text-align:right"></td>
             </tr>
             <tr>
                 <td colspan="4"></td>
