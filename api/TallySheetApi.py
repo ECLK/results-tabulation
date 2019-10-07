@@ -32,6 +32,7 @@ def get_by_id(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data
 
 
+@authorize(required_roles=ALL_ROLES)
 def unlock(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
@@ -45,9 +46,10 @@ def unlock(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
+@authorize(required_roles=ALL_ROLES)
 def lock(tallySheetId, body):
     request_body = RequestBody(body)
-    tallySheetVersionId = request_body.get("tallySheetVersionId")
+    tallySheetVersionId = request_body.get("lockedVersionId")
 
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
