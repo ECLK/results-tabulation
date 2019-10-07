@@ -153,9 +153,9 @@
 
             {% for row in content.data %}
             <tr>
-                {% for cell in row %}
-                <td class="left right top bottom" style="text-align:center;">{{cell}}</td>
-                {% endfor %}
+                <td class="left right top bottom" style="text-align:right;">{{row[0]}}</td>
+                <td class="left right top bottom" style="text-align:right;">{{row[1]}}</td>
+                <td class="left right top bottom" style="text-align:right;">{{row[2]}}</td>
             </tr>
             {% endfor %}
 
