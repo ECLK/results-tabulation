@@ -9,7 +9,7 @@ from orm.entities import Area, Candidate, Party, Election, Submission, Submissio
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query
+from util import get_paginated_query, to_comma_seperated_num
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
@@ -380,20 +380,32 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             non_postal_area_wise_vote_count_result_item = non_postal_area_wise_vote_count_result[
                 polling_division_index]
             content["pollingDivisions"].append(non_postal_area_wise_vote_count_result_item.areaName)
-            content["rejectedVoteCounts"].append(non_postal_area_wise_vote_count_result_item.rejectedVoteCount)
-            content["validVoteCounts"].append(non_postal_area_wise_vote_count_result_item.validVoteCount)
-            content["totalVoteCounts"].append(non_postal_area_wise_vote_count_result_item.totalVoteCount)
+            content["rejectedVoteCounts"].append(
+                to_comma_seperated_num(non_postal_area_wise_vote_count_result_item.rejectedVoteCount)
+            )
+            content["validVoteCounts"].append(
+                to_comma_seperated_num(non_postal_area_wise_vote_count_result_item.validVoteCount)
+            )
+            content["totalVoteCounts"].append(
+                to_comma_seperated_num(non_postal_area_wise_vote_count_result_item.totalVoteCount)
+            )
 
         for postal_polling_division_index in range(postal_polling_division_count):
             postal_area_wise_vote_count_result_item = postal_area_wise_vote_count_result[
                 postal_polling_division_index]
-            content["rejectedVoteCounts"].append(postal_area_wise_vote_count_result_item.rejectedVoteCount)
-            content["validVoteCounts"].append(postal_area_wise_vote_count_result_item.validVoteCount)
-            content["totalVoteCounts"].append(postal_area_wise_vote_count_result_item.totalVoteCount)
+            content["rejectedVoteCounts"].append(
+                to_comma_seperated_num(postal_area_wise_vote_count_result_item.rejectedVoteCount)
+            )
+            content["validVoteCounts"].append(
+                to_comma_seperated_num(postal_area_wise_vote_count_result_item.validVoteCount)
+            )
+            content["totalVoteCounts"].append(
+                to_comma_seperated_num(postal_area_wise_vote_count_result_item.totalVoteCount)
+            )
 
-        content["rejectedVoteCounts"].append(vote_count_result.rejectedVoteCount)
-        content["validVoteCounts"].append(vote_count_result.validVoteCount)
-        content["totalVoteCounts"].append(vote_count_result.totalVoteCount)
+        content["rejectedVoteCounts"].append(to_comma_seperated_num(vote_count_result.rejectedVoteCount))
+        content["validVoteCounts"].append(to_comma_seperated_num(vote_count_result.validVoteCount))
+        content["totalVoteCounts"].append(to_comma_seperated_num(vote_count_result.totalVoteCount))
 
         for candidate_wise_vote_count_result_item_index in range(number_of_candidates):
             data_row = []
@@ -414,14 +426,16 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
                     non_postal_candidate_and_area_wise_valid_vote_count_result[
                         non_postal_area_wise_valid_vote_count_result_item_index
                     ]
-                data_row.append(non_postal_candidate_and_area_wise_valid_vote_count_result_item.validVoteCount)
+                data_row.append(to_comma_seperated_num(
+                    non_postal_candidate_and_area_wise_valid_vote_count_result_item.validVoteCount))
 
             postal_candidate_and_area_wise_valid_vote_count_result_item = \
                 postal_candidate_and_area_wise_valid_vote_count_result[
                     candidate_wise_vote_count_result_item_index
                 ]
-            data_row.append(postal_candidate_and_area_wise_valid_vote_count_result_item.validVoteCount)
-            data_row.append(candidate_wise_vote_count_result_item.validVoteCount)
+            data_row.append(
+                to_comma_seperated_num(postal_candidate_and_area_wise_valid_vote_count_result_item.validVoteCount))
+            data_row.append(to_comma_seperated_num(candidate_wise_vote_count_result_item.validVoteCount))
 
             content["data"].append(data_row)
 

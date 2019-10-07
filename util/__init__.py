@@ -115,3 +115,17 @@ def to_empty_string_or_value(value):
         return ""
     else:
         return value
+
+
+def to_percentage(value, round_to=2):
+    if value is None:
+        return ""
+    else:
+        return f'{round(value, round_to)}%'
+
+
+def to_comma_seperated_num(value):
+    if value is None:
+        return ""
+    else:
+        return f'{value:,}'
