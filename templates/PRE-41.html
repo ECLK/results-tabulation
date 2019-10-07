@@ -240,24 +240,27 @@
         </tr>
         {% for row in content.data %}
         <tr>
-            {% for cell in row %}
-            <td class="left right top bottom">{{cell}}</td>
-            {% endfor %}
+            <td class="left right top bottom" style="text-align:right">{{row[0]}}</td>
+            <td class="left right top bottom">{{row[1]}}</td>
+            <td class="left right top bottom">{{row[2]}}</td>
+            <td class="left right top bottom">{{row[3]}}</td>
+            <td class="left right top bottom" style="text-align:right">{{row[4]}}</td>
+            <td class="left right top bottom">{{row[5]}}</td>
             <td class="left right top bottom"></td>
         </tr>
         {% endfor %}
         <tr>
             <td colspan="4" align="right" class="font1 bold">එකතුව / மொத்தம் / Total</td>
-            <td class="left right top bottom">{{content.total}}</td>
+            <td class="left right top bottom" style="text-align:right">{{content.total}}</td>
         </tr>
         <tr>
             <td colspan="4" align="right" class="font1 bold">ප්‍රතික්ෂේප කරන ලද ඡන්ද සංඛ්‍යාව / tamil / Rejected Votes
             </td>
-            <td class="left right top bottom">{{content.rejectedVotes}}</td>
+            <td class="left right top bottom" style="text-align:right">{{content.rejectedVotes}}</td>
         </tr>
         <tr>
             <td colspan="4" align="right" class="font1 bold">මුළු එකතුව / tamil / Grand Total</td>
-            <td class="left right top bottom">{{content.grandTotal}}</td>
+            <td class="left right top bottom" style="text-align:right">{{content.grandTotal}}</td>
         </tr>
         <tr>
             <td></td>

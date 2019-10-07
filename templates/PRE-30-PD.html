@@ -71,10 +71,6 @@
             margin-left: 20px;
         }
 
-        /* .group span {
-            margin: 5px 0;
-        } */
-
         .block, .block1, .block2 {
             padding: 5px;
         }
@@ -109,7 +105,7 @@
                         <div class="all float-right"  style="width: fit-content; padding: 5px;">
                                 <span class="bold">Polling Division :</span> {{content.pollingDivision}}
                         </div>
-                </td>                
+                </td>
             </tr>
 
 <div>
@@ -130,7 +126,7 @@
         {% for row in content.data %}
         <tr>
             {% for cell in row %}
-            <td class="left right top bottom">{{cell}}</td>
+            <td class="left right top bottom text-right">{{cell}}</td>
             {% endfor %}
             <td class="left right top bottom"></td>
         </tr>
@@ -145,7 +141,7 @@
                 No. of Valid Votes
             </th>
             {% for validVoteCount in content.validVoteCounts %}
-            <td class="left right top bottom">{{validVoteCount}}</td>
+            <td class="left right top bottom text-right">{{validVoteCount}}</td>
             {% endfor %}
         </tr>
 
@@ -154,7 +150,7 @@
                 No. of Rejected Votes
             </th>
             {% for rejectedVoteCount in content.rejectedVoteCounts %}
-            <td class="left right top bottom">{{rejectedVoteCount}}</td>
+            <td class="left right top bottom text-right">{{rejectedVoteCount}}</td>
             {% endfor %}
         </tr>
 
@@ -164,7 +160,7 @@
                 <small>(Including Rejected)</small>
             </th>
             {% for totalVoteCount in content.totalVoteCounts %}
-            <td class="left right top bottom">{{totalVoteCount}}</td>
+            <td class="left right top bottom text-right">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
 
