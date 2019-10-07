@@ -73,21 +73,21 @@
         <tr>
             <td class="left right top bottom">NO OF VALID VOTES</td>
             {% for cell in content.validVotes %}
-            <td class="left right top bottom">{{cell}}</td>
+            <td class="left right top bottom" style="text-align:right">{{cell}}</td>
             {% endfor %}
         </tr>
 
         <tr>
             <td class="left right top bottom">NO OF REJECTED VOTES</td>
             {% for cell in content.rejectedVotes %}
-              <td class="left right top bottom">{{cell}}</td>
+              <td class="left right top bottom" style="text-align:right">{{cell}}</td>
             {% endfor %}
         </tr>
 
         <tr>
             <td class="left right top bottom">TOTAL NO OF VOTES POLLED (INCLUDING REJECTED VOTES)</td>
             {% for cell in content.totalVotes %}
-              <td class="left right top bottom">{{cell}}</td>
+              <td class="left right top bottom" style="text-align:right">{{cell}}</td>
             {% endfor %}
         </tr>
 
