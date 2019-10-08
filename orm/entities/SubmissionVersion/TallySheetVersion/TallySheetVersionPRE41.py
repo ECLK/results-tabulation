@@ -9,7 +9,7 @@ from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query
+from util import get_paginated_query, to_comma_seperated_num
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
@@ -28,8 +28,6 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
         tallySheetContent = self.content
         summary = self.summary
 
-        print("############# heyyyyy")
-
         content = {
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
             "electoralDistrict": Area.get_associated_areas(
@@ -43,9 +41,9 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             ]),
             "data": [
             ],
-            "total": summary.validVoteCount,
-            "rejectedVotes": summary.rejectedVoteCount,
-            "grandTotal": summary.totalVoteCount
+            "total": to_comma_seperated_num(summary.validVoteCount),
+            "rejectedVotes": to_comma_seperated_num(summary.rejectedVoteCount),
+            "grandTotal": to_comma_seperated_num(summary.totalVoteCount)
         }
 
         for row_index in range(len(tallySheetContent)):
@@ -56,7 +54,7 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
                     row.candidateName,
                     row.partySymbol,
                     row.countInWords,
-                    row.count,
+                    to_comma_seperated_num(row.count),
                     ""
                 ])
             else:
