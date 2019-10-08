@@ -207,71 +207,6 @@ class TallySheetVersionRow_PRE_30_PD_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
-class TallySheetVersionRow_AreaWiseSummary_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "areaId",
-            "areaName",
-            "rejectedVoteCount",
-            "validVoteCount",
-            "totalVoteCount",
-        )
-
-        model = TallySheetVersionRow_RejectedVoteCount.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_CandidateWiseSummary_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "candidateId",
-            "validVoteCount"
-        )
-
-        model = TallySheetVersionRow_RejectedVoteCount.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    voteType = EnumField(VoteTypeEnum)
-
-
-class TallySheetVersionRow_ElectionWiseSummary_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "electionId",
-            # "voteType",
-            "areaCount",
-            "rejectedVoteCount",
-            "validVoteCount",
-            "totalVoteCount",
-        )
-
-        model = TallySheetVersionRow_RejectedVoteCount.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    voteType = EnumField(VoteTypeEnum)
-
-
-class TallySheetVersionRow_Summary_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "areaCount",
-            "rejectedVoteCount",
-            "validVoteCount",
-            "totalVoteCount",
-        )
-
-        model = TallySheetVersionRow_RejectedVoteCount.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
 class TallySheetVersionRow_PRE_21_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -485,8 +420,7 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content",
-            "summary"
+            "content"
         )
 
         model = TallySheetVersionPRE41.Model
@@ -496,7 +430,6 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_Summary_Schema)
 
 
 class TallySheetVersion_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.ModelSchema):
@@ -507,9 +440,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.M
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content",
-            "areaWiseSummary",
-            "summary"
+            "content"
         )
 
         model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model
@@ -519,8 +450,6 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.M
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema, many=True)
-    areaWiseSummary = ma.Nested(TallySheetVersionRow_AreaWiseSummary_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_Summary_Schema, many=False)
 
 
 class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
@@ -531,8 +460,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content",
-            "summary"
+            "content"
         )
 
         model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model
@@ -542,7 +470,6 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_Summary_Schema, many=False)
 
 
 class TallySheetVersion_CE_201_PV_Schema(ma.ModelSchema):
@@ -553,8 +480,7 @@ class TallySheetVersion_CE_201_PV_Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content",
-            "summary"
+            "content"
         )
 
         model = TallySheetVersionRow_CE_201_PV.Model
@@ -564,7 +490,6 @@ class TallySheetVersion_CE_201_PV_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_CE_201_PV_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_CE_201_PV_CC_Schema)
 
 
 class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
@@ -575,11 +500,7 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content",
-            "areaWiseSummary",
-            "summary",
-            "subElectionWiseSummary",
-            "candidateWiseSummary"
+            "content"
         )
 
         model = TallySheetVersion_PRE_30_ED.Model
@@ -589,12 +510,7 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_30_ED_Schema, many=True)
-    areaWiseSummary = ma.Nested(TallySheetVersionRow_AreaWiseSummary_Schema, many=True)
     areas = ma.Nested(AreaSchema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_Summary_Schema, many=False)
-    subElectionWiseSummary = ma.Nested(TallySheetVersionRow_ElectionWiseSummary_Schema, many=True)
-    candidateWiseSummary = ma.Nested(TallySheetVersionRow_CandidateWiseSummary_Schema, many=True)
-    candidateSubElectionWiseSummary = ma.Nested(TallySheetVersionRow_ElectionWiseSummary_Schema, many=True)
 
 
 class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
@@ -605,9 +521,7 @@ class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content",
-            "areaWiseSummary",
-            "summary"
+            "content"
         )
 
         model = TallySheetVersion_PRE_30_PD.Model
@@ -617,8 +531,6 @@ class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_30_PD_Schema, many=True)
-    areaWiseSummary = ma.Nested(TallySheetVersionRow_AreaWiseSummary_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_Summary_Schema, many=False)
 
 
 class TallySheetVersionPRE21Schema(ma.ModelSchema):
