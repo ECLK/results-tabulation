@@ -219,7 +219,6 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
     def html(self):
 
         candidate_and_area_wise_valid_vote_count_result = self.candidate_and_area_wise_valid_vote_count_query().all()
-
         candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
         area_wise_vote_count_result = self.area_wise_vote_count_query().all()
         vote_count_result = self.vote_count_query().one_or_none()
