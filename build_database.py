@@ -18,13 +18,15 @@ data_stores = {}
 csv_dir = ''
 
 jwt_payload = {
-    'areaAssignment/dataEditor': [],
-    'areaAssignment/pollingDivisionReportViewer': [],
-    'areaAssignment/pollingDivisionReportGenerator': [],
-    'areaAssignment/electoralDistrictReportViewer': [],
-    'areaAssignment/electoralDistrictReportGenerator': [],
-    'areaAssignment/nationalReportViewer': [],
-    'areaAssignment/ECLeadership': []
+    'sub': 'janak@carbon.super',
+    'area_assign_data_editor': [],
+    'area_assign_pol_div_rep_view': [],
+    'area_assign_pol_div_rep_verf': [],
+    'area_assign_elc_dis_rep_view': [],
+    'area_assign_elc_dis_rep_verf': [],
+    'area_assign_nat_dis_rep_view': [],
+    'area_assign_nat_dis_rep_verf': [],
+    'area_assign_ec_leadership': []
 }
 
 
@@ -94,7 +96,7 @@ def get_object(election, row, row_key, data_key=None):
                 officeId=obj.areaId
             )
 
-            jwt_payload["areaAssignment/nationalReportViewer"].append({
+            jwt_payload["area_assign_nat_dis_rep_view"].append({
                 "areaId": obj.areaId,
                 "areaName": obj.areaName
             })
@@ -112,12 +114,12 @@ def get_object(election, row, row_key, data_key=None):
                 officeId=obj.areaId
             )
 
-            jwt_payload["areaAssignment/electoralDistrictReportViewer"].append({
+            jwt_payload["area_assign_elc_dis_rep_view"].append({
                 "areaId": obj.areaId,
                 "areaName": obj.areaName
             })
 
-            jwt_payload["areaAssignment/electoralDistrictReportGenerator"].append({
+            jwt_payload["area_assign_elc_dis_rep_verf"].append({
                 "areaId": obj.areaId,
                 "areaName": obj.areaName
             })
@@ -131,12 +133,12 @@ def get_object(election, row, row_key, data_key=None):
                 officeId=obj.areaId
             )
 
-            jwt_payload["areaAssignment/pollingDivisionReportViewer"].append({
+            jwt_payload["area_assign_pol_div_rep_view"].append({
                 "areaId": obj.areaId,
                 "areaName": obj.areaName
             })
 
-            jwt_payload["areaAssignment/pollingDivisionReportGenerator"].append({
+            jwt_payload["area_assign_pol_div_rep_verf"].append({
                 "areaId": obj.areaId,
                 "areaName": obj.areaName
             })
@@ -166,7 +168,7 @@ def get_object(election, row, row_key, data_key=None):
                 tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, officeId=obj.areaId
             )
 
-            jwt_payload["areaAssignment/dataEditor"].append({
+            jwt_payload["area_assign_data_editor"].append({
                 "areaId": obj.areaId,
                 "areaName": obj.areaName
             })
