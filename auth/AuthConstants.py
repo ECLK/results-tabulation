@@ -1,5 +1,6 @@
 ROLE_CLAIM_PREFIX = "area_assign_"
 
+ADMIN_ROLE = "admin"
 DATA_EDITOR_ROLE = "data_editor"
 POLLING_DIVISION_REPORT_VIEWER_ROLE = "pol_div_rep_view"
 POLLING_DIVISION_REPORT_GENERATOR_ROLE = "pol_div_rep_verf"
