@@ -1,10 +1,12 @@
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import relationship
+
 from app import db
+from orm.entities.Audit import Stamp
 from orm.enums import FileTypeEnum
 import os
-from util import Auth
-from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
-from flask import Flask, request
+from flask import request
 
 FILE_DIRECTORY = os.path.join(os.getcwd(), 'data')
 
@@ -17,9 +19,11 @@ class FileModel(db.Model):
     fileMimeType = db.Column(db.String(100), nullable=False)
     fileContentLength = db.Column(db.String(100), nullable=False)
     fileContentType = db.Column(db.String(100), nullable=False)
+    fileStampId = db.Column(db.Integer, db.ForeignKey(Stamp.Model.__table__.c.stampId), nullable=False)
 
-    fileCreatedBy = db.Column(db.Integer, nullable=False)
-    fileCreatedAt = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    fileStamp = relationship(Stamp.Model, foreign_keys=[fileStampId])
+    fileCreatedBy = association_proxy("fileStamp", "createdBy")
+    fileCreatedAt = association_proxy("fileStamp", "createdAt")
 
     @hybrid_property
     def urlInline(self):
@@ -52,6 +56,8 @@ def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
     #   - file size
     #         etc.
 
+    file_stamp = Stamp.create()
+
     if fileType is None:
         fileType = FileTypeEnum.Any
 
@@ -61,7 +67,7 @@ def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
         fileContentLength=fileSource.content_length,
         fileContentType=fileSource.content_type,
         fileName=fileSource.filename,
-        fileCreatedBy=Auth().get_user_id()
+        fileStampId=file_stamp.stampId
     )
 
     db.session.add(result)

@@ -14,21 +14,114 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 tags:
-  - name: tallySheet
+  - name: Tally Sheet
     description: Access to tally sheets
-  - name: invoice
+  - name: Invoice
     description: Access to invoices
-  - name: stationary
+  - name: Stationary
     description: Access to stationaries
-  - name: invoice-stationary
+  - name: Invoice Stationary
     description: Access to stationaries
+  - name: System Testing
+    description: Endpoints required for testing purpose only. These are to be removed.
 
 paths:
+
+  /system-testing/election/{electionId}/root-token:
+    get:
+      tags:
+        - System Testing
+      summary: Get all.
+      operationId: api.ElectionApi.getRootToken
+      parameters:
+        - name: electionId
+          in: path
+          description: Election ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /system-testing/election:
+    post:
+      tags:
+        - System Testing
+      summary: Get all.
+      operationId: api.ElectionApi.createFromDataset
+      parameters:
+        - name: dataset
+          in: query
+          required: false
+          schema:
+            type: string
+            default: test
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /election:
     get:
       tags:
-        - election
+        - Election
       summary: Get all.
       operationId: api.ElectionApi.get_all
       parameters:
@@ -53,6 +146,55 @@ paths:
             application/json:
               schema:
                 type: array
+                items:
+                  type: object
+                  required:
+                    - electionId
+                    - electionName
+                  properties:
+                    electionId:
+                      type: integer
+                      format: int64
+                    electionName:
+                      type: string
+                    invalidVoteCategories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          categoryDescription:
+                            type: string
+                          invalidVoteCategoryId:
+                            type: integer
+                            format: int64
+                    parties:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          partyId:
+                            type: string
+                          partyName:
+                            type: integer
+                            format: int64
+                          partySymbol:
+                            type: string
+                          partyAbbreviation:
+                            type: string
+                          partySymbolFile:
+                            type: object
+                          candidates:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                candidateId:
+                                  type: string
+                                candidateName:
+                                  type: integer
+                                  format: int64
+                                candidateProfileImageFile:
+                                  type: object
         '400':
           description: Bad request.
           content:
@@ -81,7 +223,7 @@ paths:
   /ballot:
     get:
       tags:
-        - stationary
+        - Stationary
       summary: Get all.
       operationId: api.BallotApi.get_all
       parameters:
@@ -172,7 +314,7 @@ paths:
 
     post:
       tags:
-        - stationary
+        - Stationary
       summary: Create.
       operationId: api.BallotApi.create
       responses:
@@ -224,9 +366,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-      #      security:
-      #        - organization_auth:
-      #            - 'write:org'
       requestBody:
         content:
           application/json:
@@ -252,7 +391,7 @@ paths:
   /ballot-book:
     get:
       tags:
-        - stationary
+        - Stationary
       summary: Get all.
       operationId: api.BallotBookApi.get_all
       parameters:
@@ -328,7 +467,7 @@ paths:
 
     post:
       tags:
-        - stationary
+        - Stationary
       summary: Create.
       operationId: api.BallotBookApi.create
       responses:
@@ -378,9 +517,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-      #      security:
-      #        - organization_auth:
-      #            - 'write:org'
       requestBody:
         content:
           application/json:
@@ -404,7 +540,7 @@ paths:
   /ballot-box:
     get:
       tags:
-        - stationary
+        - Stationary
       summary: Get all.
       operationId: api.BallotBoxApi.get_all
       parameters:
@@ -482,7 +618,7 @@ paths:
 
     post:
       tags:
-        - stationary
+        - Stationary
       summary: Create.
       operationId: api.BallotBoxApi.create
       responses:
@@ -529,9 +665,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-      #      security:
-      #        - organization_auth:
-      #            - 'write:org'
       requestBody:
         content:
           application/json:
@@ -552,7 +685,7 @@ paths:
   /invoice:
     get:
       tags:
-        - invoice
+        - Invoice
       summary: Get all.
       operationId: api.InvoiceApi.get_all
       parameters:
@@ -669,7 +802,7 @@ paths:
 
     post:
       tags:
-        - invoice
+        - Invoice
       summary: Create.
       operationId: api.InvoiceApi.create
       responses:
@@ -765,7 +898,7 @@ paths:
   /invoice/{invoiceId}:
     get:
       tags:
-        - invoice
+        - Invoice
       summary: Create.
       operationId: api.InvoiceApi.get_by_id
       parameters:
@@ -842,7 +975,7 @@ paths:
 
     delete:
       tags:
-        - invoice
+        - Invoice
       summary: Create.
       operationId: api.InvoiceApi.delete
       parameters:
@@ -887,7 +1020,7 @@ paths:
   /invoice/{invoiceId}/confirm:
     put:
       tags:
-        - invoice
+        - Invoice
       summary: Create.
       operationId: api.InvoiceApi.confirm
       parameters:
@@ -965,7 +1098,7 @@ paths:
   /invoice/stationary-item:
     get:
       tags:
-        - invoice-stationary
+        - Invoice Stationary
       summary: Get all.
       operationId: api.InvoiceStationaryItemApi.get_all
       parameters:
@@ -1090,7 +1223,7 @@ paths:
   /invoice/{invoiceId}/stationary-item:
     post:
       tags:
-        - invoice-stationary
+        - Invoice Stationary
       summary: Create.
       operationId: api.InvoiceStationaryItemApi.create
       parameters:
@@ -1178,7 +1311,7 @@ paths:
   /invoice/{invoiceId}/stationary-item/{stationaryItemId}:
     get:
       tags:
-        - invoice-stationary
+        - Invoice Stationary
       summary: Get all.
       operationId: api.InvoiceStationaryItemApi.get_by_id
       parameters:
@@ -1262,7 +1395,7 @@ paths:
 
     delete:
       tags:
-        - invoice-stationary
+        - Invoice Stationary
       summary: Get all.
       operationId: api.InvoiceStationaryItemApi.delete
       parameters:
@@ -1313,7 +1446,7 @@ paths:
   /invoice/stationary-item/receive:
     put:
       tags:
-        - invoice-stationary
+        - Invoice Stationary
       summary: Create.
       operationId: api.InvoiceStationaryItemApi.receive
       responses:
@@ -1369,9 +1502,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-      #      security:
-      #        - organization_auth:
-      #            - 'write:org'
       requestBody:
         content:
           multipart/form-data:
@@ -1402,7 +1532,7 @@ paths:
   /proof/upload:
     put:
       tags:
-        - proof
+        - Proof
       summary: Upload a proof.
       operationId: api.ProofApi.upload_file
       responses:
@@ -1436,9 +1566,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-      #      security:
-      #        - organization_auth:
-      #            - 'write:org'
       requestBody:
         content:
           multipart/form-data:
@@ -1457,7 +1584,7 @@ paths:
   /proof/{proofId}/finish:
     put:
       tags:
-        - proof
+        - Proof
       summary: Create.
       operationId: api.ProofApi.finish
       parameters:
@@ -1502,7 +1629,7 @@ paths:
   /proof/{proofId}:
     get:
       tags:
-        - proof
+        - Proof
       summary: Create.
       operationId: api.ProofApi.get_by_id
       parameters:
@@ -1675,7 +1802,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /area:
     get:
       tags:
@@ -1726,171 +1852,6 @@ paths:
               - ElectoralDistrict
               - PollingDivision
               - PollingDistrict
-
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-        '400':
-          description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '404':
-          description: Resource was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '500':
-          description: Unexpected error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-
-  /office:
-    get:
-      tags:
-        - Office
-      summary: Get by ID
-      operationId: api.OfficeApi.get_all
-      parameters:
-        - name: limit
-          in: query
-          description: Limit of the result array.
-          required: false
-          schema:
-            type: integer
-            default: 20
-        - name: offset
-          in: query
-          description: Offset of the result array.
-          required: false
-          schema:
-            type: integer
-            default: 0
-        - name: electionId
-          required: false
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: officeName
-          required: false
-          in: query
-          schema:
-            type: string
-        - name: parentOfficeId
-          required: false
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: officeType
-          required: false
-          in: query
-          schema:
-            type: string
-            enum:
-              - ElectionCommission
-              - DistrictCentre
-              - CountingCentre
-              - PostalVoteCountingCentre
-              - PollingStation
-
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-        '400':
-          description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '404':
-          description: Resource was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '500':
-          description: Unexpected error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-
-  /electorate:
-    get:
-      tags:
-        - Electorate
-      summary: Get by ID
-      operationId: api.ElectorateApi.get_all
-      parameters:
-        - name: limit
-          in: query
-          description: Limit of the result array.
-          required: false
-          schema:
-            type: integer
-            default: 20
-        - name: offset
-          in: query
-          description: Offset of the result array.
-          required: false
-          schema:
-            type: integer
-            default: 0
-        - name: electionId
-          required: false
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: parentElectorateId
-          required: false
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: electorateName
-          required: false
-          in: query
-          schema:
-            type: string
-        - name: electorateType
-          required: false
-          in: query
-          schema:
-            type: string
-            enum:
-              - Country
-              - Province
-              - AdministrativeDistrict
-              - ElectoralDistrict
-              - PollingDivision
-              - PollingDistrict
       responses:
         '200':
           description: OK
@@ -1926,7 +1887,7 @@ paths:
   /tally-sheet:
     get:
       tags:
-        - tallySheet
+        - Tally Sheet
       summary: Get all the tally sheets.
       operationId: api.TallySheetApi.getAll
       parameters:
@@ -2013,7 +1974,7 @@ paths:
   /tally-sheet/{tallySheetId}:
     get:
       tags:
-        - tallySheet
+        - Tally Sheet
       summary: Get tally sheet by ID
       operationId: api.TallySheetApi.get_by_id
       parameters:
@@ -2055,11 +2016,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /tally-sheet/PRE-41/{tallySheetId}/version:
     post:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersionPRE41Api.create
       parameters:
@@ -2153,7 +2113,7 @@ paths:
   /tally-sheet/PRE-41/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersionPRE41Api.get_by_id
       parameters:
@@ -2224,11 +2184,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /tally-sheet/PRE-21/{tallySheetId}/version:
     post:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersionPRE21Api.create
       parameters:
@@ -2310,7 +2269,7 @@ paths:
   /tally-sheet/PRE-21/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersionPRE21Api.get_by_id
       parameters:
@@ -2360,12 +2319,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
-
   /tally-sheet/CE-201/{tallySheetId}/version:
     post:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersionCE201Api.create
       parameters:
@@ -2503,7 +2460,7 @@ paths:
   /tally-sheet/CE-201/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersionCE201Api.get_by_id
       parameters:
@@ -2596,11 +2553,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /tally-sheet/CE-201-PV/{tallySheetId}/version:
     post:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_CE_201_PV_Api.create
       parameters:
@@ -2714,7 +2670,7 @@ paths:
   /tally-sheet/CE-201-PV/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_CE_201_PV_Api.get_by_id
       parameters:
@@ -2799,7 +2755,7 @@ paths:
   /tally-sheet/PRE-30-PD/{tallySheetId}/version:
     post:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_PD_Api.create
       parameters:
@@ -2844,7 +2800,7 @@ paths:
   /tally-sheet/PRE-30-PD/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_PD_Api.get_by_id
       parameters:
@@ -2894,11 +2850,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /tally-sheet/PRE-30-ED/{tallySheetId}/version:
     post:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_ED_Api.create
       parameters:
@@ -2943,7 +2898,7 @@ paths:
   /tally-sheet/PRE-30-ED/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_ED_Api.get_by_id
       parameters:
@@ -2993,11 +2948,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /tally-sheet/PRE_ALL_ISLAND_RESULTS/{tallySheetId}/version:
     post:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULT_Api.create
       parameters:
@@ -3042,7 +2996,7 @@ paths:
   /tally-sheet/PRE_ALL_ISLAND_RESULTS/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULT_Api.get_by_id
       parameters:
@@ -3092,11 +3046,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /tally-sheet/PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS/{tallySheetId}/version:
     post:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Api.create
       parameters:
@@ -3141,7 +3094,7 @@ paths:
   /tally-sheet/PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-        - tallySheetVersion
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Api.get_by_id
       parameters:
@@ -3191,11 +3144,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-
   /tally-sheet/{tallySheetId}/version/{tallySheetVersionId}/html:
     get:
       tags:
-        - tallysheet
+        - Tally Sheet Version Export
       summary: Get by ID
       operationId: api.TallySheetVersionApi.html
       parameters:
@@ -3246,7 +3198,7 @@ paths:
   /tally-sheet/{tallySheetId}/lock:
     put:
       tags:
-        - tallysheet
+        - Tally Sheet
       summary: Get by ID
       operationId: api.TallySheetApi.lock
       parameters:
@@ -3302,7 +3254,7 @@ paths:
   /tally-sheet/{tallySheetId}/unlock:
     put:
       tags:
-        - tallysheet
+        - Tally Sheet
       summary: Get by ID
       operationId: api.TallySheetApi.unlock
       parameters:
