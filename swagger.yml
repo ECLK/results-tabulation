@@ -22,8 +22,101 @@ tags:
     description: Access to stationaries
   - name: invoice-stationary
     description: Access to stationaries
+  - name: System Testing
+    description: Endpoints required for testing purpose only. These are to be removed.
 
 paths:
+
+  /system-testing/election/{electionId}/root-token:
+    get:
+      tags:
+        - System Testing
+      summary: Get all.
+      operationId: api.ElectionApi.getRootToken
+      parameters:
+        - name: electionId
+          in: path
+          description: Election ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /system-testing/election:
+    post:
+      tags:
+        - System Testing
+      summary: Get all.
+      operationId: api.ElectionApi.createFromDataset
+      parameters:
+        - name: dataset
+          in: query
+          required: false
+          schema:
+            type: string
+            default: test
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /election:
     get:

@@ -7,7 +7,7 @@ from jose import jwt
 
 from auth.AuthConstants import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_GENERATOR_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_GENERATOR_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE, ROLE_CLAIM_PREFIX
+    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE, ROLE_CLAIM_PREFIX, ADMIN_ROLE
 from exception import UnauthorizedException
 
 JWT_SECRET = "jwt_secret"
@@ -35,6 +35,7 @@ def get_claims() -> Dict[str, Dict]:
     claims: dict = connexion.context['token_info']
     filtered_claims = {}
     filtered_claim_keys = [
+        ROLE_CLAIM_PREFIX + ADMIN_ROLE,
         ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE,
         ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE,
         ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_GENERATOR_ROLE,
@@ -56,7 +57,7 @@ def get_ip() -> str:
     return request.remote_addr
 
 
-def get_user_name() -> Set[int]:
+def get_user_name() -> str:
     """
     Gets user namefrom connexion context.
 
