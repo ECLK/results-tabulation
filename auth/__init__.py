@@ -28,6 +28,10 @@ def get_claims() -> Dict[str, Dict]:
 
     :return: dict of claim id to claim value.
     """
+
+    if 'token_info' not in connexion.context.keys():
+        UnauthorizedException("No claims found.")
+
     claims: dict = connexion.context['token_info']
     filtered_claims = {}
     filtered_claim_keys = [
@@ -71,23 +75,27 @@ def get_user_access_area_ids() -> Set[int]:
 
 
 @decorator
-def authorize(func, required_roles=None, *args, **kwargs):
-    if required_roles is None:
-        return func(*args, **kwargs)
-
-    if 'token_info' not in connexion.context.keys():
-        UnauthorizedException("No claims found.")
-
+def authenticate(func, *args, **kwargs):
     claims: Dict = get_claims()
-
-    claim_found = False
-    user_access_area_ids = []
 
     if SUB not in claims:
         UnauthorizedException("No valid user found.")
     else:
         user_name = claims.get(SUB)
         connexion.context[USER_NAME] = user_name
+        return func(*args, **kwargs)
+
+
+@decorator
+@authenticate
+def authorize(func, required_roles=None, *args, **kwargs):
+    if required_roles is None:
+        return func(*args, **kwargs)
+
+    claims: Dict = get_claims()
+
+    claim_found = False
+    user_access_area_ids = []
 
     for role in required_roles:
         claim = ROLE_CLAIM_PREFIX + role
