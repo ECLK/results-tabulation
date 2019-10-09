@@ -17,7 +17,7 @@ def get_root_token(electionId):
     jwt_payload = {}
 
     jwt_payload[SUB] = "janak@carbon.super"
-    jwt_payload[ROLE_CLAIM_PREFIX + ADMIN_ROLE] = []
+    # jwt_payload[ROLE_CLAIM_PREFIX + ADMIN_ROLE] = []
     jwt_payload[ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE] = []
     jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE] = []
     jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_GENERATOR_ROLE] = []
