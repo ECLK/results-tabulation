@@ -146,6 +146,55 @@ paths:
             application/json:
               schema:
                 type: array
+                items:
+                  type: object
+                  required:
+                    - electionId
+                    - electionName
+                  properties:
+                    electionId:
+                      type: integer
+                      format: int64
+                    electionName:
+                      type: string
+                    invalidVoteCategories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          categoryDescription:
+                            type: string
+                          invalidVoteCategoryId:
+                            type: integer
+                            format: int64
+                    parties:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          partyId:
+                            type: string
+                          partyName:
+                            type: integer
+                            format: int64
+                          partySymbol:
+                            type: string
+                          partyAbbreviation:
+                            type: string
+                          partySymbolFile:
+                            type: object
+                          candidates:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                candidateId:
+                                  type: string
+                                candidateName:
+                                  type: integer
+                                  format: int64
+                                candidateProfileImageFile:
+                                  type: object
         '400':
           description: Bad request.
           content:

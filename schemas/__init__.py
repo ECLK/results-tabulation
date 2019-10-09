@@ -61,6 +61,7 @@ class PartySchema(ma.ModelSchema):
         fields = (
             "partyId",
             "partyName",
+            "partySymbol",
             "partySymbolFile",
             "partyAbbreviation",
             "candidates"
