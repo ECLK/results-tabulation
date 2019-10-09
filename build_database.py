@@ -2,205 +2,229 @@ import csv
 import os
 
 from app import db
+from auth import ROLE_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
+    POLLING_DIVISION_REPORT_GENERATOR_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
+    ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_GENERATOR_ROLE, \
+    EC_LEADERSHIP_ROLE, SUB
 from orm.entities import *
-from orm.entities import Invoice
+from orm.entities import Invoice, Area, Election
 from orm.entities.Submission import TallySheet
-from orm.enums import TallySheetCodeEnum, BallotTypeEnum, VoteTypeEnum
+from orm.enums import TallySheetCodeEnum, BallotTypeEnum, VoteTypeEnum, AreaTypeEnum
 from jose import jwt
 
-root_election = Election.create(electionName="Presidential Election 2019", voteType=VoteTypeEnum.PostalAndNonPostal)
 
-postal_election = root_election.add_sub_election(electionName="Postal", voteType=VoteTypeEnum.Postal)
-ordinary_election = root_election.add_sub_election(electionName="Ordinary", voteType=VoteTypeEnum.NonPostal)
+def get_root_token(electionId):
+    jwt_payload = {}
 
-data_stores = {}
+    jwt_payload[SUB] = "janak@carbon.super"
+    # jwt_payload[ROLE_CLAIM_PREFIX + ADMIN_ROLE] = []
+    jwt_payload[ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE] = []
+    jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE] = []
+    jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_GENERATOR_ROLE] = []
+    jwt_payload[ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE] = []
+    jwt_payload[ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE] = []
+    jwt_payload[ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE] = []
+    jwt_payload[ROLE_CLAIM_PREFIX + NATIONAL_REPORT_GENERATOR_ROLE] = []
+    jwt_payload[ROLE_CLAIM_PREFIX + EC_LEADERSHIP_ROLE] = []
 
-csv_dir = ''
+    counting_centres = db.session.query(
+        Area.Model
+    ).join(
+        Election.Model,
+        Election.Model.electionId == Area.Model.electionId
+    ).filter(
+        Area.Model.areaType == AreaTypeEnum.CountingCentre,
+        Election.Model.parentElectionId == electionId
+    ).all()
 
-jwt_payload = {
-    'areaAssignment/dataEditor': [],
-    'areaAssignment/pollingDivisionReportViewer': [],
-    'areaAssignment/pollingDivisionReportGenerator': [],
-    'areaAssignment/electoralDistrictReportViewer': [],
-    'areaAssignment/electoralDistrictReportGenerator': [],
-    'areaAssignment/nationalReportViewer': [],
-    'areaAssignment/ECLeadership': []
-}
+    polling_divisions = Area.Model.query.filter(
+        Area.Model.areaType == AreaTypeEnum.PollingDivision,
+        Area.Model.electionId == electionId
+    ).all()
 
+    electoral_districts = Area.Model.query.filter(
+        Area.Model.areaType == AreaTypeEnum.ElectoralDistrict,
+        Area.Model.electionId == electionId
+    ).all()
 
-def get_data_store(data_store_key):
-    if data_store_key not in data_stores:
-        data_stores[data_store_key] = {}
+    for counting_centre in counting_centres:
+        jwt_payload[ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE].append({
+            "areaId": counting_centre.areaId,
+            "areaName": counting_centre.areaName
+        })
 
-    return data_stores[data_store_key]
+    for polling_division in polling_divisions:
+        jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE].append({
+            "areaId": polling_division.areaId,
+            "areaName": polling_division.areaName
+        })
+        jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_GENERATOR_ROLE].append({
+            "areaId": polling_division.areaId,
+            "areaName": polling_division.areaName
+        })
 
+    for electoral_district in electoral_districts:
+        jwt_payload[ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE].append({
+            "areaId": electoral_district.areaId,
+            "areaName": electoral_district.areaName
+        })
+        jwt_payload[ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE].append({
+            "areaId": electoral_district.areaId,
+            "areaName": electoral_district.areaName
+        })
 
-def get_object_from_data_store(data_key, data_store_key):
-    data_store = get_data_store(data_store_key)
-    if data_key in data_store:
-        return data_store[data_key]
-    else:
-        return None
+    # Generate a token with claims for everything.
+    key = "jwt_secret"
+    encoded_jwt_token = jwt.encode(jwt_payload, key)
 
-
-def set_object_to_data_store(data_key, data_store_key, obj):
-    data_store = get_data_store(data_store_key)
-    data_store[data_key] = obj
-
-
-def get_object(election, row, row_key, data_key=None):
-    if data_key is None:
-        cell = row[row_key].strip()
-        data_key = cell
-    else:
-        cell = row[data_key].strip()
-        data_key = cell
-
-    data_store_key = row_key
-
-    if data_store_key == "TallySheet":
-        data_key = "%s-%s" % (row["TallySheet"], row["Counting Centre"])
-    elif data_store_key == "Polling District":
-        data_key = "%s-%s" % (row["Polling Division"], row["Polling District"])
-
-    obj = get_object_from_data_store(data_key, data_store_key)
-
-    if obj is None:
-        if data_store_key == "Ballot":
-            obj = Ballot.create(ballotId=cell, electionId=election.electionId)
-        elif data_store_key == "Tendered Ballot":
-            obj = Ballot.create(ballotId=cell, electionId=election.electionId, ballotType=BallotTypeEnum.Tendered)
-        elif data_store_key == "Ballot Box":
-            obj = BallotBox.create(ballotBoxId=cell, electionId=election.electionId)
-
-        elif data_store_key == "Party":
-            obj = Party.create(partyName=cell, partySymbol=row["Party Symbol"],
-                               partyAbbreviation=row["Party Abbreviation"])
-        elif data_store_key == "Candidate":
-            obj = Candidate.create(candidateName=cell)
-
-        elif data_store_key == "Country":
-            obj = Country.create(cell, electionId=election.electionId)
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
-                electionId=election.electionId,
-                officeId=obj.areaId
-            )
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS,
-                electionId=election.electionId,
-                officeId=obj.areaId
-            )
-
-            jwt_payload["areaAssignment/nationalReportViewer"].append({
-                "areaId": obj.areaId,
-                "areaName": obj.areaName
-            })
-
-
-        elif data_store_key == "Electoral District":
-            obj = ElectoralDistrict.create(cell, electionId=election.electionId)
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_30_ED, electionId=election.electionId, officeId=obj.areaId
-            )
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=postal_election.electionId,
-                officeId=obj.areaId
-            )
-
-            jwt_payload["areaAssignment/electoralDistrictReportViewer"].append({
-                "areaId": obj.areaId,
-                "areaName": obj.areaName
-            })
-
-            jwt_payload["areaAssignment/electoralDistrictReportGenerator"].append({
-                "areaId": obj.areaId,
-                "areaName": obj.areaName
-            })
-
-
-        elif data_store_key == "Polling Division":
-            obj = PollingDivision.create(cell, electionId=election.electionId)
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=ordinary_election.electionId,
-                officeId=obj.areaId
-            )
-
-            jwt_payload["areaAssignment/pollingDivisionReportViewer"].append({
-                "areaId": obj.areaId,
-                "areaName": obj.areaName
-            })
-
-            jwt_payload["areaAssignment/pollingDivisionReportGenerator"].append({
-                "areaId": obj.areaId,
-                "areaName": obj.areaName
-            })
-
-
-        elif data_store_key == "Polling District":
-            obj = PollingDistrict.create(cell, electionId=election.electionId)
-
-        elif data_store_key == "Election Commission":
-            obj = ElectionCommission.create(cell, electionId=election.electionId)
-
-        elif data_store_key == "District Centre":
-            obj = DistrictCentre.create(cell, electionId=election.electionId)
-
-        elif data_store_key == "Counting Centre":
-            obj = CountingCentre.create(cell, electionId=election.electionId)
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, officeId=obj.areaId
-            )
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=election.electionId, officeId=obj.areaId
-            )
-
-            TallySheet.create(
-                tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, officeId=obj.areaId
-            )
-
-            jwt_payload["areaAssignment/dataEditor"].append({
-                "areaId": obj.areaId,
-                "areaName": obj.areaName
-            })
-
-
-        elif data_store_key == "Polling Station":
-            obj = PollingStation.create(
-                cell, electionId=election.electionId,
-                registeredVotersCount=row["Registered Voters"]
-            )
-
-
-        else:
-            print("-------------  Not supported yet : *%s*" % data_store_key)
-
-        set_object_to_data_store(data_key, data_store_key, obj)
-
-    return obj
-
-
-def get_rows_from_csv(csv_path):
-    csv_file_path = "%s/%s" % (csv_dir, csv_path)
-    if os.path.exists(csv_file_path) is True:
-        with open(csv_file_path, 'r') as f:
-            reader = csv.DictReader(f, delimiter=',')
-            rows = list(reader)
-    else:
-        rows = []
-
-    return rows
+    return encoded_jwt_token
 
 
 def build_database(dataset):
-    global csv_dir
+    root_election = Election.create(electionName="Presidential Election 2019", voteType=VoteTypeEnum.PostalAndNonPostal)
+
+    postal_election = root_election.add_sub_election(electionName="Postal", voteType=VoteTypeEnum.Postal)
+    ordinary_election = root_election.add_sub_election(electionName="Ordinary", voteType=VoteTypeEnum.NonPostal)
+
+    data_stores = {}
+
+    csv_dir = ''
+
+    def get_data_store(data_store_key):
+        if data_store_key not in data_stores:
+            data_stores[data_store_key] = {}
+
+        return data_stores[data_store_key]
+
+    def get_object_from_data_store(data_key, data_store_key):
+        data_store = get_data_store(data_store_key)
+        if data_key in data_store:
+            return data_store[data_key]
+        else:
+            return None
+
+    def set_object_to_data_store(data_key, data_store_key, obj):
+        data_store = get_data_store(data_store_key)
+        data_store[data_key] = obj
+
+    def get_object(election, row, row_key, data_key=None):
+        if data_key is None:
+            cell = row[row_key].strip()
+            data_key = cell
+        else:
+            cell = row[data_key].strip()
+            data_key = cell
+
+        data_store_key = row_key
+
+        if data_store_key == "TallySheet":
+            data_key = "%s-%s" % (row["TallySheet"], row["Counting Centre"])
+        elif data_store_key == "Polling District":
+            data_key = "%s-%s" % (row["Polling Division"], row["Polling District"])
+
+        obj = get_object_from_data_store(data_key, data_store_key)
+
+        if obj is None:
+            if data_store_key == "Ballot":
+                obj = Ballot.create(ballotId=cell, electionId=election.electionId)
+            elif data_store_key == "Tendered Ballot":
+                obj = Ballot.create(ballotId=cell, electionId=election.electionId, ballotType=BallotTypeEnum.Tendered)
+            elif data_store_key == "Ballot Box":
+                obj = BallotBox.create(ballotBoxId=cell, electionId=election.electionId)
+
+            elif data_store_key == "Party":
+                obj = Party.create(partyName=cell, partySymbol=row["Party Symbol"],
+                                   partyAbbreviation=row["Party Abbreviation"])
+            elif data_store_key == "Candidate":
+                obj = Candidate.create(candidateName=cell)
+
+            elif data_store_key == "Country":
+                obj = Country.create(cell, electionId=election.electionId)
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
+                    electionId=election.electionId,
+                    officeId=obj.areaId
+                )
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS,
+                    electionId=election.electionId,
+                    officeId=obj.areaId
+                )
+
+            elif data_store_key == "Electoral District":
+                obj = ElectoralDistrict.create(cell, electionId=election.electionId)
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_30_ED, electionId=election.electionId, officeId=obj.areaId
+                )
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=postal_election.electionId,
+                    officeId=obj.areaId
+                )
+
+            elif data_store_key == "Polling Division":
+                obj = PollingDivision.create(cell, electionId=election.electionId)
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=ordinary_election.electionId,
+                    officeId=obj.areaId
+                )
+
+            elif data_store_key == "Polling District":
+                obj = PollingDistrict.create(cell, electionId=election.electionId)
+
+            elif data_store_key == "Election Commission":
+                obj = ElectionCommission.create(cell, electionId=election.electionId)
+
+            elif data_store_key == "District Centre":
+                obj = DistrictCentre.create(cell, electionId=election.electionId)
+
+            elif data_store_key == "Counting Centre":
+                obj = CountingCentre.create(cell, electionId=election.electionId)
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, officeId=obj.areaId
+                )
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=election.electionId, officeId=obj.areaId
+                )
+
+                if election.voteType is VoteTypeEnum.NonPostal:
+                    TallySheet.create(
+                        tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, officeId=obj.areaId
+                    )
+                elif election.voteType is VoteTypeEnum.Postal:
+                    TallySheet.create(
+                        tallySheetCode=TallySheetCodeEnum.CE_201_PV, electionId=election.electionId, officeId=obj.areaId
+                    )
+
+            elif data_store_key == "Polling Station":
+                obj = PollingStation.create(
+                    cell, electionId=election.electionId,
+                    registeredVotersCount=row["Registered Voters"]
+                )
+
+            else:
+                print("-------------  Not supported yet : *%s*" % data_store_key)
+
+            set_object_to_data_store(data_key, data_store_key, obj)
+
+        return obj
+
+    def get_rows_from_csv(csv_path):
+        csv_file_path = "%s/%s" % (csv_dir, csv_path)
+        if os.path.exists(csv_file_path) is True:
+            with open(csv_file_path, 'r') as f:
+                reader = csv.DictReader(f, delimiter=',')
+                rows = list(reader)
+        else:
+            rows = []
+
+        return rows
 
     basedir = os.path.abspath(os.path.dirname(__file__))
     sample_data_dir = os.path.join(basedir, 'sample-data')
@@ -306,15 +330,4 @@ def build_database(dataset):
 
     db.session.commit()
 
-    # Generate a token with claims for everything.
-    key = "jwt_secret"
-    encoded_jwt_token = jwt.encode(jwt_payload, key)
-    print("""
-##########################################################
-
-JWT_PAYLOAD = %s
-
-JWT_TOKEN = %s
-
-##########################################################
-    """ % (jwt_payload, encoded_jwt_token))
+    return root_election
