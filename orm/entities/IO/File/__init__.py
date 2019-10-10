@@ -1,3 +1,5 @@
+import shutil
+
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
@@ -106,3 +108,8 @@ def save_uploaded_file_source(file, fileSource):
     fileSource.save(file_path)
 
     return file_path
+
+
+def copy_file(fileId: int, target_file: str):
+    source_file = os.path.join(FILE_DIRECTORY, str(fileId))
+    shutil.copyfile(source_file, target_file)

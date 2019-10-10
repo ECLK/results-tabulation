@@ -1,9 +1,9 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-
-from app import db
 from sqlalchemy.orm import relationship
 
+from app import db
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
+from orm.entities.IO import File
 from orm.enums import VoteTypeEnum
 from util import get_paginated_query
 
@@ -19,6 +19,11 @@ class ElectionModel(db.Model):
 
     subElections = relationship("ElectionModel")
     parentElection = relationship("ElectionModel", remote_side=[electionId])
+
+    dataFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    partyCandidateFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    invalidVoteCategoriesFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    postalDataFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
 
     def __init__(self, electionName, parentElectionId, voteType):
         super(ElectionModel, self).__init__(
@@ -91,12 +96,34 @@ class ElectionModel(db.Model):
 Model = ElectionModel
 
 
-def create(electionName, parentElectionId=None, voteType=VoteTypeEnum.PostalAndNonPostal):
+def create(electionName, parentElectionId=None, voteType=VoteTypeEnum.PostalAndNonPostal, files=None):
     result = Model(
         electionName=electionName,
         parentElectionId=parentElectionId,
         voteType=voteType
     )
+
+    if files:
+        data_file = File.createFromFileSource(
+            fileSource=files.get("data")
+        )
+
+        party_candidate_file = File.createFromFileSource(
+            fileSource=files.get("partyCandidate")
+        )
+
+        invalid_vote_categories_file = File.createFromFileSource(
+            fileSource=files.get("invalidVoteCategories")
+        )
+
+        postal_data_file = File.createFromFileSource(
+            fileSource=files.get("postalData")
+        )
+
+        result.dataFileId = data_file.fileId
+        result.partyCandidateFileId = party_candidate_file.fileId
+        result.invalidVoteCategoriesFileId = invalid_vote_categories_file.fileId
+        result.postalDataFileId = postal_data_file.fileId
 
     return result
 
