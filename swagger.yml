@@ -220,6 +220,123 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+    post:
+      tags:
+        - Election
+      summary: Create election
+      operationId: api.ElectionApi.create
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Election name
+                  type: string
+                data:
+                  description: Data CSV file
+                  type: string
+                  format: binary
+                invalidVoteCategories:
+                  description: Invalid vote categories CSV file
+                  type: string
+                  format: binary
+                partyCandidate:
+                  description: Party candidate CSV file
+                  type: string
+                  format: binary
+                postalData:
+                  description: Postal data CSV file
+                  type: string
+                  format: binary
+              required:
+                - name
+                - data
+                - invalidVoteCategories
+                - partyCandidate
+                - postalData
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - electionId
+                    - electionName
+                  properties:
+                    electionId:
+                      type: integer
+                      format: int64
+                    electionName:
+                      type: string
+                    invalidVoteCategories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          categoryDescription:
+                            type: string
+                          invalidVoteCategoryId:
+                            type: integer
+                            format: int64
+                    parties:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          partyId:
+                            type: string
+                          partyName:
+                            type: integer
+                            format: int64
+                          partySymbol:
+                            type: string
+                          partyAbbreviation:
+                            type: string
+                          partySymbolFile:
+                            type: object
+                          candidates:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                candidateId:
+                                  type: string
+                                candidateName:
+                                  type: integer
+                                  format: int64
+                                candidateProfileImageFile:
+                                  type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /ballot:
     get:
       tags:
