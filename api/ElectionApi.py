@@ -5,7 +5,7 @@ import connexion
 
 from app import db
 from auth import ADMIN_ROLE, authorize
-from build_database import build_database, get_root_token, build_database_from_api
+from build_database import get_root_token, build_database_from_api
 from orm.entities import Election
 from orm.entities.IO import File
 from schemas import ElectionSchema as Schema
@@ -18,11 +18,11 @@ def get_all():
     return Schema(many=True).dump(result).data
 
 
-@authorize(required_roles=[ADMIN_ROLE])
-def createFromDataset(dataset):
-    election = build_database(dataset=dataset)
-
-    return Schema().dump(election).data
+# @authorize(required_roles=[ADMIN_ROLE])
+# def createFromDataset(dataset):
+#     election = build_database(dataset=dataset)
+#
+#     return Schema().dump(election).data
 
 
 @authorize(required_roles=[ADMIN_ROLE])
