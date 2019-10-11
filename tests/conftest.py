@@ -13,7 +13,7 @@ def test_client():
         db.create_all()
         db.session.commit()
 
-        from build_database import build_database
+        from orm.entities.Election.election_helper import build_database
         build_database('test-small')
 
         yield tc
