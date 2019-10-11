@@ -80,15 +80,11 @@ def get_root_token(electionId):
     return encoded_jwt_token
 
 
-def build_database(dataset):
-    root_election = Election.create(electionName="Presidential Election 2019", voteType=VoteTypeEnum.PostalAndNonPostal)
-
+def build_presidential_election(root_election: Election):
     postal_election = root_election.add_sub_election(electionName="Postal", voteType=VoteTypeEnum.Postal)
     ordinary_election = root_election.add_sub_election(electionName="Ordinary", voteType=VoteTypeEnum.NonPostal)
 
     data_stores = {}
-
-    csv_dir = ''
 
     def get_data_store(data_store_key):
         if data_store_key not in data_stores:
@@ -216,7 +212,7 @@ def build_database(dataset):
         return obj
 
     def get_rows_from_csv(csv_path):
-        csv_file_path = "%s/%s" % (csv_dir, csv_path)
+        csv_file_path = csv_path
         if os.path.exists(csv_file_path) is True:
             with open(csv_file_path, 'r') as f:
                 reader = csv.DictReader(f, delimiter=',')
@@ -226,21 +222,17 @@ def build_database(dataset):
 
         return rows
 
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    sample_data_dir = os.path.join(basedir, 'sample-data')
-    csv_dir = "%s/%s" % (sample_data_dir, dataset)
-
-    for row in get_rows_from_csv('party-candidate.csv'):
+    for row in get_rows_from_csv(root_election.partyCandidateDataset.get_file_path()):
         party = get_object(root_election, row, "Party")
         root_election.add_party(partyId=party.partyId)
 
         candidate = get_object(root_election, row, "Candidate")
         root_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
 
-    for row in get_rows_from_csv('invalid-vote-categories.csv'):
+    for row in get_rows_from_csv(root_election.invalidVoteCategoriesDataset.get_file_path()):
         root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
 
-    for row in get_rows_from_csv('data.csv'):
+    for row in get_rows_from_csv(root_election.pollingStationsDataset.get_file_path()):
         print("[ROW] ========= ", row)
         country = get_object(root_election, {"Country": "Sri Lanka"}, "Country")
         electoralDistrict = get_object(root_election, row, "Electoral District")
@@ -310,7 +302,7 @@ def build_database(dataset):
 
         print("[ROW END] ========= ")
 
-    for row in get_rows_from_csv('postal-data.csv'):
+    for row in get_rows_from_csv(root_election.postalCountingCentresDataset.get_file_path()):
         print("[POSTAL ROW] ========= ", row)
         country = get_object(root_election, {"Country": "Sri Lanka"}, "Country")
         electoralDistrict = get_object(root_election, row, "Electoral District")

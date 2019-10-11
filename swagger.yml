@@ -73,26 +73,83 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /system-testing/election:
-    post:
+  /election:
+    get:
       tags:
-        - System Testing
+        - Election
       summary: Get all.
-      operationId: api.ElectionApi.createFromDataset
+      operationId: api.ElectionApi.get_all
       parameters:
-        - name: dataset
+        - name: limit
           in: query
+          description: Limit of the result array.
           required: false
           schema:
-            type: string
-            default: test
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
       responses:
         '200':
           description: Successful operation.
           content:
             application/json:
               schema:
-                type: object
+                type: array
+                items:
+                  type: object
+                  required:
+                    - electionId
+                    - electionName
+                  properties:
+                    electionId:
+                      type: integer
+                      format: int64
+                    electionName:
+                      type: string
+                    invalidVoteCategories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          categoryDescription:
+                            type: string
+                          invalidVoteCategoryId:
+                            type: integer
+                            format: int64
+                    parties:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          partyId:
+                            type: string
+                          partyName:
+                            type: integer
+                            format: int64
+                          partySymbol:
+                            type: string
+                          partyAbbreviation:
+                            type: string
+                          partySymbolFile:
+                            type: object
+                          candidates:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                candidateId:
+                                  type: string
+                                candidateName:
+                                  type: integer
+                                  format: int64
+                                candidateProfileImageFile:
+                                  type: object
         '400':
           description: Bad request.
           content:
@@ -118,27 +175,42 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /election:
-    get:
+    post:
       tags:
         - Election
-      summary: Get all.
-      operationId: api.ElectionApi.get_all
-      parameters:
-        - name: limit
-          in: query
-          description: Limit of the result array.
-          required: false
-          schema:
-            type: integer
-            default: 20
-        - name: offset
-          in: query
-          description: Offset of the result array.
-          required: false
-          schema:
-            type: integer
-            default: 0
+      summary: Create election
+      operationId: api.ElectionApi.create
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                electionName:
+                  description: Election name
+                  type: string
+                pollingStationsDataset:
+                  description: Polling stations CSV file
+                  type: string
+                  format: binary
+                invalidVoteCategoriesDataset:
+                  description: Invalid vote categories CSV file
+                  type: string
+                  format: binary
+                partyCandidatesDataset:
+                  description: Party candidate CSV file
+                  type: string
+                  format: binary
+                postalCountingCentresDataset:
+                  description: Postal counting centres CSV file
+                  type: string
+                  format: binary
+              required:
+                - electionName
+                - pollingStationsDataset
+                - invalidVoteCategoriesDataset
+                - partyCandidatesDataset
+                - postalCountingCentresDataset
       responses:
         '200':
           description: Successful operation.
