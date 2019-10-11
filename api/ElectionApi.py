@@ -1,11 +1,8 @@
-import os
-import tempfile
-
 import connexion
 
 from app import db
 from auth import ADMIN_ROLE, authorize
-from build_database import get_root_token, build_presidential_election
+from orm.entities.Election.election_helper import get_root_token, build_presidential_election
 from orm.entities import Election
 from schemas import ElectionSchema as Schema
 from util import RequestBody
