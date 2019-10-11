@@ -35,6 +35,11 @@ class FileModel(db.Model):
     def urlDownload(self):
         return "%sfile/%d/download" % (request.host_url, self.fileId)
 
+    def get_file_path(self):
+        file_path = os.path.join(FILE_DIRECTORY, str(self.fileId))
+
+        return file_path
+
     __mapper_args__ = {
         'polymorphic_on': fileType,
         'polymorphic_identity': FileTypeEnum.Any
@@ -103,8 +108,7 @@ def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
 
 
 def save_uploaded_file_source(file, fileSource):
-    file_path = os.path.join(FILE_DIRECTORY, str(file.fileId))
-
+    file_path = file.get_file_path()
     fileSource.save(file_path)
 
     return file_path

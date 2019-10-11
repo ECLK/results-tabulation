@@ -5,9 +5,8 @@ import connexion
 
 from app import db
 from auth import ADMIN_ROLE, authorize
-from build_database import get_root_token, build_database_from_api
+from build_database import get_root_token, build_presidential_election
 from orm.entities import Election
-from orm.entities.IO import File
 from schemas import ElectionSchema as Schema
 from util import RequestBody
 
@@ -18,27 +17,24 @@ def get_all():
     return Schema(many=True).dump(result).data
 
 
-# @authorize(required_roles=[ADMIN_ROLE])
-# def createFromDataset(dataset):
-#     election = build_database(dataset=dataset)
-#
-#     return Schema().dump(election).data
-
-
 @authorize(required_roles=[ADMIN_ROLE])
 def create(body):
     request_body = RequestBody(body)
-    election_name = request_body.get("name")
+    election_name = request_body.get("electionName")
+
     files = connexion.request.files
-    election = Election.create(electionName=election_name, files=files)
+    polling_stations_dataset = files.get("pollingStationsDataset")
+    postal_counting_centres_dataset = files.get("postalCountingCentresDataset")
+    party_candidates_dataset = files.get("partyCandidatesDataset")
+    invalid_vote_categories_dataset = files.get("invalidVoteCategoriesDataset")
 
-    with tempfile.TemporaryDirectory() as temp_dir:
-        File.copy_file(election.dataFileId, os.path.join(temp_dir, "data.csv"))
-        File.copy_file(election.partyCandidateFileId, os.path.join(temp_dir, "party-candidate.csv"))
-        File.copy_file(election.invalidVoteCategoriesFileId, os.path.join(temp_dir, "invalid-vote-categories.csv"))
-        File.copy_file(election.postalDataFileId, os.path.join(temp_dir, "postal-data.csv"))
+    election = Election.create(electionName=election_name)
+    election.set_polling_stations_dataset(fileSource=polling_stations_dataset)
+    election.set_postal_counting_centres_dataset(fileSource=postal_counting_centres_dataset)
+    election.set_party_candidates_dataset(fileSource=party_candidates_dataset)
+    election.set_invalid_vote_categories_dataset(fileSource=invalid_vote_categories_dataset)
 
-        build_database_from_api(root_election=election, csv_dir=temp_dir)
+    build_presidential_election(root_election=election)
 
     db.session.commit()
 
