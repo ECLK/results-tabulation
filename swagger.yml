@@ -186,31 +186,31 @@ paths:
             schema:
               type: object
               properties:
-                name:
+                electionName:
                   description: Election name
                   type: string
-                data:
-                  description: Data CSV file
+                pollingStationsDataset:
+                  description: Polling stations CSV file
                   type: string
                   format: binary
-                invalidVoteCategories:
+                invalidVoteCategoriesDataset:
                   description: Invalid vote categories CSV file
                   type: string
                   format: binary
-                partyCandidate:
+                partyCandidatesDataset:
                   description: Party candidate CSV file
                   type: string
                   format: binary
-                postalData:
-                  description: Postal data CSV file
+                postalCountingCentresDataset:
+                  description: Postal counting centres CSV file
                   type: string
                   format: binary
               required:
-                - name
-                - data
-                - invalidVoteCategories
-                - partyCandidate
-                - postalData
+                - electionName
+                - pollingStationsDataset
+                - invalidVoteCategoriesDataset
+                - partyCandidatesDataset
+                - postalCountingCentresDataset
       responses:
         '200':
           description: Successful operation.

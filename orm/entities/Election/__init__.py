@@ -20,10 +20,15 @@ class ElectionModel(db.Model):
     subElections = relationship("ElectionModel")
     parentElection = relationship("ElectionModel", remote_side=[electionId])
 
-    dataFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
-    partyCandidateFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
-    invalidVoteCategoriesFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
-    postalDataFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    pollingStationsDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    postalCountingCentresDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    partyCandidateDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    invalidVoteCategoriesDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+
+    pollingStationsDataset = relationship(File.Model, foreign_keys=[pollingStationsDatasetId])
+    postalCountingCentresDataset = relationship(File.Model, foreign_keys=[postalCountingCentresDatasetId])
+    partyCandidateDataset = relationship(File.Model, foreign_keys=[partyCandidateDatasetId])
+    invalidVoteCategoriesDataset = relationship(File.Model, foreign_keys=[invalidVoteCategoriesDatasetId])
 
     def __init__(self, electionName, parentElectionId, voteType):
         super(ElectionModel, self).__init__(
@@ -92,40 +97,35 @@ class ElectionModel(db.Model):
             candidateId=candidateId
         )
 
+    def set_polling_stations_dataset(self, fileSource):
+        dataset = File.createFromFileSource(fileSource=fileSource)
+        self.pollingStationsDatasetId = dataset.fileId
+
+    def set_postal_counting_centres_dataset(self, fileSource):
+        dataset = File.createFromFileSource(fileSource=fileSource)
+        self.postalCountingCentresDatasetId = dataset.fileId
+
+    def set_party_candidates_dataset(self, fileSource):
+        dataset = File.createFromFileSource(fileSource=fileSource)
+        self.partyCandidateDatasetId = dataset.fileId
+
+    def set_invalid_vote_categories_dataset(self, fileSource):
+        dataset = File.createFromFileSource(fileSource=fileSource)
+        self.invalidVoteCategoriesDatasetId = dataset.fileId
+
 
 Model = ElectionModel
 
 
-def create(electionName, parentElectionId=None, voteType=VoteTypeEnum.PostalAndNonPostal, files=None):
-    result = Model(
+def create(electionName, parentElectionId=None,
+           voteType=VoteTypeEnum.PostalAndNonPostal):
+    election = Model(
         electionName=electionName,
         parentElectionId=parentElectionId,
         voteType=voteType
     )
 
-    if files:
-        data_file = File.createFromFileSource(
-            fileSource=files.get("data")
-        )
-
-        party_candidate_file = File.createFromFileSource(
-            fileSource=files.get("partyCandidate")
-        )
-
-        invalid_vote_categories_file = File.createFromFileSource(
-            fileSource=files.get("invalidVoteCategories")
-        )
-
-        postal_data_file = File.createFromFileSource(
-            fileSource=files.get("postalData")
-        )
-
-        result.dataFileId = data_file.fileId
-        result.partyCandidateFileId = party_candidate_file.fileId
-        result.invalidVoteCategoriesFileId = invalid_vote_categories_file.fileId
-        result.postalDataFileId = postal_data_file.fileId
-
-    return result
+    return election
 
 
 def get_all():
