@@ -140,25 +140,25 @@ def build_presidential_election(root_election: Election):
                 TallySheet.create(
                     tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
                     electionId=election.electionId,
-                    officeId=obj.areaId
+                    areaId=obj.areaId
                 )
 
                 TallySheet.create(
                     tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS,
                     electionId=election.electionId,
-                    officeId=obj.areaId
+                    areaId=obj.areaId
                 )
 
             elif data_store_key == "Electoral District":
                 obj = ElectoralDistrict.create(cell, electionId=election.electionId)
 
                 TallySheet.create(
-                    tallySheetCode=TallySheetCodeEnum.PRE_30_ED, electionId=election.electionId, officeId=obj.areaId
+                    tallySheetCode=TallySheetCodeEnum.PRE_30_ED, electionId=election.electionId, areaId=obj.areaId
                 )
 
                 TallySheet.create(
                     tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=postal_election.electionId,
-                    officeId=obj.areaId
+                    areaId=obj.areaId
                 )
 
             elif data_store_key == "Polling Division":
@@ -166,7 +166,7 @@ def build_presidential_election(root_election: Election):
 
                 TallySheet.create(
                     tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=ordinary_election.electionId,
-                    officeId=obj.areaId
+                    areaId=obj.areaId
                 )
 
             elif data_store_key == "Polling District":
@@ -182,20 +182,20 @@ def build_presidential_election(root_election: Election):
                 obj = CountingCentre.create(cell, electionId=election.electionId)
 
                 TallySheet.create(
-                    tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, officeId=obj.areaId
+                    tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, areaId=obj.areaId
                 )
 
                 TallySheet.create(
-                    tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=election.electionId, officeId=obj.areaId
+                    tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=election.electionId, areaId=obj.areaId
                 )
 
                 if election.voteType is VoteTypeEnum.NonPostal:
                     TallySheet.create(
-                        tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, officeId=obj.areaId
+                        tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, areaId=obj.areaId
                     )
                 elif election.voteType is VoteTypeEnum.Postal:
                     TallySheet.create(
-                        tallySheetCode=TallySheetCodeEnum.CE_201_PV, electionId=election.electionId, officeId=obj.areaId
+                        tallySheetCode=TallySheetCodeEnum.CE_201_PV, electionId=election.electionId, areaId=obj.areaId
                     )
 
             elif data_store_key == "Polling Station":

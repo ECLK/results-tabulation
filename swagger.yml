@@ -1983,7 +1983,7 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: officeId
+        - name: areaId
           required: false
           in: query
           schema:
