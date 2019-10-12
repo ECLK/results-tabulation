@@ -271,9 +271,9 @@ class AreaSchema(ma.ModelSchema):
     electorateType = EnumField(ElectorateTypeEnum)
     parents = ma.Nested('self', many=True)
     children = ma.Nested('self', only="areaId", many=True)
-    pollingStations = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    countingCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    districtCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    pollingStations = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
 
 
 class ElectorateSchema(ma.ModelSchema):
@@ -300,9 +300,9 @@ class ElectorateSchema(ma.ModelSchema):
     electorateType = EnumField(ElectorateTypeEnum)
     parents = ma.Nested('AreaSchema', many=True)
     children = ma.Nested('AreaSchema', only="areaId", many=True)
-    pollingStations = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    countingCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    districtCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    pollingStations = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
 
 
 class OfficeSchema(ma.ModelSchema):
@@ -329,9 +329,9 @@ class OfficeSchema(ma.ModelSchema):
     officeType = EnumField(OfficeTypeEnum)
     parents = ma.Nested('AreaSchema', many=True)
     children = ma.Nested('AreaSchema', only="areaId", many=True)
-    pollingStations = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    countingCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    districtCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    pollingStations = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
 
 
 class Proof_Schema(ma.ModelSchema):
@@ -371,7 +371,6 @@ class SubmissionSchema(ma.ModelSchema):
         sqla_session = db.session
 
     # latestVersion = ma.Nested(TallySheetVersionSchema)
-    office = ma.Nested(OfficeSchema)
     electorate = ma.Nested(ElectorateSchema)
     submissionType = EnumField(SubmissionTypeEnum)
     submissionProof = ma.Nested(Proof_Schema)
@@ -580,7 +579,7 @@ class TallySheetSchema(ma.ModelSchema):
             "tallySheetId",
             "tallySheetCode",
             "electionId",
-            "office",
+            "area",
             "latestVersionId",
             "lockedVersionId",
             "locked",
@@ -595,7 +594,7 @@ class TallySheetSchema(ma.ModelSchema):
         sqla_session = db.session
 
     tallySheetCode = EnumField(TallySheetCodeEnum)
-    office = ma.Nested(AreaSchema)
+    area = ma.Nested(AreaSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
     latestVersion = ma.Nested(SubmissionVersionSchema)
     submissionProof = ma.Nested(Proof_Schema)
@@ -617,7 +616,7 @@ class TallySheetSchema(ma.ModelSchema):
 #             "tallySheetId",
 #             "tallySheetCode",
 #             "electionId",
-#             "officeId",
+#             "areaId",
 #             "latestVersionId",
 #
 #             "tallySheetVersionId",
