@@ -12,10 +12,10 @@ from util import RequestBody
 
 
 @authorize(required_roles=ALL_ROLES)
-def getAll(electionId=None, officeId=None, tallySheetCode=None):
+def getAll(electionId=None, areaId=None, tallySheetCode=None):
     result = TallySheet.get_all(
         electionId=electionId,
-        officeId=officeId,
+        areaId=areaId,
         tallySheetCode=tallySheetCode
     )
 

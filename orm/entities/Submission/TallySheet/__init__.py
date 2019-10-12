@@ -21,8 +21,8 @@ class TallySheetModel(db.Model):
     submission = relationship("SubmissionModel", foreign_keys=[tallySheetId])
 
     electionId = association_proxy("submission", "electionId")
-    officeId = association_proxy("submission", "areaId")
-    office = association_proxy("submission", "area")
+    areaId = association_proxy("submission", "areaId")
+    areaId = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
     lockedVersionId = association_proxy("submission", "lockedVersionId")
     locked = association_proxy("submission", "locked")
@@ -47,11 +47,11 @@ class TallySheetModel(db.Model):
             TallySheetVersion.Model.tallySheetVersionId == self.latestVersionId
         ).one_or_none()
 
-    def __init__(self, tallySheetCode, electionId, officeId):
+    def __init__(self, tallySheetCode, electionId, areaId):
         submission = Submission.create(
             submissionType=SubmissionTypeEnum.TallySheet,
             electionId=electionId,
-            areaId=officeId
+            areaId=areaId
         )
 
         super(TallySheetModel, self).__init__(
@@ -83,7 +83,7 @@ def get_by_id(tallySheetId):
     return result
 
 
-def get_all(electionId=None, officeId=None, tallySheetCode=None):
+def get_all(electionId=None, areaId=None, tallySheetCode=None):
     election = Election.get_by_id(electionId=electionId)
 
     query = Model.query.join(
@@ -99,8 +99,8 @@ def get_all(electionId=None, officeId=None, tallySheetCode=None):
             Election.Model.electionId.in_(election.mappedElectionIds)
         )
 
-    if officeId is not None:
-        query = query.filter(Submission.Model.areaId == officeId)
+    if areaId is not None:
+        query = query.filter(Submission.Model.areaId == areaId)
 
     if tallySheetCode is not None:
         query = query.filter(Model.tallySheetCode == get_tally_sheet_code(tallySheetCode))
@@ -114,11 +114,11 @@ def get_all(electionId=None, officeId=None, tallySheetCode=None):
     return result
 
 
-def create(tallySheetCode, electionId, officeId):
+def create(tallySheetCode, electionId, areaId):
     result = Model(
         tallySheetCode=tallySheetCode,
         electionId=electionId,
-        officeId=officeId
+        areaId=areaId
     )
 
     return result
