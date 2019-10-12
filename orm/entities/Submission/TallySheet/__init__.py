@@ -22,7 +22,7 @@ class TallySheetModel(db.Model):
 
     electionId = association_proxy("submission", "electionId")
     areaId = association_proxy("submission", "areaId")
-    areaId = association_proxy("submission", "area")
+    area = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
     lockedVersionId = association_proxy("submission", "lockedVersionId")
     locked = association_proxy("submission", "locked")
