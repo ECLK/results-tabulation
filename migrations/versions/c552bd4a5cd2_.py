@@ -25,15 +25,15 @@ def upgrade():
     sa.Column('createdAt', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('stampId')
     )
-    op.add_column('file', sa.Column('fileStampId', sa.Integer(), nullable=True))
+    op.add_column('file', sa.Column('fileStampId', sa.Integer(), nullable=False))
     op.create_foreign_key(None, 'file', 'stamp', ['fileStampId'], ['stampId'])
     op.drop_column('file', 'fileCreatedBy')
     op.drop_column('file', 'fileCreatedAt')
-    op.add_column('history_version', sa.Column('historyStampId', sa.Integer(), nullable=True))
+    op.add_column('history_version', sa.Column('historyStampId', sa.Integer(), nullable=False))
     op.create_foreign_key(None, 'history_version', 'stamp', ['historyStampId'], ['stampId'])
     op.drop_column('history_version', 'createdBy')
     op.drop_column('history_version', 'createdAt')
-    op.add_column('proof', sa.Column('proofStampId', sa.Integer(), nullable=True))
+    op.add_column('proof', sa.Column('proofStampId', sa.Integer(), nullable=False))
     op.create_foreign_key(None, 'proof', 'stamp', ['proofStampId'], ['stampId'])
     op.drop_column('proof', 'createdAt')
     ### end Alembic commands ###
