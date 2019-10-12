@@ -5,6 +5,7 @@ import connexion
 from decorator import decorator
 from jose import jwt
 
+from app import db
 from auth.AuthConstants import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_GENERATOR_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_GENERATOR_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE, ROLE_CLAIM_PREFIX, ADMIN_ROLE
@@ -90,6 +91,9 @@ def authenticate(func, *args, **kwargs):
 @decorator
 @authenticate
 def authorize(func, required_roles=None, *args, **kwargs):
+    from orm.entities import Area
+    from orm.enums import AreaTypeEnum
+
     if required_roles is None:
         return func(*args, **kwargs)
 
@@ -106,6 +110,13 @@ def authorize(func, required_roles=None, *args, **kwargs):
 
         claim_found = True
         user_access_area_ids.extend([x.get(AREA_ID) for x in claims.get(claim)])
+
+        if role is NATIONAL_REPORT_VIEWER_ROLE or role is NATIONAL_REPORT_GENERATOR_ROLE:
+            areas = db.session.query(Area.Model.areaId).filter(Area.Model.areaType == AreaTypeEnum.Country).all()
+            user_access_area_ids.extend([area.areaId for area in areas])
+        elif role is EC_LEADERSHIP_ROLE:
+            areas = db.session.query(Area.Model.areaId).filter(Area.Model.areaType == AreaTypeEnum.ElectionCommission).all()
+            user_access_area_ids.extend([area.areaId for area in areas])
 
     if not claim_found:
         UnauthorizedException("No matching claim found.")
