@@ -80,9 +80,23 @@ def get_root_token(electionId):
     return encoded_jwt_token
 
 
-def build_presidential_election(root_election: Election):
+def build_presidential_election(root_election: Election, party_candidate_dataset_file=None,
+                                polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
+                                invalid_vote_categories_dataset_file=None):
     postal_election = root_election.add_sub_election(electionName="Postal", voteType=VoteTypeEnum.Postal)
     ordinary_election = root_election.add_sub_election(electionName="Ordinary", voteType=VoteTypeEnum.NonPostal)
+
+    if not party_candidate_dataset_file:
+        party_candidate_dataset_file = root_election.partyCandidateDataset.get_file_path()
+
+    if not polling_station_dataset_file:
+        polling_station_dataset_file = root_election.pollingStationsDataset.get_file_path()
+
+    if not postal_counting_centers_dataset_file:
+        postal_counting_centers_dataset_file = root_election.postalCountingCentresDataset.get_file_path()
+
+    if not invalid_vote_categories_dataset_file:
+        invalid_vote_categories_dataset_file = root_election.invalidVoteCategoriesDataset.get_file_path()
 
     data_stores = {}
 
@@ -222,17 +236,17 @@ def build_presidential_election(root_election: Election):
 
         return rows
 
-    for row in get_rows_from_csv(root_election.partyCandidateDataset.get_file_path()):
+    for row in get_rows_from_csv(party_candidate_dataset_file):
         party = get_object(root_election, row, "Party")
         root_election.add_party(partyId=party.partyId)
 
         candidate = get_object(root_election, row, "Candidate")
         root_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
 
-    for row in get_rows_from_csv(root_election.invalidVoteCategoriesDataset.get_file_path()):
+    for row in get_rows_from_csv(invalid_vote_categories_dataset_file):
         root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
 
-    for row in get_rows_from_csv(root_election.pollingStationsDataset.get_file_path()):
+    for row in get_rows_from_csv(polling_station_dataset_file):
         print("[ROW] ========= ", row)
         country = get_object(root_election, {"Country": "Sri Lanka"}, "Country")
         electoralDistrict = get_object(root_election, row, "Electoral District")
@@ -302,7 +316,7 @@ def build_presidential_election(root_election: Election):
 
         print("[ROW END] ========= ")
 
-    for row in get_rows_from_csv(root_election.postalCountingCentresDataset.get_file_path()):
+    for row in get_rows_from_csv(postal_counting_centers_dataset_file):
         print("[POSTAL ROW] ========= ", row)
         country = get_object(root_election, {"Country": "Sri Lanka"}, "Country")
         electoralDistrict = get_object(root_election, row, "Electoral District")
