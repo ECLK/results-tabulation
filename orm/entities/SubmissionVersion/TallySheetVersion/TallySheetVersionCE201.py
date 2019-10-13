@@ -8,6 +8,8 @@ from orm.entities import Area
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201
 from util import get_paginated_query, to_empty_string_or_value
+from datetime import date
+from datetime import datetime
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
@@ -47,6 +49,19 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
         tallySheetContent = self.content
 
         content = {
+            "date": date.today().strftime("%B %d, %Y"),
+            "time": datetime.now().strftime("%H:%M:%S"),
+            "electionName": self.submission.election.electionName,
+            "electoralDistrict": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "countingCentre": self.submission.area.areaName,
+            "pollingDistrictNos": ", ".join([
+                pollingDistrict.areaName for pollingDistrict in
+                Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
+            ]),
+
             "data": [
             ]
         }
@@ -69,7 +84,7 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
             # three ballot boxes
             for ballotBoxIndex in range(3):
                 if ballotBoxIndex < len(row.ballotBoxesReceived):
-                    data_row.append(row.ballotBoxesReceived[ballotBoxIndex].ballotBoxId)
+                    data_row.append(row.ballotBoxesReceived[ballotBoxIndex])
                 else:
                     data_row.append("")
 

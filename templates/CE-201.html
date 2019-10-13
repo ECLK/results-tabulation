@@ -1,10 +1,11 @@
 <html>
 <head>
-    <meta name="pdfkit-page-size" content="B2"/>
+    <meta name="pdfkit-page-size" content="A4"/>
     <meta name="pdfkit-orientation" content="Landscape"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:100&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/e9b46f8997.js"></script>
 
     <style>
         .top {
@@ -30,8 +31,18 @@
             border-right: 1px solid #000 !important;
         }
 
+        .table-margins {
+            margin-left: 10px !important;
+            margin-right: 30px !important;
+        }
+
         .font1 {
             font-family: serif;
+        }
+
+        .font2 {
+            font-family: serif;
+            font-size: 18;
         }
 
         .float-right {
@@ -71,10 +82,6 @@
             margin-left: 20px;
         }
 
-        /* .group span {
-            margin: 5px 0;
-        } */
-
         .block, .block1, .block2 {
             padding: 5px;
         }
@@ -84,51 +91,85 @@
 </head>
 <body>
 
+
 <div class="font1">
-    <div class="bottom" style="margin-bottom:5px;"><i>Note : This report should be prepared on the basis of reports
-        submitted by Counting Officers under Section 51(7)</i></div>
-    <table class="table table-borderless">
+    <br/>
+    <table class="table table-borderless font1">
         <tbody>
-        <tr>
-            <td class="no-padding-left no-padding-right" colspan="2">
-                <div class="all float-right"><h1 class="bold">CE-201</h1></div>
-            </td>
-        </tr>
+            <tr>
+                <td colspan="14"></td>
+                <td class="all"><span style="font-size: 20px !important;"><strong>CE/201</strong></span></td>
+            </tr>
+            <tr>
+                <td colspan="15" align="center"><u><span style="font-size: 20px !important;">VERIFICATION OF BALLOT PAPER ACCOUNTS<br/>
+                    NUMBER OF BALLOT PAPERS IN EACH BALLOT BOX</span></u></td>
+            </tr>
+            <tr class="font2">
+                <td colspan="7"><strong>Name of Election:</strong> {{content.electionName}}</td>
+                <td colspan="8"><strong>Electoral District:</strong> {{content.electoralDistrict}}</td>
+            </tr>
+            <tr class="font2">
+                <td colspan="15"><strong>Polling Division:</strong> {{content.pollingDivision}}</td>
+            </tr>
+            <tr class="font2">
+                <td colspan="15"><strong>Counting Centre No:</strong> {{content.countingCentre}}</td>
+            </tr>
+            <tr align="center">
+                <th class="all align-middle" rowspan="2">No. of the Polling District</th>
+                <th class="all align-middle" rowspan="2" valign="middle">Name of the Polling Station</th>
+                <th class="all align-middle" rowspan="2" colspan="3">Stenciled Nos. of the Ballot Boxes</th>
+                <th class="all align-middle" rowspan="2">No. of ballot papers received</th>
+                <th class="all align-middle" rowspan="2">No. of spoilt ballot papers</th>
+                <th class="all align-middle" rowspan="2">No. of issued ballot papers</th>
+                <th class="all align-middle" rowspan="2">No. of unused ballot papers</th>
+                <th class="all align-middle" colspan="3">Ordinary Ballot Papers</th>
+                <th class="all align-middle" colspan="3">Tendered Ballot Papers</th>
+            </tr>
+            <tr align="center">
+                <th class="all align-middle">Ballot Paper Account</th>
+                <th class="all align-middle">Ballot Box</th>
+                <th class="all align-middle">Differences if any</th>
+                <th class="all align-middle">Ballot Paper Account</th>
+                <th class="all align-middle">Ballot Box</th>
+                <th class="all align-middle">Differences if any</th>
+            </tr>
+            {% for row in content.data %}
+            <tr>
+                <td class="all align-middle" style="text-align: right;">{{row[0]}}</td>
+                <td class="all align-middle">{{row[1]}}</td>
+                <td class="all align-middle" colspan="3" style="text-align: right;">{{row[2]}}</td>
+                <td class="all align-middle" style="text-align: right;">{{row[3]}}</td>
+                <td class="all align-middle" style="text-align: right;">{{row[4]}}</td>
+                <td class="all align-middle" style="text-align: right;">{{row[5]}}</td>
+                <td class="all align-middle" style="text-align: right;">{{row[6]}}</td>
+                <td class="all align-middle">{{row[7]}}</td>
+                <td class="all align-middle">{{row[8]}}</td>
+                <td class="all align-middle">{{row[9]}}</td>
+                <td class="all align-middle">{{row[10]}}</td>
+                <td class="all align-middle">{{row[11]}}</td>
+                <td class="all align-middle">{{row[12]}}</td>
+            </tr>
+            {% endfor %}
 
-        <div>
-            <table class="table table-borderless">
-                <tbody>
-                <tr>
-                    <th class="left right top bottom" rowspan="2">No. of the Polling District</th>
-                    <th class="left right top bottom" rowspan="2">Name of the Polling Station</th>
-                    <th class="left right top bottom" rowspan="2" colspan="3">Stenciled Nos. of the Ballot Boxes</th>
-                    <th class="left right top bottom" rowspan="2">No. of ballot papers received</th>
-                    <th class="left right top bottom" rowspan="2">No. of spoilt ballot papers</th>
-                    <th class="left right top bottom" rowspan="2">No. of issued ballot papers</th>
-                    <th class="left right top bottom" rowspan="2">No. of unused ballot papers</th>
-                    <th class="left right top bottom" colspan="3">Ordinary Ballot Papers</th>
-                    <th class="left right top bottom" colspan="3">Tendered Ballot Papers</th>
-                </tr>
-                <tr>
-                    <th class="left right top bottom">Ballot Paper Account</th>
-                    <th class="left right top bottom">Ballot Box</th>
-                    <th class="left right top bottom">Differences if any</th>
-                    <th class="left right top bottom">Ballot Paper Account</th>
-                    <th class="left right top bottom">Ballot Box</th>
-                    <th class="left right top bottom">Differences if any</th>
-                </tr>
-
-                {% for row in content.data %}
-                <tr>
-                    {% for cell in row %}
-                    <td class="left right top bottom">{{cell}}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-
-                </tbody>
-            </table>
-        </div>
+            <tr>
+                <td colspan="9"></td>
+                <td colspan="6"><br/>...........................................<br/>
+                                Counting Officer's Signature</td>
+            </tr>
+            <tr>
+                <td colspan="9">Date: {{content.date}}</td>
+                <td colspan="6">Name: ....................................................</td>
+            </tr>
+            <tr>
+                <td colspan="9">Time: {{content.time}}</td>
+                <td colspan="6">Designation: ...........................................</td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="table-margins">N.B. - Differences if any of the actual No. in the Ballot Box should be given a plus (+) or a minus (-) in relation to
+            the number in the Ballot Paper Account.<br/>
+            Where it is the same as in the Ballot Box. place the mark (&#10003;)</p>
+</div>
 
 
 </body>

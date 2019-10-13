@@ -13,7 +13,7 @@ from util import get_paginated_query, get_array, get_area_type
 class AreaModel(db.Model):
     __tablename__ = 'area'
     areaId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    areaName = db.Column(db.String(100), nullable=False)
+    areaName = db.Column(db.String(300), nullable=False)
     areaType = db.Column(db.Enum(AreaTypeEnum), nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
     # parentAreaId = db.Column(db.Integer, db.ForeignKey(areaId), nullable=True)
@@ -73,8 +73,11 @@ class AreaModel(db.Model):
 
         return self
 
+    def get_associated_areas_query(self, areaType, electionId=None):
+        return get_associated_areas_query(area=self, areaType=areaType, electionId=electionId)
+
     def get_associated_areas(self, areaType, electionId=None):
-        return get_associated_areas(self, areaType, electionId)
+        return self.get_associated_areas_query(areaType, electionId).all()
 
     def get_submissions(self, submissionType):
         return [submission for submission in self.submissions if submission.submissionType is submissionType]
@@ -194,24 +197,14 @@ def get_presidential_area_map_query():
         ),
         isouter=True
     ).join(
-        postal_vote_counting_centre_mapping,
-        postal_vote_counting_centre_mapping.childAreaId == counting_centre.areaId,
-        isouter=True
-    ).join(
         polling_division_mapping,
         polling_division_mapping.childAreaId == polling_district.areaId,
         isouter=True
     ).join(
         polling_division,
-        or_(
-            and_(
-                polling_division.areaId == polling_division_mapping.parentAreaId,
-                polling_division.areaType == AreaTypeEnum.PollingDivision
-            ),
-            and_(
-                polling_division.areaId == postal_vote_counting_centre_mapping.parentAreaId,
-                polling_division.areaType == AreaTypeEnum.PollingDivision
-            ),
+        and_(
+            polling_division.areaId == polling_division_mapping.parentAreaId,
+            polling_division.areaType == AreaTypeEnum.PollingDivision
         ),
         isouter=True
     ).join(
@@ -219,10 +212,20 @@ def get_presidential_area_map_query():
         electoral_district_mapping.childAreaId == polling_division.areaId,
         isouter=True
     ).join(
+        postal_vote_counting_centre_mapping,
+        postal_vote_counting_centre_mapping.childAreaId == counting_centre.areaId,
+        isouter=True
+    ).join(
         electoral_district,
-        and_(
-            electoral_district.areaId == electoral_district_mapping.parentAreaId,
-            electoral_district.areaType == AreaTypeEnum.ElectoralDistrict
+        or_(
+            and_(
+                electoral_district.areaId == electoral_district_mapping.parentAreaId,
+                electoral_district.areaType == AreaTypeEnum.ElectoralDistrict
+            ),
+            and_(
+                electoral_district.areaId == postal_vote_counting_centre_mapping.parentAreaId,
+                electoral_district.areaType == AreaTypeEnum.ElectoralDistrict
+            ),
         ),
         isouter=True
     ).join(
@@ -339,8 +342,15 @@ def get_associated_areas_query(area, areaType, electionId=None):
 
     if electionId is not None:
         query = query.filter(
-            AreaModel.electionId.in_(election.mappedElectionIds)
+            or_(
+                Model.electionId.in_(election.mappedElectionIds),
+                Model.electionId.in_(election.subElectionIds)
+            )
         )
+
+    query = query.filter(
+        AreaModel.areaType == areaType
+    )
 
     return query
 

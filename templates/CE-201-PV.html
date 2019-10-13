@@ -85,50 +85,152 @@
 <body>
 
 <div class="font1">
-    <div class="bottom" style="margin-bottom:5px;"><i>Note : This report should be prepared on the basis of reports
-        submitted by Counting Officers under Section 51(7)</i></div>
+
     <table class="table table-borderless">
         <tbody>
-        <tr>
-            <td class="no-padding-left no-padding-right" colspan="2">
-                <div class="all float-right"><h1 class="bold">CE-201</h1></div>
-            </td>
-        </tr>
+            <tr>
+                <td class="font1 bold no-padding-bottom" colspan="2">(Prepare with copies)</td>
 
-        <div>
-            <table class="table table-borderless">
-                <tbody>
-                <tr>
-                    <th class="left right top bottom" rowspan="2">No. of the Polling District</th>
-                    <th class="left right top bottom" rowspan="2">Name of the Polling Station</th>
-                    <th class="left right top bottom" rowspan="2" colspan="3">Stenciled Nos. of the Ballot Boxes</th>
-                    <th class="left right top bottom" rowspan="2">No. of ballot papers received</th>
-                    <th class="left right top bottom" rowspan="2">No. of spoilt ballot papers</th>
-                    <th class="left right top bottom" rowspan="2">No. of issued ballot papers</th>
-                    <th class="left right top bottom" rowspan="2">No. of unused ballot papers</th>
-                    <th class="left right top bottom" colspan="3">Ordinary Ballot Papers</th>
-                    <th class="left right top bottom" colspan="3">Tendered Ballot Papers</th>
-                </tr>
-                <tr>
-                    <th class="left right top bottom">Ballot Paper Account</th>
-                    <th class="left right top bottom">Ballot Box</th>
-                    <th class="left right top bottom">Differences if any</th>
-                    <th class="left right top bottom">Ballot Paper Account</th>
-                    <th class="left right top bottom">Ballot Box</th>
-                    <th class="left right top bottom">Differences if any</th>
-                </tr>
+                <td class="font1 bold no-padding-bottom" style="text-align:center;"><h5 class="bold">1<sup>st</sup> Schedule</h5></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="font1" rowspan="2">
+                    <div class="all" style="width:70%; padding: 5px;">
+                        Immediately after computing the number of postal ballot <br/>papers which are
+                        valid for the count, <span class="bold">the original of the 1<sup>st</sup><br/>
+                        schedule included in PV-P envelop should be sent to the <br/>Returning Officer.
+                    </div>
+                </td>
+                <td style="text-align:center;" class="no-padding-bottom">
+                    <span class="font1 all bold" style="text-align:center; padding: 5px; font-size: 1.25rem;">CE 201 PV</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="font1 bold" style="text-align:center; font-size: 1.25rem;">Original</td>
+            </tr>
 
-                {% for row in content.data %}
-                <tr>
-                    {% for cell in row %}
-                    <td class="left right top bottom">{{cell}}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
+            <tr>
+                <td class="font1 bold" style="text-align:center; font-size: 1.25rem;" colspan="3">
+                    Presidential Election 2019<br/>
+                    REPORT SHOWING POSTAL BALLOT PAPERS IN THE RECEPTAL FOR<br/>
+                    POSTAL BALLOT PAPERS
+                </td>
+            </tr>
 
-                </tbody>
-            </table>
-        </div>
+            <tr>
+                <td class="font1" colspan="3">
+                    1. Name and No. of Electoral District: <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.electoralDistrict}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="font1" colspan="3">
+                    2. No. of the Postal Votes Counting Center: <span class="all" style="padding: 5px;">{{content.countingCentre}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="font1" colspan="3">
+                    3. Location of Postal Ballot Paper Counting Center: <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.situation}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="font1" colspan="3">
+                    4. Time of commencement of the count of Postal Votes ballot papers: <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.timeOfCommencementOfCount}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="font1" colspan="3">
+                    5. No. of PV_A Packets counted in the PV B Ballot Box: <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="font1 left right top bottom">Serial Number of Postal Votes Ballot Box</td>
+                <td class="font1 left right top bottom">No. of packets inserted by the Returning Officer</td>
+                <td class="font1 left right top bottom">No. of PV-A packets found insidethe Ballot Box after the count</td>
+            </tr>
+
+
+            {% for row in content.data %}
+            <tr>
+                <td class="left right top bottom" style="text-align:right;">{{row[0]}}</td>
+                <td class="left right top bottom" style="text-align:right;">{{row[1]}}</td>
+                <td class="left right top bottom" style="text-align:right;">{{row[2]}}</td>
+            </tr>
+            {% endfor %}
+
+
+            <tr>
+                <td colspan="2">6. Total Number of PV-A packets found in the Box/Boxes</td>
+                <td class="left right top bottom" style="text-decoration-line: underline;text-decoration-style: double; text-align: center;">
+                  <span class="top">{{content.numberOfAPacketsFound}}</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                  7. No. of Packets rejected on various grounds after opening 'A' covers
+                  <span style="float: right;">} :-</span>
+                </td>
+                <td style="border-bottom: 1px dotted; text-align: center;">
+                  {{content.numberOfACoversRejected}}
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                  8. <span class="bold">No. of covers rejected on </span>various grounds after opening 'B' covers in accepted ballot papers receptacle
+                  <span style="float: right;">} :-</span>
+                </td>
+                <td style="border-bottom: 1px dotted; text-align: center;">
+                  {{content.numberOfBCoversRejected}}
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                  9. <span class="bold">No. of postal ballot papers for the count in the receptacle for accepted ballot papers.</span>
+                  <span style="float: right;">} :-</span>
+                </td>
+                <td style="border-bottom: 1px dotted; text-align: center;">
+                  {{content.numberOfValidBallotPapers}}
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="3" style="border-bottom: 1px dotted; text-align: center;">
+                  &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td colspan="3" style="text-align: center;">
+                    Signature of Counting Officer
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3" style="text-align: right;">
+                    <span class="bold">Name: </span>.......................................................
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3" style="text-align: right;">
+                    <span class="bold">Designation: </span>.......................................................
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3">
+                    <span class="bold">Date: </span>............................<span class="bold">/Time: </span>...........................
+                </td>
+            </tr>
+
+          </tbody>
+      </table>
+  </div>
 
 
 </body>

@@ -5,6 +5,7 @@ from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
 
+from exception import MethodNotAllowedException
 from util import get_paginated_query
 
 from orm.entities import Election, Office, Proof, History, SubmissionVersion, Area
@@ -20,17 +21,49 @@ class SubmissionModel(db.Model):
     areaId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.areaId), nullable=False)
     submissionProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId), nullable=False)
     latestVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
+    lockedVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     area = relationship(Area.Model, foreign_keys=[areaId])
     submissionProof = relationship(Proof.Model, foreign_keys=[submissionProofId])
     submissionHistory = relationship(History.Model, foreign_keys=[submissionId])
     latestVersion = relationship("SubmissionVersionModel", foreign_keys=[latestVersionId])
+    lockedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
     versions = relationship("SubmissionVersionModel", order_by="desc(SubmissionVersionModel.submissionVersionId)",
                             primaryjoin="SubmissionModel.submissionId==SubmissionVersionModel.submissionId")
 
-    def set_latest_version(self, submissionVersionId):
-        self.latestVersionId = submissionVersionId
+    @hybrid_property
+    def locked(self):
+        return self.lockedVersionId is not None
+
+    def set_latest_version(self, submissionVersion: SubmissionVersion):
+        if submissionVersion is None:
+            self.latestVersionId = None
+        else:
+            if submissionVersion.submissionId is not self.submissionId:
+                raise MethodNotAllowedException(
+                    "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
+                        self.submissionType.name, self.submissionType.name, self.submissionId,
+                        submissionVersion.submissionVersionId
+                    ))
+
+            self.latestVersionId = submissionVersion.submissionVersionId
+
+        db.session.add(self)
+        db.session.flush()
+
+    def set_locked_version(self, submissionVersion: SubmissionVersion):
+        if submissionVersion is None:
+            self.lockedVersionId = None
+        else:
+            if submissionVersion.submissionId is not self.submissionId:
+                raise MethodNotAllowedException(
+                    "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
+                        self.submissionType.name, self.submissionType.name, self.submissionId,
+                        submissionVersion.submissionVersionId
+                    ))
+
+            self.lockedVersionId = submissionVersion.submissionVersionId
 
         db.session.add(self)
         db.session.flush()

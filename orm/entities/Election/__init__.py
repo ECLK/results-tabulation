@@ -1,9 +1,9 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-
-from app import db
 from sqlalchemy.orm import relationship
 
+from app import db
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
+from orm.entities.IO import File
 from orm.enums import VoteTypeEnum
 from util import get_paginated_query
 
@@ -19,6 +19,16 @@ class ElectionModel(db.Model):
 
     subElections = relationship("ElectionModel")
     parentElection = relationship("ElectionModel", remote_side=[electionId])
+
+    pollingStationsDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    postalCountingCentresDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    partyCandidateDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    invalidVoteCategoriesDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+
+    pollingStationsDataset = relationship(File.Model, foreign_keys=[pollingStationsDatasetId])
+    postalCountingCentresDataset = relationship(File.Model, foreign_keys=[postalCountingCentresDatasetId])
+    partyCandidateDataset = relationship(File.Model, foreign_keys=[partyCandidateDatasetId])
+    invalidVoteCategoriesDataset = relationship(File.Model, foreign_keys=[invalidVoteCategoriesDatasetId])
 
     def __init__(self, electionName, parentElectionId, voteType):
         super(ElectionModel, self).__init__(
@@ -87,18 +97,35 @@ class ElectionModel(db.Model):
             candidateId=candidateId
         )
 
+    def set_polling_stations_dataset(self, fileSource):
+        dataset = File.createFromFileSource(fileSource=fileSource)
+        self.pollingStationsDatasetId = dataset.fileId
+
+    def set_postal_counting_centres_dataset(self, fileSource):
+        dataset = File.createFromFileSource(fileSource=fileSource)
+        self.postalCountingCentresDatasetId = dataset.fileId
+
+    def set_party_candidates_dataset(self, fileSource):
+        dataset = File.createFromFileSource(fileSource=fileSource)
+        self.partyCandidateDatasetId = dataset.fileId
+
+    def set_invalid_vote_categories_dataset(self, fileSource):
+        dataset = File.createFromFileSource(fileSource=fileSource)
+        self.invalidVoteCategoriesDatasetId = dataset.fileId
+
 
 Model = ElectionModel
 
 
-def create(electionName, parentElectionId=None, voteType=VoteTypeEnum.PostalAndNonPostal):
-    result = Model(
+def create(electionName, parentElectionId=None,
+           voteType=VoteTypeEnum.PostalAndNonPostal):
+    election = Model(
         electionName=electionName,
         parentElectionId=parentElectionId,
         voteType=voteType
     )
 
-    return result
+    return election
 
 
 def get_all():

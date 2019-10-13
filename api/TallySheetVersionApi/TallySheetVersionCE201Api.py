@@ -1,4 +1,6 @@
 from app import db
+from auth import authorize
+from auth.AuthConstants import DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE
 from util import RequestBody
 from schemas import TallySheetVersionCE201Schema, TallySheetVersionSchema
 from orm.entities.Submission import TallySheet
@@ -6,6 +8,7 @@ from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE
 from exception import NotFoundException
 
 
+@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
     result = TallySheetVersionCE201.get_by_id(
         tallySheetId=tallySheetId,
@@ -15,6 +18,7 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     return TallySheetVersionCE201Schema().dump(result).data
 
 
+@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
 def get_all(tallySheetId):
     tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
     if tallySheet is None:
@@ -27,6 +31,7 @@ def get_all(tallySheetId):
     return TallySheetVersionCE201Schema(many=True).dump(result).data
 
 
+@authorize(required_roles=[DATA_EDITOR_ROLE])
 def create(tallySheetId, body):
     request_body = RequestBody(body)
     tallySheetVersion = TallySheetVersionCE201.create(
@@ -51,13 +56,11 @@ def create(tallySheetId, body):
                     "tenderedBallotCountFromBallotPaperAccount")
             )
 
-            for issued_ballot_body in party_count_body.get("ballotBoxesIssued"):
-                issued_ballot_body = RequestBody(issued_ballot_body)
-                tallySheetVersionRow.add_issued_ballot_box(issued_ballot_body.get("stationaryItemId"))
+            for issued_ballot_box_id in party_count_body.get("ballotBoxesIssued"):
+                tallySheetVersionRow.add_issued_ballot_box(issued_ballot_box_id)
 
-            for received_ballot_body in party_count_body.get("ballotBoxesReceived"):
-                received_ballot_body = RequestBody(received_ballot_body)
-                tallySheetVersionRow.add_received_ballot_box(received_ballot_body.get("stationaryItemId"))
+            for received_ballot_box_id in party_count_body.get("ballotBoxesReceived"):
+                tallySheetVersionRow.add_received_ballot_box(received_ballot_box_id)
 
     db.session.commit()
 
