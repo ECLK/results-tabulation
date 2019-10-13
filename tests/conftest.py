@@ -39,11 +39,17 @@ def test_client():
                                     polling_station_dataset_file=polling_station_dataset_file,
                                     postal_counting_centers_dataset_file=postal_counting_centers_dataset_file,
                                     invalid_vote_categories_dataset_file=invalid_vote_categories_dataset_file)
+        return election
 
     with connex_app.app.app_context():
         db.create_all()
         db.session.commit()
 
-        create_test_election()
+        election = create_test_election()
 
-    yield tc
+        from orm.entities.Election.election_helper import get_root_token
+        jwt_token = get_root_token(election.electionId)
+
+        tc.environ_base['HTTP_AUTHORIZATION'] = 'Bearer ' + jwt_token
+
+        yield tc
