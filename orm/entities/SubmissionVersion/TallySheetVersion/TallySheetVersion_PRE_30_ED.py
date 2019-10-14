@@ -373,8 +373,14 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         )
 
     def html(self):
+        stamp = self.stamp
 
         content = {
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "electoralDistrict": self.submission.area.areaName,
             "pollingDivisions": [],
             "data": [],

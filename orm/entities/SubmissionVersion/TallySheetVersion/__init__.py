@@ -26,6 +26,7 @@ class TallySheetVersionModel(db.Model):
     tallySheetId = association_proxy("submissionVersion", "submissionId")
     createdBy = association_proxy("submissionVersion", "createdBy")
     createdAt = association_proxy("submissionVersion", "createdAt")
+    stamp = association_proxy("submissionVersion", "stamp")
 
     def set_locked(self):
         self.submissionVersion.set_locked()

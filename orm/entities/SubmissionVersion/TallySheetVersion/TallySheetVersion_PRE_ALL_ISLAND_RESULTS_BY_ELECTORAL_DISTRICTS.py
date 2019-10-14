@@ -231,7 +231,14 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
         area_wise_vote_count_result = self.area_wise_vote_count_query().all()
         vote_count_result = self.vote_count_query().one_or_none()
 
+        stamp = self.stamp
+
         content = {
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "electoralDistricts": [],
             "data": [],
             "validVoteCounts": [],

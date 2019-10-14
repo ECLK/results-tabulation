@@ -74,7 +74,7 @@ class TallySheetModel(db.Model):
         if self.locked is True:
             raise MethodNotAllowedException("Tally sheet is Locked. (tallySheetId=%d)" % self.tallySheetId)
 
-        tallySheetVersion = create_empty_version()
+        tallySheetVersion = self.create_empty_version()
 
         return tallySheetVersion
 

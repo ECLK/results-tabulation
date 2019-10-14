@@ -25,7 +25,10 @@ Model = Stamp
 
 
 def create():
-    result = Stamp()
+    barcode = Barcode.create()
+    result = Stamp(
+        barcodeId=barcode.barcodeId
+    )
 
     db.session.add(result)
     db.session.flush()

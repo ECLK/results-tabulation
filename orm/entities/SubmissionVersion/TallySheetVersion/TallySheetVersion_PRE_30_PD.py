@@ -239,8 +239,14 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
         candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
         area_wise_vote_count_result = self.area_wise_vote_count_query().all()
         vote_count_result = self.vote_count_query().one_or_none()
+        stamp = self.stamp
 
         content = {
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "tallySheetCode": "PRE/30/PD",
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,

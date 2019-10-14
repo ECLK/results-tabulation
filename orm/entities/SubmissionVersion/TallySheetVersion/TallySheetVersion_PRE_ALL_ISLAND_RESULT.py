@@ -167,10 +167,16 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
 
     def html(self):
         tallySheetContent = self.content
+        stamp = self.stamp
 
         content = {
-            "date": self.submissionVersion.createdAt.strftime("%d/%m/%Y"),
-            "time": self.submissionVersion.createdAt.strftime("%H:%M:%S %p"),
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
+            "date": stamp.createdAt.strftime("%d/%m/%Y"),
+            "time": stamp.createdAt.strftime("%H:%M:%S %p"),
             "data": [
             ],
             "validVoteCounts": [0, 0],

@@ -1,8 +1,6 @@
 from app import db
-import barcode
 
-EAN = barcode.get_barcode_class('ean')
-BARCODE_LENGTH = 12
+BARCODE_LENGTH = 13
 
 
 class BarcodeModel(db.Model):
@@ -16,14 +14,17 @@ Model = BarcodeModel
 
 def _get_barcode_string(num):
     num_str = str(num)
-    for i in range(12 - len(num_str)):
+    for i in range(BARCODE_LENGTH - len(num_str)):
         num_str = "0" + num_str
     return num_str
 
 
-def create(barcodeString):
+def create():
     barcode = BarcodeModel()
     db.session.add(barcode)
     db.session.flush()
 
-    barcode.barcodeString = EAN(_get_barcode_string(barcode.barcodeId))
+    barcode.barcodeString = _get_barcode_string(barcode.barcodeId)
+    db.session.flush()
+
+    return barcode

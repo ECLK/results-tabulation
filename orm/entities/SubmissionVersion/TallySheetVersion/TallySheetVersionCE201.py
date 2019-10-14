@@ -48,7 +48,14 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
     def html(self):
         tallySheetContent = self.content
 
+        stamp = self.stamp
+
         content = {
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "date": date.today().strftime("%B %d, %Y"),
             "time": datetime.now().strftime("%H:%M:%S"),
             "electionName": self.submission.election.electionName,
