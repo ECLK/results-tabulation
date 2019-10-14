@@ -3,7 +3,8 @@ from auth import authorize, EC_LEADERSHIP_ROLE
 from auth.AuthConstants import DATA_EDITOR_ROLE
 from exception import NotFoundException
 from orm.entities.Submission import TallySheet
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
+from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetVersionPRE41Schema, TallySheetVersionSchema
 from util import RequestBody
 
@@ -14,7 +15,7 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     if tallySheet is None:
         raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
 
-    result = TallySheetVersionPRE41.get_by_id(
+    result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     )
@@ -22,28 +23,12 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     return TallySheetVersionPRE41Schema().dump(result).data
 
 
-@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
-def get_all(tallySheetId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = TallySheetVersionPRE41.get_all(
-        tallySheetId=tallySheetId
-    )
-
-    return TallySheetVersionPRE41Schema(many=True).dump(result).data
-
-
 @authorize(required_roles=[DATA_EDITOR_ROLE])
 def create(tallySheetId, body):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-
     request_body = RequestBody(body)
-    tallySheetVersion = TallySheetVersionPRE41.create(
-        tallySheetId=tallySheetId
+    tallySheet, tallySheetVersion = TallySheet.create_latest_version(
+        tallySheetId=tallySheetId,
+        tallySheetCode=TallySheetCodeEnum.PRE_41
     )
 
     tally_sheet_content = request_body.get("content")

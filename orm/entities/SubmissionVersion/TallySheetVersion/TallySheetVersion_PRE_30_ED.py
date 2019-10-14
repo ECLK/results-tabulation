@@ -9,7 +9,7 @@ from orm.entities import Area, Candidate, Party, Election, Submission, Submissio
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query, to_comma_seperated_num
+from util import get_paginated_query, to_comma_seperated_num, sqlalchemy_num_or_zero
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
@@ -170,8 +170,9 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         return db.session.query(
             non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaId,
             non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaName,
-            func.sum(non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
-                "validVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
+            ).label("validVoteCount"),
         ).group_by(
             non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaId
         ).order_by(
@@ -226,7 +227,9 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         return db.session.query(
             postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaId,
             postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaName,
-            func.sum(postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
+            ).label("validVoteCount"),
         ).group_by(
             postal_candidate_and_area_wise_valid_vote_count_subquery.c.areaId
         ).order_by(
@@ -240,11 +243,15 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         return db.session.query(
             postal_area_wise_valid_vote_count_subquery.c.areaId,
             postal_area_wise_valid_vote_count_subquery.c.areaName,
-            func.sum(postal_area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-            func.sum(postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
             func.sum(
-                postal_area_wise_valid_vote_count_subquery.c.validVoteCount +
+                sqlalchemy_num_or_zero(postal_area_wise_valid_vote_count_subquery.c.validVoteCount)
+            ).label("validVoteCount"),
+            func.sum(
                 postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+            ).label("rejectedVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(postal_area_wise_valid_vote_count_subquery.c.validVoteCount) +
+                sqlalchemy_num_or_zero(postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount)
             ).label("totalVoteCount")
         ).join(
             postal_area_wise_rejected_vote_count_subquery,
@@ -260,12 +267,15 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         return db.session.query(
             non_postal_area_wise_valid_vote_count_subquery.c.areaId,
             non_postal_area_wise_valid_vote_count_subquery.c.areaName,
-            func.sum(non_postal_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
-                "validVoteCount"),
-            func.sum(non_postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
             func.sum(
-                non_postal_area_wise_valid_vote_count_subquery.c.validVoteCount +
+                sqlalchemy_num_or_zero(non_postal_area_wise_valid_vote_count_subquery.c.validVoteCount)
+            ).label("validVoteCount"),
+            func.sum(
                 non_postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+            ).label("rejectedVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(non_postal_area_wise_valid_vote_count_subquery.c.validVoteCount) +
+                sqlalchemy_num_or_zero(non_postal_area_wise_rejected_vote_count_subquery.c.rejectedVoteCount)
             ).label("totalVoteCount")
         ).join(
             non_postal_area_wise_rejected_vote_count_subquery,
@@ -281,13 +291,15 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         return db.session.query(
             non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId,
             non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateName,
-            func.sum(non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
-                "nonPostalValidVoteCount"),
-            func.sum(postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
-                "postalValidVoteCount"),
             func.sum(
-                non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount +
-                postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount
+                sqlalchemy_num_or_zero(non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
+            ).label("nonPostalValidVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
+            ).label("postalValidVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount) +
+                sqlalchemy_num_or_zero(postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
             ).label("validVoteCount")
         ).join(
             postal_candidate_and_area_wise_valid_vote_count_subquery,
@@ -303,9 +315,15 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             self.postal_area_wise_vote_count_query()).subquery()
 
         return db.session.query(
-            func.sum(area_wise_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-            func.sum(area_wise_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
-            func.sum(area_wise_vote_count_subquery.c.totalVoteCount).label("totalVoteCount")
+            func.sum(
+                sqlalchemy_num_or_zero(area_wise_vote_count_subquery.c.validVoteCount)
+            ).label("validVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(area_wise_vote_count_subquery.c.rejectedVoteCount)
+            ).label("rejectedVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(area_wise_vote_count_subquery.c.totalVoteCount)
+            ).label("totalVoteCount")
         )
 
     @hybrid_property
@@ -448,31 +466,3 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
 
 
 Model = TallySheetVersion_PRE_30_ED_Model
-
-
-def get_all(tallySheetId):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    result = get_paginated_query(query).all()
-
-    return result
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_30_ED:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
-def create(tallySheetId):
-    result = Model(tallySheetId=tallySheetId)
-
-    return result

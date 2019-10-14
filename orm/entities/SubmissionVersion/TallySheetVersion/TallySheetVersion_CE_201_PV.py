@@ -108,31 +108,3 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
 
 
 Model = TallySheetVersion_CE_201_PV_Model
-
-
-def get_all(tallySheetId):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    result = get_paginated_query(query).all()
-
-    return result
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.CE_201_PV:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
-def create(tallySheetId):
-    result = Model(tallySheetId=tallySheetId)
-
-    return result

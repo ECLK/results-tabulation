@@ -43,8 +43,6 @@ class SubmissionVersionModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-        submission.set_latest_version(submissionVersion=self)
-
 
 Model = SubmissionVersionModel
 

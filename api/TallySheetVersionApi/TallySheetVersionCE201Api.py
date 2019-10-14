@@ -1,16 +1,17 @@
+from api import TallySheetVersionApi
 from app import db
 from auth import authorize
 from auth.AuthConstants import DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE
+from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.enums import TallySheetCodeEnum
 from util import RequestBody
 from schemas import TallySheetVersionCE201Schema, TallySheetVersionSchema
 from orm.entities.Submission import TallySheet
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201
-from exception import NotFoundException
 
 
 @authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
-    result = TallySheetVersionCE201.get_by_id(
+    result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     )
@@ -18,24 +19,12 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     return TallySheetVersionCE201Schema().dump(result).data
 
 
-@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
-def get_all(tallySheetId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = TallySheetVersionCE201.get_all(
-        tallySheetId=tallySheetId
-    )
-
-    return TallySheetVersionCE201Schema(many=True).dump(result).data
-
-
 @authorize(required_roles=[DATA_EDITOR_ROLE])
 def create(tallySheetId, body):
     request_body = RequestBody(body)
-    tallySheetVersion = TallySheetVersionCE201.create(
-        tallySheetId=tallySheetId
+    tallySheet, tallySheetVersion = TallySheet.create_latest_version(
+        tallySheetId=tallySheetId,
+        tallySheetCode=TallySheetCodeEnum.CE_201
     )
 
     tally_sheet_content = request_body.get("content")
