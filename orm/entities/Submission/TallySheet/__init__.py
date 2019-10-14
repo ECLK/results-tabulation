@@ -6,10 +6,11 @@ from sqlalchemy.orm import relationship
 
 from app import db
 from auth import get_user_access_area_ids
+from exception import NotFoundException, MethodNotAllowedException
 from orm.entities import Submission, Election
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum
-from util import get_paginated_query, get_tally_sheet_code
+from util import get_paginated_query, get_tally_sheet_code, get_tally_sheet_version_class
 
 
 class TallySheetModel(db.Model):
@@ -62,17 +63,35 @@ class TallySheetModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
+    def create_empty_version(self):
+        tallySheetVersion = get_tally_sheet_version_class(self.tallySheetCode).Model(
+            tallySheetId=self.tallySheetId
+        )
+
+        return tallySheetVersion
+
+    def create_version(self):
+        if self.locked is True:
+            raise MethodNotAllowedException("Tally sheet is Locked. (tallySheetId=%d)" % self.tallySheetId)
+
+        tallySheetVersion = create_empty_version()
+
+        return tallySheetVersion
+
 
 Model = TallySheetModel
 
 
-def get_by_id(tallySheetId):
+def get_by_id(tallySheetId, tallySheetCode=None):
     query = Model.query.join(
         Submission.Model,
         Submission.Model.submissionId == Model.tallySheetId
     ).filter(
         Model.tallySheetId == tallySheetId
     )
+
+    if tallySheetCode is not None:
+        query = query.filter(Model.tallySheetCode == tallySheetCode)
 
     # Filter by authorized areas
     user_access_area_ids: Set[int] = get_user_access_area_ids()
@@ -122,3 +141,30 @@ def create(tallySheetCode, electionId, areaId):
     )
 
     return result
+
+
+def create_empty_version(tallySheetId, tallySheetCode=None):
+    tallySheet = get_by_id(tallySheetId=tallySheetId, tallySheetCode=tallySheetCode)
+    if tallySheet is None:
+        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+
+    tallySheetVersion = tallySheet.create_empty_version()
+
+    return tallySheet, tallySheetVersion
+
+
+def create_version(tallySheetId, tallySheetCode=None):
+    tallySheet = get_by_id(tallySheetId=tallySheetId, tallySheetCode=tallySheetCode)
+    if tallySheet is None:
+        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+
+    tallySheetVersion = tallySheet.create_version()
+
+    return tallySheet, tallySheetVersion
+
+
+def create_latest_version(tallySheetId, tallySheetCode=None):
+    tallySheet, tallySheetVersion = create_version(tallySheetId, tallySheetCode)
+    tallySheet.set_latest_version(tallySheetVersion=tallySheetVersion)
+
+    return tallySheet, tallySheetVersion

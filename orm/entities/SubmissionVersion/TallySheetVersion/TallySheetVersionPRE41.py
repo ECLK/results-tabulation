@@ -9,7 +9,7 @@ from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query, to_comma_seperated_num
+from util import get_paginated_query, to_comma_seperated_num, sqlalchemy_num_or_zero
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
@@ -123,75 +123,5 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
         ).all()
 
-    def area_wise_valid_vote_count(self):
-        return db.session.query(
-            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId,
-            func.sum(TallySheetVersionRow_PRE_41.Model.count).label("validVoteCount")
-        ).filter(
-            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == self.tallySheetVersionId
-        )
-
-    def area_wise_rejected_vote_count(self):
-        return db.session.query(
-            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId,
-            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
-        ).filter(
-            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
-            TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
-        )
-
-    @hybrid_property
-    def summary(self):
-        area_wise_valid_vote_count_subquery = self.area_wise_valid_vote_count().subquery()
-        area_wise_rejected_vote_count_subquery = self.area_wise_rejected_vote_count().subquery()
-
-        return db.session.query(
-            func.count(TallySheetVersion.Model.tallySheetVersionId).label("areaCount"),
-            func.sum(area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-            func.sum(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
-            func.sum(
-                area_wise_valid_vote_count_subquery.c.validVoteCount +
-                area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
-            ).label("totalVoteCount")
-        ).join(
-            area_wise_valid_vote_count_subquery,
-            area_wise_valid_vote_count_subquery.c.tallySheetVersionId == TallySheetVersion.Model.tallySheetVersionId,
-            isouter=True
-        ).join(
-            area_wise_rejected_vote_count_subquery,
-            area_wise_rejected_vote_count_subquery.c.tallySheetVersionId == TallySheetVersion.Model.tallySheetVersionId,
-            isouter=True
-        ).filter(
-            TallySheetVersion.Model.tallySheetVersionId == self.tallySheetVersionId
-        ).one_or_none()
-
 
 Model = TallySheetVersionPRE41Model
-
-
-def get_all(tallySheetId):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    result = get_paginated_query(query).all()
-
-    return result
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_41:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
-def create(tallySheetId):
-    result = Model(tallySheetId=tallySheetId)
-
-    return result

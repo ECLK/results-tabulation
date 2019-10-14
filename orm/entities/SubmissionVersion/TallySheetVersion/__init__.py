@@ -44,14 +44,6 @@ class TallySheetVersionModel(db.Model):
         )
 
     def __init__(self, tallySheetId):
-        tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-        if tallySheet is None:
-            raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-        if tallySheet.locked is True:
-            raise MethodNotAllowedException("Tally sheet is Locked. (tallySheetId=%d)" % tallySheetId)
-        elif tallySheet.tallySheetCode is not self.tallySheetVersionCode:
-            raise NotFoundException("Invalid tally sheet. (tallySheetId=%d)" % tallySheetId)
-
         submissionVersion = SubmissionVersion.create(submissionId=tallySheetId)
 
         super(TallySheetVersionModel, self).__init__(
@@ -62,7 +54,6 @@ class TallySheetVersionModel(db.Model):
         db.session.flush()
 
     def add_invalid_vote_count(self, electionId, rejectedVoteCount, areaId=None):
-
         from orm.entities.TallySheetVersionRow import TallySheetVersionRow_RejectedVoteCount
 
         TallySheetVersionRow_RejectedVoteCount.createAreaWiseCount(
@@ -91,7 +82,13 @@ def get_all(tallySheetId, tallySheetCode=None):
     return result
 
 
-def get_by_id(tallySheetVersionId):
+def get_by_id(tallySheetId, tallySheetVersionId):
+    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    if tallySheet is None:
+        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_30_ED:
+        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
+
     result = Model.query.filter(
         Model.tallySheetVersionId == tallySheetVersionId
     ).one_or_none()
