@@ -28,7 +28,14 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
         tallySheetContent = self.content
         summary = self.summary
 
+        stamp = self.stamp
+
         content = {
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,

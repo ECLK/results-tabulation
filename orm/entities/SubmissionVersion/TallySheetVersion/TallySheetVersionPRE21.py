@@ -55,7 +55,14 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
     def html(self):
         tallySheetContent = self.content.all()
 
+        stamp = self.stamp
+
         content = {
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
             "pollingDivision": Area.get_associated_areas(
