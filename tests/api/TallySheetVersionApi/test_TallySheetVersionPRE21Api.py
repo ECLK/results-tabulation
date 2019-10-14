@@ -1,9 +1,11 @@
 import random
+from unittest.mock import patch
 
 from flask import Response
 
 from app import db
 from orm.entities.Submission.TallySheet import TallySheetModel
+from tests.test_utils import get_mock_area_ids, get_mock_stamp
 from util import get_tally_sheet_code
 
 
@@ -43,13 +45,19 @@ class TestTallySheetVersionPRE21Api:
         count = 75
         invalid_vote_category_id = 2
 
-        from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE21
+        with patch(
+                "orm.entities.Submission.TallySheet.get_user_access_area_ids") as mock_get_user_access_area_ids, patch(
+            "orm.entities.Audit.Stamp.create") as mock_stamp_create:
+            from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE21
 
-        tally_sheet_version = TallySheetVersionPRE21.create(
-            tallySheetId=tally_sheet_id)
-        tally_sheet_version.add_row(
-            count=count, invalidVoteCategoryId=invalid_vote_category_id)
-        db.session.commit()
+            mock_stamp_create.return_value = get_mock_stamp()
+            mock_get_user_access_area_ids.return_value = get_mock_area_ids()
+
+            tally_sheet_version = TallySheetVersionPRE21.create(
+                tallySheetId=tally_sheet_id)
+            tally_sheet_version.add_row(
+                count=count, invalidVoteCategoryId=invalid_vote_category_id)
+            db.session.commit()
 
         response: Response = test_client.get(
             f"/tally-sheet/{self.tally_sheet_code}/{tally_sheet_id}/version/{tally_sheet_version.tallySheetVersionId}")

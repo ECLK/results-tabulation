@@ -1,12 +1,11 @@
 import os
-from datetime import datetime
 from unittest.mock import patch
 
 import pytest
 
 from app import create_app, db
 from orm.entities import Election
-from orm.entities.Audit.Stamp import Stamp
+from tests.test_utils import get_mock_stamp
 
 
 @pytest.fixture(scope="session")
@@ -17,13 +16,7 @@ def test_client():
 
     @patch("orm.entities.Audit.Stamp.create")
     def create_test_election(mock_stamp_create):
-        mock_stamp = Stamp()
-        mock_stamp.ip = "0.0.0.0"
-        mock_stamp.createdBy = "TestAdmin"
-        mock_stamp.createdAt = datetime.now()
-        db.session.add(mock_stamp)
-        db.session.flush()
-        mock_stamp_create.return_value = mock_stamp
+        mock_stamp_create.return_value = get_mock_stamp()
 
         from orm.entities.Election.election_helper import build_presidential_election
         election = Election.create(electionName="Test Election")
