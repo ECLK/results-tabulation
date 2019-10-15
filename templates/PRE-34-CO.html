@@ -1,97 +1,6 @@
-<html>
-<head>
-    <meta name="pdfkit-page-size" content="A4"/>
-    <meta name="pdfkit-orientation" content="Landscape"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Raleway:100&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/e9b46f8997.js"></script>
+{% extends 'base.html' %}
 
-    <style>
-        .top {
-            border-top: 1px solid #000 !important;
-        }
-
-        .bottom {
-            border-bottom: 1px solid #000 !important;
-        }
-
-        .left {
-            border-left: 1px solid #000 !important;
-        }
-
-        .right {
-            border-right: 1px solid #000 !important;
-        }
-
-        .all {
-            border-top: 1px solid #000 !important;
-            border-bottom: 1px solid #000 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-margins {
-            margin-left: 10px !important;
-            margin-right: 30px !important;
-        }
-
-        .font1 {
-            font-family: serif;
-        }
-
-        .font2 {
-            font-family: serif;
-            font-size: 18;
-        }
-
-        .float-right {
-            float: right;
-        }
-
-        .bold {
-            font-weight: bold;
-        }
-
-        .no-padding {
-            padding: 0 !important;
-        }
-
-        .no-padding-left {
-            padding-left: 0 !important;
-        }
-
-        .no-padding-right {
-            padding-right: 0 !important;
-        }
-
-        .no-padding-bottom {
-            padding-bottom: 0 !important;
-        }
-
-        .group div {
-            display: inline-block;
-        }
-
-        .sub-head {
-            font-style: italic;
-            text-decoration: underline;
-        }
-
-        .indent {
-            margin-left: 20px;
-        }
-
-        .block, .block1, .block2 {
-            padding: 5px;
-        }
-
-
-    </style>
-</head>
-<body>
-
-
+{% block container %}
 <div>
     <br/>
     <table class="table table-borderless">
@@ -233,7 +142,4 @@
     </table>
 
 </div>
-
-
-</body>
-</html>
+{% endblock %}

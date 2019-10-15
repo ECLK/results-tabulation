@@ -3,6 +3,56 @@
     <meta name="pdfkit-page-size" content="B2"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        .printer-only.printer-only-header,
+        .printer-only.printer-only-footer {
+            display: none;
+        }
+
+
+        @media print {
+            .printer-only.printer-only-header,
+            .printer-only.printer-only-footer {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                position: fixed;
+                left: 0;
+                width: 100%;
+            }
+
+            .printer-only.printer-only-header {
+                border-bottom: 4px solid black;
+                top: 0;
+            }
+
+            .printer-only.printer-only-footer {
+                border-top: 4px solid black;
+                bottom: 0;
+            }
+
+            .printer-only.printer-only-header .printer-only-time-stamp,
+            .printer-only.printer-only-header .printer-only-user,
+            .printer-only.printer-only-footer .printer-only-time-stamp,
+            .printer-only.printer-only-footer .printer-only-user {
+                flex: 1;
+                padding-top: 26px;
+            }
+
+            .printer-only.printer-only-header .printer-only-user,
+            .printer-only.printer-only-footer .printer-only-user {
+                flex: 1;
+                padding-left: 50px;
+            }
+
+            .printer-only.printer-only-thead,
+            .printer-only.printer-only-tfoot {
+                height: 91px;
+            }
+        }
+    </style>
+
     <style>
         .top {
             border-top: 1px solid #000 !important;
@@ -76,52 +126,8 @@
             padding: 5px;
         }
 
-
-        .printer-only.printer-only-header,
-        .printer-only.printer-only-footer {
-            display: none;
-        }
-
-
-        @media print {
-            .printer-only.printer-only-header,
-            .printer-only.printer-only-footer {
-                display: flex;
-                flex-direction: row;
-                width: 100%;
-                position: fixed;
-                left: 0;
-                width: 100%;
-            }
-
-            .printer-only.printer-only-header {
-                border-bottom: 4px solid black;
-                top: 0;
-            }
-
-            .printer-only.printer-only-footer {
-                border-top: 4px solid black;
-                bottom: 0;
-            }
-
-            .printer-only.printer-only-header .printer-only-time-stamp,
-            .printer-only.printer-only-header .printer-only-user,
-            .printer-only.printer-only-footer .printer-only-time-stamp,
-            .printer-only.printer-only-footer .printer-only-user {
-                flex: 1;
-                padding-top: 26px;
-            }
-
-            .printer-only.printer-only-header .printer-only-user,
-            .printer-only.printer-only-footer .printer-only-user {
-                flex: 1;
-                padding-left: 50px;
-            }
-
-            .printer-only.printer-only-thead,
-            .printer-only.printer-only-tfoot {
-                height: 91px;
-            }
+        .table2-padding {
+            padding: 1px;
         }
 
     </style>
