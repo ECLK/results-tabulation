@@ -2,19 +2,19 @@ from app import db
 from auth import authorize
 from auth.AuthConstants import POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
-from orm.entities import Submission, SubmissionVersion, Area
+from orm.entities import Submission, SubmissionVersion
 from orm.entities.Submission import TallySheet
+from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_RejectedVoteCount
 from orm.enums import AreaTypeEnum, TallySheetCodeEnum
 from schemas import TallySheetVersion_PRE_30_PD_Schema, TallySheetVersionSchema
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersion_PRE_30_PD
 from sqlalchemy import func
 
 
 @authorize(
     required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
-    result = TallySheetVersion_PRE_30_PD.get_by_id(
+    result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     )
@@ -25,8 +25,9 @@ def get_by_id(tallySheetId, tallySheetVersionId):
 @authorize(
     required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
 def create(tallySheetId):
-    tallySheetVersion = TallySheetVersion_PRE_30_PD.create(
-        tallySheetId=tallySheetId
+    tallySheet, tallySheetVersion = TallySheet.create_latest_version(
+        tallySheetId=tallySheetId,
+        tallySheetCode=TallySheetCodeEnum.PRE_30_PD
     )
 
     countingCentres = tallySheetVersion.submission.area.get_associated_areas(

@@ -2,17 +2,16 @@ from app import db
 from auth import authorize, NATIONAL_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE
 from orm.entities import Submission, SubmissionVersion
 from orm.entities.Submission import TallySheet
+from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount
 from orm.enums import AreaTypeEnum, TallySheetCodeEnum
 from schemas import TallySheetVersion_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema, TallySheetVersionSchema
-from orm.entities.SubmissionVersion.TallySheetVersion import \
-    TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
 from sqlalchemy import func
 
 
 @authorize(required_roles=[NATIONAL_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
-    result = TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.get_by_id(
+    result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     )
@@ -22,8 +21,9 @@ def get_by_id(tallySheetId, tallySheetVersionId):
 
 @authorize(required_roles=[NATIONAL_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
 def create(tallySheetId):
-    tallySheetVersion = TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.create(
-        tallySheetId=tallySheetId
+    tallySheet, tallySheetVersion = TallySheet.create_latest_version(
+        tallySheetId=tallySheetId,
+        tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
     )
 
     electoralDistricts = tallySheetVersion.submission.area.get_associated_areas(

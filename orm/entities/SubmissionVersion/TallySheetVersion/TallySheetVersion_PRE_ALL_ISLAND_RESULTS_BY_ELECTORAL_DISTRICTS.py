@@ -10,7 +10,7 @@ from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, \
     TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query, to_comma_seperated_num
+from util import get_paginated_query, to_comma_seperated_num, sqlalchemy_num_or_zero
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
@@ -48,7 +48,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
         return db.session.query(
             Area.Model.areaId,
             Area.Model.areaName,
-            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount
+            ).label("rejectedVoteCount"),
         ).join(
             TallySheetVersionRow_RejectedVoteCount.Model,
             and_(
@@ -72,8 +74,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
             Candidate.Model.candidateName,
             Area.Model.areaId,
             Area.Model.areaName,
-            func.sum(TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model.count).label(
-                "validVoteCount"),
+            func.sum(
+                TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model.count
+            ).label("validVoteCount"),
         ).join(
             ElectionCandidate.Model,
             ElectionCandidate.Model.electionId == Election.Model.electionId
@@ -113,8 +116,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
         return db.session.query(
             candidate_and_area_wise_valid_vote_count_subquery.c.areaId,
             candidate_and_area_wise_valid_vote_count_subquery.c.areaName,
-            func.sum(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
-                "validVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
+            ).label("validVoteCount"),
         ).group_by(
             candidate_and_area_wise_valid_vote_count_subquery.c.areaId
         ).order_by(
@@ -128,12 +132,16 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
         return db.session.query(
             area_wise_valid_vote_count_subquery.c.areaId,
             area_wise_valid_vote_count_subquery.c.areaName,
-            func.sum(area_wise_valid_vote_count_subquery.c.validVoteCount).label(
-                "validVoteCount"),
-            func.sum(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
             func.sum(
-                area_wise_valid_vote_count_subquery.c.validVoteCount +
+                sqlalchemy_num_or_zero(area_wise_valid_vote_count_subquery.c.validVoteCount)
+            ).label(
+                "validVoteCount"),
+            func.sum(
                 area_wise_rejected_vote_count_subquery.c.rejectedVoteCount
+            ).label("rejectedVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(area_wise_valid_vote_count_subquery.c.validVoteCount) +
+                sqlalchemy_num_or_zero(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount)
             ).label("totalVoteCount")
         ).join(
             area_wise_rejected_vote_count_subquery,
@@ -150,8 +158,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
         return db.session.query(
             candidate_and_area_wise_valid_vote_count_subquery.c.candidateId,
             candidate_and_area_wise_valid_vote_count_subquery.c.candidateName,
-            func.sum(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount).label(
-                "validVoteCount")
+            func.sum(
+                sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
+            ).label("validVoteCount")
         ).group_by(
             candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
         ).group_by(
@@ -164,9 +173,15 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
         area_wise_vote_count_subquery = self.area_wise_vote_count_query().subquery()
 
         return db.session.query(
-            func.sum(area_wise_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-            func.sum(area_wise_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
-            func.sum(area_wise_vote_count_subquery.c.totalVoteCount).label("totalVoteCount")
+            func.sum(
+                sqlalchemy_num_or_zero(area_wise_vote_count_subquery.c.validVoteCount)
+            ).label("validVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(area_wise_vote_count_subquery.c.rejectedVoteCount)
+            ).label("rejectedVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(area_wise_vote_count_subquery.c.totalVoteCount)
+            ).label("totalVoteCount")
         )
 
     @hybrid_property
@@ -216,7 +231,14 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
         area_wise_vote_count_result = self.area_wise_vote_count_query().all()
         vote_count_result = self.vote_count_query().one_or_none()
 
+        stamp = self.stamp
+
         content = {
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "electoralDistricts": [],
             "data": [],
             "validVoteCounts": [],
@@ -247,8 +269,8 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
 
             data_row = []
 
-            data_row_number = candidate_wise_vote_count_result_item_index + 1
-            data_row.append(data_row_number)
+            # data_row_number = candidate_wise_vote_count_result_item_index + 1
+            # data_row.append(data_row_number)
 
             data_row.append(candidate_wise_vote_count_result_item.candidateName)
 
@@ -277,31 +299,3 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
 
 
 Model = TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model
-
-
-def get_all(tallySheetId):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    result = get_paginated_query(query).all()
-
-    return result
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
-def create(tallySheetId):
-    result = Model(tallySheetId=tallySheetId)
-
-    return result
