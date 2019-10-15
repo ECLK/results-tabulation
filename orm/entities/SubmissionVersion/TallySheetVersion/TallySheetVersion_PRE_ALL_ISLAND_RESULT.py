@@ -12,7 +12,7 @@ from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, \
     TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query, to_comma_seperated_num, to_percentage
+from util import get_paginated_query, to_comma_seperated_num, to_percentage, sqlalchemy_num_or_zero
 
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
@@ -53,9 +53,13 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             Candidate.Model.candidateName,
             Party.Model.partySymbol,
             Party.Model.partyAbbreviation,
-            func.sum(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.count).label("validVoteCount"),
+            func.sum(
+                TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.count
+            ).label("validVoteCount"),
             func.sum(
                 (TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.count / valid_vote_count_result.validVoteCount) * 100
+                # (sqlalchemy_num_or_zero(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.count) /
+                #  sqlalchemy_num_or_zero(valid_vote_count_result.validVoteCount)) * 100
             ).label("validVotePercentage")
         ).join(
             TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model,
@@ -80,7 +84,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
 
     def rejected_vote_count_query(self):
         return db.session.query(
-            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount)
+            ).label("rejectedVoteCount"),
         ).filter(
             TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId
         )
@@ -88,7 +94,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
     def valid_vote_count_query(self):
         return db.session.query(
             func.count(ElectionCandidate.Model.candidateId).label("candidateCount"),
-            func.sum(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.count).label("validVoteCount")
+            func.sum(
+                sqlalchemy_num_or_zero(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.count)
+            ).label("validVoteCount")
         ).join(
             TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model,
             and_(
@@ -106,39 +114,29 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
         valid_vote_count_result = self.valid_vote_count_query().one_or_none()
         rejected_vote_count_result = self.rejected_vote_count_query().one_or_none()
 
-        return {
+        total_vote_count = valid_vote_count_result.validVoteCount
+        if rejected_vote_count_result.rejectedVoteCount is not None:
+            total_vote_count = total_vote_count + rejected_vote_count_result.rejectedVoteCount
+
+        vote_count_result = {
             "validVoteCount": valid_vote_count_result.validVoteCount,
-            "validVoteCountPercentage": (valid_vote_count_result.validVoteCount / registered_voters_count) * 100,
+            "validVoteCountPercentage": None,
             "rejectedVoteCount": rejected_vote_count_result.rejectedVoteCount,
-            "rejectedVoteCountPercentage": (rejected_vote_count_result.rejectedVoteCount /
-                                            registered_voters_count) * 100,
-            "totalVoteCount": (valid_vote_count_result.validVoteCount + rejected_vote_count_result.rejectedVoteCount),
-            "totalVoteCountPercentage": ((valid_vote_count_result.validVoteCount +
-                                          rejected_vote_count_result.rejectedVoteCount) / registered_voters_count) * 100
+            "rejectedVoteCountPercentage": None,
+            "totalVoteCount": total_vote_count,
+            "totalVoteCountPercentage": None
         }
 
-        # valid_and_rejected_vote_count_subquery = self.valid_vote_count_query().union(
-        #     self.rejected_vote_count_query()
-        # ).subquery()
-        #
-        # return db.session.query(
-        #     func.sum(valid_and_rejected_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
-        #     func.sum(
-        #         (valid_and_rejected_vote_count_subquery.c.validVoteCount / registered_voters_count) * 100
-        #     ).label("validVoteCountPercentage"),
-        #     func.sum(valid_and_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
-        #     func.sum(
-        #         (valid_and_rejected_vote_count_subquery.c.rejectedVoteCount / registered_voters_count) * 100
-        #     ).label("validVoteCountPercentage"),
-        #     func.sum(
-        #         valid_and_rejected_vote_count_subquery.c.validVoteCount +
-        #         valid_and_rejected_vote_count_subquery.c.rejectedVoteCount
-        #     ).label("totalVoteCount"),
-        #     func.sum(
-        #         ((valid_and_rejected_vote_count_subquery.c.validVoteCount +
-        #           valid_and_rejected_vote_count_subquery.c.rejectedVoteCount) / registered_voters_count) * 100
-        #     ).label("totalVoteCountPercentage")
-        # )
+        if registered_voters_count > 0:
+            vote_count_result["validVoteCountPercentage"] = (valid_vote_count_result.validVoteCount /
+                                                             registered_voters_count) * 100
+            vote_count_result["totalVoteCountPercentage"] = (total_vote_count / registered_voters_count) * 100
+
+            if rejected_vote_count_result.rejectedVoteCount is not None:
+                vote_count_result["rejectedVoteCountPercentage"] = (rejected_vote_count_result.rejectedVoteCount /
+                                                                    registered_voters_count) * 100
+
+        return vote_count_result
 
     @hybrid_property
     def content(self):
@@ -169,10 +167,16 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
 
     def html(self):
         tallySheetContent = self.content
+        stamp = self.stamp
 
         content = {
-            "date": self.submissionVersion.createdAt.strftime("%d/%m/%Y"),
-            "time": self.submissionVersion.createdAt.strftime("%H:%M:%S %p"),
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
+            "date": stamp.createdAt.strftime("%d/%m/%Y"),
+            "time": stamp.createdAt.strftime("%H:%M:%S %p"),
             "data": [
             ],
             "validVoteCounts": [0, 0],
@@ -210,47 +214,6 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             to_percentage(vote_count_result["totalVoteCountPercentage"])
         ]
 
-        # for row_index in range(len(tallySheetContent)):
-        #     row = tallySheetContent[row_index]
-        #     if row.count is not None:
-        #         content["data"].append([
-        #             row.candidateName,
-        #             row.partyAbbreviation,
-        #             row.count,
-        #             0
-        #         ])
-        #         content["validVotes"][0] = content["validVotes"][0] + row.count
-        #     else:
-        #         content["data"].append([
-        #             row.candidateName,
-        #             row.partyAbbreviation,
-        #             "",
-        #             0
-        #         ])
-
-        # Calculate the candidate wise votes percentage based on total valid votes.
-        # for row_index in range(len(content["data"])):
-        #     if content["data"][row_index][2] is not "":
-        #         content["data"][row_index][3] = round(
-        #             (content["data"][row_index][2] / content["validVotes"][0]) * 100, 2
-        #         )
-        #         content["data"][row_index][2] = f'{content["data"][row_index][2]:,}'
-
-        # TODO append the rejected votes count.
-        # content["rejectedVotes"][0] = 0  # TODO
-
-        # # Calculate the total polled.
-        # content["totalPolled"][0] = content["validVotes"][0] + content["rejectedVotes"][0]
-        #
-        # # Calculate the percentage of valid votes based on total registered voters.
-        # content["validVotes"][1] = round((content["validVotes"][0] / content["registeredVoters"][0]) * 100, 2)
-        #
-        # # Calculate the percentage of rejected votes based on total registered voters.
-        # content["rejectedVotes"][1] = round((content["rejectedVotes"][0] / content["registeredVoters"][0]) * 100, 2)
-        #
-        # # Calculate the percentage of total polled based on total registered voters.
-        # content["totalPolled"][1] = round((content["totalPolled"][0] / content["registeredVoters"][0]) * 100, 2)
-
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS.html',
             content=content
@@ -260,31 +223,3 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
 
 
 Model = TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model
-
-
-def get_all(tallySheetId):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    result = get_paginated_query(query).all()
-
-    return result
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
-def create(tallySheetId):
-    result = Model(tallySheetId=tallySheetId)
-
-    return result
