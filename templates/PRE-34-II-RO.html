@@ -1,259 +1,184 @@
-<html>
-<head>
-    <meta name="pdfkit-page-size" content="A4"/>
-    <meta name="pdfkit-orientation" content="Landscape"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Raleway:100&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/e9b46f8997.js"></script>
+{% extends 'base.html' %}
 
-    <style>
-        .top {
-            border-top: 1px solid #000 !important;
-        }
-
-        .bottom {
-            border-bottom: 1px solid #000 !important;
-        }
-
-        .left {
-            border-left: 1px solid #000 !important;
-        }
-
-        .right {
-            border-right: 1px solid #000 !important;
-        }
-
-        .all {
-            border-top: 1px solid #000 !important;
-            border-bottom: 1px solid #000 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .table-margins {
-            margin-left: 10px !important;
-            margin-right: 30px !important;
-        }
-
-        .font1 {
-            font-family: serif;
-        }
-
-        .font2 {
-            font-family: serif;
-            font-size: 18;
-        }
-
-        .float-right {
-            float: right;
-        }
-
-        .bold {
-            font-weight: bold;
-        }
-
-        .no-padding {
-            padding: 0 !important;
-        }
-
-        .no-padding-left {
-            padding-left: 0 !important;
-        }
-
-        .no-padding-right {
-            padding-right: 0 !important;
-        }
-
-        .no-padding-bottom {
-            padding-bottom: 0 !important;
-        }
-
-        .group div {
-            display: inline-block;
-        }
-
-        .sub-head {
-            font-style: italic;
-            text-decoration: underline;
-        }
-
-        .indent {
-            margin-left: 20px;
-        }
-
-        .block, .block1, .block2 {
-            padding: 5px;
-        }
-
-
-    </style>
-</head>
-<body>
-
-
+{% block container %}
 <div>
     <br/>
     <table class="table table-borderless">
         <tbody>
-            <tr>
-                <td colspan="9" style="text-align:center; padding-left:160px;" class="no-padding-bottom bold">PRESIDENTIAL ELECTION - 2019</td>
-                <td colspan="2" class="font1 no-padding-bottom bold" style="text-align:center;"><span class="all" style="font-size: 20px !important; padding: 5px;"><strong>PRE/34/II/RO</strong></span></td>
-            </tr>
-            <tr>
-                <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">
-                  Statement of the Returning Officer under Section 60, showing the Second and Third Preferences counted in favour of each of the remaining two candidates according to <br/>
-                  Polling Division, Postal Votes Counting Centers
-              </td>
-            </tr>
-            <tr>
-                <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 1 (Name): <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
-            </tr>
-            <tr>
-                <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 2 (Name): <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
-            </tr>
-            <tr>
-                <td colspan="11">No and Name of the Electorate:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
-            </tr>
+        <tr>
+            <td colspan="9" style="text-align:center; padding-left:160px;" class="no-padding-bottom bold">PRESIDENTIAL
+                ELECTION - 2019
+            </td>
+            <td colspan="2" class="font1 no-padding-bottom bold" style="text-align:center;"><span class="all"
+                                                                                                  style="font-size: 20px !important; padding: 5px;"><strong>PRE/34/II/RO</strong></span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">
+                Statement of the Returning Officer under Section 60, showing the Second and Third Preferences counted in
+                favour of each of the remaining two candidates according to <br/>
+                Polling Division, Postal Votes Counting Centers
+            </td>
+        </tr>
+        <tr>
+            <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 1 (Name): <span
+                    style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+        </tr>
+        <tr>
+            <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 2 (Name): <span
+                    style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+        </tr>
+        <tr>
+            <td colspan="11">No and Name of the Electorate:- <span
+                    style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+        </tr>
 
-            <tr style="text-align:center; font-size:14px;" class="bold">
-                <td rowspan="2" class="all"></td>
-                <td rowspan="2" class="all" style="vertical-align:middle;">Name of the Polling Division</td>
-                <td colspan="3" class="all">(1)<br/>
-                  In favour of<br/>
-                  <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span><br/>
-                  Name of Candidate No. 1
-                </td>
-                <td colspan="3" class="all">(2)<br/>
-                  In favour of<br/>
-                  <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span><br/>
-                  Name of Candidate No. 2
-                </td>
-                <td rowspan="2" class="all" style="vertical-align:middle;">(3)<br/>
-                  Ballot Papers "Not Counted" Section 58(2)
-                </td>
-                <td rowspan="2" class="all" style="vertical-align:middle;">(4)<br/>
-                  Remaining Ballot Papers
-                </td>
-                <td rowspan="2" class="all" style="vertical-align:middle;">(5)<br/>Total<br/><br/>
-                  (3) + (4)
-                </td>
-            </tr>
+        <tr style="text-align:center; font-size:14px;" class="bold">
+            <td rowspan="2" class="all"></td>
+            <td rowspan="2" class="all" style="vertical-align:middle;">Name of the Polling Division</td>
+            <td colspan="3" class="all">(1)<br/>
+                In favour of<br/>
+                <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span><br/>
+                Name of Candidate No. 1
+            </td>
+            <td colspan="3" class="all">(2)<br/>
+                In favour of<br/>
+                <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span><br/>
+                Name of Candidate No. 2
+            </td>
+            <td rowspan="2" class="all" style="vertical-align:middle;">(3)<br/>
+                Ballot Papers "Not Counted" Section 58(2)
+            </td>
+            <td rowspan="2" class="all" style="vertical-align:middle;">(4)<br/>
+                Remaining Ballot Papers
+            </td>
+            <td rowspan="2" class="all" style="vertical-align:middle;">(5)<br/>Total<br/><br/>
+                (3) + (4)
+            </td>
+        </tr>
 
-            <tr style="text-align:center; font-size:14px;" class="bold">
-                <td class="all">No of 2<sup>nd</sup> preferences</td>
-                <td class="all">No of 3<sup>rd</sup> preferences</td>
-                <td class="all">Total</td>
-                <td class="all">No of 2<sup>nd</sup> preferences</td>
-                <td class="all">No of 3<sup>rd</sup> preferences</td>
-                <td class="all">Total</td>
-            </tr>
+        <tr style="text-align:center; font-size:14px;" class="bold">
+            <td class="all">No of 2<sup>nd</sup> preferences</td>
+            <td class="all">No of 3<sup>rd</sup> preferences</td>
+            <td class="all">Total</td>
+            <td class="all">No of 2<sup>nd</sup> preferences</td>
+            <td class="all">No of 3<sup>rd</sup> preferences</td>
+            <td class="all">Total</td>
+        </tr>
 
+        <!--loop this tr block and populate with data -->
+        <tr style="font-size:14px;">
+            <td class="all" style="text-align:right;"></td>
+            <td class="all"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+        </tr>
+        <!--loop this tr block -->
+
+        <tr style="font-size:14px;">
+            <td class="all" style="text-align:right;"></td>
+            <td class="all bold">Postal Voting Counting Centers</td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+        </tr>
+
+        <tr style="font-size:14px;">
+            <td class="all" style="text-align:right;"></td>
+            <td class="all"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+        </tr>
+
+
+        <tr style="font-size:14px;">
+            <td class="all bold" colspan="2">TOTAL IN FIGURES</td>
             <!--loop this tr block and populate with data -->
-            <tr style="font-size:14px;">
-                <td class="all" style="text-align:right;"></td>
-                <td class="all"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-            </tr>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
             <!--loop this tr block -->
+        </tr>
 
-            <tr style="font-size:14px;">
-                <td class="all" style="text-align:right;"></td>
-                <td class="all bold">Postal Voting Counting Centers</td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-            </tr>
+        <tr style="font-size:14px;">
+            <td class="all bold" colspan="2" style="vertical-align:middle;">TOTAL IN WORDS</td>
+            <td class="all bold" colspan="3" style="text-align:justify;">The Total No. of Preferences in favour of
+                Candidate No. 1<br/>
+                (Name:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>)<br/>
+                is <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>
+            </td>
 
-            <tr style="font-size:14px;">
-                <td class="all" style="text-align:right;"></td>
-                <td class="all"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-            </tr>
+            <td class="all bold" colspan="3" style="text-align:justify;">The Total No. of Preferences in favour of
+                Candidate No. 2<br/>
+                (Name:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>)<br/>
+                is <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>
+            </td>
+            <td class="all"></td>
+            <td class="all"></td>
+            <td class="all"></td>
+        </tr>
 
+        <tr style="font-size:14px;">
+            <td colspan="6" class="no-padding-bottom">Witness: Assistant Returning Officer:-
+                (Name).................................................
+            </td>
+            <td colspan="2" class="no-padding-bottom">Signature............................</td>
+            <td colspan="3" class="no-padding-bottom">
+                ....................................................................
+            </td>
+        </tr>
 
-            <tr style="font-size:14px;">
-                <td class="all bold" colspan="2">TOTAL IN FIGURES</td>
-                <!--loop this tr block and populate with data -->
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <!--loop this tr block -->
-            </tr>
-
-            <tr style="font-size:14px;">
-                <td class="all bold" colspan="2" style="vertical-align:middle;">TOTAL IN WORDS</td>
-                <td class="all bold" colspan="3" style="text-align:justify;">The Total No. of Preferences in favour of Candidate No. 1<br/>
-                  (Name:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>)<br/>
-                  is <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>
-                </td>
-
-                <td class="all bold" colspan="3" style="text-align:justify;">The Total No. of Preferences in favour of Candidate No. 2<br/>
-                  (Name:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>)<br/>
-                  is <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>
-                </td>
-                <td class="all"></td>
-                <td class="all"></td>
-                <td class="all"></td>
-            </tr>
-
-            <tr style="font-size:14px;">
-                <td colspan="6" class="no-padding-bottom">Witness: Assistant Returning Officer:- (Name).................................................</td>
-                <td colspan="2" class="no-padding-bottom">Signature............................</td>
-                <td colspan="3" class="no-padding-bottom">....................................................................</td>
-            </tr>
-
-            <tr style="font-size:14px;">
-                <td colspan="6">
-                  Prepared by : .................................................................<br/><br/>
-                  Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : .................................................................<br/><br/>
-                  Signature &nbsp;&nbsp;&nbsp; : .................................................................<br/><br/>
-                  Checked by &nbsp;: .................................................................<br/><br/>
-                  Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : .................................................................<br/><br/>
-                  Signature &nbsp;&nbsp;&nbsp; : .................................................................<br/><br/>
-                </td>
-                <td colspan="2"></td>
-                <td colspan="3">
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returning Officer (Signature)<br/><br/>
-                  Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : ..............................................<br/><br/>
-                  Electoral District : ..............................................
-                </td>
-            </tr>
+        <tr style="font-size:14px;">
+            <td colspan="6">
+                Prepared by : .................................................................<br/><br/>
+                Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :
+                .................................................................<br/><br/>
+                Signature &nbsp;&nbsp;&nbsp; :
+                .................................................................<br/><br/>
+                Checked by &nbsp;: .................................................................<br/><br/>
+                Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :
+                .................................................................<br/><br/>
+                Signature &nbsp;&nbsp;&nbsp; :
+                .................................................................<br/><br/>
+            </td>
+            <td colspan="2"></td>
+            <td colspan="3">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returning Officer (Signature)<br/><br/>
+                Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :
+                ..............................................<br/><br/>
+                Electoral District : ..............................................
+            </td>
+        </tr>
 
 
         </tbody>
     </table>
 
 </div>
-
-
-</body>
-</html>
+{% endblock %}
