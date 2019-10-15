@@ -5,12 +5,12 @@ from app import db
 from sqlalchemy.orm import relationship
 
 from orm.enums import TallySheetCodeEnum
-from util import get_paginated_query, get_tally_sheet_code_string
+from util import get_paginated_query, get_tally_sheet_code_string, get_tally_sheet_version_class
 
 from orm.entities import SubmissionVersion
 from orm.entities.Submission import TallySheet
 
-from exception import NotFoundException, MethodNotAllowedException
+from exception import NotFoundException
 from flask import request
 
 
@@ -87,11 +87,10 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
     if tallySheet is None:
         raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_30_ED:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
 
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
+    result = get_tally_sheet_version_class(tallySheet.tallySheetCode).Model.query.filter(
+        Model.tallySheetVersionId == tallySheetVersionId,
+        Model.tallySheetId == tallySheetId
     ).one_or_none()
 
     return result
