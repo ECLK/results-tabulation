@@ -23,6 +23,7 @@ class SubmissionVersionModel(db.Model):
 
     createdBy = association_proxy("historyVersion", "createdBy")
     createdAt = association_proxy("historyVersion", "createdAt")
+    stamp = association_proxy("historyVersion", "historyStamp")
 
     def set_locked(self):
         self.submission.set_locked_version(self.submissionVersionId)
@@ -42,8 +43,6 @@ class SubmissionVersionModel(db.Model):
         )
         db.session.add(self)
         db.session.flush()
-
-        submission.set_latest_version(submissionVersion=self)
 
 
 Model = SubmissionVersionModel

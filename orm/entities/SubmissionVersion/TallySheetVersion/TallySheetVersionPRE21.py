@@ -55,7 +55,14 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
     def html(self):
         tallySheetContent = self.content.all()
 
+        stamp = self.stamp
+
         content = {
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
             "pollingDivision": Area.get_associated_areas(
@@ -90,31 +97,3 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
 
 
 Model = TallySheetVersionPRE21Model
-
-
-def get_all(tallySheetId):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    result = get_paginated_query(query).all()
-
-    return result
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_21:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
-def create(tallySheetId):
-    result = Model(tallySheetId=tallySheetId)
-
-    return result
