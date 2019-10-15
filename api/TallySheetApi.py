@@ -56,7 +56,7 @@ def lock(tallySheetId, body):
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
 
-    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId)
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId, tallySheetId=tallySheetId)
 
     if tally_sheet_version is None:
         raise NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)
