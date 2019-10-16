@@ -1,18 +1,11 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
-
 from app import db
-from exception import NotFoundException
-from orm.entities import Candidate, Party, Area
-from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
+from orm.entities import Area
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201_PV_CC
-from util import get_paginated_query, to_empty_string_or_value
-
-from orm.entities.Submission import TallySheet
+from util import to_empty_string_or_value
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
-from sqlalchemy import and_
 
 
 class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):

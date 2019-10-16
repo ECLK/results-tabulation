@@ -1,20 +1,13 @@
-import datetime
-
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
 from sqlalchemy import func
-
 from app import db
-from exception import NotFoundException
-from orm.entities import Candidate, Party, Area
+from orm.entities import Candidate, Party
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, \
     TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query, to_comma_seperated_num, to_percentage, sqlalchemy_num_or_zero
-
-from orm.entities.Submission import TallySheet
+from util import to_comma_seperated_num, to_percentage, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
 

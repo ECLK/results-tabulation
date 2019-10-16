@@ -4,7 +4,6 @@ from app import db
 from sqlalchemy.orm import relationship
 from orm.entities import Party
 from orm.entities.Election import ElectionCandidate
-from util import get_paginated_query
 
 
 class ElectionPartyModel(db.Model):
@@ -61,9 +60,7 @@ def get_all(electionId=None, partyId=None):
     if partyId is not None:
         query = query.filter(Model.partyId == partyId)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def get_by_id(electionId, partyId):

@@ -1,15 +1,11 @@
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
-
 from app import db
 from sqlalchemy.orm import relationship
-
 from orm.enums import TallySheetCodeEnum
-from util import get_paginated_query, get_tally_sheet_code_string, get_tally_sheet_version_class
-
+from util import get_tally_sheet_code_string, get_tally_sheet_version_class
 from orm.entities import SubmissionVersion
 from orm.entities.Submission import TallySheet
-
 from exception import NotFoundException
 from flask import request
 
@@ -78,9 +74,7 @@ def get_all(tallySheetId, tallySheetCode=None):
     if tallySheetCode is not None:
         query = query.filter(Model.tallySheetCode == tallySheetCode)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def get_by_id(tallySheetId, tallySheetVersionId):

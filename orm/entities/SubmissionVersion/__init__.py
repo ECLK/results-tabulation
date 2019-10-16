@@ -1,14 +1,8 @@
-from sqlalchemy.ext.hybrid import hybrid_property
-
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
-
-from util import get_paginated_query
-
 from orm.entities import Submission
 from orm.entities.History import HistoryVersion
-
 from exception import NotFoundException
 
 
@@ -54,9 +48,7 @@ def get_all(submissionId, submissionCode=None):
     if submissionCode is not None:
         query = query.filter(Model.submissionCode == submissionCode)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def create(submissionId):

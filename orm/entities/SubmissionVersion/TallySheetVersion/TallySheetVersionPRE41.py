@@ -1,17 +1,11 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
-from sqlalchemy import func
-
 from app import db
-from exception import NotFoundException, ForbiddenException
 from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_RejectedVoteCount
-from util import get_paginated_query, to_comma_seperated_num, sqlalchemy_num_or_zero
-
-from orm.entities.Submission import TallySheet
+from util import to_comma_seperated_num
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
 
