@@ -2,10 +2,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import and_, cast, Integer
 
 from orm.entities.Invoice import InvoiceStationaryItem
-from util import get_paginated_query
 from app import db
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.associationproxy import association_proxy
 from orm.enums import StationaryItemTypeEnum, BallotTypeEnum
 from orm.entities import StationaryItem, Election, Invoice
 
@@ -92,8 +90,7 @@ def get_all(ballotId=None, stationaryItemId=None, electionId=None, ballotType=No
 
     query = query.order_by(cast(Model.ballotId, Integer))
 
-    result = get_paginated_query(query).all()
-    return result
+    return query
 
 
 def create(ballotId, electionId, ballotType=None):

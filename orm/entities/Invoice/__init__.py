@@ -1,5 +1,4 @@
 from orm.entities.Invoice import InvoiceStationaryItem
-from util import get_paginated_query
 from datetime import datetime
 from app import db
 from sqlalchemy.orm import relationship
@@ -78,9 +77,7 @@ def get_all(electionId=None, issuingOfficeId=None, receivingOfficeId=None, issue
     if issuedTo is not None:
         query = query.filter(Model.issuedTo == issuedTo)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def get_by_id(invoiceId):

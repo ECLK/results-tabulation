@@ -1,15 +1,8 @@
-from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
-
 from app import db
 from sqlalchemy.orm import relationship
-from sqlalchemy import func
-
 from exception import MethodNotAllowedException
-from util import get_paginated_query
-
 from orm.entities import Election, Office, Proof, History, SubmissionVersion, Area
-
 from orm.enums import SubmissionTypeEnum, ProofTypeEnum
 
 
@@ -104,9 +97,7 @@ def get_all(electionId=None, officeId=None):
     if officeId is not None:
         query = query.filter(Model.areaId == officeId)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def get_submission_proof_type(submissionType):

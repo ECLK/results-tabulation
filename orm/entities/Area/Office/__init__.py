@@ -1,12 +1,6 @@
-from sqlalchemy.ext.associationproxy import association_proxy
-
-from app import db
-from sqlalchemy.orm import relationship, synonym
-from orm.enums import OfficeTypeEnum, ElectorateTypeEnum, AreaTypeEnum, AreaCategoryEnum
-from orm.entities import Election, Electorate, Area
-from sqlalchemy.ext.hybrid import hybrid_property
-
-from util import get_paginated_query
+from sqlalchemy.orm import synonym
+from orm.enums import AreaTypeEnum
+from orm.entities import Area
 
 
 class OfficeModel(Area.Model):
@@ -58,6 +52,4 @@ def get_all(electionId=None, officeName=None, parentOfficeId=None, officeType=No
     if parentOfficeId is not None:
         query = query.filter(Area.AreaAreaModel.parentAreaId == parentOfficeId)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query

@@ -6,10 +6,13 @@ from exception import NotFoundException
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetVersionSchema
+from util import get_paginated_query
 
 
 def get_all(tallySheetId):
     result = TallySheetVersion.get_all(tallySheetId=tallySheetId)
+
+    result = get_paginated_query(result).all()
 
     return TallySheetVersionSchema(many=True).dump(result).data
 

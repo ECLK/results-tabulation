@@ -1,13 +1,10 @@
-from sqlalchemy.ext.associationproxy import association_proxy
-
 from app import db
 from sqlalchemy.orm import relationship, aliased
 from sqlalchemy import and_, func, or_
 
-from orm.enums import AreaTypeEnum, AreaCategoryEnum
+from orm.enums import AreaTypeEnum
 from orm.entities import Election
 from sqlalchemy.ext.hybrid import hybrid_property
-from util import get_paginated_query, get_array, get_area_type
 
 
 class AreaModel(db.Model):
@@ -395,9 +392,7 @@ def get_all(election_id=None, area_name=None, associated_area_id=None, area_type
 
     query = query.order_by(Model.areaId)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def get_by_id(areaId):

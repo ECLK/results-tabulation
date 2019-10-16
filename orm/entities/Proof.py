@@ -3,7 +3,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from orm.entities.Audit import Stamp
-from util import get_paginated_query
 from orm.entities.IO import File, Folder
 from orm.entities.IO.Folder import FolderFile
 from orm.enums import ProofTypeEnum
@@ -31,9 +30,8 @@ Model = ProofModel
 
 def get_all():
     query = Model.query
-    result = get_paginated_query(query).all()
 
-    return result
+    return query
 
 
 def create(proofType):

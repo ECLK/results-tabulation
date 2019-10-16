@@ -8,7 +8,7 @@ from orm.entities.Submission import TallySheet
 from orm.entities.Submission.TallySheet import Model as TallySheetModel
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetSchema
-from util import RequestBody
+from util import RequestBody, get_paginated_query
 
 
 @authorize(required_roles=ALL_ROLES)
@@ -18,6 +18,8 @@ def getAll(electionId=None, areaId=None, tallySheetCode=None):
         areaId=areaId,
         tallySheetCode=tallySheetCode
     )
+
+    result = get_paginated_query(result).all()
 
     return TallySheetSchema(many=True).dump(result).data
 
@@ -56,7 +58,8 @@ def lock(tallySheetId, body):
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
 
-    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId, tallySheetId=tallySheetId)
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
+                                                      tallySheetId=tallySheetId)
 
     if tally_sheet_version is None:
         raise NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)

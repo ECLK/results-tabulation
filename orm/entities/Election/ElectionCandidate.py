@@ -1,9 +1,6 @@
-from sqlalchemy.ext.associationproxy import association_proxy
-
 from app import db
 from sqlalchemy.orm import relationship
 from orm.entities import Candidate, Party
-from util import get_paginated_query
 
 
 class ElectionCandidateModel(db.Model):
@@ -44,9 +41,7 @@ def get_all(electionId=None, candidateId=None):
     if candidateId is not None:
         query = query.filter(Model.candidateId == candidateId)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def get_by_id(electionId, candidateId):
