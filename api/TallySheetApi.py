@@ -5,7 +5,6 @@ from auth import authorize
 from auth.AuthConstants import ALL_ROLES
 from exception import NotFoundException
 from orm.entities.Submission import TallySheet
-from orm.entities.Submission.TallySheet import Model as TallySheetModel
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetSchema
 from util import RequestBody, get_paginated_query
@@ -26,7 +25,7 @@ def getAll(electionId=None, areaId=None, tallySheetCode=None):
 
 @authorize(required_roles=ALL_ROLES)
 def get_by_id(tallySheetId):
-    tally_sheet = TallySheetModel.get_by_id(tallySheetId=tallySheetId)
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
         NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
