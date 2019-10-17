@@ -1,4 +1,3 @@
-from util import get_paginated_query
 from datetime import datetime
 from app import db
 from sqlalchemy.orm import relationship
@@ -68,9 +67,7 @@ def get_all(invoiceId=None, stationaryItemId=None, received=None, receivedFrom=N
     if receivedOffice is not None:
         query = query.filter(Model.receivedOffice == receivedOffice)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def create(invoiceId, stationaryItemId):

@@ -5,7 +5,6 @@ from app import db
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
 from orm.enums import VoteTypeEnum
-from util import get_paginated_query
 
 
 class ElectionModel(db.Model):
@@ -133,9 +132,7 @@ def get_all():
         Model.parentElectionId == None
     )
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def get_by_id(electionId):

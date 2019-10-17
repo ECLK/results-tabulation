@@ -10,7 +10,7 @@ from exception import NotFoundException, MethodNotAllowedException
 from orm.entities import Submission, Election
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum
-from util import get_paginated_query, get_tally_sheet_code, get_tally_sheet_version_class
+from util import get_tally_sheet_code, get_tally_sheet_version_class
 
 
 class TallySheetModel(db.Model):
@@ -128,9 +128,7 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None):
     user_access_area_ids: Set[int] = get_user_access_area_ids()
     query = query.filter(Submission.Model.areaId.in_(user_access_area_ids))
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def create(tallySheetCode, electionId, areaId):

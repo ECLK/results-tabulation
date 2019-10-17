@@ -1,13 +1,14 @@
 from app import db
-from util import RequestBody
+from util import RequestBody, get_paginated_query
 
 from schemas import BallotBookSchema as Schema
 from orm.entities import BallotBook
 
 
 def get_all():
-    result = BallotBook.get_all(
-    )
+    result = BallotBook.get_all()
+
+    result = get_paginated_query(result).all()
 
     return Schema(many=True).dump(result).data
 

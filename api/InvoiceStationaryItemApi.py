@@ -1,5 +1,5 @@
 from app import db
-from util import RequestBody
+from util import RequestBody, get_paginated_query
 from schemas import Invoice_StationaryItem_Schema as Schema
 from orm.entities.Invoice import InvoiceStationaryItem
 import connexion
@@ -15,6 +15,8 @@ def get_all(invoiceId=None, stationaryItemId=None, received=None, receivedFrom=N
         receivedBy=receivedBy,
         receivedOffice=receivedOffice
     )
+
+    result = get_paginated_query(result).all()
 
     return Schema(many=True).dump(result).data
 

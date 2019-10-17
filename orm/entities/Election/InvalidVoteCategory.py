@@ -1,6 +1,5 @@
 from app import db
 from sqlalchemy.orm import relationship
-from util import get_paginated_query
 
 
 class InvalidVoteCategoryModel(db.Model):
@@ -37,9 +36,7 @@ def get_all(electionId=None, categoryDescription=None):
     if categoryDescription is not None:
         query = query.filter(Model.categoryDescription == categoryDescription)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def get_by_id(electionId, partyId):

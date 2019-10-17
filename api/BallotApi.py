@@ -1,5 +1,5 @@
 from app import db
-from util import RequestBody, get_ballot_type
+from util import RequestBody, get_ballot_type, get_paginated_query
 
 from schemas import Ballot_Schema as Schema
 from orm.entities import Ballot
@@ -12,6 +12,8 @@ def get_all(ballotId=None, ballotType=None, electionId=None):
         ballotType=ballotType,
         electionId=electionId
     )
+
+    result = get_paginated_query(result).all()
 
     return Schema(many=True).dump(result).data
 
