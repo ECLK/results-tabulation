@@ -163,6 +163,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
         stamp = self.stamp
 
         content = {
+            "election": {
+                "electionname": self.submission.election.electionName
+            },
             "stamp": {
                 "createdAt": stamp.createdAt,
                 "createdBy": stamp.createdBy,

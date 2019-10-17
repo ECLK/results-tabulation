@@ -25,6 +25,9 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
         stamp = self.stamp
 
         content = {
+            "election": {
+                "electionname": self.submission.election.electionName
+            },
             "stamp": {
                 "createdAt": stamp.createdAt,
                 "createdBy": stamp.createdBy,
