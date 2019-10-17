@@ -1,16 +1,11 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
-
 from app import db
-from exception import NotFoundException
-from orm.entities import Candidate, Party, Area
-from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
+from orm.entities import Area
+from orm.entities.Election import InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_21
-from util import get_paginated_query, to_empty_string_or_value
-
-from orm.entities.Submission import TallySheet
+from util import to_empty_string_or_value
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
 
@@ -58,6 +53,9 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
         stamp = self.stamp
 
         content = {
+            "election": {
+                "electionname": self.submission.election.electionName
+            },
             "stamp": {
                 "createdAt": stamp.createdAt,
                 "createdBy": stamp.createdBy,

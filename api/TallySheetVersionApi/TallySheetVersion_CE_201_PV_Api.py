@@ -4,7 +4,7 @@ from auth import authorize
 from auth.AuthConstants import DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum
-from util import RequestBody
+from util import RequestBody, get_paginated_query
 from schemas import TallySheetVersion_CE_201_PV_Schema, TallySheetVersionSchema
 from orm.entities.Submission import TallySheet
 from exception import NotFoundException
@@ -29,6 +29,8 @@ def get_all(tallySheetId):
     result = TallySheetVersion.get_all(
         tallySheetId=tallySheetId
     )
+
+    result = get_paginated_query(result).all()
 
     return TallySheetVersion_CE_201_PV_Schema(many=True).dump(result).data
 

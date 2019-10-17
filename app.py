@@ -1,5 +1,7 @@
 import os
+import traceback
 import connexion
+import sys
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
@@ -12,7 +14,8 @@ ma = Marshmallow()
 
 
 def render_exception(exception):
-    print(exception)
+    error_string = traceback.format_exc()
+    print(error_string)
 
     db.session.rollback()
 
@@ -24,9 +27,11 @@ def render_exception(exception):
 
 
 def render_connexion_problem_exception(connexion_exception):
-    print(connexion_exception)
+    error_string = traceback.format_exc()
+    print(error_string)
 
     db.session.rollback()
+
     return json.dumps({
         "detail": connexion_exception.detail,
         "status": connexion_exception.status,

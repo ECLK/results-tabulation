@@ -1,15 +1,14 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import and_, Integer, func
+from sqlalchemy import and_, Integer
 from sqlalchemy.sql.expression import cast
 
 from exception import NotFoundException
 from orm.entities.Invoice import InvoiceStationaryItem
-from util import get_paginated_query
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from orm.enums import StationaryItemTypeEnum
-from orm.entities import StationaryItem, Election, Ballot, Invoice
+from orm.entities import StationaryItem, Ballot, Invoice
 
 
 class BallotBookModel(db.Model):
@@ -112,9 +111,7 @@ def get_all(ballotId=None):
     #         Model.ballotId.like(ballotId)
     #     )
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def create(electionId, fromBallotId, toBallotId):

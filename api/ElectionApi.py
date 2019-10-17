@@ -5,11 +5,13 @@ from auth import ADMIN_ROLE, authorize
 from orm.entities.Election.election_helper import get_root_token, build_presidential_election
 from orm.entities import Election
 from schemas import ElectionSchema as Schema
-from util import RequestBody
+from util import RequestBody, get_paginated_query
 
 
 def get_all():
     result = Election.get_all()
+
+    result = get_paginated_query(result).all()
 
     return Schema(many=True).dump(result).data
 
