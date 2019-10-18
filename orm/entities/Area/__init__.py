@@ -71,7 +71,7 @@ class AreaModel(db.Model):
         return self
 
     def get_associated_areas_query(self, areaType, electionId=None):
-        return get_associated_areas_query(area=self, areaType=areaType, electionId=electionId)
+        return get_associated_areas_query(areas=[self], areaType=areaType, electionId=electionId)
 
     def get_associated_areas(self, areaType, electionId=None):
         return self.get_associated_areas_query(areaType, electionId).all()
@@ -98,7 +98,7 @@ class AreaModel(db.Model):
 
     @hybrid_property
     def registeredVotersCount(self):
-        polling_stations_subquery = get_associated_areas_query(self, areaType=AreaTypeEnum.PollingStation).subquery()
+        polling_stations_subquery = get_associated_areas_query(areas=[self], areaType=AreaTypeEnum.PollingStation).subquery()
 
         total_registered_voters_count = db.session.query(
             func.sum(polling_stations_subquery.c._registeredVotersCount)
@@ -241,7 +241,7 @@ def get_presidential_area_map_query():
     return presidential_area_map_query
 
 
-def get_associated_areas_query(area, areaType, electionId=None):
+def get_associated_areas_query(areas, areaType, electionId=None):
     presidential_area_map_sub_query = get_presidential_area_map_query().subquery()
     election = Election.get_by_id(electionId=electionId)
 
@@ -300,41 +300,46 @@ def get_associated_areas_query(area, areaType, electionId=None):
 
     query = query.group_by(AreaModel.areaId)
 
-    if area.areaType is AreaTypeEnum.PollingStation:
+    filtered_polling_stations = [area.areaId for area in areas if area.areaType == AreaTypeEnum.PollingStation]
+    filtered_counting_centres = [area.areaId for area in areas if area.areaType == AreaTypeEnum.CountingCentre]
+    filtered_district_centres = [area.areaId for area in areas if area.areaType == AreaTypeEnum.DistrictCentre]
+    filtered_election_commissions = [area.areaId for area in areas if area.areaType == AreaTypeEnum.ElectionCommission]
+    filtered_polling_districts = [area.areaId for area in areas if area.areaType == AreaTypeEnum.PollingDistrict]
+    filtered_polling_divisions = [area.areaId for area in areas if area.areaType == AreaTypeEnum.PollingDivision]
+    filtered_electoral_districts = [area.areaId for area in areas if area.areaType == AreaTypeEnum.ElectoralDistrict]
+    filtered_countries = [area.areaId for area in areas if area.areaType == AreaTypeEnum.Country]
+
+    if len(filtered_polling_stations) > 0:
         query = query.filter(
-            presidential_area_map_sub_query.c.pollingStationId == area.areaId
+            presidential_area_map_sub_query.c.pollingStationId.in_(filtered_polling_stations)
         )
-    elif area.areaType is AreaTypeEnum.CountingCentre:
+    elif len(filtered_counting_centres) > 0:
         query = query.filter(
-            presidential_area_map_sub_query.c.countingCentreId == area.areaId
+            presidential_area_map_sub_query.c.countingCentreId.in_(filtered_counting_centres)
         )
-    elif area.areaType is AreaTypeEnum.DistrictCentre:
+    elif len(filtered_district_centres) > 0:
         query = query.filter(
-            presidential_area_map_sub_query.c.districtCentreId == area.areaId
+            presidential_area_map_sub_query.c.districtCentreId.in_(filtered_district_centres)
         )
-    elif area.areaType is AreaTypeEnum.ElectionCommission:
+    elif len(filtered_election_commissions) > 0:
         query = query.filter(
-            presidential_area_map_sub_query.c.electionCommissionId == area.areaId
+            presidential_area_map_sub_query.c.electionCommissionId.in_(filtered_election_commissions)
         )
-    elif area.areaType is AreaTypeEnum.PollingDistrict:
+    elif len(filtered_polling_districts) > 0:
         query = query.filter(
-            presidential_area_map_sub_query.c.pollingDistrictId == area.areaId
+            presidential_area_map_sub_query.c.pollingDistrictId.in_(filtered_polling_districts)
         )
-    elif area.areaType is AreaTypeEnum.PollingDivision:
+    elif len(filtered_polling_divisions) > 0:
         query = query.filter(
-            presidential_area_map_sub_query.c.pollingDivisionId == area.areaId
+            presidential_area_map_sub_query.c.pollingDivisionId.in_(filtered_polling_divisions)
         )
-    elif area.areaType is AreaTypeEnum.ElectoralDistrict:
+    elif len(filtered_electoral_districts) > 0:
         query = query.filter(
-            presidential_area_map_sub_query.c.electoralDistrictId == area.areaId
+            presidential_area_map_sub_query.c.electoralDistrictId.in_(filtered_electoral_districts)
         )
-    elif area.areaType is AreaTypeEnum.Country:
+    elif len(filtered_countries) > 0:
         query = query.filter(
-            presidential_area_map_sub_query.c.countryId == area.areaId
-        )
-    elif area.areaType is AreaTypeEnum.PostalVoteCountingCentre:
-        query = query.filter(
-            presidential_area_map_sub_query.c.postalVoteCountingCentreId == area.areaId
+            presidential_area_map_sub_query.c.countryId.in_(filtered_countries)
         )
 
     if electionId is not None:
@@ -353,7 +358,7 @@ def get_associated_areas_query(area, areaType, electionId=None):
 
 
 def get_associated_areas(area, areaType, electionId=None):
-    result = get_associated_areas_query(area=area, areaType=areaType, electionId=electionId).all()
+    result = get_associated_areas_query(areas=[area], areaType=areaType, electionId=electionId).all()
 
     return result
 
@@ -372,7 +377,7 @@ def get_all(election_id=None, area_name=None, associated_area_id=None, area_type
 
     if associated_area_id is not None and area_type is not None:
         associated_area = get_by_id(areaId=associated_area_id)
-        query = get_associated_areas_query(area=associated_area, areaType=area_type, electionId=election_id)
+        query = get_associated_areas_query(areas=[associated_area], areaType=area_type, electionId=election_id)
     else:
         query = Model.query
 
