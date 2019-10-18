@@ -24,6 +24,11 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
 
         stamp = self.stamp
 
+        polling_divisions = Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDivision)
+        polling_division_name = ""
+        if len(polling_divisions) > 0:
+            polling_division_name = polling_divisions[0].areaName
+
         content = {
             "election": {
                 "electionName": self.submission.election.get_official_name()
@@ -36,8 +41,7 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": Area.get_associated_areas(
-                self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "pollingDivision": polling_division_name,
             "countingCentre": self.submission.area.areaName,
             "pollingDistrictNos": ", ".join([
                 pollingDistrict.areaName for pollingDistrict in
