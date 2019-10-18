@@ -74,38 +74,64 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
 
         for row_index in range(len(tallySheetContent)):
             row = tallySheetContent[row_index]
+
+            area = None
+            if isinstance(row, TallySheetVersionRow_CE_201.Model):
+                area = row.area
+            elif isinstance(row, Area.Model):
+                area = row
+
             data_row = []
             content["data"].append(data_row)
 
-            # polling division
+            # polling districts
             data_row.append(
                 ", ".join(
-                    area.areaName for area in row.area.get_associated_areas(AreaTypeEnum.PollingDistrict)
+                    pollingDistrict.areaName for pollingDistrict in
+                    area.get_associated_areas(AreaTypeEnum.PollingDistrict)
                 )
             )
 
             # polling station
             data_row.append(row.areaName)
 
-            # three ballot boxes
-            for ballotBoxIndex in range(3):
-                if ballotBoxIndex < len(row.ballotBoxesReceived):
-                    data_row.append(row.ballotBoxesReceived[ballotBoxIndex])
-                else:
+            if isinstance(row, TallySheetVersionRow_CE_201.Model):
+                # three ballot boxes
+                for ballotBoxIndex in range(3):
+                    if ballotBoxIndex < len(row.ballotBoxesReceived):
+                        data_row.append(row.ballotBoxesReceived[ballotBoxIndex])
+                    else:
+                        data_row.append("")
+
+                data_row.append(to_empty_string_or_value(row.ballotsReceived))
+                data_row.append(to_empty_string_or_value(row.ballotsSpoilt))
+                data_row.append(to_empty_string_or_value(row.ballotsIssued))
+                data_row.append(to_empty_string_or_value(row.ballotsUnused))
+
+                data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBallotPaperAccount))
+                data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBoxCount))
+                data_row.append(row.ordinaryBallotCountFromBoxCount - row.ordinaryBallotCountFromBallotPaperAccount)
+
+                data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBallotPaperAccount))
+                data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBoxCount))
+                data_row.append(row.tenderedBallotCountFromBoxCount - row.tenderedBallotCountFromBallotPaperAccount)
+            elif isinstance(row, Area.Model):
+                # three ballot boxes
+                for ballotBoxIndex in range(3):
                     data_row.append("")
 
-            data_row.append(to_empty_string_or_value(row.ballotsReceived))
-            data_row.append(to_empty_string_or_value(row.ballotsSpoilt))
-            data_row.append(to_empty_string_or_value(row.ballotsIssued))
-            data_row.append(to_empty_string_or_value(row.ballotsUnused))
+                data_row.append("")
+                data_row.append("")
+                data_row.append("")
+                data_row.append("")
 
-            data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBallotPaperAccount))
-            data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBoxCount))
-            data_row.append(abs(row.ordinaryBallotCountFromBallotPaperAccount - row.ordinaryBallotCountFromBoxCount))
+                data_row.append("")
+                data_row.append("")
+                data_row.append("")
 
-            data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBallotPaperAccount))
-            data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBoxCount))
-            data_row.append(abs(row.tenderedBallotCountFromBallotPaperAccount - row.tenderedBallotCountFromBoxCount))
+                data_row.append("")
+                data_row.append("")
+                data_row.append("")
 
         html = render_template(
             'CE-201.html',
@@ -118,20 +144,33 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
     def content(self):
         pollingStations = self.submission.area.get_associated_areas(AreaTypeEnum.PollingStation)
 
+        result = []
+
+        for pollingStation in pollingStations:
+            row = db.session.query(
+                TallySheetVersionRow_CE_201.Model
+            ).filter(
+                TallySheetVersionRow_CE_201.Model.areaId == pollingStation.areaId,
+                TallySheetVersionRow_CE_201.Model.tallySheetVersionId == self.tallySheetVersionId
+            ).one_or_none()
+
+            result.append(row if row is not None else pollingStation)
+
         # TODO
-        result = db.session.query(
-            TallySheetVersionRow_CE_201.Model
-        ).join(
-            Area.Model,
-            and_(
-                TallySheetVersionRow_CE_201.Model.areaId == Area.Model.areaId,
-                Area.Model.areaId.in_([area.areaId for area in pollingStations])
-            )
-        ).filter(
-            TallySheetVersionRow_CE_201.Model.tallySheetVersionId == self.tallySheetVersionId
-        ).order_by(
-            Area.Model.areaId
-        ).all()
+        # result = db.session.query(
+        #     TallySheetVersionRow_CE_201.Model
+        # ).join(
+        #     Area.Model,
+        #     and_(
+        #         TallySheetVersionRow_CE_201.Model.areaId == Area.Model.areaId,
+        #         Area.Model.areaId.in_([area.areaId for area in pollingStations])
+        #     )
+        # ).filter(
+        #     Area.Model.areaId.in_([area.areaId for area in pollingStations]),
+        #     TallySheetVersionRow_CE_201.Model.tallySheetVersionId == self.tallySheetVersionId
+        # ).order_by(
+        #     Area.Model.areaId
+        # ).all()
 
         return result
 
