@@ -14,7 +14,7 @@
                     NUMBER OF BALLOT PAPERS IN EACH BALLOT BOX</span></u></td>
         </tr>
         <tr class="font2">
-            <td colspan="7"><strong>Name of Election:</strong> {{content.electionName}}</td>
+            <td colspan="7"><strong>Name of Election:</strong> {{content.election.electionName}}</td>
             <td colspan="8"><strong>Electoral District:</strong> {{content.electoralDistrict}}</td>
         </tr>
         <tr class="font2">
@@ -44,19 +44,21 @@
         </tr>
         {% for row in content.data %}
         <tr>
-            <td class="all align-middle" style="text-align: right;">{{row[0]}}</td>
+            <td class="all align-middle">{{row[0]}}</td>
             <td class="all align-middle">{{row[1]}}</td>
-            <td class="all align-middle" colspan="3" style="text-align: right;">{{row[2]}}</td>
-            <td class="all align-middle" style="text-align: right;">{{row[3]}}</td>
-            <td class="all align-middle" style="text-align: right;">{{row[4]}}</td>
-            <td class="all align-middle" style="text-align: right;">{{row[5]}}</td>
-            <td class="all align-middle" style="text-align: right;">{{row[6]}}</td>
+            <td class="all align-middle">{{row[2]}}</td>
+            <td class="all align-middle">{{row[3]}}</td>
+            <td class="all align-middle">{{row[4]}}</td>
+            <td class="all align-middle">{{row[5]}}</td>
+            <td class="all align-middle">{{row[6]}}</td>
             <td class="all align-middle">{{row[7]}}</td>
             <td class="all align-middle">{{row[8]}}</td>
             <td class="all align-middle">{{row[9]}}</td>
             <td class="all align-middle">{{row[10]}}</td>
             <td class="all align-middle">{{row[11]}}</td>
             <td class="all align-middle">{{row[12]}}</td>
+            <td class="all align-middle">{{row[13]}}</td>
+            <td class="all align-middle">{{row[14]}}</td>
         </tr>
         {% endfor %}
 
