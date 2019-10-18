@@ -372,7 +372,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
 
         content = {
             "election": {
-                "electionname": self.submission.election.electionName
+                "electionName": self.submission.election.get_official_name()
             },
             "stamp": {
                 "createdAt": stamp.createdAt,

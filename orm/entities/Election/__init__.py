@@ -112,6 +112,12 @@ class ElectionModel(db.Model):
         dataset = File.createFromFileSource(fileSource=fileSource)
         self.invalidVoteCategoriesDatasetId = dataset.fileId
 
+    def get_official_name(self):
+        if self.parentElectionId is None:
+            return self.electionName
+        else:
+            return self.parentElection.get_official_name()
+
 
 Model = ElectionModel
 

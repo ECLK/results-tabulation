@@ -230,7 +230,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
 
         content = {
             "election": {
-                "electionname": self.submission.election.electionName
+                "electionName": self.submission.election.get_official_name()
             },
             "stamp": {
                 "createdAt": stamp.createdAt,

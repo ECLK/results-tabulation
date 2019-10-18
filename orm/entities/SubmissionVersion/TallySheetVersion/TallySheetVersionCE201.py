@@ -48,7 +48,7 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
 
         content = {
             "election": {
-                "electionname": self.submission.election.electionName
+                "electionName": self.submission.election.get_official_name()
             },
             "stamp": {
                 "createdAt": stamp.createdAt,
@@ -57,7 +57,6 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
             },
             "date": date.today().strftime("%B %d, %Y"),
             "time": datetime.now().strftime("%H:%M:%S"),
-            "electionName": self.submission.election.electionName,
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
             "pollingDivision": Area.get_associated_areas(
