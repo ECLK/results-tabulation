@@ -97,8 +97,18 @@ class AreaModel(db.Model):
         return get_associated_areas(self, AreaTypeEnum.DistrictCentre)
 
     @hybrid_property
+    def pollingDistricts(self):
+        # TODO review
+        # Sending the list of polling districts only for polling stations.
+        if self.areaType is AreaTypeEnum.PollingStation:
+            return get_associated_areas(self, AreaTypeEnum.PollingDistrict)
+        else:
+            return []
+
+    @hybrid_property
     def registeredVotersCount(self):
-        polling_stations_subquery = get_associated_areas_query(areas=[self], areaType=AreaTypeEnum.PollingStation).subquery()
+        polling_stations_subquery = get_associated_areas_query(areas=[self],
+                                                               areaType=AreaTypeEnum.PollingStation).subquery()
 
         total_registered_voters_count = db.session.query(
             func.sum(polling_stations_subquery.c._registeredVotersCount)
