@@ -279,30 +279,54 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             non_postal_area_wise_valid_vote_count_subquery.c.areaId
         )
 
-    def candidate_wise_vote_count(self):
+    def non_postal_candidate_wise_vote_count(self):
         non_postal_candidate_and_area_wise_valid_vote_count_subquery = self.non_postal_candidate_and_area_wise_valid_vote_count_query().subquery()
-        postal_candidate_and_area_wise_valid_vote_count_subquery = self.postal_candidate_and_area_wise_valid_vote_count_query().subquery()
 
         return db.session.query(
             non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId,
             non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateName,
             func.sum(
                 sqlalchemy_num_or_zero(non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
-            ).label("nonPostalValidVoteCount"),
+            ).label("validVoteCount")
+        ).group_by(
+            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
+        )
+
+    def postal_candidate_wise_vote_count(self):
+        postal_candidate_and_area_wise_valid_vote_count_subquery = self.postal_candidate_and_area_wise_valid_vote_count_query().subquery()
+
+        return db.session.query(
+            postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId,
+            postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateName,
             func.sum(
-                sqlalchemy_num_or_zero(postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
-            ).label("postalValidVoteCount"),
-            func.sum(
-                sqlalchemy_num_or_zero(non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount) +
                 sqlalchemy_num_or_zero(postal_candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
             ).label("validVoteCount")
+        ).group_by(
+            postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
+        )
+
+    def candidate_wise_vote_count(self):
+        non_postal_candidate_wise_vote_count_subquery = self.non_postal_candidate_wise_vote_count().subquery()
+        postal_candidate_wise_vote_count_subquery = self.postal_candidate_wise_vote_count().subquery()
+
+        return db.session.query(
+            non_postal_candidate_wise_vote_count_subquery.c.candidateId,
+            non_postal_candidate_wise_vote_count_subquery.c.candidateName,
+            func.sum(
+                sqlalchemy_num_or_zero(non_postal_candidate_wise_vote_count_subquery.c.validVoteCount)
+            ).label("nonPostalValidVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(postal_candidate_wise_vote_count_subquery.c.validVoteCount)
+            ).label("postalValidVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(non_postal_candidate_wise_vote_count_subquery.c.validVoteCount) +
+                sqlalchemy_num_or_zero(postal_candidate_wise_vote_count_subquery.c.validVoteCount)
+            ).label("validVoteCount")
         ).join(
-            postal_candidate_and_area_wise_valid_vote_count_subquery,
-            postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId == non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
+            postal_candidate_wise_vote_count_subquery,
+            postal_candidate_wise_vote_count_subquery.c.candidateId == non_postal_candidate_wise_vote_count_subquery.c.candidateId
         ).group_by(
-            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
-        ).group_by(
-            non_postal_candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
+            non_postal_candidate_wise_vote_count_subquery.c.candidateId
         )
 
     def vote_count_query(self):
