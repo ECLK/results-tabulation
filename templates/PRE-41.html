@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block container %}
-<div>
+<div class="pre-41">
     <table class="table table-borderless font1">
         <tbody>
         <tr>
@@ -22,7 +22,7 @@
             <td class="no-padding-bottom"></td>
             <td colspan="4" class="right top bottom bold no-padding-left no-padding-bottom">
                 <span style="font-size: 1.3rem">1981 අංක 15 දරන ජනාධිපතිවරයා තෝරාපත් කර ගැනීම පිළිබඳ පනත</span><br/>
-                Tamil</br>
+                1981 ஆம் ஆண்டின் 15 ஆம் இலக்க சனாதிபதித் தேர்தல்கள் சட்டம்</br>
                 <h5 class="font1 bold">{{content.title}}</h5>
             </td>
         </tr>
@@ -30,7 +30,7 @@
             <td></td>
             <td colspan="4" class="right font1 bold no-padding-left">
                 එක් එක් අපේක්ෂකයාට දෙන ලද ඡන්ද සංඛ්‍යාව පිළිබඳවූ ගණන් කිරීමේ නිලධාරීයාගේ ලිඛිත ප්‍රකාශය 51(7) වන වගන්තිය<br/>
-                Tamil</br>
+                ஒவ்வொரு வேட்பாளருக்கும் அளிக்கப்பட்டுள்ள வாக்குகளின் எண்ணிக்கை சம்பந்தமாக வாக்கெண்ணும் அலுவலரின் எழுத்துமூல வெளிப்படுத்துகை - 51(7) ஆம் பிரவு</br>
                 Written Statement of the Counting Officer of the Number of Votes given to each Candidate - Section 51(7)
             </td>
         </tr>
@@ -40,7 +40,7 @@
                 <div class="font1 bold group">
                     <div>
                         මැතිවරණ කොට්ඨාසයේ අංකය හා නම <br/>
-                        tamil<br/>
+                        தேர்தல் மாவட்டத்தின் இலக்கமும் பெயரும்<br/>
                         No. and Name of Electoral District
                     </div>
                     <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
@@ -53,7 +53,7 @@
                 <div class="font1 bold group">
                     <div>
                         ඡන්ද ප්‍රදේශය<br/>
-                        tamil<br/>
+                        வாக்கெடுப்புப் பிரிவு<br/>
                         Polling Division
                     </div>
                     <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
@@ -68,7 +68,7 @@
                 <div class="font1 bold group">
                     <div>
                         ඡන්ද කොට්ඨාස අංකය<br/>
-                        tamil<br/>
+                        வாக்கெடுப்பு மாவட்டத்தின் இலக்கம்<br/>
                         Polling District Nos.
                     </div>
                     <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
@@ -111,8 +111,8 @@
                 Symbol
             </th>
             <th class="left right top bottom no-padding">
-                <span style="font-size: 15px;">ගණන් කරන ලද ඡන්ද සංඛ්‍යාව වචනයෙන්</span><br/>
-                tamil<br/>
+                <span style="font-size: 15px;">ගණන් කළ ඡන්ද සංඛ්‍යාව - වචනයෙන්</span><br/>
+                எண்ணப்பட்ட வாக்குகளின் எண்ணிக்கை - சொற்களில்<br/>
                 Number of Votes Counted in Words
             </th>
             <th class="left right top bottom no-padding">
@@ -136,7 +136,7 @@
             <td class="left right top bottom" style="text-align:right">{{row[0]}}</td>
             <td class="left right top bottom">{{row[1]}}</td>
             <td class="left right top bottom">{{row[2]}}</td>
-            <td class="left right top bottom">{{row[3]}}</td>
+            <td class="left right top bottom" style="text-transform: capitalize;">{{row[3]}}</td>
             <td class="left right top bottom" style="text-align:right">{{row[4]}}</td>
             <td class="left right top bottom">{{row[5]}}</td>
             <td class="left right top bottom"></td>
@@ -147,12 +147,12 @@
             <td class="left right top bottom" style="text-align:right">{{content.total}}</td>
         </tr>
         <tr>
-            <td colspan="4" align="right" class="font1 bold">ප්‍රතික්ෂේප කරන ලද ඡන්ද සංඛ්‍යාව / tamil / Rejected Votes
+            <td colspan="4" align="right" class="font1 bold">ප්‍රතික්ෂේපිත ඡන්ද / நிராகரிக்கப்பட்ட வாக்குகள் / Rejected Votes
             </td>
             <td class="left right top bottom" style="text-align:right">{{content.rejectedVotes}}</td>
         </tr>
         <tr>
-            <td colspan="4" align="right" class="font1 bold">මුළු එකතුව / tamil / Grand Total</td>
+            <td colspan="4" align="right" class="font1 bold">මුළු එකතුව / முழு மொத்தம் / Grand Total</td>
             <td class="left right top bottom" style="text-align:right">{{content.grandTotal}}</td>
         </tr>
         <tr>
@@ -162,7 +162,7 @@
         <tr>
             <td></td>
             <td colspan="4" class="font1 bold no-padding-left no-padding-top no-padding-bottom">
-                නිවැරදි බවට සහතික කරන ලදි / tamil / Certified Correct
+                නිවැරදි බවට සහතික කළා / சரியென உறுதிப்பட்டது / Certified Correct
             </td>
         </tr>
         <tr>
@@ -184,7 +184,7 @@
                 <div class="font1 bold group">
                     <div>
                         ගණන් කිරීමේ නිලධාරියාගේ<br/>
-                        tamil<br/>
+                        வாக்கெண்ணும் அலுவலரின்<br/>
                         Counting Officer's
                     </div>
                     <div class="bracket" style="font-size: 155px; font-weight: normal;">}</div>
@@ -201,8 +201,8 @@
             <td colspan="4" class="no-padding-left no-padding-top no-padding-bottom">
                 <div class="font1 bold group">
                     <div>
-                        සාක්ෂි : සහකාර තේරීම්භාර නිලධාරී<br/>
-                        tamil<br/>
+                        සාක්ෂිකරු: සහකාර තේරීම් භාර නිලධාරී<br/>
+                        சாட்சி: உதவி தெரிவத்தாட்சி அலுவலர்<br/>
                         Witness: Assistant Returning Officer
                     </div>
                     <div class="bracket" style="font-size: 155px; font-weight: normal;">}</div>
