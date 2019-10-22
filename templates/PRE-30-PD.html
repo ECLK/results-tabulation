@@ -53,7 +53,7 @@
         {% for row in content.data %}
         <tr>
             {% for cell in row %}
-            <td class="left right top bottom text-right">{{cell}}</td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}">{{cell}}</td>
             {% endfor %}
             <td class="left right top bottom"></td>
         </tr>

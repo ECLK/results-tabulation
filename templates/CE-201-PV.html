@@ -76,9 +76,9 @@
 
         {% for row in content.data %}
         <tr>
-            <td class="left right top bottom" style="text-align:right;">{{row[0]}}</td>
-            <td class="left right top bottom" style="text-align:right;">{{row[1]}}</td>
-            <td class="left right top bottom" style="text-align:right;">{{row[2]}}</td>
+            <td class="left right top bottom {%if row[0]=="" %}missing-value{% endif %}" style="text-align:right;">{{row[0]}}</td>
+            <td class="left right top bottom {%if row[1]=="" %}missing-value{% endif %}" style="text-align:right;">{{row[1]}}</td>
+            <td class="left right top bottom {%if row[2]=="" %}missing-value{% endif %}" style="text-align:right;">{{row[2]}}</td>
         </tr>
         {% endfor %}
 
