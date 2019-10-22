@@ -34,7 +34,7 @@
         {% for row in content.data %}
         <tr>
             {% for cell in row %}
-            <td class="left right top bottom">{{cell}}</td>
+            <td class="left right top bottom {%if cell=="" %}missing-value{% endif %}">{{cell}}</td>
             {% endfor %}
         </tr>
         {% endfor %}
