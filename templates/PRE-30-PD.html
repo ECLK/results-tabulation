@@ -68,7 +68,7 @@
                 No. of Valid Votes
             </th>
             {% for validVoteCount in content.validVoteCounts %}
-            <td class="left right top bottom text-right">{{validVoteCount}}</td>
+            <td class="left right top bottom text-right {%if validVoteCount=="" %}missing-value{% endif %}">{{validVoteCount}}</td>
             {% endfor %}
         </tr>
 
@@ -77,7 +77,7 @@
                 No. of Rejected Votes
             </th>
             {% for rejectedVoteCount in content.rejectedVoteCounts %}
-            <td class="left right top bottom text-right">{{rejectedVoteCount}}</td>
+            <td class="left right top bottom text-right {%if rejectedVoteCount=="" %}missing-value{% endif %}">{{rejectedVoteCount}}</td>
             {% endfor %}
         </tr>
 
@@ -87,7 +87,7 @@
                 <small>(Including Rejected)</small>
             </th>
             {% for totalVoteCount in content.totalVoteCounts %}
-            <td class="left right top bottom text-right">{{totalVoteCount}}</td>
+            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
 
