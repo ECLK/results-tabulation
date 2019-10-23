@@ -1,0 +1,174 @@
+/* for printing */
+.printer-only.printer-only-header,
+.printer-only.printer-only-footer {
+    display: none;
+}
+
+@media print {
+    .printer-only.printer-only-header,
+    .printer-only.printer-only-footer {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        position: fixed;
+        left: 0;
+        width: 100%;
+    }
+
+    .printer-only.printer-only-header {
+        border-bottom: 4px solid black;
+        top: 0;
+    }
+
+    .printer-only.printer-only-footer {
+        border-top: 4px solid black;
+        bottom: 0;
+    }
+
+    .printer-only.printer-only-header .printer-only-time-stamp,
+    .printer-only.printer-only-header .printer-only-user,
+    .printer-only.printer-only-footer .printer-only-time-stamp,
+    .printer-only.printer-only-footer .printer-only-user {
+        flex: 1;
+        padding-top: 26px;
+    }
+
+    .printer-only.printer-only-header .printer-only-user,
+    .printer-only.printer-only-footer .printer-only-user {
+        flex: 1;
+        padding-left: 50px;
+    }
+
+    .printer-only.printer-only-thead,
+    .printer-only.printer-only-tfoot {
+        height: 91px;
+    }
+}
+
+/* common styles for all reports */
+.top {
+    border-top: 1px solid #000 !important;
+}
+
+.bottom {
+    border-bottom: 1px solid #000 !important;
+}
+
+.left {
+    border-left: 1px solid #000 !important;
+}
+
+.right {
+    border-right: 1px solid #000 !important;
+}
+
+.all {
+    border-top: 1px solid #000 !important;
+    border-bottom: 1px solid #000 !important;
+    border-left: 1px solid #000 !important;
+    border-right: 1px solid #000 !important;
+}
+
+.font1 {
+    font-family: serif;
+}
+
+.float-right {
+    float: right !important;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.no-padding {
+    padding: 0 !important;
+}
+
+.no-padding-left {
+    padding-left: 0 !important;
+}
+
+.no-padding-right {
+    padding-right: 0 !important;
+}
+
+.no-padding-bottom {
+    padding-bottom: 0 !important;
+}
+
+.no-padding-top {
+    padding-top: 0 !important;
+}
+
+.group div {
+    display: inline-block;
+}
+
+.sub-head {
+    font-style: italic;
+    text-decoration: underline;
+}
+
+.indent {
+    margin-left: 20px;
+}
+
+.block, .block1, .block2 {
+    padding: 5px;
+}
+
+.table2-padding {
+    padding: 1px;
+}
+
+/* styles for pre-41*/
+.pre-41 .top-thick {
+    border-top: 4px solid #000 !important;
+}
+
+.pre-41 .bottom-thick {
+    border-bottom: 4px solid #000 !important;
+}
+
+.pre-41 .dotted-line {
+    border-bottom: 1px dotted #000;
+}
+
+.pre-41 .group {
+    display: table;
+}
+
+.pre-41 .group div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.pre-41 .bracket {
+    font-family: 'Raleway', sans-serif;
+}
+
+.pre-41 .counting-hall {
+    float: right;
+    width: 100%;
+}
+
+.pre-41 .counting-hall div {
+    display: inline-block;
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.pre-41 .counting-hall div h3 {
+    margin: 0;
+}
+
+.pre-41 .fa-caret-right, .fa-caret-left {
+    font-size: 25px;
+}
+
+/* pre-all-island */
+.pre-all-island .report-header span {
+    display: block;
+    margin-bottom: 5px;
+}
