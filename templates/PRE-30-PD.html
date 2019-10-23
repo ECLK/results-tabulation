@@ -1,118 +1,41 @@
-<html>
-<head>
-       <meta name="pdfkit-page-size" content="B2"/>
-    <meta name="pdfkit-orientation" content="Landscape"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+{% extends 'base.html' %}
 
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-    <style>
-        .top {
-            border-top: 1px solid #000 !important;
-        }
-
-        .bottom {
-            border-bottom: 1px solid #000 !important;
-        }
-
-        .left {
-            border-left: 1px solid #000 !important;
-        }
-
-        .right {
-            border-right: 1px solid #000 !important;
-        }
-
-        .all {
-            border-top: 1px solid #000 !important;
-            border-bottom: 1px solid #000 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-        .font1 {
-            font-family: serif;
-        }
-
-        .float-right {
-            float: right;
-        }
-
-        .bold {
-            font-weight: bold;
-        }
-
-        .no-padding {
-            padding: 0 !important;
-        }
-
-        .no-padding-left {
-            padding-left: 0 !important;
-        }
-
-        .no-padding-right {
-            padding-right: 0 !important;
-        }
-
-        .no-padding-bottom {
-            padding-bottom: 0 !important;
-        }
-
-        .group div {
-            display: inline-block;
-        }
-
-        .sub-head {
-            font-style: italic;
-            text-decoration: underline;
-        }
-
-        .indent {
-            margin-left: 20px;
-        }
-
-        /* .group span {
-            margin: 5px 0;
-        } */
-
-        .block, .block1, .block2 {
-            padding: 5px;
-        }
-
-
-    </style>
-</head>
-<body>
-
+{% block container %}
 <div class="font1">
-    <div class="bottom" style="margin-bottom:5px;"><i>Note : This report should be prepared on the basis of reports submitted by Counting Officers under Section 51(7)</i></div>
+    <div class="bottom" style="margin-bottom:5px;">
+        <i>Note : This report should be prepared on the basis of reports submitted by Counting Officers under Section
+            51(7)</i>
+    </div>
     <table class="table table-borderless">
         <tbody>
-            <tr>
-                <td></td>
-                <td class="bold no-padding-left no-padding-right" colspan="3">
-                    PRESIDENTIAL ELECTION - 08.01.2015
-                    <br/>Detailed Statement of Returning Officer on the number of Votes cast in favour of each Candidate according to the Polling Divisiona and Centers for Postal Votes Counting - Section 55(1)
-                </td>
-                <td class="no-padding-left no-padding-right" colspan="2">
-                    <div class="all float-right"><h1 class="bold">{{content.tallySheetCode}}</h1></div>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td colspan="4" class="no-padding-left no-padding-right">
-                  <div class="all" style="width: fit-content; padding: 5px;">
-                      <span class="bold">Name of the Electorate :</span> {{content.electoralDistrict}}
-                  </div>
-                </td>
-                <td class="no-padding-left no-padding-right" colspan="2">
-                        <div class="all float-right"  style="width: fit-content; padding: 5px;">
-                                <span class="bold">Polling Division :</span> {{content.pollingDivisions}}
-                        </div>
-                </td>                
-            </tr>
+        <tr>
+            <td></td>
+            <td class="bold no-padding-left no-padding-right" colspan="3">
+                {{content.election.electionName}}
+                <br/>Detailed Statement of Returning Officer on the number of Votes cast in favour of each Candidate
+                according to the Polling Divisiona and Centers for Postal Votes Counting - Section 55(1)
+            </td>
+            <td class="no-padding-left no-padding-right" colspan="2">
+                <div class="all float-right"><h1 class="bold">{{content.tallySheetCode}}</h1></div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="4" class="no-padding-left no-padding-right">
+                <div class="all" style="width: fit-content; padding: 5px;">
+                    <span class="bold">Name of the Electorate :</span> {{content.electoralDistrict}}
+                </div>
+            </td>
+            <td class="no-padding-left no-padding-right" colspan="2">
+                <div class="all float-right" style="width: fit-content; padding: 5px;">
+                    <span class="bold">Polling Division :</span> {{content.pollingDivision}}
+                </div>
+            </td>
+        </tr>
 
-<div>
+        </tbody>
+    </table>
+
     <table class="table table-borderless">
         <tbody>
         <tr>
@@ -130,7 +53,7 @@
         {% for row in content.data %}
         <tr>
             {% for cell in row %}
-            <td class="left right top bottom">{{cell}}</td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}">{{cell}}</td>
             {% endfor %}
             <td class="left right top bottom"></td>
         </tr>
@@ -144,8 +67,8 @@
             <th colspan="2" class="text-right">
                 No. of Valid Votes
             </th>
-            {% for validVoteCount in content.validVotes %}
-            <td class="left right top bottom">{{validVoteCount}}</td>
+            {% for validVoteCount in content.validVoteCounts %}
+            <td class="left right top bottom text-right {%if validVoteCount=="" %}missing-value{% endif %}">{{validVoteCount}}</td>
             {% endfor %}
         </tr>
 
@@ -153,8 +76,8 @@
             <th colspan="2" class="text-right">
                 No. of Rejected Votes
             </th>
-            {% for rejectedVoteCount in content.rejectedVotes %}
-            <td class="left right top bottom">{{rejectedVoteCount}}</td>
+            {% for rejectedVoteCount in content.rejectedVoteCounts %}
+            <td class="left right top bottom text-right {%if rejectedVoteCount=="" %}missing-value{% endif %}">{{rejectedVoteCount}}</td>
             {% endfor %}
         </tr>
 
@@ -163,50 +86,47 @@
                 Total No. of Votes Polled <br/>
                 <small>(Including Rejected)</small>
             </th>
-            {% for totalVoteCount in content.totalVotes %}
-            <td class="left right top bottom">{{totalVoteCount}}</td>
+            {% for totalVoteCount in content.totalVoteCounts %}
+            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
 
         <tr>
-                <td></td>
-                <td colspan="2">
-                    <div class="group">
-                        <div class="block1 all">
-                            <div class="sect1">
-                                <span class="sub-head">Prepared by:</span><br/><br/>
-                                <span>Signature .....................................</span><br/><br/>
-                                <span>Name .....................................</span><br/><br/>
-                                <span>Designation .....................................</span>
-                            </div>
-                            <div class="sect2">
-                                <span class="sub-head">Checked by:</span><br/><br/>
-                                <span class="indent">Signature .....................................</span><br/><br/>
-                                <span class="indent">Name .....................................</span><br/><br/>
-                                <span class="indent">Designation .....................................</span>
-                            </div>
+            <td></td>
+            <td colspan="2">
+                <div class="group">
+                    <div class="block1 all">
+                        <div class="sect1">
+                            <span class="sub-head">Prepared by:</span><br/><br/>
+                            <span>Signature .....................................</span><br/><br/>
+                            <span>Name .....................................</span><br/><br/>
+                            <span>Designation .....................................</span>
+                        </div>
+                        <div class="sect2">
+                            <span class="sub-head">Checked by:</span><br/><br/>
+                            <span class="indent">Signature .....................................</span><br/><br/>
+                            <span class="indent">Name .....................................</span><br/><br/>
+                            <span class="indent">Designation .....................................</span>
                         </div>
                     </div>
-                </td>
-                <td colspan="2" style="vertical-align: bottom;">
-                    <div class="group">
-                        <div>
-                            Time .....................................<br/><br/>
-                            Date .....................................
-                        </div>
-                        <div style="margin-left:20px;">
-                            .....................................<br/><br/>
-                            <span class="bold">Returning Officer</span><br/></br/>
-                        </div>
+                </div>
+            </td>
+            <td colspan="2" style="vertical-align: bottom;">
+                <div class="group">
+                    <div>
+                        Time .....................................<br/><br/>
+                        Date .....................................
                     </div>
-                </td>
-            </tr>
+                    <div style="margin-left:20px;">
+                        .....................................<br/><br/>
+                        <span class="bold">Returning Officer</span><br/></br/>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
 
         </tbody>
     </table>
 </div>
-
-
-</body>
-</html>
+{% endblock %}

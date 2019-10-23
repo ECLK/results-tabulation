@@ -1,117 +1,329 @@
-<html>
-<head>
-    <meta name="pdfkit-page-size" content="B2"/>
-    <meta name="pdfkit-orientation" content="Landscape"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+{% extends 'base.html' %}
 
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{% block container %}
+<div>
+    <table class="table table-borderless">
+        <tbody>
+        <tr>
+            <td style="text-align: right; padding-right: 230px;" rowspan="2" colspan="2">
+                <img src={{ url_for('static', filename='Emblem_of_Sri_Lanka.png') }} width="72" height="75"/>
+            </td>
+            <td>
+                <div class="font1 bold group" style="float: right;">
+                    <div>
+                        sinhala <br/>
+                        tamil<br/>
+                        PRE
+                    </div>
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        21
+                    </div>
+                </div>
+            </td>
+        </tr>
 
-    <style>
-        .top {
-            border-top: 1px solid #000 !important;
-        }
+        <tr>
+            <td></td>
+        </tr>
 
-        .bottom {
-            border-bottom: 1px solid #000 !important;
-        }
+        <tr>
+            <td style="text-align: center;" colspan="3">
+                <h4 class="bold">Sinhala<br/>
+                    Tamil<br/>
+                    {{content.election.electionName}}</h4>
+                <h5 class="bold">Sinhala<br/>
+                    Tamil<br/>
+                    Statement of the number and grounds on which the ballot papers have been rejected [Section 51 (6)]
+                </h5>
+            </td>
+        </tr>
 
-        .left {
-            border-left: 1px solid #000 !important;
-        }
+        <tr class="no-padding-bottom">
+            <td colspan="3" class="no-padding-bottom no-padding-top">
+                <div class="font1 group">
+                    <div>
+                        මැතිවරණ කොට්ඨාසයේ අංකය හා නම <br/>
+                        tamil<br/>
+                        No. and Name of Electoral District
+                    </div>
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.electoralDistrict}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
-        .right {
-            border-right: 1px solid #000 !important;
-        }
+        <tr class="no-padding-bottom no-padding-top">
+            <td colspan="3" class="no-padding-bottom no-padding-top">
+                <div class="font1 group">
+                    <div>
+                        ඡන්ද ප්‍රදේශය<br/>
+                        tamil<br/>
+                        Polling Division
+                    </div>
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.pollingDivision}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
-        .all {
-            border-top: 1px solid #000 !important;
-            border-bottom: 1px solid #000 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
+        <tr class="no-padding-bottom no-padding-top">
+            <td colspan="3" class="no-padding-bottom no-padding-top">
+                <div class="font1 group">
+                    <div>
+                        sinhala<br/>
+                        tamil<br/>
+                        No. and Name of Counting Center
+                    </div>
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.countingCentre}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
-        .font1 {
-            font-family: serif;
-        }
+        <tr class="no-padding-bottom no-padding-top">
+            <td></td>
+            <td class="no-padding-bottom no-padding-top" style="text-align: center;">
+                sinhala<br/>
+                tamil<br/>
+                Grounds for Rejection
+            </td>
+            <td class="no-padding-bottom no-padding-top" style="text-align: center;">
+                sinhala<br/>
+                tamil<br/>
+                Number of Ballot Papers Rejected
+            </td>
+        </tr>
 
-        .float-right {
-            float: right;
-        }
-
-        .bold {
-            font-weight: bold;
-        }
-
-        .no-padding {
-            padding: 0 !important;
-        }
-
-        .no-padding-left {
-            padding-left: 0 !important;
-        }
-
-        .no-padding-right {
-            padding-right: 0 !important;
-        }
-
-        .no-padding-bottom {
-            padding-bottom: 0 !important;
-        }
-
-        .group div {
-            display: inline-block;
-        }
-
-        .sub-head {
-            font-style: italic;
-            text-decoration: underline;
-        }
-
-        .indent {
-            margin-left: 20px;
-        }
-
-        /* .group span {
-            margin: 5px 0;
-        } */
-
-        .block, .block1, .block2 {
-            padding: 5px;
-        }
-
-
-    </style>
-</head>
-<body>
-
-<div class="font1">
-    <div class="all float-right"><h1 class="bold">PRE-21</h1></div>
-    <div class="float-left">
-        <strong>Electoral District : </strong>{{content.electoralDistrict}} <br/>
-        <strong>Polling Division : </strong>{{content.pollingDivision}} <br/>
-        <strong>Counting Centre : </strong>{{content.countingCentre}} <br/>
-    </div>
-
-    <div>
-        <table class="table table-borderless">
-            <tbody>
-            <tr>
-                <th class="left right top bottom">Grounds for Rejection</th>
-                <th class="left right top bottom">Number of Ballot Papers Rejected</th>
-            </tr>
-
-            {% for row in content.data %}
-            <tr>
-                {% for cell in row %}
-                <td class="left right top bottom">{{cell}}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-
-            </tbody>
-        </table>
-    </div>
+        <tr class="no-padding-bottom no-padding-top">
+            <td class="no-padding-right" style="vertical-align: middle;">(i)</td>
+            <td class="no-padding-bottom no-padding-top no-padding-left">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
+                    <div>
+                        sinhala<br/>
+                        tamil<br/>
+                        Does not bear the official mark
+                    </div>
+                </div>
+            </td>
+            <td class="no-padding-bottom no-padding-top" style="text-align:right;">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.officialMark}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
 
 
-</body>
-</html>
+        <tr class="no-padding-bottom no-padding-top">
+            <td class="no-padding-right" style="vertical-align: middle;">(ii)</td>
+            <td class="no-padding-bottom no-padding-top no-padding-left">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
+                    <div>
+                        sinhala<br/>
+                        tamil<br/>
+                        Voted for more than one candidate
+                    </div>
+                </div>
+            </td>
+            <td class="no-padding-bottom no-padding-top" style="text-align:right;">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.candidate}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td class="no-padding-right" style="vertical-align: middle;">(iii)</td>
+            <td class="no-padding-bottom no-padding-top no-padding-left">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
+                    <div>
+                        sinhala<br/>
+                        tamil<br/>
+                        Specified a second preference or a third preference only or both such preferences only
+                    </div>
+                </div>
+            </td>
+            <td class="no-padding-bottom no-padding-top" style="text-align:right;">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.preference}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td class="no-padding-right" style="vertical-align: middle;">(iv)</td>
+            <td class="no-padding-bottom no-padding-top no-padding-left">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
+                    <div>
+                        sinhala<br/>
+                        tamil<br/>
+                        Something is written or marked by which the voter can be identified
+                    </div>
+                </div>
+            </td>
+            <td class="no-padding-bottom no-padding-top" style="text-align:right;">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.identified}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td class="no-padding-right" style="vertical-align: middle;">(v)</td>
+            <td class="no-padding-bottom no-padding-top no-padding-left">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
+                    <div>
+                        sinhala<br/>
+                        tamil<br/>
+                        unmarked
+                    </div>
+                </div>
+            </td>
+            <td class="no-padding-bottom no-padding-top" style="text-align:right;">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.unmarked}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td class="no-padding-right" style="vertical-align: middle;">(vi)</td>
+            <td class="no-padding-bottom no-padding-top no-padding-left">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">{</div>
+                    <div>
+                        sinhala<br/>
+                        tamil<br/>
+                        Void for Uncertainity
+                    </div>
+                </div>
+            </td>
+            <td class="no-padding-bottom no-padding-top" style="text-align:right;">
+                <div class="font1 group">
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.Uncertainity}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td colspan="3" class="no-padding-bottom no-padding-top">
+                <div class="font1 group" style="float: right;">
+                    <div>
+                        sinhala<br/>
+                        tamil<br/>
+                        Total Rejected
+                    </div>
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.totalRejected}}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td colspan="3" class="no-padding-bottom no-padding-top">
+                <div class="font1" style="float: right; text-align: center;">
+                    <div>
+                        ....................................<br/>
+                        sinhala<br/>
+                        tamil<br/>
+                        Signature of Counting Officer
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td colspan="3" class="no-padding-bottom no-padding-top">
+                <div class="font1 group" style="float: right;">
+                    <div>
+                        නම<br/>
+                        பெயர்<br/>
+                        Name
+                    </div>
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        .....................................................
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td colspan="3" class="no-padding-bottom no-padding-top">
+                <div class="font1 group" style="float: right;">
+                    <div>
+                        sinhala<br/>
+                        tamil<br/>
+                        Designation
+                    </div>
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        ...........................................
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td colspan="3" class="no-padding-bottom no-padding-top">
+                <div class="font1 group" style="float: right;">
+                    <div>
+                        දිනය<br/>
+                        திகதி<br/>
+                        Date
+                    </div>
+                    <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                    <div>
+                        .....................................................
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <tr class="no-padding-bottom no-padding-top">
+            <td colspan="3" class="font1 bold">
+                SHE000237 - 7000 (2014/12)
+            </td>
+        </tr>
+
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -26,13 +26,13 @@ def create_database():
 manager.add_command('db', MigrateCommand)
 
 
-@manager.command
-def build_database(dataset):
-    """
-    Populate database with sample dataset.
-    """
-    from build_database import build_database
-    build_database(dataset)
+# @manager.command
+# def build_database(dataset):
+#     """
+#     Populate database with sample dataset.
+#     """
+#     from build_database import build_database
+#     build_database(dataset)
 
 
 @manager.command

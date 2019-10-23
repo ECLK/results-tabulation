@@ -1,15 +1,11 @@
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
-
 from app import db
 from sqlalchemy.orm import relationship
-
 from orm.enums import TallySheetCodeEnum
-from util import get_paginated_query, get_tally_sheet_code_string
-
+from util import get_tally_sheet_code_string, get_tally_sheet_version_class
 from orm.entities import SubmissionVersion
 from orm.entities.Submission import TallySheet
-
 from exception import NotFoundException
 from flask import request
 
@@ -26,6 +22,10 @@ class TallySheetVersionModel(db.Model):
     tallySheetId = association_proxy("submissionVersion", "submissionId")
     createdBy = association_proxy("submissionVersion", "createdBy")
     createdAt = association_proxy("submissionVersion", "createdAt")
+    stamp = association_proxy("submissionVersion", "stamp")
+
+    def set_locked(self):
+        self.submissionVersion.set_locked()
 
     @hybrid_property
     def htmlUrl(self):
@@ -41,12 +41,6 @@ class TallySheetVersionModel(db.Model):
         )
 
     def __init__(self, tallySheetId):
-        tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-        if tallySheet is None:
-            raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-        elif tallySheet.tallySheetCode is not self.tallySheetVersionCode:
-            raise NotFoundException("Invalid tally sheet. (tallySheetId=%d)" % tallySheetId)
-
         submissionVersion = SubmissionVersion.create(submissionId=tallySheetId)
 
         super(TallySheetVersionModel, self).__init__(
@@ -55,6 +49,16 @@ class TallySheetVersionModel(db.Model):
 
         db.session.add(self)
         db.session.flush()
+
+    def add_invalid_vote_count(self, electionId, rejectedVoteCount, areaId=None):
+        from orm.entities.TallySheetVersionRow import TallySheetVersionRow_RejectedVoteCount
+
+        TallySheetVersionRow_RejectedVoteCount.createAreaWiseCount(
+            electionId=electionId,
+            tallySheetVersionId=self.tallySheetVersionId,
+            areaId=areaId,
+            rejectedVoteCount=rejectedVoteCount
+        )
 
     __mapper_args__ = {
         'polymorphic_on': tallySheetVersionCode
@@ -70,14 +74,17 @@ def get_all(tallySheetId, tallySheetCode=None):
     if tallySheetCode is not None:
         query = query.filter(Model.tallySheetCode == tallySheetCode)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
-def get_by_id(tallySheetVersionId):
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
+def get_by_id(tallySheetId, tallySheetVersionId):
+    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    if tallySheet is None:
+        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+
+    result = get_tally_sheet_version_class(tallySheet.tallySheetCode).Model.query.filter(
+        Model.tallySheetVersionId == tallySheetVersionId,
+        Model.tallySheetId == tallySheetId
     ).one_or_none()
 
     return result

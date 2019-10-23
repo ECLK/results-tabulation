@@ -1,18 +1,13 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
-
 from app import db
-from exception import NotFoundException, ForbiddenException
 from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41
-from util import get_paginated_query
-
-from orm.entities.Submission import TallySheet
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_RejectedVoteCount
+from util import to_comma_seperated_num, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 
 
 class TallySheetVersionPRE41Model(TallySheetVersion.Model):
@@ -25,15 +20,28 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
     def html(self):
 
         tallySheetContent = self.content
+        summary = self.summary
 
-        print("############# heyyyyy")
+        stamp = self.stamp
+
+        polling_divisions = Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDivision)
+        polling_division_name = ""
+        if len(polling_divisions) > 0:
+            polling_division_name = polling_divisions[0].areaName
 
         content = {
+            "election": {
+                "electionName": self.submission.election.get_official_name()
+            },
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": Area.get_associated_areas(
-                self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
+            "pollingDivision": polling_division_name,
             "countingCentre": self.submission.area.areaName,
             "pollingDistrictNos": ", ".join([
                 pollingDistrict.areaName for pollingDistrict in
@@ -41,9 +49,9 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             ]),
             "data": [
             ],
-            "total": 0,
-            "rejectedVotes": 0,
-            "grandTotal": 0
+            "total": to_comma_seperated_num(summary.validVoteCount),
+            "rejectedVotes": to_comma_seperated_num(summary.rejectedVoteCount),
+            "grandTotal": to_comma_seperated_num(summary.totalVoteCount)
         }
 
         for row_index in range(len(tallySheetContent)):
@@ -54,10 +62,9 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
                     row.candidateName,
                     row.partySymbol,
                     row.countInWords,
-                    row.count,
+                    to_comma_seperated_num(row.count),
                     ""
                 ])
-                content["total"] = content["total"] + row.count
             else:
                 content["data"].append([
                     row_index + 1,
@@ -68,15 +75,10 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
                     ""
                 ])
 
-        content["rejectedVotes"] = 0  # TODO
-        content["grandTotal"] = content["total"] + content["rejectedVotes"]
-
-        print("############# Huuui ", content)
         html = render_template(
             'PRE-41.html',
             content=content
         )
-        print("############# html ", html)
 
         return html
 
@@ -92,6 +94,13 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             candidateId=candidateId,
             count=count,
             countInWords=countInWords
+        )
+
+    def add_invalid_vote_count(self, electionId, rejectedVoteCount):
+        TallySheetVersionRow_RejectedVoteCount.create(
+            electionId=electionId,
+            tallySheetVersionId=self.tallySheetVersionId,
+            rejectedVoteCount=rejectedVoteCount
         )
 
     @hybrid_property
@@ -119,36 +128,50 @@ class TallySheetVersionPRE41Model(TallySheetVersion.Model):
             Party.Model.partyId == ElectionCandidate.Model.partyId,
             isouter=True
         ).filter(
-            ElectionCandidate.Model.electionId == self.submission.election.parentElectionId
+            ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
         ).all()
+
+    def area_wise_valid_vote_count(self):
+        return db.session.query(
+            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId,
+            func.sum(TallySheetVersionRow_PRE_41.Model.count).label("validVoteCount")
+        ).filter(
+            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == self.tallySheetVersionId
+        )
+
+    def area_wise_rejected_vote_count(self):
+        return db.session.query(
+            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId,
+            func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
+        ).filter(
+            TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == self.tallySheetVersionId,
+            TallySheetVersionRow_RejectedVoteCount.Model.candidateId == None
+        )
+
+    @hybrid_property
+    def summary(self):
+        area_wise_valid_vote_count_subquery = self.area_wise_valid_vote_count().subquery()
+        area_wise_rejected_vote_count_subquery = self.area_wise_rejected_vote_count().subquery()
+
+        return db.session.query(
+            func.count(TallySheetVersion.Model.tallySheetVersionId).label("areaCount"),
+            func.sum(area_wise_valid_vote_count_subquery.c.validVoteCount).label("validVoteCount"),
+            func.sum(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount).label("rejectedVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(area_wise_valid_vote_count_subquery.c.validVoteCount) +
+                sqlalchemy_num_or_zero(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount)
+            ).label("totalVoteCount")
+        ).join(
+            area_wise_valid_vote_count_subquery,
+            area_wise_valid_vote_count_subquery.c.tallySheetVersionId == TallySheetVersion.Model.tallySheetVersionId,
+            isouter=True
+        ).join(
+            area_wise_rejected_vote_count_subquery,
+            area_wise_rejected_vote_count_subquery.c.tallySheetVersionId == TallySheetVersion.Model.tallySheetVersionId,
+            isouter=True
+        ).filter(
+            TallySheetVersion.Model.tallySheetVersionId == self.tallySheetVersionId
+        ).one_or_none()
 
 
 Model = TallySheetVersionPRE41Model
-
-
-def get_all(tallySheetId):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    result = get_paginated_query(query).all()
-
-    return result
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_41:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
-def create(tallySheetId):
-    result = Model(tallySheetId=tallySheetId)
-
-    return result

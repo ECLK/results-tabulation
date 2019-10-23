@@ -1,40 +1,9 @@
-<html>
-<head>
-    <meta name="pdfkit-page-size" content="B2"/>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <style>
-        .top {
-            border-top: 1px solid #000 !important;
-        }
+{% extends 'base.html' %}
 
-        .bottom {
-            border-bottom: 1px solid #000 !important;
-        }
-
-        .left {
-            border-left: 1px solid #000 !important;
-        }
-
-        .right {
-            border-right: 1px solid #000 !important;
-        }
-
-        .all {
-            border-top: 1px solid #000 !important;
-            border-bottom: 1px solid #000 !important;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-        }
-
-    </style>
-</head>
-<body>
-
+{% block container %}
 <div>
-
     <div style="text-align: center; margin-bottom: 10px;">
-        <b>PRESIDENTIAL ELECTION - 08.01.2015</b>
+        <b>{{content.election.electionName}}</b>
         <br/><br/>
         Detailed statement on the number of votes cast in favour of each candidate according to each Electoral
         District
@@ -65,36 +34,33 @@
         {% for row in content.data %}
         <tr>
             {% for cell in row %}
-            <td class="left right top bottom">{{cell}}</td>
+            <td class="left right top bottom {%if cell=="" %}missing-value{% endif %}">{{cell}}</td>
             {% endfor %}
         </tr>
         {% endfor %}
 
         <tr>
             <td class="left right top bottom">NO OF VALID VOTES</td>
-            {% for cell in content.validVotes %}
-            <td class="left right top bottom">{{cell}}</td>
+            {% for validVoteCount in content.validVoteCounts %}
+            <td class="left right top bottom {%if validVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{validVoteCount}}</td>
             {% endfor %}
         </tr>
 
         <tr>
             <td class="left right top bottom">NO OF REJECTED VOTES</td>
-            {% for cell in content.rejectedVotes %}
-              <td class="left right top bottom">{{cell}}</td>
+            {% for rejectedVoteCount in content.rejectedVoteCounts %}
+            <td class="left right top bottom {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{rejectedVoteCount}}</td>
             {% endfor %}
         </tr>
 
         <tr>
             <td class="left right top bottom">TOTAL NO OF VOTES POLLED (INCLUDING REJECTED VOTES)</td>
-            {% for cell in content.totalVotes %}
-              <td class="left right top bottom">{{cell}}</td>
+            {% for totalVoteCount in content.totalVoteCounts %}
+            <td class="left right top bottom {%if totalVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
 
         </tbody>
     </table>
 </div>
-
-
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="font1">
+    <br/>
+    <table class="table table-borderless font1">
+        <tbody>
+            <tr>
+                <td colspan="20" style="text-align:center;"><img src={{ url_for('static', filename='Emblem_of_Sri_Lanka.png') }} width="72" height="75"/></td>
+            </tr>
+            <tr>
+                <td colspan="20" align="center"><h5 class="bold">
+                    {{content.election.electionName}}
+                </h5></td>
+            </tr>
+            <tr >
+                <td colspan="20" align="center"><h3 class="bold">Statement of the Returning Officer Indicating the Number of Second Preferences and <br/>
+                  Third Preferences Marked in favour of the Remaining Two Candidates</h3></td>
+            </tr>
+            <tr>
+                <td colspan="20" align="center">(Section 60)</td>
+            </tr>
+            <tr>
+                <td colspan="10" align="center">Candidate No. 1 (<span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>)</td>
+                <td colspan="10" align="center">Candidate No. 2 (<span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>)</td>
+            </tr>
+            <tr>
+                <td colspan="20">No. and Name of Electoral District : <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+            </tr>
+            <tr>
+                <td colspan="10">Administrative District : <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+            </tr>
+            <tr align="center">
+                <td class="align-middle" rowspan="2">
+                  <i>Name of Candidates<br/>
+                    (In the same order as in Ballot Paper)</i>
+                </td>
+                <td class="align-middle" rowspan="2">
+                  <i>Symbol</i>
+                </td>
+                <td class="align-middle" colspan="6">
+                  <i>Number of Second Preferences Counted</i>
+                </td>
+                <td class="align-middle" colspan="6">
+                  <i>Number of Third Preferences Counted</i>
+                </td>
+                <td class="align-middle" colspan="6">
+                  <i>Total</i>
+                </td>
+            </tr>
+            <tr align="center">
+                <td class="align-middle">
+                  <i>in words</i>
+                </td>
+                <td class="align-middle" colspan="5">
+                  <i>in figures</i>
+                </td>
+                <td class="align-middle">
+                  <i>in words</i>
+                </td>
+                <td class="align-middle" colspan="5">
+                  <i>in figures</i>
+                </td>
+                <td class="align-middle">
+                  <i>in words</i>
+                </td>
+                <td class="align-middle" colspan="5">
+                  <i>in figures</i>
+                </td>
+            </tr>
+
+            <!-- loop this block if necessary-->
+            <tr align="center">
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+            </tr>
+
+
+            <tr align="center">
+                <td colspan="20"></td>
+            </tr>
+
+            <tr align="center">
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td><span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+                <td class="all"></td>
+            </tr>
+            <!-- loop this block -->
+
+            <tr align="center">
+                <td colspan="20"></td>
+            </tr>
+
+            <tr>
+                <td colspan="9">Date : ............................</td>
+                <td colspan="11">Certified Correct</td>
+            </tr>
+
+            <tr>
+                <td colspan="14"></td>
+                <td colspan="6" style="text-align:center;">...............................................................<br/>
+                <i>Signature of Returning Officer</i></td>
+            </tr>
+
+            <tr>
+                <td colspan="14"></td>
+                <td colspan="6">Name: ...........................................................</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+    <table width="100%" class="table table-borderless">
+        <tbody>
+            <tr align="center">
+                <td></td>
+                <td rowspan="2"></td>
+                <td rowspan="2"><i>Name</i></td>
+                <td rowspan="2"><i>Signature</i></td>
+                <td rowspan="2"><i>Name of Candidate each</i></td>
+                <td rowspan="2"><i>Agent Represents</i></td>
+            </tr>
+            <tr>
+                <td><i>Witness</i> :- Assistant Returning Officer:</td>
+            </tr>
+
+            <tr align="center">
+                <td rowspan="35" style="vertical-align:middle; text-align:right;" class="table2-padding">Agents</td>
+                <td class="table2-padding">1.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+
+            <tr align="center">
+                <td>2.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>3.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>4.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>5.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>6.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>7.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>8.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>9.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>10.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+
+
+            <tr align="center">
+                <td class="table2-padding">11.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+
+            <tr align="center">
+                <td>12.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>13.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>14.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>15.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>16.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>17.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>18.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>19.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>20.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+
+            <tr align="center">
+                <td class="table2-padding">21.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+
+            <tr align="center">
+                <td>22.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>23.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>24.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>25.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>26.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>27.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>28.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>29.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>30.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+
+            <tr align="center">
+                <td class="table2-padding">31.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+
+            <tr align="center">
+                <td>32.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>33.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>34.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+            <tr align="center">
+                <td>35.</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+                <td class="table2-padding">............................................................</td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

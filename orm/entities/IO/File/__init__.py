@@ -1,10 +1,14 @@
+import shutil
+
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import relationship
+
 from app import db
+from orm.entities.Audit import Stamp
 from orm.enums import FileTypeEnum
 import os
-from util import Auth
-from datetime import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
-from flask import Flask, request
+from flask import request
 
 FILE_DIRECTORY = os.path.join(os.getcwd(), 'data')
 
@@ -17,9 +21,11 @@ class FileModel(db.Model):
     fileMimeType = db.Column(db.String(100), nullable=False)
     fileContentLength = db.Column(db.String(100), nullable=False)
     fileContentType = db.Column(db.String(100), nullable=False)
+    fileStampId = db.Column(db.Integer, db.ForeignKey(Stamp.Model.__table__.c.stampId), nullable=False)
 
-    fileCreatedBy = db.Column(db.Integer, nullable=False)
-    fileCreatedAt = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    fileStamp = relationship(Stamp.Model, foreign_keys=[fileStampId])
+    fileCreatedBy = association_proxy("fileStamp", "createdBy")
+    fileCreatedAt = association_proxy("fileStamp", "createdAt")
 
     @hybrid_property
     def urlInline(self):
@@ -28,6 +34,11 @@ class FileModel(db.Model):
     @hybrid_property
     def urlDownload(self):
         return "%sfile/%d/download" % (request.host_url, self.fileId)
+
+    def get_file_path(self):
+        file_path = os.path.join(FILE_DIRECTORY, str(self.fileId))
+
+        return file_path
 
     __mapper_args__ = {
         'polymorphic_on': fileType,
@@ -46,30 +57,34 @@ def get_by_id(fileId):
     return result
 
 
-# def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
-#     # TODO validate the
-#     #   - file type
-#     #   - file size
-#     #         etc.
-#
-#     if fileType is None:
-#         fileType = FileTypeEnum.Any
-#
-#     result = Model(
-#         fileType=fileType,
-#         fileMimeType=fileSource.mimetype,
-#         fileContentLength=fileSource.content_length,
-#         fileContentType=fileSource.content_type,
-#         fileName=fileSource.filename,
-#         fileCreatedBy=Auth().get_user_id()
-#     )
-#
-#     db.session.add(result)
-#     db.session.flush()
-#
-#     save_uploaded_file_source(result, fileSource)
-#
-#     return result
+def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
+    # TODO validate the
+    #   - file type
+    #   - file size
+    #         etc.
+
+    file_stamp = Stamp.create()
+
+    if fileType is None:
+        fileType = FileTypeEnum.Any
+
+    result = Model(
+        fileType=fileType,
+        fileMimeType=fileSource.mimetype,
+        fileContentLength=fileSource.content_length,
+        fileContentType=fileSource.content_type,
+        fileName=fileSource.filename,
+        fileStampId=file_stamp.stampId
+    )
+
+    db.session.add(result)
+    db.session.flush()
+
+    save_uploaded_file_source(result, fileSource)
+
+    return result
+
+
 #
 #
 # def createReport(fileName, html):
@@ -93,8 +108,12 @@ def get_by_id(fileId):
 
 
 def save_uploaded_file_source(file, fileSource):
-    file_path = os.path.join(FILE_DIRECTORY, str(file.fileId))
-
+    file_path = file.get_file_path()
     fileSource.save(file_path)
 
     return file_path
+
+
+def copy_file(fileId: int, target_file: str):
+    source_file = os.path.join(FILE_DIRECTORY, str(fileId))
+    shutil.copyfile(source_file, target_file)
