@@ -8,17 +8,41 @@ from jose import jwt
 from app import db
 from auth.AuthConstants import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_GENERATOR_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_GENERATOR_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE, ROLE_CLAIM_PREFIX, ADMIN_ROLE
+    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE, ROLE_CLAIM_PREFIX, ADMIN_ROLE, \
+    JWT_TOKEN_HEADER_KEY
 from exception import UnauthorizedException
+import json
 
 JWT_SECRET = "jwt_secret"
 AREA_ID = "areaId"
 USER_ACCESS_AREA_IDS = "userAccessAreaIds"
 USER_NAME = "userName"
 
+def apikey_auth(token, required_scopes):
+    info = TOKEN_DB.get(token, None)
+
+    if not info:
+        raise OAuthProblem('Invalid token')
+
+    return info
 
 def decode_token(token):
-    return jwt.decode(token, key=JWT_SECRET)
+    try:
+        token = jwt.decode(
+            token, key=JWT_SECRET,
+            options={"verify_signature": False, "verify_exp": False}
+        )
+
+        return token
+    except Exception as e:
+        raise UnauthorizedException("Invalid authorization token.")
+
+
+def get_jwt_token():
+    if JWT_TOKEN_HEADER_KEY not in request.headers:
+        raise UnauthorizedException("No authorization header found.")
+
+    return request.headers.get(JWT_TOKEN_HEADER_KEY)
 
 
 def get_claims() -> Dict[str, Dict]:
@@ -30,12 +54,10 @@ def get_claims() -> Dict[str, Dict]:
     :return: dict of claim id to claim value.
     """
 
-    if 'token_info' not in connexion.context.keys():
-        UnauthorizedException("No claims found.")
-
-    claims: dict = connexion.context['token_info']
+    claims: dict = decode_token(get_jwt_token())
     filtered_claims = {}
-    filtered_claim_keys = [
+
+    area_assignment_claim_keys = [
         ROLE_CLAIM_PREFIX + ADMIN_ROLE,
         ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE,
         ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE,
@@ -44,12 +66,16 @@ def get_claims() -> Dict[str, Dict]:
         ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE,
         ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE,
         ROLE_CLAIM_PREFIX + NATIONAL_REPORT_GENERATOR_ROLE,
-        ROLE_CLAIM_PREFIX + EC_LEADERSHIP_ROLE,
-        SUB
+        ROLE_CLAIM_PREFIX + EC_LEADERSHIP_ROLE
     ]
-    for role_claim_key in filtered_claim_keys:
-        if role_claim_key in claims.keys():
-            filtered_claims[role_claim_key] = claims.get(role_claim_key)
+    for area_assignment_claim_key in area_assignment_claim_keys:
+        if area_assignment_claim_key in claims.keys():
+            area_assignment_claim_value = claims.get(area_assignment_claim_key)
+            area_assignment_claim_value = area_assignment_claim_value.replace("\'", "\"")
+            filtered_claims[area_assignment_claim_key] = json.loads(area_assignment_claim_value)
+
+    if SUB in claims.keys():
+        filtered_claims[SUB] = claims.get(SUB)
 
     return filtered_claims
 
@@ -119,7 +145,8 @@ def authorize(func, required_roles=None, *args, **kwargs):
             areas = db.session.query(Area.Model.areaId).filter(Area.Model.areaType == AreaTypeEnum.Country).all()
             user_access_area_ids.extend([area.areaId for area in areas])
         elif role is EC_LEADERSHIP_ROLE:
-            areas = db.session.query(Area.Model.areaId).filter(Area.Model.areaType == AreaTypeEnum.ElectionCommission).all()
+            areas = db.session.query(Area.Model.areaId).filter(
+                Area.Model.areaType == AreaTypeEnum.ElectionCommission).all()
             user_access_area_ids.extend([area.areaId for area in areas])
 
     if not claim_found:
