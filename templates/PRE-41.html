@@ -133,27 +133,27 @@
         </tr>
         {% for row in content.data %}
         <tr>
-            <td class="left right top bottom" style="text-align:right">{{row[0]}}</td>
-            <td class="left right top bottom">{{row[1]}}</td>
-            <td class="left right top bottom">{{row[2]}}</td>
+            <td class="left right top bottom {%if row[0]=="" %}missing-value{% endif %}" style="text-align:right">{{row[0]}}</td>
+            <td class="left right top bottom {%if row[1]=="" %}missing-value{% endif %}">{{row[1]}}</td>
+            <td class="left right top bottom {%if row[2]=="" %}missing-value{% endif %}">{{row[2]}}</td>
             <td class="left right top bottom" style="text-transform: capitalize;">{{row[3]}}</td>
-            <td class="left right top bottom" style="text-align:right">{{row[4]}}</td>
+            <td class="left right top bottom {%if row[4]=="" %}missing-value{% endif %}" style="text-align:right">{{row[4]}}</td>
             <td class="left right top bottom">{{row[5]}}</td>
             <td class="left right top bottom"></td>
         </tr>
         {% endfor %}
         <tr>
             <td colspan="4" align="right" class="font1 bold">එකතුව / மொத்தம் / Total</td>
-            <td class="left right top bottom" style="text-align:right">{{content.total}}</td>
+            <td class="left right top bottom {%if content.total=="" %}missing-value{% endif %}" style="text-align:right">{{content.total}}</td>
         </tr>
         <tr>
             <td colspan="4" align="right" class="font1 bold">ප්‍රතික්ෂේපිත ඡන්ද / நிராகரிக்கப்பட்ட வாக்குகள் / Rejected Votes
             </td>
-            <td class="left right top bottom" style="text-align:right">{{content.rejectedVotes}}</td>
+            <td class="left right top bottom {%if content.rejectedVotes =="" %}missing-value{% endif %}" style="text-align:right">{{content.rejectedVotes}}</td>
         </tr>
         <tr>
-            <td colspan="4" align="right" class="font1 bold">මුළු එකතුව / முழு மொத்தம் / Grand Total</td>
-            <td class="left right top bottom" style="text-align:right">{{content.grandTotal}}</td>
+            <td colspan="4" align="right" class="font1 bold">මුළු එකතුව /  முழு மொத்தம் / Grand Total</td>
+            <td class="left right top bottom {%if content.grandTotal =="" %}missing-value{% endif %}" style="text-align:right">{{content.grandTotal}}</td>
         </tr>
         <tr>
             <td></td>
