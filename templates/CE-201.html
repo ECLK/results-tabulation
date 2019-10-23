@@ -7,21 +7,21 @@
         <tbody>
         <tr>
             <td colspan="14"></td>
-            <td class="all"><span style="font-size: 20px !important;"><strong>CE/201</strong></span></td>
+            <td class="all no-padding" style="text-align:center;"><span style="font-size: 20px !important;"><strong>CE/201</strong></span></td>
         </tr>
         <tr>
             <td colspan="15" align="center"><u><span style="font-size: 20px !important;">VERIFICATION OF BALLOT PAPER ACCOUNTS<br/>
                     NUMBER OF BALLOT PAPERS IN EACH BALLOT BOX</span></u></td>
         </tr>
         <tr class="font2">
-            <td colspan="7"><strong>Name of Election:</strong> {{content.election.electionName}}</td>
-            <td colspan="8"><strong>Electoral District:</strong> {{content.electoralDistrict}}</td>
+            <td colspan="7"><strong>Name of Election :</strong><span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.election.electionName}}</span></td>
+            <td colspan="8"><strong>Electoral District :</strong><span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.electoralDistrict}}</span></td>
         </tr>
         <tr class="font2">
-            <td colspan="15"><strong>Polling Division:</strong> {{content.pollingDivision}}</td>
+            <td colspan="15"><strong>Polling Division :</strong><span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.pollingDivision}}</span></td>
         </tr>
         <tr class="font2">
-            <td colspan="15"><strong>Counting Centre No:</strong> {{content.countingCentre}}</td>
+            <td colspan="15"><strong>Counting Centre No :</strong><span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.countingCentre}}</span></td>
         </tr>
         <tr align="center">
             <th class="all align-middle" rowspan="2">No. of the Polling District</th>
@@ -46,19 +46,19 @@
         <tr>
             <td class="all align-middle {%if row[0]=="" %}missing-value{% endif %}">{{row[0]}}</td>
             <td class="all align-middle {%if row[1]=="" %}missing-value{% endif %}">{{row[1]}}</td>
-            <td class="all align-middle {%if row[2]=="" %}missing-value{% endif %}">{{row[2]}}</td>
+            <td class="all align-middle">{{row[2]}}</td>
             <td class="all align-middle">{{row[3]}}</td>
             <td class="all align-middle">{{row[4]}}</td>
-            <td class="all align-middle {%if row[5]=="" %}missing-value{% endif %}">{{row[5]}}</td>
-            <td class="all align-middle {%if row[6]=="" %}missing-value{% endif %}">{{row[6]}}</td>
-            <td class="all align-middle {%if row[7]=="" %}missing-value{% endif %}">{{row[7]}}</td>
-            <td class="all align-middle {%if row[8]=="" %}missing-value{% endif %}">{{row[8]}}</td>
-            <td class="all align-middle {%if row[9]=="" %}missing-value{% endif %}">{{row[9]}}</td>
+            <td class="all align-middle {%if row[5]=="" %}missing-value{% endif %}"></td>
+            <td class="all align-middle {%if row[6]=="" %}missing-value{% endif %}"></td>
+            <td class="all align-middle {%if row[7]=="" %}missing-value{% endif %}"></td>
+            <td class="all align-middle {%if row[8]=="" %}missing-value{% endif %}"></td>
+            <td class="all align-middle {%if row[9]=="" %}missing-value{% endif %}"></td>
             <td class="all align-middle {%if row[10]=="" %}missing-value{% endif %}">{{row[10]}}</td>
-            <td class="all align-middle {%if row[11]=="" %}missing-value{% endif %}">{{row[11]}}</td>
-            <td class="all align-middle {%if row[12]=="" %}missing-value{% endif %}">{{row[12]}}</td>
-            <td class="all align-middle {%if row[13]=="" %}missing-value{% endif %}">{{row[13]}}</td>
-            <td class="all align-middle {%if row[14]=="" %}missing-value{% endif %}">{{row[14]}}</td>
+            <td class="all align-middle {%if row[11]=="" %}missing-value{% endif %}"></td>
+            <td class="all align-middle {%if row[12]=="" %}missing-value{% endif %}"></td>
+            <td class="all align-middle {%if row[13]=="" %}missing-value{% endif %}"></td>
+            <td class="all align-middle {%if row[14]=="" %}missing-value{% endif %}"></td>
         </tr>
         {% endfor %}
 
@@ -69,18 +69,18 @@
             </td>
         </tr>
         <tr>
-            <td colspan="9">Date: {{content.date}}</td>
+            <td colspan="9">Date :<span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.date}}</span></td>
             <td colspan="6">Name: ....................................................</td>
         </tr>
         <tr>
-            <td colspan="9">Time: {{content.time}}</td>
+            <td colspan="9">Time :<span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.time}}</span></td>
             <td colspan="6">Designation: ...........................................</td>
         </tr>
         </tbody>
     </table>
-    <p class="table-margins">N.B. - Differences if any of the actual No. in the Ballot Box should be given a plus (+) or
+    <!-- <p class="table-margins">N.B. - Differences if any of the actual No. in the Ballot Box should be given a plus (+) or
         a minus (-) in relation to
         the number in the Ballot Paper Account.<br/>
-        Where it is the same as in the Ballot Box. place the mark (&#10003;)</p>
+        Where it is the same as in the Ballot Box. place the mark (&#10003;)</p> -->
 </div>
 {% endblock %}
