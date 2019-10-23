@@ -3418,24 +3418,24 @@ externalDocs:
   url: 'http://swagger.io'
 
 components:
-  securitySchemes:
-    organization_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
-          scopes:
-            'write:org': modify
-            'read:org': read
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
-    jwt:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      x-bearerInfoFunc: auth.decode_token
+#  securitySchemes:
+#    organization_auth:
+#      type: oauth2
+#      flows:
+#        implicit:
+#          authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
+#          scopes:
+#            'write:org': modify
+#            'read:org': read
+#    api_key:
+#      type: apiKey
+#      name: api_key
+#      in: header
+#    jwt:
+#      type: http
+#      scheme: bearer
+#      bearerFormat: JWT
+#      x-bearerInfoFunc: auth.decode_token
   schemas:
     ApiResponse:
       type: object
@@ -3664,5 +3664,5 @@ components:
               voteCount:
                 type: integer
                 format: int64
-security:
-  - jwt: []
+#security:
+#  - jwt: []
