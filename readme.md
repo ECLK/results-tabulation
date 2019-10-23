@@ -36,12 +36,6 @@ Update `env/dev.cfg`
 
 `export ENV_CONFIG=./env/dev.cfg && python manage.py db upgrade`
 
-**Build the Database with sample data**
-
-`export ENV_CONFIG=./env/dev.cfg && python manage.py build_database <dataset>`
-
-`dataset` could be `mock-election`, `test` or `test-small`
-
 **Run local server**
 
 `export ENV_CONFIG=./env/dev.cfg && python index.py`
@@ -77,3 +71,25 @@ If there are changes identified, a revision file is created at migrations/versio
 **Drop database**
 
 `export ENV_CONFIG=./env/dev.cfg && python manage.py drop_database`
+
+## API Invocation ##
+
+**JWT generation sample**
+
+```
+from jose import jwt
+
+key = "jwt_secret"
+payload = {
+    'areaAssignment/dataEditor': [
+        {
+            "areaName": "1",
+            "areaId": 7
+        }
+    ],
+    'areaAssignment/ECLeadership': [
+    ]
+}
+encoded = jwt.encode(payload, key)
+print(encoded)
+```

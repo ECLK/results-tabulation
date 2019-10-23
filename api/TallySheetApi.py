@@ -1,28 +1,70 @@
-from orm.entities.Submission.TallySheet import Model as TallySheetModel
-from schemas import TallySheetSchema
+from typing import Set
 
-from schemas import TallySheetSchema as Schema
+from app import db
+from auth import authorize
+from auth.AuthConstants import ALL_ROLES
+from exception import NotFoundException
 from orm.entities.Submission import TallySheet
+from orm.entities.SubmissionVersion import TallySheetVersion
+from schemas import TallySheetSchema
+from util import RequestBody, get_paginated_query
 
 
-def getAll(electionId=None, officeId=None, tallySheetCode=None):
+@authorize(required_roles=ALL_ROLES)
+def getAll(electionId=None, areaId=None, tallySheetCode=None):
     result = TallySheet.get_all(
         electionId=electionId,
-        officeId=officeId,
+        areaId=areaId,
         tallySheetCode=tallySheetCode
     )
 
-    return Schema(many=True).dump(result).data
+    result = get_paginated_query(result).all()
+
+    return TallySheetSchema(many=True).dump(result).data
 
 
+@authorize(required_roles=ALL_ROLES)
 def get_by_id(tallySheetId):
-    tallySheet = TallySheetModel.query.filter(TallySheetModel.tallySheetId == tallySheetId).one_or_none()
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
-    return TallySheetSchema().dump(tallySheet).data
+    if tally_sheet is None:
+        NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    return TallySheetSchema().dump(tally_sheet).data
 
 
-def get_tallysheet_response(new_tallysheet):
-    if new_tallysheet.code == "PRE-41":
-        return TallySheetSchema().dump(new_tallysheet).data
-    else:
-        return TallySheetSchema().dump(new_tallysheet).data
+@authorize(required_roles=ALL_ROLES)
+def unlock(tallySheetId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    tally_sheet.set_locked_version(None)
+
+    db.session.commit()
+
+    return TallySheetSchema().dump(tally_sheet).data, 201
+
+
+@authorize(required_roles=ALL_ROLES)
+def lock(tallySheetId, body):
+    request_body = RequestBody(body)
+    tallySheetVersionId = request_body.get("lockedVersionId")
+
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
+                                                      tallySheetId=tallySheetId)
+
+    if tally_sheet_version is None:
+        raise NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)
+
+    tally_sheet.set_locked_version(tally_sheet_version)
+
+    db.session.commit()
+
+    return TallySheetSchema().dump(tally_sheet).data, 201

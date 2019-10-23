@@ -1,18 +1,11 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
-
 from app import db
-from exception import NotFoundException
-from orm.entities import Candidate, Party, Area
-from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
+from orm.entities import Area
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201_PV_CC
-from util import get_paginated_query, to_empty_string_or_value
-
-from orm.entities.Submission import TallySheet
+from util import to_empty_string_or_value
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
-from sqlalchemy import and_
 
 
 class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
@@ -49,7 +42,7 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
 
     @hybrid_property
     def content(self):
-        #return []
+        # return []
         return db.session.query(
             TallySheetVersionRow_CE_201_PV.Model
         ).filter(
@@ -66,8 +59,18 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
 
     def html(self):
         tallySheetContent = self.content.all()
+        tallySheetContentSummary = self.summary
+        stamp = self.stamp
 
         content = {
+            "election": {
+                "electionName": self.submission.election.get_official_name()
+            },
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
             "pollingDivision": Area.get_associated_areas(
@@ -77,8 +80,16 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
                 pollingDistrict.areaName for pollingDistrict in
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
+
+            "situation": tallySheetContentSummary.situation,
+            "timeOfCommencementOfCount": tallySheetContentSummary.timeOfCommencementOfCount,
+            "numberOfAPacketsFound": tallySheetContentSummary.numberOfAPacketsFound,
+            "numberOfACoversRejected": tallySheetContentSummary.numberOfACoversRejected,
+            "numberOfBCoversRejected": tallySheetContentSummary.numberOfBCoversRejected,
+            "numberOfValidBallotPapers": tallySheetContentSummary.numberOfValidBallotPapers,
+
             "data": [
-            ]
+            ],
         }
 
         for row_index in range(len(tallySheetContent)):
@@ -86,11 +97,12 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
             data_row = []
             content["data"].append(data_row)
 
-            data_row.append(row.categoryDescription)
-            data_row.append(to_empty_string_or_value(row.count))
+            data_row.append(row.ballotBox.ballotBoxId)
+            data_row.append(to_empty_string_or_value(row.numberOfPacketsInserted))
+            data_row.append(to_empty_string_or_value(row.numberOfAPacketsFound))
 
         html = render_template(
-            'PRE-21.html',
+            'CE-201-PV.html',
             content=content
         )
 
@@ -98,31 +110,3 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
 
 
 Model = TallySheetVersion_CE_201_PV_Model
-
-
-def get_all(tallySheetId):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    result = get_paginated_query(query).all()
-
-    return result
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.CE_201_PV:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
-def create(tallySheetId):
-    result = Model(tallySheetId=tallySheetId)
-
-    return result

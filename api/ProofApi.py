@@ -1,5 +1,7 @@
 from app import db
-from util import RequestBody
+from auth import authorize
+from auth.AuthConstants import ALL_ROLES
+from util import RequestBody, get_paginated_query
 import connexion
 
 from schemas import Proof_Schema as Schema
@@ -7,12 +9,16 @@ from orm.entities import Proof
 from orm.enums import FileTypeEnum
 
 
+@authorize(required_roles=ALL_ROLES)
 def get_all():
     result = Proof.get_all()
+
+    result = get_paginated_query(result).all()
 
     return Schema(many=True).dump(result).data
 
 
+@authorize(required_roles=ALL_ROLES)
 def get_by_id(proofId):
     result = Proof.get_by_id(
         proofId=proofId
@@ -21,6 +27,7 @@ def get_by_id(proofId):
     return Schema().dump(result).data
 
 
+@authorize(required_roles=ALL_ROLES)
 def upload_file(body):
     request_body = RequestBody(body)
     result = Proof.upload_file(
@@ -34,6 +41,7 @@ def upload_file(body):
     return Schema().dump(result).data, 201
 
 
+@authorize(required_roles=ALL_ROLES)
 def finish(proofId):
     result = Proof.update(
         finished=True,

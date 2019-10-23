@@ -1,31 +1,53 @@
 from flask import Response
-
 from app import db
-from util import RequestBody
-from schemas import Ballot_Schema as Schema
+from auth import authorize
+from auth.AuthConstants import ALL_ROLES
+from exception import NotFoundException
+from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
+from schemas import TallySheetVersionSchema
+from util import get_paginated_query
 
 
 def get_all(tallySheetId):
     result = TallySheetVersion.get_all(tallySheetId=tallySheetId)
 
-    return Schema(many=True).dump(result).data
+    result = get_paginated_query(result).all()
+
+    return TallySheetVersionSchema(many=True).dump(result).data
 
 
-def create(body):
-    request_body = RequestBody(body)
-    result = TallySheetVersion.create(
-        tallySheetId=request_body.get("tallySheetId")
+@authorize(required_roles=ALL_ROLES)
+def create_empty(tallySheetId):
+    tallySheet, tallySheetVersion = TallySheet.create_empty_version(
+        tallySheetId=tallySheetId
     )
-
     db.session.commit()
 
-    return Schema().dump(result).data, 201
+    return TallySheetVersionSchema().dump(tallySheetVersion).data
 
 
-def html(tallySheetId, tallySheetVersionId):
-    tallySheetVersion = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId)
-
+@authorize(required_roles=ALL_ROLES)
+def create_empty_and_get_html(tallySheetId):
+    tallySheet, tallySheetVersion = TallySheet.create_empty_version(
+        tallySheetId=tallySheetId
+    )
     db.session.commit()
 
     return Response(tallySheetVersion.html(), mimetype='text/html')
+
+
+@authorize(required_roles=ALL_ROLES)
+def html(tallySheetId, tallySheetVersionId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tallySheetId,
+                                                      tallySheetVersionId=tallySheetVersionId)
+
+    if tally_sheet_version is None:
+        NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)
+
+    return Response(tally_sheet_version.html(), mimetype='text/html')

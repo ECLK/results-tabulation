@@ -1,12 +1,8 @@
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
-
-from util import get_paginated_query
-
 from orm.entities import Submission
 from orm.entities.History import HistoryVersion
-
 from exception import NotFoundException
 
 
@@ -21,6 +17,12 @@ class SubmissionVersionModel(db.Model):
 
     createdBy = association_proxy("historyVersion", "createdBy")
     createdAt = association_proxy("historyVersion", "createdAt")
+    stamp = association_proxy("historyVersion", "historyStamp")
+
+    def set_locked(self):
+        self.submission.set_locked_version(self.submissionVersionId)
+        db.session.add(self)
+        db.session.flush()
 
     def __init__(self, submissionId):
         submission = Submission.get_by_id(submissionId=submissionId)
@@ -36,8 +38,6 @@ class SubmissionVersionModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-        submission.set_latest_version(submissionVersionId=historyVersion.historyVersionId)
-
 
 Model = SubmissionVersionModel
 
@@ -48,9 +48,7 @@ def get_all(submissionId, submissionCode=None):
     if submissionCode is not None:
         query = query.filter(Model.submissionCode == submissionCode)
 
-    result = get_paginated_query(query).all()
-
-    return result
+    return query
 
 
 def create(submissionId):

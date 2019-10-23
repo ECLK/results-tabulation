@@ -13,7 +13,8 @@ from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201, \
     TallySheetVersionRow_PRE_41, \
     TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_30_ED, \
-    TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_CE_201_PV_CC
+    TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_CE_201_PV_CC, TallySheetVersionRow_RejectedVoteCount, \
+    TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, \
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum, VoteTypeEnum
 
@@ -60,6 +61,7 @@ class PartySchema(ma.ModelSchema):
         fields = (
             "partyId",
             "partyName",
+            "partySymbol",
             "partySymbolFile",
             "partyAbbreviation",
             "candidates"
@@ -110,6 +112,21 @@ class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "electoralDistrictId",
+            "electoralDistrictName",
+            "candidateId",
+            "count"
+        )
+
+        model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -127,7 +144,7 @@ class TallySheetVersionRow_PRE_30_ED_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "candidateId",
-            "pollingDivisionId",
+            "areaId",
             "count",
             "electionId",
             "voteType"
@@ -191,6 +208,21 @@ class TallySheetVersionRow_PRE_30_PD_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class TallySheetVersionRow_Summary_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "areaCount",
+            "rejectedVoteCount",
+            "validVoteCount",
+            "totalVoteCount",
+        )
+
+        model = TallySheetVersionRow_RejectedVoteCount.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class TallySheetVersionRow_PRE_21_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -210,8 +242,8 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
         fields = (
             "areaId",
             "areaName",
-            # "ballotBoxesIssued",
-            # "ballotBoxesReceived",
+            "ballotBoxesIssued",
+            "ballotBoxesReceived",
             "ballotsIssued",
             "ballotsReceived",
             "ballotsSpoilt",
@@ -219,9 +251,7 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
             "ordinaryBallotCountFromBoxCount",
             "tenderedBallotCountFromBoxCount",
             "ordinaryBallotCountFromBallotPaperAccount",
-            "tenderedBallotCountFromBallotPaperAccount",
-            "issuedBallots",
-            "receivedBallots"
+            "tenderedBallotCountFromBallotPaperAccount"
         )
 
         model = TallySheetVersionRow_CE_201.Model
@@ -229,8 +259,8 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    issuedBallots = ma.Nested("BallotBox_Schema", only=["stationaryItemId", "ballotBoxId"], many=True)
-    receivedBallots = ma.Nested("BallotBox_Schema", only=["stationaryItemId", "ballotBoxId"], many=True)
+    # ballotBoxesIssued = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
+    # ballotBoxesReceived = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
 
 
 class AreaSchema(ma.ModelSchema):
@@ -244,7 +274,8 @@ class AreaSchema(ma.ModelSchema):
             # "children",
             # "pollingStations",
             # "countingCentres",
-            # "districtCentres"
+            # "districtCentres",
+            "pollingDistricts"
         )
 
         model = Area.Model
@@ -256,9 +287,10 @@ class AreaSchema(ma.ModelSchema):
     electorateType = EnumField(ElectorateTypeEnum)
     parents = ma.Nested('self', many=True)
     children = ma.Nested('self', only="areaId", many=True)
-    pollingStations = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    countingCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    districtCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    pollingStations = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    pollingDistricts = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
 
 
 class ElectorateSchema(ma.ModelSchema):
@@ -285,9 +317,9 @@ class ElectorateSchema(ma.ModelSchema):
     electorateType = EnumField(ElectorateTypeEnum)
     parents = ma.Nested('AreaSchema', many=True)
     children = ma.Nested('AreaSchema', only="areaId", many=True)
-    pollingStations = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    countingCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    districtCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    pollingStations = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
 
 
 class OfficeSchema(ma.ModelSchema):
@@ -314,9 +346,9 @@ class OfficeSchema(ma.ModelSchema):
     officeType = EnumField(OfficeTypeEnum)
     parents = ma.Nested('AreaSchema', many=True)
     children = ma.Nested('AreaSchema', only="areaId", many=True)
-    pollingStations = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    countingCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
-    districtCentres = ma.Nested('OfficeSchema', only=["officeId", "officeName", "officeType"], many=True)
+    pollingStations = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
 
 
 class Proof_Schema(ma.ModelSchema):
@@ -356,7 +388,6 @@ class SubmissionSchema(ma.ModelSchema):
         sqla_session = db.session
 
     # latestVersion = ma.Nested(TallySheetVersionSchema)
-    office = ma.Nested(OfficeSchema)
     electorate = ma.Nested(ElectorateSchema)
     submissionType = EnumField(SubmissionTypeEnum)
     submissionProof = ma.Nested(Proof_Schema)
@@ -406,7 +437,8 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content"
+            "content",
+            "summary"
         )
 
         model = TallySheetVersionPRE41.Model
@@ -416,6 +448,27 @@ class TallySheetVersionPRE41Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
+    summary = ma.Nested(TallySheetVersionRow_Summary_Schema)
+
+
+class TallySheetVersion_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt",
+            "htmlUrl",
+            "content"
+        )
+
+        model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    # submission = ma.Nested(SubmissionSchema)
+    content = ma.Nested(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema, many=True)
 
 
 class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
@@ -446,8 +499,7 @@ class TallySheetVersion_CE_201_PV_Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content",
-            "summary"
+            "content"
         )
 
         model = TallySheetVersionRow_CE_201_PV.Model
@@ -457,7 +509,6 @@ class TallySheetVersion_CE_201_PV_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_CE_201_PV_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_CE_201_PV_CC_Schema)
 
 
 class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
@@ -478,6 +529,7 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_30_ED_Schema, many=True)
+    areas = ma.Nested(AreaSchema, many=True)
 
 
 class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
@@ -546,8 +598,10 @@ class TallySheetSchema(ma.ModelSchema):
             "tallySheetId",
             "tallySheetCode",
             "electionId",
-            "office",
+            "area",
             "latestVersionId",
+            "lockedVersionId",
+            "locked",
             # "latestVersion",
             "submissionProofId",
             "versions"
@@ -559,7 +613,7 @@ class TallySheetSchema(ma.ModelSchema):
         sqla_session = db.session
 
     tallySheetCode = EnumField(TallySheetCodeEnum)
-    office = ma.Nested(AreaSchema)
+    area = ma.Nested(AreaSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
     latestVersion = ma.Nested(SubmissionVersionSchema)
     submissionProof = ma.Nested(Proof_Schema)
@@ -581,7 +635,7 @@ class TallySheetSchema(ma.ModelSchema):
 #             "tallySheetId",
 #             "tallySheetCode",
 #             "electionId",
-#             "officeId",
+#             "areaId",
 #             "latestVersionId",
 #
 #             "tallySheetVersionId",

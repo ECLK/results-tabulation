@@ -1,8 +1,8 @@
-from datetime import datetime
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
-from util import get_paginated_query
+
+from orm.entities.Audit import Stamp
 from orm.entities.IO import File, Folder
 from orm.entities.IO.Folder import FolderFile
 from orm.enums import ProofTypeEnum
@@ -13,14 +13,16 @@ class ProofModel(db.Model):
     __tablename__ = 'proof'
     proofId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     proofType = db.Column(db.Enum(ProofTypeEnum), nullable=False)
-    createdAt = db.Column(db.DateTime, default=None, onupdate=datetime.now, nullable=True)
-    scannedFilesFolderId = db.Column(db.Integer, db.ForeignKey(Folder.Model.__table__.c.folderId),
-                                     nullable=False)
+    proofStampId = db.Column(db.Integer, db.ForeignKey(Stamp.Model.__table__.c.stampId), nullable=False)
+    scannedFilesFolderId = db.Column(db.Integer, db.ForeignKey(Folder.Model.__table__.c.folderId), nullable=False)
     finished = db.Column(db.Boolean, default=False)
 
     scannedFilesFolder = relationship(Folder.Model, foreign_keys=[scannedFilesFolderId])
+    proofStamp = relationship(Stamp.Model, foreign_keys=[proofStampId])
 
     scannedFiles = association_proxy("scannedFilesFolder", "files")
+    createdBy = association_proxy("proofStamp", "createdBy")
+    createdAt = association_proxy("proofStamp", "createdAt")
 
 
 Model = ProofModel
@@ -28,16 +30,18 @@ Model = ProofModel
 
 def get_all():
     query = Model.query
-    result = get_paginated_query(query).all()
 
-    return result
+    return query
 
 
 def create(proofType):
     scanned_files_folder = Folder.create()
+    proof_stamp = Stamp.create()
+
     result = ProofModel(
         proofType=proofType,
-        scannedFilesFolderId=scanned_files_folder.folderId
+        scannedFilesFolderId=scanned_files_folder.folderId,
+        proofStampId=proof_stamp.stampId
     )
 
     db.session.add(result)

@@ -1,16 +1,11 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
-
 from app import db
-from exception import NotFoundException
-from orm.entities import Candidate, Party, Area
-from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
+from orm.entities import Area
+from orm.entities.Election import InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_21
-from util import get_paginated_query, to_empty_string_or_value
-
-from orm.entities.Submission import TallySheet
+from util import to_empty_string_or_value
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
 
@@ -49,13 +44,23 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
             ),
             isouter=True
         ).filter(
-            InvalidVoteCategory.Model.electionId == self.submission.electionId
+            InvalidVoteCategory.Model.electionId.in_(self.submission.election.mappedElectionIds)
         )
 
     def html(self):
         tallySheetContent = self.content.all()
 
+        stamp = self.stamp
+
         content = {
+            "election": {
+                "electionName": self.submission.election.get_official_name()
+            },
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
             "pollingDivision": Area.get_associated_areas(
@@ -66,7 +71,8 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
             "data": [
-            ]
+            ],
+            "totalRejected": 0
         }
 
         for row_index in range(len(tallySheetContent)):
@@ -77,6 +83,9 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
             data_row.append(row.categoryDescription)
             data_row.append(to_empty_string_or_value(row.count))
 
+            if row.count is not None:
+                content["totalRejected"] = content["totalRejected"] + row.count
+
         html = render_template(
             'PRE-21.html',
             content=content
@@ -86,31 +95,3 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
 
 
 Model = TallySheetVersionPRE21Model
-
-
-def get_all(tallySheetId):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    result = get_paginated_query(query).all()
-
-    return result
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
-    elif tallySheet.tallySheetCode is not TallySheetCodeEnum.PRE_21:
-        raise NotFoundException("Requested version not found. (tallySheetId=%d)" % tallySheetId)
-
-    result = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
-def create(tallySheetId):
-    result = Model(tallySheetId=tallySheetId)
-
-    return result

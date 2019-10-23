@@ -1,15 +1,18 @@
 import datetime
-
 from app import db
-from util import RequestBody
+from auth import authorize
+from auth.AuthConstants import DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE
+from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.enums import TallySheetCodeEnum
+from util import RequestBody, get_paginated_query
 from schemas import TallySheetVersion_CE_201_PV_Schema, TallySheetVersionSchema
 from orm.entities.Submission import TallySheet
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersion_CE_201_PV
 from exception import NotFoundException
 
 
+@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
-    result = TallySheetVersion_CE_201_PV.get_by_id(
+    result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     )
@@ -17,22 +20,27 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     return TallySheetVersion_CE_201_PV_Schema().dump(result).data
 
 
+@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
 def get_all(tallySheetId):
     tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
     if tallySheet is None:
         raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
 
-    result = TallySheetVersion_CE_201_PV.get_all(
+    result = TallySheetVersion.get_all(
         tallySheetId=tallySheetId
     )
+
+    result = get_paginated_query(result).all()
 
     return TallySheetVersion_CE_201_PV_Schema(many=True).dump(result).data
 
 
+@authorize(required_roles=[DATA_EDITOR_ROLE])
 def create(tallySheetId, body):
     request_body = RequestBody(body)
-    tallySheetVersion = TallySheetVersion_CE_201_PV.create(
-        tallySheetId=tallySheetId
+    tallySheet, tallySheetVersion = TallySheet.create_latest_version(
+        tallySheetId=tallySheetId,
+        tallySheetCode=TallySheetCodeEnum.CE_201_PV
     )
 
     total_number_of_a_packets_found = 0

@@ -1,8 +1,5 @@
-from app import db
-from sqlalchemy.orm import relationship
-from orm.entities import Electorate, Office
-from orm.enums import OfficeTypeEnum, AreaTypeEnum
-from util import get_paginated_query
+from orm.entities import Office
+from orm.enums import AreaTypeEnum
 
 
 class PollingStationModel(Office.Model):
@@ -33,6 +30,5 @@ def create(officeName, electionId, registeredVotersCount):
 
 def get_all():
     query = Model.query
-    result = get_paginated_query(query).all()
 
-    return result
+    return query

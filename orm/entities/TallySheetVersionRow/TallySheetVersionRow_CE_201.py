@@ -1,6 +1,7 @@
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-from sqlalchemy import and_
+from sqlalchemy import and_, select, func
 
 from app import db
 
@@ -16,8 +17,8 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(TallySheetVersion.Model.__table__.c.tallySheetVersionId),
                                     nullable=False)
     areaId = db.Column(db.Integer, db.ForeignKey(Area.Model.__table__.c.areaId), nullable=False)
-    # ballotBoxesIssued = db.Column(db.Integer, nullable=False)
-    # ballotBoxesReceived = db.Column(db.Integer, nullable=False)
+    # ballotBoxesIssued = relationship("TallySheetVersionRow_CE_201_IssuedBallotBox_Model")
+    # ballotBoxesReceived = relationship("TallySheetVersionRow_CE_201_ReceivedBallotBox_Model")
     ballotsIssued = db.Column(db.Integer, nullable=False)
     ballotsReceived = db.Column(db.Integer, nullable=False)
     ballotsSpoilt = db.Column(db.Integer, nullable=False)
@@ -30,50 +31,46 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
     area = relationship(Area.Model, foreign_keys=[areaId])
     tallySheetVersion = relationship(TallySheetVersion.Model, foreign_keys=[tallySheetVersionId])
 
-    @hybrid_property
-    def issuedBallots(self):
-        return db.session.query(
-            BallotBox.Model.stationaryItemId,
-            BallotBox.Model.ballotBoxId
-        ).join(
-            TallySheetVersionRow_CE_201_IssuedBallotBox_Model,
-            and_(
-                TallySheetVersionRow_CE_201_IssuedBallotBox_Model.tallySheetVersionRowId == self.tallySheetVersionRowId,
-                TallySheetVersionRow_CE_201_IssuedBallotBox_Model.ballotBoxStationaryItemId == BallotBox.Model.stationaryItemId
-            )
-        ).all()
+    areaName = association_proxy("area", "areaName")
+    electionId = association_proxy("tallySheetVersion", "electionId")
 
     @hybrid_property
-    def receivedBallots(self):
-        return db.session.query(
-            BallotBox.Model.stationaryItemId,
-            BallotBox.Model.ballotBoxId
-        ).join(
-            TallySheetVersionRow_CE_201_ReceivedBallotBox_Model,
-            and_(
-                TallySheetVersionRow_CE_201_ReceivedBallotBox_Model.tallySheetVersionRowId == self.tallySheetVersionRowId,
-                TallySheetVersionRow_CE_201_ReceivedBallotBox_Model.ballotBoxStationaryItemId == BallotBox.Model.stationaryItemId
-            )
+    def ballotBoxesIssued(self):
+        ballot_boxes = db.session.query(
+            TallySheetVersionRow_CE_201_IssuedBallotBox_Model.ballotBoxId
+        ).filter(
+            TallySheetVersionRow_CE_201_IssuedBallotBox_Model.tallySheetVersionRowId == self.tallySheetVersionRowId
         ).all()
+
+        return [ballot_box.ballotBoxId for ballot_box in ballot_boxes]
+
+    @hybrid_property
+    def ballotBoxesReceived(self):
+        ballot_boxes = db.session.query(
+            TallySheetVersionRow_CE_201_ReceivedBallotBox_Model.ballotBoxId
+        ).filter(
+            TallySheetVersionRow_CE_201_ReceivedBallotBox_Model.tallySheetVersionRowId == self.tallySheetVersionRowId
+        ).all()
+
+        return [ballot_box.ballotBoxId for ballot_box in ballot_boxes]
 
     __table_args__ = (
         db.UniqueConstraint('tallySheetVersionId', 'areaId', name='PollingStationPerBallotPaperAccount'),
     )
 
-    def add_received_ballot_box(self, stationaryItemId):
+    def add_received_ballot_box(self, ballotBoxId):
         TallySheetVersionRow_CE_201_ReceivedBallotBox_Model(
             tallySheetVersionRow=self,
-            ballotBoxStationaryItemId=stationaryItemId
+            ballotBoxId=ballotBoxId
         )
 
-    def add_issued_ballot_box(self, stationaryItemId):
+    def add_issued_ballot_box(self, ballotBoxId):
         TallySheetVersionRow_CE_201_IssuedBallotBox_Model(
             tallySheetVersionRow=self,
-            ballotBoxStationaryItemId=stationaryItemId
+            ballotBoxId=ballotBoxId
         )
 
-    def __init__(self, tallySheetVersion, areaId, ballotBoxesIssued, ballotBoxesReceived, ballotsIssued,
-                 ballotsReceived, ballotsSpoilt, ballotsUnused,
+    def __init__(self, tallySheetVersion, areaId, ballotsIssued, ballotsReceived, ballotsSpoilt, ballotsUnused,
                  ordinaryBallotCountFromBoxCount, tenderedBallotCountFromBoxCount,
                  ordinaryBallotCountFromBallotPaperAccount, tenderedBallotCountFromBallotPaperAccount):
 
@@ -82,14 +79,12 @@ class TallySheetVersionRow_CE_201_Model(db.Model):
         if area is None:
             raise NotFoundException("Area not found. (areaId=%d)" % areaId)
 
-        if area.electionId != tallySheetVersion.submission.electionId:
+        if area.electionId not in tallySheetVersion.submission.election.mappedElectionIds:
             raise NotFoundException("Area is not registered for the given election. (areaId=%d)" % areaId)
 
         super(TallySheetVersionRow_CE_201_Model, self).__init__(
             tallySheetVersionId=tallySheetVersion.tallySheetVersionId,
             areaId=areaId,
-            # ballotBoxesIssued=ballotBoxesIssued,
-            # ballotBoxesReceived=ballotBoxesReceived,
             ballotsIssued=ballotsIssued,
             ballotsReceived=ballotsReceived,
             ballotsSpoilt=ballotsSpoilt,
@@ -111,28 +106,27 @@ class TallySheetVersionRow_CE_201_BallotBox_Model(db.Model):
     __tablename__ = 'tallySheetVersionRow_CE_201_ballotBox'
     tallySheetVersionRowId = db.Column(db.Integer, db.ForeignKey(
         TallySheetVersionRow_CE_201_Model.__table__.c.tallySheetVersionRowId), primary_key=True)
-    ballotBoxStationaryItemId = db.Column(db.Integer, db.ForeignKey(BallotBox.Model.__table__.c.stationaryItemId),
-                                          primary_key=True)
-    invoiceStage = db.Column(db.Enum(InvoiceStageEnum), nullable=False)
+    ballotBoxId = db.Column(db.String(100), primary_key=True)
+    invoiceStage = db.Column(db.Enum(InvoiceStageEnum), primary_key=True)
 
     __mapper_args__ = {
         'polymorphic_on': invoiceStage
     }
 
-    def __init__(self, tallySheetVersionRow, ballotBoxStationaryItemId):
-        ballotBox = BallotBox.get_by_id(stationaryItemId=ballotBoxStationaryItemId)
-
-        if ballotBox is None:
-            raise NotFoundException("Ballot Box not found. (stationaryItemId=%d)" % ballotBoxStationaryItemId)
-
-        if ballotBox.electionId != tallySheetVersionRow.tallySheetVersion.submission.electionId:
-            raise NotFoundException(
-                "Ballot Box is not registered for the given election. (stationaryItemId=%d)" % ballotBoxStationaryItemId
-            )
+    def __init__(self, tallySheetVersionRow, ballotBoxId):
+        # ballotBox = BallotBox.get_by_id(stationaryItemId=ballotBoxStationaryItemId)
+        #
+        # if ballotBox is None:
+        #     raise NotFoundException("Ballot Box not found. (stationaryItemId=%d)" % ballotBoxStationaryItemId)
+        #
+        # if ballotBox.electionId not in tallySheetVersionRow.tallySheetVersion.submission.election.mappedElectionIds:
+        #     raise NotFoundException(
+        #         "Ballot Box is not registered for the given election. (stationaryItemId=%d)" % ballotBoxStationaryItemId
+        #     )
 
         super(TallySheetVersionRow_CE_201_BallotBox_Model, self).__init__(
             tallySheetVersionRowId=tallySheetVersionRow.tallySheetVersionRowId,
-            ballotBoxStationaryItemId=ballotBoxStationaryItemId
+            ballotBoxId=ballotBoxId
         )
         db.session.add(self)
         db.session.flush()
@@ -150,15 +144,13 @@ class TallySheetVersionRow_CE_201_ReceivedBallotBox_Model(TallySheetVersionRow_C
     }
 
 
-def create(tallySheetVersion, areaId, ballotBoxesIssued, ballotBoxesReceived, ballotsIssued, ballotsReceived,
+def create(tallySheetVersion, areaId, ballotsIssued, ballotsReceived,
            ballotsSpoilt, ballotsUnused,
            ordinaryBallotCountFromBoxCount, tenderedBallotCountFromBoxCount, ordinaryBallotCountFromBallotPaperAccount,
            tenderedBallotCountFromBallotPaperAccount):
     result = Model(
         tallySheetVersion=tallySheetVersion,
         areaId=areaId,
-        ballotBoxesIssued=ballotBoxesIssued,
-        ballotBoxesReceived=ballotBoxesReceived,
         ballotsIssued=ballotsIssued,
         ballotsReceived=ballotsReceived,
         ballotsSpoilt=ballotsSpoilt,
