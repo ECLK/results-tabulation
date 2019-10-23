@@ -78,6 +78,10 @@ def get_user_access_area_ids() -> Set[int]:
 
 @decorator
 def authenticate(func, *args, **kwargs):
+    print("\n\n\n\n####### request.headers ### [START]")
+    print(request.headers)
+    print("####### request.headers ### [END]\n\n\n")
+
     claims: Dict = get_claims()
 
     if SUB not in claims:
