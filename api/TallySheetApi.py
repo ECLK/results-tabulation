@@ -8,16 +8,10 @@ from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetSchema
 from util import RequestBody, get_paginated_query
-from flask import request
 
 
 @authorize(required_roles=ALL_ROLES)
 def getAll(electionId=None, areaId=None, tallySheetCode=None):
-    print("\n\n\n\n####### request.headers ### [START]")
-    print(request.headers)
-    print("####### request.headers ### [END]\n\n\n")
-
-
     result = TallySheet.get_all(
         electionId=electionId,
         areaId=areaId,
