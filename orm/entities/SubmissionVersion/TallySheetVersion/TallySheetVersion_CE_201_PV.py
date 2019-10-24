@@ -32,10 +32,10 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
             numberOfValidBallotPapers=numberOfValidBallotPapers
         )
 
-    def add_row(self, ballotBoxStationaryItemId, numberOfPacketsInserted, numberOfAPacketsFound):
+    def add_row(self, ballotBoxId, numberOfPacketsInserted, numberOfAPacketsFound):
         return TallySheetVersionRow_CE_201_PV.create(
             tallySheetVersionId=self.tallySheetVersionId,
-            ballotBoxStationaryItemId=ballotBoxStationaryItemId,
+            ballotBoxId=ballotBoxId,
             numberOfPacketsInserted=numberOfPacketsInserted,
             numberOfAPacketsFound=numberOfAPacketsFound
         )
@@ -73,14 +73,7 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
             },
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": Area.get_associated_areas(
-                self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName,
             "countingCentre": self.submission.area.areaName,
-            "pollingDistrictNos": ", ".join([
-                pollingDistrict.areaName for pollingDistrict in
-                Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
-            ]),
-
             "situation": tallySheetContentSummary.situation,
             "timeOfCommencementOfCount": tallySheetContentSummary.timeOfCommencementOfCount,
             "numberOfAPacketsFound": tallySheetContentSummary.numberOfAPacketsFound,
@@ -97,7 +90,7 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
             data_row = []
             content["data"].append(data_row)
 
-            data_row.append(row.ballotBox.ballotBoxId)
+            data_row.append(row.ballotBoxId)
             data_row.append(to_empty_string_or_value(row.numberOfPacketsInserted))
             data_row.append(to_empty_string_or_value(row.numberOfAPacketsFound))
 

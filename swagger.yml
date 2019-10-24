@@ -2017,7 +2017,46 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TallySheet'
+                  type: object
+                  required:
+                    - electionId
+                    - officeId
+                    - tallySheetCode
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                      default: 1
+                    version:
+                      type: integer
+                      format: int64
+                      default: 1
+                    electionId:
+                      type: integer
+                      format: int64
+                      default: 1
+                    officeId:
+                      type: integer
+                      format: int64
+                      default: 1
+                    createdBy:
+                      type: integer
+                      format: int64
+                      default: 1
+                    createdAt:
+                      type: string
+                      format: date-time
+                    tallySheetCode:
+                      type: string
+                      enum:
+                        - CE-201
+                        - CE-201-PV
+                        - PRE-41
+                        - PRE-21
+                        - PRE-30-PD
+                        - PRE-30-ED
+                        - PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+                        - PRE_ALL_ISLAND_RESULTS
         '400':
           description: Bad request.
           content:
@@ -2062,7 +2101,46 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TallySheet'
+                type: object
+                required:
+                  - electionId
+                  - officeId
+                  - tallySheetCode
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                    default: 1
+                  version:
+                    type: integer
+                    format: int64
+                    default: 1
+                  electionId:
+                    type: integer
+                    format: int64
+                    default: 1
+                  officeId:
+                    type: integer
+                    format: int64
+                    default: 1
+                  createdBy:
+                    type: integer
+                    format: int64
+                    default: 1
+                  createdAt:
+                    type: string
+                    format: date-time
+                  tallySheetCode:
+                    type: string
+                    enum:
+                      - CE-201
+                      - CE-201-PV
+                      - PRE-41
+                      - PRE-21
+                      - PRE-30-PD
+                      - PRE-30-ED
+                      - PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+                      - PRE_ALL_ISLAND_RESULTS
         '400':
           description: Bad request.
           content:
@@ -2365,7 +2443,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TallySheet'
+                type: object
         '400':
           description: Bad request.
           content:
@@ -2655,7 +2733,7 @@ paths:
                     items:
                       type: object
                       properties:
-                        ballotBoxStationaryItemId:
+                        ballotBoxId:
                           type: integer
                           format: int64
                         numberOfPacketsInserted:
@@ -2716,9 +2794,8 @@ paths:
                   items:
                     type: object
                     properties:
-                      ballotBoxStationaryItemId:
-                        type: integer
-                        format: int64
+                      ballotBoxId:
+                        type: string
                       numberOfPacketsInserted:
                         type: integer
                       numberOfAPacketsFound:
@@ -2776,7 +2853,7 @@ paths:
                     items:
                       type: object
                       properties:
-                        ballotBoxStationaryItemId:
+                        ballotBoxId:
                           type: integer
                           format: int64
                         numberOfPacketsInserted:
@@ -3418,24 +3495,24 @@ externalDocs:
   url: 'http://swagger.io'
 
 components:
-#  securitySchemes:
-#    organization_auth:
-#      type: oauth2
-#      flows:
-#        implicit:
-#          authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
-#          scopes:
-#            'write:org': modify
-#            'read:org': read
-#    api_key:
-#      type: apiKey
-#      name: api_key
-#      in: header
-#    jwt:
-#      type: http
-#      scheme: bearer
-#      bearerFormat: JWT
-#      x-bearerInfoFunc: auth.decode_token
+  #  securitySchemes:
+  #    organization_auth:
+  #      type: oauth2
+  #      flows:
+  #        implicit:
+  #          authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
+  #          scopes:
+  #            'write:org': modify
+  #            'read:org': read
+  #    api_key:
+  #      type: apiKey
+  #      name: api_key
+  #      in: header
+  #    jwt:
+  #      type: http
+  #      scheme: bearer
+  #      bearerFormat: JWT
+  #      x-bearerInfoFunc: auth.decode_token
   schemas:
     ApiResponse:
       type: object
@@ -3447,222 +3524,6 @@ components:
           type: string
         detail:
           type: string
-    TallySheetHistory:
-      type: array
-      items:
-        type: object
-        properties:
-          version:
-            type: integer
-            format: int64
-          createdBy:
-            type: integer
-            format: int64
-          createdAt:
-            type: string
-            format: date-time
-    TallySheet:
-      type: object
-      required:
-        - electionId
-        - officeId
-        - tallySheetCode
-      properties:
-        id:
-          type: integer
-          format: int64
-          default: 1
-        version:
-          type: integer
-          format: int64
-          default: 1
-        electionId:
-          type: integer
-          format: int64
-          default: 1
-        officeId:
-          type: integer
-          format: int64
-          default: 1
-        createdBy:
-          type: integer
-          format: int64
-          default: 1
-        createdAt:
-          type: string
-          format: date-time
-        tallySheetCode:
-          type: string
-          enum:
-            - PCE-22
-            - PCE-34
-            - PCE-35
-            - PCE-31
-            - CE/ CO/ PR/ 1
-            - PRE-41
-            - ISSUING
-            - RECEIVING
 
-
-    ########################################################
-    ###  Provincial Council                              ###
-    ########################################################
-    TallySheet_PCE-22:
-      allOf:
-        - $ref: '#/components/schemas/TallySheet'
-      type: object
-      description: Record of ballot papers of each ballot box of a polling station.
-      properties:
-        countingStartedAt:
-          type: string
-          format: data-time
-        table:
-          type: array
-          items:
-            type: object
-            description: the count of ballot of a ballot box.
-            properties:
-              id:
-                type: integer
-                format: int64
-              ballotBox:
-                type: integer
-              ballotCount:
-                type: integer
-    TallySheet_PCE-34:
-      allOf:
-        - $ref: '#/components/schemas/TallySheet'
-      type: object
-      description: >-
-        Statement for number and grounds on which ballot papers have been
-        rejected.
-      properties:
-        countingStartedAt:
-          type: string
-          format: data-time
-        does_not_bear_the_official_mark:
-          type: integer
-        votes_are_given_for_more_than_one_recognized_political_party:
-          type: integer
-        votes_are_given_for_more_than_one_independent_group:
-          type: integer
-        votes_are_given_for_a_combination_of_one_or_more_recognized_political_parties_and_independent_groups:
-          type: integer
-        something_is_written_or_marked_by_which_the_voter_can_be_identified:
-          type: integer
-        unmarked:
-          type: integer
-        void_for_uncertainty:
-          type: integer
-    TallySheet_PCE-35:
-      allOf:
-        - $ref: '#/components/schemas/TallySheet'
-      type: object
-      description: >-
-        Statement on the number of votes given to each recognized political
-        party/ independent group from the counting centre.
-      properties:
-        table:
-          type: array
-          items:
-            type: object
-            description: >-
-              votes given to a particular political party/ independent group
-              approved by an agent.
-            properties:
-              id:
-                type: integer
-                format: int64
-              partyId:
-                type: integer
-                format: int64
-              vote_count:
-                type: integer
-              vote_count_in_words:
-                type: string
-              signed_agent:
-                type: string
-    TallySheet_PCE-31:
-      allOf:
-        - $ref: '#/components/schemas/TallySheet'
-      type: object
-      description: Statement for invalid ballot papers at the count of preferences.
-      properties:
-        table:
-          type: array
-          items:
-            type: object
-            description: >-
-              Statement for invalid ballot papers at the count of preferences of
-              a party
-            properties:
-              id:
-                type: integer
-                format: int64
-              partyId:
-                type: integer
-                format: int64
-              preferences_given_for_more_than_three_candidates:
-                type: integer
-              all_preferences_are_void_uncertainity:
-                type: integer
-              no_preferences_marked:
-                type: integer
-
-    TallySheet_CE-CO-PR-1:
-      allOf:
-        - $ref: '#/components/schemas/TallySheet'
-      type: object
-      description: Tally sheet of preferences of a 50 bundle of a party.
-      properties:
-        partyId:
-          type: integer
-          format: int64
-        table:
-          type: array
-          items:
-            type: object
-            description: >-
-              Statement for invalid ballot papers at the count of preferences of
-              a party
-            properties:
-              id:
-                type: integer
-                format: int64
-              candidateId:
-                type: integer
-                format: int64
-              preferences_count:
-                type: integer
-
-    TallySheet_PRE-41:
-      allOf:
-        - $ref: '#/components/schemas/TallySheet'
-      type: object
-      description: Tally sheet of preferences of a 50 bundle of a party.
-      properties:
-        electoralDistrictId:
-          type: integer
-          format: int64
-        pollingDivisionId:
-          type: integer
-          format: int64
-        countingCentreId:
-          type: integer
-          format: int64
-        party_wise_results:
-          type: array
-          items:
-            type: object
-            description: >-
-              Statement for invalid ballot papers at the count of preferences of
-              a party
-            properties:
-              partyId:
-                type: integer
-                format: int64
-              voteCount:
-                type: integer
-                format: int64
 #security:
 #  - jwt: []

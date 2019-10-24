@@ -14,19 +14,6 @@ from jose import jwt
 
 
 def get_root_token(electionId):
-    jwt_payload = {}
-
-    jwt_payload[SUB] = "janak@carbon.super"
-    # jwt_payload[ROLE_CLAIM_PREFIX + ADMIN_ROLE] = []
-    jwt_payload[ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE] = []
-    jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE] = []
-    jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_GENERATOR_ROLE] = []
-    jwt_payload[ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE] = []
-    jwt_payload[ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE] = []
-    jwt_payload[ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE] = []
-    jwt_payload[ROLE_CLAIM_PREFIX + NATIONAL_REPORT_GENERATOR_ROLE] = []
-    jwt_payload[ROLE_CLAIM_PREFIX + EC_LEADERSHIP_ROLE] = []
-
     counting_centres = db.session.query(
         Area.Model
     ).join(
@@ -47,31 +34,32 @@ def get_root_token(electionId):
         Area.Model.electionId == electionId
     ).all()
 
-    for counting_centre in counting_centres:
-        jwt_payload[ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE].append({
+    jwt_payload = {
+        SUB: "janak@carbon.super", ROLE_CLAIM_PREFIX + ADMIN_ROLE: str([]),
+        ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE: str([{
             "areaId": counting_centre.areaId,
             "areaName": counting_centre.areaName
-        })
-
-    for polling_division in polling_divisions:
-        jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE].append({
+        } for counting_centre in counting_centres]),
+        ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE: str([{
             "areaId": polling_division.areaId,
             "areaName": polling_division.areaName
-        })
-        jwt_payload[ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_GENERATOR_ROLE].append({
+        } for polling_division in polling_divisions]),
+        ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_GENERATOR_ROLE: str([{
             "areaId": polling_division.areaId,
             "areaName": polling_division.areaName
-        })
-
-    for electoral_district in electoral_districts:
-        jwt_payload[ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE].append({
+        } for polling_division in polling_divisions]),
+        ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: str([{
             "areaId": electoral_district.areaId,
             "areaName": electoral_district.areaName
-        })
-        jwt_payload[ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE].append({
+        } for electoral_district in electoral_districts]),
+        ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE: str([{
             "areaId": electoral_district.areaId,
             "areaName": electoral_district.areaName
-        })
+        } for electoral_district in electoral_districts]),
+        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([]),
+        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_GENERATOR_ROLE: str([]),
+        ROLE_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([])
+    }
 
     # Generate a token with claims for everything.
     key = "jwt_secret"

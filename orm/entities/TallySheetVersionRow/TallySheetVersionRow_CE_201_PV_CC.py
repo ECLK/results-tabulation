@@ -2,10 +2,7 @@ from sqlalchemy.orm import relationship
 
 from app import db
 
-from orm.entities import Candidate
 from orm.entities.Area.Office import CountingCentre
-from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
-from exception import NotFoundException
 from orm.entities.SubmissionVersion import TallySheetVersion
 
 
