@@ -1,11 +1,12 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
+
 from app import db
 from orm.entities import Area
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201_PV_CC
-from util import to_empty_string_or_value
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
+from util import to_comma_seperated_num
 
 
 class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
@@ -77,9 +78,9 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
             "situation": tallySheetContentSummary.situation,
             "timeOfCommencementOfCount": tallySheetContentSummary.timeOfCommencementOfCount,
             "numberOfAPacketsFound": tallySheetContentSummary.numberOfAPacketsFound,
-            "numberOfACoversRejected": tallySheetContentSummary.numberOfACoversRejected,
-            "numberOfBCoversRejected": tallySheetContentSummary.numberOfBCoversRejected,
-            "numberOfValidBallotPapers": tallySheetContentSummary.numberOfValidBallotPapers,
+            "numberOfACoversRejected": to_comma_seperated_num(tallySheetContentSummary.numberOfACoversRejected),
+            "numberOfBCoversRejected": to_comma_seperated_num(tallySheetContentSummary.numberOfBCoversRejected),
+            "numberOfValidBallotPapers": to_comma_seperated_num(tallySheetContentSummary.numberOfValidBallotPapers),
 
             "data": [
             ],
@@ -91,8 +92,8 @@ class TallySheetVersion_CE_201_PV_Model(TallySheetVersion.Model):
             content["data"].append(data_row)
 
             data_row.append(row.ballotBoxId)
-            data_row.append(to_empty_string_or_value(row.numberOfPacketsInserted))
-            data_row.append(to_empty_string_or_value(row.numberOfAPacketsFound))
+            data_row.append(to_comma_seperated_num(row.numberOfPacketsInserted))
+            data_row.append(to_comma_seperated_num(row.numberOfAPacketsFound))
 
         html = render_template(
             'CE-201-PV.html',
