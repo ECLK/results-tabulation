@@ -18,14 +18,6 @@ AREA_ID = "areaId"
 USER_ACCESS_AREA_IDS = "userAccessAreaIds"
 USER_NAME = "userName"
 
-def apikey_auth(token, required_scopes):
-    info = TOKEN_DB.get(token, None)
-
-    if not info:
-        raise OAuthProblem('Invalid token')
-
-    return info
-
 def decode_token(token):
     try:
         token = jwt.decode(
