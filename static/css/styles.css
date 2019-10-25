@@ -172,3 +172,17 @@
     display: block;
     margin-bottom: 5px;
 }
+
+/* CE-201-PV */
+.CE-201-PV .group {
+    display: table;
+}
+
+.CE-201-PV .group div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.CE-201-PV .bracket {
+    font-family: 'Raleway', sans-serif;
+}
