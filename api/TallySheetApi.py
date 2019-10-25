@@ -63,6 +63,9 @@ def lock(tallySheetId, body):
     if tally_sheet_version is None:
         raise NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)
 
+    if not tally_sheet_version.isComplete:
+            raise NotFoundException("Incomplete tally sheet version (tallySheetVersionId=%d)" % tallySheetVersionId)
+
     tally_sheet.set_locked_version(tally_sheet_version)
 
     db.session.commit()
