@@ -5,7 +5,7 @@ from app import db
 from orm.entities import Area
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201
-from util import to_empty_string_or_value
+from util import to_empty_string_or_value, to_comma_seperated_num
 from datetime import date
 from datetime import datetime
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
@@ -108,11 +108,11 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
                 data_row.append(to_empty_string_or_value(row.ballotsUnused))
 
                 data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBallotPaperAccount))
-                data_row.append(to_empty_string_or_value(row.ordinaryBallotCountFromBoxCount))
+                data_row.append(to_empty_string_or_value(to_comma_seperated_num(row.ordinaryBallotCountFromBoxCount)))
                 data_row.append(row.ordinaryBallotCountFromBoxCount - row.ordinaryBallotCountFromBallotPaperAccount)
 
                 data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBallotPaperAccount))
-                data_row.append(to_empty_string_or_value(row.tenderedBallotCountFromBoxCount))
+                data_row.append(to_empty_string_or_value(to_comma_seperated_num(row.tenderedBallotCountFromBoxCount)))
                 data_row.append(row.tenderedBallotCountFromBoxCount - row.tenderedBallotCountFromBallotPaperAccount)
             elif isinstance(row, Area.Model):
                 # three ballot boxes
