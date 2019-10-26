@@ -16,6 +16,12 @@ def get_all():
     return Schema(many=True).dump(result).data
 
 
+def get_by_id(electionId):
+    result = Election.get_by_id(electionId=electionId)
+
+    return Schema().dump(result).data
+
+
 @authorize(required_roles=[ADMIN_ROLE])
 def create(body):
     request_body = RequestBody(body)
