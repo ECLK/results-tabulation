@@ -418,7 +418,8 @@ class TallySheetVersionSchema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "contentUrl"
+            "contentUrl",
+            "isComplete"
         )
 
         model = TallySheetVersion.Model

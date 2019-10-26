@@ -15,7 +15,7 @@ class TallySheetVersionModel(db.Model):
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
                                     primary_key=True)
     tallySheetVersionCode = db.Column(db.Enum(TallySheetCodeEnum), nullable=False)
-
+    isComplete = db.Column(db.Boolean, default=False, nullable=False)
     submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[tallySheetVersionId])
 
     submission = association_proxy("submissionVersion", "submission")
@@ -23,6 +23,9 @@ class TallySheetVersionModel(db.Model):
     createdBy = association_proxy("submissionVersion", "createdBy")
     createdAt = association_proxy("submissionVersion", "createdAt")
     stamp = association_proxy("submissionVersion", "stamp")
+
+    def set_complete(self):
+        self.isComplete = True
 
     def set_locked(self):
         self.submissionVersion.set_locked()
