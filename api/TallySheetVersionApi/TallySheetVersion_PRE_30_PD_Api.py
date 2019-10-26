@@ -2,13 +2,14 @@ from app import db
 from auth import authorize
 from auth.AuthConstants import POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
-from orm.entities import Submission, SubmissionVersion
+from orm.entities import Submission, SubmissionVersion, Area, Election
+from orm.entities.Election import ElectionCandidate
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_RejectedVoteCount
 from orm.enums import AreaTypeEnum, TallySheetCodeEnum
 from schemas import TallySheetVersion_PRE_30_PD_Schema, TallySheetVersionSchema
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 
 @authorize(
@@ -35,32 +36,54 @@ def create(tallySheetId):
     )
 
     query = db.session.query(
-        TallySheetVersionRow_PRE_41.Model.candidateId,
-        Submission.Model.areaId,
+        Area.Model.areaId,
+        ElectionCandidate.Model.candidateId,
         func.sum(TallySheetVersionRow_PRE_41.Model.count).label("count"),
     ).join(
-        SubmissionVersion.Model,
-        SubmissionVersion.Model.submissionVersionId == TallySheetVersionRow_PRE_41.Model.tallySheetVersionId
+        Election.Model,
+        Election.Model.electionId == Area.Model.electionId
+    ).join(
+        ElectionCandidate.Model,
+        ElectionCandidate.Model.electionId == Election.Model.parentElectionId
     ).join(
         Submission.Model,
-        Submission.Model.submissionId == SubmissionVersion.Model.submissionId
+        Submission.Model.areaId == Area.Model.areaId
+    ).join(
+        TallySheet.Model,
+        and_(
+            TallySheet.Model.tallySheetId == Submission.Model.submissionId,
+            TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_41
+        )
+    ).join(
+        TallySheetVersionRow_PRE_41.Model,
+        and_(
+            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
+            TallySheetVersionRow_PRE_41.Model.candidateId == ElectionCandidate.Model.candidateId
+        ),
+        isouter=True
     ).filter(
-        TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
-        Submission.Model.areaId.in_([area.areaId for area in countingCentres])
+        Area.Model.areaId.in_([area.areaId for area in countingCentres])
     ).group_by(
-        TallySheetVersionRow_PRE_41.Model.candidateId,
-        Submission.Model.areaId
+        Area.Model.areaId,
+        ElectionCandidate.Model.candidateId
     ).order_by(
-        TallySheetVersionRow_PRE_41.Model.candidateId,
-        Submission.Model.areaId
+        Area.Model.areaId,
+        ElectionCandidate.Model.candidateId
     ).all()
 
+    is_complete = True
     for row in query:
-        tallySheetVersion.add_row(
-            candidateId=row.candidateId,
-            countingCentreId=row.areaId,
-            count=row.count
-        )
+        if row.candidateId is not None and row.areaId is not None and row.count is not None:
+            tallySheetVersion.add_row(
+                candidateId=row.candidateId,
+                countingCentreId=row.areaId,
+                count=row.count
+            )
+        else:
+            is_complete = False
+
+    if is_complete:
+        tallySheetVersion.set_complete()
 
     rejected_vote_count_query = db.session.query(
         Submission.Model.areaId,
