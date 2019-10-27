@@ -259,8 +259,8 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    # ballotBoxesIssued = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
-    # ballotBoxesReceived = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
+    ballotBoxesIssued = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
+    ballotBoxesReceived = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
 
 
 class AreaSchema(ma.ModelSchema):
