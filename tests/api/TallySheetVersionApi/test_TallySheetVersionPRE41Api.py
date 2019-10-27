@@ -24,14 +24,17 @@ class TestTallySheetVersionPRE41Api:
             "content": [
                 {
                     "candidateId": 1,
-                    "count": 100,
-                    "countInWords": "One hundred"
+                    "count": 500,
+                    "countInWords": "Five hundred"
                 }
-            ]
+            ],
+            "summary": {
+                "rejectedVoteCount": 10
+            }
         }
 
         response: Response = test_client.post(f"/tally-sheet/{self.tally_sheet_code}/{tally_sheet_id}/version",
-                                              json=payload)
+                                              json=payload, headers=test_client.http_headers)
         assert response.status_code == 200
         json_response = response.get_json()
         for key in ["contentUrl", "createdAt", "createdBy", "htmlUrl", "tallySheetId", "tallySheetVersionId"]:

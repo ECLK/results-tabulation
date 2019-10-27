@@ -1,12 +1,10 @@
 import os
-from datetime import datetime
-from unittest.mock import patch
 
 import pytest
 
+import auth
 from app import create_app, db
 from orm.entities import Election
-from orm.entities.Audit.Stamp import Stamp
 
 
 @pytest.fixture(scope="session")
@@ -15,16 +13,7 @@ def test_client():
     flask_app = connex_app.app
     tc = flask_app.test_client()
 
-    @patch("orm.entities.Audit.Stamp.create")
-    def create_test_election(mock_stamp_create):
-        mock_stamp = Stamp()
-        mock_stamp.ip = "0.0.0.0"
-        mock_stamp.createdBy = "TestAdmin"
-        mock_stamp.createdAt = datetime.now()
-        db.session.add(mock_stamp)
-        db.session.flush()
-        mock_stamp_create.return_value = mock_stamp
-
+    def create_test_election():
         from orm.entities.Election.election_helper import build_presidential_election
         election = Election.create(electionName="Test Election")
 
@@ -45,11 +34,15 @@ def test_client():
         db.create_all()
         db.session.commit()
 
-        election = create_test_election()
+        with connex_app.app.test_request_context(environ_base={'REMOTE_ADDR': '1.2.3.4'}) as test_request_ctx:
+            test_request_ctx.connexion_context = {auth.USER_NAME: 'Test User'}
+            election = create_test_election()
 
         from orm.entities.Election.election_helper import get_root_token
-        jwt_token = get_root_token(election.electionId)
+        jwt = get_root_token(election.electionId)
 
-        tc.environ_base['HTTP_AUTHORIZATION'] = 'Bearer ' + jwt_token
+        tc.http_headers = {
+            auth.JWT_TOKEN_HEADER_KEY: jwt
+        }
 
         yield tc
