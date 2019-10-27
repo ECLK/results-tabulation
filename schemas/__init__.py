@@ -275,7 +275,9 @@ class AreaSchema(ma.ModelSchema):
             # "pollingStations",
             # "countingCentres",
             # "districtCentres",
-            "pollingDistricts"
+            "pollingDistricts",
+            "electoralDistricts",
+            "pollingDivisions"
         )
 
         model = Area.Model
@@ -291,6 +293,8 @@ class AreaSchema(ma.ModelSchema):
     countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
     districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
     pollingDistricts = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    electoralDistricts = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    pollingDivisions = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
 
 
 class ElectorateSchema(ma.ModelSchema):
