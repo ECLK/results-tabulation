@@ -88,13 +88,19 @@ class AreaModel(db.Model):
 
     @hybrid_property
     def countingCentres(self):
-        # return []
         return get_associated_areas(self, AreaTypeEnum.CountingCentre)
 
     @hybrid_property
     def districtCentres(self):
-        # return []
         return get_associated_areas(self, AreaTypeEnum.DistrictCentre)
+
+    @hybrid_property
+    def electoralDistricts(self):
+        return get_associated_areas(self, AreaTypeEnum.ElectoralDistrict)
+
+    @hybrid_property
+    def pollingDivisions(self):
+        return get_associated_areas(self, AreaTypeEnum.PollingDivision)
 
     @hybrid_property
     def pollingDistricts(self):
