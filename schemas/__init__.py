@@ -606,7 +606,9 @@ class TallySheetSchema(ma.ModelSchema):
             "area",
             "latestVersionId",
             "lockedVersionId",
+            "submittedVersionId",
             "locked",
+            "submitted",
             # "latestVersion",
             "submissionProofId",
             "versions"

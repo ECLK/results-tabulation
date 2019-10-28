@@ -64,9 +64,46 @@ def lock(tallySheetId, body):
         raise NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)
 
     if not tally_sheet_version.isComplete:
-            raise NotFoundException("Incomplete tally sheet version (tallySheetVersionId=%d)" % tallySheetVersionId)
+        raise NotFoundException("Incomplete tally sheet version (tallySheetVersionId=%d)" % tallySheetVersionId)
 
     tally_sheet.set_locked_version(tally_sheet_version)
+
+    db.session.commit()
+
+    return TallySheetSchema().dump(tally_sheet).data, 201
+
+
+@authorize(required_roles=ALL_ROLES)
+def request_edit(tallySheetId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    tally_sheet.set_submitted_version(None)
+
+    db.session.commit()
+
+    return TallySheetSchema().dump(tally_sheet).data, 201
+
+
+@authorize(required_roles=ALL_ROLES)
+def submit(tallySheetId, body):
+    request_body = RequestBody(body)
+    tallySheetVersionId = request_body.get("submittedVersionId")
+
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
+                                                      tallySheetId=tallySheetId)
+
+    if tally_sheet_version is None:
+        raise NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)
+
+    tally_sheet.set_submitted_version(tally_sheet_version)
 
     db.session.commit()
 
