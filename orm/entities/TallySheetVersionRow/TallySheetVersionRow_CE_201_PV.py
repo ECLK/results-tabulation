@@ -7,15 +7,11 @@ class TallySheetVersionRow_CE_201_PV_Model(db.Model):
     __tablename__ = 'tallySheetVersionRow_CE_201_PV'
     tallySheetVersionRowId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(TallySheetVersion.Model.__table__.c.tallySheetVersionId))
-    ballotBoxId = db.Column(db.String(20), nullable=False)
-    numberOfPacketsInserted = db.Column(db.Integer, nullable=False)
-    numberOfAPacketsFound = db.Column(db.Integer, nullable=False)
+    ballotBoxId = db.Column(db.String(20), nullable=True, default="")
+    numberOfPacketsInserted = db.Column(db.Integer, nullable=True, default=0)
+    numberOfAPacketsFound = db.Column(db.Integer, nullable=True, default=0)
 
     tallySheetVersion = relationship(TallySheetVersion.Model, foreign_keys=[tallySheetVersionId])
-
-    __table_args__ = (
-        db.UniqueConstraint('tallySheetVersionId', 'ballotBoxId', name='BallotBoxPerCE201PV'),
-    )
 
     def __init__(self, tallySheetVersionId, ballotBoxId, numberOfPacketsInserted, numberOfAPacketsFound):
         super(TallySheetVersionRow_CE_201_PV_Model, self).__init__(
