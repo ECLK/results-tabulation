@@ -2827,8 +2827,7 @@ paths:
                       type: object
                       properties:
                         ballotBoxId:
-                          type: integer
-                          format: int64
+                          type: string
                         numberOfPacketsInserted:
                           type: integer
                         numberOfAPacketsFound:
@@ -2947,8 +2946,7 @@ paths:
                       type: object
                       properties:
                         ballotBoxId:
-                          type: integer
-                          format: int64
+                          type: string
                         numberOfPacketsInserted:
                           type: integer
                         numberOfAPacketsFound:
