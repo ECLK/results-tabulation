@@ -71,7 +71,7 @@ def create(tallySheetId):
         ElectionCandidate.Model.candidateId
     ).all()
 
-    is_complete = True
+    is_complete = True      # TODO:Change other reports to validate like this
     for row in query:
         if row.candidateId is not None and row.areaId is not None and row.count is not None:
             tallySheetVersion.add_row(
