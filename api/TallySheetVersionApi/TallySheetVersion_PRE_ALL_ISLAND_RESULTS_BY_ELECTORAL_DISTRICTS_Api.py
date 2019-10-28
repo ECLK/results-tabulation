@@ -25,7 +25,7 @@ def create(tallySheetId):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
     )
-
+    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     electoralDistricts = tallySheetVersion.submission.area.get_associated_areas(
         areaType=AreaTypeEnum.ElectoralDistrict, electionId=tallySheetVersion.submission.electionId
     )
