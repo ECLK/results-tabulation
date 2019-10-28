@@ -85,4 +85,12 @@ def create_app():
     connex_app.add_api("swagger.yml", strict_validation=True,
                        validate_responses=False)
 
+    @app.context_processor
+    def inject_to_template():
+        is_prod_env = False
+
+        if app.config.get('PROD_ENV'):
+            is_prod_env = app.config['PROD_ENV']
+        return dict(isProdEnv=is_prod_env)
+
     return connex_app
