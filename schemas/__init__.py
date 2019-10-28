@@ -163,7 +163,7 @@ class TallySheetVersionRow_CE_201_PV_Schema(ma.ModelSchema):
         fields = (
             "tallySheetVersionRowId",
             "tallySheetVersionId",
-            "ballotBoxStationaryItemId",
+            "ballotBoxId",
             "numberOfPacketsInserted",
             "numberOfAPacketsFound"
         )
