@@ -74,7 +74,7 @@ class SubmissionModel(db.Model):
 
     def set_submitted_version(self, submissionVersion: SubmissionVersion):
         if submissionVersion is None:
-            self.lockedVersionId = None
+            self.submittedVersionId = None
         else:
             if submissionVersion.submissionId is not self.submissionId:
                 raise MethodNotAllowedException(
