@@ -58,6 +58,16 @@ def create(tallySheetId, body):
 
     tally_sheet_summary = request_body.get("summary")
     time_of_commencement_of_count = tally_sheet_summary.get("timeOfCommencementOfCount")
+    if time_of_commencement_of_count is None:
+        try:
+            time_of_commencement_of_count = datetime.datetime.strptime(
+                time_of_commencement_of_count,
+                '%Y-%m-%dT%H:%M:%S.%fZ'
+            )
+        except  Exception as e:
+            time_of_commencement_of_count = None
+    else:
+        time_of_commencement_of_count = None
 
     # To remove the colon between time zone comming from openapi date-time.
     # This is since the colon is not accepted in python datetime
@@ -66,10 +76,7 @@ def create(tallySheetId, body):
 
     tallySheetVersion.add_summary(
         situation=tally_sheet_summary.get("situation"),
-        timeOfCommencementOfCount=datetime.datetime.strptime(
-            time_of_commencement_of_count,
-            '%Y-%m-%dT%H:%M:%S.%fZ'
-        ),
+        timeOfCommencementOfCount=time_of_commencement_of_count,
         numberOfAPacketsFound=total_number_of_a_packets_found,
         numberOfACoversRejected=tally_sheet_summary.get("numberOfACoversRejected"),
         numberOfBCoversRejected=tally_sheet_summary.get("numberOfBCoversRejected"),
