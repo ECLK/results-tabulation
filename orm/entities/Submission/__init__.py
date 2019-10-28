@@ -3,6 +3,7 @@ from app import db
 from sqlalchemy.orm import relationship
 from exception import MethodNotAllowedException
 from orm.entities import Election, Office, Proof, History, SubmissionVersion, Area
+from orm.entities.Audit import Stamp
 from orm.enums import SubmissionTypeEnum, ProofTypeEnum
 
 
@@ -15,7 +16,9 @@ class SubmissionModel(db.Model):
     submissionProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId), nullable=False)
     latestVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
     lockedVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
+    lockedStampId = db.Column(db.Integer, db.ForeignKey("stamp.stampId"), nullable=True)
     submittedVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
+    submittedStampId = db.Column(db.Integer, db.ForeignKey("stamp.stampId"), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     area = relationship(Area.Model, foreign_keys=[areaId])
@@ -54,6 +57,7 @@ class SubmissionModel(db.Model):
     def set_locked_version(self, submissionVersion: SubmissionVersion):
         if submissionVersion is None:
             self.lockedVersionId = None
+            self.lockedStampId = None
         else:
             if submissionVersion.submissionId is not self.submissionId:
                 raise MethodNotAllowedException(
@@ -63,6 +67,7 @@ class SubmissionModel(db.Model):
                     ))
 
             self.lockedVersionId = submissionVersion.submissionVersionId
+            self.lockedStampId = Stamp.create().stampId
 
         db.session.add(self)
         db.session.flush()
@@ -79,6 +84,7 @@ class SubmissionModel(db.Model):
                     ))
 
             self.submittedVersionId = submissionVersion.submissionVersionId
+            self.submittedStampId = Stamp.create().stampId
 
         db.session.add(self)
         db.session.flush()
