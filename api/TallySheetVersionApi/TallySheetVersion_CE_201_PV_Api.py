@@ -42,7 +42,7 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.CE_201_PV
     )
-
+    tallySheetVersion.set_complete()    # TODO: valid before setting complete. Refer to PRE_30_PD
     total_number_of_a_packets_found = 0
     tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:

@@ -30,7 +30,7 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.PRE_41
     )
-
+    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
         for row in tally_sheet_content:

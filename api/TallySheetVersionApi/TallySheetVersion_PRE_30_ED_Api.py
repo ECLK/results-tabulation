@@ -27,7 +27,7 @@ def create(tallySheetId):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.PRE_30_ED
     )
-
+    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     polling_division_and_electoral_district_subquery = tallySheetVersion.polling_division_and_electoral_district_query().subquery()
 
     query = db.session.query(

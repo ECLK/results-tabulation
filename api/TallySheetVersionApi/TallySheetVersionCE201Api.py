@@ -26,7 +26,7 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.CE_201
     )
-
+    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
         for party_count_body in tally_sheet_content:
