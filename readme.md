@@ -44,6 +44,8 @@ https://localhost:5000/ui/
 
 **Run tests**
 
+NOTE: Due to differences in SQL syntax it is recommended to use a mysql database for testing. Update `./env/test.cfg` with database information and follow `Create Database` (no need of `Upgrade the Database`).
+
 `export ENV_CONFIG=./env/test.cfg && pytest tests`
 
 ## Database Operations

@@ -4,7 +4,7 @@ from flask import Response
 class TestTallySheet:
 
     def test_get_all(self, test_client):
-        response: Response = test_client.get("/tally-sheet")
+        response: Response = test_client.get("/tally-sheet", headers=test_client.http_headers)
         assert response.status_code == 200
         assert len(response.get_json()) > 0
 
