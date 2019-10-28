@@ -12,12 +12,12 @@ class TallySheetVersionRow_CE_201_PV_CC_Model(db.Model):
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(TallySheetVersion.Model.__table__.c.tallySheetVersionId))
 
     countingCentreId = db.Column(db.Integer, db.ForeignKey(CountingCentre.Model.__table__.c.areaId))
-    situation = db.Column(db.String(100), nullable=False)
-    timeOfCommencementOfCount = db.Column(db.DateTime, nullable=False)
-    numberOfAPacketsFound = db.Column(db.Integer, nullable=False)
-    numberOfACoversRejected = db.Column(db.Integer, nullable=False)
-    numberOfBCoversRejected = db.Column(db.Integer, nullable=False)
-    numberOfValidBallotPapers = db.Column(db.Integer, nullable=False)
+    situation = db.Column(db.String(100), nullable=True)
+    timeOfCommencementOfCount = db.Column(db.DateTime, nullable=True)
+    numberOfAPacketsFound = db.Column(db.Integer, nullable=True)
+    numberOfACoversRejected = db.Column(db.Integer, nullable=True)
+    numberOfBCoversRejected = db.Column(db.Integer, nullable=True)
+    numberOfValidBallotPapers = db.Column(db.Integer, nullable=True)
 
     tallySheetVersion = relationship(TallySheetVersion.Model, foreign_keys=[tallySheetVersionId])
 
