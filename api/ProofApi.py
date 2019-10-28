@@ -1,6 +1,7 @@
 from app import db
 from auth import authorize
 from auth.AuthConstants import ALL_ROLES
+from exception import NotFoundException
 from util import RequestBody, get_paginated_query
 import connexion
 
@@ -23,6 +24,9 @@ def get_by_id(proofId):
     result = Proof.get_by_id(
         proofId=proofId
     )
+
+    if result is None:
+        raise NotFoundException("Proof not found. (proofId=%d)" % proofId)
 
     return Schema().dump(result).data
 

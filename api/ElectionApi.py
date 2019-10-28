@@ -2,6 +2,7 @@ import connexion
 
 from app import db
 from auth import ADMIN_ROLE, authorize
+from exception import NotFoundException
 from orm.entities.Election.election_helper import get_root_token, build_presidential_election
 from orm.entities import Election
 from schemas import ElectionSchema as Schema
@@ -14,6 +15,14 @@ def get_all():
     result = get_paginated_query(result).all()
 
     return Schema(many=True).dump(result).data
+
+
+def get_by_id(electionId):
+    result = Election.get_by_id(electionId=electionId)
+    if result is None:
+        raise NotFoundException("Election not found (electionId=%d)" % electionId)
+    
+    return Schema().dump(result).data
 
 
 @authorize(required_roles=[ADMIN_ROLE])

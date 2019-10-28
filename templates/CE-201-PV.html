@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block container %}
-<div class="font1">
+<div class="font1 CE-201-PV">
 
     <table class="table table-borderless">
         <tbody>
@@ -76,49 +76,90 @@
 
         {% for row in content.data %}
         <tr>
-            <td class="left right top bottom {%if row[0]=="" %}missing-value{% endif %}" style="text-align:right;">{{row[0]}}</td>
-            <td class="left right top bottom {%if row[1]=="" %}missing-value{% endif %}" style="text-align:right;">{{row[1]}}</td>
-            <td class="left right top bottom {%if row[2]=="" %}missing-value{% endif %}" style="text-align:right;">{{row[2]}}</td>
+            <td class="left right top bottom {%if row[0]=="" %}missing-value{% endif %}" style="text-align:right;">
+              <div style="border-bottom: 1px dotted;">{{row[0]}}</div>
+            </td>
+            <td class="left right top bottom {%if row[1]=="" %}missing-value{% endif %}" style="text-align:right;">
+              <div style="border-bottom: 1px dotted;">{{row[1]}}</div>
+            </td>
+            <td class="left right top bottom {%if row[2]=="" %}missing-value{% endif %}" style="text-align:right;">
+              <div style="border-bottom: 1px dotted;">{{row[2]}}</div>
+            </td>
         </tr>
         {% endfor %}
 
 
         <tr>
             <td colspan="2">6. Total Number of PV-A packets found in the Box/Boxes</td>
-            <td class="left right top bottom"
-                style="text-decoration-line: underline;text-decoration-style: double; text-align: center;">
-                <span class="top">{{content.numberOfAPacketsFound}}</span>
+            <td class="left right top bottom" style="text-align: right; padding-top: 0.25rem; padding-bottom: 0.25rem;;">
+                <div class="top" style="border-bottom: double; padding-top: 0.3rem; padding-bottom: 0.3rem;">{{content.numberOfAPacketsFound}}</div>
             </td>
         </tr>
 
         <tr>
-            <td colspan="2">
-                7. No. of Packets rejected on various grounds after opening 'A' covers
-                <span style="float: right;">} :-</span>
+            <td colspan="2" class="no-padding-top no-padding-bottom">
+              <div class="group">
+                  <div style="padding-right:5px;">
+                      7.
+                  </div>
+                  <div>
+                      No. of Packets rejected on various grounds after opening 'A' covers
+                  </div>
+                  <div class="group" style="float:right; padding-left: 377px;">
+                      <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                      <div style="font-weight: normal;">
+                          &nbsp:-
+                      </div>
+                  </div>
+              </div>
             </td>
-            <td style="border-bottom: 1px dotted; text-align: center;">
-                {{content.numberOfACoversRejected}}
+            <td style="text-align: center; vertical-align: middle;">
+                <div style="border-bottom: 1px dotted;">{{content.numberOfACoversRejected}}</div>
             </td>
         </tr>
 
         <tr>
-            <td colspan="2">
-                8. <span class="bold">No. of covers rejected on </span>various grounds after opening 'B' covers in
-                accepted ballot papers receptacle
-                <span style="float: right;">} :-</span>
+            <td colspan="2" class="no-padding-top no-padding-bottom">
+              <div class="group">
+                  <div style="padding-right:5px;">
+                      8.
+                  </div>
+                  <div>
+                    <span class="bold">No. of covers rejected on </span>various grounds after opening 'B' covers in
+                    accepted ballot papers receptacle
+                  </div>
+                  <div class="group" style="float:right; padding-left: 135px;">
+                      <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                      <div style="font-weight: normal;">
+                          &nbsp:-
+                      </div>
+                  </div>
+              </div>
             </td>
-            <td style="border-bottom: 1px dotted; text-align: center;">
-                {{content.numberOfBCoversRejected}}
+            <td style="text-align: center; vertical-align: middle;">
+                <div style="border-bottom: 1px dotted;">{{content.numberOfBCoversRejected}}</div>
             </td>
         </tr>
 
         <tr>
-            <td colspan="2">
-                9. <span class="bold">No. of postal ballot papers for the count in the receptacle for accepted ballot papers.</span>
-                <span style="float: right;">} :-</span>
+            <td colspan="2" class="no-padding-top no-padding-bottom">
+              <div class="group">
+                  <div style="padding-right:5px;">
+                      9.
+                  </div>
+                  <div>
+                    <span class="bold">No. of postal ballot papers for the count in the receptacle for accepted ballot papers.</span>
+                  </div>
+                  <div class="group" style="float:right; padding-left: 225px;">
+                      <div class="bracket" style="font-size: 64px; font-weight: normal;">}</div>
+                      <div style="font-weight: normal;">
+                          &nbsp:-
+                      </div>
+                  </div>
+              </div>
             </td>
-            <td style="border-bottom: 1px dotted; text-align: center;">
-                {{content.numberOfValidBallotPapers}}
+            <td style="text-align: center; vertical-align: middle;">
+                <div style="border-bottom: 1px dotted;">{{content.numberOfValidBallotPapers}}</div>
             </td>
         </tr>
 

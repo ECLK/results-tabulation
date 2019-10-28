@@ -259,8 +259,8 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    # ballotBoxesIssued = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
-    # ballotBoxesReceived = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
+    ballotBoxesIssued = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
+    ballotBoxesReceived = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
 
 
 class AreaSchema(ma.ModelSchema):
@@ -275,7 +275,9 @@ class AreaSchema(ma.ModelSchema):
             # "pollingStations",
             # "countingCentres",
             # "districtCentres",
-            "pollingDistricts"
+            "pollingDistricts",
+            "electoralDistricts",
+            "pollingDivisions"
         )
 
         model = Area.Model
@@ -291,6 +293,8 @@ class AreaSchema(ma.ModelSchema):
     countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
     districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
     pollingDistricts = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    electoralDistricts = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
+    pollingDivisions = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
 
 
 class ElectorateSchema(ma.ModelSchema):

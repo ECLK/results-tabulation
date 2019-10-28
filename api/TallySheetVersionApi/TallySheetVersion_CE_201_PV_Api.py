@@ -49,7 +49,7 @@ def create(tallySheetId, body):
         for row in tally_sheet_content:
             tally_sheet_content_item = RequestBody(row)
             row = tallySheetVersion.add_row(
-                ballotBoxStationaryItemId=tally_sheet_content_item.get("ballotBoxStationaryItemId"),
+                ballotBoxId=tally_sheet_content_item.get("ballotBoxId"),
                 numberOfPacketsInserted=tally_sheet_content_item.get("numberOfPacketsInserted"),
                 numberOfAPacketsFound=tally_sheet_content_item.get("numberOfAPacketsFound")
             )
