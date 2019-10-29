@@ -2840,6 +2840,7 @@ paths:
                       timeOfCommencementOfCount:
                         type: string
                         format: date-time
+                        nullable: true
                       numberOfAPacketsFound:
                         type: integer
                       numberOfACoversRejected:
@@ -2900,6 +2901,7 @@ paths:
                     timeOfCommencementOfCount:
                       type: string
                       format: date-time
+                      nullable: true
                     numberOfACoversRejected:
                       type: integer
                     numberOfBCoversRejected:
@@ -2959,6 +2961,7 @@ paths:
                       timeOfCommencementOfCount:
                         type: string
                         format: date-time
+                        nullable: true
                       numberOfAPacketsFound:
                         type: integer
                       numberOfACoversRejected:
