@@ -26,8 +26,11 @@ class SubmissionModel(db.Model):
     submissionProof = relationship(Proof.Model, foreign_keys=[submissionProofId])
     submissionHistory = relationship(History.Model, foreign_keys=[submissionId])
     latestVersion = relationship("SubmissionVersionModel", foreign_keys=[latestVersionId])
+    latestStamp = relationship(Stamp.Model, foreign_keys=[latestStampId])
     lockedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
+    lockedStamp = relationship(Stamp.Model, foreign_keys=[lockedStampId])
     submittedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
+    submittedStamp = relationship(Stamp.Model, foreign_keys=[submittedStampId])
     versions = relationship("SubmissionVersionModel", order_by="desc(SubmissionVersionModel.submissionVersionId)",
                             primaryjoin="SubmissionModel.submissionId==SubmissionVersionModel.submissionId")
 
