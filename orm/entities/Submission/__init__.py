@@ -15,6 +15,7 @@ class SubmissionModel(db.Model):
     areaId = db.Column(db.Integer, db.ForeignKey(Office.Model.__table__.c.areaId), nullable=False)
     submissionProofId = db.Column(db.Integer, db.ForeignKey(Proof.Model.__table__.c.proofId), nullable=False)
     latestVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
+    latestStampId = db.Column(db.Integer, db.ForeignKey("stamp.stampId"), nullable=True)
     lockedVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
     lockedStampId = db.Column(db.Integer, db.ForeignKey("stamp.stampId"), nullable=True)
     submittedVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
@@ -41,6 +42,7 @@ class SubmissionModel(db.Model):
     def set_latest_version(self, submissionVersion: SubmissionVersion):
         if submissionVersion is None:
             self.latestVersionId = None
+            self.latestStampId = None
         else:
             if submissionVersion.submissionId is not self.submissionId:
                 raise MethodNotAllowedException(
@@ -50,6 +52,7 @@ class SubmissionModel(db.Model):
                     ))
 
             self.latestVersionId = submissionVersion.submissionVersionId
+            self.latestStampId = Stamp.create().stampId
 
         db.session.add(self)
         db.session.flush()
@@ -75,6 +78,7 @@ class SubmissionModel(db.Model):
     def set_submitted_version(self, submissionVersion: SubmissionVersion):
         if submissionVersion is None:
             self.submittedVersionId = None
+            self.submittedStampId = None
         else:
             if submissionVersion.submissionId is not self.submissionId:
                 raise MethodNotAllowedException(
