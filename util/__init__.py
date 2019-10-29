@@ -61,9 +61,9 @@ def get_tally_sheet_code(tally_sheet_code_str):
         return TallySheetCodeEnum.PRE_30_PD_PV
     elif tally_sheet_code_str == "PRE-30-ED":
         return TallySheetCodeEnum.PRE_30_ED
-    elif tally_sheet_code_str == "PRE_ALL_ISLAND_RESULTS":
+    elif tally_sheet_code_str == "PRE-ALL-ISLAND-RESULTS":
         return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS
-    elif tally_sheet_code_str == "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS":
+    elif tally_sheet_code_str == "PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS":
         return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
 
 
@@ -83,9 +83,9 @@ def get_tally_sheet_code_string(tally_sheet_code):
     elif tally_sheet_code is TallySheetCodeEnum.PRE_30_ED:
         return "PRE-30-ED"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS:
-        return "PRE_ALL_ISLAND_RESULTS"
+        return "PRE-ALL-ISLAND-RESULTS"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS:
-        return "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS"
+        return "PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS"
 
 
 def get_tally_sheet_version_class(tally_sheet_version_code):
