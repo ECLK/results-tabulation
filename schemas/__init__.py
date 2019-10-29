@@ -9,7 +9,9 @@ from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41, \
-    TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_30_ED
+    TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_30_ED, \
+    TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersion_PRE_ALL_ISLAND_RESULT, \
+    TallySheetVersion_CE_201_PV
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201, \
     TallySheetVersionRow_PRE_41, \
     TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_30_ED, \
@@ -467,7 +469,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.M
             "content"
         )
 
-        model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model
+        model = TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -487,7 +489,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
             "content"
         )
 
-        model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model
+        model = TallySheetVersion_PRE_ALL_ISLAND_RESULT.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -504,16 +506,18 @@ class TallySheetVersion_CE_201_PV_Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content"
+            "content",
+            "summary"
         )
 
-        model = TallySheetVersionRow_CE_201_PV.Model
+        model = TallySheetVersion_CE_201_PV.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_CE_201_PV_Schema, many=True)
+    summary = ma.Nested(TallySheetVersionRow_CE_201_PV_CC_Schema)
 
 
 class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
