@@ -2100,8 +2100,8 @@ paths:
               - PRE-21
               - PRE-30-PD
               - PRE-30-ED
-              - PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
-              - PRE_ALL_ISLAND_RESULTS
+              - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
+              - PRE-ALL-ISLAND-RESULTS
       responses:
         '200':
           description: Successful operation.
@@ -2148,8 +2148,8 @@ paths:
                         - PRE-21
                         - PRE-30-PD
                         - PRE-30-ED
-                        - PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
-                        - PRE_ALL_ISLAND_RESULTS
+                        - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
+                        - PRE-ALL-ISLAND-RESULTS
         '400':
           description: Bad request.
           content:
@@ -2232,8 +2232,8 @@ paths:
                       - PRE-21
                       - PRE-30-PD
                       - PRE-30-ED
-                      - PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
-                      - PRE_ALL_ISLAND_RESULTS
+                      - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
+                      - PRE-ALL-ISLAND-RESULTS
         '400':
           description: Bad request.
           content:
@@ -3191,7 +3191,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /tally-sheet/PRE_ALL_ISLAND_RESULTS/{tallySheetId}/version:
+  /tally-sheet/PRE-ALL-ISLAND-RESULTS/{tallySheetId}/version:
     post:
       tags:
         - Tally Sheet Version
@@ -3236,7 +3236,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-  /tally-sheet/PRE_ALL_ISLAND_RESULTS/{tallySheetId}/version/{tallySheetVersionId}:
+  /tally-sheet/PRE-ALL-ISLAND-RESULTS/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
         - Tally Sheet Version
@@ -3289,7 +3289,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /tally-sheet/PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS/{tallySheetId}/version:
+  /tally-sheet/PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS/{tallySheetId}/version:
     post:
       tags:
         - Tally Sheet Version
@@ -3334,7 +3334,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-  /tally-sheet/PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS/{tallySheetId}/version/{tallySheetVersionId}:
+  /tally-sheet/PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
         - Tally Sheet Version
