@@ -10,14 +10,14 @@ class TestTallySheet:
 
     def test_get_all_pre_all_island_results_by_electoral_districts(self, test_client):
         response: Response = test_client.get(
-            "/tally-sheet?tallySheetCode=PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS"
+            "/tally-sheet?tallySheetCode=PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS"
         )
         assert response.status_code == 200
         assert len(response.get_json()) > 0
 
     def test_get_all_pre_all_island_results(self, test_client):
         response: Response = test_client.get(
-            "/tally-sheet?tallySheetCode=PRE_ALL_ISLAND_RESULTS"
+            "/tally-sheet?tallySheetCode=PRE-ALL-ISLAND-RESULTS"
         )
         assert response.status_code == 200
         assert len(response.get_json()) > 0
