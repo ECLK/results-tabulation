@@ -42,7 +42,7 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.CE_201_PV
     )
-    tallySheetVersion.set_complete()    # TODO: valid before setting complete. Refer to PRE_30_PD
+    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     total_number_of_a_packets_found = 0
     tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
@@ -58,11 +58,19 @@ def create(tallySheetId, body):
 
     tally_sheet_summary = request_body.get("summary")
     time_of_commencement_of_count = tally_sheet_summary.get("timeOfCommencementOfCount")
-    if time_of_commencement_of_count is None:
+
+    if time_of_commencement_of_count is not None:
+
+        # Remove the colon from %z [1] following [2]
+        #   [1] http://strftime.org/
+        #   [2] https://stackoverflow.com/questions/30999230/parsing-timezone-with-colon
+        if ":" == time_of_commencement_of_count[-3:-2]:
+            time_of_commencement_of_count = time_of_commencement_of_count[:-3] + time_of_commencement_of_count[-2:]
+
         try:
             time_of_commencement_of_count = datetime.datetime.strptime(
                 time_of_commencement_of_count,
-                '%Y-%m-%dT%H:%M:%S.%fZ'
+                '%Y-%m-%dT%H:%M:%S%z'
             )
         except  Exception as e:
             time_of_commencement_of_count = None
