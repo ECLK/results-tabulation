@@ -181,21 +181,24 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
                 obj = DistrictCentre.create(cell, electionId=election.electionId)
 
             elif data_store_key == "Counting Centre":
-                obj = CountingCentre.create(cell, electionId=election.electionId)
-
-                TallySheet.create(
-                    tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, areaId=obj.areaId
-                )
-
-                TallySheet.create(
-                    tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=election.electionId, areaId=obj.areaId
-                )
-
                 if election.voteType is VoteTypeEnum.NonPostal:
+                    obj = CountingCentre.create(
+                        cell, electionId=election.electionId
+                    )
+                    TallySheet.create(
+                        tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, areaId=obj.areaId
+                    )
                     TallySheet.create(
                         tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, areaId=obj.areaId
                     )
                 elif election.voteType is VoteTypeEnum.Postal:
+                    obj = CountingCentre.create(
+                        cell, electionId=election.electionId,
+                        registeredVotersCount=row["Registered Voters"]
+                    )
+                    TallySheet.create(
+                        tallySheetCode=TallySheetCodeEnum.PRE_41, electionId=election.electionId, areaId=obj.areaId
+                    )
                     TallySheet.create(
                         tallySheetCode=TallySheetCodeEnum.CE_201_PV, electionId=election.electionId, areaId=obj.areaId
                     )
@@ -312,7 +315,7 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
                                         "Election Commission")
         districtCentre = get_object(root_election, row, "District Centre")
         countingCentre = get_object(postal_election, {
-            "Counting Centre": row["Postal Vote Counting Centre"]
+            "Counting Centre": row["Postal Vote Counting Centre"], "Registered Voters": row["Registered Voters"]
         }, "Counting Centre")
 
         country.add_child(electoralDistrict.areaId)
