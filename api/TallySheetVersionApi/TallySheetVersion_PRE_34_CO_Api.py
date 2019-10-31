@@ -36,20 +36,11 @@ def create(tallySheetId, body):
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
             tallySheetVersion.add_row(
-                electionId=party_count_body.get("electionId"),
+                electionId=tallySheetVersion.submission.electionId,
                 candidateId=party_count_body.get("candidateId"),
                 preferenceCount=party_count_body.get("preferenceCount"),
-                preferencNumber=party_count_body.get("preferenceNumber"),
+                preferenceNumber=party_count_body.get("preferenceNumber"),
             )
-
-    tally_sheet_summary_body = request_body.get("summary")
-    if tally_sheet_summary_body is not None:
-        tallySheetVersion.add_invalid_vote_count(
-            electionId=tallySheetVersion.submission.electionId,
-            candidateId=tallySheetVersion.submission.candidateId,
-            preferenceCount=tallySheetVersion.submission.preferenceCount,
-            preferencNumber=tallySheetVersion.submission.preferenceNumber,
-        )
 
     db.session.commit()
 
