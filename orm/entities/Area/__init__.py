@@ -388,6 +388,15 @@ def create(areaName, electionId):
     return area
 
 
+def get_all_areas_of_root_election(election_id):
+    election = Election.get_by_id(electionId=election_id)
+
+    if election.parentElectionId is not None:
+        return get_all_areas_of_root_election(election.parentElectionI)
+    else:
+        return get_all(election_id=election_id)
+
+
 def get_all(election_id=None, area_name=None, associated_area_id=None, area_type=None):
     election = Election.get_by_id(electionId=election_id)
 
