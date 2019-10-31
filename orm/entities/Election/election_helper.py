@@ -191,6 +191,9 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
                     TallySheet.create(
                         tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, areaId=obj.areaId
                     )
+                    TallySheet.create(
+                        tallySheetCode=TallySheetCodeEnum.PRE_34_CO, electionId=election.electionId, areaId=obj.areaId
+                    )
                 elif election.voteType is VoteTypeEnum.Postal:
                     obj = CountingCentre.create(
                         cell, electionId=election.electionId,
@@ -201,6 +204,9 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
                     )
                     TallySheet.create(
                         tallySheetCode=TallySheetCodeEnum.CE_201_PV, electionId=election.electionId, areaId=obj.areaId
+                    )
+                    TallySheet.create(
+                        tallySheetCode=TallySheetCodeEnum.PRE_34_CO, electionId=election.electionId, areaId=obj.areaId
                     )
 
             elif data_store_key == "Polling Station":
