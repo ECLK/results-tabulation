@@ -265,6 +265,28 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
     ballotBoxesReceived = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
 
 
+class SimpleAreaSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "areaId",
+            "areaName",
+            "areaType",
+            "electionId",
+            #"parents",
+            "children"
+        )
+
+        model = Area.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    areaType = EnumField(AreaTypeEnum)
+    electorateType = EnumField(ElectorateTypeEnum)
+    parents = ma.Nested('self', only="areaId", many=True)
+    children = ma.Nested('self', only="areaId", many=True)
+
+
 class AreaSchema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -277,9 +299,9 @@ class AreaSchema(ma.ModelSchema):
             # "pollingStations",
             # "countingCentres",
             # "districtCentres",
-            "pollingDistricts",
-            "electoralDistricts",
-            "pollingDivisions"
+            # "pollingDistricts",
+            # "electoralDistricts",
+            # "pollingDivisions"
         )
 
         model = Area.Model
@@ -381,7 +403,7 @@ class SubmissionSchema(ma.ModelSchema):
             "submissionId",
             "submissionType",
             "electionId",
-            "area",
+            "areaId",
             "latestVersionId",
             # "tallySheetProofId",
             "submissionProofId",
@@ -607,7 +629,7 @@ class TallySheetSchema(ma.ModelSchema):
             "tallySheetId",
             "tallySheetCode",
             "electionId",
-            "area",
+            "areaId",
             "latestVersionId",
             "lockedVersionId",
             "submittedVersionId",
