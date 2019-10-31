@@ -1,20 +1,20 @@
 from app import db
-from auth import authorize
-from auth.AuthConstants import POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
-from orm.entities import Submission, SubmissionVersion, Area, Election
-from orm.entities.Election import ElectionCandidate
+from auth import authorize, EC_LEADERSHIP_ROLE
+from auth.AuthConstants import DATA_EDITOR_ROLE
+from exception import NotFoundException
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_RejectedVoteCount
-from orm.enums import AreaTypeEnum, TallySheetCodeEnum
+from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetVersion_PRE_34_CO_Schema, TallySheetVersionSchema
-from sqlalchemy import func, and_
+from util import RequestBody
 
 
-@authorize(
-    required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
+@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
+    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    if tallySheet is None:
+        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+
     result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
@@ -23,91 +23,32 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     return TallySheetVersion_PRE_34_CO_Schema().dump(result).data
 
 
-@authorize(
-    required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
-def create(tallySheetId):
+@authorize(required_roles=[DATA_EDITOR_ROLE])
+def create(tallySheetId, body):
+    request_body = RequestBody(body)
     tallySheet, tallySheetVersion = TallySheet.create_latest_version(
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.PRE_34_CO
     )
-
-    countingCentres = tallySheetVersion.submission.area.get_associated_areas(
-        areaType=AreaTypeEnum.CountingCentre, electionId=tallySheetVersion.submission.electionId
-    )
-
-    query = db.session.query(
-        Area.Model.areaId,
-        ElectionCandidate.Model.candidateId,
-        func.sum(TallySheetVersionRow_PRE_41.Model.count).label("count"),
-    ).join(
-        Election.Model,
-        Election.Model.electionId == Area.Model.electionId
-    ).join(
-        ElectionCandidate.Model,
-        ElectionCandidate.Model.electionId == Election.Model.parentElectionId
-    ).join(
-        Submission.Model,
-        Submission.Model.areaId == Area.Model.areaId
-    ).join(
-        TallySheet.Model,
-        and_(
-            TallySheet.Model.tallySheetId == Submission.Model.submissionId,
-            TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_41
-        )
-    ).join(
-        TallySheetVersionRow_PRE_41.Model,
-        and_(
-            TallySheetVersionRow_PRE_41.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
-            TallySheetVersionRow_PRE_41.Model.candidateId == ElectionCandidate.Model.candidateId
-        ),
-        isouter=True
-    ).filter(
-        Area.Model.areaId.in_([area.areaId for area in countingCentres])
-    ).group_by(
-        Area.Model.areaId,
-        ElectionCandidate.Model.candidateId
-    ).order_by(
-        Area.Model.areaId,
-        ElectionCandidate.Model.candidateId
-    ).all()
-
-    is_complete = True      # TODO:Change other reports to validate like this
-    for row in query:
-        if row.candidateId is not None and row.areaId is not None and row.count is not None:
+    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_34_CO
+    tally_sheet_content = request_body.get("content")
+    if tally_sheet_content is not None:
+        for row in tally_sheet_content:
+            party_count_body = RequestBody(row)
             tallySheetVersion.add_row(
-                candidateId=row.candidateId,
-                countingCentreId=row.areaId,
-                count=row.count
+                electionId=party_count_body.get("electionId"),
+                candidateId=party_count_body.get("candidateId"),
+                preferenceCount=party_count_body.get("preferenceCount"),
+                preferencNumber=party_count_body.get("preferenceNumber"),
             )
-        else:
-            is_complete = False
 
-    if is_complete:
-        tallySheetVersion.set_complete()
-
-    rejected_vote_count_query = db.session.query(
-        Submission.Model.areaId,
-        func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
-    ).join(
-        TallySheet.Model,
-        TallySheet.Model.tallySheetId == Submission.Model.submissionId
-    ).join(
-        TallySheetVersionRow_RejectedVoteCount.Model,
-        TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.lockedVersionId
-    ).filter(
-        Submission.Model.areaId.in_([area.areaId for area in countingCentres]),
-        TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_41
-    ).group_by(
-        Submission.Model.areaId
-    ).order_by(
-        Submission.Model.areaId
-    ).all()
-
-    for row in rejected_vote_count_query:
+    tally_sheet_summary_body = request_body.get("summary")
+    if tally_sheet_summary_body is not None:
         tallySheetVersion.add_invalid_vote_count(
             electionId=tallySheetVersion.submission.electionId,
-            areaId=row.areaId,
-            rejectedVoteCount=row.rejectedVoteCount
+            candidateId=tallySheetVersion.submission.candidateId,
+            preferenceCount=tallySheetVersion.submission.preferenceCount,
+            preferencNumber=tallySheetVersion.submission.preferenceNumber,
         )
 
     db.session.commit()

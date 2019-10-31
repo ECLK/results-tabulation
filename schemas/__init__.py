@@ -2,8 +2,8 @@ from marshmallow.fields import Integer, String
 
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
-    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook
-from orm.entities.Election import InvalidVoteCategory
+    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook, Candidate
+from orm.entities.Election import InvalidVoteCategory, ElectionCandidate
 from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -51,7 +51,7 @@ class CandidateSchema(ma.ModelSchema):
             "qualifiedForPreferences"
         )
 
-        model = Party.Model
+        model = ElectionCandidate.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
