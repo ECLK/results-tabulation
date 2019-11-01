@@ -5,7 +5,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app import db
-from auth import get_user_access_area_ids, get_user_name
+from auth import get_user_access_area_ids, get_user_name, has_role_based_access, ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, \
+    ACCESS_TYPE_READ
 from exception import NotFoundException, MethodNotAllowedException, ForbiddenException
 from orm.entities import Submission, Election
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -46,10 +47,14 @@ class TallySheetModel(db.Model):
             raise ForbiddenException("Tally sheet submitted user is now allowed to lock/unlock.")
 
         if tallySheetVersion is None:
+            if not has_role_based_access(self.tallySheetCode, ACCESS_TYPE_UNLOCK):
+                raise ForbiddenException("User doesn't have access to tally sheet.")
+
             self.submission.set_locked_version(submissionVersion=None)
         else:
-            if not self.submitted:
-                raise ForbiddenException("Tally sheet is not yet submitted, cannot lock.")
+            if not has_role_based_access(self.tallySheetCode, ACCESS_TYPE_LOCK):
+                raise ForbiddenException("User doesn't have access to tally sheet.")
+
             self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     def set_submitted_version(self, tallySheetVersion: TallySheetVersion):
@@ -117,6 +122,9 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     query = query.filter(Submission.Model.areaId.in_(user_access_area_ids))
 
     result = query.one_or_none()
+
+    if not has_role_based_access(result.tallySheetCode, ACCESS_TYPE_READ):
+        raise ForbiddenException("User doesn't have access to tally sheet.")
 
     return result
 

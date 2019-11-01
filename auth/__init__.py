@@ -1,22 +1,25 @@
 from typing import Dict, Set
 
-from flask import request
 import connexion
 from decorator import decorator
+from flask import request
 from jose import jwt
 
 from app import db
 from auth.AuthConstants import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, ROLE_CLAIM_PREFIX, ADMIN_ROLE, \
-    JWT_TOKEN_HEADER_KEY
+    JWT_TOKEN_HEADER_KEY, ACCESS_TYPE_READ, ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK
+from auth.RoleBasedAccess import role_to_read_allowed_tallysheet_types, role_to_lock_allowed_tallysheet_types, \
+    role_to_unlock_allowed_tallysheet_types
 from exception import UnauthorizedException
-import json
 
 JWT_SECRET = "jwt_secret"
 AREA_ID = "areaId"
 USER_ACCESS_AREA_IDS = "userAccessAreaIds"
 USER_NAME = "userName"
+USER_ROLES = "userRoles"
+
 
 def decode_token(token):
     try:
@@ -94,6 +97,20 @@ def get_user_access_area_ids() -> Set[int]:
     return connexion.context[USER_ACCESS_AREA_IDS]
 
 
+def has_role_based_access(tally_sheet_code, access_type):
+    if access_type == ACCESS_TYPE_READ:
+        mapping = role_to_read_allowed_tallysheet_types
+    elif access_type == ACCESS_TYPE_LOCK:
+        mapping = role_to_lock_allowed_tallysheet_types
+    elif access_type == ACCESS_TYPE_UNLOCK:
+        mapping = role_to_unlock_allowed_tallysheet_types
+
+    for role in connexion.context[USER_ROLES]:
+        if mapping.get(role) is not None and tally_sheet_code in mapping.get(role):
+            return True
+    return False
+
+
 @decorator
 def authenticate(func, *args, **kwargs):
     print("\n\n\n\n####### request.headers ### [START]")
@@ -107,6 +124,9 @@ def authenticate(func, *args, **kwargs):
     else:
         user_name = claims.get(SUB)
         connexion.context[USER_NAME] = user_name
+        connexion.context[USER_ROLES] = [claim.replace(ROLE_CLAIM_PREFIX, '') for claim in claims.keys() if
+                                         claim.startswith(ROLE_CLAIM_PREFIX)]
+
         return func(*args, **kwargs)
 
 

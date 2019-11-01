@@ -59,6 +59,11 @@ def lock(tallySheetId, body):
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
 
+    if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
+                                      TallySheetCodeEnum.CE_201_PV,
+                                      TallySheetCodeEnum.PRE_34_CO] and not tally_sheet.submitted:
+        raise ForbiddenException("Tally sheet is not yet submitted, cannot lock.")
+
     tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
                                                       tallySheetId=tallySheetId)
 
