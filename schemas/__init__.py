@@ -115,7 +115,6 @@ class ElectionSchema(ma.ModelSchema):
     parties = ma.Nested(PartySchema, many=True)
     invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
     subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType"], many=True)
-    parentElection = ma.Nested("self", only=["electionId", "electionName", "voteType"], many=True)
 
 
 class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
