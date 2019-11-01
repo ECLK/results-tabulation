@@ -5,7 +5,7 @@ from decorator import decorator
 from flask import request
 from jose import jwt
 
-from app import db
+from app import db, cache
 from auth.AuthConstants import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, ROLE_CLAIM_PREFIX, ADMIN_ROLE, \
@@ -14,11 +14,46 @@ from auth.RoleBasedAccess import role_to_read_allowed_tallysheet_types, role_to_
     role_to_unlock_allowed_tallysheet_types
 from exception import UnauthorizedException
 
+import json
+
 JWT_SECRET = "jwt_secret"
 AREA_ID = "areaId"
 USER_ACCESS_AREA_IDS = "userAccessAreaIds"
 USER_NAME = "userName"
 USER_ROLES = "userRoles"
+
+
+@cache.cached(timeout=50000000, key_prefix='global_area_map')
+def init_global_area_map():
+    # TODO Refactor
+
+    print("############# init_global_area_map ###############")
+    from orm.entities import Area
+    from orm.enums import AreaTypeEnum
+
+    global_area_map = {}
+
+    electoral_districts = Area.get_all(area_type=AreaTypeEnum.ElectoralDistrict)
+    global_area_map["electoral_district_counting_centre"] = {}
+    for electoral_district in electoral_districts:
+        counting_centre_area_ids = [
+            counting_centre.areaId for counting_centre in
+            electoral_district.get_associated_areas(areaType=AreaTypeEnum.CountingCentre)
+        ]
+        global_area_map["electoral_district_counting_centre"][electoral_district.areaId] = counting_centre_area_ids
+
+    global_area_map["electoral_district_polling_division"] = {}
+    for electoral_district in electoral_districts:
+        polling_division_area_ids = [
+            polling_division.areaId for polling_division in
+            electoral_district.get_associated_areas(areaType=AreaTypeEnum.PollingDivision)
+        ]
+        global_area_map["electoral_district_polling_division"][
+            electoral_district.areaId] = polling_division_area_ids
+
+    print("############# init_global_area_map ###############", global_area_map)
+
+    return global_area_map
 
 
 def decode_token(token):
@@ -113,9 +148,9 @@ def has_role_based_access(tally_sheet_code, access_type):
 
 @decorator
 def authenticate(func, *args, **kwargs):
-    print("\n\n\n\n####### request.headers ### [START]")
-    print(request.headers)
-    print("####### request.headers ### [END]\n\n\n")
+    # print("\n\n\n\n####### request.headers ### [START]")
+    # print(request.headers)
+    # print("####### request.headers ### [END]\n\n\n")
 
     claims: Dict = get_claims()
 
@@ -160,6 +195,20 @@ def authorize(func, required_roles=None, *args, **kwargs):
             areas = db.session.query(Area.Model.areaId).filter(
                 Area.Model.areaType == AreaTypeEnum.ElectionCommission).all()
             user_access_area_ids.extend([area.areaId for area in areas])
+        elif role is DATA_EDITOR_ROLE:
+            global_area_map = init_global_area_map()
+            for electoral_district_id in user_access_area_ids:
+                if electoral_district_id in global_area_map["electoral_district_counting_centre"]:
+                    user_access_area_ids.extend(
+                        global_area_map["electoral_district_counting_centre"][electoral_district_id]
+                    )
+        elif role is POLLING_DIVISION_REPORT_VIEWER_ROLE or role is POLLING_DIVISION_REPORT_VERIFIER_ROLE:
+            global_area_map = init_global_area_map()
+            for electoral_district_id in user_access_area_ids:
+                if electoral_district_id in global_area_map["electoral_district_polling_division"]:
+                    user_access_area_ids.extend(
+                        global_area_map["electoral_district_polling_division"][electoral_district_id]
+                    )
 
     if not claim_found:
         UnauthorizedException("No matching claim found.")
