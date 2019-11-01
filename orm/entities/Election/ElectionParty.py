@@ -1,4 +1,5 @@
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from app import db
 from sqlalchemy.orm import relationship
@@ -14,12 +15,6 @@ class ElectionPartyModel(db.Model):
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     party = relationship(Party.Model, foreign_keys=[partyId])
-    candidates = relationship(
-        "CandidateModel",
-        secondary="election_candidate",
-        primaryjoin="and_(ElectionPartyModel.electionId==ElectionCandidateModel.electionId, ElectionPartyModel.partyId==ElectionCandidateModel.partyId)",
-        secondaryjoin="ElectionCandidateModel.candidateId==CandidateModel.candidateId"
-    )
 
     partyName = association_proxy("party", "partyName")
     partySymbolFileId = association_proxy("party", "partySymbolFileId")
@@ -30,6 +25,15 @@ class ElectionPartyModel(db.Model):
     __table_args__ = (
         db.UniqueConstraint('electionId', 'partyId', name='PartyPerElection'),
     )
+
+    @hybrid_property
+    def candidates(self):
+        return db.session.query(
+            ElectionCandidate.Model
+        ).filter(
+            ElectionCandidate.Model.electionId == self.electionId,
+            ElectionCandidate.Model.partyId == self.partyId
+        )
 
     def __init__(self, electionId, partyId):
         super(ElectionPartyModel, self).__init__(
