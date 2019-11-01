@@ -3,9 +3,11 @@ from typing import Set
 from app import db
 from auth import authorize
 from auth.AuthConstants import ALL_ROLES
-from exception import NotFoundException
+from exception import NotFoundException, ForbiddenException
 from orm.entities.Submission import TallySheet
+from orm.entities.Submission.TallySheet import TallySheetModel
 from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetSchema
 from util import RequestBody, get_paginated_query
 
@@ -80,6 +82,10 @@ def request_edit(tallySheetId):
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
 
+    if tally_sheet.tallySheetCode not in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
+                                          TallySheetCodeEnum.CE_201_PV, TallySheetCodeEnum.PRE_34_CO]:
+        raise ForbiddenException("Submit operation is not supported for this tally sheet type.")
+
     tally_sheet.set_submitted_version(None)
 
     db.session.commit()
@@ -92,10 +98,14 @@ def submit(tallySheetId, body):
     request_body = RequestBody(body)
     tallySheetVersionId = request_body.get("submittedVersionId")
 
-    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    tally_sheet: TallySheetModel = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    if tally_sheet.tallySheetCode not in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
+                                          TallySheetCodeEnum.CE_201_PV, TallySheetCodeEnum.PRE_34_CO]:
+        raise ForbiddenException("Submit operation is not supported for this tally sheet type.")
 
     tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
                                                       tallySheetId=tallySheetId)
