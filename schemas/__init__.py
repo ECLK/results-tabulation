@@ -4,6 +4,7 @@ from app import db, ma
 from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
     Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook, Candidate
 from orm.entities.Area import AreaAreaModel
+from orm.entities.Audit import Stamp
 from orm.entities.Election import InvalidVoteCategory, ElectionCandidate
 from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
@@ -22,6 +23,20 @@ from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum,
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum, VoteTypeEnum
 
 from marshmallow_enum import EnumField
+
+
+class StampSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "stampId",
+            "createdBy",
+            "createdAt"
+        )
+
+        model = Stamp.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
 
 
 class File_Schema(ma.ModelSchema):
@@ -683,8 +698,11 @@ class TallySheetSchema(ma.ModelSchema):
             "electionId",
             "areaId",
             "latestVersionId",
+            "latestStamp",
             "lockedVersionId",
+            "lockedStamp",
             "submittedVersionId",
+            "submittedStamp",
             "locked",
             "submitted",
             # "latestVersion",
@@ -701,6 +719,9 @@ class TallySheetSchema(ma.ModelSchema):
     area = ma.Nested(AreaSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
     latestVersion = ma.Nested(SubmissionVersionSchema)
+    latestStamp = ma.Nested(StampSchema)
+    lockedStamp = ma.Nested(StampSchema)
+    submittedStamp = ma.Nested(StampSchema)
     submissionProof = ma.Nested(Proof_Schema)
 
 
