@@ -5,8 +5,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app import db
-from auth import get_user_access_area_ids
-from exception import NotFoundException, MethodNotAllowedException
+from auth import get_user_access_area_ids, get_user_name
+from exception import NotFoundException, MethodNotAllowedException, ForbiddenException
 from orm.entities import Submission, Election
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum
@@ -42,12 +42,20 @@ class TallySheetModel(db.Model):
             self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     def set_locked_version(self, tallySheetVersion: TallySheetVersion):
+        if self.submittedStamp.createdBy == get_user_name():
+            raise ForbiddenException("Tally sheet submitted user is now allowed to lock/unlock.")
+
         if tallySheetVersion is None:
             self.submission.set_locked_version(submissionVersion=None)
         else:
+            if not self.submitted:
+                raise ForbiddenException("Tally sheet is not yet submitted, cannot lock.")
             self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     def set_submitted_version(self, tallySheetVersion: TallySheetVersion):
+        if self.locked:
+            raise ForbiddenException("Tally sheet is already locked.")
+
         if tallySheetVersion is None:
             self.submission.set_submitted_version(submissionVersion=None)
         else:
