@@ -3,8 +3,8 @@ import os
 
 from app import db
 from auth import ROLE_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
-    POLLING_DIVISION_REPORT_GENERATOR_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_GENERATOR_ROLE, \
+    POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
+    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, \
     EC_LEADERSHIP_ROLE, SUB
 from orm.entities import *
 from orm.entities import Invoice, Area, Election
@@ -44,7 +44,7 @@ def get_root_token(electionId):
             "areaId": polling_division.areaId,
             "areaName": polling_division.areaName
         } for polling_division in polling_divisions]),
-        ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_GENERATOR_ROLE: str([{
+        ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE: str([{
             "areaId": polling_division.areaId,
             "areaName": polling_division.areaName
         } for polling_division in polling_divisions]),
@@ -52,12 +52,12 @@ def get_root_token(electionId):
             "areaId": electoral_district.areaId,
             "areaName": electoral_district.areaName
         } for electoral_district in electoral_districts]),
-        ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_GENERATOR_ROLE: str([{
+        ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: str([{
             "areaId": electoral_district.areaId,
             "areaName": electoral_district.areaName
         } for electoral_district in electoral_districts]),
         ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([]),
-        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_GENERATOR_ROLE: str([]),
+        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([]),
         ROLE_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([])
     }
 
