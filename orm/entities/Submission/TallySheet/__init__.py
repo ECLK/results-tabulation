@@ -165,7 +165,8 @@ def create_empty_version(tallySheetId, tallySheetCode=None):
 def create_version(tallySheetId, tallySheetCode=None):
     tallySheet = get_by_id(tallySheetId=tallySheetId, tallySheetCode=tallySheetCode)
     if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException(
+            "Tally sheet not found. (tallySheetId=%d, tallySheetCode=%s)" % (tallySheetId, tallySheetCode.name))
 
     tallySheetVersion = tallySheet.create_version()
 

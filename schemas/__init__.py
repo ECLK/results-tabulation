@@ -2,19 +2,20 @@ from marshmallow.fields import Integer, String
 
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
-    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook
+    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook, Candidate
+from orm.entities.Area import AreaAreaModel
 from orm.entities.Audit import Stamp
-from orm.entities.Election import InvalidVoteCategory
+from orm.entities.Election import InvalidVoteCategory, ElectionCandidate
 from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41, \
-    TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_30_ED, \
+    TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_30_ED, TallySheetVersion_PRE_34_CO, \
     TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersion_PRE_ALL_ISLAND_RESULT, \
     TallySheetVersion_CE_201_PV
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201, \
-    TallySheetVersionRow_PRE_41, \
+    TallySheetVersionRow_PRE_41, TallySheetVersionRow_PRE_34_preference, \
     TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_30_ED, \
     TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_CE_201_PV_CC, TallySheetVersionRow_RejectedVoteCount, \
     TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
@@ -62,10 +63,11 @@ class CandidateSchema(ma.ModelSchema):
         fields = (
             "candidateId",
             "candidateName",
-            "candidateProfileImageFile"
+            "candidateProfileImageFile",
+            "qualifiedForPreferences"
         )
 
-        model = Party.Model
+        model = ElectionCandidate.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -113,6 +115,7 @@ class ElectionSchema(ma.ModelSchema):
     parties = ma.Nested(PartySchema, many=True)
     invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
     subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType"], many=True)
+    parentElection = ma.Nested("self", only=["electionId", "electionName", "voteType"], many=True)
 
 
 class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
@@ -211,6 +214,22 @@ class TallySheetVersionRow_CE_201_PV_CC_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
+class TallySheetVersionRow_PRE_34_CO_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "electionId",
+            "tallySheetVersionId",
+            "preferenceNumber",
+            "preferenceCount",
+            "candidateId"
+        )
+
+        model = TallySheetVersionRow_PRE_34_preference.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class TallySheetVersionRow_PRE_30_PD_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -280,6 +299,41 @@ class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
     ballotBoxesReceived = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
 
 
+class SimpleAreaSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "areaId",
+            "areaName",
+            "areaType",
+            "electionId",
+            # "parents",
+            "children"
+        )
+
+        model = Area.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    areaType = EnumField(AreaTypeEnum)
+    electorateType = EnumField(ElectorateTypeEnum)
+    parents = ma.Nested('self', only="areaId", many=True)
+    children = ma.Nested('AreaAreaSchema', only="childAreaId", many=True)
+
+
+class AreaAreaSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "parentAreaId",
+            "childAreaId"
+        )
+
+        model = AreaAreaModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class AreaSchema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -292,9 +346,9 @@ class AreaSchema(ma.ModelSchema):
             # "pollingStations",
             # "countingCentres",
             # "districtCentres",
-            "pollingDistricts",
-            "electoralDistricts",
-            "pollingDivisions"
+            # "pollingDistricts",
+            # "electoralDistricts",
+            # "pollingDivisions"
         )
 
         model = Area.Model
@@ -396,7 +450,7 @@ class SubmissionSchema(ma.ModelSchema):
             "submissionId",
             "submissionType",
             "electionId",
-            "area",
+            "areaId",
             "latestVersionId",
             # "tallySheetProofId",
             "submissionProofId",
@@ -556,6 +610,26 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
     areas = ma.Nested(AreaSchema, many=True)
 
 
+class TallySheetVersion_PRE_34_CO_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetVersionId",
+            "createdBy",
+            "createdAt",
+            "htmlUrl",
+            "content"
+        )
+
+        model = TallySheetVersion_PRE_34_CO.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    # submission = ma.Nested(SubmissionSchema)
+    content = ma.Nested(TallySheetVersionRow_PRE_34_CO_Schema, many=True)
+
+
 class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -622,7 +696,7 @@ class TallySheetSchema(ma.ModelSchema):
             "tallySheetId",
             "tallySheetCode",
             "electionId",
-            "area",
+            "areaId",
             "latestVersionId",
             "latestStamp",
             "lockedVersionId",

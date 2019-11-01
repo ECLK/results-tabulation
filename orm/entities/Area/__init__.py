@@ -1,5 +1,5 @@
 from app import db
-from sqlalchemy.orm import relationship, aliased
+from sqlalchemy.orm import relationship, aliased, backref
 from sqlalchemy import and_, func, or_
 
 from orm.enums import AreaTypeEnum
@@ -10,7 +10,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 class AreaModel(db.Model):
     __tablename__ = 'area'
     areaId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    areaName = db.Column(db.String(300), nullable=False)
+    areaName = db.Column(db.String(800), nullable=False)
     areaType = db.Column(db.Enum(AreaTypeEnum), nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
     # parentAreaId = db.Column(db.Integer, db.ForeignKey(areaId), nullable=True)
@@ -23,25 +23,28 @@ class AreaModel(db.Model):
     # pollingStations = relationship("PollingStationModel")
 
     # this relationship is used for persistence
-    children = relationship("AreaModel", secondary="area_area",
-                            primaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId",
-                            secondaryjoin="AreaModel.areaId==AreaAreaModel.childAreaId"
-                            )
-    parents = relationship("AreaModel", secondary="area_area",
-                           primaryjoin="AreaModel.areaId==AreaAreaModel.childAreaId",
-                           secondaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId"
-                           )
+    children = relationship("AreaAreaModel", lazy="joined",
+                            primaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId")
 
-    tallySheets = relationship("TallySheetModel", secondary="submission",
-                               primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
-                               secondaryjoin="SubmissionModel.submissionId==TallySheetModel.tallySheetId"
-                               )
-
-    tallySheets_PRE_41 = relationship(
-        "TallySheetModel", secondary="submission",
-        primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
-        secondaryjoin="and_(SubmissionModel.submissionId==TallySheetModel.tallySheetId, TallySheetModel.tallySheetCode=='PRE_41')"
-    )
+    # children = relationship("AreaModel", secondary="area_area", lazy="subquery",
+    #                         primaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId",
+    #                         secondaryjoin="AreaModel.areaId==AreaAreaModel.childAreaId"
+    #                         )
+    # parents = relationship("AreaModel", secondary="area_area", lazy="joined",
+    #                        primaryjoin="AreaModel.areaId==AreaAreaModel.childAreaId",
+    #                        secondaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId"
+    #                        )
+    #
+    # tallySheets = relationship("TallySheetModel", secondary="submission", lazy="joined",
+    #                            primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
+    #                            secondaryjoin="SubmissionModel.submissionId==TallySheetModel.tallySheetId"
+    #                            )
+    #
+    # tallySheets_PRE_41 = relationship(
+    #     "TallySheetModel", secondary="submission",
+    #     primaryjoin="AreaModel.areaId==SubmissionModel.areaId",
+    #     secondaryjoin="and_(SubmissionModel.submissionId==TallySheetModel.tallySheetId, TallySheetModel.tallySheetCode=='PRE_41')"
+    # )
 
     def __init__(self, areaName, electionId):
         super(AreaModel, self).__init__(
@@ -131,6 +134,8 @@ class AreaAreaModel(db.Model):
     __tablename__ = 'area_area'
     parentAreaId = db.Column(db.Integer, db.ForeignKey("area.areaId"), primary_key=True)
     childAreaId = db.Column(db.Integer, db.ForeignKey("area.areaId"), primary_key=True)
+
+    #parentArea = relationship(AreaModel, foreign_keys=[parentAreaId], backref=backref('children', lazy='joined'))
 
 
 Model = AreaModel
@@ -386,6 +391,15 @@ def create(areaName, electionId):
     )
 
     return area
+
+
+def get_all_areas_of_root_election(election_id):
+    election = Election.get_by_id(electionId=election_id)
+
+    if election.parentElectionId is not None:
+        return get_all_areas_of_root_election(election.parentElectionI)
+    else:
+        return get_all(election_id=election_id)
 
 
 def get_all(election_id=None, area_name=None, associated_area_id=None, area_type=None):
