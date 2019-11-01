@@ -28,7 +28,6 @@ class StampSchema(ma.ModelSchema):
     class Meta:
         fields = (
             "stampId",
-            "ip",
             "createdBy",
             "createdAt"
         )
