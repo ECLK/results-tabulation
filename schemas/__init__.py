@@ -3,6 +3,7 @@ from marshmallow.fields import Integer, String
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
     Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook, Candidate
+from orm.entities.Area import AreaAreaModel
 from orm.entities.Election import InvalidVoteCategory, ElectionCandidate
 from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
@@ -99,6 +100,7 @@ class ElectionSchema(ma.ModelSchema):
     parties = ma.Nested(PartySchema, many=True)
     invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
     subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType"], many=True)
+    parentElection = ma.Nested("self", only=["electionId", "electionName", "voteType"], many=True)
 
 
 class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
@@ -196,6 +198,7 @@ class TallySheetVersionRow_CE_201_PV_CC_Schema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
+
 class TallySheetVersionRow_PRE_34_CO_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -210,6 +213,7 @@ class TallySheetVersionRow_PRE_34_CO_Schema(ma.ModelSchema):
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
+
 
 class TallySheetVersionRow_PRE_30_PD_Schema(ma.ModelSchema):
     class Meta:
@@ -287,7 +291,7 @@ class SimpleAreaSchema(ma.ModelSchema):
             "areaName",
             "areaType",
             "electionId",
-            #"parents",
+            # "parents",
             "children"
         )
 
@@ -299,7 +303,20 @@ class SimpleAreaSchema(ma.ModelSchema):
     areaType = EnumField(AreaTypeEnum)
     electorateType = EnumField(ElectorateTypeEnum)
     parents = ma.Nested('self', only="areaId", many=True)
-    children = ma.Nested('self', only="areaId", many=True)
+    children = ma.Nested('AreaAreaSchema', only="childAreaId", many=True)
+
+
+class AreaAreaSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "parentAreaId",
+            "childAreaId"
+        )
+
+        model = AreaAreaModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
 
 
 class AreaSchema(ma.ModelSchema):
@@ -577,6 +594,7 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
     content = ma.Nested(TallySheetVersionRow_PRE_30_ED_Schema, many=True)
     areas = ma.Nested(AreaSchema, many=True)
 
+
 class TallySheetVersion_PRE_34_CO_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -595,6 +613,7 @@ class TallySheetVersion_PRE_34_CO_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_34_CO_Schema, many=True)
+
 
 class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
     class Meta:

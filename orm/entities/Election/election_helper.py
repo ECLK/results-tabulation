@@ -118,7 +118,9 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         if data_store_key == "TallySheet":
             data_key = "%s-%s" % (row["TallySheet"], row["Counting Centre"])
         elif data_store_key == "Polling District":
-            data_key = "%s-%s" % (row["Polling Division"], row["Polling District"])
+            data_key = "%s-%s-%s" % (row["Electoral District"], row["Polling Division"], row["Polling District"])
+        elif data_store_key == "Counting Centre":
+            data_key = "%s-%s" % (row["Electoral District"], row["Counting Centre"])
 
         obj = get_object_from_data_store(data_key, data_store_key)
 
@@ -231,6 +233,10 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         else:
             rows = []
 
+        for row in rows:
+            for cell_key in row:
+                row[cell_key] = row[cell_key].encode('unicode_escape')
+
         return rows
 
     for row in get_rows_from_csv(party_candidate_dataset_file):
@@ -254,10 +260,10 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         districtCentre = get_object(root_election, row, "District Centre")
         countingCentre = get_object(ordinary_election, row, "Counting Centre")
 
-        if row["Registered Voters"] is None or len(row["Registered Voters"]) is 0:
-            registered_voters = 0
-        else:
+        try:
             registered_voters = row["Registered Voters"].replace(",", "")
+        except Exception as e:
+            registered_voters = 0
 
         pollingStation = get_object(ordinary_election, {
             "Polling Station": row["Polling Station (English)"],
@@ -320,8 +326,15 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         electionCommission = get_object(root_election, {"Election Commission": "Sri Lanka Election Commission"},
                                         "Election Commission")
         districtCentre = get_object(root_election, row, "District Centre")
+
+        try:
+            registered_voters = row["Registered Voters"].replace(",", "")
+        except Exception as e:
+            registered_voters = 0
+
         countingCentre = get_object(postal_election, {
-            "Counting Centre": row["Postal Vote Counting Centre"], "Registered Voters": row["Registered Voters"]
+            "Counting Centre": row["Postal Vote Counting Centre"], "Registered Voters": registered_voters,
+            "Electoral District": row["Electoral District"]
         }, "Counting Centre")
 
         country.add_child(electoralDistrict.areaId)
