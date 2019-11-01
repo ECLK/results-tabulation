@@ -9,6 +9,7 @@ class ElectionCandidateModel(db.Model):
     electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=False)
     partyId = db.Column(db.Integer, db.ForeignKey(Party.Model.__table__.c.partyId), nullable=False)
     candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.Model.__table__.c.candidateId), nullable=False)
+    qualifiedForPreferences = db.Column(db.Boolean, default=False, nullable=False)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     party = relationship(Party.Model, foreign_keys=[partyId])

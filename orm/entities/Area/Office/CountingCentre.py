@@ -9,14 +9,25 @@ class CountingCentreModel(Office.Model):
         'polymorphic_identity': AreaTypeEnum.CountingCentre
     }
 
+    def __init__(self, officeName, electionId, registeredVotersCount=None):
+        # For postal vote counting centres.
+        if registeredVotersCount is not None:
+            self._registeredVotersCount = registeredVotersCount
+
+        super(CountingCentreModel, self).__init__(
+            officeName=officeName,
+            electionId=electionId
+        )
+
 
 Model = CountingCentreModel
 
 
-def create(officeName, electionId):
+def create(officeName, electionId, registeredVotersCount=None):
     result = Model(
         officeName=officeName,
-        electionId=electionId
+        electionId=electionId,
+        registeredVotersCount=registeredVotersCount
     )
 
     return result

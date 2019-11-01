@@ -4,8 +4,8 @@ from app import db
 from auth import ADMIN_ROLE, authorize
 from exception import NotFoundException
 from orm.entities.Election.election_helper import get_root_token, build_presidential_election
-from orm.entities import Election
-from schemas import ElectionSchema as Schema
+from orm.entities import Election, Area
+from schemas import ElectionSchema as Schema, SimpleAreaSchema
 from util import RequestBody, get_paginated_query
 
 
@@ -21,7 +21,7 @@ def get_by_id(electionId):
     result = Election.get_by_id(electionId=electionId)
     if result is None:
         raise NotFoundException("Election not found (electionId=%d)" % electionId)
-    
+
     return Schema().dump(result).data
 
 
@@ -52,3 +52,11 @@ def create(body):
 @authorize(required_roles=[ADMIN_ROLE])
 def getRootToken(electionId):
     return get_root_token(electionId=electionId)
+
+
+def get_all_areas(electionId):
+    result = Area.get_all_areas_of_root_election(
+        election_id=electionId
+    )
+
+    return SimpleAreaSchema(many=True).dump(result).data
