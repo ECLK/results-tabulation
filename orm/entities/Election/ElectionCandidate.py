@@ -1,3 +1,5 @@
+from sqlalchemy.ext.associationproxy import association_proxy
+
 from app import db
 from sqlalchemy.orm import relationship
 from orm.entities import Candidate, Party
@@ -14,6 +16,8 @@ class ElectionCandidateModel(db.Model):
     election = relationship("ElectionModel", foreign_keys=[electionId])
     party = relationship(Party.Model, foreign_keys=[partyId])
     candidate = relationship(Candidate.Model, foreign_keys=[candidateId])
+
+    candidateName = association_proxy("candidate", "candidateName")
 
     __table_args__ = (
         db.UniqueConstraint('electionId', 'candidateId', name='CandidatePerElection'),
