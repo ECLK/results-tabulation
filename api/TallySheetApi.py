@@ -1,7 +1,8 @@
 from typing import Set
 
 from app import db
-from auth import authorize, DATA_EDITOR_ROLE
+from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
+    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE
 from auth.AuthConstants import ALL_ROLES
 from exception import NotFoundException, ForbiddenException
 from orm.entities.Submission import TallySheet
@@ -35,7 +36,8 @@ def get_by_id(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data
 
 
-@authorize(required_roles=ALL_ROLES)
+@authorize(required_roles=[POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                           NATIONAL_REPORT_VERIFIER_ROLE])
 def unlock(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
@@ -49,7 +51,9 @@ def unlock(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=ALL_ROLES)
+@authorize(
+    required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                    NATIONAL_REPORT_VERIFIER_ROLE])
 def lock(tallySheetId, body):
     request_body = RequestBody(body)
     tallySheetVersionId = request_body.get("lockedVersionId")
