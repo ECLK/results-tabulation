@@ -5,12 +5,15 @@ import sys
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
+from flask_caching import Cache
 
 from connexion.exceptions import ProblemException
 import json
 
 db = SQLAlchemy()
 ma = Marshmallow()
+
+cache = Cache(config={'CACHE_TYPE': 'simple'})
 
 
 def render_exception(exception):
@@ -92,5 +95,7 @@ def create_app():
         if app.config.get('PROD_ENV'):
             is_prod_env = app.config['PROD_ENV']
         return dict(isProdEnv=is_prod_env)
+
+    cache.init_app(app)
 
     return connex_app
