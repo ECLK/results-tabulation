@@ -258,44 +258,44 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         districtCentre.add_child(countingCentre.areaId)
         countingCentre.add_child(pollingStation.areaId)
 
-        stationaryItems = []
-
-        for i in range(1, 4):
-            box_key = "Ballot Box %d" % i
-            if box_key in row and row[box_key] is not None and len(row[box_key]) > 0:
-                if row[box_key] is not None and len(row[box_key]) > 0:
-                    ballotBox = BallotBox.Model(ballotBoxId=row[box_key], electionId=root_election.electionId)
-                    db.session.add(ballotBox)
-                    stationaryItems.append(ballotBox)
-                    # ballotBox = get_object({"Ballot Box": row[box_key]}, "Ballot Box")
-
-        if len(row["Ballot - start"]) is not 0 and len(row["Ballot - end"]) is not 0:
-            for ballotId in range(int(row["Ballot - start"]), int(row["Ballot - end"]) + 1):
-                ballot = Ballot.Model(ballotId=ballotId, electionId=root_election.electionId)
-                db.session.add(ballot)
-                stationaryItems.append(ballot)
-                # ballot = get_object({"Ballot": str(ballotId)}, "Ballot")
-                # invoice.add_stationary_item(ballot.stationaryItemId)
-
-        if len(row["Tendered Ballot - start"]) is not 0 and len(row["Tendered Ballot - end"]) is not 0:
-            for ballotId in range(int(row["Tendered Ballot - start"]), int(row["Tendered Ballot - end"]) + 1):
-                ballot = Ballot.Model(ballotId=ballotId, ballotType=BallotTypeEnum.Tendered,
-                                      electionId=root_election.electionId)
-                db.session.add(ballot)
-                stationaryItems.append(ballot)
-                # ballot = get_object({"Tendered Ballot": str(ballotId)}, "Tendered Ballot")
-                # invoice.add_stationary_item(ballot.stationaryItemId)
-
-        invoice = Invoice.create(
-            electionId=root_election.electionId,
-            issuingOfficeId=countingCentre.areaId,
-            receivingOfficeId=pollingStation.areaId,
-            issuedTo=1
-        )
-
-        invoice.add_stationary_items([stationaryItem.stationaryItemId for stationaryItem in stationaryItems])
-
-        invoice.set_confirmed()
+        # stationaryItems = []
+        #
+        # for i in range(1, 4):
+        #     box_key = "Ballot Box %d" % i
+        #     if box_key in row and row[box_key] is not None and len(row[box_key]) > 0:
+        #         if row[box_key] is not None and len(row[box_key]) > 0:
+        #             ballotBox = BallotBox.Model(ballotBoxId=row[box_key], electionId=root_election.electionId)
+        #             db.session.add(ballotBox)
+        #             stationaryItems.append(ballotBox)
+        #             # ballotBox = get_object({"Ballot Box": row[box_key]}, "Ballot Box")
+        #
+        # if len(row["Ballot - start"]) is not 0 and len(row["Ballot - end"]) is not 0:
+        #     for ballotId in range(int(row["Ballot - start"]), int(row["Ballot - end"]) + 1):
+        #         ballot = Ballot.Model(ballotId=ballotId, electionId=root_election.electionId)
+        #         db.session.add(ballot)
+        #         stationaryItems.append(ballot)
+        #         # ballot = get_object({"Ballot": str(ballotId)}, "Ballot")
+        #         # invoice.add_stationary_item(ballot.stationaryItemId)
+        #
+        # if len(row["Tendered Ballot - start"]) is not 0 and len(row["Tendered Ballot - end"]) is not 0:
+        #     for ballotId in range(int(row["Tendered Ballot - start"]), int(row["Tendered Ballot - end"]) + 1):
+        #         ballot = Ballot.Model(ballotId=ballotId, ballotType=BallotTypeEnum.Tendered,
+        #                               electionId=root_election.electionId)
+        #         db.session.add(ballot)
+        #         stationaryItems.append(ballot)
+        #         # ballot = get_object({"Tendered Ballot": str(ballotId)}, "Tendered Ballot")
+        #         # invoice.add_stationary_item(ballot.stationaryItemId)
+        #
+        # invoice = Invoice.create(
+        #     electionId=root_election.electionId,
+        #     issuingOfficeId=countingCentre.areaId,
+        #     receivingOfficeId=pollingStation.areaId,
+        #     issuedTo=1
+        # )
+        #
+        # invoice.add_stationary_items([stationaryItem.stationaryItemId for stationaryItem in stationaryItems])
+        #
+        # invoice.set_confirmed()
 
         print("[ROW END] ========= ")
 
