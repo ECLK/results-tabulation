@@ -5,7 +5,8 @@ from app import db
 from auth import AREA_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, \
-    EC_LEADERSHIP_ROLE, SUB
+    EC_LEADERSHIP_ROLE, SUB, ROLE_CLAIM, ROLE_PREFIX
+from auth.AuthConstants import NAMESPACE
 from orm.entities import *
 from orm.entities import Invoice, Area, Election
 from orm.entities.Submission import TallySheet
@@ -24,6 +25,16 @@ def get_root_token(electionId):
     ).all()
 
     jwt_payload = {
+        ROLE_CLAIM: [
+            ROLE_PREFIX + DATA_EDITOR_ROLE,
+            ROLE_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE,
+            ROLE_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE,
+            ROLE_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE,
+            ROLE_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE,
+            ROLE_PREFIX + NATIONAL_REPORT_VIEWER_ROLE,
+            ROLE_PREFIX + NATIONAL_REPORT_VIEWER_ROLE,
+            ROLE_PREFIX + EC_LEADERSHIP_ROLE
+        ],
         SUB: "janak@carbon.super", AREA_CLAIM_PREFIX + ADMIN_ROLE: str([]),
         AREA_CLAIM_PREFIX + DATA_EDITOR_ROLE: str([{
             "areaId": electoral_district.areaId
