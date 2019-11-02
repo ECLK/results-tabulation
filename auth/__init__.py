@@ -16,6 +16,8 @@ from exception import UnauthorizedException
 
 import json
 
+from orm.enums import TallySheetCodeEnum, AreaTypeEnum
+
 JWT_SECRET = "jwt_secret"
 AREA_ID = "areaId"
 USER_ACCESS_AREA_IDS = "userAccessAreaIds"
@@ -135,7 +137,9 @@ def get_user_access_area_ids() -> Set[int]:
     return connexion.context[USER_ACCESS_AREA_IDS]
 
 
-def has_role_based_access(tally_sheet_code, access_type):
+def has_role_based_access(tally_sheet, access_type):
+    tally_sheet_code = tally_sheet.tallySheetCode
+
     if access_type == ACCESS_TYPE_READ:
         mapping = role_to_read_allowed_tallysheet_types
     elif access_type == ACCESS_TYPE_LOCK:
@@ -145,7 +149,19 @@ def has_role_based_access(tally_sheet_code, access_type):
 
     for role in connexion.context[USER_ROLES]:
         if mapping.get(role) is not None and tally_sheet_code in mapping.get(role):
-            return True
+
+            # special handling for PRE-30-PD
+            if access_type == ACCESS_TYPE_READ and tally_sheet_code == TallySheetCodeEnum.PRE_30_PD:
+                tally_sheet_area_type = tally_sheet.area.areaType
+                if role in [POLLING_DIVISION_REPORT_VIEWER_ROLE,
+                            POLLING_DIVISION_REPORT_VERIFIER_ROLE] and tally_sheet_area_type == AreaTypeEnum.PollingDivision:
+                    return True
+                elif role in [ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE,
+                            ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE] and tally_sheet_area_type == AreaTypeEnum.ElectoralDistrict:
+                    return True
+            else:
+                return True
+
     return False
 
 
