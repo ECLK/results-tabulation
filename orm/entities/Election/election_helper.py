@@ -18,6 +18,10 @@ def get_root_token(electionId):
         Area.Model.areaType == AreaTypeEnum.ElectoralDistrict,
         Area.Model.electionId == electionId
     ).all()
+    countries = Area.Model.query.filter(
+        Area.Model.areaType == AreaTypeEnum.Country,
+        Area.Model.electionId == electionId
+    ).all()
 
     jwt_payload = {
         SUB: "janak@carbon.super", AREA_CLAIM_PREFIX + ADMIN_ROLE: str([]),
@@ -36,9 +40,15 @@ def get_root_token(electionId):
         AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: str([{
             "areaId": electoral_district.areaId
         } for electoral_district in electoral_districts]),
-        AREA_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([]),
-        AREA_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([]),
-        AREA_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([])
+        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([{
+            "areaId": country.areaId
+        } for country in countries]),
+        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_GENERATOR_ROLE: str([{
+            "areaId": country.areaId
+        } for country in countries]),
+        ROLE_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([{
+            "areaId": country.areaId
+        } for country in countries])
     }
 
     # Generate a token with claims for everything.
