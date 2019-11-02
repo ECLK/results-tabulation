@@ -82,6 +82,8 @@ def get_jwt_token():
             code=MESSAGE_CODE_USER_NOT_AUTHENTICATED
         )
 
+    print("######### request.headers.get(JWT_TOKEN_HEADER_KEY) ###### ", request.headers.get(JWT_TOKEN_HEADER_KEY))
+
     return request.headers.get(JWT_TOKEN_HEADER_KEY)
 
 
