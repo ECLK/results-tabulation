@@ -7,28 +7,34 @@
 
     <table class="table table-borderless">
         <tbody>
+            <tr>
+                <td style="width:50px;"></td>
+                <td class="bold no-padding-left no-padding-right" colspan="3">
+                    {{content.election.electionName}}
+                    <br/>Detailed Statement of Returning Officer on the number of Votes cast in favour of each Candidate
+                    according to the Polling Divisiona and Centers for Postal Votes Counting - Section 55(1)
+                </td>
+                <td class="no-padding-left no-padding-right" colspan="2">
+                    <div class="all float-right"><h1 class="bold">{{content.tallySheetCode}}</h1></div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="4" class="no-padding-left no-padding-right">
+                    <div class="all" style="width: fit-content; padding: 5px;">
+                        <span class="bold">Name of the Electorate :</span> {{content.electoralDistrict}}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-borderless" style="table-layout:fixed;">
+        <tbody>
+
         <tr>
-            <td></td>
-            <td class="bold no-padding-left no-padding-right" colspan="3">
-                {{content.election.electionName}}
-                <br/>Detailed Statement of Returning Officer on the number of Votes cast in favour of each Candidate
-                according to the Polling Divisiona and Centers for Postal Votes Counting - Section 55(1)
-            </td>
-            <td class="no-padding-left no-padding-right" colspan="2">
-                <div class="all float-right"><h1 class="bold">PRE/30/ED</h1></div>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td colspan="4" class="no-padding-left no-padding-right">
-                <div class="all" style="width: fit-content; padding: 5px;">
-                    <span class="bold">Name of the Electorate :</span> {{content.electoralDistrict}}
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td rowspan="2" class="right" style="border-right: 1px solid #000 !important;"></td>
-            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2">
+            <td rowspan="2" class="right" style="border-right: 1px solid #000 !important; width:50px;"></td>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2" style="width:200px;">
                 <div class="left" style="height:100%;">Name of the Candidate</div>
             </th>
             <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}">
@@ -36,11 +42,11 @@
             </th>
             <th class="left right top bottom" rowspan="2">Postal Votes</th>
             <th class="left right top bottom" rowspan="2">Total No. of Votes in Figures</th>
-            <th class="left right top bottom" rowspan="2">Total No. of Votes in Words</th>
+            <th class="left right top bottom" rowspan="2" style="width:200px;">Total No. of Votes in Words</th>
         </tr>
         <tr>
             {% for pollingDivision in content.pollingDivisions %}
-            <th class="left right top bottom">{{pollingDivision}}</th>
+            <th class="left right top bottom" style="word-break:break-all;">{{pollingDivision}}</th>
             {% endfor %}
         </tr>
 
