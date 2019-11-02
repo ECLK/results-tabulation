@@ -39,27 +39,27 @@ def get_root_token(electionId):
         AREA_CLAIM_PREFIX + DATA_EDITOR_ROLE: str([{
             "areaId": electoral_district.areaId
         } for electoral_district in electoral_districts]),
-        # AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE: str([{
-        #     "areaId": electoral_district.areaId
-        # } for electoral_district in electoral_districts]),
-        # AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE: str([{
-        #     "areaId": electoral_district.areaId
-        # } for electoral_district in electoral_districts]),
-        # AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: str([{
-        #     "areaId": electoral_district.areaId
-        # } for electoral_district in electoral_districts]),
-        # AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: str([{
-        #     "areaId": electoral_district.areaId
-        # } for electoral_district in electoral_districts]),
-        # AREA_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([{
-        #     "areaId": country.areaId
-        # } for country in countries]),
-        # AREA_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([{
-        #     "areaId": country.areaId
-        # } for country in countries]),
-        # AREA_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([{
-        #     "areaId": country.areaId
-        # } for country in countries])
+        AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE: str([{
+            "areaId": electoral_district.areaId
+        } for electoral_district in electoral_districts]),
+        AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE: str([{
+            "areaId": electoral_district.areaId
+        } for electoral_district in electoral_districts]),
+        AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: str([{
+            "areaId": electoral_district.areaId
+        } for electoral_district in electoral_districts]),
+        AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: str([{
+            "areaId": electoral_district.areaId
+        } for electoral_district in electoral_districts]),
+        AREA_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([{
+            "areaId": country.areaId
+        } for country in countries]),
+        AREA_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([{
+            "areaId": country.areaId
+        } for country in countries]),
+        AREA_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([{
+            "areaId": country.areaId
+        } for country in countries])
     }
 
     # Generate a token with claims for everything.
