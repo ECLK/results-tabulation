@@ -1,10 +1,6 @@
-from app import db
 from orm.entities.Area import Electorate
-from orm.entities.Area.Electorate import Country
-from orm.enums import ElectorateTypeEnum, AreaTypeEnum
-from exception import NotFoundException
+from orm.enums import AreaTypeEnum
 from sqlalchemy.orm import synonym
-from sqlalchemy.ext.associationproxy import association_proxy
 
 
 class ElectoralDistrictModel(Electorate.Model):
