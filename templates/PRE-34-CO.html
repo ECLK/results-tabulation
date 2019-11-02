@@ -15,14 +15,14 @@
                 <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">Statement of the Counting Officer under Section 59(1), showing the Second and Third Preferences counted in favour of each of the remaining two candidates.</td>
             </tr>
             <tr>
-                <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 1 (Name): <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 1 (Name): <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{ content.data[0].name }}</span></td>
             </tr>
             <tr>
-                <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 2 (Name): <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td colspan="11" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 2 (Name): <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{ content.data[1].name }}</span></td>
             </tr>
             <tr>
-                <td colspan="8">Polling Division:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
-                <td colspan="3">Counting Center No:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                <td colspan="8">Polling Division:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{ content.pollingDivision }}</span></td>
+                <td colspan="3">Counting Center No:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{ content.countingCentre }}</span></td>
             </tr>
 
             <tr style="text-align:center; font-size:14px;" class="bold">
@@ -32,12 +32,12 @@
                 </td>
                 <td colspan="3" class="all">(1)<br/>
                   In favour of<br/>
-                  <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span><br/>
+                  <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{ content.data[0].name }}</span><br/>
                   Name of Candidate No. 1
                 </td>
                 <td colspan="3" class="all">(2)<br/>
                   In favour of<br/>
-                  <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span><br/>
+                  <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{ content.data[1].name }}</span><br/>
                   Name of Candidate No. 2
                 </td>
                 <td rowspan="2" class="all">(3)<br/>
@@ -61,9 +61,10 @@
             </tr>
 
             <!--loop this tr block and populate with data -->
+            {% for candidate in content.candidates %}
             <tr style="font-size:14px;">
-                <td class="all" style="text-align:right;"></td>
-                <td class="all"></td>
+                <td class="all" style="text-align:right;">{{ loop.index }}</td>
+                <td class="all">{{candidate.candidateName  }}</td>
                 <td class="all" style="text-align:right;"></td>
                 <td class="all" style="text-align:right;"></td>
                 <td class="all" style="text-align:right;"></td>
@@ -74,6 +75,7 @@
                 <td class="all" style="text-align:right;"></td>
                 <td class="all" style="text-align:right;"></td>
             </tr>
+            {% endfor %}
             <!--loop this tr block -->
 
 
@@ -81,12 +83,12 @@
                 <td class="all"></td>
                 <td class="all bold">TOTAL IN FIGURES</td>
                 <!--loop this tr block and populate with data -->
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
+                <td class="all" style="text-align:right;">{{ content.data[0].secondPreferenceCount }}</td>
+                <td class="all" style="text-align:right;">{{ content.data[0].thirdPreferenceCount }}</td>
+                <td class="all" style="text-align:right;">{{ content.data[0].secondPreferenceCount + content.data[0].thirdPreferenceCount }}</td>
+                <td class="all" style="text-align:right;">{{ content.data[1].secondPreferenceCount }}</td>
+                <td class="all" style="text-align:right;">{{ content.data[1].thirdPreferenceCount }}</td>
+                <td class="all" style="text-align:right;">{{ content.data[1].secondPreferenceCount + content.data[0].thirdPreferenceCount }}</td>
                 <td class="all" style="text-align:right;"></td>
                 <td class="all" style="text-align:right;"></td>
                 <td class="all" style="text-align:right;"></td>

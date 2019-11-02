@@ -65,11 +65,23 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
 
     def html(self):
         stamp = self.stamp
+        tallySheetContent = self.content
 
         polling_divisions = Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDivision)
         polling_division_name = ""
         if len(polling_divisions) > 0:
             polling_division_name = polling_divisions[0].areaName
+
+        disqualifiedCandidates = db.session.query(
+            ElectionCandidate.Model.candidateId,
+            Candidate.Model.candidateName,
+        ).join(
+            Candidate.Model,
+            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
+        ).filter(
+            ElectionCandidate.Model.qualifiedForPreferences == False,
+            ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
+        ).all()
 
         content = {
             "election": {
@@ -89,30 +101,33 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
                 pollingDistrict.areaName for pollingDistrict in
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
-            "data": [
-            ],
+            "data": [],
+            "candidates": disqualifiedCandidates
         }
 
-        # for row_index in range(len(tallySheetContent)):
-        #     row = tallySheetContent[row_index]
-        #     if row.count is not None:
-        #         content["data"].append([
-        #             row_index + 1,
-        #             row.candidateName,
-        #             row.partySymbol,
-        #             row.preferenceNumber,
-        #             to_comma_seperated_num(row.count),
-        #             ""
-        #         ])
-        #     else:
-        #         content["data"].append([
-        #             row_index + 1,
-        #             row.candidateName,
-        #             row.partySymbol,
-        #             "",
-        #             "",
-        #             ""
-        #         ])
+        temp_data = {}
+
+        for row_index in range(len(tallySheetContent)):
+            row = tallySheetContent[row_index]
+            if row.preferenceCount is not None:
+                temp_data[row.candidateId] = {}
+
+        for row_index in range(len(tallySheetContent)):
+            row = tallySheetContent[row_index]
+            if row.preferenceCount is not None:
+
+                if row.preferenceNumber == 2:
+                    preference = "secondPreferenceCount"
+                elif row.preferenceNumber == 3:
+                    preference = "thirdPreferenceCount"
+                else:
+                    preference = ""
+
+                temp_data[row.candidateId]['name'] = row.candidateName
+                temp_data[row.candidateId][preference] = row.preferenceCount
+
+        for i in temp_data:
+            content['data'].append(temp_data[i])
 
         html = render_template(
             'PRE-34-CO.html',
