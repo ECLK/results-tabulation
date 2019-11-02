@@ -236,7 +236,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
             global_area_map = init_global_area_map()
             for electoral_district_id in user_access_area_ids:
                 if electoral_district_id in global_area_map["electoral_district_counting_centre"]:
-                    counting_centre_ids.extend(
+                    user_access_area_ids.extend(
                         global_area_map["electoral_district_counting_centre"][electoral_district_id]
                     )
 
@@ -245,7 +245,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
             global_area_map = init_global_area_map()
             for electoral_district_id in user_access_area_ids:
                 if electoral_district_id in global_area_map["electoral_district_polling_division"]:
-                    counting_centre_ids.extend(
+                    user_access_area_ids.extend(
                         global_area_map["electoral_district_polling_division"][electoral_district_id]
                     )
 
