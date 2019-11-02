@@ -1,6 +1,6 @@
 from api import TallySheetVersionApi
 from app import db
-from auth import authorize
+from auth import authorize, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE
 from auth.AuthConstants import ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE
 from orm.entities import Submission
 from orm.entities.Submission import TallySheet
@@ -11,7 +11,8 @@ from schemas import TallySheetVersion_PRE_30_ED_Schema, TallySheetVersionSchema
 from sqlalchemy import func
 
 
-@authorize(required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
+@authorize(required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                           NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
     result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,

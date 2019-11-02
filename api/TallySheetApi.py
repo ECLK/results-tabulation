@@ -1,11 +1,14 @@
 from typing import Set
 
 from app import db
-from auth import authorize
+from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
+    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE
 from auth.AuthConstants import ALL_ROLES
-from exception import NotFoundException
+from exception import NotFoundException, ForbiddenException
 from orm.entities.Submission import TallySheet
+from orm.entities.Submission.TallySheet import TallySheetModel
 from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetSchema
 from util import RequestBody, get_paginated_query
 
@@ -33,7 +36,8 @@ def get_by_id(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data
 
 
-@authorize(required_roles=ALL_ROLES)
+@authorize(required_roles=[POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                           NATIONAL_REPORT_VERIFIER_ROLE])
 def unlock(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
@@ -47,7 +51,9 @@ def unlock(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=ALL_ROLES)
+@authorize(
+    required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                    NATIONAL_REPORT_VERIFIER_ROLE])
 def lock(tallySheetId, body):
     request_body = RequestBody(body)
     tallySheetVersionId = request_body.get("lockedVersionId")
@@ -56,6 +62,11 @@ def lock(tallySheetId, body):
 
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
+                                      TallySheetCodeEnum.CE_201_PV,
+                                      TallySheetCodeEnum.PRE_34_CO] and not tally_sheet.submitted:
+        raise ForbiddenException("Tally sheet is not yet submitted, cannot lock.")
 
     tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
                                                       tallySheetId=tallySheetId)
@@ -73,12 +84,16 @@ def lock(tallySheetId, body):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=ALL_ROLES)
+@authorize(required_roles=[DATA_EDITOR_ROLE])
 def request_edit(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    if tally_sheet.tallySheetCode not in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
+                                          TallySheetCodeEnum.CE_201_PV, TallySheetCodeEnum.PRE_34_CO]:
+        raise ForbiddenException("Submit operation is not supported for this tally sheet type.")
 
     tally_sheet.set_submitted_version(None)
 
@@ -87,15 +102,19 @@ def request_edit(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=ALL_ROLES)
+@authorize(required_roles=[DATA_EDITOR_ROLE])
 def submit(tallySheetId, body):
     request_body = RequestBody(body)
     tallySheetVersionId = request_body.get("submittedVersionId")
 
-    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    tally_sheet: TallySheetModel = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    if tally_sheet.tallySheetCode not in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
+                                          TallySheetCodeEnum.CE_201_PV, TallySheetCodeEnum.PRE_34_CO]:
+        raise ForbiddenException("Submit operation is not supported for this tally sheet type.")
 
     tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
                                                       tallySheetId=tallySheetId)
