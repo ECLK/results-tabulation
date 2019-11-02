@@ -16,6 +16,8 @@ from exception import UnauthorizedException
 
 import json
 
+from exception.messages import MESSAGE_CODE_USER_NOT_FOUND, MESSAGE_CODE_USER_NOT_AUTHENTICATED, \
+    MESSAGE_CODE_USER_NOT_AUTHORIZED
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 
 JWT_SECRET = "jwt_secret"
@@ -67,12 +69,18 @@ def decode_token(token):
 
         return token
     except Exception as e:
-        raise UnauthorizedException("Invalid authorization token.")
+        raise UnauthorizedException(
+            message="Invalid authorization token.",
+            code=MESSAGE_CODE_USER_NOT_AUTHENTICATED
+        )
 
 
 def get_jwt_token():
     if JWT_TOKEN_HEADER_KEY not in request.headers:
-        raise UnauthorizedException("No authorization header found.")
+        raise UnauthorizedException(
+            message="No authorization header found.",
+            code=MESSAGE_CODE_USER_NOT_AUTHENTICATED
+        )
 
     return request.headers.get(JWT_TOKEN_HEADER_KEY)
 
@@ -157,7 +165,7 @@ def has_role_based_access(tally_sheet, access_type):
                             POLLING_DIVISION_REPORT_VERIFIER_ROLE] and tally_sheet_area_type == AreaTypeEnum.PollingDivision:
                     return True
                 elif role in [ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE,
-                            ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE] and tally_sheet_area_type == AreaTypeEnum.ElectoralDistrict:
+                              ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE] and tally_sheet_area_type == AreaTypeEnum.ElectoralDistrict:
                     return True
             else:
                 return True
@@ -174,10 +182,16 @@ def authenticate(func, *args, **kwargs):
     claims: Dict = get_claims()
 
     if SUB not in claims:
-        UnauthorizedException("No valid user found.")
+        UnauthorizedException(
+            message="No valid user found.",
+            code=MESSAGE_CODE_USER_NOT_FOUND
+        )
 
     if ROLE_CLAIM not in claims or claims.get(ROLE_CLAIM) == []:
-        UnauthorizedException("No valid user role found.")
+        UnauthorizedException(
+            message="No valid user role found.",
+            code=MESSAGE_CODE_USER_NOT_AUTHORIZED
+        )
 
     user_name = claims.get(SUB)
 
@@ -227,7 +241,10 @@ def authorize(func, required_roles=None, *args, **kwargs):
                     )
 
     if not claim_found:
-        UnauthorizedException("No matching claim found.")
+        UnauthorizedException(
+            message="No matching claim found.",
+            code=MESSAGE_CODE_USER_NOT_AUTHORIZED
+        )
     else:
         connexion.context[USER_ACCESS_AREA_IDS] = set(user_access_area_ids)
         return func(*args, **kwargs)

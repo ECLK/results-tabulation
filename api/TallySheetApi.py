@@ -5,6 +5,9 @@ from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_R
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE
 from auth.AuthConstants import ALL_ROLES
 from exception import NotFoundException, ForbiddenException
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
+    MESSAGE_CODE_TALLY_SHEET_SUBMIT_IS_NOT_SUPPORTED, MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, \
+    MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_INCOMPLETE_TALLY_SHEET_CANNOT_BE_LOCKED
 from orm.entities.Submission import TallySheet
 from orm.entities.Submission.TallySheet import TallySheetModel
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -31,7 +34,10 @@ def get_by_id(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        NotFoundException(
+            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
 
     return TallySheetSchema().dump(tally_sheet).data
 
@@ -42,7 +48,10 @@ def unlock(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        NotFoundException(
+            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
 
     tally_sheet.set_locked_version(None)
 
@@ -66,16 +75,25 @@ def lock(tallySheetId, body):
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
                                       TallySheetCodeEnum.CE_201_PV,
                                       TallySheetCodeEnum.PRE_34_CO] and not tally_sheet.submitted:
-        raise ForbiddenException("Tally sheet is not yet submitted, cannot lock.")
+        raise ForbiddenException(
+            message="Tally sheet is not yet submitted, cannot lock.",
+            code=MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT
+        )
 
     tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
                                                       tallySheetId=tallySheetId)
 
     if tally_sheet_version is None:
-        raise NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)
+        raise NotFoundException(
+            message="Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId,
+            code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
+        )
 
     if not tally_sheet_version.isComplete:
-        raise NotFoundException("Incomplete tally sheet version (tallySheetVersionId=%d)" % tallySheetVersionId)
+        raise NotFoundException(
+            message="Incomplete tally sheet version (tallySheetVersionId=%d)" % tallySheetVersionId,
+            code=MESSAGE_CODE_TALLY_SHEET_INCOMPLETE_TALLY_SHEET_CANNOT_BE_LOCKED
+        )
 
     tally_sheet.set_locked_version(tally_sheet_version)
 
@@ -89,11 +107,17 @@ def request_edit(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException(
+            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
 
     if tally_sheet.tallySheetCode not in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
                                           TallySheetCodeEnum.CE_201_PV, TallySheetCodeEnum.PRE_34_CO]:
-        raise ForbiddenException("Submit operation is not supported for this tally sheet type.")
+        raise ForbiddenException(
+            message="Submit operation is not supported for this tally sheet type.",
+            code=MESSAGE_CODE_TALLY_SHEET_SUBMIT_IS_NOT_SUPPORTED
+        )
 
     tally_sheet.set_submitted_version(None)
 
@@ -110,17 +134,26 @@ def submit(tallySheetId, body):
     tally_sheet: TallySheetModel = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException(
+            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
 
     if tally_sheet.tallySheetCode not in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
                                           TallySheetCodeEnum.CE_201_PV, TallySheetCodeEnum.PRE_34_CO]:
-        raise ForbiddenException("Submit operation is not supported for this tally sheet type.")
+        raise ForbiddenException(
+            message="Submit operation is not supported for this tally sheet type.",
+            code=MESSAGE_CODE_TALLY_SHEET_SUBMIT_IS_NOT_SUPPORTED
+        )
 
     tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
                                                       tallySheetId=tallySheetId)
 
     if tally_sheet_version is None:
-        raise NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)
+        raise NotFoundException(
+            message="Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId,
+            code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
+        )
 
     tally_sheet.set_submitted_version(tally_sheet_version)
 

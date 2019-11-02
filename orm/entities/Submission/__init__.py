@@ -2,6 +2,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from app import db
 from sqlalchemy.orm import relationship
 from exception import MethodNotAllowedException
+from exception.messages import MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
 from orm.entities import Election, Office, Proof, History, SubmissionVersion, Area
 from orm.entities.Audit import Stamp
 from orm.enums import SubmissionTypeEnum, ProofTypeEnum
@@ -49,10 +50,12 @@ class SubmissionModel(db.Model):
         else:
             if submissionVersion.submissionId != self.submissionId:
                 raise MethodNotAllowedException(
-                    "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
+                    message="%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
                         self.submissionType.name, self.submissionType.name, self.submissionId,
                         submissionVersion.submissionVersionId, submissionVersion.submissionId
-                    ))
+                    ),
+                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
+                )
 
             self.latestVersionId = submissionVersion.submissionVersionId
             self.latestStampId = Stamp.create().stampId
@@ -67,10 +70,12 @@ class SubmissionModel(db.Model):
         else:
             if submissionVersion.submissionId != self.submissionId:
                 raise MethodNotAllowedException(
-                    "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
+                    message="%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
                         self.submissionType.name, self.submissionType.name, self.submissionId,
-                        submissionVersion.submissionVersionId
-                    ))
+                        submissionVersion.submissionVersionId, submissionVersion.submissionId
+                    ),
+                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
+                )
 
             self.lockedVersionId = submissionVersion.submissionVersionId
             self.lockedStampId = Stamp.create().stampId
@@ -85,10 +90,12 @@ class SubmissionModel(db.Model):
         else:
             if submissionVersion.submissionId != self.submissionId:
                 raise MethodNotAllowedException(
-                    "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
+                    message="%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
                         self.submissionType.name, self.submissionType.name, self.submissionId,
-                        submissionVersion.submissionVersionId
-                    ))
+                        submissionVersion.submissionVersionId, submissionVersion.submissionId
+                    ),
+                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
+                )
 
             self.submittedVersionId = submissionVersion.submissionVersionId
             self.submittedStampId = Stamp.create().stampId

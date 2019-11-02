@@ -3,6 +3,7 @@ from app import db
 from auth import authorize
 from auth.AuthConstants import ALL_ROLES
 from exception import NotFoundException
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetVersionSchema
@@ -42,12 +43,18 @@ def html(tallySheetId, tallySheetVersionId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException(
+            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
 
     tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tallySheetId,
                                                       tallySheetVersionId=tallySheetVersionId)
 
     if tally_sheet_version is None:
-        NotFoundException("Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId)
+        raise NotFoundException(
+            message="Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId,
+            code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
+        )
 
     return Response(tally_sheet_version.html(), mimetype='text/html')
