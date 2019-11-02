@@ -135,6 +135,7 @@ def get_user_name() -> str:
     """
     return connexion.context[USER_NAME]
 
+
 def get_user_roles():
     return connexion.context[USER_ROLES]
 
@@ -229,17 +230,20 @@ def authorize(func, required_roles=None, *args, **kwargs):
         user_access_area_ids.extend([x.get(AREA_ID) for x in claims.get(claim)])
 
         if role is DATA_EDITOR_ROLE:
+            counting_centre_ids = []
             global_area_map = init_global_area_map()
             for electoral_district_id in user_access_area_ids:
                 if electoral_district_id in global_area_map["electoral_district_counting_centre"]:
-                    user_access_area_ids.extend(
+                    counting_centre_ids.extend(
                         global_area_map["electoral_district_counting_centre"][electoral_district_id]
                     )
+
         elif role is POLLING_DIVISION_REPORT_VIEWER_ROLE or role is POLLING_DIVISION_REPORT_VERIFIER_ROLE:
+            counting_centre_ids = []
             global_area_map = init_global_area_map()
             for electoral_district_id in user_access_area_ids:
                 if electoral_district_id in global_area_map["electoral_district_polling_division"]:
-                    user_access_area_ids.extend(
+                    counting_centre_ids.extend(
                         global_area_map["electoral_district_polling_division"][electoral_district_id]
                     )
 
