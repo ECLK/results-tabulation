@@ -5,8 +5,13 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app import db
-from auth import get_user_access_area_ids
-from exception import NotFoundException, MethodNotAllowedException
+from auth import get_user_access_area_ids, get_user_name, has_role_based_access, ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, \
+    ACCESS_TYPE_READ, DATA_EDITOR_ROLE, get_user_roles
+from exception import NotFoundException, MethodNotAllowedException, ForbiddenException
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
+    MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK, \
+    MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW, \
+    MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
 from orm.entities import Submission, Election
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum
@@ -42,12 +47,36 @@ class TallySheetModel(db.Model):
             self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     def set_locked_version(self, tallySheetVersion: TallySheetVersion):
+        if DATA_EDITOR_ROLE in get_user_roles() and self.submittedStamp.createdBy == get_user_name():
+            raise ForbiddenException(
+                message="Tally sheet submitted user is not allowed to lock/unlock.",
+                code=MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT
+            )
+
         if tallySheetVersion is None:
+            if not has_role_based_access(self, ACCESS_TYPE_UNLOCK):
+                raise ForbiddenException(
+                    message="User doesn't have access to tally sheet.",
+                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK
+                )
+
             self.submission.set_locked_version(submissionVersion=None)
         else:
+            if not has_role_based_access(self, ACCESS_TYPE_LOCK):
+                raise ForbiddenException(
+                    message="User doesn't have access to tally sheet.",
+                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK
+                )
+
             self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     def set_submitted_version(self, tallySheetVersion: TallySheetVersion):
+        if self.locked:
+            raise ForbiddenException(
+                message="Tally sheet is already locked.",
+                code=MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK
+            )
+
         if tallySheetVersion is None:
             self.submission.set_submitted_version(submissionVersion=None)
         else:
@@ -110,6 +139,12 @@ def get_by_id(tallySheetId, tallySheetCode=None):
 
     result = query.one_or_none()
 
+    if not has_role_based_access(result, ACCESS_TYPE_READ):
+        raise ForbiddenException(
+            message="User doesn't have access to tally sheet.",
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
+        )
+
     return result
 
 
@@ -155,7 +190,10 @@ def create(tallySheetCode, electionId, areaId):
 def create_empty_version(tallySheetId, tallySheetCode=None):
     tallySheet = get_by_id(tallySheetId=tallySheetId, tallySheetCode=tallySheetCode)
     if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException(
+            message="Tally sheet not found. (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
 
     tallySheetVersion = tallySheet.create_empty_version()
 
@@ -166,7 +204,9 @@ def create_version(tallySheetId, tallySheetCode=None):
     tallySheet = get_by_id(tallySheetId=tallySheetId, tallySheetCode=tallySheetCode)
     if tallySheet is None:
         raise NotFoundException(
-            "Tally sheet not found. (tallySheetId=%d, tallySheetCode=%s)" % (tallySheetId, tallySheetCode.name))
+            message="Tally sheet not found. (tallySheetId=%d, tallySheetCode=%s)" % (tallySheetId, tallySheetCode.name),
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
 
     tallySheetVersion = tallySheet.create_version()
 
