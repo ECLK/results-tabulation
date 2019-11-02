@@ -32,30 +32,30 @@
     <table class="table table-borderless" style="table-layout:fixed;">
         <tbody>
 
-        <tr>
+        <tr style="text-align:center;">
             <td rowspan="2" class="right" style="border-right: 1px solid #000 !important; width:50px;"></td>
-            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2" style="width:200px;">
-                <div class="left" style="height:100%;">Name of the Candidate</div>
+            <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align: middle;">
+                Name of the Candidate
             </th>
-            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}">
+            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align: middle;">
                 Name of the Polling Division
             </th>
-            <th class="left right top bottom" rowspan="2">Postal Votes</th>
-            <th class="left right top bottom" rowspan="2">Total No. of Votes in Figures</th>
-            <th class="left right top bottom" rowspan="2" style="width:200px;">Total No. of Votes in Words</th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align: middle;">Postal Votes</th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align: middle;">Total No. of Votes in Figures</th>
+            <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align: middle;">Total No. of Votes in Words</th>
         </tr>
-        <tr>
+        <tr style="text-align:center;">
             {% for pollingDivision in content.pollingDivisions %}
-            <th class="left right top bottom" style="word-break:break-all;">{{pollingDivision}}</th>
+            <th class="left right top bottom" style="word-break:break-all; vertical-align:middle;">{{pollingDivision}}</th>
             {% endfor %}
         </tr>
 
         {% for row in content.data %}
         <tr>
             {% for cell in row %}
-            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}">{{cell}}</td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{cell}}</td>
             {% endfor %}
-            <td class="left right top bottom"></td>
+            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
         {% endfor %}
 
@@ -87,7 +87,7 @@
                 <small>(Including Rejected)</small>
             </th>
             {% for totalVoteCount in content.totalVoteCounts %}
-            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}">{{totalVoteCount}}</td>
+            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
 
