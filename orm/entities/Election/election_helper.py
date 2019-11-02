@@ -37,28 +37,36 @@ def get_root_token(electionId):
         ],
         SUB: "janak@carbon.super", AREA_CLAIM_PREFIX + ADMIN_ROLE: str([]),
         AREA_CLAIM_PREFIX + DATA_EDITOR_ROLE: str([{
-            "areaId": electoral_district.areaId
+            "areaId": electoral_district.areaId,
+            "areaName": electoral_district.areaName
         } for electoral_district in electoral_districts]),
         AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE: str([{
-            "areaId": electoral_district.areaId
+            "areaId": electoral_district.areaId,
+            "areaName": electoral_district.areaName
         } for electoral_district in electoral_districts]),
         AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE: str([{
-            "areaId": electoral_district.areaId
+            "areaId": electoral_district.areaId,
+            "areaName": electoral_district.areaName
         } for electoral_district in electoral_districts]),
         AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: str([{
-            "areaId": electoral_district.areaId
+            "areaId": electoral_district.areaId,
+            "areaName": electoral_district.areaName
         } for electoral_district in electoral_districts]),
         AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: str([{
-            "areaId": electoral_district.areaId
+            "areaId": electoral_district.areaId,
+            "areaName": electoral_district.areaName
         } for electoral_district in electoral_districts]),
         AREA_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([{
-            "areaId": country.areaId
+            "areaId": country.areaId,
+            "areaName": country.areaName
         } for country in countries]),
         AREA_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([{
-            "areaId": country.areaId
+            "areaId": country.areaId,
+            "areaName": country.areaName
         } for country in countries]),
         AREA_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([{
-            "areaId": country.areaId
+            "areaId": country.areaId,
+            "areaName": country.areaName
         } for country in countries])
     }
 
