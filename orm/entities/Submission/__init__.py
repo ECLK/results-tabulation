@@ -47,11 +47,11 @@ class SubmissionModel(db.Model):
             self.latestVersionId = None
             self.latestStampId = None
         else:
-            if submissionVersion.submissionId is not self.submissionId:
+            if submissionVersion.submissionId != self.submissionId:
                 raise MethodNotAllowedException(
-                    "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
+                    "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
                         self.submissionType.name, self.submissionType.name, self.submissionId,
-                        submissionVersion.submissionVersionId
+                        submissionVersion.submissionVersionId, submissionVersion.submissionId
                     ))
 
             self.latestVersionId = submissionVersion.submissionVersionId
@@ -65,7 +65,7 @@ class SubmissionModel(db.Model):
             self.lockedVersionId = None
             self.lockedStampId = None
         else:
-            if submissionVersion.submissionId is not self.submissionId:
+            if submissionVersion.submissionId != self.submissionId:
                 raise MethodNotAllowedException(
                     "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
                         self.submissionType.name, self.submissionType.name, self.submissionId,
@@ -83,7 +83,7 @@ class SubmissionModel(db.Model):
             self.submittedVersionId = None
             self.submittedStampId = None
         else:
-            if submissionVersion.submissionId is not self.submissionId:
+            if submissionVersion.submissionId != self.submissionId:
                 raise MethodNotAllowedException(
                     "%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d)" % (
                         self.submissionType.name, self.submissionType.name, self.submissionId,
