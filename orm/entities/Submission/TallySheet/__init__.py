@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 
 from app import db
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access, ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, \
-    ACCESS_TYPE_READ
+    ACCESS_TYPE_READ, DATA_EDITOR_ROLE, get_user_roles
 from exception import NotFoundException, MethodNotAllowedException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
     MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK, \
@@ -47,7 +47,7 @@ class TallySheetModel(db.Model):
             self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     def set_locked_version(self, tallySheetVersion: TallySheetVersion):
-        if self.submittedStamp.createdBy == get_user_name():
+        if DATA_EDITOR_ROLE in get_user_roles() and self.submittedStamp.createdBy == get_user_name():
             raise ForbiddenException(
                 message="Tally sheet submitted user is not allowed to lock/unlock.",
                 code=MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT
