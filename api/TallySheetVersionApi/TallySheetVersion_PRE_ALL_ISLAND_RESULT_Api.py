@@ -1,6 +1,6 @@
 from api import TallySheetVersionApi
 from app import db
-from auth import authorize, NATIONAL_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE
+from auth import authorize, NATIONAL_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE
 from orm.entities import Submission, SubmissionVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -10,7 +10,7 @@ from schemas import TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema, TallySheetVe
 from sqlalchemy import func
 
 
-@authorize(required_roles=[NATIONAL_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
+@authorize(required_roles=[NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
     result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,

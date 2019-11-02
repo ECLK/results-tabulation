@@ -1,5 +1,6 @@
 from app import db
-from auth import authorize
+from auth import authorize, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
+    NATIONAL_REPORT_VERIFIER_ROLE
 from auth.AuthConstants import POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
 from orm.entities import Submission, SubmissionVersion, Area, Election
@@ -13,7 +14,9 @@ from sqlalchemy import func, and_
 
 
 @authorize(
-    required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
+    required_roles=[POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE,
+                    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                    NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
     result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,
@@ -24,7 +27,8 @@ def get_by_id(tallySheetId, tallySheetVersionId):
 
 
 @authorize(
-    required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
+    required_roles=[POLLING_DIVISION_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE,
+                    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def create(tallySheetId):
     tallySheet, tallySheetVersion = TallySheet.create_latest_version(
         tallySheetId=tallySheetId,
@@ -71,7 +75,7 @@ def create(tallySheetId):
         ElectionCandidate.Model.candidateId
     ).all()
 
-    is_complete = True      # TODO:Change other reports to validate like this
+    is_complete = True  # TODO:Change other reports to validate like this
     for row in query:
         if row.candidateId is not None and row.areaId is not None and row.count is not None:
             tallySheetVersion.add_row(

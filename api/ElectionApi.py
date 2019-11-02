@@ -3,6 +3,7 @@ import connexion
 from app import db
 from auth import ADMIN_ROLE, authorize
 from exception import NotFoundException
+from exception.messages import MESSAGE_CODE_ELECTION_NOT_FOUND
 from orm.entities.Election.election_helper import get_root_token, build_presidential_election
 from orm.entities import Election, Area
 from schemas import ElectionSchema as Schema, SimpleAreaSchema
@@ -20,7 +21,10 @@ def get_all():
 def get_by_id(electionId):
     result = Election.get_by_id(electionId=electionId)
     if result is None:
-        raise NotFoundException("Election not found (electionId=%d)" % electionId)
+        raise NotFoundException(
+            message="Election not found (electionId=%d)" % electionId,
+            const=MESSAGE_CODE_ELECTION_NOT_FOUND
+        )
 
     return Schema().dump(result).data
 
