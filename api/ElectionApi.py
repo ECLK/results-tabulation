@@ -23,7 +23,7 @@ def get_by_id(electionId):
     if result is None:
         raise NotFoundException(
             message="Election not found (electionId=%d)" % electionId,
-            const=MESSAGE_CODE_ELECTION_NOT_FOUND
+            code=MESSAGE_CODE_ELECTION_NOT_FOUND
         )
 
     return Schema().dump(result).data
