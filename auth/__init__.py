@@ -25,7 +25,7 @@ USER_NAME = "userName"
 USER_ROLES = "userRoles"
 
 
-@cache.cached(timeout=50000000, key_prefix='global_area_map')
+@cache.cached(key_prefix='global_area_map')
 def init_global_area_map():
     # TODO Refactor
 
@@ -214,14 +214,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
         claim_found = True
         user_access_area_ids.extend([x.get(AREA_ID) for x in claims.get(claim)])
 
-        if role is NATIONAL_REPORT_VIEWER_ROLE or role is NATIONAL_REPORT_VERIFIER_ROLE:
-            areas = db.session.query(Area.Model.areaId).filter(Area.Model.areaType == AreaTypeEnum.Country).all()
-            user_access_area_ids.extend([area.areaId for area in areas])
-        elif role is EC_LEADERSHIP_ROLE:
-            areas = db.session.query(Area.Model.areaId).filter(
-                Area.Model.areaType == AreaTypeEnum.ElectionCommission).all()
-            user_access_area_ids.extend([area.areaId for area in areas])
-        elif role is DATA_EDITOR_ROLE:
+        if role is DATA_EDITOR_ROLE:
             global_area_map = init_global_area_map()
             for electoral_district_id in user_access_area_ids:
                 if electoral_district_id in global_area_map["electoral_district_counting_centre"]:
