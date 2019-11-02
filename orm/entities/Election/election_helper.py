@@ -203,6 +203,10 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
                     tallySheetCode=TallySheetCodeEnum.PRE_21, electionId=election.electionId, areaId=obj.areaId
                 )
 
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_34_CO, electionId=election.electionId, areaId=obj.areaId
+                )
+
                 if election.voteType is VoteTypeEnum.NonPostal:
                     TallySheet.create(
                         tallySheetCode=TallySheetCodeEnum.CE_201, electionId=election.electionId, areaId=obj.areaId

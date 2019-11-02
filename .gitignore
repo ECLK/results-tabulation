@@ -3,4 +3,4 @@ venv
 data
 __pycache__/
 *.pyc
-
+.vscode

@@ -1,9 +1,8 @@
 openapi: 3.0.0
 info:
-  description: |
-    Election Tally Sheet Service.
+  description: "Election Tally Sheet Service.
     [http://swagger.io](http://swagger.io) or on
-    [irc.freenode.net, #swagger](http://swagger.io/irc/).
+    [irc.freenode.net, #swagger](http://swagger.io/irc/)."
   version: "2.0.0-oas3"
   title: Tally Sheet
   termsOfService: 'http://swagger.io/terms/'
@@ -3019,6 +3018,162 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
+
+  /tally-sheet/PRE-34-CO/{tallySheetId}/version:
+    post:
+      tags:
+        - Tally Sheet Version
+      summary: Create tally sheet version
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_CO_Api.create
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      candidateId:
+                        type: integer
+                        format: int64
+                      notCountedBallotPapers:
+                        type: integer
+                      remainingBallotPapers:
+                        type: integer
+                      preferences:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            candidateId:
+                              type: integer
+                              format: int64
+                            no2ndPreferences:
+                              type: integer
+                            no3rdPreferences:
+                              type: integer
+        description: Updated PRE 34 Tally sheet object.
+        required: true
+  /tally-sheet/PRE-34-CO/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - Tally Sheet Version
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_CO_Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - content
+                  - summary
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        candidateId:
+                          type: integer
+                          format: int64
+                        count:
+                          type: integer
+                        countInWords:
+                          type: string
+                  summary:
+                    type: object
+                    properties:
+                      rejectedVoteCount:
+                        type: integer
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
 
   /tally-sheet/PRE_ALL_ISLAND_RESULTS/{tallySheetId}/version:
     post:
