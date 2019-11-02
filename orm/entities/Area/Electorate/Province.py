@@ -1,14 +1,9 @@
-from app import db
 from orm.entities import Electorate
-from orm.entities.Area.Electorate import Country
-from orm.enums import ElectorateTypeEnum, AreaTypeEnum
-from exception import NotFoundException
-from sqlalchemy.orm import relationship, synonym
+from orm.enums import AreaTypeEnum
+from sqlalchemy.orm import synonym
 
 
 class ProvinceModel(Electorate.Model):
-    # parentElectorateId = db.Column(db.Integer, db.ForeignKey("electorateId"), nullable=True)
-
     country = synonym("parentElectorate")
 
     __mapper_args__ = {
