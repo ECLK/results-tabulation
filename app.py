@@ -1,5 +1,7 @@
 import os
 import traceback
+from datetime import datetime
+
 import connexion
 import sys
 from flask_sqlalchemy import SQLAlchemy
@@ -98,7 +100,13 @@ def create_app():
 
         if app.config.get('PROD_ENV'):
             is_prod_env = app.config['PROD_ENV']
-        return dict(isProdEnv=is_prod_env)
+
+        from auth import get_user_name
+        return dict(
+            isProdEnv=is_prod_env,
+            current_user=get_user_name(),
+            current_timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        )
 
     cache.init_app(app)
 
