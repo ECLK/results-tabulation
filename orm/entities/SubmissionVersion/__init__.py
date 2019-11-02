@@ -1,6 +1,8 @@
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
+
+from exception.messages import MESSAGE_CODE_SUBMISSION_NOT_FOUND
 from orm.entities import Submission
 from orm.entities.History import HistoryVersion
 from exception import NotFoundException
@@ -27,7 +29,10 @@ class SubmissionVersionModel(db.Model):
     def __init__(self, submissionId):
         submission = Submission.get_by_id(submissionId=submissionId)
         if submission is None:
-            raise NotFoundException("Submission not found. (submissionId=%d)" % submissionId)
+            raise NotFoundException(
+                message="Submission not found. (submissionId=%d)" % submissionId,
+                code=MESSAGE_CODE_SUBMISSION_NOT_FOUND
+            )
 
         historyVersion = HistoryVersion.create(submissionId)
 
