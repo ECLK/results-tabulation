@@ -47,12 +47,12 @@ class TallySheetModel(db.Model):
             raise ForbiddenException("Tally sheet submitted user is not allowed to lock/unlock.")
 
         if tallySheetVersion is None:
-            if not has_role_based_access(self.tallySheetCode, ACCESS_TYPE_UNLOCK):
+            if not has_role_based_access(self, ACCESS_TYPE_UNLOCK):
                 raise ForbiddenException("User doesn't have access to tally sheet.")
 
             self.submission.set_locked_version(submissionVersion=None)
         else:
-            if not has_role_based_access(self.tallySheetCode, ACCESS_TYPE_LOCK):
+            if not has_role_based_access(self, ACCESS_TYPE_LOCK):
                 raise ForbiddenException("User doesn't have access to tally sheet.")
 
             self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
@@ -123,7 +123,7 @@ def get_by_id(tallySheetId, tallySheetCode=None):
 
     result = query.one_or_none()
 
-    if not has_role_based_access(result.tallySheetCode, ACCESS_TYPE_READ):
+    if not has_role_based_access(result, ACCESS_TYPE_READ):
         raise ForbiddenException("User doesn't have access to tally sheet.")
 
     return result
