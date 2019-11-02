@@ -1,4 +1,7 @@
-ROLE_CLAIM_PREFIX = "http://wso2.org/claims/area_assign_"
+NAMESPACE = "http://wso2.org/claims"
+AREA_CLAIM_PREFIX = NAMESPACE + "/area_assign_"
+ROLE_CLAIM = NAMESPACE + "/role"
+ROLE_PREFIX = "tab_"
 
 ADMIN_ROLE = "admin"
 DATA_EDITOR_ROLE = "data_editor"

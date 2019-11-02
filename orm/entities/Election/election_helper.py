@@ -2,7 +2,7 @@ import csv
 import os
 
 from app import db
-from auth import ROLE_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
+from auth import AREA_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, \
     EC_LEADERSHIP_ROLE, SUB
@@ -20,25 +20,25 @@ def get_root_token(electionId):
     ).all()
 
     jwt_payload = {
-        SUB: "janak@carbon.super", ROLE_CLAIM_PREFIX + ADMIN_ROLE: str([]),
-        ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE: str([{
+        SUB: "janak@carbon.super", AREA_CLAIM_PREFIX + ADMIN_ROLE: str([]),
+        AREA_CLAIM_PREFIX + DATA_EDITOR_ROLE: str([{
             "areaId": electoral_district.areaId
         } for electoral_district in electoral_districts]),
-        ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE: str([{
+        AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE: str([{
             "areaId": electoral_district.areaId
         } for electoral_district in electoral_districts]),
-        ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE: str([{
+        AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE: str([{
             "areaId": electoral_district.areaId
         } for electoral_district in electoral_districts]),
-        ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: str([{
+        AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: str([{
             "areaId": electoral_district.areaId
         } for electoral_district in electoral_districts]),
-        ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: str([{
+        AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: str([{
             "areaId": electoral_district.areaId
         } for electoral_district in electoral_districts]),
-        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([]),
-        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([]),
-        ROLE_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([])
+        AREA_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([]),
+        AREA_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([]),
+        AREA_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([])
     }
 
     # Generate a token with claims for everything.
