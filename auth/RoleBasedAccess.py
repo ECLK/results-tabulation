@@ -75,6 +75,8 @@ role_to_unlock_allowed_tallysheet_types = {
     ],
     NATIONAL_REPORT_VERIFIER_ROLE: [
         TallySheetCodeEnum.PRE_30_PD_PV,
-        TallySheetCodeEnum.PRE_30_ED
+        TallySheetCodeEnum.PRE_30_ED,
+        TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
+        TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
     ]
 }
