@@ -1,6 +1,6 @@
 import connexion
 
-from app import db, cache
+from app import db
 from auth import ADMIN_ROLE, authorize
 from exception import NotFoundException
 from orm.entities.Election.election_helper import get_root_token, build_presidential_election
@@ -17,7 +17,6 @@ def get_all():
     return Schema(many=True).dump(result).data
 
 
-@cache.cached(key_prefix='election.get_by_id')
 def get_by_id(electionId):
     result = Election.get_by_id(electionId=electionId)
     if result is None:
@@ -55,7 +54,6 @@ def getRootToken(electionId):
     return get_root_token(electionId=electionId)
 
 
-@cache.cached(key_prefix='election.get_all_areas_by')
 def get_all_areas(electionId):
     result = Area.get_all_areas_of_root_election(
         election_id=electionId
