@@ -21,3 +21,4 @@ MESSAGE_CODE_USER_NOT_AUTHORIZED = 17
 MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED = 19
 MESSAGE_CODE_SUBMISSION_NOT_FOUND = 21
 # next: 23
+# Do not change the numbers and new always. These are linked to client applications.

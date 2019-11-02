@@ -18,7 +18,7 @@ ma = Marshmallow()
 cache = Cache(config={
     "DEBUG": True,  # some Flask specific configs
     "CACHE_TYPE": "simple",  # Flask-Caching related configs
-    "CACHE_DEFAULT_TIMEOUT": 18144000000 # One month
+    "CACHE_DEFAULT_TIMEOUT": 18144000000  # One month
 })
 
 
@@ -44,7 +44,8 @@ def render_connexion_problem_exception(connexion_exception):
     return json.dumps({
         "detail": connexion_exception.detail,
         "status": connexion_exception.status,
-        "title": connexion_exception.title
+        "title": connexion_exception.title,
+        "code": connexion_exception.args[4]
     }, indent=2), connexion_exception.status
 
 
