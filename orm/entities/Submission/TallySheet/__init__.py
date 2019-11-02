@@ -44,7 +44,7 @@ class TallySheetModel(db.Model):
 
     def set_locked_version(self, tallySheetVersion: TallySheetVersion):
         if self.submittedStamp.createdBy == get_user_name():
-            raise ForbiddenException("Tally sheet submitted user is now allowed to lock/unlock.")
+            raise ForbiddenException("Tally sheet submitted user is not allowed to lock/unlock.")
 
         if tallySheetVersion is None:
             if not has_role_based_access(self.tallySheetCode, ACCESS_TYPE_UNLOCK):
