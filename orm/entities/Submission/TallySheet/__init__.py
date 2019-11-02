@@ -54,19 +54,19 @@ class TallySheetModel(db.Model):
         #     )
 
         if tallySheetVersion is None:
-            if not has_role_based_access(self, ACCESS_TYPE_UNLOCK):
-                raise ForbiddenException(
-                    message="User doesn't have access to tally sheet.",
-                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK
-                )
+            # if not has_role_based_access(self, ACCESS_TYPE_UNLOCK):
+            #     raise ForbiddenException(
+            #         message="User doesn't have access to tally sheet.",
+            #         code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK
+            #     )
 
             self.submission.set_locked_version(submissionVersion=None)
         else:
-            if not has_role_based_access(self, ACCESS_TYPE_LOCK):
-                raise ForbiddenException(
-                    message="User doesn't have access to tally sheet.",
-                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK
-                )
+            # if not has_role_based_access(self, ACCESS_TYPE_LOCK):
+            #     raise ForbiddenException(
+            #         message="User doesn't have access to tally sheet.",
+            #         code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK
+            #     )
 
             self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
 
@@ -139,11 +139,11 @@ def get_by_id(tallySheetId, tallySheetCode=None):
 
     result = query.one_or_none()
 
-    if not has_role_based_access(result, ACCESS_TYPE_READ):
-        raise ForbiddenException(
-            message="User doesn't have access to tally sheet.",
-            code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
-        )
+    # if not has_role_based_access(result, ACCESS_TYPE_READ):
+    #     raise ForbiddenException(
+    #         message="User doesn't have access to tally sheet.",
+    #         code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
+    #     )
 
     return result
 

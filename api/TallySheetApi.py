@@ -27,9 +27,9 @@ def getAll(electionId=None, areaId=None, tallySheetCode=None):
     result = get_paginated_query(result).all()
 
     # filter based on roles
-    filtered_results = [tally_sheet for tally_sheet in result if has_role_based_access(tally_sheet, ACCESS_TYPE_READ)]
+    # filtered_results = [tally_sheet for tally_sheet in result if has_role_based_access(tally_sheet, ACCESS_TYPE_READ)]
 
-    return TallySheetSchema(many=True).dump(filtered_results).data
+    return TallySheetSchema(many=True).dump(result).data
 
 
 @authorize(required_roles=ALL_ROLES)
@@ -45,8 +45,9 @@ def get_by_id(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data
 
 
-@authorize(required_roles=[POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
-                           NATIONAL_REPORT_VERIFIER_ROLE])
+@authorize(
+    required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                    NATIONAL_REPORT_VERIFIER_ROLE])
 def unlock(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
