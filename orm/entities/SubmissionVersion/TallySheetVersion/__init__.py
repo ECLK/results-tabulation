@@ -2,6 +2,8 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from app import db
 from sqlalchemy.orm import relationship
+
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
 from orm.enums import TallySheetCodeEnum
 from util import get_tally_sheet_code_string, get_tally_sheet_version_class
 from orm.entities import SubmissionVersion
@@ -83,7 +85,10 @@ def get_all(tallySheetId, tallySheetCode=None):
 def get_by_id(tallySheetId, tallySheetVersionId):
     tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
     if tallySheet is None:
-        raise NotFoundException("Tally sheet not found. (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException(
+            message="Tally sheet not found. (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
 
     result = get_tally_sheet_version_class(tallySheet.tallySheetCode).Model.query.filter(
         Model.tallySheetVersionId == tallySheetVersionId,

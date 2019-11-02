@@ -2,6 +2,8 @@ from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
+from exception.messages import MESSAGE_CODE_PROOF_CANNOT_BE_CONFIRMED_WITHOUT_EVIDENCE, \
+    MESSAGE_CODE_PROOF_NOT_MORE_EVIDENCE_ACCEPTED, MESSAGE_CODE_PROOF_NOT_FOUND
 from orm.entities.Audit import Stamp
 from orm.entities.IO import File, Folder
 from orm.entities.IO.Folder import FolderFile
@@ -54,12 +56,17 @@ def update(proofId, finished=None):
     instance = get_by_id(proofId)
 
     if instance is None:
-        raise NotFoundException("Proof not found associated with the given proofId (proofId=%d)" % proofId)
+        raise NotFoundException(
+            "Proof not found associated with the given proofId (proofId=%d)" % proofId,
+            code=MESSAGE_CODE_PROOF_NOT_FOUND
+        )
     else:
         if finished is not None:
             if len(instance.scannedFiles) is 0:
                 raise ForbiddenException(
-                    "A proof required at least one evidence. Please upload an evidence (proofId=%d)" % proofId)
+                    message="A proof required at least one evidence. Please upload an evidence (proofId=%d)" % proofId,
+                    code=MESSAGE_CODE_PROOF_CANNOT_BE_CONFIRMED_WITHOUT_EVIDENCE
+                )
 
             instance.finished = finished
 
@@ -72,9 +79,15 @@ def upload_file(proofId, fileSource, fileType):
     proof = get_by_id(proofId=proofId)
 
     if proof is None:
-        raise NotFoundException("Proof not found associated with the given proofId (proofId=%d)" % proofId)
+        raise NotFoundException(
+            message="Proof not found associated with the given proofId (proofId=%d)" % proofId,
+            code=MESSAGE_CODE_PROOF_NOT_FOUND
+        )
     elif proof.finished is True:
-        raise ForbiddenException("No more evidence is accepted for this proof (proofId=%d)" % proofId)
+        raise ForbiddenException(
+            message="No more evidence is accepted for this proof (proofId=%d)" % proofId,
+            code=MESSAGE_CODE_PROOF_NOT_MORE_EVIDENCE_ACCEPTED
+        )
     else:
         file = File.createFromFileSource(
             fileSource=fileSource,
