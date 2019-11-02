@@ -13,7 +13,11 @@ import json
 db = SQLAlchemy()
 ma = Marshmallow()
 
-cache = Cache(config={'CACHE_TYPE': 'simple'})
+cache = Cache(config={
+    "DEBUG": True,  # some Flask specific configs
+    "CACHE_TYPE": "simple",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 18144000000 # One month
+})
 
 
 def render_exception(exception):
