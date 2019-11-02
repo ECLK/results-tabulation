@@ -2,6 +2,7 @@ alembic==0.8.5
 connexion==2.2.0
 decorator==4.4.0
 Flask==1.0.2
+Flask-Caching==1.7.2
 Flask-Cors==3.0.8
 Flask-Migrate==1.8.0
 flask-marshmallow==0.10.1

@@ -135,8 +135,6 @@ class AreaAreaModel(db.Model):
     parentAreaId = db.Column(db.Integer, db.ForeignKey("area.areaId"), primary_key=True)
     childAreaId = db.Column(db.Integer, db.ForeignKey("area.areaId"), primary_key=True)
 
-    #parentArea = relationship(AreaModel, foreign_keys=[parentAreaId], backref=backref('children', lazy='joined'))
-
 
 Model = AreaModel
 

@@ -1,16 +1,25 @@
 import os
 import traceback
+from datetime import datetime
+
 import connexion
 import sys
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
+from flask_caching import Cache
 
 from connexion.exceptions import ProblemException
 import json
 
 db = SQLAlchemy()
 ma = Marshmallow()
+
+cache = Cache(config={
+    "DEBUG": True,  # some Flask specific configs
+    "CACHE_TYPE": "simple",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 18144000000 # One month
+})
 
 
 def render_exception(exception):
@@ -91,6 +100,14 @@ def create_app():
 
         if app.config.get('PROD_ENV'):
             is_prod_env = app.config['PROD_ENV']
-        return dict(isProdEnv=is_prod_env)
+
+        from auth import get_user_name
+        return dict(
+            isProdEnv=is_prod_env,
+            current_user=get_user_name(),
+            current_timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        )
+
+    cache.init_app(app)
 
     return connex_app
