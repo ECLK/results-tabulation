@@ -127,6 +127,9 @@ def get_user_name() -> str:
     """
     return connexion.context[USER_NAME]
 
+def get_user_roles():
+    return connexion.context[USER_ROLES]
+
 
 def get_user_access_area_ids() -> Set[int]:
     """

@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 
 from app import db
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access, ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, \
-    ACCESS_TYPE_READ
+    ACCESS_TYPE_READ, DATA_EDITOR_ROLE, get_user_roles
 from exception import NotFoundException, MethodNotAllowedException, ForbiddenException
 from orm.entities import Submission, Election
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -43,7 +43,7 @@ class TallySheetModel(db.Model):
             self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     def set_locked_version(self, tallySheetVersion: TallySheetVersion):
-        if self.submittedStamp.createdBy == get_user_name():
+        if DATA_EDITOR_ROLE in get_user_roles() and self.submittedStamp.createdBy == get_user_name():
             raise ForbiddenException("Tally sheet submitted user is not allowed to lock/unlock.")
 
         if tallySheetVersion is None:
