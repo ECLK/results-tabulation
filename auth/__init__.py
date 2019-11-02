@@ -8,8 +8,8 @@ from jose import jwt
 from app import db, cache
 from auth.AuthConstants import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, ROLE_CLAIM_PREFIX, ADMIN_ROLE, \
-    JWT_TOKEN_HEADER_KEY, ACCESS_TYPE_READ, ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK
+    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, AREA_CLAIM_PREFIX, ADMIN_ROLE, \
+    JWT_TOKEN_HEADER_KEY, ACCESS_TYPE_READ, ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, ROLE_CLAIM, ROLE_PREFIX
 from auth.RoleBasedAccess import role_to_read_allowed_tallysheet_types, role_to_lock_allowed_tallysheet_types, \
     role_to_unlock_allowed_tallysheet_types
 from exception import UnauthorizedException
@@ -88,15 +88,15 @@ def get_claims() -> Dict[str, Dict]:
     filtered_claims = {}
 
     area_assignment_claim_keys = [
-        ROLE_CLAIM_PREFIX + ADMIN_ROLE,
-        ROLE_CLAIM_PREFIX + DATA_EDITOR_ROLE,
-        ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE,
-        ROLE_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE,
-        ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE,
-        ROLE_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
-        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE,
-        ROLE_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE,
-        ROLE_CLAIM_PREFIX + EC_LEADERSHIP_ROLE
+        AREA_CLAIM_PREFIX + ADMIN_ROLE,
+        AREA_CLAIM_PREFIX + DATA_EDITOR_ROLE,
+        AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE,
+        AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE,
+        AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE,
+        AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+        AREA_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE,
+        AREA_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE,
+        AREA_CLAIM_PREFIX + EC_LEADERSHIP_ROLE
     ]
     for area_assignment_claim_key in area_assignment_claim_keys:
         if area_assignment_claim_key in claims.keys():
@@ -106,6 +106,9 @@ def get_claims() -> Dict[str, Dict]:
 
     if SUB in claims.keys():
         filtered_claims[SUB] = claims.get(SUB)
+
+    if ROLE_CLAIM in claims.keys():
+        filtered_claims[ROLE_CLAIM] = claims.get(ROLE_CLAIM)
 
     return filtered_claims
 
@@ -156,13 +159,17 @@ def authenticate(func, *args, **kwargs):
 
     if SUB not in claims:
         UnauthorizedException("No valid user found.")
-    else:
-        user_name = claims.get(SUB)
-        connexion.context[USER_NAME] = user_name
-        connexion.context[USER_ROLES] = [claim.replace(ROLE_CLAIM_PREFIX, '') for claim in claims.keys() if
-                                         claim.startswith(ROLE_CLAIM_PREFIX)]
 
-        return func(*args, **kwargs)
+    if ROLE_CLAIM not in claims or claims.get(ROLE_CLAIM) == []:
+        UnauthorizedException("No valid user role found.")
+
+    user_name = claims.get(SUB)
+
+    connexion.context[USER_NAME] = user_name
+    connexion.context[USER_ROLES] = [role.replace(ROLE_PREFIX, "") for role in claims.get(ROLE_CLAIM) if
+                                     role.startswith(ROLE_PREFIX)]
+
+    return func(*args, **kwargs)
 
 
 @decorator
@@ -180,7 +187,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
     user_access_area_ids = []
 
     for role in required_roles:
-        claim = ROLE_CLAIM_PREFIX + role
+        claim = AREA_CLAIM_PREFIX + role
 
         if claim not in claims.keys():
             continue
