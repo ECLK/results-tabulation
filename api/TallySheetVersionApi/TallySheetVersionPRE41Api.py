@@ -1,5 +1,5 @@
 from app import db
-from auth import authorize, EC_LEADERSHIP_ROLE
+from auth import authorize, EC_LEADERSHIP_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE
 from auth.AuthConstants import DATA_EDITOR_ROLE
 from exception import NotFoundException
 from orm.entities.Submission import TallySheet
@@ -9,7 +9,7 @@ from schemas import TallySheetVersionPRE41Schema, TallySheetVersionSchema
 from util import RequestBody
 
 
-@authorize(required_roles=[DATA_EDITOR_ROLE, EC_LEADERSHIP_ROLE])
+@authorize(required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
     tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
     if tallySheet is None:
