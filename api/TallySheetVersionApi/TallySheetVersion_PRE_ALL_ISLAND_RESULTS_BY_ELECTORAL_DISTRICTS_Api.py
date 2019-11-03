@@ -1,6 +1,6 @@
 from app import db
 from auth import authorize, NATIONAL_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE
-from orm.entities import Submission, SubmissionVersion
+from orm.entities import Submission, SubmissionVersion, Area
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount
@@ -26,9 +26,13 @@ def create(tallySheetId):
         tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
     )
     tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
-    electoralDistricts = tallySheetVersion.submission.area.get_associated_areas(
-        areaType=AreaTypeEnum.ElectoralDistrict, electionId=tallySheetVersion.submission.electionId
-    )
+
+    electoralDistrictAreaIds = db.session.query(
+        Area.Model.areaId
+    ).filter(
+        Area.Model.areaType == AreaTypeEnum.ElectoralDistrict,
+        Area.Model.electionId == tallySheetVersion.submission.electionId
+    ).all()
 
     query = db.session.query(
         TallySheetVersionRow_PRE_30_ED.Model.candidateId,
@@ -42,7 +46,7 @@ def create(tallySheetId):
         Submission.Model.submissionId == SubmissionVersion.Model.submissionId
     ).filter(
         TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
-        Submission.Model.areaId.in_([area.areaId for area in electoralDistricts])
+        Submission.Model.areaId.in_(electoralDistrictAreaIds)
     ).group_by(
         TallySheetVersionRow_PRE_30_ED.Model.candidateId,
         Submission.Model.areaId
@@ -68,7 +72,7 @@ def create(tallySheetId):
         TallySheetVersionRow_RejectedVoteCount.Model,
         TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.lockedVersionId
     ).filter(
-        Submission.Model.areaId.in_([area.areaId for area in electoralDistricts]),
+        Submission.Model.areaId.in_(electoralDistrictAreaIds),
         TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_30_ED
     ).group_by(
         Submission.Model.areaId
