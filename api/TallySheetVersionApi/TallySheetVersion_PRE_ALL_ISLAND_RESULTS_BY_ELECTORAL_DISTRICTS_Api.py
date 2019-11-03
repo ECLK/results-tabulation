@@ -27,7 +27,7 @@ def create(tallySheetId):
     )
     tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
 
-    electoralDistrictAreaIds = db.session.query(
+    electoralDistricts = db.session.query(
         Area.Model.areaId
     ).filter(
         Area.Model.areaType == AreaTypeEnum.ElectoralDistrict,
@@ -46,7 +46,7 @@ def create(tallySheetId):
         Submission.Model.submissionId == SubmissionVersion.Model.submissionId
     ).filter(
         TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
-        Submission.Model.areaId.in_(electoralDistrictAreaIds)
+        Submission.Model.areaId.in_([electoralDistrict.areaId for electoralDistrict in electoralDistricts])
     ).group_by(
         TallySheetVersionRow_PRE_30_ED.Model.candidateId,
         Submission.Model.areaId
@@ -72,7 +72,7 @@ def create(tallySheetId):
         TallySheetVersionRow_RejectedVoteCount.Model,
         TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.lockedVersionId
     ).filter(
-        Submission.Model.areaId.in_(electoralDistrictAreaIds),
+        Submission.Model.areaId.in_([electoralDistrict.areaId for electoralDistrict in electoralDistricts]),
         TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_30_ED
     ).group_by(
         Submission.Model.areaId

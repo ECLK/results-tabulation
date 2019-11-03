@@ -2,7 +2,7 @@ from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func
 from app import db
-from orm.entities import Candidate, Party
+from orm.entities import Candidate, Party, Area
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, \
@@ -34,9 +34,14 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
 
     @hybrid_property
     def electoralDistricts(self):
-        return self.submission.area.get_associated_areas(
-            areaType=AreaTypeEnum.ElectoralDistrict, electionId=self.submission.electionId
-        )
+        electoralDistricts = db.session.query(
+            Area.Model
+        ).filter(
+            Area.Model.areaType == AreaTypeEnum.ElectoralDistrict,
+            Area.Model.electionId == self.submission.electionId
+        ).all()
+
+        return electoralDistricts
 
     def candidate_wise_valid_vote_count_query(self):
         valid_vote_count_result = self.valid_vote_count_query().one_or_none()
