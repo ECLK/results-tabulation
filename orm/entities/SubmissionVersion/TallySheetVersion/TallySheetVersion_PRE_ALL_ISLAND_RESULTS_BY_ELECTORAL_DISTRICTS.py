@@ -35,9 +35,14 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
 
     @hybrid_property
     def electoralDistricts(self):
-        return self.submission.area.get_associated_areas(
-            areaType=AreaTypeEnum.ElectoralDistrict, electionId=self.submission.electionId
-        )
+        electoralDistricts = db.session.query(
+            Area.Model
+        ).filter(
+            Area.Model.areaType == AreaTypeEnum.ElectoralDistrict,
+            Area.Model.electionId == self.submission.electionId
+        ).all()
+
+        return electoralDistricts
 
     def area_wise_rejected_vote_count_query(self):
         return db.session.query(
@@ -182,7 +187,12 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
     @hybrid_property
     def content(self):
 
-        electoralDistricts = self.submission.area.get_associated_areas(AreaTypeEnum.ElectoralDistrict)
+        electoralDistricts = db.session.query(
+            Area.Model
+        ).filter(
+            Area.Model.areaType == AreaTypeEnum.ElectoralDistrict,
+            Area.Model.electionId == self.submission.electionId
+        ).all()
 
         return db.session.query(
             ElectionCandidate.Model.candidateId,
