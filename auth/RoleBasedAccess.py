@@ -42,6 +42,15 @@ role_to_read_allowed_tallysheet_types = {
     ]
 }
 
+role_to_write_allowed_tallysheet_types = {
+    DATA_EDITOR_ROLE: [
+        TallySheetCodeEnum.PRE_41,
+        TallySheetCodeEnum.CE_201,
+        TallySheetCodeEnum.CE_201_PV,
+        TallySheetCodeEnum.PRE_34_CO
+    ]
+}
+
 role_to_lock_allowed_tallysheet_types = {
     DATA_EDITOR_ROLE: [
         TallySheetCodeEnum.PRE_41,
@@ -70,6 +79,9 @@ role_to_unlock_allowed_tallysheet_types = {
         TallySheetCodeEnum.PRE_34_CO
     ],
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: [
+        TallySheetCodeEnum.PRE_41,
+        TallySheetCodeEnum.CE_201_PV,
+        TallySheetCodeEnum.PRE_34_CO,
         TallySheetCodeEnum.PRE_30_PD
     ],
     NATIONAL_REPORT_VERIFIER_ROLE: [
