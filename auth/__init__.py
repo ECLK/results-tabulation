@@ -302,7 +302,10 @@ def authorize(func, required_roles=None, *args, **kwargs):
                 # To list, view, submit and lock data entry tally sheets.
                 if electoral_district_id in global_area_map[ElectoralDistricts][PollingDivisions]:
                     user_access_area_ids.extend(
-                        global_area_map[ElectoralDistricts][CountingCentres][electoral_district_id]
+                        global_area_map[ElectoralDistricts][CountingCentres][Postal][electoral_district_id]
+                    )
+                    user_access_area_ids.extend(
+                        global_area_map[ElectoralDistricts][CountingCentres][NonPostal][electoral_district_id]
                     )
 
         elif role is POLLING_DIVISION_REPORT_VIEWER_ROLE:
