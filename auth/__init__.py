@@ -113,7 +113,7 @@ def init_global_area_map():
 
         global_area_map[Countries][ElectoralDistricts][country.areaId] = [
             counting_centre.areaId for counting_centre in
-            country.get_associated_areas(areaType=AreaTypeEnum.PollingDivision)
+            country.get_associated_areas(areaType=AreaTypeEnum.ElectoralDistrict)
         ]
 
         global_area_map[Countries][PollingDivisions][country.areaId] = [
