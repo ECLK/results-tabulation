@@ -318,7 +318,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
                         global_area_map[ElectoralDistricts][PollingDivisions][electoral_district_id]
                     )
 
-        elif POLLING_DIVISION_REPORT_VERIFIER_ROLE:
+        elif role is POLLING_DIVISION_REPORT_VERIFIER_ROLE:
 
             for electoral_district_id in claim_area_ids:
 
