@@ -2,8 +2,7 @@ from typing import Set
 
 from app import db
 from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, has_role_based_access, ACCESS_TYPE_READ, \
-    EC_LEADERSHIP_ROLE
+    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE
 from auth.AuthConstants import ALL_ROLES
 from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
@@ -26,9 +25,6 @@ def getAll(electionId=None, areaId=None, tallySheetCode=None):
     )
 
     result = get_paginated_query(result).all()
-
-    # filter based on roles
-    # filtered_results = [tally_sheet for tally_sheet in result if has_role_based_access(tally_sheet, ACCESS_TYPE_READ)]
 
     return TallySheetSchema(many=True).dump(result).data
 

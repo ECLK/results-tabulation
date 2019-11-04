@@ -83,12 +83,18 @@ def init_global_area_map():
             if sub_election.voteType == VoteTypeEnum.Postal:
                 global_area_map[ElectoralDistricts][CountingCentres][Postal][electoral_district.areaId] = [
                     counting_centre.areaId for counting_centre in
-                    electoral_district.get_associated_areas(areaType=AreaTypeEnum.CountingCentre)
+                    electoral_district.get_associated_areas(
+                        areaType=AreaTypeEnum.CountingCentre,
+                        electionId=sub_election.electionId
+                    )
                 ]
             elif sub_election.voteType == VoteTypeEnum.NonPostal:
                 global_area_map[ElectoralDistricts][CountingCentres][NonPostal][electoral_district.areaId] = [
                     counting_centre.areaId for counting_centre in
-                    electoral_district.get_associated_areas(areaType=AreaTypeEnum.CountingCentre)
+                    electoral_district.get_associated_areas(
+                        areaType=AreaTypeEnum.CountingCentre,
+                        electionId=sub_election.electionId
+                    )
                 ]
 
         global_area_map[ElectoralDistricts][PollingDivisions][electoral_district.areaId] = [
@@ -103,12 +109,18 @@ def init_global_area_map():
             if sub_election.voteType == VoteTypeEnum.Postal:
                 global_area_map[Countries][CountingCentres][Postal][country.areaId] = [
                     counting_centre.areaId for counting_centre in
-                    country.get_associated_areas(areaType=AreaTypeEnum.CountingCentre)
+                    country.get_associated_areas(
+                        areaType=AreaTypeEnum.CountingCentre,
+                        electionId=sub_election.electionId
+                    )
                 ]
             elif sub_election.voteType == VoteTypeEnum.NonPostal:
                 global_area_map[Countries][CountingCentres][NonPostal][country.areaId] = [
                     counting_centre.areaId for counting_centre in
-                    country.get_associated_areas(areaType=AreaTypeEnum.CountingCentre)
+                    country.get_associated_areas(
+                        areaType=AreaTypeEnum.CountingCentre,
+                        electionId=sub_election.electionId
+                    )
                 ]
 
         global_area_map[Countries][ElectoralDistricts][country.areaId] = [
@@ -299,11 +311,14 @@ def authorize(func, required_roles=None, *args, **kwargs):
 
             for electoral_district_id in claim_area_ids:
 
-                # To list, view, submit and lock data entry tally sheets.
-                if electoral_district_id in global_area_map[ElectoralDistricts][PollingDivisions]:
+                # To list, view, submit and lock postal data entry tally sheets.
+                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres][Postal]:
                     user_access_area_ids.extend(
                         global_area_map[ElectoralDistricts][CountingCentres][Postal][electoral_district_id]
                     )
+
+                # To list, view, submit and lock non postal data entry tally sheets.
+                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres][NonPostal]:
                     user_access_area_ids.extend(
                         global_area_map[ElectoralDistricts][CountingCentres][NonPostal][electoral_district_id]
                     )
@@ -328,8 +343,8 @@ def authorize(func, required_roles=None, *args, **kwargs):
                         global_area_map[ElectoralDistricts][PollingDivisions][electoral_district_id]
                     )
 
-                # To list, view and unlock data entry tally sheets.
-                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres]:
+                # To list, view and unlock non postal data entry tally sheets.
+                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres][NonPostal]:
                     user_access_area_ids.extend(
                         global_area_map[ElectoralDistricts][CountingCentres][NonPostal][electoral_district_id]
                     )
@@ -353,7 +368,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
                     )
 
                 # To list, view and unlock postal data entry tally sheets.
-                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres]:
+                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres][Postal]:
                     user_access_area_ids.extend(
                         global_area_map[ElectoralDistricts][CountingCentres][Postal][electoral_district_id]
                     )
@@ -394,10 +409,12 @@ def authorize(func, required_roles=None, *args, **kwargs):
                         global_area_map[Countries][PollingDivisions][country_id]
                     )
 
-                if country_id in global_area_map[Countries][CountingCentres]:
+                if country_id in global_area_map[Countries][CountingCentres][Postal]:
                     user_access_area_ids.extend(
                         global_area_map[Countries][CountingCentres][Postal][country_id]
                     )
+
+                if country_id in global_area_map[Countries][CountingCentres][NonPostal]:
                     user_access_area_ids.extend(
                         global_area_map[Countries][CountingCentres][NonPostal][country_id]
                     )
