@@ -396,7 +396,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
 
             for country_id in claim_area_ids:
 
-                # To list, view and lock All Island Reports
+                # To list, view and unlock All Island Reports
                 user_access_area_ids.extend(claim_area_ids)
 
                 if country_id in global_area_map[Countries][ElectoralDistricts]:

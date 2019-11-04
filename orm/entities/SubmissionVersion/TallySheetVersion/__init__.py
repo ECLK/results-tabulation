@@ -1,8 +1,11 @@
+from typing import Set
+
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from app import db
 from sqlalchemy.orm import relationship
 
+from auth import get_user_access_area_ids
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
 from orm.enums import TallySheetCodeEnum
 from util import get_tally_sheet_code_string, get_tally_sheet_version_class
@@ -90,9 +93,9 @@ def get_by_id(tallySheetId, tallySheetVersionId):
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
-    result = get_tally_sheet_version_class(tallySheet.tallySheetCode).Model.query.filter(
+    tallySheetVersion = get_tally_sheet_version_class(tallySheet.tallySheetCode).Model.query.filter(
         Model.tallySheetVersionId == tallySheetVersionId,
         Model.tallySheetId == tallySheetId
     ).one_or_none()
 
-    return result
+    return tallySheetVersion
