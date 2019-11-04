@@ -2,7 +2,8 @@ from typing import Set
 
 from app import db
 from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, has_role_based_access, ACCESS_TYPE_READ
+    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, has_role_based_access, ACCESS_TYPE_READ, \
+    EC_LEADERSHIP_ROLE
 from auth.AuthConstants import ALL_ROLES
 from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
@@ -47,7 +48,7 @@ def get_by_id(tallySheetId):
 
 @authorize(
     required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
-                    NATIONAL_REPORT_VERIFIER_ROLE])
+                    NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def unlock(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 

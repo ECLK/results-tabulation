@@ -20,7 +20,7 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     return TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema().dump(result).data
 
 
-@authorize(required_roles=[NATIONAL_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
+@authorize(required_roles=[NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def create(tallySheetId):
     tallySheet, tallySheetVersion = TallySheet.create_latest_version(
         tallySheetId=tallySheetId,

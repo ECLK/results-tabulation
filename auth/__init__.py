@@ -113,7 +113,7 @@ def init_global_area_map():
 
         global_area_map[Countries][ElectoralDistricts][country.areaId] = [
             counting_centre.areaId for counting_centre in
-            country.get_associated_areas(areaType=AreaTypeEnum.PollingDivision)
+            country.get_associated_areas(areaType=AreaTypeEnum.ElectoralDistrict)
         ]
 
         global_area_map[Countries][PollingDivisions][country.areaId] = [
@@ -318,7 +318,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
                         global_area_map[ElectoralDistricts][PollingDivisions][electoral_district_id]
                     )
 
-        elif POLLING_DIVISION_REPORT_VERIFIER_ROLE:
+        elif role is POLLING_DIVISION_REPORT_VERIFIER_ROLE:
 
             for electoral_district_id in claim_area_ids:
 
@@ -396,7 +396,10 @@ def authorize(func, required_roles=None, *args, **kwargs):
 
                 if country_id in global_area_map[Countries][CountingCentres]:
                     user_access_area_ids.extend(
-                        global_area_map[Countries][CountingCentres][country_id]
+                        global_area_map[Countries][CountingCentres][Postal][country_id]
+                    )
+                    user_access_area_ids.extend(
+                        global_area_map[Countries][CountingCentres][NonPostal][country_id]
                     )
 
     if not claim_found:
