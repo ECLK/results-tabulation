@@ -35,7 +35,7 @@ def get_by_id(tallySheetId):
 
     if tally_sheet is None:
         NotFoundException(
-            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            message="Tally sheet not found (tallySheetId=%s)" % tallySheetId,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
@@ -43,7 +43,7 @@ def get_by_id(tallySheetId):
 
 
 @authorize(
-    required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+    required_roles=[POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
                     NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def unlock(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
