@@ -396,7 +396,10 @@ def authorize(func, required_roles=None, *args, **kwargs):
 
                 if country_id in global_area_map[Countries][CountingCentres]:
                     user_access_area_ids.extend(
-                        global_area_map[Countries][CountingCentres][country_id]
+                        global_area_map[Countries][CountingCentres][Postal][country_id]
+                    )
+                    user_access_area_ids.extend(
+                        global_area_map[Countries][CountingCentres][NonPostal][country_id]
                     )
 
     if not claim_found:
