@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block container %}
-<div class="font1">
+<div class="font1 pre-30-ed">
     <div class="bottom" style="margin-bottom:5px;"><i>Note : This report should be prepared on the basis of PRE/30/PD,
         PRE/30/PV Reports</i></div>
 
@@ -34,11 +34,12 @@
             <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}">
                 Name of the Polling Division
             </th>
-            <th class="left right top bottom" rowspan="2">Postal Votes</th>
-            <th class="left right top bottom" rowspan="2">Total No. of Votes in Figures</th>
-            <th class="left right top bottom" rowspan="2">Total No. of Votes in Words</th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;">Postal Votes</th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;">Total No. of Votes in Figures</th>
+            <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align: middle;">Total No. of Votes in Words</th>
         </tr>
-        <tr>
+        <tr style="text-align:center;" class="ed">
+
             {% for pollingDivision in content.pollingDivisions %}
             <th class="left right top bottom">{{pollingDivision}}</th>
             {% endfor %}
