@@ -174,11 +174,29 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
                     areaId=obj.areaId
                 )
 
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_34, electionId=election.electionId, areaId=obj.areaId
+                )
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_34_II_RO, electionId=election.electionId, areaId=obj.areaId
+                )
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_34_I_RO, electionId=postal_election.electionId,
+                    areaId=obj.areaId
+                )
+
             elif data_store_key == "Polling Division":
                 obj = PollingDivision.create(cell, electionId=election.electionId)
 
                 TallySheet.create(
                     tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=ordinary_election.electionId,
+                    areaId=obj.areaId
+                )
+
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_34_I_RO, electionId=ordinary_election.electionId,
                     areaId=obj.areaId
                 )
 

@@ -220,7 +220,8 @@ class TallySheetVersionRow_PRE_34_CO_Schema(ma.ModelSchema):
             "tallySheetVersionId",
             "preferenceNumber",
             "preferenceCount",
-            "candidateId"
+            "candidateId",
+            "candidateName"
         )
 
         model = TallySheetVersionRow_PRE_34_preference.Model
