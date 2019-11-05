@@ -105,6 +105,7 @@ def create(tallySheetId, body):
 
         voteCount = tally_sheet_summary_body.get("rejectedVoteCount")
         candidateId = None
+        pollingStationId = None
         if election is not None:
             existingStatus = StatusPRE41.get_status_record(
                 electionId=electionId,
@@ -121,6 +122,7 @@ def create(tallySheetId, body):
                     electoralDistrictId=electoralDistrictId,
                     pollingDivisionId=pollingDivisionId,
                     countingCentreId=countingCentreId,
+                    pollingStationId=pollingStationId,
                     voteCount=voteCount,
                     candidateId=candidateId,
 
@@ -132,6 +134,7 @@ def create(tallySheetId, body):
                 existingStatus.pollingDivisionId = pollingDivisionId,
                 existingStatus.countingCentreId = countingCentreId,
                 existingStatus.voteCount = voteCount,
+                existingStatus.pollingStationId=pollingStationId,
                 existingStatus.candidateId = candidateId
 
     db.session.commit()
