@@ -130,9 +130,21 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         elif data_store_key == "Polling District":
             data_key = "%s-%s-%s" % (row["Electoral District"], row["Polling Division"], row["Polling District"])
         elif data_store_key == "Counting Centre":
-            data_key = "%s-%s-%s" % (row["Electoral District"], row["Counting Centre"], election.electionId)
+            data_key = "%s-%s" % (row["Electoral District"], row["Counting Centre"])
+        elif data_store_key == "Polling Station":
+            data_key = "%s-%s-%s-%s" % (
+                row["Electoral District"], row["Polling Division"], row["Polling District"], row["Polling Station"]
+            )
 
         obj = get_object_from_data_store(data_key, data_store_key)
+
+        # To identify the duplicated polling stations.
+        if data_store_key == "Polling Station" and obj is not None:
+            raise Exception("Duplicated polling station %s" % data_key)
+
+        # To identify the duplicated counting centres.
+        if data_store_key == "Counting Centre" and obj is not None:
+            print("[Error] Duplicated counting centre %s" % data_key)
 
         if obj is None:
             if data_store_key == "Ballot":
@@ -287,6 +299,9 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         registered_voters = row["Registered Voters"]
 
         pollingStation = get_object(ordinary_election, {
+            "Electoral District": row["Electoral District"],
+            "Polling Division": row["Polling Division"],
+            "Polling District": row["Polling District"],
             "Polling Station": row["Polling Station (English)"],
             "Registered Voters": registered_voters
         }, "Polling Station")
