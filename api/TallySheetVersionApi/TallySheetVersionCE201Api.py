@@ -59,15 +59,14 @@ def create(tallySheetId, body):
                     "tenderedBallotCountFromBallotPaperAccount")
             )
 
-            ballotCount = party_count_body.get("ordinaryBallotCountFromBoxCount")
-            pollingStationId = party_count_body.get("areaId")
-
             for issued_ballot_box_id in party_count_body.get("ballotBoxesIssued"):
                 tallySheetVersionRow.add_issued_ballot_box(issued_ballot_box_id)
 
             for received_ballot_box_id in party_count_body.get("ballotBoxesReceived"):
                 tallySheetVersionRow.add_received_ballot_box(received_ballot_box_id)
 
+            ballotCount = party_count_body.get("ordinaryBallotCountFromBoxCount")
+            pollingStationId = party_count_body.get("areaId")
             if election is not None:
                 existingStatus = StatusCE201.get_status_record(
                     electionId=electionId,

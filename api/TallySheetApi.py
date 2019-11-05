@@ -14,6 +14,8 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetSchema
 from util import RequestBody, get_paginated_query
+from orm.entities.Election import get_by_id as GetElectionById
+from orm.entities.Dashboard import StatusCE201
 
 
 @authorize(required_roles=ALL_ROLES)
@@ -59,6 +61,15 @@ def unlock(tallySheetId):
 
     tally_sheet.set_locked_version(None)
 
+    if tally_sheet.tallySheetCode in [TallySheetCodeEnum.CE_201, TallySheetCodeEnum.CE_201_PV]:
+        election = GetElectionById(tally_sheet.electionId)
+        electionId = election.parentElectionId
+        countingCentreId = tally_sheet.areaId
+        results = StatusCE201.get_status_records(electionId, countingCentreId)
+
+        for item in results:
+            item.status = "Submitted"
+
     db.session.commit()
 
     return TallySheetSchema().dump(tally_sheet).data, 201
@@ -100,6 +111,15 @@ def lock(tallySheetId, body):
         )
 
     tally_sheet.set_locked_version(tally_sheet_version)
+
+    if tally_sheet.tallySheetCode in [TallySheetCodeEnum.CE_201, TallySheetCodeEnum.CE_201_PV]:
+        election = GetElectionById(tally_sheet.electionId)
+        electionId = election.parentElectionId
+        countingCentreId = tally_sheet.areaId
+        results = StatusCE201.get_status_records(electionId, countingCentreId)
+
+        for item in results:
+            item.status = "Verified"
 
     db.session.commit()
 
@@ -160,6 +180,15 @@ def submit(tallySheetId, body):
         )
 
     tally_sheet.set_submitted_version(tally_sheet_version)
+
+    if tally_sheet.tallySheetCode in [TallySheetCodeEnum.CE_201, TallySheetCodeEnum.CE_201_PV]:
+        election = GetElectionById(tally_sheet.electionId)
+        electionId = election.parentElectionId
+        countingCentreId = tally_sheet.areaId
+        results = StatusCE201.get_status_records(electionId, countingCentreId)
+
+        for item in results:
+            item.status = "Submitted"
 
     db.session.commit()
 

@@ -71,3 +71,12 @@ def get_status_record(electionId, electoralDistrictId, pollingDivisionId, counti
     ).one_or_none()
 
     return result
+
+
+def get_status_records(electionId, countingCentreId):
+    result = Model.query.filter(
+        Model.electionId == electionId,
+        Model.countingCentreId == countingCentreId
+    ).all()
+
+    return result
