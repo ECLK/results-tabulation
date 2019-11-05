@@ -9,6 +9,9 @@ from util import RequestBody, get_paginated_query
 from schemas import TallySheetVersion_CE_201_PV_Schema, TallySheetVersionSchema
 from orm.entities.Submission import TallySheet
 from exception import NotFoundException
+from orm.entities.Dashboard import StatusCE201
+from orm.entities import Area
+from orm.enums import AreaTypeEnum
 
 
 @authorize(required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
@@ -46,6 +49,15 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.CE_201_PV
     )
+    election = tallySheet.submission.election
+    voteType = election.electionName
+    status = "Entered"
+    electionId = election.parentElectionId
+    countingCentreId = tallySheet.areaId
+    area = Area.get_by_id(areaId=countingCentreId)
+    electoralDistrictId = area.get_associated_areas(AreaTypeEnum.ElectoralDistrict, electionId=electionId)[0].areaId
+    pollingDivisionId = None
+
     tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     total_number_of_a_packets_found = 0
     tally_sheet_content = request_body.get("content")
@@ -59,6 +71,37 @@ def create(tallySheetId, body):
             )
 
             total_number_of_a_packets_found = total_number_of_a_packets_found + row.numberOfAPacketsFound
+
+        # for postal votes pollingStation is not available there for all results aggregated
+        ballotCount = total_number_of_a_packets_found
+        pollingStationId = None
+        if election is not None:
+            existingStatus = StatusCE201.get_status_record(
+                electionId=electionId,
+                electoralDistrictId=electoralDistrictId,
+                pollingDivisionId=pollingDivisionId,
+                countingCentreId=countingCentreId,
+                pollingStationId=pollingStationId,
+            )
+            if existingStatus is None:
+                StatusCE201.create(
+                    voteType=voteType,
+                    status=status,
+                    electionId=electionId,
+                    electoralDistrictId=electoralDistrictId,
+                    pollingDivisionId=pollingDivisionId,
+                    countingCentreId=countingCentreId,
+                    pollingStationId=pollingStationId,
+                    ballotCount=ballotCount
+                )
+            else:
+                existingStatus.voteType = voteType,
+                existingStatus.electionId = electionId,
+                existingStatus.electoralDistrictId = electoralDistrictId,
+                existingStatus.pollingDivisionId = pollingDivisionId,
+                existingStatus.countingCentreId = countingCentreId,
+                existingStatus.pollingStationId = pollingStationId,
+                existingStatus.ballotCount = ballotCount
 
     tally_sheet_summary = request_body.get("summary")
     time_of_commencement_of_count = tally_sheet_summary.get("timeOfCommencementOfCount")

@@ -8,6 +8,9 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetVersionPRE41Schema, TallySheetVersionSchema
 from util import RequestBody
+from orm.entities.Dashboard import StatusPRE41
+from orm.entities import Area
+from orm.enums import AreaTypeEnum
 
 
 @authorize(required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
@@ -34,6 +37,19 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.PRE_41
     )
+
+    election = tallySheet.submission.election
+    voteType = election.electionName
+    status = "Entered"
+    electionId = election.parentElectionId
+    countingCentreId = tallySheet.areaId
+    area = Area.get_by_id(areaId=countingCentreId)
+    electoralDistrictId = area.get_associated_areas(AreaTypeEnum.ElectoralDistrict, electionId=electionId)[0].areaId
+    pollingDivisionId = None
+    pollingDivisionResult = area.get_associated_areas(AreaTypeEnum.PollingDivision, electionId=electionId)
+    if len(pollingDivisionResult) > 0:
+        pollingDivisionId = area.get_associated_areas(AreaTypeEnum.PollingDivision, electionId=electionId)[0].areaId
+
     tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
@@ -45,12 +61,78 @@ def create(tallySheetId, body):
                 countInWords=party_count_body.get("countInWords")
             )
 
+            voteCount = party_count_body.get("count")
+            pollingStationId = party_count_body.get("areaId")
+            candidateId = party_count_body.get("candidateId")
+            if election is not None:
+                existingStatus = StatusPRE41.get_status_record(
+                    electionId=electionId,
+                    electoralDistrictId=electoralDistrictId,
+                    pollingDivisionId=pollingDivisionId,
+                    countingCentreId=countingCentreId,
+                    pollingStationId=pollingStationId,
+                    candidateId=candidateId
+                )
+                if existingStatus is None:
+                    StatusPRE41.create(
+                        voteType=voteType,
+                        status=status,
+                        electionId=electionId,
+                        electoralDistrictId=electoralDistrictId,
+                        pollingDivisionId=pollingDivisionId,
+                        countingCentreId=countingCentreId,
+                        pollingStationId=pollingStationId,
+                        voteCount=voteCount,
+                        candidateId=candidateId,
+
+                    )
+                else:
+                    existingStatus.voteType = voteType,
+                    existingStatus.electionId = electionId,
+                    existingStatus.electoralDistrictId = electoralDistrictId,
+                    existingStatus.pollingDivisionId = pollingDivisionId,
+                    existingStatus.countingCentreId = countingCentreId,
+                    existingStatus.pollingStationId = pollingStationId,
+                    existingStatus.voteCount = voteCount,
+                    existingStatus.candidateId = candidateId
+
     tally_sheet_summary_body = request_body.get("summary")
     if tally_sheet_summary_body is not None:
         tallySheetVersion.add_invalid_vote_count(
             electionId=tallySheetVersion.submission.electionId,
             rejectedVoteCount=tally_sheet_summary_body.get("rejectedVoteCount")
         )
+
+        voteCount = tally_sheet_summary_body.get("rejectedVoteCount")
+        candidateId = None
+        if election is not None:
+            existingStatus = StatusPRE41.get_status_record(
+                electionId=electionId,
+                electoralDistrictId=electoralDistrictId,
+                pollingDivisionId=pollingDivisionId,
+                countingCentreId=countingCentreId,
+                candidateId=candidateId
+            )
+            if existingStatus is None:
+                StatusPRE41.create(
+                    voteType=voteType,
+                    status=status,
+                    electionId=electionId,
+                    electoralDistrictId=electoralDistrictId,
+                    pollingDivisionId=pollingDivisionId,
+                    countingCentreId=countingCentreId,
+                    voteCount=voteCount,
+                    candidateId=candidateId,
+
+                )
+            else:
+                existingStatus.voteType = voteType,
+                existingStatus.electionId = electionId,
+                existingStatus.electoralDistrictId = electoralDistrictId,
+                existingStatus.pollingDivisionId = pollingDivisionId,
+                existingStatus.countingCentreId = countingCentreId,
+                existingStatus.voteCount = voteCount,
+                existingStatus.candidateId = candidateId
 
     db.session.commit()
 
