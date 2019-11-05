@@ -19,7 +19,7 @@ def create_database():
     database_name = app.config['DATABASE_NAME']
 
     try:
-        conn.execute("create database %s" % database_name)
+        conn.execute("create database %s character set utf8mb4 collate utf8mb4_unicode_ci" % database_name)
         print("Database '%s' CREATED" % database_name)
     except:
         print("Database '%s' creation FAILED" % database_name)
