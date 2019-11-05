@@ -18,18 +18,16 @@ class StatusPRE34Model(db.Model):
     electoralDistrictId = db.Column(db.Integer, db.ForeignKey(Area.AreaModel.areaId), autoincrement=True)
     pollingDivisionId = db.Column(db.Integer, db.ForeignKey(Area.AreaModel.areaId), autoincrement=True)
     countingCentreId = db.Column(db.Integer, db.ForeignKey(Area.AreaModel.areaId), autoincrement=True)
-    candidate1Preference2Count = db.Column(db.Integer, nullable=False)
-    candidate1Preference3Count = db.Column(db.Integer, nullable=False)
-    candidate2Preference2Count = db.Column(db.Integer, nullable=False)
-    candidate2Preference3Count = db.Column(db.Integer, nullable=False)
+    candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.CandidateModel.candidateId), autoincrement=True)
+    secondPreferenceCount = db.Column(db.Integer, nullable=False)
+    thirdPreferenceCount = db.Column(db.Integer, nullable=False)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     electoralDistrict = relationship("ElectoralDistrictModel", foreign_keys=[electoralDistrictId])
     pollingDivision = relationship("PollingDivisionModel", foreign_keys=[pollingDivisionId])
 
-    def __init__(self, electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
-                 candidate1Preference2Count, candidate1Preference3Count, candidate2Preference2Count,
-                 candidate2Preference3Count, candidateId, voteType="NonPostal", status="Pending", ballotCount=0):
+    def __init__(self, electionId, electoralDistrictId, pollingDivisionId, countingCentreId, secondPreferenceCount
+                 , thirdPreferenceCount, candidateId, voteType="NonPostal", status="Pending"):
         super(StatusPRE34Model, self).__init__(
             voteType=voteType,
             status=status,
@@ -37,12 +35,9 @@ class StatusPRE34Model(db.Model):
             electoralDistrictId=electoralDistrictId,
             pollingDivisionId=pollingDivisionId,
             countingCentreId=countingCentreId,
-            candidate1Preference2Count=candidate1Preference2Count,
-            candidate1Preference3Count=candidate1Preference3Count,
-            candidate2Preference2Count=candidate2Preference2Count,
-            candidate2Preference3Count=candidate2Preference3Count,
-            candidateId=candidateId,
-            ballotCount=ballotCount
+            secondPreferenceCount=secondPreferenceCount,
+            thirdPreferenceCount=thirdPreferenceCount,
+            candidateId=candidateId
         )
 
         db.session.add(self)
@@ -52,9 +47,8 @@ class StatusPRE34Model(db.Model):
 Model = StatusPRE34Model
 
 
-def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
-           candidate1Preference2Count, candidate1Preference3Count, candidate2Preference2Count,
-           candidate2Preference3Count, candidateId, voteType="NonPostal", status="Pending", ballotCount=0):
+def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId, secondPreferenceCount
+           , thirdPreferenceCount, candidateId, voteType="NonPostal", status="Pending"):
     result = Model(
         voteType=voteType,
         status=status,
@@ -62,18 +56,15 @@ def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
         electoralDistrictId=electoralDistrictId,
         pollingDivisionId=pollingDivisionId,
         countingCentreId=countingCentreId,
-        candidate1Preference2Count=candidate1Preference2Count,
-        candidate1Preference3Count=candidate1Preference3Count,
-        candidate2Preference2Count=candidate2Preference2Count,
-        candidate2Preference3Count=candidate2Preference3Count,
-        candidateId=candidateId,
-        ballotCount=ballotCount
+        secondPreferenceCount=secondPreferenceCount,
+        thirdPreferenceCount=thirdPreferenceCount,
+        candidateId=candidateId
     )
 
     return result
 
 
-def get_status_record(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
+def get_status_record(electionId, electoralDistrictId, pollingDivisionId, countingCentreId, candidateId,
                       pollingStationId=None):
     result = Model.query.filter(
         Model.electionId == electionId,
@@ -81,6 +72,7 @@ def get_status_record(electionId, electoralDistrictId, pollingDivisionId, counti
         Model.pollingDivisionId == pollingDivisionId,
         Model.countingCentreId == countingCentreId,
         Model.pollingStationId == pollingStationId,
+        Model.candidateId == candidateId
     ).one_or_none()
 
     return result
