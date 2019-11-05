@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy.orm import relationship, aliased, backref
 from sqlalchemy import and_, func, or_
 
+from orm.entities.Area import AreaMap
 from orm.enums import AreaTypeEnum
 from orm.entities import Election
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -140,124 +141,9 @@ Model = AreaModel
 
 
 def get_presidential_area_map_query():
-    election_commission_mapping = aliased(AreaAreaModel)
-    district_centre_mapping = aliased(AreaAreaModel)
-    counting_centre_mapping = aliased(AreaAreaModel)
-    postal_vote_counting_centre_mapping = aliased(AreaAreaModel)
-    polling_station_mapping = aliased(AreaAreaModel)
-    polling_district_mapping = aliased(AreaAreaModel)
-    polling_division_mapping = aliased(AreaAreaModel)
-    electoral_district_mapping = aliased(AreaAreaModel)
-    country_mapping = aliased(AreaAreaModel)
-
-    election_commission = aliased(AreaModel)
-    district_centre = aliased(AreaModel)
-    counting_centre = aliased(AreaModel)
-    polling_station = aliased(AreaModel)
-    polling_district = aliased(AreaModel)
-    polling_division = aliased(AreaModel)
-    electoral_district = aliased(AreaModel)
-    country = aliased(AreaModel)
-
-    presidential_area_map_query = db.session.query(
-        counting_centre.areaId.label("countingCentreId"),
-        polling_station.areaId.label("pollingStationId"),
-        district_centre.areaId.label("districtCentreId"),
-        election_commission.areaId.label("electionCommissionId"),
-        polling_district.areaId.label("pollingDistrictId"),
-        polling_division.areaId.label("pollingDivisionId"),
-        electoral_district.areaId.label("electoralDistrictId"),
-        country.areaId.label("countryId")
-    ).join(
-        polling_station_mapping,
-        polling_station_mapping.parentAreaId == counting_centre.areaId,
-        isouter=True
-    ).join(
-        polling_station,
-        and_(
-            polling_station.areaId == polling_station_mapping.childAreaId,
-            polling_station.areaType == AreaTypeEnum.PollingStation
-        ),
-        isouter=True
-    ).join(
-        district_centre_mapping,
-        district_centre_mapping.childAreaId == counting_centre.areaId,
-        isouter=True
-    ).join(
-        district_centre,
-        and_(
-            district_centre.areaId == district_centre_mapping.parentAreaId,
-            district_centre.areaType == AreaTypeEnum.DistrictCentre
-        ),
-        isouter=True
-    ).join(
-        election_commission_mapping,
-        election_commission_mapping.childAreaId == district_centre.areaId,
-        isouter=True
-    ).join(
-        election_commission,
-        and_(
-            election_commission.areaId == election_commission_mapping.parentAreaId,
-            election_commission.areaType == AreaTypeEnum.ElectionCommission
-        ),
-        isouter=True
-    ).join(
-        polling_district_mapping,
-        polling_district_mapping.childAreaId == polling_station.areaId,
-        isouter=True
-    ).join(
-        polling_district,
-        and_(
-            polling_district.areaId == polling_district_mapping.parentAreaId,
-            polling_district.areaType == AreaTypeEnum.PollingDistrict
-        ),
-        isouter=True
-    ).join(
-        polling_division_mapping,
-        polling_division_mapping.childAreaId == polling_district.areaId,
-        isouter=True
-    ).join(
-        polling_division,
-        and_(
-            polling_division.areaId == polling_division_mapping.parentAreaId,
-            polling_division.areaType == AreaTypeEnum.PollingDivision
-        ),
-        isouter=True
-    ).join(
-        electoral_district_mapping,
-        electoral_district_mapping.childAreaId == polling_division.areaId,
-        isouter=True
-    ).join(
-        postal_vote_counting_centre_mapping,
-        postal_vote_counting_centre_mapping.childAreaId == counting_centre.areaId,
-        isouter=True
-    ).join(
-        electoral_district,
-        or_(
-            and_(
-                electoral_district.areaId == electoral_district_mapping.parentAreaId,
-                electoral_district.areaType == AreaTypeEnum.ElectoralDistrict
-            ),
-            and_(
-                electoral_district.areaId == postal_vote_counting_centre_mapping.parentAreaId,
-                electoral_district.areaType == AreaTypeEnum.ElectoralDistrict
-            ),
-        ),
-        isouter=True
-    ).join(
-        country_mapping,
-        country_mapping.childAreaId == electoral_district.areaId,
-        isouter=True
-    ).join(
-        country,
-        and_(
-            country.areaId == country_mapping.parentAreaId,
-            country.areaType == AreaTypeEnum.Country
-        ),
-        isouter=True
+    return db.session.query(
+        AreaMap.Model
     )
-
-    return presidential_area_map_query
 
 
 def get_associated_areas_query(areas, areaType, electionId=None):

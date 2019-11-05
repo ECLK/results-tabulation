@@ -255,6 +255,14 @@ def has_role_based_access(tally_sheet, access_type):
     return False
 
 
+def has_role(role):
+    user_roles = get_user_roles()
+    if role in user_roles:
+        return True
+    else:
+        return False
+
+
 @decorator
 def authenticate(func, *args, **kwargs):
     print("\n\n\n\n####### request.headers ### [START]")
@@ -301,6 +309,9 @@ def authorize(func, required_roles=None, *args, **kwargs):
         claim = AREA_CLAIM_PREFIX + role
 
         if claim not in claims.keys():
+            continue
+
+        if not has_role(role):
             continue
 
         claim_found = True

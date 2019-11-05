@@ -57,7 +57,7 @@ class TallySheetModel(db.Model):
         if tallySheetVersion is None:
             if not has_role_based_access(self, ACCESS_TYPE_UNLOCK):
                 raise ForbiddenException(
-                    message="User doesn't have access to tally sheet.",
+                    message="User not authorized to unlock the tally sheet.",
                     code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK
                 )
 
@@ -77,7 +77,7 @@ class TallySheetModel(db.Model):
 
             if not has_role_based_access(self, ACCESS_TYPE_LOCK):
                 raise ForbiddenException(
-                    message="User doesn't have access to tally sheet.",
+                    message="User is not authorized to lock the tally sheet.",
                     code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK
                 )
 
