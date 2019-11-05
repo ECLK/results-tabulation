@@ -53,7 +53,7 @@ def create(body):
     return Schema().dump(election).data
 
 
-# @authorize(required_roles=[ADMIN_ROLE])
+@authorize(required_roles=[ADMIN_ROLE])
 def getRootToken(electionId):
     return get_root_token(electionId=electionId)
 

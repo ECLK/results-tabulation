@@ -8,7 +8,6 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetVersionPRE41Schema, TallySheetVersionSchema
 from util import RequestBody
-from orm.entities.Election import get_by_id as GetElectionById
 from orm.entities.Dashboard import StatusPRE41
 from orm.entities import Area
 from orm.enums import AreaTypeEnum
@@ -39,7 +38,7 @@ def create(tallySheetId, body):
         tallySheetCode=TallySheetCodeEnum.PRE_41
     )
 
-    election = GetElectionById(tallySheet.electionId)
+    election = tally_sheet.submission.election
     voteType = election.electionName
     status = "Entered"
     electionId = election.parentElectionId

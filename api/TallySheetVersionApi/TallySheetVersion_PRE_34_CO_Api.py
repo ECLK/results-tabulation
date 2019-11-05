@@ -39,7 +39,7 @@ def create(tallySheetId, body):
         tallySheetCode=TallySheetCodeEnum.PRE_34_CO
     )
 
-    election = GetElectionById(tallySheet.electionId)
+    election = tally_sheet.submission.election
     voteType = election.electionName
     status = "Entered"
     electionId = election.parentElectionId

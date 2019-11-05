@@ -14,7 +14,6 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetSchema
 from util import RequestBody, get_paginated_query
-from orm.entities.Election import get_by_id as GetElectionById
 from orm.entities.Dashboard import StatusCE201, StatusPRE41, StatusPRE34
 
 
@@ -62,7 +61,7 @@ def unlock(tallySheetId):
     tally_sheet.set_locked_version(None)
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.CE_201, TallySheetCodeEnum.CE_201_PV]:
-        election = GetElectionById(tally_sheet.electionId)
+        election = tally_sheet.submission.election
         electionId = election.parentElectionId
         countingCentreId = tally_sheet.areaId
         results = StatusCE201.get_status_records(electionId, countingCentreId)
@@ -71,7 +70,7 @@ def unlock(tallySheetId):
             item.status = "Submitted"
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_41]:
-        election = GetElectionById(tally_sheet.electionId)
+        election = tally_sheet.submission.election
         electionId = election.parentElectionId
         countingCentreId = tally_sheet.areaId
         results = StatusPRE41.get_status_records(electionId, countingCentreId)
@@ -80,7 +79,7 @@ def unlock(tallySheetId):
             item.status = "Submitted"
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_34_CO]:
-        election = GetElectionById(tally_sheet.electionId)
+        election = tally_sheet.submission.election
         electionId = election.parentElectionId
         countingCentreId = tally_sheet.areaId
         results = StatusPRE34.get_status_records(electionId, countingCentreId)
@@ -131,7 +130,7 @@ def lock(tallySheetId, body):
     tally_sheet.set_locked_version(tally_sheet_version)
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.CE_201, TallySheetCodeEnum.CE_201_PV]:
-        election = GetElectionById(tally_sheet.electionId)
+        election = tally_sheet.submission.election
         electionId = election.parentElectionId
         countingCentreId = tally_sheet.areaId
         results = StatusCE201.get_status_records(electionId, countingCentreId)
@@ -140,7 +139,7 @@ def lock(tallySheetId, body):
             item.status = "Verified"
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_41]:
-        election = GetElectionById(tally_sheet.electionId)
+        election = tally_sheet.submission.election
         electionId = election.parentElectionId
         countingCentreId = tally_sheet.areaId
         results = StatusPRE41.get_status_records(electionId, countingCentreId)
@@ -149,7 +148,7 @@ def lock(tallySheetId, body):
             item.status = "Verified"
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_34_CO]:
-        election = GetElectionById(tally_sheet.electionId)
+        election = tally_sheet.submission.election
         electionId = election.parentElectionId
         countingCentreId = tally_sheet.areaId
         results = StatusPRE34.get_status_records(electionId, countingCentreId)
@@ -218,7 +217,7 @@ def submit(tallySheetId, body):
     tally_sheet.set_submitted_version(tally_sheet_version)
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.CE_201, TallySheetCodeEnum.CE_201_PV]:
-        election = GetElectionById(tally_sheet.electionId)
+        election = tally_sheet.submission.election
         electionId = election.parentElectionId
         countingCentreId = tally_sheet.areaId
         results = StatusCE201.get_status_records(electionId, countingCentreId)
@@ -227,7 +226,7 @@ def submit(tallySheetId, body):
             item.status = "Submitted"
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_41]:
-        election = GetElectionById(tally_sheet.electionId)
+        election = tally_sheet.submission.election
         electionId = election.parentElectionId
         countingCentreId = tally_sheet.areaId
         results = StatusPRE41.get_status_records(electionId, countingCentreId)
@@ -236,7 +235,7 @@ def submit(tallySheetId, body):
             item.status = "Submitted"
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_34_CO]:
-        election = GetElectionById(tally_sheet.electionId)
+        election = tally_sheet.submission.election
         electionId = election.parentElectionId
         countingCentreId = tally_sheet.areaId
         results = StatusPRE34.get_status_records(electionId, countingCentreId)

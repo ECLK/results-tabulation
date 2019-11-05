@@ -9,7 +9,6 @@ from util import RequestBody, get_paginated_query
 from schemas import TallySheetVersion_CE_201_PV_Schema, TallySheetVersionSchema
 from orm.entities.Submission import TallySheet
 from exception import NotFoundException
-from orm.entities.Election import get_by_id as GetElectionById
 from orm.entities.Dashboard import StatusCE201
 from orm.entities import Area
 from orm.enums import AreaTypeEnum
@@ -50,7 +49,7 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.CE_201_PV
     )
-    election = GetElectionById(tallySheet.electionId)
+    election = tally_sheet.submission.election
     voteType = election.electionName
     status = "Entered"
     electionId = election.parentElectionId
