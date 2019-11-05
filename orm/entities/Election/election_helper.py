@@ -27,6 +27,7 @@ def get_root_token(electionId):
 
     jwt_payload = {
         ROLE_CLAIM: [
+            ROLE_PREFIX + ADMIN_ROLE,
             ROLE_PREFIX + DATA_EDITOR_ROLE,
             ROLE_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE,
             ROLE_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE,
