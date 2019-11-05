@@ -25,6 +25,10 @@ from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, Tally
     TallySheetVersionRow_PRE_ALL_ISLAND_RESULT
 
 from orm.entities.Election import InvalidVoteCategory
+from orm.entities.Dashboard import StatusCE201
+from orm.entities.Dashboard import StatusPRE41
+from orm.entities.Dashboard import StatusPRE34
+
 
 # import sadisplay
 # import codecs

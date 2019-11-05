@@ -12,7 +12,7 @@ class TallySheetCodeEnum(enum.Enum):
     PRE_34_CO = 6
     PRE_34_I_RO = 7
     PRE_34_II_RO = 8
-    PRE_34 = 9
+    PRE_34_RO = 9
     PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS = 10
     PRE_ALL_ISLAND_RESULTS = 11
     CE_201_PV = 12
