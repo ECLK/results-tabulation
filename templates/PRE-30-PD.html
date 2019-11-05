@@ -36,18 +36,18 @@
         </tbody>
     </table>
 
-    <table class="table table-borderless">
+    <table class="table table-borderless" style="table-layout:fixed;">
         <tbody>
-        <tr>
-            <td rowspan="2"></td>
-            <th class="left right top bottom" rowspan="2">Name of the Candidate</th>
-            <th class="left right top bottom" colspan="{{content.countingCentres|length}}">Counting Centre No.</th>
-            <th class="left right top bottom" rowspan="2">Total</th>
-            <th class="left right top bottom" rowspan="2">Total No. of Votes in Words</th>
+        <tr style="text-align:center;">
+            <td rowspan="2" style="width:50px;"></td>
+            <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align:middle;">Name of the Candidate</th>
+            <th class="left right top bottom" colspan="{{content.countingCentres|length}}" style="vertical-align:middle;">Counting Centre No.</th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align:middle;">Total</th>
+            <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align:middle;">Total No. of Votes in Words</th>
         </tr>
-        <tr>
+        <tr style="text-align:center;">
             {% for countingCentre in content.countingCentres %}
-            <th class="left right top bottom">{{countingCentre}}</th>
+            <th class="left right top bottom" style="vertical-align:middle;">{{countingCentre}}</th>
             {% endfor %}
         </tr>
         {% for row in content.data %}
@@ -68,7 +68,7 @@
                 No. of Valid Votes
             </th>
             {% for validVoteCount in content.validVoteCounts %}
-            <td class="left right top bottom text-right {%if validVoteCount=="" %}missing-value{% endif %}">{{validVoteCount}}</td>
+            <td class="left right top bottom text-right {%if validVoteCount=="" %}missing-value{% endif %}" style="vertical-align:middle;">{{validVoteCount}}</td>
             {% endfor %}
         </tr>
 
@@ -77,7 +77,7 @@
                 No. of Rejected Votes
             </th>
             {% for rejectedVoteCount in content.rejectedVoteCounts %}
-            <td class="left right top bottom text-right {%if rejectedVoteCount=="" %}missing-value{% endif %}">{{rejectedVoteCount}}</td>
+            <td class="left right top bottom text-right {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="vertical-align:middle;">{{rejectedVoteCount}}</td>
             {% endfor %}
         </tr>
 
@@ -87,7 +87,7 @@
                 <small>(Including Rejected)</small>
             </th>
             {% for totalVoteCount in content.totalVoteCounts %}
-            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}">{{totalVoteCount}}</td>
+            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align:middle;">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
 
