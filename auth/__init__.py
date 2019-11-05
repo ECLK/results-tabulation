@@ -257,9 +257,9 @@ def has_role_based_access(tally_sheet, access_type):
 
 @decorator
 def authenticate(func, *args, **kwargs):
-    # print("\n\n\n\n####### request.headers ### [START]")
-    # print(request.headers)
-    # print("####### request.headers ### [END]\n\n\n")
+    print("\n\n\n\n####### request.headers ### [START]")
+    print(request.headers)
+    print("####### request.headers ### [END]\n\n\n")
 
     claims: Dict = get_claims()
 
