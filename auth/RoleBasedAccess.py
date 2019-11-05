@@ -24,11 +24,17 @@ role_to_read_allowed_tallysheet_types = {
     ],
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: [
         TallySheetCodeEnum.PRE_30_PD,
-        TallySheetCodeEnum.PRE_30_ED
+        TallySheetCodeEnum.PRE_30_ED,
+        TallySheetCodeEnum.PRE_34_I_RO,
+        TallySheetCodeEnum.PRE_34_II_RO,
+        TallySheetCodeEnum.PRE_34
     ],
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: [
         TallySheetCodeEnum.PRE_30_ED,
-        TallySheetCodeEnum.PRE_30_PD
+        TallySheetCodeEnum.PRE_30_PD,
+        TallySheetCodeEnum.PRE_34_I_RO,
+        TallySheetCodeEnum.PRE_34_II_RO,
+        TallySheetCodeEnum.PRE_34
     ],
     NATIONAL_REPORT_VIEWER_ROLE: [
         TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
@@ -37,8 +43,11 @@ role_to_read_allowed_tallysheet_types = {
     NATIONAL_REPORT_VERIFIER_ROLE: [
         TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
         TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS,
-        TallySheetCodeEnum.PRE_30_PD_PV,
-        TallySheetCodeEnum.PRE_30_ED
+        TallySheetCodeEnum.PRE_30_PD,
+        TallySheetCodeEnum.PRE_30_ED,
+        TallySheetCodeEnum.PRE_34_I_RO,
+        TallySheetCodeEnum.PRE_34_II_RO,
+        TallySheetCodeEnum.PRE_34
     ]
 }
 
@@ -59,11 +68,15 @@ role_to_lock_allowed_tallysheet_types = {
         TallySheetCodeEnum.PRE_34_CO
     ],
     POLLING_DIVISION_REPORT_VERIFIER_ROLE: [
-        TallySheetCodeEnum.PRE_30_PD
+        TallySheetCodeEnum.PRE_30_PD,
+        TallySheetCodeEnum.PRE_34_I_RO
     ],
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: [
         TallySheetCodeEnum.PRE_30_PD,
-        TallySheetCodeEnum.PRE_30_ED
+        TallySheetCodeEnum.PRE_30_ED,
+        TallySheetCodeEnum.PRE_34_I_RO,
+        TallySheetCodeEnum.PRE_34_II_RO,
+        TallySheetCodeEnum.PRE_34
     ],
     NATIONAL_REPORT_VERIFIER_ROLE: [
         TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
@@ -87,6 +100,9 @@ role_to_unlock_allowed_tallysheet_types = {
     NATIONAL_REPORT_VERIFIER_ROLE: [
         TallySheetCodeEnum.PRE_30_PD,
         TallySheetCodeEnum.PRE_30_ED,
+        TallySheetCodeEnum.PRE_34_I_RO,
+        TallySheetCodeEnum.PRE_34_II_RO,
+        TallySheetCodeEnum.PRE_34,
         TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
         TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
     ],
