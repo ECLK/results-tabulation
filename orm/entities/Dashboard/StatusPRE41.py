@@ -20,14 +20,14 @@ class StatusPRE41Model(db.Model):
     countingCentreId = db.Column(db.Integer, db.ForeignKey(Area.AreaModel.areaId), autoincrement=True)
     pollingStationId = db.Column(db.Integer, db.ForeignKey(Area.AreaModel.areaId), autoincrement=True)
     candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.CandidateModel.candidateId), autoincrement=True)
-    ballotCount = db.Column(db.Integer, nullable=False)
+    voteCount = db.Column(db.Integer, nullable=False)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     electoralDistrict = relationship("ElectoralDistrictModel", foreign_keys=[electoralDistrictId])
     pollingDivision = relationship("PollingDivisionModel", foreign_keys=[pollingDivisionId])
 
     def __init__(self, electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
-                 pollingStationId, candidateId, voteType="NonPostal", status="Pending", ballotCount=0):
+                 pollingStationId, candidateId, voteType="NonPostal", status="Pending", voteCount=0):
         super(StatusPRE41Model, self).__init__(
             voteType=voteType,
             status=status,
@@ -37,7 +37,7 @@ class StatusPRE41Model(db.Model):
             countingCentreId=countingCentreId,
             pollingStationId=pollingStationId,
             candidateId=candidateId,
-            ballotCount=ballotCount
+            voteCount=voteCount
         )
 
         db.session.add(self)
@@ -48,7 +48,7 @@ Model = StatusPRE41Model
 
 
 def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
-           pollingStationId, candidateId, voteType="NonPostal", status="Pending", ballotCount=0):
+           pollingStationId, candidateId, voteType="NonPostal", status="Pending", voteCount=0):
     result = Model(
         voteType=voteType,
         status=status,
@@ -58,7 +58,7 @@ def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
         countingCentreId=countingCentreId,
         pollingStationId=pollingStationId,
         candidateId=candidateId,
-        ballotCount=ballotCount
+        voteCount=voteCount
     )
 
     return result
