@@ -53,8 +53,8 @@ Model = StatusPRE34Model
 
 
 def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
-                 candidate1Preference2Count, candidate1Preference3Count, candidate2Preference2Count,
-                 candidate2Preference3Count, candidateId, voteType="NonPostal", status="Pending", ballotCount=0):
+           candidate1Preference2Count, candidate1Preference3Count, candidate2Preference2Count,
+           candidate2Preference3Count, candidateId, voteType="NonPostal", status="Pending", ballotCount=0):
     result = Model(
         voteType=voteType,
         status=status,
@@ -69,5 +69,27 @@ def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
         candidateId=candidateId,
         ballotCount=ballotCount
     )
+
+    return result
+
+
+def get_status_record(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
+                      pollingStationId=None):
+    result = Model.query.filter(
+        Model.electionId == electionId,
+        Model.electoralDistrictId == electoralDistrictId,
+        Model.pollingDivisionId == pollingDivisionId,
+        Model.countingCentreId == countingCentreId,
+        Model.pollingStationId == pollingStationId,
+    ).one_or_none()
+
+    return result
+
+
+def get_status_records(electionId, countingCentreId):
+    result = Model.query.filter(
+        Model.electionId == electionId,
+        Model.countingCentreId == countingCentreId
+    ).all()
 
     return result

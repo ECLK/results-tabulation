@@ -62,3 +62,26 @@ def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
     )
 
     return result
+
+
+def get_status_record(electionId, electoralDistrictId, pollingDivisionId, countingCentreId, candidateId,
+                      pollingStationId=None):
+    result = Model.query.filter(
+        Model.electionId == electionId,
+        Model.electoralDistrictId == electoralDistrictId,
+        Model.pollingDivisionId == pollingDivisionId,
+        Model.countingCentreId == countingCentreId,
+        Model.pollingStationId == pollingStationId,
+        Model.candidateId == candidateId
+    ).one_or_none()
+
+    return result
+
+
+def get_status_records(electionId, countingCentreId):
+    result = Model.query.filter(
+        Model.electionId == electionId,
+        Model.countingCentreId == countingCentreId
+    ).all()
+
+    return result
