@@ -9,6 +9,7 @@ from auth import AREA_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISI
 from auth.AuthConstants import NAMESPACE
 from orm.entities import *
 from orm.entities import Invoice, Area, Election
+from orm.entities.Area import AreaMap
 from orm.entities.Submission import TallySheet
 from orm.enums import TallySheetCodeEnum, BallotTypeEnum, VoteTypeEnum, AreaTypeEnum
 from jose import jwt
@@ -284,6 +285,19 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         districtCentre.add_child(countingCentre.areaId)
         countingCentre.add_child(pollingStation.areaId)
 
+        AreaMap.create(
+            electionId=root_election.electionId,
+            voteType=VoteTypeEnum.NonPostal,
+            pollingStationId=pollingStation.areaId,
+            countingCentreId=countingCentre.areaId,
+            districtCentreId=districtCentre.areaId,
+            electionCommissionId=electionCommission.areaId,
+            pollingDistrictId=pollingDistrict.areaId,
+            pollingDivisionId=pollingDivision.areaId,
+            electoralDistrictId=electoralDistrict.areaId,
+            countryId=country.areaId
+        )
+
         # stationaryItems = []
         #
         # for i in range(1, 4):
@@ -346,6 +360,16 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         electionCommission.add_child(districtCentre.areaId)
 
         print("[POSTAL ROW END] ========= ")
+
+        AreaMap.create(
+            electionId=root_election.electionId,
+            voteType=VoteTypeEnum.Postal,
+            countingCentreId=countingCentre.areaId,
+            districtCentreId=districtCentre.areaId,
+            electionCommissionId=electionCommission.areaId,
+            electoralDistrictId=electoralDistrict.areaId,
+            countryId=country.areaId
+        )
 
     db.session.commit()
 
