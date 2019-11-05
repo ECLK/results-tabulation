@@ -18,7 +18,7 @@ import json
 
 from exception.messages import MESSAGE_CODE_USER_NOT_FOUND, MESSAGE_CODE_USER_NOT_AUTHENTICATED, \
     MESSAGE_CODE_USER_NOT_AUTHORIZED
-from orm.enums import TallySheetCodeEnum, AreaTypeEnum
+from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 
 JWT_SECRET = "jwt_secret"
 AREA_ID = "areaId"
@@ -26,36 +26,112 @@ USER_ACCESS_AREA_IDS = "userAccessAreaIds"
 USER_NAME = "userName"
 USER_ROLES = "userRoles"
 
+Countries = "Countries"
+CountingCentres = "CountingCentres"
+ElectoralDistricts = "ElectoralDistricts"
+PollingDivisions = "CountingCentres"
+Postal = "Postal"
+NonPostal = "NonPostal"
+
 
 @cache.cached(key_prefix='global_area_map')
 def init_global_area_map():
     # TODO Refactor
 
-    print("############# init_global_area_map ###############")
     from orm.entities import Area
     from orm.enums import AreaTypeEnum
 
-    global_area_map = {}
+    global_area_map = {
+        ElectoralDistricts: {
+            PollingDivisions: {
+                # list of polling divisions mapped to the electoral district id.
+            },
+            CountingCentres: {
+                Postal: {
+                    # list of postal counting centres mapped to the electoral district id.
+                },
+                NonPostal: {
+                    # list of non postal counting centres mapped to the electoral district id.
+                }
+            }
+        },
+        Countries: {
+            ElectoralDistricts: {
+                # list of electoral districts mapped to the country id.
+            },
+            PollingDivisions: {
+                # list of polling divisions mapped to the country id.
+            },
+            CountingCentres: {
+                Postal: {
+                    # list of postal counting centres mapped to the country id.
+                },
+                NonPostal: {
+                    # list of non postal counting centres mapped to the country id.
+                }
+            }
+        }
+    }
 
+    countries = Area.get_all(area_type=AreaTypeEnum.Country)
     electoral_districts = Area.get_all(area_type=AreaTypeEnum.ElectoralDistrict)
-    global_area_map["electoral_district_counting_centre"] = {}
-    for electoral_district in electoral_districts:
-        counting_centre_area_ids = [
-            counting_centre.areaId for counting_centre in
-            electoral_district.get_associated_areas(areaType=AreaTypeEnum.CountingCentre)
-        ]
-        global_area_map["electoral_district_counting_centre"][electoral_district.areaId] = counting_centre_area_ids
 
-    global_area_map["electoral_district_polling_division"] = {}
     for electoral_district in electoral_districts:
-        polling_division_area_ids = [
-            polling_division.areaId for polling_division in
+
+        sub_elections = electoral_district.election.subElections
+        for sub_election in sub_elections:
+            if sub_election.voteType == VoteTypeEnum.Postal:
+                global_area_map[ElectoralDistricts][CountingCentres][Postal][electoral_district.areaId] = [
+                    counting_centre.areaId for counting_centre in
+                    electoral_district.get_associated_areas(
+                        areaType=AreaTypeEnum.CountingCentre,
+                        electionId=sub_election.electionId
+                    )
+                ]
+            elif sub_election.voteType == VoteTypeEnum.NonPostal:
+                global_area_map[ElectoralDistricts][CountingCentres][NonPostal][electoral_district.areaId] = [
+                    counting_centre.areaId for counting_centre in
+                    electoral_district.get_associated_areas(
+                        areaType=AreaTypeEnum.CountingCentre,
+                        electionId=sub_election.electionId
+                    )
+                ]
+
+        global_area_map[ElectoralDistricts][PollingDivisions][electoral_district.areaId] = [
+            counting_centre.areaId for counting_centre in
             electoral_district.get_associated_areas(areaType=AreaTypeEnum.PollingDivision)
         ]
-        global_area_map["electoral_district_polling_division"][
-            electoral_district.areaId] = polling_division_area_ids
 
-    print("############# init_global_area_map ###############", global_area_map)
+    for country in countries:
+
+        sub_elections = country.election.subElections
+        for sub_election in sub_elections:
+            if sub_election.voteType == VoteTypeEnum.Postal:
+                global_area_map[Countries][CountingCentres][Postal][country.areaId] = [
+                    counting_centre.areaId for counting_centre in
+                    country.get_associated_areas(
+                        areaType=AreaTypeEnum.CountingCentre,
+                        electionId=sub_election.electionId
+                    )
+                ]
+            elif sub_election.voteType == VoteTypeEnum.NonPostal:
+                global_area_map[Countries][CountingCentres][NonPostal][country.areaId] = [
+                    counting_centre.areaId for counting_centre in
+                    country.get_associated_areas(
+                        areaType=AreaTypeEnum.CountingCentre,
+                        electionId=sub_election.electionId
+                    )
+                ]
+
+        global_area_map[Countries][ElectoralDistricts][country.areaId] = [
+            counting_centre.areaId for counting_centre in
+            country.get_associated_areas(areaType=AreaTypeEnum.ElectoralDistrict)
+        ]
+
+        global_area_map[Countries][PollingDivisions][country.areaId] = [
+            counting_centre.areaId for counting_centre in
+            country.get_associated_areas(areaType=AreaTypeEnum.PollingDivision)
+        ]
 
     return global_area_map
 
@@ -211,8 +287,7 @@ def authenticate(func, *args, **kwargs):
 @decorator
 @authenticate
 def authorize(func, required_roles=None, *args, **kwargs):
-    from orm.entities import Area
-    from orm.enums import AreaTypeEnum
+    global_area_map = init_global_area_map()
 
     if required_roles is None:
         return func(*args, **kwargs)
@@ -229,24 +304,119 @@ def authorize(func, required_roles=None, *args, **kwargs):
             continue
 
         claim_found = True
-        user_access_area_ids.extend([x.get(AREA_ID) for x in claims.get(claim)])
+
+        claim_area_ids = [x.get(AREA_ID) for x in claims.get(claim)]
 
         if role is DATA_EDITOR_ROLE:
-            counting_centre_ids = []
-            global_area_map = init_global_area_map()
-            for electoral_district_id in user_access_area_ids:
-                if electoral_district_id in global_area_map["electoral_district_counting_centre"]:
+
+            for electoral_district_id in claim_area_ids:
+
+                # To list, view, submit and lock postal data entry tally sheets.
+                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres][Postal]:
                     user_access_area_ids.extend(
-                        global_area_map["electoral_district_counting_centre"][electoral_district_id]
+                        global_area_map[ElectoralDistricts][CountingCentres][Postal][electoral_district_id]
                     )
 
-        elif role is POLLING_DIVISION_REPORT_VIEWER_ROLE or role is POLLING_DIVISION_REPORT_VERIFIER_ROLE:
-            counting_centre_ids = []
-            global_area_map = init_global_area_map()
-            for electoral_district_id in user_access_area_ids:
-                if electoral_district_id in global_area_map["electoral_district_polling_division"]:
+                # To list, view, submit and lock non postal data entry tally sheets.
+                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres][NonPostal]:
                     user_access_area_ids.extend(
-                        global_area_map["electoral_district_polling_division"][electoral_district_id]
+                        global_area_map[ElectoralDistricts][CountingCentres][NonPostal][electoral_district_id]
+                    )
+
+        elif role is POLLING_DIVISION_REPORT_VIEWER_ROLE:
+
+            for electoral_district_id in claim_area_ids:
+
+                # To list, view and lock PRE-30-PD.
+                if electoral_district_id in global_area_map[ElectoralDistricts][PollingDivisions]:
+                    user_access_area_ids.extend(
+                        global_area_map[ElectoralDistricts][PollingDivisions][electoral_district_id]
+                    )
+
+        elif role is POLLING_DIVISION_REPORT_VERIFIER_ROLE:
+
+            for electoral_district_id in claim_area_ids:
+
+                # To list, view and lock PRE-30-PD.
+                if electoral_district_id in global_area_map[ElectoralDistricts][PollingDivisions]:
+                    user_access_area_ids.extend(
+                        global_area_map[ElectoralDistricts][PollingDivisions][electoral_district_id]
+                    )
+
+                # To list, view and unlock non postal data entry tally sheets.
+                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres][NonPostal]:
+                    user_access_area_ids.extend(
+                        global_area_map[ElectoralDistricts][CountingCentres][NonPostal][electoral_district_id]
+                    )
+
+        elif role is ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE:
+
+            # To list, view and lock PRE-30-ED and PRE-30-PV.
+            user_access_area_ids.extend(claim_area_ids)
+
+        elif role is ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE:
+
+            # To list, view and lock PRE-30-ED and PRE-30-PV.
+            user_access_area_ids.extend(claim_area_ids)
+
+            for electoral_district_id in claim_area_ids:
+
+                # To list, view and unlock PR-30-PD.
+                if electoral_district_id in global_area_map[ElectoralDistricts][PollingDivisions]:
+                    user_access_area_ids.extend(
+                        global_area_map[ElectoralDistricts][PollingDivisions][electoral_district_id]
+                    )
+
+                # To list, view and unlock postal data entry tally sheets.
+                if electoral_district_id in global_area_map[ElectoralDistricts][CountingCentres][Postal]:
+                    user_access_area_ids.extend(
+                        global_area_map[ElectoralDistricts][CountingCentres][Postal][electoral_district_id]
+                    )
+
+        elif role is NATIONAL_REPORT_VIEWER_ROLE:
+
+            for electoral_district_id in claim_area_ids:
+                # To list, view and lock All Island Reports
+                user_access_area_ids.extend(claim_area_ids)
+
+        elif role is NATIONAL_REPORT_VERIFIER_ROLE:
+
+            for country_id in claim_area_ids:
+
+                # To list, view and lock All Island Reports
+                user_access_area_ids.extend(claim_area_ids)
+
+                # To list, view and unlock PR-30-PV and PRE-30-ED.
+                if country_id in global_area_map[Countries][ElectoralDistricts]:
+                    user_access_area_ids.extend(
+                        global_area_map[Countries][ElectoralDistricts][country_id]
+                    )
+
+        elif role is EC_LEADERSHIP_ROLE:
+
+            for country_id in claim_area_ids:
+
+                # To list, view and unlock All Island Reports
+                user_access_area_ids.extend(claim_area_ids)
+
+                if country_id in global_area_map[Countries][ElectoralDistricts]:
+                    user_access_area_ids.extend(
+                        global_area_map[Countries][ElectoralDistricts][country_id]
+                    )
+
+                if country_id in global_area_map[Countries][PollingDivisions]:
+                    user_access_area_ids.extend(
+                        global_area_map[Countries][PollingDivisions][country_id]
+                    )
+
+                if country_id in global_area_map[Countries][CountingCentres][Postal]:
+                    user_access_area_ids.extend(
+                        global_area_map[Countries][CountingCentres][Postal][country_id]
+                    )
+
+                if country_id in global_area_map[Countries][CountingCentres][NonPostal]:
+                    user_access_area_ids.extend(
+                        global_area_map[Countries][CountingCentres][NonPostal][country_id]
                     )
 
     if not claim_found:

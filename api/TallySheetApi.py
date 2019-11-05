@@ -2,7 +2,7 @@ from typing import Set
 
 from app import db
 from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, has_role_based_access, ACCESS_TYPE_READ
+    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE
 from auth.AuthConstants import ALL_ROLES
 from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
@@ -26,9 +26,6 @@ def getAll(electionId=None, areaId=None, tallySheetCode=None):
 
     result = get_paginated_query(result).all()
 
-    # filter based on roles
-    # filtered_results = [tally_sheet for tally_sheet in result if has_role_based_access(tally_sheet, ACCESS_TYPE_READ)]
-
     return TallySheetSchema(many=True).dump(result).data
 
 
@@ -38,7 +35,7 @@ def get_by_id(tallySheetId):
 
     if tally_sheet is None:
         NotFoundException(
-            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            message="Tally sheet not found (tallySheetId=%s)" % tallySheetId,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
@@ -46,8 +43,8 @@ def get_by_id(tallySheetId):
 
 
 @authorize(
-    required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
-                    NATIONAL_REPORT_VERIFIER_ROLE])
+    required_roles=[POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                    NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def unlock(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
@@ -75,14 +72,6 @@ def lock(tallySheetId, body):
 
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
-
-    if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_41, TallySheetCodeEnum.CE_201,
-                                      TallySheetCodeEnum.CE_201_PV,
-                                      TallySheetCodeEnum.PRE_34_CO] and not tally_sheet.submitted:
-        raise ForbiddenException(
-            message="Tally sheet is not yet submitted, cannot lock.",
-            code=MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT
-        )
 
     tally_sheet_version = TallySheetVersion.get_by_id(tallySheetVersionId=tallySheetVersionId,
                                                       tallySheetId=tallySheetId)

@@ -103,9 +103,15 @@ def create_app():
             is_prod_env = app.config['PROD_ENV']
 
         from auth import get_user_name
+        current_user_name = ''
+
+        try:
+            current_user_name = get_user_name()
+        except:
+            pass
         return dict(
             isProdEnv=is_prod_env,
-            current_user=get_user_name(),
+            current_user=current_user_name,
             current_timestamp=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         )
 

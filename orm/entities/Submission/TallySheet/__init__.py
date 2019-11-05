@@ -11,11 +11,18 @@ from exception import NotFoundException, MethodNotAllowedException, ForbiddenExc
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
     MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW, \
-    MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+    MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT
 from orm.entities import Submission, Election
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum
 from util import get_tally_sheet_code, get_tally_sheet_version_class
+
+DATA_ENTRY_TALLY_SHEET_CODES = [
+    TallySheetCodeEnum.PRE_41,
+    TallySheetCodeEnum.CE_201,
+    TallySheetCodeEnum.CE_201_PV,
+    TallySheetCodeEnum.PRE_34_CO
+]
 
 
 class TallySheetModel(db.Model):
@@ -47,26 +54,32 @@ class TallySheetModel(db.Model):
             self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
 
     def set_locked_version(self, tallySheetVersion: TallySheetVersion):
-        # if DATA_EDITOR_ROLE in get_user_roles() and self.submittedStamp.createdBy == get_user_name():
-        #     raise ForbiddenException(
-        #         message="Tally sheet submitted user is not allowed to lock/unlock.",
-        #         code=MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT
-        #     )
-
         if tallySheetVersion is None:
-            # if not has_role_based_access(self, ACCESS_TYPE_UNLOCK):
-            #     raise ForbiddenException(
-            #         message="User doesn't have access to tally sheet.",
-            #         code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK
-            #     )
+            if not has_role_based_access(self, ACCESS_TYPE_UNLOCK):
+                raise ForbiddenException(
+                    message="User doesn't have access to tally sheet.",
+                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK
+                )
 
             self.submission.set_locked_version(submissionVersion=None)
         else:
-            # if not has_role_based_access(self, ACCESS_TYPE_LOCK):
-            #     raise ForbiddenException(
-            #         message="User doesn't have access to tally sheet.",
-            #         code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK
-            #     )
+            if self.tallySheetCode in DATA_ENTRY_TALLY_SHEET_CODES:
+                if self.submittedVersionId is None:
+                    raise ForbiddenException(
+                        message="Data entry tally sheet cannot be locked before submitting",
+                        code=MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT
+                    )
+                elif self.submittedStamp.createdBy == get_user_name():
+                    raise ForbiddenException(
+                        message="Data entry tally sheet submitted user is not allowed to lock/unlock.",
+                        code=MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT
+                    )
+
+            if not has_role_based_access(self, ACCESS_TYPE_LOCK):
+                raise ForbiddenException(
+                    message="User doesn't have access to tally sheet.",
+                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK
+                )
 
             self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
 
