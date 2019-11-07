@@ -72,14 +72,14 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
         if len(polling_divisions) > 0:
             polling_division_name = polling_divisions[0].areaName
 
-        disqualifiedCandidates = db.session.query(
+        candidates = db.session.query(
             ElectionCandidate.Model.candidateId,
+            ElectionCandidate.Model.qualifiedForPreferences,
             Candidate.Model.candidateName,
         ).join(
             Candidate.Model,
             Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
         ).filter(
-            ElectionCandidate.Model.qualifiedForPreferences == False,
             ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
         ).all()
 
@@ -102,15 +102,22 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
             "data": [],
-            "candidates": disqualifiedCandidates
+            "candidates": []
         }
 
         temp_data = {}
 
-        for row_index in range(len(tallySheetContent)):
-            row = tallySheetContent[row_index]
-            if row.preferenceCount is not None:
-                temp_data[row.candidateId] = {}
+        for candidateIndex in range(len(candidates)):
+            candidate = candidates[candidateIndex]
+            if candidate.qualifiedForPreferences is True:
+                temp_data[candidate.candidateId] = {
+                    "number": len(temp_data) + 1,
+                    "name": candidate.candidateName,
+                    "secondPreferenceCount": "####",
+                    "thirdPreferenceCount": "####",
+                }
+            else:
+                content["candidates"].append(candidate)
 
         for row_index in range(len(tallySheetContent)):
             row = tallySheetContent[row_index]
@@ -123,18 +130,17 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
                 else:
                     preference = ""
 
-                temp_data[row.candidateId]['name'] = row.candidateName
                 temp_data[row.candidateId][preference] = row.preferenceCount
 
         for i in temp_data:
             content['data'].append(temp_data[i])
 
         html = render_template(
-            'PRE-34-CO.html',
+            'PRE-34-I-RO.html',
             content=content
         )
 
         return html
 
 
-Model = TallySheetVersion_PRE_34_CO_Model
+Model = TallySheetVersion_PRE_34_I_RO_Model
