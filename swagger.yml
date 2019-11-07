@@ -2148,6 +2148,9 @@ paths:
           - PRE-34-CO
           - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
           - PRE-ALL-ISLAND-RESULTS
+          - PRE-34-I-RO
+          - PRE-34-II-RO
+          - PRE-34
       responses:
         '200':
           description: Successful operation.
@@ -2196,6 +2199,9 @@ paths:
                       - PRE-30-ED
                       - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
                       - PRE-ALL-ISLAND-RESULTS
+                      - PRE-34-I-RO
+                      - PRE-34-II-RO
+                      - PRE-34
         '400':
           description: Bad request.
           content:
