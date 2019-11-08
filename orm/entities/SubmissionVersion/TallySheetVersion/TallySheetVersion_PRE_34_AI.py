@@ -10,15 +10,15 @@ from util import to_comma_seperated_num, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 
 
-class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
+class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
 
     def __init__(self, tallySheetId):
-        super(TallySheetVersion_PRE_34_PD_Model, self).__init__(
+        super(TallySheetVersion_PRE_34_AI_Model, self).__init__(
             tallySheetId=tallySheetId
         )
 
     __mapper_args__ = {
-        'polymorphic_identity': TallySheetCodeEnum.PRE_34_PD
+        'polymorphic_identity': TallySheetCodeEnum.PRE_34_AI
     }
 
     def add_row(self, preferenceNumber, preferenceCount, candidateId, electionId):
@@ -67,19 +67,8 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
         stamp = self.stamp
         tallySheetContent = self.content
 
-        # disqualifiedCandidates = db.session.query(
-        #     ElectionCandidate.Model.candidateId,
-        #     Candidate.Model.candidateName,
-        # ).join(
-        #     Candidate.Model,
-        #     Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
-        # ).filter(
-        #     ElectionCandidate.Model.qualifiedForPreferences == False,
-        #     ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
-        # ).all()
-
         content = {
-            "tallySheetCode": "PRE-34-PD",
+            "tallySheetCode": "PRE-34-AI",
             "election": {
                 "electionName": self.submission.election.get_official_name()
             },
@@ -88,18 +77,8 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
                 "createdBy": stamp.createdBy,
                 "barcodeString": stamp.barcodeString
             },
-            "electoralDistrict": Area.get_associated_areas(
-                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": "XX",
-            "data": [],
-            # "candidates": disqualifiedCandidates
+            "data": []
         }
-
-        if self.submission.election.voteType == VoteTypeEnum.Postal:
-            content["tallySheetCode"] = "PRE-34-PV"
-            content["pollingDivision"] = "Postal"
-        elif self.submission.election.voteType == VoteTypeEnum.NonPostal:
-            content["pollingDivision"] = self.submission.area.areaName
 
         temp_data = {}
         for candidateIndex in range(len(tallySheetContent)):
@@ -107,6 +86,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             temp_data[candidate.candidateId] = {
                 "number": len(temp_data) + 1,
                 "name": candidate.candidateName,
+                "firstPreferenceCount": "",
                 "secondPreferenceCount": "",
                 "thirdPreferenceCount": "",
                 "total": 0
@@ -133,11 +113,11 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             content['data'].append(temp_data[i])
 
         html = render_template(
-            'PRE-34-PD.html',
+            'PRE-34-AI.html',
             content=content
         )
 
         return html
 
 
-Model = TallySheetVersion_PRE_34_PD_Model
+Model = TallySheetVersion_PRE_34_AI_Model

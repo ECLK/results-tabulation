@@ -97,7 +97,8 @@ def create(tallySheetId):
         ),
         isouter=True
     ).filter(
-        Area.Model.areaId == tallySheet.submission.areaId
+        Area.Model.areaId == tallySheet.submission.areaId,
+        ElectionCandidate.Model.qualifiedForPreferences == True
     ).group_by(
         ElectionCandidate.Model.candidateId,
         Submission.Model.areaId

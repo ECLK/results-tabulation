@@ -14,33 +14,33 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 
 tags:
-- name: Tally Sheet
-  description: Access to tally sheets
-- name: Invoice
-  description: Access to invoices
-- name: Stationary
-  description: Access to stationaries
-- name: Invoice Stationary
-  description: Access to stationaries
-- name: System Testing
-  description: Endpoints required for testing purpose only. These are to be removed.
+  - name: Tally Sheet
+    description: Access to tally sheets
+  - name: Invoice
+    description: Access to invoices
+  - name: Stationary
+    description: Access to stationaries
+  - name: Invoice Stationary
+    description: Access to stationaries
+  - name: System Testing
+    description: Endpoints required for testing purpose only. These are to be removed.
 
 paths:
 
   /system-testing/election/{electionId}/root-token:
     get:
       tags:
-      - System Testing
+        - System Testing
       summary: Get all.
       operationId: api.ElectionApi.getRootToken
       parameters:
-      - name: electionId
-        in: path
-        description: Election ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: electionId
+          in: path
+          description: Election ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -77,16 +77,16 @@ paths:
   /election/{electionId}:
     get:
       tags:
-      - Election
+        - Election
       summary: Get By Id
       operationId: api.ElectionApi.get_by_id
       parameters:
-      - name: electionId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: electionId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -95,8 +95,8 @@ paths:
               schema:
                 type: object
                 required:
-                - electionId
-                - electionName
+                  - electionId
+                  - electionName
                 properties:
                   electionId:
                     type: integer
@@ -169,16 +169,16 @@ paths:
   /election/{electionId}/area:
     get:
       tags:
-      - Election
+        - Election
       summary: Get by ID
       operationId: api.ElectionApi.get_all_areas
       parameters:
-      - name: electionId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: electionId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -214,24 +214,24 @@ paths:
   /election:
     get:
       tags:
-      - Election
+        - Election
       summary: Get all.
       operationId: api.ElectionApi.get_all
       parameters:
-      - name: limit
-        in: query
-        description: Limit of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 20
-      - name: offset
-        in: query
-        description: Offset of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 0
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
       responses:
         '200':
           description: Successful operation.
@@ -242,8 +242,8 @@ paths:
                 items:
                   type: object
                   required:
-                  - electionId
-                  - electionName
+                    - electionId
+                    - electionName
                   properties:
                     electionId:
                       type: integer
@@ -315,7 +315,7 @@ paths:
 
     post:
       tags:
-      - Election
+        - Election
       summary: Create election
       operationId: api.ElectionApi.create
       requestBody:
@@ -344,11 +344,11 @@ paths:
                   type: string
                   format: binary
               required:
-              - electionName
-              - pollingStationsDataset
-              - invalidVoteCategoriesDataset
-              - partyCandidatesDataset
-              - postalCountingCentresDataset
+                - electionName
+                - pollingStationsDataset
+                - invalidVoteCategoriesDataset
+                - partyCandidatesDataset
+                - postalCountingCentresDataset
       responses:
         '200':
           description: Successful operation.
@@ -359,8 +359,8 @@ paths:
                 items:
                   type: object
                   required:
-                  - electionId
-                  - electionName
+                    - electionId
+                    - electionName
                   properties:
                     electionId:
                       type: integer
@@ -433,43 +433,43 @@ paths:
   /ballot:
     get:
       tags:
-      - Stationary
+        - Stationary
       summary: Get all.
       operationId: api.BallotApi.get_all
       parameters:
-      - name: limit
-        in: query
-        description: Limit of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 20
-      - name: offset
-        in: query
-        description: Offset of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 0
-      - name: electionId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: ballotId
-        required: false
-        in: query
-        schema:
-          type: string
-      - name: ballotType
-        required: false
-        in: query
-        schema:
-          type: string
-          enum:
-          - Ordinary
-          - Tendered
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: ballotId
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: ballotType
+          required: false
+          in: query
+          schema:
+            type: string
+            enum:
+              - Ordinary
+              - Tendered
       responses:
         '200':
           description: Successful operation.
@@ -480,9 +480,9 @@ paths:
                 items:
                   type: object
                   required:
-                  - ballotId
-                  - stationaryItemId
-                  - electionId
+                    - ballotId
+                    - stationaryItemId
+                    - electionId
                   properties:
                     ballotId:
                       type: string
@@ -495,8 +495,8 @@ paths:
                     ballotType:
                       type: string
                       enum:
-                      - Ordinary
-                      - Tendered
+                        - Ordinary
+                        - Tendered
         '400':
           description: Bad request.
           content:
@@ -524,7 +524,7 @@ paths:
 
     post:
       tags:
-      - Stationary
+        - Stationary
       summary: Create.
       operationId: api.BallotApi.create
       responses:
@@ -535,9 +535,9 @@ paths:
               schema:
                 type: object
                 required:
-                - ballotId
-                - stationaryItemId
-                - electionId
+                  - ballotId
+                  - stationaryItemId
+                  - electionId
                 properties:
                   ballotId:
                     type: string
@@ -550,8 +550,8 @@ paths:
                   ballotType:
                     type: string
                     enum:
-                    - Ordinary
-                    - Tendered
+                      - Ordinary
+                      - Tendered
         '400':
           description: Bad request.
           content:
@@ -582,8 +582,8 @@ paths:
             schema:
               type: object
               required:
-              - ballotId
-              - electionId
+                - ballotId
+                - electionId
               properties:
                 ballotId:
                   type: string
@@ -593,38 +593,38 @@ paths:
                 ballotType:
                   type: string
                   enum:
-                  - Ordinary
-                  - Tendered
+                    - Ordinary
+                    - Tendered
         description: Ballot Object.
         required: True
 
   /ballot-book:
     get:
       tags:
-      - Stationary
+        - Stationary
       summary: Get all.
       operationId: api.BallotBookApi.get_all
       parameters:
-      - name: limit
-        in: query
-        description: Limit of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 20
-      - name: offset
-        in: query
-        description: Offset of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 0
-      - name: electionId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -635,10 +635,10 @@ paths:
                 items:
                   type: object
                   required:
-                  - stationaryItemId
-                  - fromBallotId
-                  - toBallotId
-                  - electionId
+                    - stationaryItemId
+                    - fromBallotId
+                    - toBallotId
+                    - electionId
                   properties:
                     fromBallotId:
                       type: string
@@ -677,7 +677,7 @@ paths:
 
     post:
       tags:
-      - Stationary
+        - Stationary
       summary: Create.
       operationId: api.BallotBookApi.create
       responses:
@@ -688,10 +688,10 @@ paths:
               schema:
                 type: object
                 required:
-                - stationaryItemId
-                - fromBallotId
-                - toBallotId
-                - electionId
+                  - stationaryItemId
+                  - fromBallotId
+                  - toBallotId
+                  - electionId
                 properties:
                   fromBallotId:
                     type: string
@@ -733,9 +733,9 @@ paths:
             schema:
               type: object
               required:
-              - fromBallotId
-              - toBallotId
-              - electionId
+                - fromBallotId
+                - toBallotId
+                - electionId
               properties:
                 fromBallotId:
                   type: string
@@ -750,35 +750,35 @@ paths:
   /ballot-box:
     get:
       tags:
-      - Stationary
+        - Stationary
       summary: Get all.
       operationId: api.BallotBoxApi.get_all
       parameters:
-      - name: limit
-        in: query
-        description: Limit of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 20
-      - name: offset
-        in: query
-        description: Offset of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 0
-      - name: electionId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: ballotBoxId
-        required: false
-        in: query
-        schema:
-          type: string
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: ballotBoxId
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation.
@@ -789,9 +789,9 @@ paths:
                 items:
                   type: object
                   required:
-                  - ballotBoxId
-                  - stationaryItemId
-                  - electionId
+                    - ballotBoxId
+                    - stationaryItemId
+                    - electionId
                   properties:
                     ballotBoxId:
                       type: string
@@ -828,7 +828,7 @@ paths:
 
     post:
       tags:
-      - Stationary
+        - Stationary
       summary: Create.
       operationId: api.BallotBoxApi.create
       responses:
@@ -839,9 +839,9 @@ paths:
               schema:
                 type: object
                 required:
-                - ballotBoxId
-                - stationaryItemId
-                - electionId
+                  - ballotBoxId
+                  - stationaryItemId
+                  - electionId
                 properties:
                   ballotBoxId:
                     type: string
@@ -881,8 +881,8 @@ paths:
             schema:
               type: object
               required:
-              - ballotBoxId
-              - electionId
+                - ballotBoxId
+                - electionId
               properties:
                 ballotBoxId:
                   type: string
@@ -895,54 +895,54 @@ paths:
   /invoice:
     get:
       tags:
-      - Invoice
+        - Invoice
       summary: Get all.
       operationId: api.InvoiceApi.get_all
       parameters:
-      - name: limit
-        in: query
-        description: Limit of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 20
-      - name: offset
-        in: query
-        description: Offset of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 0
-      - name: electionId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: issuingOfficeId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: receivingOfficeId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: issuedBy
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: issuedTo
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: issuingOfficeId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: receivingOfficeId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: issuedBy
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: issuedTo
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -953,14 +953,14 @@ paths:
                 items:
                   type: object
                   required:
-                  - invoiceId
-                  - electionId
-                  - issuingOfficeId
-                  - receivingOfficeId
-                  - issuedBy
-                  - issuedTo
-                  - issuedAt
-                  - confirmed
+                    - invoiceId
+                    - electionId
+                    - issuingOfficeId
+                    - receivingOfficeId
+                    - issuedBy
+                    - issuedTo
+                    - issuedAt
+                    - confirmed
                   properties:
                     invoiceId:
                       type: integer
@@ -1012,7 +1012,7 @@ paths:
 
     post:
       tags:
-      - Invoice
+        - Invoice
       summary: Create.
       operationId: api.InvoiceApi.create
       responses:
@@ -1023,14 +1023,14 @@ paths:
               schema:
                 type: object
                 required:
-                - invoiceId
-                - electionId
-                - issuingOfficeId
-                - receivingOfficeId
-                - issuedBy
-                - issuedTo
-                - issuedAt
-                - confirmed
+                  - invoiceId
+                  - electionId
+                  - issuingOfficeId
+                  - receivingOfficeId
+                  - issuedBy
+                  - issuedTo
+                  - issuedAt
+                  - confirmed
                 properties:
                   invoiceId:
                     type: integer
@@ -1085,10 +1085,10 @@ paths:
             schema:
               type: object
               required:
-              - electionId
-              - issuingOfficeId
-              - receivingOfficeId
-              - issuedTo
+                - electionId
+                - issuingOfficeId
+                - receivingOfficeId
+                - issuedTo
               properties:
                 electionId:
                   type: integer
@@ -1108,16 +1108,16 @@ paths:
   /invoice/{invoiceId}:
     get:
       tags:
-      - Invoice
+        - Invoice
       summary: Create.
       operationId: api.InvoiceApi.get_by_id
       parameters:
-      - name: invoiceId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: invoiceId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1126,14 +1126,14 @@ paths:
               schema:
                 type: object
                 required:
-                - invoiceId
-                - electionId
-                - issuingOfficeId
-                - receivingOfficeId
-                - issuedBy
-                - issuedTo
-                - issuedAt
-                - confirmed
+                  - invoiceId
+                  - electionId
+                  - issuingOfficeId
+                  - receivingOfficeId
+                  - issuedBy
+                  - issuedTo
+                  - issuedAt
+                  - confirmed
                 properties:
                   invoiceId:
                     type: integer
@@ -1185,16 +1185,16 @@ paths:
 
     delete:
       tags:
-      - Invoice
+        - Invoice
       summary: Create.
       operationId: api.InvoiceApi.delete
       parameters:
-      - name: invoiceId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: invoiceId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1230,16 +1230,16 @@ paths:
   /invoice/{invoiceId}/confirm:
     put:
       tags:
-      - Invoice
+        - Invoice
       summary: Create.
       operationId: api.InvoiceApi.confirm
       parameters:
-      - name: invoiceId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: invoiceId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1248,14 +1248,14 @@ paths:
               schema:
                 type: object
                 required:
-                - invoiceId
-                - electionId
-                - issuingOfficeId
-                - receivingOfficeId
-                - issuedBy
-                - issuedTo
-                - issuedAt
-                - confirmed
+                  - invoiceId
+                  - electionId
+                  - issuingOfficeId
+                  - receivingOfficeId
+                  - issuedBy
+                  - issuedTo
+                  - issuedAt
+                  - confirmed
                 properties:
                   invoiceId:
                     type: integer
@@ -1308,60 +1308,60 @@ paths:
   /invoice/stationary-item:
     get:
       tags:
-      - Invoice Stationary
+        - Invoice Stationary
       summary: Get all.
       operationId: api.InvoiceStationaryItemApi.get_all
       parameters:
-      - name: limit
-        in: query
-        description: Limit of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 20
-      - name: offset
-        in: query
-        description: Offset of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 0
-      - name: invoiceId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: stationaryItemId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: received
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: receivedBy
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: receivedFrom
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: receivedOffice
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: invoiceId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: stationaryItemId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: received
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: receivedBy
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: receivedFrom
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: receivedOffice
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1372,13 +1372,13 @@ paths:
                 items:
                   type: object
                   required:
-                  - invoiceId
-                  - stationaryItemId
-                  - received
-                  - receivedBy
-                  - receivedFrom
-                  - receivedOfficeId
-                  - receivedAt
+                    - invoiceId
+                    - stationaryItemId
+                    - received
+                    - receivedBy
+                    - receivedFrom
+                    - receivedOfficeId
+                    - receivedAt
                   properties:
                     invoiceId:
                       type: integer
@@ -1433,16 +1433,16 @@ paths:
   /invoice/{invoiceId}/stationary-item:
     post:
       tags:
-      - Invoice Stationary
+        - Invoice Stationary
       summary: Create.
       operationId: api.InvoiceStationaryItemApi.create
       parameters:
-      - name: invoiceId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: invoiceId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1451,9 +1451,9 @@ paths:
               schema:
                 type: object
                 required:
-                - invoiceId
-                - stationaryItemId
-                - received
+                  - invoiceId
+                  - stationaryItemId
+                  - received
                 properties:
                   invoiceId:
                     type: integer
@@ -1510,7 +1510,7 @@ paths:
             schema:
               type: object
               required:
-              - stationaryItemId
+                - stationaryItemId
               properties:
                 stationaryItemId:
                   type: integer
@@ -1521,22 +1521,22 @@ paths:
   /invoice/{invoiceId}/stationary-item/{stationaryItemId}:
     get:
       tags:
-      - Invoice Stationary
+        - Invoice Stationary
       summary: Get all.
       operationId: api.InvoiceStationaryItemApi.get_by_id
       parameters:
-      - name: invoiceId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
-      - name: stationaryItemId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: invoiceId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+        - name: stationaryItemId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1545,13 +1545,13 @@ paths:
               schema:
                 type: object
                 required:
-                - invoiceId
-                - stationaryItemId
-                - received
-                - receivedBy
-                - receivedFrom
-                - receivedOfficeId
-                - receivedAt
+                  - invoiceId
+                  - stationaryItemId
+                  - received
+                  - receivedBy
+                  - receivedFrom
+                  - receivedOfficeId
+                  - receivedAt
                 properties:
                   invoiceId:
                     type: integer
@@ -1605,22 +1605,22 @@ paths:
 
     delete:
       tags:
-      - Invoice Stationary
+        - Invoice Stationary
       summary: Get all.
       operationId: api.InvoiceStationaryItemApi.delete
       parameters:
-      - name: invoiceId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
-      - name: stationaryItemId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: invoiceId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+        - name: stationaryItemId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1656,7 +1656,7 @@ paths:
   /invoice/stationary-item/receive:
     put:
       tags:
-      - Invoice Stationary
+        - Invoice Stationary
       summary: Create.
       operationId: api.InvoiceStationaryItemApi.receive
       responses:
@@ -1742,7 +1742,7 @@ paths:
   /proof/upload:
     put:
       tags:
-      - Proof
+        - Proof
       summary: Upload a proof.
       operationId: api.ProofApi.upload_file
       responses:
@@ -1794,16 +1794,16 @@ paths:
   /proof/{proofId}/finish:
     put:
       tags:
-      - Proof
+        - Proof
       summary: Create.
       operationId: api.ProofApi.finish
       parameters:
-      - name: proofId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: proofId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1839,16 +1839,16 @@ paths:
   /proof/{proofId}:
     get:
       tags:
-      - Proof
+        - Proof
       summary: Create.
       operationId: api.ProofApi.get_by_id
       parameters:
-      - name: proofId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: proofId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -1884,16 +1884,16 @@ paths:
   /file/{fileId}:
     get:
       tags:
-      - Files
+        - Files
       summary: Get by ID
       operationId: api.FileApi.get_by_id
       parameters:
-      - name: fileId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: fileId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -1925,16 +1925,16 @@ paths:
   /file/{fileId}/inline:
     get:
       tags:
-      - Files
+        - Files
       summary: Get by ID
       operationId: api.FileApi.get_inline_file
       parameters:
-      - name: fileId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: fileId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -1970,16 +1970,16 @@ paths:
   /file/{fileId}/download:
     get:
       tags:
-      - Files
+        - Files
       summary: Get by ID
       operationId: api.FileApi.get_download_file
       parameters:
-      - name: fileId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: fileId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -2015,53 +2015,53 @@ paths:
   /area:
     get:
       tags:
-      - Area
+        - Area
       summary: Get by ID
       operationId: api.AreaApi.get_all
       parameters:
-      - name: limit
-        in: query
-        description: Limit of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 20
-      - name: offset
-        in: query
-        description: Offset of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 0
-      - name: electionId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: associatedAreaId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: areaType
-        required: false
-        in: query
-        schema:
-          type: string
-          enum:
-          - ElectionCommission
-          - DistrictCentre
-          - CountingCentre
-          - PostalVoteCountingCentre
-          - PollingStation
-          - Country
-          - Province
-          - AdministrativeDistrict
-          - ElectoralDistrict
-          - PollingDivision
-          - PollingDistrict
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: associatedAreaId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: areaType
+          required: false
+          in: query
+          schema:
+            type: string
+            enum:
+              - ElectionCommission
+              - DistrictCentre
+              - CountingCentre
+              - PostalVoteCountingCentre
+              - PollingStation
+              - Country
+              - Province
+              - AdministrativeDistrict
+              - ElectoralDistrict
+              - PollingDivision
+              - PollingDistrict
       responses:
         '200':
           description: OK
@@ -2097,63 +2097,63 @@ paths:
   /tally-sheet:
     get:
       tags:
-      - Tally Sheet
+        - Tally Sheet
       summary: Get all the tally sheets.
       operationId: api.TallySheetApi.getAll
       parameters:
-      - name: limit
-        in: query
-        description: Limit of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 20
-      - name: offset
-        in: query
-        description: Offset of the result array.
-        required: false
-        schema:
-          type: integer
-          default: 0
-      - name: electionId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: areaId
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: createdBy
-        required: false
-        in: query
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetCode
-        required: false
-        in: query
-        schema:
-          type: string
-          enum:
-          - CE-201
-          - CE-201-PV
-          - PRE-41
-          - PRE-21
-          - PRE-30-PD
-          - PRE-30-ED
-          - PRE-34-CO
-          - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
-          - PRE-ALL-ISLAND-RESULTS
-          - PRE-34-I-RO
-          - PRE-34-II-RO
-          - PRE-34
-          - PRE-34-PD
-          - PRE-34-ED
-          - PRE-34-AI
+        - name: limit
+          in: query
+          description: Limit of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Offset of the result array.
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: electionId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: areaId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: createdBy
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetCode
+          required: false
+          in: query
+          schema:
+            type: string
+            enum:
+              - CE-201
+              - CE-201-PV
+              - PRE-41
+              - PRE-21
+              - PRE-30-PD
+              - PRE-30-ED
+              - PRE-34-CO
+              - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
+              - PRE-ALL-ISLAND-RESULTS
+              - PRE-34-I-RO
+              - PRE-34-II-RO
+              - PRE-34
+              - PRE-34-PD
+              - PRE-34-ED
+              - PRE-34-AI
       responses:
         '200':
           description: Successful operation.
@@ -2164,9 +2164,9 @@ paths:
                 items:
                   type: object
                   required:
-                  - electionId
-                  - officeId
-                  - tallySheetCode
+                    - electionId
+                    - officeId
+                    - tallySheetCode
                   properties:
                     id:
                       type: integer
@@ -2194,20 +2194,20 @@ paths:
                     tallySheetCode:
                       type: string
                       enum:
-                      - CE-201
-                      - CE-201-PV
-                      - PRE-41
-                      - PRE-21
-                      - PRE-30-PD
-                      - PRE-30-ED
-                      - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
-                      - PRE-ALL-ISLAND-RESULTS
-                      - PRE-34-I-RO
-                      - PRE-34-II-RO
-                      - PRE-34
-                      - PRE-34-PD
-                      - PRE-34-ED
-                      - PRE-34-AI
+                        - CE-201
+                        - CE-201-PV
+                        - PRE-41
+                        - PRE-21
+                        - PRE-30-PD
+                        - PRE-30-ED
+                        - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
+                        - PRE-ALL-ISLAND-RESULTS
+                        - PRE-34-I-RO
+                        - PRE-34-II-RO
+                        - PRE-34
+                        - PRE-34-PD
+                        - PRE-34-ED
+                        - PRE-34-AI
         '400':
           description: Bad request.
           content:
@@ -2236,17 +2236,17 @@ paths:
   /tally-sheet/{tallySheetId}:
     get:
       tags:
-      - Tally Sheet
+        - Tally Sheet
       summary: Get tally sheet by ID
       operationId: api.TallySheetApi.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -2255,9 +2255,9 @@ paths:
               schema:
                 type: object
                 required:
-                - electionId
-                - officeId
-                - tallySheetCode
+                  - electionId
+                  - officeId
+                  - tallySheetCode
                 properties:
                   id:
                     type: integer
@@ -2285,14 +2285,14 @@ paths:
                   tallySheetCode:
                     type: string
                     enum:
-                    - CE-201
-                    - CE-201-PV
-                    - PRE-41
-                    - PRE-21
-                    - PRE-30-PD
-                    - PRE-30-ED
-                    - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
-                    - PRE-ALL-ISLAND-RESULTS
+                      - CE-201
+                      - CE-201-PV
+                      - PRE-41
+                      - PRE-21
+                      - PRE-30-PD
+                      - PRE-30-ED
+                      - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
+                      - PRE-ALL-ISLAND-RESULTS
         '400':
           description: Bad request.
           content:
@@ -2321,17 +2321,17 @@ paths:
   /tally-sheet/PRE-41/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersionPRE41Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -2340,8 +2340,8 @@ paths:
               schema:
                 type: object
                 required:
-                - content
-                - summary
+                  - content
+                  - summary
                 properties:
                   content:
                     type: array
@@ -2390,8 +2390,8 @@ paths:
             schema:
               type: object
               required:
-              - content
-              - summary
+                - content
+                - summary
               properties:
                 content:
                   type: array
@@ -2415,24 +2415,24 @@ paths:
   /tally-sheet/PRE-41/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersionPRE41Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -2441,8 +2441,8 @@ paths:
               schema:
                 type: object
                 required:
-                - content
-                - summary
+                  - content
+                  - summary
                 properties:
                   content:
                     type: array
@@ -2489,17 +2489,17 @@ paths:
   /tally-sheet/PRE-21/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersionPRE21Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -2508,7 +2508,7 @@ paths:
               schema:
                 type: object
                 required:
-                - content
+                  - content
                 properties:
                   content:
                     type: array
@@ -2553,7 +2553,7 @@ paths:
             schema:
               type: object
               required:
-              - content
+                - content
               properties:
                 content:
                   type: array
@@ -2571,24 +2571,24 @@ paths:
   /tally-sheet/PRE-21/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersionPRE21Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -2624,17 +2624,17 @@ paths:
   /tally-sheet/CE-201/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersionCE201Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -2643,7 +2643,7 @@ paths:
               schema:
                 type: object
                 required:
-                - content
+                  - content
                 properties:
                   content:
                     type: array
@@ -2715,7 +2715,7 @@ paths:
             schema:
               type: object
               required:
-              - content
+                - content
               properties:
                 content:
                   type: array
@@ -2762,24 +2762,24 @@ paths:
   /tally-sheet/CE-201/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersionCE201Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -2788,7 +2788,7 @@ paths:
               schema:
                 type: object
                 required:
-                - content
+                  - content
                 properties:
                   content:
                     type: array
@@ -2858,17 +2858,17 @@ paths:
   /tally-sheet/CE-201-PV/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_CE_201_PV_Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -2877,8 +2877,8 @@ paths:
               schema:
                 type: object
                 required:
-                - content
-                - summary
+                  - content
+                  - summary
                 properties:
                   content:
                     type: array
@@ -2938,8 +2938,8 @@ paths:
             schema:
               type: object
               required:
-              - content
-              - summary
+                - content
+                - summary
               properties:
                 content:
                   type: array
@@ -2972,24 +2972,24 @@ paths:
   /tally-sheet/CE-201-PV/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_CE_201_PV_Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -2998,8 +2998,8 @@ paths:
               schema:
                 type: object
                 required:
-                - content
-                - summary
+                  - content
+                  - summary
                 properties:
                   content:
                     type: array
@@ -3057,17 +3057,17 @@ paths:
   /tally-sheet/PRE-30-PD/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_PD_Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3102,24 +3102,24 @@ paths:
   /tally-sheet/PRE-30-PD/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_PD_Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3155,17 +3155,17 @@ paths:
   /tally-sheet/PRE-30-ED/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_ED_Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3200,24 +3200,24 @@ paths:
   /tally-sheet/PRE-30-ED/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_30_ED_Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3254,17 +3254,17 @@ paths:
   /tally-sheet/PRE-34-PD/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_PD_Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3299,24 +3299,24 @@ paths:
   /tally-sheet/PRE-34-PD/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_PD_Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3350,20 +3350,220 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
 
+  /tally-sheet/PRE-34-ED/{tallySheetId}/version:
+    post:
+      tags:
+        - Tally Sheet Version
+      summary: Create tally sheet version
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_ED_Api.create
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /tally-sheet/PRE-34-ED/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - Tally Sheet Version
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_ED_Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+
+  /tally-sheet/PRE-34-AI/{tallySheetId}/version:
+    post:
+      tags:
+        - Tally Sheet Version
+      summary: Create tally sheet version
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_AI_Api.create
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /tally-sheet/PRE-34-AI/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - Tally Sheet Version
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_AI_Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+
   /tally-sheet/PRE-34-I-RO/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_I_RO_Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3398,24 +3598,24 @@ paths:
   /tally-sheet/PRE-30-I-RO/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_I_RO_Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3452,24 +3652,24 @@ paths:
   /tally-sheet/PRE-34-CO/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_CO_Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/json:
             schema:
               type: object
               required:
-              - content
+                - content
               properties:
                 content:
                   type: array
@@ -3518,24 +3718,24 @@ paths:
   /tally-sheet/PRE-34-CO/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_CO_Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3571,17 +3771,17 @@ paths:
   /tally-sheet/PRE-ALL-ISLAND-RESULTS/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULT_Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3616,24 +3816,24 @@ paths:
   /tally-sheet/PRE-ALL-ISLAND-RESULTS/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULT_Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3669,17 +3869,17 @@ paths:
   /tally-sheet/PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS/{tallySheetId}/version:
     post:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Create tally sheet version
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Api.create
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3714,24 +3914,24 @@ paths:
   /tally-sheet/PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS/{tallySheetId}/version/{tallySheetVersionId}:
     get:
       tags:
-      - Tally Sheet Version
+        - Tally Sheet Version
       summary: Get tally sheet version by ID
       operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Api.get_by_id
       parameters:
-      - name: tallySheetId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        in: path
-        description: Tally sheet ID
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.
@@ -3767,22 +3967,22 @@ paths:
   /tally-sheet/{tallySheetId}/version/{tallySheetVersionId}/html:
     get:
       tags:
-      - Tally Sheet Version Export
+        - Tally Sheet Version Export
       summary: Get by ID
       operationId: api.TallySheetVersionApi.html
       parameters:
-      - name: tallySheetId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
-      - name: tallySheetVersionId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -3818,16 +4018,16 @@ paths:
   /tally-sheet/{tallySheetId}/empty/html:
     get:
       tags:
-      - Tally Sheet Version Export
+        - Tally Sheet Version Export
       summary: Get by ID
       operationId: api.TallySheetVersionApi.create_empty_and_get_html
       parameters:
-      - name: tallySheetId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -3863,16 +4063,16 @@ paths:
   /tally-sheet/{tallySheetId}/lock:
     put:
       tags:
-      - Tally Sheet
+        - Tally Sheet
       summary: Get by ID
       operationId: api.TallySheetApi.lock
       parameters:
-      - name: tallySheetId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -3910,7 +4110,7 @@ paths:
             schema:
               type: object
               required:
-              - lockedVersionId
+                - lockedVersionId
               properties:
                 lockedVersionId:
                   type: integer
@@ -3919,16 +4119,16 @@ paths:
   /tally-sheet/{tallySheetId}/unlock:
     put:
       tags:
-      - Tally Sheet
+        - Tally Sheet
       summary: Get by ID
       operationId: api.TallySheetApi.unlock
       parameters:
-      - name: tallySheetId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -3964,16 +4164,16 @@ paths:
   /tally-sheet/{tallySheetId}/submit:
     put:
       tags:
-      - Tally Sheet
+        - Tally Sheet
       summary: Get by ID
       operationId: api.TallySheetApi.submit
       parameters:
-      - name: tallySheetId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -4011,7 +4211,7 @@ paths:
             schema:
               type: object
               required:
-              - submittedVersionId
+                - submittedVersionId
               properties:
                 submittedVersionId:
                   type: integer
@@ -4020,16 +4220,16 @@ paths:
   /tally-sheet/{tallySheetId}/request-edit:
     put:
       tags:
-      - Tally Sheet
+        - Tally Sheet
       summary: Get by ID
       operationId: api.TallySheetApi.request_edit
       parameters:
-      - name: tallySheetId
-        required: true
-        in: path
-        schema:
-          type: integer
-          format: int64
+        - name: tallySheetId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK

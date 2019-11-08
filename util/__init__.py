@@ -75,6 +75,10 @@ def get_tally_sheet_code(tally_sheet_code_str):
         return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
     elif tally_sheet_code_str == "PRE-34-PD":
         return TallySheetCodeEnum.PRE_34_PD
+    elif tally_sheet_code_str == "PRE-34-ED":
+        return TallySheetCodeEnum.PRE_34_ED
+    elif tally_sheet_code_str == "PRE-34-AI":
+        return TallySheetCodeEnum.PRE_34_AI
 
 
 def get_tally_sheet_code_string(tally_sheet_code):
@@ -106,6 +110,10 @@ def get_tally_sheet_code_string(tally_sheet_code):
         return "PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_34_PD:
         return "PRE-34-PD"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_34_ED:
+        return "PRE-34-ED"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_34_AI:
+        return "PRE-34-AI"
 
 
 def get_tally_sheet_version_class(tally_sheet_version_code):
@@ -113,7 +121,7 @@ def get_tally_sheet_version_class(tally_sheet_version_code):
         TallySheetVersionCE201, TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_34_CO, \
         TallySheetVersion_PRE_30_ED, TallySheetVersion_PRE_ALL_ISLAND_RESULT, \
         TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersion_PRE_34_I_RO, \
-        TallySheetVersion_PRE_34_PD
+        TallySheetVersion_PRE_34_PD, TallySheetVersion_PRE_34_ED, TallySheetVersion_PRE_34_AI
 
     if tally_sheet_version_code is TallySheetCodeEnum.CE_201:
         return TallySheetVersionCE201
@@ -139,6 +147,10 @@ def get_tally_sheet_version_class(tally_sheet_version_code):
         return TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
     elif tally_sheet_version_code is TallySheetCodeEnum.PRE_34_PD:
         return TallySheetVersion_PRE_34_PD
+    elif tally_sheet_version_code is TallySheetCodeEnum.PRE_34_ED:
+        return TallySheetVersion_PRE_34_ED
+    elif tally_sheet_version_code is TallySheetCodeEnum.PRE_34_AI:
+        return TallySheetVersion_PRE_34_AI
 
 
 def sqlalchemy_num_or_zero(column):
