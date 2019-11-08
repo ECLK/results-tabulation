@@ -84,6 +84,7 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
         ).all()
 
         content = {
+            "tallySheetCode": "PRE/34/I/RO",
             "election": {
                 "electionName": self.submission.election.get_official_name()
             },
@@ -101,6 +102,7 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
         }
 
         if self.submission.election.voteType == VoteTypeEnum.Postal:
+            content["tallySheetCode"] = "PRE/34/I/RO PV"
             content["pollingDivisionOrPostalVoteCountingCentres"] = ", ".join([
                 countingCentre.areaName for countingCentre in
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.CountingCentre,

@@ -84,6 +84,7 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
         ).all()
 
         content = {
+            "tallySheetCode": "PRE/34/CO",
             "election": {
                 "electionName": self.submission.election.get_official_name()
             },
@@ -104,6 +105,10 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
             "data": [],
             "candidates": disqualifiedCandidates
         }
+
+        if self.submission.election.voteType == VoteTypeEnum.Postal:
+            content["tallySheetCode"] = "PRE/34/CO PV"
+            content["pollingDivision"] = "Postal"
 
         temp_data = {}
 
