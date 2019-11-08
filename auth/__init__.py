@@ -397,24 +397,10 @@ def authorize(func, required_roles=None, *args, **kwargs):
                 # To list, view and lock All Island Reports
                 user_access_area_ids.extend(claim_area_ids)
 
+                # To list, view and unlock PR-30-PV and PRE-30-ED.
                 if country_id in global_area_map[Countries][ElectoralDistricts]:
                     user_access_area_ids.extend(
                         global_area_map[Countries][ElectoralDistricts][country_id]
-                    )
-
-                if country_id in global_area_map[Countries][PollingDivisions]:
-                    user_access_area_ids.extend(
-                        global_area_map[Countries][PollingDivisions][country_id]
-                    )
-
-                if country_id in global_area_map[Countries][CountingCentres][Postal]:
-                    user_access_area_ids.extend(
-                        global_area_map[Countries][CountingCentres][Postal][country_id]
-                    )
-
-                if country_id in global_area_map[Countries][CountingCentres][NonPostal]:
-                    user_access_area_ids.extend(
-                        global_area_map[Countries][CountingCentres][NonPostal][country_id]
                     )
 
         elif role is EC_LEADERSHIP_ROLE:
