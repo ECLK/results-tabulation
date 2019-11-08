@@ -1,5 +1,6 @@
 from app import db
-from auth import authorize
+from auth import authorize, POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, \
+    NATIONAL_REPORT_VERIFIER_ROLE
 from auth.AuthConstants import POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
 from orm.entities import Submission, Area, Election
@@ -13,7 +14,9 @@ from sqlalchemy import func, and_, or_
 
 
 @authorize(
-    required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
+    required_roles=[POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE,
+                    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                    NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
     result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,
@@ -21,9 +24,11 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     )
 
     return TallySheetVersionSchema().dump(result).data
-git
+
+
 @authorize(
-    required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE])
+    required_roles=[POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE,
+                    ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def create(tallySheetId):
     tallySheet, tallySheetVersion = TallySheet.create_latest_version(
         tallySheetId=tallySheetId,
