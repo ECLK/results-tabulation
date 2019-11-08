@@ -59,7 +59,8 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             Party.Model.partyId == ElectionCandidate.Model.partyId,
             isouter=True
         ).filter(
-            ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
+            ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds),
+            ElectionCandidate.Model.qualifiedForPreferences == True
         ).all()
 
     def html(self):
@@ -78,7 +79,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
         # ).all()
 
         content = {
-            "tallySheetCode": "PRE/34/PO",
+            "tallySheetCode": "PRE-34-PD",
             "election": {
                 "electionName": self.submission.election.get_official_name()
             },
@@ -87,16 +88,20 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
                 "createdBy": stamp.createdBy,
                 "barcodeString": stamp.barcodeString
             },
+            "electoralDistrict": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": "XX",
             "data": [],
             # "candidates": disqualifiedCandidates
         }
 
         if self.submission.election.voteType == VoteTypeEnum.Postal:
-            content["tallySheetCode"] = "PRE/34/CO PV"
+            content["tallySheetCode"] = "PRE-34-PV"
             content["pollingDivision"] = "Postal"
+        elif self.submission.election.voteType == VoteTypeEnum.NonPostal:
+            content["pollingDivision"] = self.submission.area.areaName
 
         temp_data = {}
-
         for candidateIndex in range(len(tallySheetContent)):
             candidate = tallySheetContent[candidateIndex]
             temp_data[candidate.candidateId] = {
