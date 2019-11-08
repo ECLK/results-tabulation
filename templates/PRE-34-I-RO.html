@@ -5,129 +5,153 @@
     <br/>
     <table class="table table-borderless">
         <tbody>
-            <tr>
-                <td colspan="8" style="text-align:center; padding-left:160px;" class="no-padding-bottom bold">
-                    {{content.election.electionName}}
-                </td>
-                <td colspan="2" class="font1 no-padding-bottom bold" style="text-align:center;"><span class="all" style="font-size: 20px !important; padding: 5px;"><strong>PRE/34/I/RO</strong></span></td>
-            </tr>
-            <tr>
-                <td colspan="10" class="no-padding-bottom bold" style="text-align:center;">
-                  Statement of the Returning Officer showing the Second and Third Preferences counted in favour of each of the remaining two candidates according to <br/>
-                  Counting Centers of a Polling Division, all Postal Votes Counting Centers
-                </td>
-            </tr>
-            <tr>
-                <td colspan="10" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 1 (Name): <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
-            </tr>
-            <tr>
-                <td colspan="10" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 2 (Name): <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
-            </tr>
-            <tr>
-                <td colspan="5">Electorate:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
-                <td colspan="5">Name of the Polling Division/ Postal Voting Centers:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
-            </tr>
+        <tr>
+            <td colspan="8" style="text-align:center; padding-left:160px;" class="no-padding-bottom bold">
+                {{content.election.electionName}}
+            </td>
+            <td colspan="2" class="font1 no-padding-bottom bold" style="text-align:center;">
+                <span class="all" style="font-size: 20px !important; padding: 5px;">
+                    <strong>{{content.tallySheetCode}}</strong>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="10" class="no-padding-bottom bold" style="text-align:center;">
+                Statement of the Returning Officer showing the Second and Third Preferences counted in favour of each of
+                the remaining two candidates according to <br/>
+                Counting Centers of a Polling Division, all Postal Votes Counting Centers
+            </td>
+        </tr>
 
-            <tr style="text-align:center; font-size:14px;" class="bold">
-                <td rowspan="2" class="all" style="vertical-align:middle;">Counting Center Number</td>
-                <td colspan="3" class="all">(1)<br/>
-                  In favour of<br/>
-                  <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span><br/>
-                  Name of Candidate No. 1
-                </td>
-                <td colspan="3" class="all">(2)<br/>
-                  In favour of<br/>
-                  <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span><br/>
-                  Name of Candidate No. 2
-                </td>
-                <td rowspan="2" class="all" style="vertical-align:middle;">(3)<br/>
-                  Ballot Papers "Not Counted" Section 58(2)
-                </td>
-                <td rowspan="2" class="all" style="vertical-align:middle;">(4)<br/>
-                  Remaining Ballot Papers
-                </td>
-                <td rowspan="2" class="all" style="vertical-align:middle;">(5)<br/>Total<br/><br/>
-                  (3) + (4)
-                </td>
-            </tr>
+        {% for candidatePreference in content.data %}
+        <tr>
+            <td colspan="10" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 1 (Name): <span
+                    style="text-decoration-line: underline;text-decoration-style: dotted;">{{candidatePreference.name}}</span>
+            </td>
+        </tr>
+        {% endfor %}
 
-            <tr style="text-align:center; font-size:14px;" class="bold">
-                <td class="all">No of 2<sup>nd</sup> preferences</td>
-                <td class="all">No of 3<sup>rd</sup> preferences</td>
-                <td class="all">Total</td>
-                <td class="all">No of 2<sup>nd</sup> preferences</td>
-                <td class="all">No of 3<sup>rd</sup> preferences</td>
-                <td class="all">Total</td>
-            </tr>
+        <tr>
+            <td colspan="5">Electorate:- <span
+                    style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.electoralDistrict}}</span>
+            </td>
+            <td colspan="5">Name of the Polling Division/ Postal Voting Centers:- <span
+                    style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.pollingDivisionOrPostalVoteCountingCentres}}</span>
+            </td>
+        </tr>
 
-            <!--loop this tr block and populate with data -->
-            <tr style="font-size:14px;">
-                <td class="all"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-            </tr>
-            <!--loop this tr block -->
+        <tr style="text-align:center; font-size:14px;" class="bold">
+            <td rowspan="2" class="all"></td>
+            <td rowspan="2" class="all">Name of the Candidates<br/><br/>
+                [Order of the Names should be indicated according to the Commissioner's direction (Section 57)]
+            </td>
+
+            {% for candidatePreference in content.data %}
+            <td colspan="3" class="all">(1)<br/>
+                In favour of<br/>
+                <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{ candidatePreference.name }}</span><br/>
+                Name of Candidate No. {{candidatePreference.number}}
+            </td>
+            {% endfor %}
+
+            <td rowspan="2" class="all">(3)<br/>
+                Ballot Papers "Not Counted" Section 58(2)
+            </td>
+            <td rowspan="2" class="all">(5)<br/>
+                Remaining Ballot Papers
+            </td>
+            <td rowspan="2" class="all">(5)<br/>Total<br/><br/>
+                (3) + (4)
+            </td>
+        </tr>
+
+        <tr style="text-align:center; font-size:14px;" class="bold">
+            <td class="all">No of 2<sup>nd</sup> preferences</td>
+            <td class="all">No of 3<sup>rd</sup> preferences</td>
+            <td class="all">Total</td>
+            <td class="all">No of 2<sup>nd</sup> preferences</td>
+            <td class="all">No of 3<sup>rd</sup> preferences</td>
+            <td class="all">Total</td>
+        </tr>
+
+        {% for candidate in content.candidates %}
+        <tr style="font-size:14px;">
+            <td class="all" style="text-align:right;">{{ loop.index }}</td>
+            <td class="all">{{candidate.candidateName }}</td>
+
+            {% for candidatePreference in content.data %}
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            {% endfor %}
+
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+        </tr>
+        {% endfor %}
 
 
-            <tr style="font-size:14px;">
-                <td class="all bold">TOTAL IN FIGURES</td>
-                <!--loop this tr block and populate with data -->
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <td class="all" style="text-align:right;"></td>
-                <!--loop this tr block -->
-            </tr>
+        <tr style="font-size:14px;">
+            <td class="all"></td>
+            <td class="all bold">TOTAL IN FIGURES</td>
 
-            <tr style="font-size:14px;">
-                <td class="all bold" style="vertical-align:middle;">TOTAL IN WORDS</td>
-                <td class="all bold" colspan="3" style="text-align:justify;">The Total No. of Preferences in favour of Candidate No. 1<br/>
-                  (Name:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>)<br/>
-                  is <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>
-                </td>
+            {% for candidatePreference in content.data %}
+            <td class="all" style="text-align:right;">{{ candidatePreference.secondPreferenceCount }}</td>
+            <td class="all" style="text-align:right;">{{ candidatePreference.thirdPreferenceCount }}</td>
+            <td class="all" style="text-align:right;">
+                {{ candidatePreference.secondPreferenceCount + candidatePreference.thirdPreferenceCount }}
+            </td>
+            {% endfor %}
 
-                <td class="all bold" colspan="3" style="text-align:justify;">The Total No. of Preferences in favour of Candidate No. 2<br/>
-                  (Name:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>)<br/>
-                  is <span style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span>
-                </td>
-                <td class="all"></td>
-                <td class="all"></td>
-                <td class="all"></td>
-            </tr>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+        </tr>
 
-            <tr>
-                <td colspan="10"></td>
-            </tr>
+        <tr style="font-size:14px;">
+            <td class="all"></td>
+            <td class="all bold">TOTAL IN WORDS</td>
 
-            <tr style="font-size:14px;">
-                <td colspan="4">
-                  Prepared by : .................................................................<br/><br/>
-                  Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : .................................................................<br/><br/>
-                  Signature &nbsp;&nbsp;&nbsp; : .................................................................<br/><br/>
-                  Checked by &nbsp;: .................................................................<br/><br/>
-                  Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : .................................................................<br/><br/>
-                  Signature &nbsp;&nbsp;&nbsp; : .................................................................<br/><br/>
-                </td>
-                <td colspan="3"></td>
-                <td colspan="4">
-                  ...........................................................................<br/><br/>
-                  Returning Officer (Signature)<br/><br/>
-                  Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : ..............................................<br/><br/>
-                  Electoral District : ..............................................
-                </td>
-            </tr>
+            {% for candidatePreference in content.data %}
+            <td class="all bold" colspan="3" style="text-align:justify;">The Total No. of Preferences in favour of
+                Candidate No. {{candidatePreference.number}}<br/>
+                (Name:- <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{candidatePreference.name}}</span>)<br/>
+                is <span style="text-decoration-line: underline;text-decoration-style: dotted;">............................................</span>
+            </td>
+            {% endfor %}
+
+            <td class="all"></td>
+            <td class="all"></td>
+            <td class="all"></td>
+        </tr>
+
+        <tr>
+            <td colspan="10"></td>
+        </tr>
+
+        <tr style="font-size:14px;">
+            <td colspan="4">
+                Prepared by : .................................................................<br/><br/>
+                Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :
+                .................................................................<br/><br/>
+                Signature &nbsp;&nbsp;&nbsp; :
+                .................................................................<br/><br/>
+                Checked by &nbsp;: .................................................................<br/><br/>
+                Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :
+                .................................................................<br/><br/>
+                Signature &nbsp;&nbsp;&nbsp; :
+                .................................................................<br/><br/>
+            </td>
+            <td colspan="3"></td>
+            <td colspan="4">
+                ...........................................................................<br/><br/>
+                Returning Officer (Signature)<br/><br/>
+                Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :
+                ..............................................<br/><br/>
+                Electoral District : ..............................................
+            </td>
+        </tr>
 
 
         </tbody>
