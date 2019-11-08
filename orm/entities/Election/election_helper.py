@@ -174,6 +174,11 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
                     electionId=election.electionId,
                     areaId=obj.areaId
                 )
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_34_AI,
+                    electionId=election.electionId,
+                    areaId=obj.areaId
+                )
 
             elif data_store_key == "Electoral District":
                 obj = ElectoralDistrict.create(cell, electionId=election.electionId)
@@ -182,7 +187,14 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
                     tallySheetCode=TallySheetCodeEnum.PRE_30_ED, electionId=election.electionId, areaId=obj.areaId
                 )
                 TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_34_ED, electionId=election.electionId, areaId=obj.areaId
+                )
+                TallySheet.create(
                     tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=postal_election.electionId,
+                    areaId=obj.areaId
+                )
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_34_PD, electionId=postal_election.electionId,
                     areaId=obj.areaId
                 )
                 TallySheet.create(
@@ -203,6 +215,10 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
 
                 TallySheet.create(
                     tallySheetCode=TallySheetCodeEnum.PRE_30_PD, electionId=ordinary_election.electionId,
+                    areaId=obj.areaId
+                )
+                TallySheet.create(
+                    tallySheetCode=TallySheetCodeEnum.PRE_34_PD, electionId=ordinary_election.electionId,
                     areaId=obj.areaId
                 )
                 TallySheet.create(
