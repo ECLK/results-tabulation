@@ -3450,6 +3450,106 @@ paths:
 
 
 
+  /tally-sheet/PRE-34-AI/{tallySheetId}/version:
+    post:
+      tags:
+        - Tally Sheet Version
+      summary: Create tally sheet version
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_AI_Api.create
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /tally-sheet/PRE-34-AI/{tallySheetId}/version/{tallySheetVersionId}:
+    get:
+      tags:
+        - Tally Sheet Version
+      summary: Get tally sheet version by ID
+      operationId: api.TallySheetVersionApi.TallySheetVersion_PRE_34_AI_Api.get_by_id
+      parameters:
+        - name: tallySheetId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          in: path
+          description: Tally sheet ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+
   /tally-sheet/PRE-34-I-RO/{tallySheetId}/version:
     post:
       tags:

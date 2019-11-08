@@ -1,6 +1,6 @@
 from app import db
 from auth import authorize, POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, \
-    NATIONAL_REPORT_VERIFIER_ROLE
+    NATIONAL_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE
 from auth.AuthConstants import POLLING_DIVISION_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
 from orm.entities import Submission, Area, Election
@@ -14,8 +14,7 @@ from schemas import TallySheetVersionSchema
 from sqlalchemy import func, and_, or_
 
 
-@authorize(required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
-                           NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
+@authorize(required_roles=[NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def get_by_id(tallySheetId, tallySheetVersionId):
     result = TallySheetVersion.get_by_id(
         tallySheetId=tallySheetId,
@@ -25,27 +24,24 @@ def get_by_id(tallySheetId, tallySheetVersionId):
     return TallySheetVersionSchema().dump(result).data
 
 
-@authorize(
-    required_roles=[ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
-                    NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
+@authorize(required_roles=[NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
 def create(tallySheetId):
     tallySheet, tallySheetVersion = TallySheet.create_latest_version(
         tallySheetId=tallySheetId,
-        tallySheetCode=TallySheetCodeEnum.PRE_34_ED
+        tallySheetCode=TallySheetCodeEnum.PRE_34_AI
     )
 
-    electoral_district_id = tallySheet.submission.areaId
-    polling_divisions = db.session.query(
-        AreaMap.Model.pollingDivisionId
+    electoral_districts = db.session.query(
+        AreaMap.Model.electoralDistrictId
     ).filter(
-        AreaMap.Model.electoralDistrictId == electoral_district_id
+        AreaMap.Model.countryId == tallySheet.submission.areaId
     ).group_by(
-        AreaMap.Model.pollingDivisionId
+        AreaMap.Model.electoralDistrictId
     ).all()
 
-    electoral_district_and_polling_division_ids = [electoral_district_id]
-    for polling_division in polling_divisions:
-        electoral_district_and_polling_division_ids.append(polling_division.pollingDivisionId)
+    electoral_district_ids = []
+    for electoral_district in electoral_districts:
+        electoral_district_ids.append(electoral_district.electoralDistrictId)
 
     query = db.session.query(
         func.count(Area.Model.areaId).label("areaCount"),
@@ -69,7 +65,7 @@ def create(tallySheetId):
         TallySheet.Model,
         and_(
             TallySheet.Model.tallySheetId == Submission.Model.submissionId,
-            TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_34_PD
+            TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_34_ED
         )
     ).join(
         TallySheetVersionRow_PRE_34_preference.Model,
@@ -78,8 +74,7 @@ def create(tallySheetId):
             TallySheetVersionRow_PRE_34_preference.Model.candidateId == ElectionCandidate.Model.candidateId
         ),
     ).filter(
-        Submission.Model.areaId.in_(electoral_district_and_polling_division_ids),
-        ElectionCandidate.Model.qualifiedForPreferences == True
+        Submission.Model.areaId.in_(electoral_district_ids)
     ).group_by(
         ElectionCandidate.Model.candidateId,
         TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber
@@ -91,6 +86,7 @@ def create(tallySheetId):
     is_complete = True  # TODO:Change other reports to validate like this
     for row in query:
         if row.candidateId is not None and row.preferenceNumber is not None and row.preferenceCount:
+            print("========== row ======== ", row)
             tallySheetVersion.add_row(
                 electionId=row.electionId,
                 candidateId=row.candidateId,
