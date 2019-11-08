@@ -7,9 +7,6 @@
     <div>
         <strong>Electoral District : </strong>{{content.electoralDistrict}}
     </div>
-    <div>
-        <strong>Polling Division : </strong>{{content.pollingDivision}}
-    </div>
     <table class="table table-borderless">
         <tbody>
 
@@ -52,8 +49,7 @@
                 {{ candidatePreference.thirdPreferenceCount }}
             </td>
             <td colspan="3" class="all">
-                {{ candidatePreference.firstPreferenceCount + candidatePreference.secondPreferenceCount +
-                candidatePreference.thirdPreferenceCount }}
+                {{ candidatePreference.total }}
             </td>
         </tr>
         {% endfor %}

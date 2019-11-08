@@ -10,10 +10,10 @@ from util import to_comma_seperated_num, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 
 
-class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
+class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
 
     def __init__(self, tallySheetId):
-        super(TallySheetVersion_PRE_34_PD_Model, self).__init__(
+        super(TallySheetVersion_PRE_34_ED_Model, self).__init__(
             tallySheetId=tallySheetId
         )
 
@@ -79,7 +79,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
         # ).all()
 
         content = {
-            "tallySheetCode": "PRE-34-PD",
+            "tallySheetCode": "PRE-34-ED",
             "election": {
                 "electionName": self.submission.election.get_official_name()
             },
@@ -90,16 +90,8 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             },
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": "XX",
-            "data": [],
-            # "candidates": disqualifiedCandidates
+            "data": []
         }
-
-        if self.submission.election.voteType == VoteTypeEnum.Postal:
-            content["tallySheetCode"] = "PRE-34-PV"
-            content["pollingDivision"] = "Postal"
-        elif self.submission.election.voteType == VoteTypeEnum.NonPostal:
-            content["pollingDivision"] = self.submission.area.areaName
 
         temp_data = {}
         for candidateIndex in range(len(tallySheetContent)):
@@ -107,6 +99,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             temp_data[candidate.candidateId] = {
                 "number": len(temp_data) + 1,
                 "name": candidate.candidateName,
+                "firstPreferenceCount": "",
                 "secondPreferenceCount": "",
                 "thirdPreferenceCount": "",
                 "total": 0
@@ -133,11 +126,11 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             content['data'].append(temp_data[i])
 
         html = render_template(
-            'PRE-34-PD.html',
+            'PRE-34-ED.html',
             content=content
         )
 
         return html
 
 
-Model = TallySheetVersion_PRE_34_PD_Model
+Model = TallySheetVersion_PRE_34_ED_Model

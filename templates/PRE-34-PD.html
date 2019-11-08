@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div>
+    <br/>
+    <h1>{{content.tallySheetCode}}</h1>
+    <div>
+        <strong>Electoral District : </strong>{{content.electoralDistrict}}
+    </div>
+    <div>
+        <strong>Polling Division : </strong>{{content.pollingDivision}}
+    </div>
+    <table class="table table-borderless">
+        <tbody>
+
+        <tr style="text-align:center; font-size:14px;" class="bold">
+            <td colspan="3" class="all">
+
+            </td>
+            <td colspan="3" class="all">
+                Candidate Name
+            </td>
+            <td colspan="3" class="all">
+                First Preference Count
+            </td>
+            <td colspan="3" class="all">
+                Second Preference Count
+            </td>
+            <td colspan="3" class="all">
+                Third Preference Count
+            </td>
+            <td colspan="3" class="all">
+                Total
+            </td>
+        </tr>
+
+        {% for candidatePreference in content.data %}
+        <tr style="text-align:center; font-size:14px;" class="bold">
+            <td colspan="3" class="all">
+                {{candidatePreference.number}}
+            </td>
+            <td colspan="3" class="all">
+                {{ candidatePreference.name }}
+            </td>
+            <td colspan="3" class="all">
+                {{ candidatePreference.firstPreferenceCount }}
+            </td>
+            <td colspan="3" class="all">
+                {{ candidatePreference.secondPreferenceCount }}
+            </td>
+            <td colspan="3" class="all">
+                {{ candidatePreference.thirdPreferenceCount }}
+            </td>
+            <td colspan="3" class="all">
+                {{ candidatePreference.total }}
+            </td>
+        </tr>
+        {% endfor %}
+
+
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}
