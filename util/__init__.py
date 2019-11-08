@@ -73,6 +73,8 @@ def get_tally_sheet_code(tally_sheet_code_str):
         return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS
     elif tally_sheet_code_str == "PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS":
         return TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+    elif tally_sheet_code_str == "PRE-34-PD":
+        return TallySheetCodeEnum.PRE_34_PD
 
 
 def get_tally_sheet_code_string(tally_sheet_code):
@@ -102,13 +104,16 @@ def get_tally_sheet_code_string(tally_sheet_code):
         return "PRE-ALL-ISLAND-RESULTS"
     elif tally_sheet_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS:
         return "PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS"
+    elif tally_sheet_code is TallySheetCodeEnum.PRE_34_PD:
+        return "PRE-34-PD"
 
 
 def get_tally_sheet_version_class(tally_sheet_version_code):
     from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41, TallySheetVersion_CE_201_PV, \
         TallySheetVersionCE201, TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_34_CO, \
         TallySheetVersion_PRE_30_ED, TallySheetVersion_PRE_ALL_ISLAND_RESULT, \
-        TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersion_PRE_34_I_RO
+        TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersion_PRE_34_I_RO, \
+        TallySheetVersion_PRE_34_PD
 
     if tally_sheet_version_code is TallySheetCodeEnum.CE_201:
         return TallySheetVersionCE201
@@ -132,6 +137,8 @@ def get_tally_sheet_version_class(tally_sheet_version_code):
         return TallySheetVersion_PRE_ALL_ISLAND_RESULT
     elif tally_sheet_version_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS:
         return TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+    elif tally_sheet_version_code is TallySheetCodeEnum.PRE_34_PD:
+        return TallySheetVersion_PRE_34_PD
 
 
 def sqlalchemy_num_or_zero(column):
