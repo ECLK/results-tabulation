@@ -18,7 +18,7 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
         )
 
     __mapper_args__ = {
-        'polymorphic_identity': TallySheetCodeEnum.PRE_34_CO
+        'polymorphic_identity': TallySheetCodeEnum.PRE_34_I_RO
     }
 
     def add_row(self, preferenceNumber, preferenceCount, candidateId, electionId):
@@ -95,15 +95,20 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
             "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": polling_division_name,
-            "countingCentre": self.submission.area.areaName,
-            "pollingDistrictNos": ", ".join([
-                pollingDistrict.areaName for pollingDistrict in
-                Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
-            ]),
+            "pollingDivisionOrPostalVoteCountingCentres": "XX",
             "data": [],
             "candidates": []
         }
+
+        if self.submission.election.voteType == VoteTypeEnum.Postal:
+            content["pollingDivisionOrPostalVoteCountingCentres"] = ", ".join([
+                countingCentre.areaName for countingCentre in
+                Area.get_associated_areas(self.submission.area, AreaTypeEnum.CountingCentre,
+                                          electionId=self.submission.electionId)
+            ])
+        elif self.submission.election.voteType == VoteTypeEnum.NonPostal:
+            content["pollingDivisionOrPostalVoteCountingCentres"] = Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName
 
         temp_data = {}
 
@@ -113,8 +118,8 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
                 temp_data[candidate.candidateId] = {
                     "number": len(temp_data) + 1,
                     "name": candidate.candidateName,
-                    "secondPreferenceCount": "####",
-                    "thirdPreferenceCount": "####",
+                    "secondPreferenceCount": "",
+                    "thirdPreferenceCount": "",
                 }
             else:
                 content["candidates"].append(candidate)

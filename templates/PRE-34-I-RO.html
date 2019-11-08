@@ -20,19 +20,22 @@
                 Counting Centers of a Polling Division, all Postal Votes Counting Centers
             </td>
         </tr>
+
+        {% for candidatePreference in content.data %}
         <tr>
             <td colspan="10" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 1 (Name): <span
-                    style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                    style="text-decoration-line: underline;text-decoration-style: dotted;">{{candidatePreference.name}}</span>
+            </td>
         </tr>
-        <tr>
-            <td colspan="10" class="no-padding-bottom bold" style="text-align:center;">Candidate No. 2 (Name): <span
-                    style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
-        </tr>
+        {% endfor %}
+
         <tr>
             <td colspan="5">Electorate:- <span
-                    style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                    style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.electoralDistrict}}</span>
+            </td>
             <td colspan="5">Name of the Polling Division/ Postal Voting Centers:- <span
-                    style="text-decoration-line: underline;text-decoration-style: dotted;">xx</span></td>
+                    style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.pollingDivisionOrPostalVoteCountingCentres}}</span>
+            </td>
         </tr>
 
         <tr style="text-align:center; font-size:14px;" class="bold">

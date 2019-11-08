@@ -106,9 +106,9 @@ def get_tally_sheet_code_string(tally_sheet_code):
 
 def get_tally_sheet_version_class(tally_sheet_version_code):
     from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41, TallySheetVersion_CE_201_PV, \
-        TallySheetVersionCE201, TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_34_CO \
-        , TallySheetVersion_PRE_30_ED, \
-        TallySheetVersion_PRE_ALL_ISLAND_RESULT, TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+        TallySheetVersionCE201, TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_34_CO, \
+        TallySheetVersion_PRE_30_ED, TallySheetVersion_PRE_ALL_ISLAND_RESULT, \
+        TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersion_PRE_34_I_RO
 
     if tally_sheet_version_code is TallySheetCodeEnum.CE_201:
         return TallySheetVersionCE201
@@ -126,6 +126,8 @@ def get_tally_sheet_version_class(tally_sheet_version_code):
         return TallySheetVersion_PRE_30_ED
     elif tally_sheet_version_code is TallySheetCodeEnum.PRE_34_CO:
         return TallySheetVersion_PRE_34_CO
+    elif tally_sheet_version_code is TallySheetCodeEnum.PRE_34_I_RO:
+        return TallySheetVersion_PRE_34_I_RO
     elif tally_sheet_version_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS:
         return TallySheetVersion_PRE_ALL_ISLAND_RESULT
     elif tally_sheet_version_code is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS:
