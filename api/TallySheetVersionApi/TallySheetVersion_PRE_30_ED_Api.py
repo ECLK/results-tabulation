@@ -30,7 +30,6 @@ def create(tallySheetId):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.PRE_30_ED
     )
-    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     polling_division_and_electoral_district_subquery = tallySheetVersion.polling_division_and_electoral_district_query().subquery()
 
     query = db.session.query(
@@ -59,13 +58,20 @@ def create(tallySheetId):
         Submission.Model.areaId
     ).all()
 
+    is_complete = True
     for row in query:
-        tallySheetVersion.add_row(
-            candidateId=row.candidateId,
-            areaId=row.areaId,
-            count=row.count,
-            electionId=row.electionId
-        )
+        if row.candidateId is not None and row.areaId is not None and row.count is not None and row.electionId is not None:
+            tallySheetVersion.add_row(
+                candidateId=row.candidateId,
+                areaId=row.areaId,
+                count=row.count,
+                electionId=row.electionId
+            )
+        else:
+            is_complete = False
+
+    if is_complete:
+        tallySheetVersion.set_complete()
 
     rejected_vote_count_query = db.session.query(
         polling_division_and_electoral_district_subquery.c.areaId,
