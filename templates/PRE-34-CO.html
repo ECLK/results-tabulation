@@ -104,9 +104,9 @@
             </td>
             {% endfor %}
 
-            <td class="all" style="text-align:right;"></td>
-            <td class="all" style="text-align:right;"></td>
-            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;">{{ content.summary.ballotPapersNotCounted }}</td>
+            <td class="all" style="text-align:right;">{{ content.summary.remainingBallotPapers }}</td>
+            <td class="all" style="text-align:right;">{{ content.summary.remainingBallotPapers + content.summary.ballotPapersNotCounted }}</td>
         </tr>
 
         <tr style="font-size:14px;">
