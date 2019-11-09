@@ -36,16 +36,6 @@ class TallySheetVersionRow_PRE_34_summary_Model(db.Model):
 Model = TallySheetVersionRow_PRE_34_summary_Model
 
 
-def get_summary_record(electionId, tallySheetVersionId
-                      ):
-    result = Model.query.filter(
-        Model.electionId == electionId,
-        tallySheetVersionId == tallySheetVersionId
-    ).one_or_none()
-
-    return result
-
-
 def create(electionId, tallySheetVersionId, ballotPapersNotCounted, remainingBallotPapers):
     result = Model(
         electionId=electionId,

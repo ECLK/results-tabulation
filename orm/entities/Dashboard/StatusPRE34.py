@@ -21,13 +21,16 @@ class StatusPRE34Model(db.Model):
     candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.CandidateModel.candidateId), autoincrement=True)
     secondPreferenceCount = db.Column(db.Integer, nullable=False)
     thirdPreferenceCount = db.Column(db.Integer, nullable=False)
+    ballotPapersNotCounted = db.Column(db.Integer, nullable=False)
+    remainingBallotPapers = db.Column(db.Integer, nullable=False)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
     electoralDistrict = relationship("ElectoralDistrictModel", foreign_keys=[electoralDistrictId])
     pollingDivision = relationship("PollingDivisionModel", foreign_keys=[pollingDivisionId])
 
     def __init__(self, electionId, electoralDistrictId, pollingDivisionId, countingCentreId, secondPreferenceCount
-                 , thirdPreferenceCount, candidateId, voteType="NonPostal", status="Pending"):
+                 , thirdPreferenceCount, candidateId, ballotPapersNotCounted, remainingBallotPapers,
+                 voteType="NonPostal", status="Pending"):
         super(StatusPRE34Model, self).__init__(
             voteType=voteType,
             status=status,
@@ -37,7 +40,9 @@ class StatusPRE34Model(db.Model):
             countingCentreId=countingCentreId,
             secondPreferenceCount=secondPreferenceCount,
             thirdPreferenceCount=thirdPreferenceCount,
-            candidateId=candidateId
+            candidateId=candidateId,
+            ballotPapersNotCounted=ballotPapersNotCounted,
+            remainingBallotPapers=remainingBallotPapers
         )
 
         db.session.add(self)
@@ -48,7 +53,8 @@ Model = StatusPRE34Model
 
 
 def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId, secondPreferenceCount
-           , thirdPreferenceCount, candidateId, voteType="NonPostal", status="Pending"):
+           , thirdPreferenceCount, candidateId, ballotPapersNotCounted, remainingBallotPapers, voteType="NonPostal",
+           status="Pending"):
     result = Model(
         voteType=voteType,
         status=status,
@@ -58,7 +64,9 @@ def create(electionId, electoralDistrictId, pollingDivisionId, countingCentreId,
         countingCentreId=countingCentreId,
         secondPreferenceCount=secondPreferenceCount,
         thirdPreferenceCount=thirdPreferenceCount,
-        candidateId=candidateId
+        candidateId=candidateId,
+        ballotPapersNotCounted=ballotPapersNotCounted,
+        remainingBallotPapers=remainingBallotPapers
     )
 
     return result
