@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="pre-all-island">
+    <table class="table table-borderless">
+        <tbody>
+        <tr>
+            <td style="width:15%; font-size:12px; font-weight:bold;">OFFICIAL RESULTS</td>
+            <td style="text-align:center; vertical-align:middle; width:70%;" rowspan="2" class="report-header">
+                <span style="font-size:12px;">DEPARTMENT OF ELECTIONS</span>
+                <span style="font-weight:bold;">
+                    {{content.election.electionName}}
+                </span>
+                <span style="font-weight:bold;">Results of Electoral District {{ content.electoralDistrict }}</span>
+                <span style="font-size:12px;">VOTES RECEIVED BY EACH CANDIDATE</span>
+            </td>
+            <td style="text-align:right; width:15%; font-size:12px; font-weight:bold;" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width:15%; text-align:center;" class="no-padding-bottom no-padding-top">
+                <img src={{ url_for('static', filename='Emblem_of_Sri_Lanka.png') }} width="72" height="75"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <table class="table table-borderless">
+        <tbody>
+        <tr>
+            <td><u><i>Name of the Candidate</i></u></td>
+            <td style="text-align:center;"><u><i>First Preference Count</i></u></td>
+            <td style="text-align:center;"><u><i>Second Preference Count</i></u></td>
+            <td style="text-align:center;"><u><i>Third Preference Count</i></u></td>
+            <td style="text-align:center;"><u><i>Grand Total</i></u></td>
+        </tr>
+
+        {% for row in content.data %}
+        <tr>
+            <td class="all {%if row[0]=="" %}missing-value{% endif %}">{{row.name}}</td>
+            <td class="all" style="text-align:center;">{{row.firstPreferenceCount}}</td>
+            <td class="all {%if row[2]=="" %}missing-value{% endif %}" style="text-align:right;"><b>{{row.secondPreferenceCount}}</b></td>
+            <td class="all {%if row[3]=="" %}missing-value{% endif %}" style="text-align:right;">{{row.thirdPreferenceCount}}</td>
+            <td class="all {%if row[3]=="" %}missing-value{% endif %}" style="text-align:right;">{{row.total}}</td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td colspan="4"></td>
+        </tr>
+
+{#        <tr>#}
+{#            <td></td>#}
+{#            <td><b>Total Valid Votes</b></td>#}
+{#            <td class="{%if content.validVoteCounts[0]=="" %}missing-value{% endif %}" style="text-align:right;"><b>{{content.validVoteCounts[0]}}</b></td>#}
+{#            <td class="{%if content.validVoteCounts[1]=="" %}missing-value{% endif %}" style="text-align:right;">{{content.validVoteCounts[1]}}</td>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td></td>#}
+{#            <td><b>Rejected Votes</b></td>#}
+{#            <td class="{%if content.rejectedVoteCounts[0]=="" %}missing-value{% endif %}" style="text-align:right;"><b>{{content.rejectedVoteCounts[0]}}</b></td>#}
+{#            <td class="{%if content.rejectedVoteCounts[1]=="" %}missing-value{% endif %}" style="text-align:right;">{{content.rejectedVoteCounts[1]}}</td>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td></td>#}
+{#            <td><b>Total Polled</b></td>#}
+{#            <td class="{%if content.totalVoteCounts[0]=="" %}missing-value{% endif %}" style="text-align:right;"><b>{{content.totalVoteCounts[0]}}</b></td>#}
+{#            <td class="{%if content.totalVoteCounts[1]=="" %}missing-value{% endif %}" style="text-align:right;">{{content.totalVoteCounts[1]}}</td>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td></td>#}
+{#            <td><b>Registered No. of Electors</b></td>#}
+{#            <td style="text-align:right"><b>{{content.registeredVoters[0]}}</b></td>#}
+{#            <td style="text-align:right"></td>#}
+{#        </tr>#}
+        <tr>
+            <td colspan="4"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><b>Time: {{content.time}}</b></td>
+            <td colspan="2" style="text-align:center;"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><b>Date: {{content.date}}</b></td>
+            <td colspan="2" style="text-align:center;"></td>
+        </tr>
+
+        <tr>
+            <td colspan="4" rowspan="4"></td>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-borderless signatures">
+      <tr style="text-align:center;">
+        <td>
+            ....................................</br>
+            MAHINDA DESHAPRIYA</br>
+            Chairman</br>
+            Election Commission
+        </td>
+        <td>
+            ....................................</br>
+            N. J. ABEYESEKERE</br>
+            Member</br>
+            Election Commission
+        </td>
+        <td>
+            ....................................</br>
+            S. RATNAJEEVAN H. HOOLE</br>
+            Member</br>
+            Election Commission
+        </td>
+      </tr>
+    </table>
+    <table class="table table-borderless signatures">
+      <tr>
+          <td style="vertical-align:middle; font-size: 11px; font-weight: bold;">
+              Election Secretariat, Sarana Mawatha, Rajagiriya.
+          </td>
+          <td></td>
+      </tr>
+    </table>
+
+</div>
+{% endblock %}
