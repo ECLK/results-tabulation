@@ -1,7 +1,10 @@
+from typing import Set
+
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app import db
+from auth import get_user_access_area_ids
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
 from orm.enums import VoteTypeEnum
@@ -134,15 +137,31 @@ def create(electionName, parentElectionId=None,
 
 
 def get_all():
-    query = Model.query.filter(
-        Model.parentElectionId == None
+    from orm.entities import Area
+
+    user_access_area_ids: Set[int] = get_user_access_area_ids()
+
+    query = Model.query.join(
+        Area.Model,
+        Area.Model.electionId == Model.electionId
+    ).filter(
+        Model.parentElectionId == None,
+        Area.Model.areaId.in_(user_access_area_ids)
     )
 
     return query
 
 
 def get_by_id(electionId):
-    result = Model.query.filter(
+    from orm.entities import Area
+
+    user_access_area_ids: Set[int] = get_user_access_area_ids()
+
+    result = Model.query.join(
+        Area.Model,
+        Area.Model.electionId == Model.electionId
+    ).filter(
+        Area.Model.areaId.in_(user_access_area_ids),
         Model.electionId == electionId
     ).one_or_none()
 

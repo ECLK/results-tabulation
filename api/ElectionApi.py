@@ -2,6 +2,7 @@ import connexion
 
 from app import db
 from auth import ADMIN_ROLE, authorize
+from auth.AuthConstants import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_ELECTION_NOT_FOUND
 from orm.entities.Election.election_helper import get_root_token, build_presidential_election
@@ -10,6 +11,7 @@ from schemas import ElectionSchema as Schema, SimpleAreaSchema
 from util import RequestBody, get_paginated_query
 
 
+@authorize(required_roles=ALL_ROLES)
 def get_all():
     result = Election.get_all()
 
@@ -18,6 +20,7 @@ def get_all():
     return Schema(many=True).dump(result).data
 
 
+@authorize(required_roles=ALL_ROLES)
 def get_by_id(electionId):
     result = Election.get_by_id(electionId=electionId)
     if result is None:
