@@ -249,6 +249,19 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
     def html_letter(self):
 
         stamp = self.stamp
+        election = self.submission.election
+        total_registered_voters = 0
+
+        if election.voteType == VoteTypeEnum.Postal:
+            electoral_district = self.submission.area
+            postal_counting_centres = electoral_district.get_associated_areas(
+                areaType=AreaTypeEnum.CountingCentre,
+                electionId=election.electionId
+            )
+            for postal_counting_centre in postal_counting_centres:
+                total_registered_voters = total_registered_voters + postal_counting_centre._registeredVotersCount
+        else:
+            total_registered_voters = self.submission.area.registeredVotersCount
 
         content = {
             "election": {
@@ -268,7 +281,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             "rejectedVoteCounts": [0, 0],
             "totalVoteCounts": [0, 0],
             "registeredVoters": [
-                to_comma_seperated_num(self.submission.area.registeredVotersCount),
+                to_comma_seperated_num(total_registered_voters),
                 100
             ],
             "electoralDistrict": Area.get_associated_areas(
@@ -289,17 +302,17 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
         content["validVoteCounts"] = [
             to_comma_seperated_num(vote_count_result.validVoteCount),
-            to_percentage(vote_count_result.validVoteCount * 100 / self.submission.area.registeredVotersCount)
+            to_percentage(vote_count_result.validVoteCount * 100 / total_registered_voters)
         ]
 
         content["rejectedVoteCounts"] = [
             to_comma_seperated_num(vote_count_result.rejectedVoteCount),
-            to_percentage(vote_count_result.rejectedVoteCount * 100 / self.submission.area.registeredVotersCount)
+            to_percentage(vote_count_result.rejectedVoteCount * 100 / total_registered_voters)
         ]
 
         content["totalVoteCounts"] = [
             to_comma_seperated_num(vote_count_result.totalVoteCount),
-            to_percentage(vote_count_result.totalVoteCount * 100 / self.submission.area.registeredVotersCount)
+            to_percentage(vote_count_result.totalVoteCount * 100 / total_registered_voters)
         ]
 
         html = render_template(
@@ -317,6 +330,10 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
         vote_count_result = self.vote_count_query().one_or_none()
         stamp = self.stamp
 
+        pollingDivision = self.submission.area.areaName
+        if self.submission.election.voteType == VoteTypeEnum.Postal:
+            pollingDivision = 'Postal'
+
         content = {
             "election": {
                 "electionName": self.submission.election.get_official_name()
@@ -329,7 +346,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             "tallySheetCode": "PRE/30/PD",
             "electoralDistrict": Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": self.submission.area.areaName,
+            "pollingDivision": pollingDivision,
             "data": [],
             "countingCentres": [],
             "validVoteCounts": [],
