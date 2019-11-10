@@ -281,7 +281,7 @@ def get_all_areas_of_root_election(election_id):
     election = Election.Model.query.filter(Election.Model.electionId == election_id).one_or_none()
 
     if election.parentElectionId is not None:
-        return get_all_areas_of_root_election(election.parentElectionI)
+        return get_all_areas_of_root_election(election.parentElectionId)
     else:
         return get_all(election_id=election_id)
 
