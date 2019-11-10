@@ -148,7 +148,7 @@ def get_presidential_area_map_query():
 
 def get_associated_areas_query(areas, areaType, electionId=None):
     presidential_area_map_sub_query = get_presidential_area_map_query().subquery()
-    election = Election.get_by_id(electionId=electionId)
+    election = Election.Model.query.filter(Election.Model.electionId == electionId).one_or_none()
 
     query = db.session.query(
         AreaModel
@@ -278,7 +278,7 @@ def create(areaName, electionId):
 
 
 def get_all_areas_of_root_election(election_id):
-    election = Election.get_by_id(electionId=election_id)
+    election = Election.Model.query.filter(Election.Model.electionId == election_id).one_or_none()
 
     if election.parentElectionId is not None:
         return get_all_areas_of_root_election(election.parentElectionI)
@@ -287,7 +287,7 @@ def get_all_areas_of_root_election(election_id):
 
 
 def get_all(election_id=None, area_name=None, associated_area_id=None, area_type=None):
-    election = Election.get_by_id(electionId=election_id)
+    election = Election.Model.query.filter(Election.Model.electionId == election_id).one_or_none()
 
     if associated_area_id is not None and area_type is not None:
         associated_area = get_by_id(areaId=associated_area_id)
