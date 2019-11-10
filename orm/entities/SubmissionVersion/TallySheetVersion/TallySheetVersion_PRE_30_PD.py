@@ -252,7 +252,8 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
         content = {
             "election": {
-                "electionName": self.submission.election.get_official_name()
+                "electionName": self.submission.election.get_official_name(),
+                "isPostal": self.submission.election.voteType == VoteTypeEnum.Postal
             },
             "stamp": {
                 "createdAt": stamp.createdAt,
