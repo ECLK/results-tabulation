@@ -432,7 +432,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
                 to_comma_seperated_num(self.submission.area.registeredVotersCount),
                 100
             ],
-            "areaName": self.submission.area.areaName
+            "electoralDistrict": self.submission.area.areaName
         }
 
         candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
