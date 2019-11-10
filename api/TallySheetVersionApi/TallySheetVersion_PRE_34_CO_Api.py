@@ -28,7 +28,7 @@ def get_by_id(tallySheetId, tallySheetVersionId):
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     )
-    print(result, "umayanga")
+
     return TallySheetVersion_PRE_34_CO_Schema().dump(result).data
 
 
