@@ -13,8 +13,10 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW, \
     MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT
 from orm.entities import Submission, Election
+from orm.entities.Area import AreaMap
+from orm.entities.Dashboard import StatusReport
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum
+from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum, VoteTypeEnum, AreaTypeEnum
 from util import get_tally_sheet_code, get_tally_sheet_version_class
 
 DATA_ENTRY_TALLY_SHEET_CODES = [
@@ -30,8 +32,10 @@ class TallySheetModel(db.Model):
 
     tallySheetId = db.Column(db.Integer, db.ForeignKey(Submission.Model.__table__.c.submissionId), primary_key=True)
     tallySheetCode = db.Column(db.Enum(TallySheetCodeEnum), nullable=False)
+    statusReportId = db.Column(db.Integer, db.ForeignKey(StatusReport.Model.__table__.c.statusReportId), nullable=True)
 
     submission = relationship("SubmissionModel", foreign_keys=[tallySheetId])
+    statusReport = relationship(StatusReport.Model, foreign_keys=[statusReportId])
 
     electionId = association_proxy("submission", "electionId")
     areaId = association_proxy("submission", "areaId")
@@ -45,13 +49,91 @@ class TallySheetModel(db.Model):
     locked = association_proxy("submission", "locked")
     submitted = association_proxy("submission", "submitted")
     submissionProofId = association_proxy("submission", "submissionProofId")
+    submissionProof = association_proxy("submission", "submissionProof")
     versions = association_proxy("submission", "versions")
+
+    def get_status_report_type(self):
+        electoral_district_name = ""
+        polling_division_name = ""
+        status_report_type = ""
+
+        election = self.submission.election
+        submission_area = self.submission.area
+        if self.tallySheetCode is TallySheetCodeEnum.PRE_30_PD:
+            if election.voteType is VoteTypeEnum.Postal:
+                electoral_district_name = submission_area.areaName
+                status_report_type = "PV"
+            else:
+                electoral_district_name = _get_polling_division_name(submission_area)
+                polling_division_name = submission_area.areaName
+                status_report_type = "PD"
+        elif self.tallySheetCode is TallySheetCodeEnum.PRE_34_PD:
+            if election.voteType is VoteTypeEnum.Postal:
+                electoral_district_name = submission_area.areaName
+                status_report_type = "PV [Revised]"
+            else:
+                electoral_district_name = _get_polling_division_name(submission_area)
+                polling_division_name = submission_area.areaName
+                status_report_type = "PD [Revised]"
+        elif self.tallySheetCode is TallySheetCodeEnum.PRE_30_ED:
+            electoral_district_name = submission_area.areaName
+            status_report_type = "ED"
+        elif self.tallySheetCode is TallySheetCodeEnum.PRE_34_ED:
+            electoral_district_name = submission_area.areaName
+            status_report_type = "ED [Revised]"
+        else:
+            # TODO
+            status_report_type = self.tallySheetCode.name
+
+        return electoral_district_name, polling_division_name, status_report_type
+
+    def get_report_status(self):
+        if self.tallySheetCode in DATA_ENTRY_TALLY_SHEET_CODES:
+            if self.locked and self.submissionProof.finished:
+                return "RELEASED"
+            if self.locked and len(self.submissionProof.scannedFiles) > 0:
+                return "CERTIFIED"
+            if self.locked:
+                return "VERIFIED"
+            if self.submitted:
+                return "SUBMITTED"
+            if self.latestVersionId is not None:
+                return "ENTERED"
+            else:
+                return "NOT ENTERED"
+        else:
+            if self.locked and self.submissionProof.finished:
+                return "RELEASED"
+            if self.locked and len(self.submissionProof.scannedFiles) > 0:
+                return "CERTIFIED"
+            if self.locked:
+                return "VERIFIED"
+            else:
+                return "PENDING"
+
+    def update_status_report(self):
+        if self.statusReportId is None:
+            electoral_district_name, polling_division_name, status_report_type = self.get_status_report_type()
+            status_report = StatusReport.create(
+                reportType=status_report_type,
+                electoralDistrictName=electoral_district_name,
+                pollingDivisionName=polling_division_name,
+                status=self.get_report_status()
+            )
+
+            self.statusReportId = status_report.statusReportId
+        else:
+            self.statusReport.update_status(
+                status=self.get_report_status()
+            )
 
     def set_latest_version(self, tallySheetVersion: TallySheetVersion):
         if tallySheetVersion is None:
             self.submission.set_latest_version(submissionVersion=None)
         else:
             self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
+
+        self.update_status_report()
 
     def set_locked_version(self, tallySheetVersion: TallySheetVersion):
         if tallySheetVersion is None:
@@ -83,6 +165,8 @@ class TallySheetModel(db.Model):
 
             self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
 
+        self.update_status_report()
+
     def set_submitted_version(self, tallySheetVersion: TallySheetVersion):
         if self.locked:
             raise ForbiddenException(
@@ -94,6 +178,8 @@ class TallySheetModel(db.Model):
             self.submission.set_submitted_version(submissionVersion=None)
         else:
             self.submission.set_submitted_version(submissionVersion=tallySheetVersion.submissionVersion)
+
+        self.update_status_report()
 
     @hybrid_property
     def latestVersion(self):
@@ -112,6 +198,8 @@ class TallySheetModel(db.Model):
             tallySheetId=submission.submissionId,
             tallySheetCode=tallySheetCode,
         )
+
+        self.update_status_report()
 
         db.session.add(self)
         db.session.flush()
@@ -133,6 +221,15 @@ class TallySheetModel(db.Model):
 
 
 Model = TallySheetModel
+
+
+def _get_polling_division_name(electoral_district):
+    polling_division_name = ""
+    polling_division = electoral_district.get_associated_areas(areaType=AreaTypeEnum.ElectoralDistrict)
+    if len(polling_division) > 0:
+        polling_division_name = polling_division[0].areaName
+
+    return polling_division_name
 
 
 def get_by_id(tallySheetId, tallySheetCode=None):
