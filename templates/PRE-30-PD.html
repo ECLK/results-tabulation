@@ -41,8 +41,8 @@
         <tr style="text-align:center;">
             <td rowspan="2" style="width:50px;"></td>
             <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align:middle;">Name of the Candidate</th>
-            <th class="left right top bottom" colspan="{{content.countingCentres|length}}" style="vertical-align:middle;">Counting Centre No.</th>
-            <th class="left right top bottom" rowspan="2" style="vertical-align:middle;">Total</th>
+            <th class="left right top bottom" colspan="{{content.countingCentres|length}}" style="vertical-align:middle;width:{{content.countingCentres|length * 80}}px;">Counting Centre No.</th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align:middle;width:80px">Total</th>
             <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align:middle;">Total No. of Votes in Words</th>
         </tr>
         <tr style="text-align:center;">
@@ -90,7 +90,10 @@
             <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align:middle;">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
-
+    </tbody>
+</table>
+<table class="table table-borderless">
+    <tbody>
         <tr>
             <td></td>
             <td colspan="2">
@@ -127,6 +130,29 @@
 
 
         </tbody>
+    </table>
+
+    <table class="table table-borderless">
+      <tr style="text-align:center;">
+        <td>
+            ....................................</br>
+            MAHINDA DESHAPRIYA</br>
+            Chairman</br>
+            Election Commission
+        </td>
+        <td>
+            ....................................</br>
+            N. J. ABEYESEKERE</br>
+            Member</br>
+            Election Commission
+        </td>
+        <td>
+            ....................................</br>
+            S. RATNAJEEVAN H. HOOLE</br>
+            Member</br>
+            Election Commission
+        </td>
+      </tr>
     </table>
 </div>
 {% endblock %}

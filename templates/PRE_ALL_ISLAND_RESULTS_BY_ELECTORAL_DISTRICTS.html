@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block container %}
-<div>
+<div class="pre-all-ed">
     <div style="text-align: center; margin-bottom: 10px;">
         <b>{{content.election.electionName}}</b>
         <br/><br/>
@@ -12,22 +12,22 @@
     </div>
 
 
-    <table class="table table-borderless">
+    <table class="table table-borderless" style="table-layout:fixed;">
         <tbody>
 
         <tr>
-            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2">
+            <th class="left right top bottom" rowspan="2" style="width:200px">
                 Name of the Candidate (According to the order in the Ballot Paper)
             </th>
-            <th class="left right top bottom" colspan="{{content.electoralDistricts|length}}">
-                ELECTORAL DISTRICT
+            <th class="left right top bottom" colspan="{{content.electoralDistricts|length}}" style="width:{{content.electoralDistricts|length * 100}}px;">
+                ELECTORAL DISTRICT {{ed_column_width}}
             </th>
-            <th class="left right top bottom" rowspan="2">TOTAL</th>
-            <th class="left right top bottom" rowspan="2">TOTAL NUMBER OF VOTES IN WORDS</th>
+            <th class="left right top bottom" rowspan="2" style="width:100px">TOTAL</th>
+            <th class="left right top bottom" rowspan="2" style="width:170px">TOTAL NUMBER OF VOTES IN WORDS</th>
         </tr>
-        <tr>
+        <tr class="ed">
             {% for electoralDistrict in content.electoralDistricts %}
-            <th class="left right top bottom">{{electoralDistrict}}</th>
+            <th class="left right top bottom"><div>{{electoralDistrict}}</div></th>
             {% endfor %}
         </tr>
 
@@ -36,6 +36,7 @@
             {% for cell in row %}
             <td class="left right top bottom {%if cell=="" %}missing-value{% endif %}" style="text-align:right">{{cell}}</td>
             {% endfor %}
+            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
         {% endfor %}
 
@@ -44,6 +45,7 @@
             {% for validVoteCount in content.validVoteCounts %}
             <td class="left right top bottom {%if validVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{validVoteCount}}</td>
             {% endfor %}
+            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
 
         <tr>
@@ -51,6 +53,7 @@
             {% for rejectedVoteCount in content.rejectedVoteCounts %}
             <td class="left right top bottom {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{rejectedVoteCount}}</td>
             {% endfor %}
+            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
 
         <tr>
@@ -58,9 +61,32 @@
             {% for totalVoteCount in content.totalVoteCounts %}
             <td class="left right top bottom {%if totalVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{totalVoteCount}}</td>
             {% endfor %}
+            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
 
         </tbody>
+    </table>
+    <table class="table table-borderless signatures">
+      <tr style="text-align:center;">
+        <td>
+            ....................................</br>
+            MAHINDA DESHAPRIYA</br>
+            Chairman</br>
+            Election Commission
+        </td>
+        <td>
+            ....................................</br>
+            N. J. ABEYESEKERE</br>
+            Member</br>
+            Election Commission
+        </td>
+        <td>
+            ....................................</br>
+            S. RATNAJEEVAN H. HOOLE</br>
+            Member</br>
+            Election Commission
+        </td>
+      </tr>
     </table>
 </div>
 {% endblock %}

@@ -31,28 +31,28 @@
 
     <table class="table table-borderless" style="table-layout:fixed;">
         <tr style="text-align:center;">
-            <td rowspan="2" class="right" style="border-right: 1px solid #000 !important; width:50px;"></td>
+            <td rowspan="2" class="right" style="border-right: 1px solid #000 !important; width:20px;"></td>
             <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2" style="width:200px; vertical-align: middle;">
                 Name of the Candidate
             </th>
-            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align: middle;">
+            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align: middle; width:{{content.pollingDivisions|length * 80}}px;">
                 Name of the Polling Division
             </th>
-            <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;">Postal Votes</th>
-            <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;">Total No. of Votes in Figures</th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Postal Votes</th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Total No. of Votes in Figures</th>
             <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align: middle;">Total No. of Votes in Words</th>
         </tr>
         <tr style="text-align:center;" class="ed">
 
             {% for pollingDivision in content.pollingDivisions %}
-            <th class="left right top bottom">{{pollingDivision}}</th>
+            <th class="left right top bottom"><div>{{pollingDivision}}</div></th>
             {% endfor %}
         </tr>
 
         {% for row in content.data %}
         <tr>
             {% for cell in row %}
-            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{cell}}</td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{cell}}</td>
             {% endfor %}
             <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
@@ -89,7 +89,11 @@
             <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
+    </tbody>
+</table>
 
+<table class="table table-borderless">
+    <tbody>
         <tr>
             <td></td>
             <td colspan="2">
@@ -170,7 +174,7 @@
             <td><br/>1. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
-            <td><br/>11. ....................</td>
+            <td><br/>10. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
         </tr>
@@ -178,7 +182,7 @@
             <td><br/>2. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
-            <td><br/>12. ....................</td>
+            <td><br/>22. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
         </tr>
@@ -186,7 +190,7 @@
             <td><br/>3. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
-            <td><br/>13. ....................</td>
+            <td><br/>23. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
         </tr>
@@ -194,7 +198,7 @@
             <td><br/>4. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
-            <td><br/>14. ....................</td>
+            <td><br/>24. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
         </tr>
@@ -202,7 +206,7 @@
             <td><br/>5. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
-            <td><br/>15. ....................</td>
+            <td><br/>25. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
         </tr>
@@ -210,7 +214,7 @@
             <td><br/>6. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
-            <td><br/>16. ....................</td>
+            <td><br/>26. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
         </tr>
@@ -218,7 +222,7 @@
             <td><br/>7. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
-            <td><br/>17. ....................</td>
+            <td><br/>27. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
         </tr>
@@ -226,7 +230,7 @@
             <td><br/>8. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
-            <td><br/>18. ....................</td>
+            <td><br/>28. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
         </tr>
@@ -234,7 +238,7 @@
             <td><br/>9. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
-            <td><br/>19. ....................</td>
+            <td><br/>29. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
         </tr>
@@ -242,11 +246,114 @@
             <td><br/>10. ....................</td>
             <td style="text-align: center;"><br/>....................</td>
             <td style="text-align: center;"><br/>..........................</td>
+            <td><br/>30. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+        </tr>
+        <tr>
+            <td><br/>11. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+            <td><br/>31. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+        </tr>
+        <tr>
+            <td><br/>12. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+            <td><br/>32. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+        </tr>
+        <tr>
+            <td><br/>13. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+            <td><br/>33. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+        </tr>
+        <tr>
+            <td><br/>14. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+            <td><br/>34. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+        </tr>
+        <tr>
+            <td><br/>15. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+            <td><br/>35. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+        </tr>
+        <tr>
+            <td><br/>16. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/>17. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/>18. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/>19. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><br/>20. ....................</td>
+            <td style="text-align: center;"><br/>....................</td>
+            <td style="text-align: center;"><br/>..........................</td>
             <td></td>
             <td></td>
             <td></td>
         </tr>
         </tbody>
+    </table>
+
+    <table class="table table-borderless signatures">
+      <tr style="text-align:center;">
+        <td>
+            ....................................</br>
+            MAHINDA DESHAPRIYA</br>
+            Chairman</br>
+            Election Commission
+        </td>
+        <td>
+            ....................................</br>
+            N. J. ABEYESEKERE</br>
+            Member</br>
+            Election Commission
+        </td>
+        <td>
+            ....................................</br>
+            S. RATNAJEEVAN H. HOOLE</br>
+            Member</br>
+            Election Commission
+        </td>
+      </tr>
     </table>
 </div>
 {% endblock %}
