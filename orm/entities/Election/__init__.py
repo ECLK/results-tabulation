@@ -1,13 +1,14 @@
 from typing import Set
 
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, aliased
 
 from app import db
 from auth import get_user_access_area_ids
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
 from orm.enums import VoteTypeEnum
+from sqlalchemy import and_, func, or_
 
 
 class ElectionModel(db.Model):
@@ -136,33 +137,46 @@ def create(electionName, parentElectionId=None,
     return election
 
 
-def get_all():
+def get_authorized_election_ids():
     from orm.entities import Area
 
     user_access_area_ids: Set[int] = get_user_access_area_ids()
 
-    query = Model.query.join(
+    authorized_elections = db.session.query(
+        Model
+    ).join(
         Area.Model,
         Area.Model.electionId == Model.electionId
     ).filter(
-        Model.parentElectionId == None,
         Area.Model.areaId.in_(user_access_area_ids)
+    ).group_by(
+        Area.Model.electionId
+    ).all()
+
+    authorized_election_ids = []
+    for authorized_election in authorized_elections:
+        authorized_election_ids.extend(authorized_election.mappedElectionIds)
+
+    return authorized_election_ids
+
+
+def get_all():
+    authorized_election_ids = get_authorized_election_ids()
+
+    query = Model.query.filter(
+        Model.electionId.in_(authorized_election_ids),
+        Model.parentElectionId == None
     )
 
     return query
 
 
 def get_by_id(electionId):
-    from orm.entities import Area
+    authorized_election_ids = get_authorized_election_ids()
 
-    user_access_area_ids: Set[int] = get_user_access_area_ids()
-
-    result = Model.query.join(
-        Area.Model,
-        Area.Model.electionId == Model.electionId
-    ).filter(
-        Area.Model.areaId.in_(user_access_area_ids),
-        Model.electionId == electionId
+    result = Model.query.filter(
+        Model.electionId == electionId,
+        Model.electionId.in_(authorized_election_ids)
     ).one_or_none()
 
     return result

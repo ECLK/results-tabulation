@@ -132,8 +132,8 @@ role_to_unlock_allowed_tallysheet_types = {
         TallySheetCodeEnum.PRE_34_I_RO,
         TallySheetCodeEnum.PRE_34_II_RO,
         TallySheetCodeEnum.PRE_34,
-        TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
-        TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS,
+        # TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
+        # TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS,
         TallySheetCodeEnum.PRE_34_PD,
         TallySheetCodeEnum.PRE_34_ED,
         TallySheetCodeEnum.PRE_34_AI
