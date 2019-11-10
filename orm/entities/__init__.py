@@ -22,7 +22,7 @@ from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPR
 
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_CE_201, \
     TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_PRE_30_ED, \
-    TallySheetVersionRow_PRE_ALL_ISLAND_RESULT
+    TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_34_summary
 
 from orm.entities.Election import InvalidVoteCategory
 from orm.entities.Dashboard import StatusCE201

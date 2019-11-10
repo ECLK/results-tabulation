@@ -5,7 +5,8 @@ from app import db
 from orm.entities import Area, Candidate, Party, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference, \
+    TallySheetVersionRow_PRE_34_summary
 from util import to_comma_seperated_num, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 
@@ -34,7 +35,6 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
 
     @hybrid_property
     def content(self):
-
         return db.session.query(
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
@@ -42,7 +42,7 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
             TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
             TallySheetVersionRow_PRE_34_preference.Model.tallySheetVersionId,
-            TallySheetVersionRow_PRE_34_preference.Model.electionId
+            TallySheetVersionRow_PRE_34_preference.Model.electionId,
         ).join(
             TallySheetVersionRow_PRE_34_preference.Model,
             and_(
@@ -63,6 +63,14 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
             ElectionCandidate.Model.qualifiedForPreferences == True
         ).all()
 
+    @hybrid_property
+    def summary(self):
+        return db.session.query(
+            TallySheetVersionRow_PRE_34_summary.Model
+        ).filter(
+            TallySheetVersionRow_PRE_34_summary.Model.tallySheetVersionId == self.tallySheetVersionId
+        ).one_or_none()
+
     def html(self):
         stamp = self.stamp
         tallySheetContent = self.content
@@ -71,6 +79,13 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
         polling_division_name = ""
         if len(polling_divisions) > 0:
             polling_division_name = polling_divisions[0].areaName
+
+        summary = db.session.query(
+            TallySheetVersionRow_PRE_34_summary.Model.ballotPapersNotCounted,
+            TallySheetVersionRow_PRE_34_summary.Model.remainingBallotPapers,
+        ).filter(
+            TallySheetVersionRow_PRE_34_summary.Model.tallySheetVersionId == self.tallySheetVersionId
+        ).one_or_none()
 
         disqualifiedCandidates = db.session.query(
             ElectionCandidate.Model.candidateId,
@@ -103,7 +118,8 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
             "data": [],
-            "candidates": disqualifiedCandidates
+            "candidates": disqualifiedCandidates,
+            "summary": summary
         }
 
         if self.submission.election.voteType == VoteTypeEnum.Postal:

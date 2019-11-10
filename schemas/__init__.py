@@ -18,7 +18,7 @@ from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, Ta
     TallySheetVersionRow_PRE_41, TallySheetVersionRow_PRE_34_preference, \
     TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_30_ED, \
     TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_CE_201_PV_CC, TallySheetVersionRow_RejectedVoteCount, \
-    TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+    TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersionRow_PRE_34_summary
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, \
     SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum, VoteTypeEnum
 
@@ -220,7 +220,8 @@ class TallySheetVersionRow_PRE_34_CO_Schema(ma.ModelSchema):
             "tallySheetVersionId",
             "preferenceNumber",
             "preferenceCount",
-            "candidateId"
+            "candidateId",
+            "candidateName"
         )
 
         model = TallySheetVersionRow_PRE_34_preference.Model
@@ -609,6 +610,19 @@ class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
     areas = ma.Nested(AreaSchema, many=True)
 
 
+class TallySheetVersionRow_PRE_34_CO_Summary_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "ballotPapersNotCounted",
+            "remainingBallotPapers"
+        )
+
+        model = TallySheetVersionRow_PRE_34_summary.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class TallySheetVersion_PRE_34_CO_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -617,7 +631,8 @@ class TallySheetVersion_PRE_34_CO_Schema(ma.ModelSchema):
             "createdBy",
             "createdAt",
             "htmlUrl",
-            "content"
+            "content",
+            "summary",
         )
 
         model = TallySheetVersion_PRE_34_CO.Model
@@ -627,6 +642,7 @@ class TallySheetVersion_PRE_34_CO_Schema(ma.ModelSchema):
 
     # submission = ma.Nested(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_PRE_34_CO_Schema, many=True)
+    summary = ma.Nested(TallySheetVersionRow_PRE_34_CO_Summary_Schema)
 
 
 class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
