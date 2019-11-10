@@ -5,6 +5,7 @@ from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_summary
 from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetVersion_PRE_34_CO_Schema, TallySheetVersionSchema
 from util import RequestBody
@@ -53,6 +54,20 @@ def create(tallySheetId, body):
 
     tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_34_CO
     tally_sheet_content = request_body.get("content")
+
+    # summary
+    summary = request_body.get("summary")
+    print("umayanga", summary)
+    ballotPapersNotCounted = summary['ballotPapersNotCounted']
+    remainingBallotPapers = summary['remainingBallotPapers']
+    if ballotPapersNotCounted is not None and remainingBallotPapers is not None:
+        TallySheetVersionRow_PRE_34_summary.create(
+            electionId=tallySheetVersion.submission.electionId,
+            tallySheetVersionId=tallySheetVersion.tallySheetVersionId,
+            ballotPapersNotCounted=ballotPapersNotCounted,
+            remainingBallotPapers=remainingBallotPapers
+        )
+
     if tally_sheet_content is not None:
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
@@ -92,7 +107,9 @@ def create(tallySheetId, body):
                         countingCentreId=countingCentreId,
                         secondPreferenceCount=secondPreferenceCount,
                         thirdPreferenceCount=thirdPreferenceCount,
-                        candidateId=candidateId
+                        candidateId=candidateId,
+                        ballotPapersNotCounted=ballotPapersNotCounted,
+                        remainingBallotPapers=remainingBallotPapers
                     )
                 else:
                     existingStatus.voteType = voteType
@@ -100,6 +117,8 @@ def create(tallySheetId, body):
                     existingStatus.electoralDistrictId = electoralDistrictId
                     existingStatus.pollingDivisionId = pollingDivisionId
                     existingStatus.countingCentreId = countingCentreId
+                    existingStatus.ballotPapersNotCounted = ballotPapersNotCounted
+                    existingStatus.remainingBallotPapers = remainingBallotPapers
                     if secondPreferenceCount is not 0:
                         existingStatus.secondPreferenceCount = secondPreferenceCount
                     if thirdPreferenceCount is not 0:
