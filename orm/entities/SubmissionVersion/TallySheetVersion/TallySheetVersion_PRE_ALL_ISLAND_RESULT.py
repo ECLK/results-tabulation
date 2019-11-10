@@ -163,7 +163,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             ElectionCandidate.Model.electionId == self.submission.electionId
         ).all()
 
-    def html(self):
+    def get_html_content_dict(self):
         tallySheetContent = self.content
         stamp = self.stamp
 
@@ -215,9 +215,20 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             to_percentage(vote_count_result["totalVoteCountPercentage"])
         ]
 
+        return content
+
+    def html_letter(self):
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS.html',
-            content=content
+            content=self.get_html_content_dict()
+        )
+
+        return html
+
+    def html(self):
+        html = render_template(
+            'PRE_ALL_ISLAND_RESULTS.html',
+            content=self.get_html_content_dict()
         )
 
         return html

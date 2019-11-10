@@ -230,7 +230,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
             Area.Model.areaId
         ).all()
 
-    def html(self):
+    def get_html_content_dict(self):
         candidate_and_area_wise_valid_vote_count_result = self.candidate_and_area_wise_valid_vote_count_query().all()
         candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
         area_wise_vote_count_result = self.area_wise_vote_count_query().all()
@@ -298,9 +298,20 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
 
             content["data"].append(data_row)
 
+        return content
+
+    def html_letter(self):
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.html',
-            content=content
+            content=self.get_html_content_dict()
+        )
+
+        return html
+
+    def html(self):
+        html = render_template(
+            'PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.html',
+            content=self.get_html_content_dict()
         )
 
         return html
