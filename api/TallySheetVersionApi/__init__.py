@@ -38,6 +38,7 @@ def create_empty_and_get_html(tallySheetId):
     return Response(tallySheetVersion.html(), mimetype='text/html')
 
 
+@authorize(required_roles=ALL_ROLES)
 def letter_html(tallySheetId, tallySheetVersionId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
