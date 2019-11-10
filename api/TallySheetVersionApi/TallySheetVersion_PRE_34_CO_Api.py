@@ -56,8 +56,10 @@ def create(tallySheetId, body):
     tally_sheet_content = request_body.get("content")
 
     # summary
-    ballotPapersNotCounted = request_body.get("ballotPapersNotCounted")
-    remainingBallotPapers = request_body.get("remainingBallotPapers")
+    summary = request_body.get("summary")
+    print("umayanga", summary)
+    ballotPapersNotCounted = summary['ballotPapersNotCounted']
+    remainingBallotPapers = summary['remainingBallotPapers']
     if ballotPapersNotCounted is not None and remainingBallotPapers is not None:
         TallySheetVersionRow_PRE_34_summary.create(
             electionId=tallySheetVersion.submission.electionId,
