@@ -144,8 +144,8 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
             raise Exception("Duplicated polling station %s" % data_key)
 
         # To identify the duplicated counting centres.
-        if data_store_key == "Counting Centre" and obj is not None:
-            print("[Error] Duplicated counting centre %s" % data_key)
+        # if data_store_key == "Counting Centre" and obj is not None:
+        #     print("[Error] Duplicated counting centre %s" % data_key)
 
         if obj is None:
             if data_store_key == "Ballot":
