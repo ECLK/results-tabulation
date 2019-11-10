@@ -6,7 +6,7 @@ from orm.entities import Area, Candidate, Party, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_RejectedVoteCount
-from util import to_comma_seperated_num, sqlalchemy_num_or_zero
+from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 
 
@@ -159,13 +159,31 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
     def candidate_wise_vote_count(self):
         candidate_and_area_wise_valid_vote_count_subquery = self.candidate_and_area_wise_valid_vote_count_query().subquery()
+        vote_count_result = self.vote_count_query().one_or_none()
 
         return db.session.query(
             candidate_and_area_wise_valid_vote_count_subquery.c.candidateId,
             candidate_and_area_wise_valid_vote_count_subquery.c.candidateName,
+            Party.Model.partyAbbreviation,
             func.sum(
                 sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
-            ).label("validVoteCount")
+            ).label("validVoteCount"),
+            func.sum(
+                ((sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount) +
+                  sqlalchemy_num_or_zero(
+                      candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)) / vote_count_result.validVoteCount) * 100
+            ).label("validVotePercentage")
+        ).join(
+            ElectionCandidate.Model,
+            ElectionCandidate.Model.candidateId == candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
+        ).join(
+            Candidate.Model,
+            Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
+            isouter=True
+        ).join(
+            Party.Model,
+            Party.Model.partyId == ElectionCandidate.Model.partyId,
+            isouter=True
         ).group_by(
             candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
         ).group_by(
@@ -227,6 +245,68 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             ElectionCandidate.Model.candidateId,
             func.cast(Area.Model.areaName, db.Integer)
         ).all()
+
+    def html_letter(self):
+
+        stamp = self.stamp
+
+        content = {
+            "election": {
+                "electionName": self.submission.election.get_official_name()
+            },
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
+            "date": stamp.createdAt.strftime("%d/%m/%Y"),
+            "time": stamp.createdAt.strftime("%H:%M:%S %p"),
+            "data": [
+            ],
+            "validVoteCounts": [0, 0],
+            "rejectedVoteCounts": [0, 0],
+            "totalVoteCounts": [0, 0],
+            "registeredVoters": [
+                to_comma_seperated_num(self.submission.area.registeredVotersCount),
+                100
+            ],
+            "electoralDistrict": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": self.submission.area.areaName
+        }
+
+        candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
+        vote_count_result = self.vote_count_query().one_or_none()
+
+        for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
+            content["data"].append([
+                candidate_wise_valid_vote_count_result_item.candidateName,
+                candidate_wise_valid_vote_count_result_item.partyAbbreviation,
+                to_comma_seperated_num(candidate_wise_valid_vote_count_result_item.validVoteCount),
+                to_percentage(candidate_wise_valid_vote_count_result_item.validVotePercentage)
+            ])
+
+        content["validVoteCounts"] = [
+            to_comma_seperated_num(vote_count_result.validVoteCount),
+            to_percentage(vote_count_result.validVoteCount * 100 / self.submission.area.registeredVotersCount)
+        ]
+
+        content["rejectedVoteCounts"] = [
+            to_comma_seperated_num(vote_count_result.rejectedVoteCount),
+            to_percentage(vote_count_result.rejectedVoteCount * 100 / self.submission.area.registeredVotersCount)
+        ]
+
+        content["totalVoteCounts"] = [
+            to_comma_seperated_num(vote_count_result.totalVoteCount),
+            to_percentage(vote_count_result.totalVoteCount * 100 / self.submission.area.registeredVotersCount)
+        ]
+
+        html = render_template(
+            'PRE-30-PD-LETTER.html',
+            content=content
+        )
+
+        return html
 
     def html(self):
 
