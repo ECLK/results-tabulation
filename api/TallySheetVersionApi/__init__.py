@@ -57,7 +57,7 @@ def letter_html(tallySheetId, tallySheetVersionId):
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
-    return Response(tally_sheet_version.html(), mimetype='text/html')
+    return Response(tally_sheet_version.html_letter(), mimetype='text/html')
 
 
 @authorize(required_roles=ALL_ROLES)
