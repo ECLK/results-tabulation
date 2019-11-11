@@ -57,7 +57,6 @@ def create(tallySheetId, body):
 
     # summary
     summary = request_body.get("summary")
-    print("umayanga", summary)
     ballotPapersNotCounted = summary['ballotPapersNotCounted']
     remainingBallotPapers = summary['remainingBallotPapers']
     if ballotPapersNotCounted is not None and remainingBallotPapers is not None:
