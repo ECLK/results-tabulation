@@ -63,6 +63,76 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             ElectionCandidate.Model.qualifiedForPreferences == True
         ).all()
 
+    def html_letter(self):
+
+        stamp = self.stamp
+        tallySheetContent = self.content
+
+        content = {
+            "election": {
+                "electionName": self.submission.election.get_official_name(),
+                "isPostal": self.submission.election.voteType == VoteTypeEnum.Postal
+            },
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
+            "date": stamp.createdAt.strftime("%d/%m/%Y"),
+            "time": stamp.createdAt.strftime("%H:%M:%S %p"),
+            "data": [
+            ],
+            "validVoteCounts": [0, 0],
+            "rejectedVoteCounts": [0, 0],
+            "totalVoteCounts": [0, 0],
+            "registeredVoters": [
+                to_comma_seperated_num(self.submission.area.registeredVotersCount),
+                100
+            ],
+            "electoralDistrict": Area.get_associated_areas(
+                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+            "pollingDivision": self.submission.area.areaName
+        }
+
+        temp_data = {}
+        for candidateIndex in range(len(tallySheetContent)):
+            candidate = tallySheetContent[candidateIndex]
+            temp_data[candidate.candidateId] = {
+                "number": len(temp_data) + 1,
+                "name": candidate.candidateName,
+                "firstPreferenceCount": "",
+                "secondPreferenceCount": "",
+                "thirdPreferenceCount": "",
+                "total": 0
+            }
+
+        for row_index in range(len(tallySheetContent)):
+            row = tallySheetContent[row_index]
+            if row.preferenceCount is not None:
+
+                if row.preferenceNumber == 1:
+                    preference = "firstPreferenceCount"
+                elif row.preferenceNumber == 2:
+                    preference = "secondPreferenceCount"
+                elif row.preferenceNumber == 3:
+                    preference = "thirdPreferenceCount"
+                else:
+                    preference = ""
+
+                temp_data[row.candidateId]['name'] = row.candidateName
+                temp_data[row.candidateId][preference] = row.preferenceCount
+                temp_data[row.candidateId]["total"] = temp_data[row.candidateId]["total"] + row.preferenceCount
+
+        for i in temp_data:
+            content['data'].append(temp_data[i])
+
+        html = render_template(
+            'PRE-34-PD-LETTER.html',
+            content=content
+        )
+
+        return html
+
     def html(self):
         stamp = self.stamp
         tallySheetContent = self.content
