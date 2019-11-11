@@ -79,6 +79,14 @@ def get_root_token(electionId):
     return encoded_jwt_token
 
 
+def update_dashboard_tables():
+    tally_sheets = TallySheet.Model.query.all()
+    for tally_sheet in tally_sheets:
+        tally_sheet.update_status_report()
+
+    db.session.commit()
+
+
 def build_presidential_election(root_election: Election, party_candidate_dataset_file=None,
                                 polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
                                 invalid_vote_categories_dataset_file=None):
@@ -418,5 +426,7 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
         )
 
     db.session.commit()
+
+    update_dashboard_tables()
 
     return root_election
