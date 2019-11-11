@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, url_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from app import db
 from orm.entities import Area
@@ -8,6 +8,9 @@ from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_21
 from util import to_empty_string_or_value
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
+import io
+import base64
+import os
 
 
 class TallySheetVersionPRE21Model(TallySheetVersion.Model):
@@ -86,9 +89,16 @@ class TallySheetVersionPRE21Model(TallySheetVersion.Model):
             if row.count is not None:
                 content["totalRejected"] = content["totalRejected"] + row.count
 
+        # convert image to data-uri
+        data_image = ''
+
+        with open("static/Emblem_of_Sri_Lanka.png", "rb") as img_file:
+            data_image = base64.b64encode(img_file.read()).decode()
+
         html = render_template(
             'PRE-21.html',
-            content=content
+            content=content,
+            data_image=data_image
         )
 
         return html

@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, url_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func
 from app import db
@@ -10,6 +10,9 @@ from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAN
 from util import to_comma_seperated_num, to_percentage, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
+import io
+import base64
+import os
 
 
 class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
@@ -217,10 +220,17 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
 
         return content
 
+    # convert image to data-uri
+    data_image = ''
+
+    with open("static/Emblem_of_Sri_Lanka.png", "rb") as img_file:
+        data_image = base64.b64encode(img_file.read()).decode()
+
     def html_letter(self):
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS.html',
-            content=self.get_html_content_dict()
+            content=self.get_html_content_dict(),
+            data_image=data_image
         )
 
         return html
@@ -228,7 +238,8 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
     def html(self):
         html = render_template(
             'PRE_ALL_ISLAND_RESULTS.html',
-            content=self.get_html_content_dict()
+            content=self.get_html_content_dict(),
+            data_image=data_image
         )
 
         return html
