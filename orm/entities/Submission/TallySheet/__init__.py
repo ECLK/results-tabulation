@@ -64,7 +64,7 @@ class TallySheetModel(db.Model):
                 electoral_district_name = submission_area.areaName
                 status_report_type = "PV"
             else:
-                electoral_district_name = _get_polling_division_name(submission_area)
+                electoral_district_name = _get_electoral_district_name(submission_area)
                 polling_division_name = submission_area.areaName
                 status_report_type = "PD"
         elif self.tallySheetCode is TallySheetCodeEnum.PRE_34_PD:
@@ -72,7 +72,7 @@ class TallySheetModel(db.Model):
                 electoral_district_name = submission_area.areaName
                 status_report_type = "PV [Revised]"
             else:
-                electoral_district_name = _get_polling_division_name(submission_area)
+                electoral_district_name = _get_electoral_district_name(submission_area)
                 polling_division_name = submission_area.areaName
                 status_report_type = "PD [Revised]"
         elif self.tallySheetCode is TallySheetCodeEnum.PRE_30_ED:
@@ -202,8 +202,6 @@ class TallySheetModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-        self.update_status_report()
-
     def create_empty_version(self):
         tallySheetVersion = get_tally_sheet_version_class(self.tallySheetCode).Model(
             tallySheetId=self.tallySheetId
@@ -223,13 +221,16 @@ class TallySheetModel(db.Model):
 Model = TallySheetModel
 
 
-def _get_polling_division_name(electoral_district):
-    polling_division_name = ""
-    polling_division = electoral_district.get_associated_areas(areaType=AreaTypeEnum.ElectoralDistrict)
-    if len(polling_division) > 0:
-        polling_division_name = polling_division[0].areaName
+def _get_electoral_district_name(polling_division):
+    electoral_district_name = ""
+    electoral_district = polling_division.get_associated_areas(
+        areaType=AreaTypeEnum.ElectoralDistrict,
+        electionId=polling_division.electionId
+    )
+    if len(electoral_district) > 0:
+        electoral_district_name = electoral_district[0].areaName
 
-    return polling_division_name
+    return electoral_district_name
 
 
 def get_by_id(tallySheetId, tallySheetCode=None):
