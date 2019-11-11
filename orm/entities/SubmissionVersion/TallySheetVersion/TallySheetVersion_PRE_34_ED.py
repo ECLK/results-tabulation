@@ -18,7 +18,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
         )
 
     __mapper_args__ = {
-        'polymorphic_identity': TallySheetCodeEnum.PRE_34_PD
+        'polymorphic_identity': TallySheetCodeEnum.PRE_34_ED
     }
 
     def add_row(self, preferenceNumber, preferenceCount, candidateId, electionId):
