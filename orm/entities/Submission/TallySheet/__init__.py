@@ -199,10 +199,10 @@ class TallySheetModel(db.Model):
             tallySheetCode=tallySheetCode,
         )
 
-        self.update_status_report()
-
         db.session.add(self)
         db.session.flush()
+
+        self.update_status_report()
 
     def create_empty_version(self):
         tallySheetVersion = get_tally_sheet_version_class(self.tallySheetCode).Model(

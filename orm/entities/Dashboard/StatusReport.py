@@ -5,7 +5,7 @@ class StatusReportModel(db.Model):
     __tablename__ = 'dashboard_status_report'
 
     statusReportId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    reportType = db.Column(db.String(20), nullable=False)
+    reportType = db.Column(db.String(100), nullable=False)
     electoralDistrictName = db.Column(db.String(100), nullable=False)
     pollingDivisionName = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(20), nullable=False)
