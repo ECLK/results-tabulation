@@ -2,6 +2,7 @@ import connexion
 
 from orm.enums import TallySheetCodeEnum, BallotTypeEnum, AreaTypeEnum
 from sqlalchemy import func
+import base64
 
 
 class RequestBody:
@@ -202,3 +203,11 @@ def to_comma_seperated_num(value):
         return ""
     else:
         return f'{value:,}'
+
+def convert_image_to_data_uri(value):
+    data_image = ''
+
+    with open(value, "rb") as img_file:
+        data_image = base64.b64encode(img_file.read()).decode()
+
+    return data_image
