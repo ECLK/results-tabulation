@@ -104,9 +104,11 @@
             </td>
             {% endfor %}
 
-            <td class="all" style="text-align:right;"></td>
-            <td class="all" style="text-align:right;"></td>
-            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;">{{ content.summary.ballotPapersNotCounted }}</td>
+            <td class="all" style="text-align:right;">{{ content.summary.remainingBallotPapers }}</td>
+            <td class="all" style="text-align:right;">{{ content.summary.remainingBallotPapers +
+                content.summary.ballotPapersNotCounted }}
+            </td>
         </tr>
 
         <tr style="font-size:14px;">
@@ -158,26 +160,26 @@
     </table>
 
     <table class="table table-borderless">
-      <tr style="text-align:center;">
-        <td>
-            ....................................</br>
-            MAHINDA DESHAPRIYA</br>
-            Chairman</br>
-            Election Commission
-        </td>
-        <td>
-            ....................................</br>
-            N. J. ABEYESEKERE</br>
-            Member</br>
-            Election Commission
-        </td>
-        <td>
-            ....................................</br>
-            S. RATNAJEEVAN H. HOOLE</br>
-            Member</br>
-            Election Commission
-        </td>
-      </tr>
+        <tr style="text-align:center;">
+            <td>
+                ....................................</br>
+                MAHINDA DESHAPRIYA</br>
+                Chairman</br>
+                Election Commission
+            </td>
+            <td>
+                ....................................</br>
+                N. J. ABEYESEKERE</br>
+                Member</br>
+                Election Commission
+            </td>
+            <td>
+                ....................................</br>
+                S. RATNAJEEVAN H. HOOLE</br>
+                Member</br>
+                Election Commission
+            </td>
+        </tr>
     </table>
 
 </div>
