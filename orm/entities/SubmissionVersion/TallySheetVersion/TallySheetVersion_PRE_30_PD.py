@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, url_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func, and_
 from app import db
@@ -6,7 +6,7 @@ from orm.entities import Area, Candidate, Party, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_RejectedVoteCount
-from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage
+from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage, convert_image_to_data_uri
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 from datetime import datetime
 
@@ -318,6 +318,8 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             to_comma_seperated_num(vote_count_result.totalVoteCount),
             to_percentage(vote_count_result.totalVoteCount * 100 / total_registered_voters)
         ]
+
+        content["logo"] = convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png")
 
         html = render_template(
             'PRE-30-PD-LETTER.html',
