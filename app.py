@@ -65,7 +65,7 @@ def create_app():
     app.config.from_envvar('ENV_CONFIG')
 
     # Configure the SQLAlchemy part of the app instance
-    app.config['SQLALCHEMY_ECHO'] = True
+    app.config['SQLALCHEMY_ECHO'] = app.config['DEBUG']
 
     if app.config['DATABASE_PLUGIN'] == "sqlite":
         # this is for unit tests
