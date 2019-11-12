@@ -55,6 +55,9 @@ def unlock(tallySheetId):
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
+    # TODO refactor
+    tally_sheet.submissionProof.open()
+
     tally_sheet.set_locked_version(None)
 
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.CE_201, TallySheetCodeEnum.CE_201_PV]:
@@ -144,6 +147,51 @@ def lock(tallySheetId, body):
 
         for item in results:
             item.status = "Verified"
+
+    db.session.commit()
+
+    return TallySheetSchema().dump(tally_sheet).data, 201
+
+
+# @authorize(required_roles=[EC_LEADERSHIP_ROLE])
+# def certify(tallySheetId):
+#     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+#
+#     if tally_sheet is None:
+#         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+#
+#     tally_sheet.set_certified_version()
+#
+#     db.session.commit()
+#
+#     return TallySheetSchema().dump(tally_sheet).data, 201
+
+
+@authorize(required_roles=[EC_LEADERSHIP_ROLE])
+def notify(tallySheetId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    tally_sheet.set_notified_version()
+
+    db.session.commit()
+
+    return TallySheetSchema().dump(tally_sheet).data, 201
+
+
+@authorize(required_roles=[EC_LEADERSHIP_ROLE])
+def release(tallySheetId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    # TODO refactor
+    tally_sheet.submissionProof.close()
+
+    tally_sheet.set_released_version()
 
     db.session.commit()
 
