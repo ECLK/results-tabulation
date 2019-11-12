@@ -133,14 +133,17 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
         candidate_wise_vote_count_result = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         candidates = []
+        vote_count_result = self.vote_count_query().one_or_none()
+        total_valid_votes = vote_count_result.validVoteCount or 0
         for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
+            total_vote_count = candidate_wise_valid_vote_count_result_item['total']
             candidates.append({
                 "party_code": candidate_wise_valid_vote_count_result_item['partyAbbreviation'],
-                "votes": str(candidate_wise_valid_vote_count_result_item['total']),
+                "votes": str(total_vote_count),
                 "votes1st": str(candidate_wise_valid_vote_count_result_item['firstPreferenceCount']),
                 "votes2nd": str(candidate_wise_valid_vote_count_result_item['secondPreferenceCount']),
                 "votes3rd": str(candidate_wise_valid_vote_count_result_item['thirdPreferenceCount']),
-                "percentage": "",
+                "percentage": f'{round(total_vote_count*100/total_valid_votes,2)}',
                 "party_name": candidate_wise_valid_vote_count_result_item['partyName'],
                 "candidate": candidate_wise_valid_vote_count_result_item['name']
             })
@@ -155,7 +158,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
             "ed_name": ed_name,
             "by_party": candidates,
             "summary": {
-                "valid": "",
+                "valid": str(total_valid_votes),
                 "rejected": "",
                 "polled": "",
                 "electors": "",
