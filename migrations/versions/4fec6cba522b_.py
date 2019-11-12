@@ -26,10 +26,10 @@ def upgrade():
                     sa.PrimaryKeyConstraint('statusReportId')
                     )
     op.add_column('tallySheet', sa.Column('statusReportId', sa.Integer(), nullable=True))
-    op.create_foreign_key(None, 'tallySheet', 'dashboard_status_report', ['statusReportId'], ['statusReportId'])
+    op.create_foreign_key("dashboard_status_report_ibfk_1", 'tallySheet', 'dashboard_status_report', ['statusReportId'], ['statusReportId'])
 
 
 def downgrade():
-    op.drop_constraint(None, 'tallySheet', type_='foreignkey')
+    op.drop_constraint("dashboard_status_report_ibfk_1", 'tallySheet', type_='foreignkey')
     op.drop_column('tallySheet', 'statusReportId')
     op.drop_table('dashboard_status_report')

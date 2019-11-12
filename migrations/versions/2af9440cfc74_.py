@@ -17,12 +17,16 @@ depends_on = None
 
 
 def upgrade():
+    op.drop_constraint("dashboard_status_report_ibfk_1", 'tallySheet', type_='foreignkey')
     op.alter_column('dashboard_status_report', 'electionId',
                existing_type=mysql.INTEGER(display_width=11),
                nullable=False)
+    op.create_foreign_key("dashboard_status_report_ibfk_1", 'tallySheet', 'dashboard_status_report', ['statusReportId'], ['statusReportId'])
 
 
 def downgrade():
+    op.drop_constraint("dashboard_status_report_ibfk_1", 'tallySheet', type_='foreignkey')
     op.alter_column('dashboard_status_report', 'electionId',
                existing_type=mysql.INTEGER(display_width=11),
                nullable=True)
+    op.create_foreign_key("dashboard_status_report_ibfk_1", 'tallySheet', 'dashboard_status_report', ['statusReportId'], ['statusReportId'])
