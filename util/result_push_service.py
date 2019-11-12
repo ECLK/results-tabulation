@@ -57,7 +57,9 @@ def release_results(tally_sheet, tally_sheet_version_id):
         )
 
         print("#### RESULT_DISSEMINATION_API - Release #### ", [url, response])
-        return requests.post(url, verify=False, json=response)
+        result = requests.post(url, verify=False, json=response)
+        print(result.status_code, result.content)
+        return result
     else:
         raise MethodNotAllowedException(
             message="Tally sheet is not allowed to be released.",
@@ -88,7 +90,9 @@ def notify_results(tally_sheet, tally_sheet_version_id):
         )
 
         print("#### RESULT_DISSEMINATION_API - Notify #### ", [url, response])
-        return requests.post(url, verify=False)
+        result = requests.post(url, verify=False)
+        print(result.status_code, result.content)
+        return result
     else:
         raise MethodNotAllowedException(
             message="Tally sheet is not allowed to be notified.",
