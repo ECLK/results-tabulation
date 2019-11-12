@@ -6,7 +6,8 @@ from orm.entities import Submission, Area, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference, \
+    TallySheetVersionRow_PRE_34_summary
 from orm.enums import AreaTypeEnum, TallySheetCodeEnum
 from schemas import TallySheetVersionSchema
 from sqlalchemy import func, and_
@@ -75,6 +76,30 @@ def create(tallySheetId):
         ElectionCandidate.Model.candidateId
     ).all()
 
+    summary = db.session.query(
+        func.count(Area.Model.areaId).label("areaCount"),
+        func.sum(TallySheetVersionRow_PRE_34_summary.Model.ballotPapersNotCounted).label("ballotPapersNotCounted"),
+        func.sum(TallySheetVersionRow_PRE_34_summary.Model.remainingBallotPapers).label("remainingBallotPapers"),
+    ).join(
+        Submission.Model,
+        Submission.Model.areaId == Area.Model.areaId
+    ).join(
+        TallySheet.Model,
+        and_(
+            TallySheet.Model.tallySheetId == Submission.Model.submissionId,
+            TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_34_CO
+        )
+    ).join(
+        TallySheetVersionRow_PRE_34_summary.Model,
+        and_(
+            TallySheetVersionRow_PRE_34_summary.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
+            TallySheetVersionRow_PRE_34_summary.Model.electionId == Submission.Model.electionId
+        ),
+        isouter=True
+    ).filter(
+        Area.Model.areaId.in_([area.areaId for area in countingCentres])
+    ).one_or_none()
+
     is_complete = True  # TODO:Change other reports to validate like this
     for row in query:
         if row.candidateId is not None and row.preferenceNumber is not None and row.preferenceNumber is not None:
@@ -86,6 +111,16 @@ def create(tallySheetId):
             )
         else:
             is_complete = False
+
+    if summary is not None and summary.ballotPapersNotCounted is not None and summary.remainingBallotPapers is not None:
+        TallySheetVersionRow_PRE_34_summary.create(
+            electionId=tallySheet.submission.electionId,
+            tallySheetVersionId=tallySheetVersion.tallySheetVersionId,
+            ballotPapersNotCounted=summary.ballotPapersNotCounted,
+            remainingBallotPapers=summary.remainingBallotPapers
+        )
+    else:
+        is_complete = False
 
     if is_complete:
         tallySheetVersion.set_complete()
