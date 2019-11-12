@@ -180,7 +180,7 @@ def notify(tallySheetId):
 
     result_push_service.notify_results(
         tally_sheet=tally_sheet,
-        tally_sheet_version_id=tally_sheet.releasedVersionId
+        tally_sheet_version_id=tally_sheet.notifiedVersionId
     )
 
     return TallySheetSchema().dump(tally_sheet).data, 201
