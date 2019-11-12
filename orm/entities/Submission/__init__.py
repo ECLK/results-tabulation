@@ -21,6 +21,10 @@ class SubmissionModel(db.Model):
     lockedStampId = db.Column(db.Integer, db.ForeignKey("stamp.stampId"), nullable=True)
     submittedVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
     submittedStampId = db.Column(db.Integer, db.ForeignKey("stamp.stampId"), nullable=True)
+    notifiedVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
+    notifiedStampId = db.Column(db.Integer, db.ForeignKey("stamp.stampId"), nullable=True)
+    releasedVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
+    releasedStampId = db.Column(db.Integer, db.ForeignKey("stamp.stampId"), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     area = relationship(Area.Model, foreign_keys=[areaId])
@@ -32,6 +36,10 @@ class SubmissionModel(db.Model):
     lockedStamp = relationship(Stamp.Model, foreign_keys=[lockedStampId])
     submittedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
     submittedStamp = relationship(Stamp.Model, foreign_keys=[submittedStampId])
+    notifiedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
+    notifiedStamp = relationship(Stamp.Model, foreign_keys=[submittedStampId])
+    releasedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
+    releasedStamp = relationship(Stamp.Model, foreign_keys=[submittedStampId])
     versions = relationship("SubmissionVersionModel", order_by="desc(SubmissionVersionModel.submissionVersionId)",
                             primaryjoin="SubmissionModel.submissionId==SubmissionVersionModel.submissionId")
 
@@ -42,6 +50,24 @@ class SubmissionModel(db.Model):
     @hybrid_property
     def submitted(self):
         return self.submittedVersionId is not None
+
+    @hybrid_property
+    def submitted(self):
+        return self.submittedVersionId is not None
+
+    @hybrid_property
+    def notified(self):
+        if self.lockedVersionId and self.lockedVersionId == self.notifiedVersionId:
+            return True
+        else:
+            return False
+
+    @hybrid_property
+    def released(self):
+        if self.lockedVersionId and self.lockedVersionId == self.releasedVersionId:
+            return True
+        else:
+            return False
 
     def set_latest_version(self, submissionVersion: SubmissionVersion):
         if submissionVersion is None:
@@ -99,6 +125,46 @@ class SubmissionModel(db.Model):
 
             self.submittedVersionId = submissionVersion.submissionVersionId
             self.submittedStampId = Stamp.create().stampId
+
+        db.session.add(self)
+        db.session.flush()
+
+    def set_notified_version(self, submissionVersion: SubmissionVersion):
+        if submissionVersion is None:
+            self.notifiedVersionId = None
+            self.notifiedStampId = None
+        else:
+            if submissionVersion.submissionId != self.submissionId:
+                raise MethodNotAllowedException(
+                    message="%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
+                        self.submissionType.name, self.submissionType.name, self.submissionId,
+                        submissionVersion.submissionVersionId, submissionVersion.submissionId
+                    ),
+                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
+                )
+
+            self.notifiedVersionId = submissionVersion.submissionVersionId
+            self.notifiedStampId = Stamp.create().stampId
+
+        db.session.add(self)
+        db.session.flush()
+
+    def set_released_version(self, submissionVersion: SubmissionVersion):
+        if submissionVersion is None:
+            self.releasedVersionId = None
+            self.releasedStampId = None
+        else:
+            if submissionVersion.submissionId != self.submissionId:
+                raise MethodNotAllowedException(
+                    message="%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
+                        self.submissionType.name, self.submissionType.name, self.submissionId,
+                        submissionVersion.submissionVersionId, submissionVersion.submissionId
+                    ),
+                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
+                )
+
+            self.releasedVersionId = submissionVersion.submissionVersionId
+            self.releasedStampId = Stamp.create().stampId
 
         db.session.add(self)
         db.session.flush()

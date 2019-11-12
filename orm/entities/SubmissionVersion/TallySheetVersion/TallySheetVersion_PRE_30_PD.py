@@ -8,6 +8,7 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_RejectedVoteCount
 from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
+from datetime import datetime
 
 
 class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
@@ -165,13 +166,12 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             candidate_and_area_wise_valid_vote_count_subquery.c.candidateId,
             candidate_and_area_wise_valid_vote_count_subquery.c.candidateName,
             Party.Model.partyAbbreviation,
+            Party.Model.partyName,
             func.sum(
                 sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
             ).label("validVoteCount"),
             func.sum(
-                ((sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount) +
-                  sqlalchemy_num_or_zero(
-                      candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)) / vote_count_result.validVoteCount) * 100
+                (sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount) / vote_count_result.validVoteCount) * 100
             ).label("validVotePercentage")
         ).join(
             ElectionCandidate.Model,
@@ -246,9 +246,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             func.cast(Area.Model.areaName, db.Integer)
         ).all()
 
-    def html_letter(self):
-
-        stamp = self.stamp
+    def get_total_registered_voters(self):
         election = self.submission.election
         total_registered_voters = 0
 
@@ -262,6 +260,12 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
                 total_registered_voters = total_registered_voters + postal_counting_centre._registeredVotersCount
         else:
             total_registered_voters = self.submission.area.registeredVotersCount
+        return total_registered_voters
+
+    def html_letter(self):
+
+        stamp = self.stamp
+        total_registered_voters = self.get_total_registered_voters()
 
         content = {
             "election": {
@@ -406,6 +410,62 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
         )
 
         return html
+
+    def json_data(self):
+
+        total_registered_voters = self.get_total_registered_voters()
+
+        electoral_district = Area.get_associated_areas(self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName
+        polling_division = self.submission.area.areaName
+        candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
+        vote_count_result = self.vote_count_query().one_or_none()
+
+        candidates = []
+        for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
+            candidates.append({
+                "party_code": candidate_wise_valid_vote_count_result_item.partyAbbreviation,
+                "votes": str(candidate_wise_valid_vote_count_result_item.validVoteCount),
+                "percentage": f'{round(candidate_wise_valid_vote_count_result_item.validVotePercentage or 0,2)}',
+                "party_name": candidate_wise_valid_vote_count_result_item.partyName,
+                "candidate": candidate_wise_valid_vote_count_result_item.candidateName
+            })
+
+        is_postal = self.submission.election.voteType == VoteTypeEnum.Postal
+        ed_name=electoral_district.split(" - ")[1]
+        ed_code= electoral_district.split(" - ")[0]
+        if is_postal:
+            pd_name="Postal Votes"
+            pd_code = ed_code + 'P'
+        else:
+            pd_name=polling_division.split("- ")[1]
+            pd_code = ed_code + polling_division.split("- ")[0]
+
+        validVoteCount = vote_count_result.validVoteCount or 0
+        rejectedVoteCount = vote_count_result.rejectedVoteCount or 0
+        totalVoteCount = vote_count_result.totalVoteCount or 0
+
+        response = {
+            "result_code": pd_code,
+            "type": 'PRESIDENTIAL-FIRST',
+            "timestamp": str(datetime.now()),
+            "level": "POLLING-DIVISION",
+            "ed_code": ed_code,
+            "ed_name": ed_name,
+            "pd_code": pd_code,
+            "pd_name": pd_name,
+            "by_party": candidates,
+            "summary": {
+                "valid": str(vote_count_result.validVoteCount),
+                "rejected": str(vote_count_result.rejectedVoteCount),
+                "polled": str(vote_count_result.totalVoteCount),
+                "electors": str(total_registered_voters),
+                "percent_valid": f'{round((validVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_rejected": f'{round((rejectedVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_polled": f'{round((totalVoteCount * 100 / total_registered_voters), 2)}',
+            }
+        }
+
+        return response
 
 
 Model = TallySheetVersion_PRE_30_PD_Model

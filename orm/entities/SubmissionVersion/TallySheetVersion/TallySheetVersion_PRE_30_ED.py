@@ -8,6 +8,7 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount
 from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
+from datetime import datetime
 
 
 class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
@@ -314,6 +315,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             non_postal_candidate_wise_vote_count_subquery.c.candidateId,
             non_postal_candidate_wise_vote_count_subquery.c.candidateName,
             Party.Model.partyAbbreviation,
+            Party.Model.partyName,
             func.sum(
                 sqlalchemy_num_or_zero(non_postal_candidate_wise_vote_count_subquery.c.validVoteCount)
             ).label("nonPostalValidVoteCount"),
@@ -326,7 +328,8 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             ).label("validVoteCount"),
             func.sum(
                 ((sqlalchemy_num_or_zero(non_postal_candidate_wise_vote_count_subquery.c.validVoteCount) +
-                sqlalchemy_num_or_zero(postal_candidate_wise_vote_count_subquery.c.validVoteCount)) / vote_count_result.validVoteCount) * 100
+                  sqlalchemy_num_or_zero(
+                      postal_candidate_wise_vote_count_subquery.c.validVoteCount)) / vote_count_result.validVoteCount) * 100
             ).label("validVotePercentage")
         ).join(
             ElectionCandidate.Model,
@@ -448,7 +451,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
 
         content["validVoteCounts"] = [
             to_comma_seperated_num(vote_count_result.validVoteCount),
-            to_percentage(vote_count_result.validVoteCount*100/self.submission.area.registeredVotersCount)
+            to_percentage(vote_count_result.validVoteCount * 100 / self.submission.area.registeredVotersCount)
         ]
 
         content["rejectedVoteCounts"] = [
@@ -460,7 +463,6 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             to_comma_seperated_num(vote_count_result.totalVoteCount),
             to_percentage(vote_count_result.totalVoteCount * 100 / self.submission.area.registeredVotersCount)
         ]
-
 
         html = render_template(
             'PRE-30-ED-LETTER.html',
@@ -569,6 +571,52 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         )
 
         return html
+
+    def json_data(self):
+
+        total_registered_voters = self.submission.area.registeredVotersCount
+
+        electoral_district = self.submission.area.areaName
+        candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
+        vote_count_result = self.vote_count_query().one_or_none()
+
+        candidates = []
+        for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
+            candidates.append({
+                "party_code": candidate_wise_valid_vote_count_result_item.partyAbbreviation,
+                "votes": str(candidate_wise_valid_vote_count_result_item.validVoteCount),
+                "percentage": f'{round(candidate_wise_valid_vote_count_result_item.validVotePercentage or 0,2)}',
+                "party_name": candidate_wise_valid_vote_count_result_item.partyName,
+                "candidate": candidate_wise_valid_vote_count_result_item.candidateName
+            })
+
+        ed_name = electoral_district.split(" - ")[1]
+        ed_code = electoral_district.split(" - ")[0]
+
+        validVoteCount = vote_count_result.validVoteCount or 0
+        rejectedVoteCount = vote_count_result.rejectedVoteCount or 0
+        totalVoteCount = vote_count_result.totalVoteCount or 0
+
+        response = {
+            "result_code": ed_code,
+            "type": 'PRESIDENTIAL-FIRST',
+            "timestamp": str(datetime.now()),
+            "level": "ELECTORAL-DISTRICT",
+            "ed_code": ed_code,
+            "ed_name": ed_name,
+            "by_party": candidates,
+            "summary": {
+                "valid": str(vote_count_result.validVoteCount),
+                "rejected": str(vote_count_result.rejectedVoteCount),
+                "polled": str(vote_count_result.totalVoteCount),
+                "electors": str(total_registered_voters),
+                "percent_valid": f'{round((validVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_rejected": f'{round((rejectedVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_polled": f'{round((totalVoteCount * 100 / total_registered_voters), 2)}',
+            }
+        }
+
+        return response
 
 
 Model = TallySheetVersion_PRE_30_ED_Model

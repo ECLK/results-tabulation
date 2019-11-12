@@ -26,6 +26,25 @@ class ProofModel(db.Model):
     createdBy = association_proxy("proofStamp", "createdBy")
     createdAt = association_proxy("proofStamp", "createdAt")
 
+    def close(self):
+        if self.size() is 0:
+            raise ForbiddenException(
+                message="A proof required at least one evidence. Please upload at least one evidence (proofId=%d)" % self.proofId,
+                code=MESSAGE_CODE_PROOF_CANNOT_BE_CONFIRMED_WITHOUT_EVIDENCE
+            )
+
+        self.finished = True
+
+        db.session.flush()
+
+    def open(self):
+        self.finished = False
+
+        db.session.flush()
+
+    def size(self):
+        return len(self.scannedFiles)
+
 
 Model = ProofModel
 

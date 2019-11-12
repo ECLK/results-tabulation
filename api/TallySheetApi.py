@@ -13,7 +13,7 @@ from orm.entities.Submission.TallySheet import TallySheetModel
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetSchema
-from util import RequestBody, get_paginated_query
+from util import RequestBody, get_paginated_query, result_push_service
 from orm.entities.Dashboard import StatusCE201, StatusPRE41, StatusPRE34
 
 
@@ -54,6 +54,9 @@ def unlock(tallySheetId):
             message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
+
+    # TODO refactor
+    tally_sheet.submissionProof.open()
 
     tally_sheet.set_locked_version(None)
 
@@ -146,6 +149,61 @@ def lock(tallySheetId, body):
             item.status = "Verified"
 
     db.session.commit()
+
+    return TallySheetSchema().dump(tally_sheet).data, 201
+
+
+# @authorize(required_roles=[EC_LEADERSHIP_ROLE])
+# def certify(tallySheetId):
+#     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+#
+#     if tally_sheet is None:
+#         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+#
+#     tally_sheet.set_certified_version()
+#
+#     db.session.commit()
+#
+#     return TallySheetSchema().dump(tally_sheet).data, 201
+
+
+@authorize(required_roles=[EC_LEADERSHIP_ROLE])
+def notify(tallySheetId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    tally_sheet.set_notified_version()
+
+    db.session.commit()
+
+    result_push_service.notify_results(
+        tally_sheet=tally_sheet,
+        tally_sheet_version_id=tally_sheet.notifiedVersionId
+    )
+
+    return TallySheetSchema().dump(tally_sheet).data, 201
+
+
+@authorize(required_roles=[EC_LEADERSHIP_ROLE])
+def release(tallySheetId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    # TODO refactor
+    tally_sheet.submissionProof.close()
+
+    tally_sheet.set_released_version()
+
+    db.session.commit()
+
+    result_push_service.release_results(
+        tally_sheet=tally_sheet,
+        tally_sheet_version_id=tally_sheet.releasedVersionId
+    )
 
     return TallySheetSchema().dump(tally_sheet).data, 201
 

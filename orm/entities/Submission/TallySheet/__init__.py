@@ -11,7 +11,10 @@ from exception import NotFoundException, MethodNotAllowedException, ForbiddenExc
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
     MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW, \
-    MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT
+    MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
+    MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_LOCK, \
+    MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
+    MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED
 from orm.entities import Submission, Election
 from orm.entities.Area import AreaMap
 from orm.entities.Dashboard import StatusReport
@@ -24,6 +27,16 @@ DATA_ENTRY_TALLY_SHEET_CODES = [
     TallySheetCodeEnum.CE_201,
     TallySheetCodeEnum.CE_201_PV,
     TallySheetCodeEnum.PRE_34_CO
+]
+
+PREFERENCE_TALLY_SHEET_CODES = [
+    TallySheetCodeEnum.PRE_34_CO,
+    TallySheetCodeEnum.PRE_34_I_RO,
+    TallySheetCodeEnum.PRE_34_II_RO,
+    TallySheetCodeEnum.PRE_34,
+    TallySheetCodeEnum.PRE_34_PD,
+    TallySheetCodeEnum.PRE_34_ED,
+    TallySheetCodeEnum.PRE_34_AI
 ]
 
 
@@ -43,11 +56,18 @@ class TallySheetModel(db.Model):
     latestVersionId = association_proxy("submission", "latestVersionId")
     latestStamp = association_proxy("submission", "latestStamp")
     lockedVersionId = association_proxy("submission", "lockedVersionId")
+    lockedVersion = association_proxy("submission", "lockedVersion")
+    notifiedVersionId = association_proxy("submission", "notifiedVersionId")
+    notifiedVersion = association_proxy("submission", "notifiedVersion")
+    releasedVersionId = association_proxy("submission", "releasedVersionId")
+    releasedVersion = association_proxy("submission", "releasedVersion")
     lockedStamp = association_proxy("submission", "lockedStamp")
     submittedVersionId = association_proxy("submission", "submittedVersionId")
     submittedStamp = association_proxy("submission", "submittedStamp")
     locked = association_proxy("submission", "locked")
     submitted = association_proxy("submission", "submitted")
+    notified = association_proxy("submission", "notified")
+    released = association_proxy("submission", "released")
     submissionProofId = association_proxy("submission", "submissionProofId")
     submissionProof = association_proxy("submission", "submissionProof")
     versions = association_proxy("submission", "versions")
@@ -89,32 +109,41 @@ class TallySheetModel(db.Model):
 
     def get_report_status(self):
         if self.tallySheetCode in DATA_ENTRY_TALLY_SHEET_CODES:
-            if self.locked and self.submissionProof.finished:
-                return "RELEASED"
-            if self.locked and len(self.submissionProof.scannedFiles) > 0:
-                return "CERTIFIED"
             if self.locked:
-                return "VERIFIED"
-            if self.submitted:
+                if self.released:
+                    return "RELEASED"
+                elif self.notified:
+                    return "NOTIFIED"
+                elif self.submissionProof.size() > 0:
+                    return "CERTIFIED"
+                else:
+                    return "VERIFIED"
+            elif self.submitted:
                 return "SUBMITTED"
-            if self.latestVersionId is not None:
+            elif self.latestVersionId is not None:
                 return "ENTERED"
             else:
                 return "NOT ENTERED"
         else:
-            if self.locked and self.submissionProof.finished:
-                return "RELEASED"
-            if self.locked and len(self.submissionProof.scannedFiles) > 0:
-                return "CERTIFIED"
             if self.locked:
-                return "VERIFIED"
+                if self.released:
+                    return "RELEASED"
+                elif self.notified:
+                    return "NOTIFIED"
+                elif self.submissionProof.size() > 0:
+                    return "CERTIFIED"
+                else:
+                    return "VERIFIED"
             else:
                 return "PENDING"
 
     def update_status_report(self):
+        election = self.submission.election.get_root_election()
+
         if self.statusReportId is None:
             electoral_district_name, polling_division_name, status_report_type = self.get_status_report_type()
             status_report = StatusReport.create(
+                electionId=election.electionId,
                 reportType=status_report_type,
                 electoralDistrictName=electoral_district_name,
                 pollingDivisionName=polling_division_name,
@@ -178,6 +207,38 @@ class TallySheetModel(db.Model):
             self.submission.set_submitted_version(submissionVersion=None)
         else:
             self.submission.set_submitted_version(submissionVersion=tallySheetVersion.submissionVersion)
+
+        self.update_status_report()
+
+    def set_notified_version(self):
+        if self.lockedVersionId is None:
+            raise ForbiddenException(
+                message="Tally sheet cannot be notified before it's verified.",
+                code=MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK
+            )
+        elif self.notified is True:
+            raise ForbiddenException(
+                message="Tally sheet is already notified.",
+                code=MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED
+            )
+        else:
+            self.submission.set_notified_version(submissionVersion=self.lockedVersion)
+
+        self.update_status_report()
+
+    def set_released_version(self):
+        if self.notified is False:
+            raise ForbiddenException(
+                message="Tally sheet cannot be released before notifying",
+                code=MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING
+            )
+        elif self.released is True:
+            raise ForbiddenException(
+                message="Tally sheet is already released.",
+                code=MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED
+            )
+        else:
+            self.submission.set_released_version(submissionVersion=self.notifiedVersion)
 
         self.update_status_report()
 

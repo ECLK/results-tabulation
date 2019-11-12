@@ -8,6 +8,7 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference
 from util import to_comma_seperated_num, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
+from datetime import datetime
 
 
 class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
@@ -34,7 +35,6 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
 
     @hybrid_property
     def content(self):
-
         return db.session.query(
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
@@ -42,7 +42,9 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
             TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
             TallySheetVersionRow_PRE_34_preference.Model.tallySheetVersionId,
-            TallySheetVersionRow_PRE_34_preference.Model.electionId
+            TallySheetVersionRow_PRE_34_preference.Model.electionId,
+            Party.Model.partyAbbreviation,
+            Party.Model.partyName
         ).join(
             TallySheetVersionRow_PRE_34_preference.Model,
             and_(
@@ -64,9 +66,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
         ).all()
 
     def html_letter(self):
-
         stamp = self.stamp
-        tallySheetContent = self.content
 
         content = {
             "election": {
@@ -93,37 +93,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
             "pollingDivision": self.submission.area.areaName
         }
 
-        temp_data = {}
-        for candidateIndex in range(len(tallySheetContent)):
-            candidate = tallySheetContent[candidateIndex]
-            temp_data[candidate.candidateId] = {
-                "number": len(temp_data) + 1,
-                "name": candidate.candidateName,
-                "firstPreferenceCount": "",
-                "secondPreferenceCount": "",
-                "thirdPreferenceCount": "",
-                "total": 0
-            }
-
-        for row_index in range(len(tallySheetContent)):
-            row = tallySheetContent[row_index]
-            if row.preferenceCount is not None:
-
-                if row.preferenceNumber == 1:
-                    preference = "firstPreferenceCount"
-                elif row.preferenceNumber == 2:
-                    preference = "secondPreferenceCount"
-                elif row.preferenceNumber == 3:
-                    preference = "thirdPreferenceCount"
-                else:
-                    preference = ""
-
-                temp_data[row.candidateId]['name'] = row.candidateName
-                temp_data[row.candidateId][preference] = row.preferenceCount
-                temp_data[row.candidateId]["total"] = temp_data[row.candidateId]["total"] + row.preferenceCount
-
-        for i in temp_data:
-            content['data'].append(temp_data[i])
+        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-AI-LETTER.html',
@@ -134,8 +104,6 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
 
     def html(self):
         stamp = self.stamp
-        tallySheetContent = self.content
-
         content = {
             "tallySheetCode": "PRE-34-AI",
             "election": {
@@ -149,37 +117,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
             "data": []
         }
 
-        temp_data = {}
-        for candidateIndex in range(len(tallySheetContent)):
-            candidate = tallySheetContent[candidateIndex]
-            temp_data[candidate.candidateId] = {
-                "number": len(temp_data) + 1,
-                "name": candidate.candidateName,
-                "firstPreferenceCount": "",
-                "secondPreferenceCount": "",
-                "thirdPreferenceCount": "",
-                "total": 0
-            }
-
-        for row_index in range(len(tallySheetContent)):
-            row = tallySheetContent[row_index]
-            if row.preferenceCount is not None:
-
-                if row.preferenceNumber == 1:
-                    preference = "firstPreferenceCount"
-                elif row.preferenceNumber == 2:
-                    preference = "secondPreferenceCount"
-                elif row.preferenceNumber == 3:
-                    preference = "thirdPreferenceCount"
-                else:
-                    preference = ""
-
-                temp_data[row.candidateId]['name'] = row.candidateName
-                temp_data[row.candidateId][preference] = row.preferenceCount
-                temp_data[row.candidateId]["total"] = temp_data[row.candidateId]["total"] + row.preferenceCount
-
-        for i in temp_data:
-            content['data'].append(temp_data[i])
+        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-AI.html',
@@ -187,6 +125,41 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
         )
 
         return html
+
+    def json_data(self):
+        candidate_wise_vote_count_result = TallySheetVersion.create_candidate_preference_struct(self.content)
+
+        candidates = []
+        for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
+            candidates.append({
+                "party_code": candidate_wise_valid_vote_count_result_item['partyAbbreviation'],
+                "votes": str(candidate_wise_valid_vote_count_result_item['total']),
+                "votes1st": str(candidate_wise_valid_vote_count_result_item['firstPreferenceCount']),
+                "votes2nd": str(candidate_wise_valid_vote_count_result_item['secondPreferenceCount']),
+                "votes3rd": str(candidate_wise_valid_vote_count_result_item['thirdPreferenceCount']),
+                "percentage": "",
+                "party_name": candidate_wise_valid_vote_count_result_item['partyName'],
+                "candidate": candidate_wise_valid_vote_count_result_item['name']
+            })
+
+        response = {
+            "result_code": "FINAL",
+            "type": 'PRESIDENTIAL-PREF',
+            "timestamp": str(datetime.now()),
+            "level": "ALL-ISLAND",
+            "by_party": candidates,
+            "summary": {
+                "valid": "",
+                "rejected": "",
+                "polled": "",
+                "electors": "",
+                "percent_valid": "",
+                "percent_rejected": "",
+                "percent_polled": "",
+            }
+        }
+
+        return response
 
 
 Model = TallySheetVersion_PRE_34_AI_Model
