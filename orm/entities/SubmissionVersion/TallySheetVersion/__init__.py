@@ -117,8 +117,8 @@ def create_candidate_preference_struct(tallySheetContent):
                 "firstPreferenceCount": "",
                 "secondPreferenceCount": "",
                 "thirdPreferenceCount": "",
-                "partyAbbreviation": "",
-                "partyName": "",
+                "partyAbbreviation": candidate.partyAbbreviation,
+                "partyName": candidate.partyName,
                 "total": 0
             }
 
