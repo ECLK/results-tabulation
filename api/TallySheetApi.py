@@ -194,12 +194,12 @@ def release(tallySheetId):
 
     tally_sheet.set_released_version()
 
-    db.session.commit()
-
     ResultPushService().push_result(
         tallysheet_id=tallySheetId,
         tallysheet_version_id=tally_sheet.releasedVersionId
     )
+
+    db.session.commit()
 
     return TallySheetSchema().dump(tally_sheet).data, 201
 
