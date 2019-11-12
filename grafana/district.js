@@ -146,5 +146,3 @@ return function (callback) {
 
         });
 }
-1
-Downloading1
