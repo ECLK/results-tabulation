@@ -171,9 +171,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
                 sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
             ).label("validVoteCount"),
             func.sum(
-                ((sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount) +
-                  sqlalchemy_num_or_zero(
-                      candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)) / vote_count_result.validVoteCount) * 100
+                (sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount) / vote_count_result.validVoteCount) * 100
             ).label("validVotePercentage")
         ).join(
             ElectionCandidate.Model,
