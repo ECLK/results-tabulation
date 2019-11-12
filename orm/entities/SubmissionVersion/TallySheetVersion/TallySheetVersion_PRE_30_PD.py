@@ -427,19 +427,29 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             candidates.append({
                 "party_code": candidate_wise_valid_vote_count_result_item.partyAbbreviation,
                 "votes": str(candidate_wise_valid_vote_count_result_item.validVoteCount),
-                "percentage": f'{round(candidate_wise_valid_vote_count_result_item.validVotePercentage,2)}',
+                "percentage": f'{round(candidate_wise_valid_vote_count_result_item.validVotePercentage or 0,2)}',
                 "party_name": candidate_wise_valid_vote_count_result_item.partyName,
                 "candidate": candidate_wise_valid_vote_count_result_item.candidateName
             })
+
+        is_postal = self.submission.election.voteType == VoteTypeEnum.Postal
+        ed_name=electoral_district.split(" - ")[1]
+        ed_code= electoral_district.split(" - ")[0]
+        if is_postal:
+            pd_name="Postal Votes"
+            pd_code = ed_code + 'P'
+        else:
+            pd_name=polling_division.split("- ")[1]
+            pd_code = ed_code + polling_division.split("- ")[0]
 
         response = {
             "type": 'PRESIDENTIAL-FIRST',
             "timestamp": str(datetime.now()),
             "level": "POLLING-DIVISION",
-            "ed_code": electoral_district.split(" - ")[0],
-            "ed_name": electoral_district.split(" - ")[1],
-            "pd_code": electoral_district.split(" - ")[0] + polling_division.split("- ")[0],
-            "pd_name": polling_division.split("- ")[1],
+            "ed_code": ed_code,
+            "ed_name": ed_name,
+            "pd_code": pd_code,
+            "pd_name": pd_name,
             "by_party": candidates,
             "summary": {
                 "valid": str(vote_count_result.validVoteCount),
