@@ -38,6 +38,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
         return db.session.query(
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
+            ElectionCandidate.Model.qualifiedForPreferences,
             Party.Model.partySymbol,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
@@ -62,7 +63,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
             isouter=True
         ).filter(
             ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds),
-            ElectionCandidate.Model.qualifiedForPreferences == True
+            # ElectionCandidate.Model.qualifiedForPreferences == True
         ).all()
 
     def html_letter(self):
@@ -93,7 +94,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
             "pollingDivision": self.submission.area.areaName
         }
 
-        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
+        content["data"], total_valid_vote_count = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-AI-LETTER.html',
@@ -117,7 +118,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
             "data": []
         }
 
-        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
+        content["data"], total_valid_vote_count = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-AI.html',
@@ -127,29 +128,28 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
         return html
 
     def json_data(self):
-        candidate_wise_vote_count_result = TallySheetVersion.create_candidate_preference_struct(self.content)
+        candidate_wise_vote_count_result, total_valid_votes = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         candidates = []
         for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
+            total_vote_count = candidate_wise_valid_vote_count_result_item['total']
             candidates.append({
                 "party_code": candidate_wise_valid_vote_count_result_item['partyAbbreviation'],
-                "votes": str(candidate_wise_valid_vote_count_result_item['total']),
+                "votes": str(total_vote_count),
                 "votes1st": str(candidate_wise_valid_vote_count_result_item['firstPreferenceCount']),
                 "votes2nd": str(candidate_wise_valid_vote_count_result_item['secondPreferenceCount']),
                 "votes3rd": str(candidate_wise_valid_vote_count_result_item['thirdPreferenceCount']),
-                "percentage": "",
+                "percentage": f'{round(total_vote_count*100/total_valid_votes,2)}',
                 "party_name": candidate_wise_valid_vote_count_result_item['partyName'],
                 "candidate": candidate_wise_valid_vote_count_result_item['name']
             })
 
         response = {
-            "result_code": "FINAL",
-            "type": 'PRESIDENTIAL-PREF',
             "timestamp": str(datetime.now()),
             "level": "ALL-ISLAND",
             "by_party": candidates,
             "summary": {
-                "valid": "",
+                "valid": str(total_valid_votes),
                 "rejected": "",
                 "polled": "",
                 "electors": "",
@@ -159,7 +159,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
             }
         }
 
-        return response
+        return response, "FINAL"
 
 
 Model = TallySheetVersion_PRE_34_AI_Model

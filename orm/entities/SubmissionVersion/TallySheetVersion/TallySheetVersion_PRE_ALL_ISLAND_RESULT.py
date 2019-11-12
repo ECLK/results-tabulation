@@ -257,8 +257,6 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
         totalVoteCount = vote_count_result['totalVoteCount'] or 0
 
         response = {
-            "result_code": "FINAL",
-            "type": 'PRESIDENTIAL-FIRST',
             "timestamp": str(datetime.now()),
             "level": "ALL-ISLAND",
             "by_party": candidates,
@@ -273,7 +271,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             }
         }
 
-        return response
+        return response, "FINAL"
 
 
 Model = TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model

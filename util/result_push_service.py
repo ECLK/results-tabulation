@@ -40,22 +40,26 @@ def release_results(tally_sheet, tally_sheet_version_id):
             tallySheetId=tally_sheet.tallySheetId,
             tallySheetVersionId=tally_sheet_version_id
         )
-        response = tally_sheet_version.json_data()
+        response, result_code = tally_sheet_version.json_data()
 
         result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE
         if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
             result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
+
+        response['type'] = result_dissemination_result_type
 
         url = "%s/%s/%s/%s/%s" % (
             RESULT_DISSEMINATION_SYSTEM_URL,
             RELEASE_RESULTS_ENDPOINT,
             RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE,
             result_dissemination_result_type,
-            response['result_code']
+            result_code
         )
 
         print("#### RESULT_DISSEMINATION_API - Release #### ", [url, response])
-        return requests.post(url, verify=False, json=response)
+        result = requests.post(url, verify=False, json=response)
+        print(result.status_code, result.content)
+        return result
     else:
         raise MethodNotAllowedException(
             message="Tally sheet is not allowed to be released.",
@@ -69,22 +73,26 @@ def notify_results(tally_sheet, tally_sheet_version_id):
             tallySheetId=tally_sheet.tallySheetId,
             tallySheetVersionId=tally_sheet_version_id
         )
-        response = tally_sheet_version.json_data()
+        response, result_code = tally_sheet_version.json_data()
 
         result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE
         if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
             result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
+
+        response['type'] = result_dissemination_result_type
 
         url = "%s/%s/%s/%s" % (
             RESULT_DISSEMINATION_SYSTEM_URL,
             NOTIFY_RESULTS_ENDPOINT,
             RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE,
             # result_dissemination_result_type,
-            response['result_code']
+            result_code
         )
 
         print("#### RESULT_DISSEMINATION_API - Notify #### ", [url, response])
-        return requests.post(url, verify=False)
+        result = requests.post(url, verify=False)
+        print(result.status_code, result.content)
+        return result
     else:
         raise MethodNotAllowedException(
             message="Tally sheet is not allowed to be notified.",

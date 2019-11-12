@@ -598,8 +598,6 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         totalVoteCount = vote_count_result.totalVoteCount or 0
 
         response = {
-            "result_code": ed_code,
-            "type": 'PRESIDENTIAL-FIRST',
             "timestamp": str(datetime.now()),
             "level": "ELECTORAL-DISTRICT",
             "ed_code": ed_code,
@@ -616,7 +614,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             }
         }
 
-        return response
+        return response, ed_code
 
 
 Model = TallySheetVersion_PRE_30_ED_Model
