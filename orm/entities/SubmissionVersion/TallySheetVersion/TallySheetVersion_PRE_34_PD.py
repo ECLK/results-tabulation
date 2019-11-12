@@ -171,7 +171,6 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
 
         response = {
             "result_code": pd_code,
-            "type": 'PRESIDENTIAL-PREF',
             "timestamp": str(datetime.now()),
             "level": "POLLING-DIVISION",
             "ed_code": ed_code,

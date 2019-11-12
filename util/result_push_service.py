@@ -46,6 +46,8 @@ def release_results(tally_sheet, tally_sheet_version_id):
         if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
             result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
 
+        response['type'] = result_dissemination_result_type
+
         url = "%s/%s/%s/%s/%s" % (
             RESULT_DISSEMINATION_SYSTEM_URL,
             RELEASE_RESULTS_ENDPOINT,
@@ -74,6 +76,8 @@ def notify_results(tally_sheet, tally_sheet_version_id):
         result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE
         if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
             result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
+
+        response['type'] = result_dissemination_result_type
 
         url = "%s/%s/%s/%s" % (
             RESULT_DISSEMINATION_SYSTEM_URL,

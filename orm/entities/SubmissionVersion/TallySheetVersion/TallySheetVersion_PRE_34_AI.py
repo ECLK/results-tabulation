@@ -144,7 +144,6 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
 
         response = {
             "result_code": "FINAL",
-            "type": 'PRESIDENTIAL-PREF',
             "timestamp": str(datetime.now()),
             "level": "ALL-ISLAND",
             "by_party": candidates,

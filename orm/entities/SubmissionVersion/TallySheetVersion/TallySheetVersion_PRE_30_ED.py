@@ -599,7 +599,6 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
 
         response = {
             "result_code": ed_code,
-            "type": 'PRESIDENTIAL-FIRST',
             "timestamp": str(datetime.now()),
             "level": "ELECTORAL-DISTRICT",
             "ed_code": ed_code,

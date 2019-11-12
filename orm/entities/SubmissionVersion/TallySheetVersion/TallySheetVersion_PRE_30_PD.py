@@ -446,7 +446,6 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
         response = {
             "result_code": pd_code,
-            "type": 'PRESIDENTIAL-FIRST',
             "timestamp": str(datetime.now()),
             "level": "POLLING-DIVISION",
             "ed_code": ed_code,
