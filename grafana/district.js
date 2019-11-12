@@ -136,8 +136,8 @@ return function (callback) {
                 selected: true
             }
             var scynDashboard = result.dashboard;
-            scynDashboard.templating.list[1].options.push(code)
-            scynDashboard.templating.list[1].current = code;
+            scynDashboard.templating.list[2].options.push(code)
+            scynDashboard.templating.list[2].current = code;
 
 
             // when dashboard is composed call the callback
