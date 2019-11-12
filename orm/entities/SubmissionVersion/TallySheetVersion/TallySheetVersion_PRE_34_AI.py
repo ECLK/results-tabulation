@@ -143,7 +143,6 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
             })
 
         response = {
-            "result_code": "FINAL",
             "timestamp": str(datetime.now()),
             "level": "ALL-ISLAND",
             "by_party": candidates,
@@ -158,7 +157,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
             }
         }
 
-        return response
+        return response, "FINAL"
 
 
 Model = TallySheetVersion_PRE_34_AI_Model

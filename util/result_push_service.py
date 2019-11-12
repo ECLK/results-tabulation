@@ -40,7 +40,7 @@ def release_results(tally_sheet, tally_sheet_version_id):
             tallySheetId=tally_sheet.tallySheetId,
             tallySheetVersionId=tally_sheet_version_id
         )
-        response = tally_sheet_version.json_data()
+        response, result_code = tally_sheet_version.json_data()
 
         result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE
         if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
@@ -53,7 +53,7 @@ def release_results(tally_sheet, tally_sheet_version_id):
             RELEASE_RESULTS_ENDPOINT,
             RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE,
             result_dissemination_result_type,
-            response['result_code']
+            result_code
         )
 
         print("#### RESULT_DISSEMINATION_API - Release #### ", [url, response])
@@ -73,7 +73,7 @@ def notify_results(tally_sheet, tally_sheet_version_id):
             tallySheetId=tally_sheet.tallySheetId,
             tallySheetVersionId=tally_sheet_version_id
         )
-        response = tally_sheet_version.json_data()
+        response, result_code = tally_sheet_version.json_data()
 
         result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE
         if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
@@ -86,7 +86,7 @@ def notify_results(tally_sheet, tally_sheet_version_id):
             NOTIFY_RESULTS_ENDPOINT,
             RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE,
             # result_dissemination_result_type,
-            response['result_code']
+            result_code
         )
 
         print("#### RESULT_DISSEMINATION_API - Notify #### ", [url, response])

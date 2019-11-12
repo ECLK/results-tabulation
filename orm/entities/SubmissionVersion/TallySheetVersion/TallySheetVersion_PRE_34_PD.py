@@ -170,7 +170,6 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             pd_code = ed_code + polling_division.split("- ")[0]
 
         response = {
-            "result_code": pd_code,
             "timestamp": str(datetime.now()),
             "level": "POLLING-DIVISION",
             "ed_code": ed_code,
@@ -189,7 +188,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             }
         }
 
-        return response
+        return response, pd_code
 
 
 Model = TallySheetVersion_PRE_34_PD_Model

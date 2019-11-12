@@ -149,7 +149,6 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
         ed_code = electoral_district.split(" - ")[0]
 
         response = {
-            "result_code": ed_code,
             "timestamp": str(datetime.now()),
             "level": "ELECTORAL-DISTRICT",
             "ed_code": ed_code,
@@ -166,7 +165,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
             }
         }
 
-        return response
+        return response, ed_code
 
 
 Model = TallySheetVersion_PRE_34_ED_Model
