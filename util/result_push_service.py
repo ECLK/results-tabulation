@@ -54,6 +54,7 @@ def release_results(tally_sheet, tally_sheet_version_id):
             response['result_code']
         )
 
+        print("#### RESULT_DISSEMINATION_API - Release #### ", [url, response])
         return requests.post(url, verify=False, json=response)
     else:
         raise MethodNotAllowedException(
@@ -82,6 +83,7 @@ def notify_results(tally_sheet, tally_sheet_version_id):
             response['result_code']
         )
 
+        print("#### RESULT_DISSEMINATION_API - Notify #### ", [url, response])
         return requests.post(url, verify=False)
     else:
         raise MethodNotAllowedException(
