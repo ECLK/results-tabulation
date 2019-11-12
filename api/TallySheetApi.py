@@ -13,9 +13,8 @@ from orm.entities.Submission.TallySheet import TallySheetModel
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum
 from schemas import TallySheetSchema
-from util import RequestBody, get_paginated_query
+from util import RequestBody, get_paginated_query, result_push_service
 from orm.entities.Dashboard import StatusCE201, StatusPRE41, StatusPRE34
-from util.result_push_service import ResultPushService
 
 
 @authorize(required_roles=ALL_ROLES)
@@ -179,6 +178,11 @@ def notify(tallySheetId):
 
     db.session.commit()
 
+    result_push_service.notify_results(
+        tally_sheet=tally_sheet,
+        tally_sheet_version_id=tally_sheet.releasedVersionId
+    )
+
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
@@ -194,12 +198,12 @@ def release(tallySheetId):
 
     tally_sheet.set_released_version()
 
-    ResultPushService().push_result(
-        tallysheet_id=tallySheetId,
-        tallysheet_version_id=tally_sheet.releasedVersionId
-    )
-
     db.session.commit()
+
+    result_push_service.release_results(
+        tally_sheet=tally_sheet,
+        tally_sheet_version_id=tally_sheet.releasedVersionId
+    )
 
     return TallySheetSchema().dump(tally_sheet).data, 201
 
