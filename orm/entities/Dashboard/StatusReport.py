@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app import db
 from orm.entities import Election
 
@@ -11,6 +13,7 @@ class StatusReportModel(db.Model):
     electoralDistrictName = db.Column(db.String(100), nullable=False)
     pollingDivisionName = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(20), nullable=False)
+    createdAt = db.Column(db.DateTime, default=datetime.now, nullable=True)
 
     def __init__(self, electionId, reportType, electoralDistrictName, pollingDivisionName, status):
         super(StatusReportModel, self).__init__(
@@ -18,7 +21,8 @@ class StatusReportModel(db.Model):
             reportType=reportType,
             electoralDistrictName=electoralDistrictName,
             pollingDivisionName=pollingDivisionName,
-            status=status
+            status=status,
+            createdAt=datetime.now()
         )
 
         db.session.add(self)
