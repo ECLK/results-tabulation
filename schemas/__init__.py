@@ -720,6 +720,8 @@ class TallySheetSchema(ma.ModelSchema):
             "submittedStamp",
             "locked",
             "submitted",
+            "notified",
+            "released",
             # "latestVersion",
             "submissionProofId",
             "versions"
