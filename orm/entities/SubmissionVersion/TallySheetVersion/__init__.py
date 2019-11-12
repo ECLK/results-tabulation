@@ -104,22 +104,27 @@ def get_by_id(tallySheetId, tallySheetVersionId):
 def create_candidate_preference_struct(tallySheetContent):
     temp_data = {}
     struct = []
+    total_vote_count = 0
     for candidateIndex in range(len(tallySheetContent)):
         candidate = tallySheetContent[candidateIndex]
-        temp_data[candidate.candidateId] = {
-            "number": len(temp_data) + 1,
-            "name": candidate.candidateName,
-            "firstPreferenceCount": "",
-            "secondPreferenceCount": "",
-            "thirdPreferenceCount": "",
-            "partyAbbreviation": "",
-            "partyName": "",
-            "total": 0
-        }
+        if candidate.preferenceNumber == 1 and candidate.preferenceCount is not None:
+            total_vote_count += candidate.preferenceCount
+
+        if candidate.qualifiedForPreferences is True:
+            temp_data[candidate.candidateId] = {
+                "number": len(temp_data) + 1,
+                "name": candidate.candidateName,
+                "firstPreferenceCount": "",
+                "secondPreferenceCount": "",
+                "thirdPreferenceCount": "",
+                "partyAbbreviation": "",
+                "partyName": "",
+                "total": 0
+            }
 
     for row_index in range(len(tallySheetContent)):
         row = tallySheetContent[row_index]
-        if row.preferenceCount is not None:
+        if row.preferenceCount is not None and row.candidateId in temp_data:
 
             if row.preferenceNumber == 1:
                 preference = "firstPreferenceCount"
@@ -139,4 +144,4 @@ def create_candidate_preference_struct(tallySheetContent):
     for i in temp_data:
         struct.append(temp_data[i])
 
-    return struct
+    return struct, total_vote_count

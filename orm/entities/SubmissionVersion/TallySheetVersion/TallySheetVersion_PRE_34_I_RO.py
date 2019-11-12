@@ -38,6 +38,7 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
 
         return db.session.query(
             ElectionCandidate.Model.candidateId,
+            ElectionCandidate.Model.qualifiedForPreferences,
             Candidate.Model.candidateName,
             Party.Model.partySymbol,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
@@ -115,7 +116,7 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
             content["pollingDivisionOrPostalVoteCountingCentres"] = Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName
 
-        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
+        content["data"], total_valid_vote_count = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-I-RO.html',

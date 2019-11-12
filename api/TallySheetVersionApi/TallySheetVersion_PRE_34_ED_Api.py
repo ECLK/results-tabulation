@@ -79,7 +79,7 @@ def create(tallySheetId):
         ),
     ).filter(
         Submission.Model.areaId.in_(electoral_district_and_polling_division_ids),
-        ElectionCandidate.Model.qualifiedForPreferences == True
+        # ElectionCandidate.Model.qualifiedForPreferences == True
     ).group_by(
         ElectionCandidate.Model.candidateId,
         TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber
@@ -90,7 +90,9 @@ def create(tallySheetId):
 
     is_complete = True  # TODO:Change other reports to validate like this
     for row in query:
-        if row.candidateId is not None and row.preferenceNumber is not None and row.preferenceCount:
+        if row.candidateId is not None and row.preferenceNumber is not None and (
+                row.preferenceNumber != 1 or row.preferenceCount is not None):
+
             tallySheetVersion.add_row(
                 electionId=row.electionId,
                 candidateId=row.candidateId,

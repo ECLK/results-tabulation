@@ -39,6 +39,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
         return db.session.query(
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
+            ElectionCandidate.Model.qualifiedForPreferences,
             Party.Model.partySymbol,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
@@ -63,7 +64,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
             isouter=True
         ).filter(
             ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds),
-            ElectionCandidate.Model.qualifiedForPreferences == True
+            # ElectionCandidate.Model.qualifiedForPreferences == True
         ).all()
 
     def html_letter(self):
@@ -92,7 +93,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
             "electoralDistrict": self.submission.area.areaName
         }
 
-        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
+        content["data"], total_valid_vote_count = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-ED-LETTER.html',
@@ -119,7 +120,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
             "data": []
         }
 
-        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
+        content["data"], total_valid_vote_count = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-ED.html',
@@ -130,11 +131,9 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
 
     def json_data(self):
         electoral_district = self.submission.area.areaName
-        candidate_wise_vote_count_result = TallySheetVersion.create_candidate_preference_struct(self.content)
+        candidate_wise_vote_count_result, total_valid_votes = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         candidates = []
-        vote_count_result = self.vote_count_query().one_or_none()
-        total_valid_votes = vote_count_result.validVoteCount or 0
         for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
             total_vote_count = candidate_wise_valid_vote_count_result_item['total']
             candidates.append({

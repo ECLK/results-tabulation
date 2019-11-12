@@ -38,6 +38,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
 
         return db.session.query(
             ElectionCandidate.Model.candidateId,
+            ElectionCandidate.Model.qualifiedForPreferences,
             Candidate.Model.candidateName,
             Party.Model.partySymbol,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
@@ -62,8 +63,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             Party.Model.partyId == ElectionCandidate.Model.partyId,
             isouter=True
         ).filter(
-            ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds),
-            ElectionCandidate.Model.qualifiedForPreferences == True
+            ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
         ).all()
 
     def html_letter(self):
@@ -96,7 +96,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             "pollingDivision": self.submission.area.areaName
         }
 
-        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
+        content["data"], total_valid_vote_count = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-PD-LETTER.html',
@@ -131,24 +131,20 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
         elif self.submission.election.voteType == VoteTypeEnum.NonPostal:
             content["pollingDivision"] = self.submission.area.areaName
 
-        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
+        content["data"], total_valid_vote_count = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-PD.html',
             content=content
         )
-
         return html
 
     def json_data(self):
 
         electoral_district = Area.get_associated_areas(self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName
         polling_division = self.submission.area.areaName
-        candidate_wise_vote_count_result = TallySheetVersion.create_candidate_preference_struct(self.content)
-
+        candidate_wise_vote_count_result, total_valid_votes = TallySheetVersion.create_candidate_preference_struct(self.content)
         candidates = []
-        vote_count_result = self.vote_count_query().one_or_none()
-        total_valid_votes = vote_count_result.validVoteCount or 0
         for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
             total_vote_count = candidate_wise_valid_vote_count_result_item['total']
             candidates.append({

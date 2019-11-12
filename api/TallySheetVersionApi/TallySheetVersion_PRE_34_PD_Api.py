@@ -98,7 +98,7 @@ def create(tallySheetId):
         isouter=True
     ).filter(
         Area.Model.areaId == tallySheet.submission.areaId,
-        ElectionCandidate.Model.qualifiedForPreferences == True
+        # ElectionCandidate.Model.qualifiedForPreferences == True
     ).group_by(
         ElectionCandidate.Model.candidateId,
         Submission.Model.areaId
@@ -109,25 +109,26 @@ def create(tallySheetId):
 
     is_complete = True  # TODO:Change other reports to validate like this
     for row in query:
-        if row.candidateId is not None and row.firstPreferenceCount is not None and row.secondPreferenceCount is not None and row.thirdPreferenceCount is not None:
-            tallySheetVersion.add_row(
-                electionId=row.electionId,
-                candidateId=row.candidateId,
-                preferenceNumber=1,
-                preferenceCount=row.firstPreferenceCount
-            )
-            tallySheetVersion.add_row(
-                electionId=row.electionId,
-                candidateId=row.candidateId,
-                preferenceNumber=2,
-                preferenceCount=row.secondPreferenceCount
-            )
-            tallySheetVersion.add_row(
-                electionId=row.electionId,
-                candidateId=row.candidateId,
-                preferenceNumber=3,
-                preferenceCount=row.thirdPreferenceCount
-            )
+        if row.candidateId is not None and row.firstPreferenceCount is not None:
+            if row.secondPreferenceCount is not None and row.thirdPreferenceCount is not None:
+                tallySheetVersion.add_row(
+                    electionId=row.electionId,
+                    candidateId=row.candidateId,
+                    preferenceNumber=1,
+                    preferenceCount=row.firstPreferenceCount
+                )
+                tallySheetVersion.add_row(
+                    electionId=row.electionId,
+                    candidateId=row.candidateId,
+                    preferenceNumber=2,
+                    preferenceCount=row.secondPreferenceCount
+                )
+                tallySheetVersion.add_row(
+                    electionId=row.electionId,
+                    candidateId=row.candidateId,
+                    preferenceNumber=3,
+                    preferenceCount=row.thirdPreferenceCount
+                )
         else:
             is_complete = False
 
