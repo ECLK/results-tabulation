@@ -16,7 +16,6 @@ class ResultPushService:
 
         if tallysheet_version.tallySheetVersionCode is TallySheetCodeEnum.PRE_30_PD or \
                 tallysheet_version.tallySheetVersionCode is TallySheetCodeEnum.PRE_30_ED or \
-                tallysheet_version.tallySheetVersionCode is TallySheetCodeEnum.PRE_34_PD or \
                 tallysheet_version.tallySheetVersionCode is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS:
             response = tallysheet_version.json_data()
 
