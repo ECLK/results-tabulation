@@ -1,11 +1,12 @@
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import TallySheetCodeEnum
 import requests
+from app import connex_app
 
 
-# Push Results to Dissemination Service
+# Push Results to Result Dissemination Service
 class ResultPushService:
-    PUSH_URL = 'http://39654bd3.ngrok.io/result/data/foo/PRESIDENTIAL-FIRST/'
+    PUSH_URL = connex_app.app.config['PUSH_SERVICE_URL']
 
     def push_result(self, tallysheet_id, tallysheet_version_id):
         tallysheet_version = TallySheetVersion.get_by_id(

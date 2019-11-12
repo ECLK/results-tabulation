@@ -21,6 +21,11 @@ cache = Cache(config={
     "CACHE_DEFAULT_TIMEOUT": 18144000000  # One month
 })
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Create the Connexion application instance
+connex_app = connexion.App(__name__, specification_dir=basedir)
+
 
 def render_exception(exception):
     error_string = traceback.format_exc()
@@ -50,11 +55,6 @@ def render_connexion_problem_exception(connexion_exception):
 
 
 def create_app():
-    basedir = os.path.abspath(os.path.dirname(__file__))
-
-    # Create the Connexion application instance
-    connex_app = connexion.App(__name__, specification_dir=basedir)
-
     connex_app.add_error_handler(Exception, render_exception)
     connex_app.add_error_handler(
         ProblemException, render_connexion_problem_exception)
