@@ -109,32 +109,41 @@ class TallySheetModel(db.Model):
 
     def get_report_status(self):
         if self.tallySheetCode in DATA_ENTRY_TALLY_SHEET_CODES:
-            if self.locked and self.submissionProof.finished:
-                return "RELEASED"
-            if self.locked and len(self.submissionProof.scannedFiles) > 0:
-                return "CERTIFIED"
             if self.locked:
-                return "VERIFIED"
-            if self.submitted:
+                if self.submissionProof.released:
+                    return "RELEASED"
+                elif self.submissionProof.notified:
+                    return "NOTIFIED"
+                elif self.submissionProof.size() > 0:
+                    return "CERTIFIED"
+                else:
+                    return "VERIFIED"
+            elif self.submitted:
                 return "SUBMITTED"
-            if self.latestVersionId is not None:
+            elif self.latestVersionId is not None:
                 return "ENTERED"
             else:
                 return "NOT ENTERED"
         else:
-            if self.locked and self.submissionProof.finished:
-                return "RELEASED"
-            if self.locked and len(self.submissionProof.scannedFiles) > 0:
-                return "CERTIFIED"
             if self.locked:
-                return "VERIFIED"
+                if self.submissionProof.released:
+                    return "RELEASED"
+                elif self.submissionProof.notified:
+                    return "NOTIFIED"
+                elif self.submissionProof.size() > 0:
+                    return "CERTIFIED"
+                else:
+                    return "VERIFIED"
             else:
                 return "PENDING"
 
     def update_status_report(self):
+        election = self.submission.election.get_root_election()
+
         if self.statusReportId is None:
             electoral_district_name, polling_division_name, status_report_type = self.get_status_report_type()
             status_report = StatusReport.create(
+                electionId=election.electionId,
                 reportType=status_report_type,
                 electoralDistrictName=electoral_district_name,
                 pollingDivisionName=polling_division_name,

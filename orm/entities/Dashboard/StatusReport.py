@@ -1,17 +1,20 @@
 from app import db
+from orm.entities import Election
 
 
 class StatusReportModel(db.Model):
     __tablename__ = 'dashboard_status_report'
 
     statusReportId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=True)
     reportType = db.Column(db.String(100), nullable=False)
     electoralDistrictName = db.Column(db.String(100), nullable=False)
     pollingDivisionName = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(20), nullable=False)
 
-    def __init__(self, reportType, electoralDistrictName, pollingDivisionName, status):
+    def __init__(self, electionId, reportType, electoralDistrictName, pollingDivisionName, status):
         super(StatusReportModel, self).__init__(
+            electionId=electionId,
             reportType=reportType,
             electoralDistrictName=electoralDistrictName,
             pollingDivisionName=pollingDivisionName,
@@ -29,8 +32,9 @@ class StatusReportModel(db.Model):
 Model = StatusReportModel
 
 
-def create(reportType, electoralDistrictName, pollingDivisionName, status):
+def create(electionId, reportType, electoralDistrictName, pollingDivisionName, status):
     result = Model(
+        electionId=electionId,
         reportType=reportType,
         electoralDistrictName=electoralDistrictName,
         pollingDivisionName=pollingDivisionName,
