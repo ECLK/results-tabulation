@@ -20,7 +20,7 @@ depends_on = None
 
 def upgrade():
     op.add_column('dashboard_status_report', sa.Column('electionId', sa.Integer(), nullable=True))
-    op.create_foreign_key(None, 'dashboard_status_report', 'election', ['electionId'], ['electionId'])
+    op.create_foreign_key("dashboard_status_report_fk_election_id", 'dashboard_status_report', 'election', ['electionId'], ['electionId'])
 
     Base = declarative_base()
 
@@ -64,8 +64,11 @@ def upgrade():
         for sub_election in root_election.subElections:
             mapped_election_ids.append(sub_election.electionId)
 
-        tally_sheets = session.query(
-            _TallySheetModel
+        status_reports = session.query(
+            _StatusReportModel
+        ).join(
+            _TallySheetModel,
+            _TallySheetModel.statusReportId == _StatusReportModel.statusReportId
         ).join(
             _SubmissionModel,
             _SubmissionModel.submissionId == _TallySheetModel.tallySheetId
@@ -73,12 +76,12 @@ def upgrade():
             _SubmissionModel.electionId.in_(mapped_election_ids)
         )
 
-        for tally_sheet in tally_sheets:
-            tally_sheet.statusReport.electionId = root_election_id
+        for status_report in status_reports:
+            status_report.electionId = root_election_id
 
     session.commit()
 
 
 def downgrade():
-    op.drop_constraint(None, 'dashboard_status_report', type_='foreignkey')
+    op.drop_constraint('dashboard_status_report_fk_election_id', 'dashboard_status_report', type_='foreignkey')
     op.drop_column('dashboard_status_report', 'electionId')
