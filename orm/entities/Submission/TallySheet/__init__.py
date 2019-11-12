@@ -110,9 +110,9 @@ class TallySheetModel(db.Model):
     def get_report_status(self):
         if self.tallySheetCode in DATA_ENTRY_TALLY_SHEET_CODES:
             if self.locked:
-                if self.submissionProof.released:
+                if self.released:
                     return "RELEASED"
-                elif self.submissionProof.notified:
+                elif self.notified:
                     return "NOTIFIED"
                 elif self.submissionProof.size() > 0:
                     return "CERTIFIED"
@@ -126,9 +126,9 @@ class TallySheetModel(db.Model):
                 return "NOT ENTERED"
         else:
             if self.locked:
-                if self.submissionProof.released:
+                if self.released:
                     return "RELEASED"
-                elif self.submissionProof.notified:
+                elif self.notified:
                     return "NOTIFIED"
                 elif self.submissionProof.size() > 0:
                     return "CERTIFIED"
