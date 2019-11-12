@@ -8,6 +8,7 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference
 from util import to_comma_seperated_num, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
+from datetime import datetime
 
 
 class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
@@ -42,7 +43,9 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
             TallySheetVersionRow_PRE_34_preference.Model.tallySheetVersionId,
-            TallySheetVersionRow_PRE_34_preference.Model.electionId
+            TallySheetVersionRow_PRE_34_preference.Model.electionId,
+            Party.Model.partyAbbreviation,
+            Party.Model.partyName
         ).join(
             TallySheetVersionRow_PRE_34_preference.Model,
             and_(
@@ -63,10 +66,49 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             ElectionCandidate.Model.qualifiedForPreferences == True
         ).all()
 
+    def create_candidate_preference_struct(self, tallySheetContent):
+        temp_data = {}
+        struct = []
+        for candidateIndex in range(len(tallySheetContent)):
+            candidate = tallySheetContent[candidateIndex]
+            temp_data[candidate.candidateId] = {
+                "number": len(temp_data) + 1,
+                "name": candidate.candidateName,
+                "firstPreferenceCount": "",
+                "secondPreferenceCount": "",
+                "thirdPreferenceCount": "",
+                "partyAbbreviation": "",
+                "partyName": "",
+                "total": 0
+            }
+
+        for row_index in range(len(tallySheetContent)):
+            row = tallySheetContent[row_index]
+            if row.preferenceCount is not None:
+
+                if row.preferenceNumber == 1:
+                    preference = "firstPreferenceCount"
+                elif row.preferenceNumber == 2:
+                    preference = "secondPreferenceCount"
+                elif row.preferenceNumber == 3:
+                    preference = "thirdPreferenceCount"
+                else:
+                    preference = ""
+
+                temp_data[row.candidateId]['name'] = row.candidateName
+                temp_data[row.candidateId][preference] = row.preferenceCount
+                temp_data[row.candidateId]["total"] = temp_data[row.candidateId]["total"] + row.preferenceCount
+                temp_data[row.candidateId]["partyAbbreviation"] = temp_data[row.candidateId]["partyAbbreviation"]
+                temp_data[row.candidateId]["partyName"] = temp_data[row.candidateId]["partyName"]
+
+        for i in temp_data:
+            struct.append(temp_data[i])
+
+        return struct
+
     def html_letter(self):
 
         stamp = self.stamp
-        tallySheetContent = self.content
 
         content = {
             "election": {
@@ -94,37 +136,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             "pollingDivision": self.submission.area.areaName
         }
 
-        temp_data = {}
-        for candidateIndex in range(len(tallySheetContent)):
-            candidate = tallySheetContent[candidateIndex]
-            temp_data[candidate.candidateId] = {
-                "number": len(temp_data) + 1,
-                "name": candidate.candidateName,
-                "firstPreferenceCount": "",
-                "secondPreferenceCount": "",
-                "thirdPreferenceCount": "",
-                "total": 0
-            }
-
-        for row_index in range(len(tallySheetContent)):
-            row = tallySheetContent[row_index]
-            if row.preferenceCount is not None:
-
-                if row.preferenceNumber == 1:
-                    preference = "firstPreferenceCount"
-                elif row.preferenceNumber == 2:
-                    preference = "secondPreferenceCount"
-                elif row.preferenceNumber == 3:
-                    preference = "thirdPreferenceCount"
-                else:
-                    preference = ""
-
-                temp_data[row.candidateId]['name'] = row.candidateName
-                temp_data[row.candidateId][preference] = row.preferenceCount
-                temp_data[row.candidateId]["total"] = temp_data[row.candidateId]["total"] + row.preferenceCount
-
-        for i in temp_data:
-            content['data'].append(temp_data[i])
+        content["data"] = self.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-PD-LETTER.html',
@@ -135,18 +147,6 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
 
     def html(self):
         stamp = self.stamp
-        tallySheetContent = self.content
-
-        # disqualifiedCandidates = db.session.query(
-        #     ElectionCandidate.Model.candidateId,
-        #     Candidate.Model.candidateName,
-        # ).join(
-        #     Candidate.Model,
-        #     Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
-        # ).filter(
-        #     ElectionCandidate.Model.qualifiedForPreferences == False,
-        #     ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
-        # ).all()
 
         content = {
             "tallySheetCode": "PRE-34-PD",
@@ -171,36 +171,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
         elif self.submission.election.voteType == VoteTypeEnum.NonPostal:
             content["pollingDivision"] = self.submission.area.areaName
 
-        temp_data = {}
-        for candidateIndex in range(len(tallySheetContent)):
-            candidate = tallySheetContent[candidateIndex]
-            temp_data[candidate.candidateId] = {
-                "number": len(temp_data) + 1,
-                "name": candidate.candidateName,
-                "secondPreferenceCount": "",
-                "thirdPreferenceCount": "",
-                "total": 0
-            }
-
-        for row_index in range(len(tallySheetContent)):
-            row = tallySheetContent[row_index]
-            if row.preferenceCount is not None:
-
-                if row.preferenceNumber == 1:
-                    preference = "firstPreferenceCount"
-                elif row.preferenceNumber == 2:
-                    preference = "secondPreferenceCount"
-                elif row.preferenceNumber == 3:
-                    preference = "thirdPreferenceCount"
-                else:
-                    preference = ""
-
-                temp_data[row.candidateId]['name'] = row.candidateName
-                temp_data[row.candidateId][preference] = row.preferenceCount
-                temp_data[row.candidateId]["total"] = temp_data[row.candidateId]["total"] + row.preferenceCount
-
-        for i in temp_data:
-            content['data'].append(temp_data[i])
+        content["data"] = self.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-PD.html',
@@ -209,5 +180,56 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
 
         return html
 
+    def json_data(self):
+
+        electoral_district = Area.get_associated_areas(self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName
+        polling_division = self.submission.area.areaName
+        candidate_wise_vote_count_result = self.create_candidate_preference_struct(self.content)
+
+        candidates = []
+        for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
+            candidates.append({
+                "party_code": candidate_wise_valid_vote_count_result_item['partyAbbreviation'],
+                "votes": str(candidate_wise_valid_vote_count_result_item['total']),
+                "votes1st": str(candidate_wise_valid_vote_count_result_item['firstPreferenceCount']),
+                "votes2nd": str(candidate_wise_valid_vote_count_result_item['secondPreferenceCount']),
+                "votes3rd": str(candidate_wise_valid_vote_count_result_item['thirdPreferenceCount']),
+                "percentage": "",
+                "party_name": candidate_wise_valid_vote_count_result_item['partyName'],
+                "candidate": candidate_wise_valid_vote_count_result_item['name']
+            })
+
+        is_postal = self.submission.election.voteType == VoteTypeEnum.Postal
+        ed_name=electoral_district.split(" - ")[1]
+        ed_code= electoral_district.split(" - ")[0]
+        if is_postal:
+            pd_name="Postal Votes"
+            pd_code = ed_code + 'P'
+        else:
+            pd_name=polling_division.split("- ")[1]
+            pd_code = ed_code + polling_division.split("- ")[0]
+
+        response = {
+            "result_code": pd_code,
+            "type": 'PRESIDENTIAL-PREFS',
+            "timestamp": str(datetime.now()),
+            "level": "POLLING-DIVISION",
+            "ed_code": ed_code,
+            "ed_name": ed_name,
+            "pd_code": pd_code,
+            "pd_name": pd_name,
+            "by_party": candidates,
+            "summary": {
+                "valid": "",
+                "rejected": "",
+                "polled": "",
+                "electors": "",
+                "percent_valid": "",
+                "percent_rejected": "",
+                "percent_polled": "",
+            }
+        }
+
+        return response
 
 Model = TallySheetVersion_PRE_34_PD_Model
