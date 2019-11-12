@@ -64,14 +64,16 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
             ElectionCandidate.Model.qualifiedForPreferences == True
         ).all()
 
-    def html(self):
-        stamp = self.stamp
-        summary = db.session.query(
-            TallySheetVersionRow_PRE_34_summary.Model.ballotPapersNotCounted,
-            TallySheetVersionRow_PRE_34_summary.Model.remainingBallotPapers,
+    @hybrid_property
+    def summary(self):
+        return db.session.query(
+            TallySheetVersionRow_PRE_34_summary.Model
         ).filter(
             TallySheetVersionRow_PRE_34_summary.Model.tallySheetVersionId == self.tallySheetVersionId
         ).one_or_none()
+
+    def html(self):
+        stamp = self.stamp
 
         disqualifiedCandidates = db.session.query(
             ElectionCandidate.Model.candidateId,
@@ -99,7 +101,7 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
             "pollingDivisionOrPostalVoteCountingCentres": "XX",
             "data": [],
             "candidates": disqualifiedCandidates,
-            "summary": summary
+            "summary": self.summary
         }
 
         if self.submission.election.voteType == VoteTypeEnum.Postal:

@@ -80,13 +80,6 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
         if len(polling_divisions) > 0:
             polling_division_name = polling_divisions[0].areaName
 
-        summary = db.session.query(
-            TallySheetVersionRow_PRE_34_summary.Model.ballotPapersNotCounted,
-            TallySheetVersionRow_PRE_34_summary.Model.remainingBallotPapers,
-        ).filter(
-            TallySheetVersionRow_PRE_34_summary.Model.tallySheetVersionId == self.tallySheetVersionId
-        ).one_or_none()
-
         disqualifiedCandidates = db.session.query(
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
@@ -119,7 +112,7 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
             ]),
             "data": [],
             "candidates": disqualifiedCandidates,
-            "summary": summary
+            "summary": self.summary
         }
 
         if self.submission.election.voteType == VoteTypeEnum.Postal:
