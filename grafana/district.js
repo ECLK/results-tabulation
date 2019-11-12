@@ -136,6 +136,7 @@ return function (callback) {
                 selected: true
             }
             var scynDashboard = result.dashboard;
+            scynDashboard.editable = false;
             scynDashboard.templating.list[2].options.push(code)
             scynDashboard.templating.list[2].current = code;
 
