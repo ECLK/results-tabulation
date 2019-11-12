@@ -252,9 +252,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
                 "candidate": candidate_wise_valid_vote_count_result_item.candidateName
             })
 
-        validVoteCount = vote_count_result['validVoteCount']
-        rejectedVoteCount = vote_count_result['rejectedVoteCount']
-        totalVoteCount = vote_count_result['totalVoteCount']
+        validVoteCount = vote_count_result['validVoteCount'] or 0
+        rejectedVoteCount = vote_count_result['rejectedVoteCount'] or 0
+        totalVoteCount = vote_count_result['totalVoteCount'] or 0
 
         response = {
             "result_code": "FINAL",

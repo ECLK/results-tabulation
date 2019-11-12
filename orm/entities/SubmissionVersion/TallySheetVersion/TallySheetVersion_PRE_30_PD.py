@@ -440,6 +440,10 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             pd_name=polling_division.split("- ")[1]
             pd_code = ed_code + polling_division.split("- ")[0]
 
+        validVoteCount = vote_count_result.validVoteCount or 0
+        rejectedVoteCount = vote_count_result.rejectedVoteCount or 0
+        totalVoteCount = vote_count_result.totalVoteCount or 0
+
         response = {
             "result_code": pd_code,
             "type": 'PRESIDENTIAL-FIRST',
@@ -455,9 +459,9 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
                 "rejected": str(vote_count_result.rejectedVoteCount),
                 "polled": str(vote_count_result.totalVoteCount),
                 "electors": str(total_registered_voters),
-                "percent_valid": f'{round((vote_count_result.validVoteCount * 100 / total_registered_voters), 2)}',
-                "percent_rejected": f'{round((vote_count_result.rejectedVoteCount * 100 / total_registered_voters), 2)}',
-                "percent_polled": f'{round((vote_count_result.totalVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_valid": f'{round((validVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_rejected": f'{round((rejectedVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_polled": f'{round((totalVoteCount * 100 / total_registered_voters), 2)}',
             }
         }
 

@@ -464,7 +464,6 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             to_percentage(vote_count_result.totalVoteCount * 100 / self.submission.area.registeredVotersCount)
         ]
 
-
         html = render_template(
             'PRE-30-ED-LETTER.html',
             content=content
@@ -577,7 +576,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
 
         total_registered_voters = self.submission.area.registeredVotersCount
 
-        electoral_district =self.submission.area.areaName
+        electoral_district = self.submission.area.areaName
         candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
         vote_count_result = self.vote_count_query().one_or_none()
 
@@ -594,6 +593,10 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         ed_name = electoral_district.split(" - ")[1]
         ed_code = electoral_district.split(" - ")[0]
 
+        validVoteCount = vote_count_result.validVoteCount or 0
+        rejectedVoteCount = vote_count_result.rejectedVoteCount or 0
+        totalVoteCount = vote_count_result.totalVoteCount or 0
+
         response = {
             "result_code": ed_code,
             "type": 'PRESIDENTIAL-FIRST',
@@ -607,9 +610,9 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
                 "rejected": str(vote_count_result.rejectedVoteCount),
                 "polled": str(vote_count_result.totalVoteCount),
                 "electors": str(total_registered_voters),
-                "percent_valid": f'{round((vote_count_result.validVoteCount * 100 / total_registered_voters), 2)}',
-                "percent_rejected": f'{round((vote_count_result.rejectedVoteCount * 100 / total_registered_voters), 2)}',
-                "percent_polled": f'{round((vote_count_result.totalVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_valid": f'{round((validVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_rejected": f'{round((rejectedVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_polled": f'{round((totalVoteCount * 100 / total_registered_voters), 2)}',
             }
         }
 
