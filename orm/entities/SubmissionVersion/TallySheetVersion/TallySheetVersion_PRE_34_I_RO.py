@@ -5,7 +5,8 @@ from app import db
 from orm.entities import Area, Candidate, Party, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference, \
+    TallySheetVersionRow_PRE_34_summary
 from util import to_comma_seperated_num, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 
@@ -65,24 +66,23 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
 
     def html(self):
         stamp = self.stamp
-        tallySheetContent = self.content
+        summary = db.session.query(
+            TallySheetVersionRow_PRE_34_summary.Model.ballotPapersNotCounted,
+            TallySheetVersionRow_PRE_34_summary.Model.remainingBallotPapers,
+        ).filter(
+            TallySheetVersionRow_PRE_34_summary.Model.tallySheetVersionId == self.tallySheetVersionId
+        ).one_or_none()
 
-        polling_divisions = Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDivision)
-        polling_division_name = ""
-        if len(polling_divisions) > 0:
-            polling_division_name = polling_divisions[0].areaName
-
-        candidates = db.session.query(
+        disqualifiedCandidates = db.session.query(
             ElectionCandidate.Model.candidateId,
-            ElectionCandidate.Model.qualifiedForPreferences,
             Candidate.Model.candidateName,
         ).join(
             Candidate.Model,
             Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
         ).filter(
+            ElectionCandidate.Model.qualifiedForPreferences == False,
             ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds)
         ).all()
-
         content = {
             "tallySheetCode": "PRE/34/I/RO",
             "election": {
@@ -98,7 +98,8 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
                 self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
             "pollingDivisionOrPostalVoteCountingCentres": "XX",
             "data": [],
-            "candidates": []
+            "candidates": disqualifiedCandidates,
+            "summary": summary
         }
 
         if self.submission.election.voteType == VoteTypeEnum.Postal:
@@ -112,35 +113,7 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
             content["pollingDivisionOrPostalVoteCountingCentres"] = Area.get_associated_areas(
                 self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName
 
-        temp_data = {}
-
-        for candidateIndex in range(len(candidates)):
-            candidate = candidates[candidateIndex]
-            if candidate.qualifiedForPreferences is True:
-                temp_data[candidate.candidateId] = {
-                    "number": len(temp_data) + 1,
-                    "name": candidate.candidateName,
-                    "secondPreferenceCount": "",
-                    "thirdPreferenceCount": "",
-                }
-            else:
-                content["candidates"].append(candidate)
-
-        for row_index in range(len(tallySheetContent)):
-            row = tallySheetContent[row_index]
-            if row.preferenceCount is not None:
-
-                if row.preferenceNumber == 2:
-                    preference = "secondPreferenceCount"
-                elif row.preferenceNumber == 3:
-                    preference = "thirdPreferenceCount"
-                else:
-                    preference = ""
-
-                temp_data[row.candidateId][preference] = row.preferenceCount
-
-        for i in temp_data:
-            content['data'].append(temp_data[i])
+        content["data"] = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         html = render_template(
             'PRE-34-I-RO.html',

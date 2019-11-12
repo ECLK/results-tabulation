@@ -3,7 +3,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_ALLOWED_TO_BE_RELEAS
     MESSAGE_CODE_TALLY_SHEET_NOT_ALLOWED_TO_BE_NOTIFIED
 from orm.entities.Submission.TallySheet import PREFERENCE_TALLY_SHEET_CODES
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.enums import TallySheetCodeEnum, VoteTypeEnum
+from orm.enums import TallySheetCodeEnum
 import requests
 from app import connex_app
 
