@@ -443,6 +443,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             pd_code = ed_code + polling_division.split("- ")[0]
 
         response = {
+            "result_code": pd_code,
             "type": 'PRESIDENTIAL-FIRST',
             "timestamp": str(datetime.now()),
             "level": "POLLING-DIVISION",

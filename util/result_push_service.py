@@ -13,8 +13,12 @@ class ResultPushService:
             tallySheetId=tallysheet_id,
             tallySheetVersionId=tallysheet_version_id
         )
-        if tallysheet_version.tallySheetVersionCode == TallySheetCodeEnum.PRE_30_PD:
+
+        if tallysheet_version.tallySheetVersionCode is TallySheetCodeEnum.PRE_30_PD or \
+                tallysheet_version.tallySheetVersionCode is TallySheetCodeEnum.PRE_30_ED or \
+                tallysheet_version.tallySheetVersionCode is TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS:
             response = tallysheet_version.json_data()
 
-            url = self.PUSH_URL + response['pd_code']
+            url = self.PUSH_URL + response['result_code']
             return requests.post(url, verify=False, json=response)
+        return None

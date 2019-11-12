@@ -10,6 +10,7 @@ from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAN
 from util import to_comma_seperated_num, to_percentage, sqlalchemy_num_or_zero
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
+from datetime import datetime
 
 
 class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
@@ -51,6 +52,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
             Candidate.Model.candidateName,
             Party.Model.partySymbol,
             Party.Model.partyAbbreviation,
+            Party.Model.partyName,
             func.sum(
                 TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model.count
             ).label("validVoteCount"),
@@ -232,6 +234,46 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
         )
 
         return html
+
+    def json_data(self):
+
+        total_registered_voters = self.submission.area.registeredVotersCount
+
+        candidate_wise_vote_count_result = self.candidate_wise_valid_vote_count_query().all()
+        vote_count_result = self.vote_count_result()
+
+        candidates = []
+        for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
+            candidates.append({
+                "party_code": candidate_wise_valid_vote_count_result_item.partyAbbreviation,
+                "votes": str(candidate_wise_valid_vote_count_result_item.validVoteCount),
+                "percentage": f'{round(candidate_wise_valid_vote_count_result_item.validVotePercentage or 0,2)}',
+                "party_name": candidate_wise_valid_vote_count_result_item.partyName,
+                "candidate": candidate_wise_valid_vote_count_result_item.candidateName
+            })
+
+        validVoteCount = vote_count_result['validVoteCount']
+        rejectedVoteCount = vote_count_result['rejectedVoteCount']
+        totalVoteCount = vote_count_result['totalVoteCount']
+
+        response = {
+            "result_code": "FINAL",
+            "type": 'PRESIDENTIAL-FIRST',
+            "timestamp": str(datetime.now()),
+            "level": "ALL-ISLAND",
+            "by_party": candidates,
+            "summary": {
+                "valid": str(validVoteCount),
+                "rejected": str(rejectedVoteCount),
+                "polled": str(totalVoteCount),
+                "electors": str(total_registered_voters),
+                "percent_valid": f'{round((validVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_rejected": f'{round((rejectedVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_polled": f'{round((totalVoteCount * 100 / total_registered_voters), 2)}',
+            }
+        }
+
+        return response
 
 
 Model = TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model
