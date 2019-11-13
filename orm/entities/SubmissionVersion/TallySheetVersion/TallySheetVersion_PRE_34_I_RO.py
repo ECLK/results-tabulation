@@ -41,6 +41,8 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
             ElectionCandidate.Model.qualifiedForPreferences,
             Candidate.Model.candidateName,
             Party.Model.partySymbol,
+            Party.Model.partyName,
+            Party.Model.partyAbbreviation,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
             TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
             TallySheetVersionRow_PRE_34_preference.Model.tallySheetVersionId,
@@ -62,7 +64,7 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
             isouter=True
         ).filter(
             ElectionCandidate.Model.electionId.in_(self.submission.election.mappedElectionIds),
-            ElectionCandidate.Model.qualifiedForPreferences == True
+            # ElectionCandidate.Model.qualifiedForPreferences == True
         ).all()
 
     @hybrid_property
@@ -117,6 +119,8 @@ class TallySheetVersion_PRE_34_I_RO_Model(TallySheetVersion.Model):
                 self.submission.area, AreaTypeEnum.PollingDivision)[0].areaName
 
         content["data"], total_valid_vote_count = TallySheetVersion.create_candidate_preference_struct(self.content)
+
+        #return str([content["data"], self.content])
 
         html = render_template(
             'PRE-34-I-RO.html',
