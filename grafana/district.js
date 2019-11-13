@@ -53,13 +53,12 @@ return function (callback) {
 
     var rows = 1;
     var seriesName = 'argName';
-
     $.ajax({
         method: 'GET',
-        url: '/api/dashboards/uid/6CQ3Xj0Wk'
+        url: '/api/dashboards/uid/'+ARGS.id
     })
         .done(function (result) {
-            debugger;
+            
             var district = null
                 switch (user){
                     case 'colombo-ro':
