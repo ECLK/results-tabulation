@@ -39,30 +39,53 @@ def create(tallySheetId, body):
     electoralDistrictId = area.get_associated_areas(AreaTypeEnum.ElectoralDistrict, electionId=electionId)[0].areaId
     pollingDivisionId = area.get_associated_areas(AreaTypeEnum.PollingDivision, electionId=electionId)[0].areaId
 
-    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
+        is_complete = True
         for party_count_body in tally_sheet_content:
             party_count_body = RequestBody(party_count_body)
-            tallySheetVersionRow = tallySheetVersion.add_row(
-                areaId=party_count_body.get("areaId"),
-                ballotsIssued=party_count_body.get("ballotsIssued"),
-                ballotsReceived=party_count_body.get("ballotsReceived"),
-                ballotsSpoilt=party_count_body.get("ballotsSpoilt"),
-                ballotsUnused=party_count_body.get("ballotsUnused"),
-                ordinaryBallotCountFromBoxCount=party_count_body.get("ordinaryBallotCountFromBoxCount"),
-                tenderedBallotCountFromBoxCount=party_count_body.get("tenderedBallotCountFromBoxCount"),
-                ordinaryBallotCountFromBallotPaperAccount=party_count_body.get(
-                    "ordinaryBallotCountFromBallotPaperAccount"),
-                tenderedBallotCountFromBallotPaperAccount=party_count_body.get(
-                    "tenderedBallotCountFromBallotPaperAccount")
-            )
+            areaId = party_count_body.get("areaId")
+            ballotsIssued = party_count_body.get("ballotsIssued")
+            ballotsReceived = party_count_body.get("ballotsReceived")
+            ballotsSpoilt = party_count_body.get("ballotsSpoilt")
+            ballotsUnused = party_count_body.get("ballotsUnused")
+            ordinaryBallotCountFromBoxCount = party_count_body.get("ordinaryBallotCountFromBoxCount")
+            tenderedBallotCountFromBoxCount = party_count_body.get("tenderedBallotCountFromBoxCount")
+            ordinaryBallotCountFromBallotPaperAccount = party_count_body.get(
+                "ordinaryBallotCountFromBallotPaperAccount")
+            tenderedBallotCountFromBallotPaperAccount = party_count_body.get(
+                "tenderedBallotCountFromBallotPaperAccount")
+
+            if (areaId and ballotsIssued and ballotsReceived and ballotsSpoilt and ballotsUnused and
+                ordinaryBallotCountFromBoxCount and tenderedBallotCountFromBallotPaperAccount and
+                tenderedBallotCountFromBallotPaperAccount and tenderedBallotCountFromBoxCount and
+                ordinaryBallotCountFromBallotPaperAccount) is not None:
+
+                tallySheetVersionRow = tallySheetVersion.add_row(
+                    areaId=areaId,
+                    ballotsIssued=ballotsIssued,
+                    ballotsReceived=ballotsReceived,
+                    ballotsSpoilt=ballotsSpoilt,
+                    ballotsUnused=ballotsUnused,
+                    ordinaryBallotCountFromBoxCount=ordinaryBallotCountFromBoxCount,
+                    tenderedBallotCountFromBoxCount=tenderedBallotCountFromBoxCount,
+                    ordinaryBallotCountFromBallotPaperAccount=ordinaryBallotCountFromBallotPaperAccount,
+                    tenderedBallotCountFromBallotPaperAccount=tenderedBallotCountFromBallotPaperAccount
+                )
+            else:
+                is_complete = False
 
             for issued_ballot_box_id in party_count_body.get("ballotBoxesIssued"):
-                tallySheetVersionRow.add_issued_ballot_box(issued_ballot_box_id)
+                if issued_ballot_box_id is not None:
+                    tallySheetVersionRow.add_issued_ballot_box(issued_ballot_box_id)
+                else:
+                    is_complete = False
 
             for received_ballot_box_id in party_count_body.get("ballotBoxesReceived"):
-                tallySheetVersionRow.add_received_ballot_box(received_ballot_box_id)
+                if received_ballot_box_id is not None:
+                    tallySheetVersionRow.add_received_ballot_box(received_ballot_box_id)
+                else:
+                    is_complete = False
 
             ballotCount = party_count_body.get("ordinaryBallotCountFromBoxCount")
             pollingStationId = party_count_body.get("areaId")
@@ -93,6 +116,9 @@ def create(tallySheetId, body):
                     existingStatus.countingCentreId = countingCentreId,
                     existingStatus.pollingStationId = pollingStationId,
                     existingStatus.ballotCount = ballotCount
+
+        if is_complete:
+            tallySheetVersion.set_complete()
 
         db.session.commit()
 

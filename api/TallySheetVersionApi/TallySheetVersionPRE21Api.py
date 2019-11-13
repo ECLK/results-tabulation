@@ -25,16 +25,24 @@ def create(tallySheetId, body):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.PRE_21
     )
-    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
+        is_complete = True
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
-            tallySheetVersion.add_row(
-                count=party_count_body.get("count"),
-                invalidVoteCategoryId=party_count_body.get("invalidVoteCategoryId")
-            )
+            count = party_count_body.get("count")
+            invalidVoteCategoryId = party_count_body.get("invalidVoteCategoryId")
 
+            if (count and invalidVoteCategoryId) is not None:
+                tallySheetVersion.add_row(
+                    count=count,
+                    invalidVoteCategoryId=invalidVoteCategoryId
+                )
+            else:
+                is_complete = False
+
+        if is_complete:
+            tallySheetVersion.set_complete()
     db.session.commit()
 
     return TallySheetVersionSchema().dump(tallySheetVersion).data

@@ -58,19 +58,28 @@ def create(tallySheetId, body):
     electoralDistrictId = area.get_associated_areas(AreaTypeEnum.ElectoralDistrict, electionId=electionId)[0].areaId
     pollingDivisionId = None
 
-    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     total_number_of_a_packets_found = 0
     tally_sheet_content = request_body.get("content")
     if tally_sheet_content is not None:
+        is_complete = True
         for row in tally_sheet_content:
             tally_sheet_content_item = RequestBody(row)
-            row = tallySheetVersion.add_row(
-                ballotBoxId=tally_sheet_content_item.get("ballotBoxId"),
-                numberOfPacketsInserted=tally_sheet_content_item.get("numberOfPacketsInserted"),
-                numberOfAPacketsFound=tally_sheet_content_item.get("numberOfAPacketsFound")
-            )
+            ballotBoxId = tally_sheet_content_item.get("ballotBoxId")
+            numberOfPacketsInserted = tally_sheet_content_item.get("numberOfPacketsInserted")
+            numberOfAPacketsFound = tally_sheet_content_item.get("numberOfAPacketsFound")
+            if (ballotBoxId and numberOfPacketsInserted and numberOfAPacketsFound) is not None:
+                row = tallySheetVersion.add_row(
+                    ballotBoxId=ballotBoxId,
+                    numberOfPacketsInserted=numberOfPacketsInserted,
+                    numberOfAPacketsFound=numberOfAPacketsFound
+                )
 
-            total_number_of_a_packets_found = total_number_of_a_packets_found + row.numberOfAPacketsFound
+                total_number_of_a_packets_found += row.numberOfAPacketsFound
+            else:
+                is_complete = False
+
+        if is_complete:
+            tallySheetVersion.set_complete()
 
         # for postal votes pollingStation is not available there for all results aggregated
         ballotCount = total_number_of_a_packets_found
