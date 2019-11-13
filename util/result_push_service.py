@@ -3,7 +3,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_ALLOWED_TO_BE_RELEAS
     MESSAGE_CODE_TALLY_SHEET_NOT_ALLOWED_TO_BE_NOTIFIED
 from orm.entities.Submission.TallySheet import PREFERENCE_TALLY_SHEET_CODES
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.enums import TallySheetCodeEnum
+from orm.enums import TallySheetCodeEnum, VoteTypeEnum
 import requests
 from app import connex_app
 
@@ -13,7 +13,9 @@ RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE = connex_app.app.config['RESULT_DIS
 RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF = connex_app.app.config['RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF']
 
 RELEASE_RESULTS_ENDPOINT = "result/data"
+
 NOTIFY_RESULTS_ENDPOINT = "result/notification"
+"/result/notification/{electionCode}/{resultType}/{resultCode}?level={level}&ed_name={ed_name}&pd_name={pd_name}"
 
 release_allowed_tally_sheet_codes = [
     TallySheetCodeEnum.PRE_30_PD,
@@ -32,6 +34,28 @@ notify_allowed_tally_sheet_codes = [
     TallySheetCodeEnum.PRE_34_ED,
     TallySheetCodeEnum.PRE_34_AI
 ]
+
+RESULT_LEVEL_NATIONAL_FINAL = "NATIONAL-FINAL"
+RESULT_LEVEL_ELECTORAL_DISTRICT = "ELECTORAL-DISTRICT"
+RESULT_LEVEL_POLLING_DIVISION = "POLLING-DIVISION"
+
+PARAM_ED_NAME = "ed_name"
+PARAM_PD_NAME = "pd_name"
+
+tally_sheet_code_result_level = {
+
+}
+
+
+def get_result_level(tally_sheet):
+    if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_34_AI, TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS]:
+        return RESULT_LEVEL_NATIONAL_FINAL
+    elif tally_sheet.submission.election.voteType is not VoteTypeEnum.Postal and tally_sheet.tallySheetCode in [
+        TallySheetCodeEnum.PRE_30_PD, TallySheetCodeEnum.PRE_34_PD
+    ]:
+        return RESULT_LEVEL_POLLING_DIVISION
+    else:
+        return RESULT_LEVEL_ELECTORAL_DISTRICT
 
 
 def release_results(tally_sheet, tally_sheet_version_id):
@@ -81,16 +105,25 @@ def notify_results(tally_sheet, tally_sheet_version_id):
 
         response['type'] = result_dissemination_result_type
 
-        url = "%s/%s/%s/%s" % (
+        url = "%s/%s/%s/%s/%s" % (
             RESULT_DISSEMINATION_SYSTEM_URL,
             NOTIFY_RESULTS_ENDPOINT,
             RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE,
-            # result_dissemination_result_type,
+            result_dissemination_result_type,
             result_code
         )
 
+        params = {
+            "level": get_result_level(tally_sheet)
+        }
+
+        required_params_from_response = [PARAM_ED_NAME, PARAM_PD_NAME]
+        for required_param in required_params_from_response:
+            if required_param in response:
+                params[required_param] = response[required_param]
+
         print("#### RESULT_DISSEMINATION_API - Notify #### ", [url, response])
-        result = requests.post(url, verify=False)
+        result = requests.post(url, verify=False, params=params)
         print(result.status_code, result.content)
         return result
     else:
