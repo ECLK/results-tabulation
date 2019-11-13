@@ -35,8 +35,8 @@ def create(tallySheetId, body):
 
             if (count and invalidVoteCategoryId) is not None:
                 tallySheetVersion.add_row(
-                    count=party_count_body.get("count"),
-                    invalidVoteCategoryId=party_count_body.get("invalidVoteCategoryId")
+                    count=count,
+                    invalidVoteCategoryId=invalidVoteCategoryId
                 )
             else:
                 is_complete = False

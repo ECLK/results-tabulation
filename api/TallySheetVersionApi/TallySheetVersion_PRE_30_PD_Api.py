@@ -77,7 +77,7 @@ def create(tallySheetId):
 
     is_complete = True
     for row in query:
-        if row.candidateId is not None and row.areaId is not None and row.count is not None:
+        if (row.candidateId and row.areaId and row.count) is not None:
             tallySheetVersion.add_row(
                 candidateId=row.candidateId,
                 countingCentreId=row.areaId,
@@ -105,14 +105,14 @@ def create(tallySheetId):
     ).all()
 
     for row in rejected_vote_count_query:
-        if tallySheetVersion.submission.electionId is not None and row.areaId is not None and row.rejectedVoteCount is not None:
+        if (tallySheetVersion.submission.electionId and row.areaId and row.rejectedVoteCount) is not None:
             tallySheetVersion.add_invalid_vote_count(
                 electionId=tallySheetVersion.submission.electionId,
                 areaId=row.areaId,
                 rejectedVoteCount=row.rejectedVoteCount
             )
         else:
-            is_complete=False
+            is_complete = False
 
     if is_complete:
         tallySheetVersion.set_complete()

@@ -62,17 +62,15 @@ def create(tallySheetId, body):
                 ordinaryBallotCountFromBallotPaperAccount) is not None:
 
                 tallySheetVersionRow = tallySheetVersion.add_row(
-                    areaId=party_count_body.get("areaId"),
-                    ballotsIssued=party_count_body.get("ballotsIssued"),
-                    ballotsReceived=party_count_body.get("ballotsReceived"),
-                    ballotsSpoilt=party_count_body.get("ballotsSpoilt"),
-                    ballotsUnused=party_count_body.get("ballotsUnused"),
-                    ordinaryBallotCountFromBoxCount=party_count_body.get("ordinaryBallotCountFromBoxCount"),
-                    tenderedBallotCountFromBoxCount=party_count_body.get("tenderedBallotCountFromBoxCount"),
-                    ordinaryBallotCountFromBallotPaperAccount=party_count_body.get(
-                        "ordinaryBallotCountFromBallotPaperAccount"),
-                    tenderedBallotCountFromBallotPaperAccount=party_count_body.get(
-                        "tenderedBallotCountFromBallotPaperAccount")
+                    areaId=areaId,
+                    ballotsIssued=ballotsIssued,
+                    ballotsReceived=ballotsReceived,
+                    ballotsSpoilt=ballotsSpoilt,
+                    ballotsUnused=ballotsUnused,
+                    ordinaryBallotCountFromBoxCount=ordinaryBallotCountFromBoxCount,
+                    tenderedBallotCountFromBoxCount=tenderedBallotCountFromBoxCount,
+                    ordinaryBallotCountFromBallotPaperAccount=ordinaryBallotCountFromBallotPaperAccount,
+                    tenderedBallotCountFromBallotPaperAccount=tenderedBallotCountFromBallotPaperAccount
                 )
             else:
                 is_complete = False

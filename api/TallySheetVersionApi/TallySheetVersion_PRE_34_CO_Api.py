@@ -58,7 +58,7 @@ def create(tallySheetId, body):
     summary = request_body.get("summary")
     ballotPapersNotCounted = summary['ballotPapersNotCounted']
     remainingBallotPapers = summary['remainingBallotPapers']
-    if ballotPapersNotCounted is not None and remainingBallotPapers is not None:
+    if (ballotPapersNotCounted and remainingBallotPapers) is not None:
         TallySheetVersionRow_PRE_34_summary.create(
             electionId=tallySheetVersion.submission.electionId,
             tallySheetVersionId=tallySheetVersion.tallySheetVersionId,
@@ -74,13 +74,12 @@ def create(tallySheetId, body):
             candidateId = party_count_body.get("candidateId")
             preferenceCount = party_count_body.get("preferenceCount")
             preferenceNumber = party_count_body.get("preferenceNumber")
-            if electionId is not None and candidateId is not None and \
-                    preferenceCount is not None and preferenceNumber is not None:
+            if (electionId and candidateId and preferenceCount and preferenceNumber) is not None:
                 tallySheetVersion.add_row(
-                    electionId=tallySheetVersion.submission.electionId,
-                    candidateId=party_count_body.get("candidateId"),
-                    preferenceCount=party_count_body.get("preferenceCount"),
-                    preferenceNumber=party_count_body.get("preferenceNumber"),
+                    electionId=electionId,
+                    candidateId=candidateId,
+                    preferenceCount=preferenceCount,
+                    preferenceNumber=preferenceNumber,
                 )
                 pollingStationId = party_count_body.get("areaId")
                 candidateId = party_count_body.get("candidateId")

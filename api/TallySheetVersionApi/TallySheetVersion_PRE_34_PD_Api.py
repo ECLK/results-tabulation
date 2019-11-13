@@ -109,8 +109,8 @@ def create(tallySheetId):
 
     is_complete = True
     for row in query:
-        if row.candidateId is not None and row.firstPreferenceCount is not None:
-            if row.secondPreferenceCount is not None and row.thirdPreferenceCount is not None:
+        if (row.candidateId and row.firstPreferenceCount) is not None:
+            if (row.secondPreferenceCount and row.thirdPreferenceCount) is not None:
                 tallySheetVersion.add_row(
                     electionId=row.electionId,
                     candidateId=row.candidateId,

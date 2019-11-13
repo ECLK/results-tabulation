@@ -102,7 +102,7 @@ def create(tallySheetId):
 
     is_complete = True
     for row in query:
-        if row.candidateId is not None and row.preferenceNumber is not None and row.preferenceNumber is not None:
+        if (row.candidateId and row.preferenceNumber and row.preferenceNumber) is not None:
             tallySheetVersion.add_row(
                 electionId=row.electionId,
                 candidateId=row.candidateId,
@@ -112,7 +112,7 @@ def create(tallySheetId):
         else:
             is_complete = False
 
-    if summary is not None and summary.ballotPapersNotCounted is not None and summary.remainingBallotPapers is not None:
+    if (summary and summary.ballotPapersNotCounted and summary.remainingBallotPapers) is not None:
         TallySheetVersionRow_PRE_34_summary.create(
             electionId=tallySheet.submission.electionId,
             tallySheetVersionId=tallySheetVersion.tallySheetVersionId,

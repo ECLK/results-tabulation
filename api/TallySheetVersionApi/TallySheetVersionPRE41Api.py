@@ -62,9 +62,9 @@ def create(tallySheetId, body):
 
             if (candidateId and count and countInWords) is not None:
                 tallySheetVersion.add_row(
-                    candidateId=party_count_body.get("candidateId"),
-                    count=party_count_body.get("count"),
-                    countInWords=party_count_body.get("countInWords")
+                    candidateId=candidateId,
+                    count=count,
+                    countInWords=countInWords
                 )
             else:
                 is_complete = False

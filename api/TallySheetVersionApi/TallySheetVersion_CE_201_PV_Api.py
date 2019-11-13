@@ -67,7 +67,7 @@ def create(tallySheetId, body):
             ballotBoxId = tally_sheet_content_item.get("ballotBoxId")
             numberOfPacketsInserted = tally_sheet_content_item.get("numberOfPacketsInserted")
             numberOfAPacketsFound = tally_sheet_content_item.get("numberOfAPacketsFound")
-            if ballotBoxId is not None and numberOfPacketsInserted is not None and numberOfAPacketsFound is not None:
+            if (ballotBoxId and numberOfPacketsInserted and numberOfAPacketsFound) is not None:
                 row = tallySheetVersion.add_row(
                     ballotBoxId=ballotBoxId,
                     numberOfPacketsInserted=numberOfPacketsInserted,
