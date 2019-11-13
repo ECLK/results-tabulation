@@ -66,7 +66,7 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
                 pollingDistrict.areaName for pollingDistrict in
                 Area.get_associated_areas(self.submission.area, AreaTypeEnum.PollingDistrict)
             ]),
-
+            "totalBallotBoxCount": 0,
             "data": [
             ]
         }
@@ -77,6 +77,7 @@ class TallySheetVersionCE201Model(TallySheetVersion.Model):
             area = None
             if isinstance(row, TallySheetVersionRow_CE_201.Model):
                 area = row.area
+                content["totalBallotBoxCount"] += row.ordinaryBallotCountFromBoxCount
             elif isinstance(row, Area.Model):
                 area = row
 
