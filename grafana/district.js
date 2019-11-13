@@ -50,12 +50,18 @@ return function (callback) {
         from: "now-6h",
         to: "now"
     };
+    
+    //Get the Dashbord ID from url
+    var uid = 'of8-M-1Zz'
+    if (!_.isUndefined(ARGS.uid)) {
+        uid  = ARGS.uid;
+    }
 
     var rows = 1;
     var seriesName = 'argName';
     $.ajax({
         method: 'GET',
-        url: '/api/dashboards/uid/'+ARGS.id
+        url: '/api/dashboards/uid/'+id
     })
         .done(function (result) {
             
