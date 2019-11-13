@@ -15,7 +15,7 @@ RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF = connex_app.app.config['RESULT_DIS
 RELEASE_RESULTS_ENDPOINT = "result/data"
 
 NOTIFY_RESULTS_ENDPOINT = "result/notification"
-"/result/notification/{electionCode}/{resultType}/{resultCode}?level={level}&ed_name={ed_name}&pd_name={pd_name}"
+RESULTS_PROOF_IMAGE_UPLOAD_ENDPOINT = "result/image"
 
 release_allowed_tally_sheet_codes = [
     TallySheetCodeEnum.PRE_30_PD,
@@ -58,6 +58,44 @@ def get_result_level(tally_sheet):
         return RESULT_LEVEL_ELECTORAL_DISTRICT
 
 
+def upload_proof_last_image(tally_sheet, tally_sheet_version):
+    if tally_sheet.tallySheetCode in release_allowed_tally_sheet_codes:
+        response, result_code = tally_sheet_version.json_data()
+
+        result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE
+        if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
+            result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
+
+        response['type'] = result_dissemination_result_type
+
+        url = "%s/%s/%s/%s" % (
+            RESULT_DISSEMINATION_SYSTEM_URL,
+            RESULTS_PROOF_IMAGE_UPLOAD_ENDPOINT,
+            RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE,
+            result_code
+        )
+
+        files = tally_sheet.submissionProof.scannedFiles
+        last_file = files[len(files) - 1]
+
+        last_file_data = open(last_file.get_file_path(), 'rb').read()
+
+        print("#### RESULT_DISSEMINATION_API - Image Upload #### ", [url, response, last_file_data])
+
+        result = requests.post(
+            url=url,
+            data=last_file_data,
+            headers={'Content-Type': last_file.fileContentType}
+        )
+        print(result.status_code, result.content)
+        return result
+    else:
+        raise MethodNotAllowedException(
+            message="Tally sheet is not allowed to be released.",
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_ALLOWED_TO_BE_RELEASED
+        )
+
+
 def release_results(tally_sheet, tally_sheet_version_id):
     if tally_sheet.tallySheetCode in release_allowed_tally_sheet_codes:
         tally_sheet_version = TallySheetVersion.get_by_id(
@@ -83,6 +121,9 @@ def release_results(tally_sheet, tally_sheet_version_id):
         print("#### RESULT_DISSEMINATION_API - Release #### ", [url, response])
         result = requests.post(url, verify=False, json=response)
         print(result.status_code, result.content)
+
+        upload_proof_last_image(tally_sheet, tally_sheet_version)
+
         return result
     else:
         raise MethodNotAllowedException(
