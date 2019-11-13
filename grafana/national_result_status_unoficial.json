@@ -15,21 +15,197 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 14,
-  "iteration": 1573451813506,
+  "id": 4,
+  "iteration": 1573618984697,
   "links": [],
   "panels": [
     {
       "cacheTimeout": null,
-      "columns": [],
-      "fontSize": "200%",
+      "colorBackground": false,
+      "colorPostfix": true,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "#A352CC",
+        "#d44a3a"
+      ],
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
       "gridPos": {
-        "h": 6,
-        "w": 24,
+        "h": 2,
+        "w": 16,
         "x": 0,
         "y": 0
       },
       "id": 8,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": " - Unofficial Results",
+      "postfixFontSize": "70%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "Presidential Election 2019 [ EC System Test 7 ]",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select \"$elections\"",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "stampId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "stamp",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "aliasColors": {},
+      "breakPoint": "50%",
+      "cacheTimeout": null,
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "fontSize": "110%",
+      "format": "locale",
+      "gridPos": {
+        "h": 13,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 85,
+      "interval": null,
+      "legend": {
+        "header": "",
+        "percentage": true,
+        "show": true,
+        "values": true
+      },
+      "legendType": "Under graph",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "options": {},
+      "pieType": "pie",
+      "strokeWidth": "2",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "(SELECT candidateName as metric,\n      if(totalVoteCount is null,0,totalVoteCount) as value, \n      UNIX_TIMESTAMP(now()) AS time_sec\n      from (\nSELECT dashboard_status_PRE_41.candidateId,candidate.candidateName AS candidateName,SUM(dashboard_status_PRE_41.voteCount) AS totalVoteCount \nFROM dashboard_status_PRE_41 join candidate on dashboard_status_PRE_41.candidateId = candidate.candidateId\nWHERE dashboard_status_PRE_41.electionId = \"$electionId\"\nAND dashboard_status_PRE_41.candidateId IS NOT NULL\nGROUP BY dashboard_status_PRE_41.electionId,dashboard_status_PRE_41.candidateId\n) as t1 \nGROUP BY t1.candidateId\nORDER BY totalVoteCount DESC\nLIMIT 2)\nUNION \nSELECT 'Others' as metric,\n        $totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes - $top2CandidateVoteCount1stPref,\n        UNIX_TIMESTAMP(now()) AS time_sec\n\n \n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "fileId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "file",
+          "timeColumn": "fileCreatedAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "UNOFFICIAL RESULTS (TOP 2 Candidates)",
+      "type": "grafana-piechart-panel",
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "columns": [],
+      "fontSize": "150%",
+      "gridPos": {
+        "h": 11,
+        "w": 16,
+        "x": 0,
+        "y": 2
+      },
+      "id": 86,
       "links": [],
       "options": {},
       "pageSize": null,
@@ -71,7 +247,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "(SELECT candidateName as \"Candidate Name\",\n      totalVoteCount as \"1st Preference\", \n      sum(secondPreferenceCount) AS \"2nd Preference\",\n      sum(thirdPreferenceCount) AS \"3rd Preference\",\n      (totalVoteCount + if(secondPreferenceCount is null,0,secondPreferenceCount) + if(thirdPreferenceCount is null,0,thirdPreferenceCount)) AS Total\n      from (\nSELECT dashboard_status_PRE_41.candidateId,candidate.candidateName AS candidateName,SUM(dashboard_status_PRE_41.voteCount) AS totalVoteCount \nFROM dashboard_status_PRE_41 join candidate on dashboard_status_PRE_41.candidateId = candidate.candidateId\nWHERE dashboard_status_PRE_41.electionId = \"$electionId\"\nAND dashboard_status_PRE_41.candidateId IS NOT NULL\nGROUP BY dashboard_status_PRE_41.electionId,dashboard_status_PRE_41.candidateId\n) as t1 LEFT JOIN dashboard_status_PRE_34 ON t1.candidateId = dashboard_status_PRE_34.candidateId\njoin election_candidate on election_candidate.candidateId = dashboard_status_PRE_34.candidateId and election_candidate.electionId = \"$electionId\"\nAND election_candidate.qualifiedForPreferences = 1\n\nGROUP BY t1.candidateId\nORDER BY totalVoteCount DESC\nLIMIT 2)\n-- UNION \n-- SELECT 'Others',\n--         $totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes - $top5CandidateVoteCount1stPref,\n--         ' ',\n--         ' ',\n--         $totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes - $top5CandidateVoteCount1stPref,\n--         concat(round((($totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes - $top5CandidateVoteCount1stPref )/($totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes + $totalPolledRejectedOrdinaryVotes + $totalPolledRejectedPostalVotes)*100),2),\"%\")\n-- UNION \n-- SELECT 'Total',\n--         $totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes,\n--         $top5CandidateVoteCount2ndPref,\n--         $top5CandidateVoteCount3rdPref,\n--         $totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes + $top5CandidateVoteCount2ndPref - $top5CandidateVoteCount3rdPref,\n--         \"100%\"\n",
+          "rawSql": "(SELECT candidateName as \"Candidate Name\",\n      totalVoteCount as \"1st Preference\", \n      concat(round((totalVoteCount/($totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes)*100),2),\"%\") AS '%' \n      from (\n      SELECT dashboard_status_PRE_41.candidateId,candidate.candidateName AS candidateName,SUM(dashboard_status_PRE_41.voteCount) AS totalVoteCount \n      FROM dashboard_status_PRE_41 join candidate on dashboard_status_PRE_41.candidateId = candidate.candidateId\n      WHERE dashboard_status_PRE_41.electionId = \"$electionId\"\n      AND dashboard_status_PRE_41.candidateId IS NOT NULL\n      GROUP BY dashboard_status_PRE_41.electionId,dashboard_status_PRE_41.candidateId\n      ) as t1 -- LEFT JOIN dashboard_status_PRE_34 ON t1.candidateId = dashboard_status_PRE_34.candidateId\n-- join election_candidate on election_candidate.candidateId = dashboard_status_PRE_34.candidateId and election_candidate.electionId = \"$electionId\"\n-- AND election_candidate.qualifiedForPreferences = 1\n\nGROUP BY t1.candidateId\nORDER BY totalVoteCount DESC\nLIMIT 5)\nUNION \nSELECT 'Others',\n        $totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes - $top5CandidateVoteCount1stPref,\n        concat(round((($totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes - $top5CandidateVoteCount1stPref )/($totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes )*100),2),\"%\")\nUNION \nSELECT 'Total',\n        $totalPolledValidOrdinaryVotes + $totalPolledValidPostalVotes,\n        \"100%\"\n",
           "refId": "A",
           "select": [
             [
@@ -97,309 +273,9 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "UNOFFICIAL RESULTS (TOP 2 Candidates)",
+      "title": "UNOFFICIAL RESULTS (TOP 5 Candidates)",
       "transform": "table",
       "type": "table"
-    },
-    {
-      "cacheTimeout": null,
-      "content": "\n\n\n\n",
-      "gridPos": {
-        "h": 2,
-        "w": 4,
-        "x": 0,
-        "y": 6
-      },
-      "id": 79,
-      "links": [],
-      "mode": "markdown",
-      "options": {},
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT NOW() AS time,SUM(IF(T1.registeredPostalVotersCount IS NOT NULL, T1.registeredPostalVotersCount, 0) + IF(T1.registeredOrdinaryVotersCount IS NOT NULL, T1.registeredOrdinaryVotersCount, 0))  AS value FROM (\nSELECT \n      electoralDistrict.areaName as electoralDistrictName,\n      electoralDistrict.areaId as electoralDistrictId,\n      \n      pollingDivision.areaName as pollingDivisionName,\n      pollingDivision.areaId as pollingDivisionId,\n      \n      -- pollingDistrict.areaName as pollingDistrictName,\n      -- pollingDistrict.areaId as pollingDistrictId,\n      \n      pollingStation.areaName as pollingStationName,\n\t  pollingStation.areaId as pollingStationId,\n      sum(pollingStation._registeredVotersCount) as registeredOrdinaryVotersCount,\n      \n      countingCentre.areaName as countingCentreName,\n      countingCentre.areaId as countingCentreId,\n      sum(countingCentre._registeredVotersCount) as registeredPostalVotersCount,\n      \n      countingCentreElection.voteType\n      \n      -- districtCentre.areaName as districtCentreName,\n      -- districtCentre.areaId as districtCentreId\n      \n    \n    FROM \n      area countingCentre \n      \n      left join area_area as pollingStationMapping on pollingStationMapping.parentAreaId = countingCentre.areaId\n      left join area as pollingStation on pollingStation.areaId = pollingStationMapping.childAreaId and pollingStation.areaType = \"PollingStation\"\n      \n      left join area_area as pollingDistrictMapping on pollingDistrictMapping.childAreaId = pollingStation.areaId\n      left join area as pollingDistrict on pollingDistrict.areaId = pollingDistrictMapping.parentAreaId and pollingDistrict.areaType = \"PollingDistrict\"\n      \n      left join area_area as pollingDivisionMapping on pollingDivisionMapping.childAreaId = pollingDistrict.areaId\n      left join area as pollingDivision on pollingDivision.areaId = pollingDivisionMapping.parentAreaId and pollingDivision.areaType = \"PollingDivision\"\n      \n      inner join area_area as electoralDistrictMapping on  (electoralDistrictMapping.childAreaId = pollingDivision.areaId or electoralDistrictMapping.childAreaId = countingCentre.areaId )\n      inner join area as electoralDistrict on electoralDistrict.areaId = electoralDistrictMapping.parentAreaId and electoralDistrict.areaType = \"ElectoralDistrict\"\n      \n      inner join area_area as districtCentreMapping on districtCentreMapping.childAreaId = countingCentre.areaId\n      inner join area as districtCentre on districtCentre.areaId = districtCentreMapping.parentAreaId and districtCentre.areaType = \"DistrictCentre\"\n      \n      inner join election as countingCentreElection on countingCentreElection.electionId = countingCentre.electionId\n    WHERE \n      countingCentre.areaType = \"CountingCentre\"\n      \n    GROUP BY\n      electoralDistrict.areaId,\n      pollingDivision.areaId,\n      countingCentre.areaId,\n      pollingStation.areaId\n      ) AS T1\n     WHERE T1.electoralDistrictName = \"$district\"\n     AND T1.pollingDivisionName IN ($Polling_Division)\n     OR T1.pollingDivisionName IS NULL\n\n    \n    \n    ",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "invoiceId"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "invoice",
-          "timeColumn": "issuedAt",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "cacheTimeout": null,
-      "content": "\n\n\n\n",
-      "gridPos": {
-        "h": 2,
-        "w": 4,
-        "x": 4,
-        "y": 6
-      },
-      "id": 80,
-      "links": [],
-      "mode": "markdown",
-      "options": {},
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT NOW() AS time,SUM(IF(T1.registeredPostalVotersCount IS NOT NULL, T1.registeredPostalVotersCount, 0) + IF(T1.registeredOrdinaryVotersCount IS NOT NULL, T1.registeredOrdinaryVotersCount, 0))  AS value FROM (\nSELECT \n      electoralDistrict.areaName as electoralDistrictName,\n      electoralDistrict.areaId as electoralDistrictId,\n      \n      pollingDivision.areaName as pollingDivisionName,\n      pollingDivision.areaId as pollingDivisionId,\n      \n      -- pollingDistrict.areaName as pollingDistrictName,\n      -- pollingDistrict.areaId as pollingDistrictId,\n      \n      pollingStation.areaName as pollingStationName,\n\t  pollingStation.areaId as pollingStationId,\n      sum(pollingStation._registeredVotersCount) as registeredOrdinaryVotersCount,\n      \n      countingCentre.areaName as countingCentreName,\n      countingCentre.areaId as countingCentreId,\n      sum(countingCentre._registeredVotersCount) as registeredPostalVotersCount,\n      \n      countingCentreElection.voteType\n      \n      -- districtCentre.areaName as districtCentreName,\n      -- districtCentre.areaId as districtCentreId\n      \n    \n    FROM \n      area countingCentre \n      \n      left join area_area as pollingStationMapping on pollingStationMapping.parentAreaId = countingCentre.areaId\n      left join area as pollingStation on pollingStation.areaId = pollingStationMapping.childAreaId and pollingStation.areaType = \"PollingStation\"\n      \n      left join area_area as pollingDistrictMapping on pollingDistrictMapping.childAreaId = pollingStation.areaId\n      left join area as pollingDistrict on pollingDistrict.areaId = pollingDistrictMapping.parentAreaId and pollingDistrict.areaType = \"PollingDistrict\"\n      \n      left join area_area as pollingDivisionMapping on pollingDivisionMapping.childAreaId = pollingDistrict.areaId\n      left join area as pollingDivision on pollingDivision.areaId = pollingDivisionMapping.parentAreaId and pollingDivision.areaType = \"PollingDivision\"\n      \n      inner join area_area as electoralDistrictMapping on  (electoralDistrictMapping.childAreaId = pollingDivision.areaId or electoralDistrictMapping.childAreaId = countingCentre.areaId )\n      inner join area as electoralDistrict on electoralDistrict.areaId = electoralDistrictMapping.parentAreaId and electoralDistrict.areaType = \"ElectoralDistrict\"\n      \n      inner join area_area as districtCentreMapping on districtCentreMapping.childAreaId = countingCentre.areaId\n      inner join area as districtCentre on districtCentre.areaId = districtCentreMapping.parentAreaId and districtCentre.areaType = \"DistrictCentre\"\n      \n      inner join election as countingCentreElection on countingCentreElection.electionId = countingCentre.electionId\n    WHERE \n      countingCentre.areaType = \"CountingCentre\"\n      \n    GROUP BY\n      electoralDistrict.areaId,\n      pollingDivision.areaId,\n      countingCentre.areaId,\n      pollingStation.areaId\n      ) AS T1\n     WHERE T1.electoralDistrictName = \"$district\"\n     AND T1.pollingDivisionName IN ($Polling_Division)\n     OR T1.pollingDivisionName IS NULL\n\n    \n    \n    ",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "invoiceId"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "invoice",
-          "timeColumn": "issuedAt",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "cacheTimeout": null,
-      "content": "\n\n\n\n",
-      "gridPos": {
-        "h": 2,
-        "w": 4,
-        "x": 8,
-        "y": 6
-      },
-      "id": 81,
-      "links": [],
-      "mode": "markdown",
-      "options": {},
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT NOW() AS time,SUM(IF(T1.registeredPostalVotersCount IS NOT NULL, T1.registeredPostalVotersCount, 0) + IF(T1.registeredOrdinaryVotersCount IS NOT NULL, T1.registeredOrdinaryVotersCount, 0))  AS value FROM (\nSELECT \n      electoralDistrict.areaName as electoralDistrictName,\n      electoralDistrict.areaId as electoralDistrictId,\n      \n      pollingDivision.areaName as pollingDivisionName,\n      pollingDivision.areaId as pollingDivisionId,\n      \n      -- pollingDistrict.areaName as pollingDistrictName,\n      -- pollingDistrict.areaId as pollingDistrictId,\n      \n      pollingStation.areaName as pollingStationName,\n\t  pollingStation.areaId as pollingStationId,\n      sum(pollingStation._registeredVotersCount) as registeredOrdinaryVotersCount,\n      \n      countingCentre.areaName as countingCentreName,\n      countingCentre.areaId as countingCentreId,\n      sum(countingCentre._registeredVotersCount) as registeredPostalVotersCount,\n      \n      countingCentreElection.voteType\n      \n      -- districtCentre.areaName as districtCentreName,\n      -- districtCentre.areaId as districtCentreId\n      \n    \n    FROM \n      area countingCentre \n      \n      left join area_area as pollingStationMapping on pollingStationMapping.parentAreaId = countingCentre.areaId\n      left join area as pollingStation on pollingStation.areaId = pollingStationMapping.childAreaId and pollingStation.areaType = \"PollingStation\"\n      \n      left join area_area as pollingDistrictMapping on pollingDistrictMapping.childAreaId = pollingStation.areaId\n      left join area as pollingDistrict on pollingDistrict.areaId = pollingDistrictMapping.parentAreaId and pollingDistrict.areaType = \"PollingDistrict\"\n      \n      left join area_area as pollingDivisionMapping on pollingDivisionMapping.childAreaId = pollingDistrict.areaId\n      left join area as pollingDivision on pollingDivision.areaId = pollingDivisionMapping.parentAreaId and pollingDivision.areaType = \"PollingDivision\"\n      \n      inner join area_area as electoralDistrictMapping on  (electoralDistrictMapping.childAreaId = pollingDivision.areaId or electoralDistrictMapping.childAreaId = countingCentre.areaId )\n      inner join area as electoralDistrict on electoralDistrict.areaId = electoralDistrictMapping.parentAreaId and electoralDistrict.areaType = \"ElectoralDistrict\"\n      \n      inner join area_area as districtCentreMapping on districtCentreMapping.childAreaId = countingCentre.areaId\n      inner join area as districtCentre on districtCentre.areaId = districtCentreMapping.parentAreaId and districtCentre.areaType = \"DistrictCentre\"\n      \n      inner join election as countingCentreElection on countingCentreElection.electionId = countingCentre.electionId\n    WHERE \n      countingCentre.areaType = \"CountingCentre\"\n      \n    GROUP BY\n      electoralDistrict.areaId,\n      pollingDivision.areaId,\n      countingCentre.areaId,\n      pollingStation.areaId\n      ) AS T1\n     WHERE T1.electoralDistrictName = \"$district\"\n     AND T1.pollingDivisionName IN ($Polling_Division)\n     OR T1.pollingDivisionName IS NULL\n\n    \n    \n    ",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "invoiceId"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "invoice",
-          "timeColumn": "issuedAt",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "cacheTimeout": null,
-      "content": "\n\n\n\n",
-      "gridPos": {
-        "h": 2,
-        "w": 4,
-        "x": 12,
-        "y": 6
-      },
-      "id": 82,
-      "links": [],
-      "mode": "markdown",
-      "options": {},
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT NOW() AS time,SUM(IF(T1.registeredPostalVotersCount IS NOT NULL, T1.registeredPostalVotersCount, 0) + IF(T1.registeredOrdinaryVotersCount IS NOT NULL, T1.registeredOrdinaryVotersCount, 0))  AS value FROM (\nSELECT \n      electoralDistrict.areaName as electoralDistrictName,\n      electoralDistrict.areaId as electoralDistrictId,\n      \n      pollingDivision.areaName as pollingDivisionName,\n      pollingDivision.areaId as pollingDivisionId,\n      \n      -- pollingDistrict.areaName as pollingDistrictName,\n      -- pollingDistrict.areaId as pollingDistrictId,\n      \n      pollingStation.areaName as pollingStationName,\n\t  pollingStation.areaId as pollingStationId,\n      sum(pollingStation._registeredVotersCount) as registeredOrdinaryVotersCount,\n      \n      countingCentre.areaName as countingCentreName,\n      countingCentre.areaId as countingCentreId,\n      sum(countingCentre._registeredVotersCount) as registeredPostalVotersCount,\n      \n      countingCentreElection.voteType\n      \n      -- districtCentre.areaName as districtCentreName,\n      -- districtCentre.areaId as districtCentreId\n      \n    \n    FROM \n      area countingCentre \n      \n      left join area_area as pollingStationMapping on pollingStationMapping.parentAreaId = countingCentre.areaId\n      left join area as pollingStation on pollingStation.areaId = pollingStationMapping.childAreaId and pollingStation.areaType = \"PollingStation\"\n      \n      left join area_area as pollingDistrictMapping on pollingDistrictMapping.childAreaId = pollingStation.areaId\n      left join area as pollingDistrict on pollingDistrict.areaId = pollingDistrictMapping.parentAreaId and pollingDistrict.areaType = \"PollingDistrict\"\n      \n      left join area_area as pollingDivisionMapping on pollingDivisionMapping.childAreaId = pollingDistrict.areaId\n      left join area as pollingDivision on pollingDivision.areaId = pollingDivisionMapping.parentAreaId and pollingDivision.areaType = \"PollingDivision\"\n      \n      inner join area_area as electoralDistrictMapping on  (electoralDistrictMapping.childAreaId = pollingDivision.areaId or electoralDistrictMapping.childAreaId = countingCentre.areaId )\n      inner join area as electoralDistrict on electoralDistrict.areaId = electoralDistrictMapping.parentAreaId and electoralDistrict.areaType = \"ElectoralDistrict\"\n      \n      inner join area_area as districtCentreMapping on districtCentreMapping.childAreaId = countingCentre.areaId\n      inner join area as districtCentre on districtCentre.areaId = districtCentreMapping.parentAreaId and districtCentre.areaType = \"DistrictCentre\"\n      \n      inner join election as countingCentreElection on countingCentreElection.electionId = countingCentre.electionId\n    WHERE \n      countingCentre.areaType = \"CountingCentre\"\n      \n    GROUP BY\n      electoralDistrict.areaId,\n      pollingDivision.areaId,\n      countingCentre.areaId,\n      pollingStation.areaId\n      ) AS T1\n     WHERE T1.electoralDistrictName = \"$district\"\n     AND T1.pollingDivisionName IN ($Polling_Division)\n     OR T1.pollingDivisionName IS NULL\n\n    \n    \n    ",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "invoiceId"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "invoice",
-          "timeColumn": "issuedAt",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "cacheTimeout": null,
-      "content": "\n\n\n\n",
-      "gridPos": {
-        "h": 2,
-        "w": 4,
-        "x": 16,
-        "y": 6
-      },
-      "id": 83,
-      "links": [],
-      "mode": "markdown",
-      "options": {},
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT NOW() AS time,SUM(IF(T1.registeredPostalVotersCount IS NOT NULL, T1.registeredPostalVotersCount, 0) + IF(T1.registeredOrdinaryVotersCount IS NOT NULL, T1.registeredOrdinaryVotersCount, 0))  AS value FROM (\nSELECT \n      electoralDistrict.areaName as electoralDistrictName,\n      electoralDistrict.areaId as electoralDistrictId,\n      \n      pollingDivision.areaName as pollingDivisionName,\n      pollingDivision.areaId as pollingDivisionId,\n      \n      -- pollingDistrict.areaName as pollingDistrictName,\n      -- pollingDistrict.areaId as pollingDistrictId,\n      \n      pollingStation.areaName as pollingStationName,\n\t  pollingStation.areaId as pollingStationId,\n      sum(pollingStation._registeredVotersCount) as registeredOrdinaryVotersCount,\n      \n      countingCentre.areaName as countingCentreName,\n      countingCentre.areaId as countingCentreId,\n      sum(countingCentre._registeredVotersCount) as registeredPostalVotersCount,\n      \n      countingCentreElection.voteType\n      \n      -- districtCentre.areaName as districtCentreName,\n      -- districtCentre.areaId as districtCentreId\n      \n    \n    FROM \n      area countingCentre \n      \n      left join area_area as pollingStationMapping on pollingStationMapping.parentAreaId = countingCentre.areaId\n      left join area as pollingStation on pollingStation.areaId = pollingStationMapping.childAreaId and pollingStation.areaType = \"PollingStation\"\n      \n      left join area_area as pollingDistrictMapping on pollingDistrictMapping.childAreaId = pollingStation.areaId\n      left join area as pollingDistrict on pollingDistrict.areaId = pollingDistrictMapping.parentAreaId and pollingDistrict.areaType = \"PollingDistrict\"\n      \n      left join area_area as pollingDivisionMapping on pollingDivisionMapping.childAreaId = pollingDistrict.areaId\n      left join area as pollingDivision on pollingDivision.areaId = pollingDivisionMapping.parentAreaId and pollingDivision.areaType = \"PollingDivision\"\n      \n      inner join area_area as electoralDistrictMapping on  (electoralDistrictMapping.childAreaId = pollingDivision.areaId or electoralDistrictMapping.childAreaId = countingCentre.areaId )\n      inner join area as electoralDistrict on electoralDistrict.areaId = electoralDistrictMapping.parentAreaId and electoralDistrict.areaType = \"ElectoralDistrict\"\n      \n      inner join area_area as districtCentreMapping on districtCentreMapping.childAreaId = countingCentre.areaId\n      inner join area as districtCentre on districtCentre.areaId = districtCentreMapping.parentAreaId and districtCentre.areaType = \"DistrictCentre\"\n      \n      inner join election as countingCentreElection on countingCentreElection.electionId = countingCentre.electionId\n    WHERE \n      countingCentre.areaType = \"CountingCentre\"\n      \n    GROUP BY\n      electoralDistrict.areaId,\n      pollingDivision.areaId,\n      countingCentre.areaId,\n      pollingStation.areaId\n      ) AS T1\n     WHERE T1.electoralDistrictName = \"$district\"\n     AND T1.pollingDivisionName IN ($Polling_Division)\n     OR T1.pollingDivisionName IS NULL\n\n    \n    \n    ",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "invoiceId"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "invoice",
-          "timeColumn": "issuedAt",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "cacheTimeout": null,
-      "content": "\n\n\n\n",
-      "gridPos": {
-        "h": 2,
-        "w": 4,
-        "x": 20,
-        "y": 6
-      },
-      "id": 84,
-      "links": [],
-      "mode": "markdown",
-      "options": {},
-      "repeatDirection": "h",
-      "targets": [
-        {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "SELECT NOW() AS time,SUM(IF(T1.registeredPostalVotersCount IS NOT NULL, T1.registeredPostalVotersCount, 0) + IF(T1.registeredOrdinaryVotersCount IS NOT NULL, T1.registeredOrdinaryVotersCount, 0))  AS value FROM (\nSELECT \n      electoralDistrict.areaName as electoralDistrictName,\n      electoralDistrict.areaId as electoralDistrictId,\n      \n      pollingDivision.areaName as pollingDivisionName,\n      pollingDivision.areaId as pollingDivisionId,\n      \n      -- pollingDistrict.areaName as pollingDistrictName,\n      -- pollingDistrict.areaId as pollingDistrictId,\n      \n      pollingStation.areaName as pollingStationName,\n\t  pollingStation.areaId as pollingStationId,\n      sum(pollingStation._registeredVotersCount) as registeredOrdinaryVotersCount,\n      \n      countingCentre.areaName as countingCentreName,\n      countingCentre.areaId as countingCentreId,\n      sum(countingCentre._registeredVotersCount) as registeredPostalVotersCount,\n      \n      countingCentreElection.voteType\n      \n      -- districtCentre.areaName as districtCentreName,\n      -- districtCentre.areaId as districtCentreId\n      \n    \n    FROM \n      area countingCentre \n      \n      left join area_area as pollingStationMapping on pollingStationMapping.parentAreaId = countingCentre.areaId\n      left join area as pollingStation on pollingStation.areaId = pollingStationMapping.childAreaId and pollingStation.areaType = \"PollingStation\"\n      \n      left join area_area as pollingDistrictMapping on pollingDistrictMapping.childAreaId = pollingStation.areaId\n      left join area as pollingDistrict on pollingDistrict.areaId = pollingDistrictMapping.parentAreaId and pollingDistrict.areaType = \"PollingDistrict\"\n      \n      left join area_area as pollingDivisionMapping on pollingDivisionMapping.childAreaId = pollingDistrict.areaId\n      left join area as pollingDivision on pollingDivision.areaId = pollingDivisionMapping.parentAreaId and pollingDivision.areaType = \"PollingDivision\"\n      \n      inner join area_area as electoralDistrictMapping on  (electoralDistrictMapping.childAreaId = pollingDivision.areaId or electoralDistrictMapping.childAreaId = countingCentre.areaId )\n      inner join area as electoralDistrict on electoralDistrict.areaId = electoralDistrictMapping.parentAreaId and electoralDistrict.areaType = \"ElectoralDistrict\"\n      \n      inner join area_area as districtCentreMapping on districtCentreMapping.childAreaId = countingCentre.areaId\n      inner join area as districtCentre on districtCentre.areaId = districtCentreMapping.parentAreaId and districtCentre.areaType = \"DistrictCentre\"\n      \n      inner join election as countingCentreElection on countingCentreElection.electionId = countingCentre.electionId\n    WHERE \n      countingCentre.areaType = \"CountingCentre\"\n      \n    GROUP BY\n      electoralDistrict.areaId,\n      pollingDivision.areaId,\n      countingCentre.areaId,\n      pollingStation.areaId\n      ) AS T1\n     WHERE T1.electoralDistrictName = \"$district\"\n     AND T1.pollingDivisionName IN ($Polling_Division)\n     OR T1.pollingDivisionName IS NULL\n\n    \n    \n    ",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "invoiceId"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "invoice",
-          "timeColumn": "issuedAt",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
     },
     {
       "cacheTimeout": null,
@@ -408,7 +284,7 @@
         "h": 2,
         "w": 4,
         "x": 0,
-        "y": 8
+        "y": 13
       },
       "id": 67,
       "links": [],
@@ -457,7 +333,7 @@
         "h": 2,
         "w": 4,
         "x": 4,
-        "y": 8
+        "y": 13
       },
       "id": 48,
       "links": [],
@@ -505,7 +381,7 @@
         "h": 2,
         "w": 4,
         "x": 8,
-        "y": 8
+        "y": 13
       },
       "id": 49,
       "links": [],
@@ -553,7 +429,7 @@
         "h": 2,
         "w": 4,
         "x": 12,
-        "y": 8
+        "y": 13
       },
       "id": 70,
       "links": [],
@@ -601,7 +477,7 @@
         "h": 2,
         "w": 4,
         "x": 16,
-        "y": 8
+        "y": 13
       },
       "id": 77,
       "links": [],
@@ -649,7 +525,7 @@
         "h": 2,
         "w": 4,
         "x": 20,
-        "y": 8
+        "y": 13
       },
       "id": 71,
       "links": [],
@@ -697,7 +573,7 @@
         "h": 2,
         "w": 4,
         "x": 0,
-        "y": 10
+        "y": 15
       },
       "id": 61,
       "links": [],
@@ -761,7 +637,7 @@
         "h": 2,
         "w": 4,
         "x": 4,
-        "y": 10
+        "y": 15
       },
       "id": 73,
       "interval": null,
@@ -805,7 +681,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \n    concat(completedPollingStations,'/',totalPollingStations,' - ',IF(totalPollingStations<>0 AND completedPollingStations<>0,concat(round(( completedPollingStations/totalPollingStations * 100 ))),0)) AS value FROM (\n    SELECT $totalPollingStations AS totalPollingStations,COUNT(pollingstationid) AS completedPollingStations\nFROM   (SELECT countingcentreid \n        FROM   `dashboard_status_PRE_34` \n        WHERE  (status = \"Submitted\" OR status = \"Entered\")\n        AND electionId = \"$electionId\"\n        GROUP  BY countingcentreid) AS countingCentres \n      LEFT JOIN area_map \n              ON countingCentres.countingcentreid = area_map.countingcentreid \n    ) AS T1\n",
+          "rawSql": "SELECT \n    concat(completedPollingStations,'/',totalPollingStations,' - ',IF(totalPollingStations<>0 AND completedPollingStations<>0,concat(round(( completedPollingStations/totalPollingStations * 100 ))),0)) AS value FROM (\n    SELECT $totalPollingStations AS totalPollingStations,COUNT(pollingstationid) AS completedPollingStations\nFROM   (SELECT countingcentreid \n        FROM   `dashboard_status_PRE_41` \n        WHERE  (status = \"Submitted\" OR status = \"Entered\")\n        AND electionId = \"$electionId\"\n        GROUP  BY countingcentreid) AS countingCentres \n      LEFT JOIN area_map \n              ON countingCentres.countingcentreid = area_map.countingcentreid \n    ) AS T1\n",
           "refId": "A",
           "select": [
             [
@@ -866,7 +742,7 @@
         "h": 2,
         "w": 4,
         "x": 8,
-        "y": 10
+        "y": 15
       },
       "id": 74,
       "interval": null,
@@ -910,7 +786,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \nconcat(if(completedCountingCentres is null,0,completedCountingCentres),'/',totalCountingCentres,' - ',IF(totalCountingCentres<>0 AND completedCountingCentres<>0,concat(round(( completedCountingCentres/totalCountingCentres * 100 ))),0)) AS value \nFROM (\nSELECT \n    $OrdinaryCountingCentres AS totalCountingCentres,\n    SUM(IF(status = \"Submitted\" OR status = \"Entered\",1,0)) AS completedCountingCentres\nFROM (\n    SELECT \n    countingCentreId,\n    status\n    FROM dashboard_status_PRE_34\n    WHERE electionId = \"$electionId\"\n    AND voteType = \"Ordinary\"\n    GROUP BY countingCentreId\n  ) AS counting_centre_wise_status\n) AS T1",
+          "rawSql": "SELECT \nconcat(if(completedCountingCentres is null,0,completedCountingCentres),'/',totalCountingCentres,' - ',IF(totalCountingCentres<>0 AND completedCountingCentres<>0,concat(round(( completedCountingCentres/totalCountingCentres * 100 ))),0)) AS value \nFROM (\nSELECT \n    $OrdinaryCountingCentres AS totalCountingCentres,\n    SUM(IF(status = \"Submitted\" OR status = \"Entered\",1,0)) AS completedCountingCentres\nFROM (\n    SELECT \n    countingCentreId,\n    status\n    FROM dashboard_status_PRE_41\n    WHERE electionId = \"$electionId\"\n    AND voteType = \"Ordinary\"\n    GROUP BY countingCentreId\n  ) AS counting_centre_wise_status\n) AS T1",
           "refId": "A",
           "select": [
             [
@@ -971,7 +847,7 @@
         "h": 2,
         "w": 4,
         "x": 12,
-        "y": 10
+        "y": 15
       },
       "id": 75,
       "interval": null,
@@ -1015,7 +891,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n      concat(if(completedPollingDivisions is null,0,completedPollingDivisions),'/',$totalPollingDivisions,' - ',IF($totalPollingDivisions<>0 AND completedPollingDivisions<>0,concat(round(( completedPollingDivisions/$totalPollingDivisions * 100 ))),0)) AS value \nFROM\n  (\n    SELECT\n      SUM(IF(notCompletedCountingCentres = 0, 1, 0)) as completedPollingDivisions\n    FROM\n      (\n        SELECT \n          pollingDivision.*,\n          SUM(IF(status = \"Submitted\" OR status = \"Entered\",0,1)) as notCompletedCountingCentres\n        FROM \n          dashboard_status_PRE_34\n          join area_map on area_map.countingCentreId = dashboard_status_PRE_34.countingCentreId\n          join area as pollingDivision on pollingDivision.areaId = area_map.pollingDivisionId\n        WHERE \n          dashboard_status_PRE_34.electionId = \"$electionId\"\n          AND dashboard_status_PRE_34.voteType = \"Ordinary\"\n        GROUP BY\n          area_map.pollingDivisionId\n      ) as pollingDivision201Status\n    ) as pollingDivision201Summary",
+          "rawSql": "SELECT\n      concat(if(completedPollingDivisions is null,0,completedPollingDivisions),'/',$totalPollingDivisions,' - ',IF($totalPollingDivisions<>0 AND completedPollingDivisions<>0,concat(round(( completedPollingDivisions/$totalPollingDivisions * 100 ))),0)) AS value \nFROM\n  (\n    SELECT\n      SUM(IF(notCompletedCountingCentres = 0, 1, 0)) as completedPollingDivisions\n    FROM\n      (\n        SELECT \n          pollingDivision.*,\n          SUM(IF(status = \"Submitted\" OR status = \"Entered\",0,1)) as notCompletedCountingCentres\n        FROM \n          dashboard_status_PRE_41\n          join area_map on area_map.countingCentreId = dashboard_status_PRE_41.countingCentreId\n          join area as pollingDivision on pollingDivision.areaId = area_map.pollingDivisionId\n        WHERE \n          dashboard_status_PRE_41.electionId = \"$electionId\"\n          AND dashboard_status_PRE_41.voteType = \"Ordinary\"\n        GROUP BY\n          area_map.pollingDivisionId\n      ) as pollingDivision201Status\n    ) as pollingDivision201Summary",
           "refId": "A",
           "select": [
             [
@@ -1076,7 +952,7 @@
         "h": 2,
         "w": 4,
         "x": 16,
-        "y": 10
+        "y": 15
       },
       "id": 55,
       "interval": null,
@@ -1120,7 +996,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \nconcat(if(completedCountingCentres is null,0,completedCountingCentres),'/',totalCountingCentres,' - ',IF(totalCountingCentres<>0 AND completedCountingCentres<>0,concat(round(( completedCountingCentres/totalCountingCentres * 100 ))),0)) AS value \nFROM (\nSELECT \n    $totalPostalCountingCentres AS totalCountingCentres,\n    SUM(IF(status = \"Submitted\" OR status = \"Entered\",1,0)) AS completedCountingCentres\nFROM (\n    SELECT \n    countingCentreId,\n    status\n    FROM dashboard_status_PRE_34\n    WHERE electionId = \"$electionId\"\n    AND voteType = \"Postal\"\n    GROUP BY countingCentreId\n  ) AS counting_centre_wise_status\n) AS T1",
+          "rawSql": "SELECT \nconcat(if(completedCountingCentres is null,0,completedCountingCentres),'/',totalCountingCentres,' - ',IF(totalCountingCentres<>0 AND completedCountingCentres<>0,concat(round(( completedCountingCentres/totalCountingCentres * 100 ))),0)) AS value \nFROM (\nSELECT \n    $totalPostalCountingCentres AS totalCountingCentres,\n    SUM(IF(status = \"Submitted\" OR status = \"Entered\",1,0)) AS completedCountingCentres\nFROM (\n    SELECT \n    countingCentreId,\n    status\n    FROM dashboard_status_PRE_41\n    WHERE electionId = \"$electionId\"\n    AND voteType = \"Postal\"\n    GROUP BY countingCentreId\n  ) AS counting_centre_wise_status\n) AS T1",
           "refId": "A",
           "select": [
             [
@@ -1181,7 +1057,7 @@
         "h": 2,
         "w": 4,
         "x": 20,
-        "y": 10
+        "y": 15
       },
       "id": 65,
       "interval": null,
@@ -1225,7 +1101,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \nconcat(completedElectoralDistricts,'/',totalElectoralDistricts,' - ',IF(totalElectoralDistricts<>0 AND completedElectoralDistricts<>0,concat(round(( completedElectoralDistricts/totalElectoralDistricts * 100 ))),0)) AS value \nFROM (\n        SELECT \n        $totalElectoralDistricts AS totalElectoralDistricts,\n        SUM(IF(totalCountingCentres=completedCountingCentres,1,0)) AS completedElectoralDistricts\n        FROM (\n          SELECT \n            COUNT(DISTINCT dashboard_status_PRE_34.countingCentreId) AS completedCountingCentres,\n            COUNT(DISTINCT area_map.countingCentreId) AS totalCountingCentres,\n            electoralDistrict.areaName as electoralDistrict  \n          FROM \n            area_map\n            join area as pollingDivision on pollingDivision.areaId = area_map.pollingDivisionId\n            join area as electoralDistrict on electoralDistrict.areaId = area_map.electoralDistrictId\n            left join  dashboard_status_PRE_34 on area_map.countingCentreId = dashboard_status_PRE_34.countingCentreId\n            AND dashboard_status_PRE_34.status <> \"Verified\" \n            AND dashboard_status_PRE_34.electionId = \"$electionId\"\n          GROUP BY\n            area_map.electoralDistrictId\n          ) AS T1\n          ) AS T2\n    \n    \n    \n    \n\n          \n          \n          \n          \n          ",
+          "rawSql": "SELECT \nconcat(completedElectoralDistricts,'/',totalElectoralDistricts,' - ',IF(totalElectoralDistricts<>0 AND completedElectoralDistricts<>0,concat(round(( completedElectoralDistricts/totalElectoralDistricts * 100 ))),0)) AS value \nFROM (\n        SELECT \n        $totalElectoralDistricts AS totalElectoralDistricts,\n        SUM(IF(totalCountingCentres=completedCountingCentres,1,0)) AS completedElectoralDistricts\n        FROM (\n          SELECT \n            COUNT(DISTINCT dashboard_status_PRE_41.countingCentreId) AS completedCountingCentres,\n            COUNT(DISTINCT area_map.countingCentreId) AS totalCountingCentres,\n            electoralDistrict.areaName as electoralDistrict  \n          FROM \n            area_map\n            join area as pollingDivision on pollingDivision.areaId = area_map.pollingDivisionId\n            join area as electoralDistrict on electoralDistrict.areaId = area_map.electoralDistrictId\n            left join  dashboard_status_PRE_41 on area_map.countingCentreId = dashboard_status_PRE_41.countingCentreId\n            AND dashboard_status_PRE_41.status <> \"Verified\" \n            AND dashboard_status_PRE_41.electionId = \"$electionId\"\n          GROUP BY\n            area_map.electoralDistrictId\n          ) AS T1\n          ) AS T2\n    \n    \n    \n    \n\n          \n          \n          \n          \n          ",
           "refId": "A",
           "select": [
             [
@@ -1271,7 +1147,7 @@
         "h": 2,
         "w": 4,
         "x": 0,
-        "y": 12
+        "y": 17
       },
       "id": 72,
       "links": [],
@@ -1335,7 +1211,7 @@
         "h": 2,
         "w": 4,
         "x": 4,
-        "y": 12
+        "y": 17
       },
       "id": 64,
       "interval": null,
@@ -1379,7 +1255,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \n    concat(completedPollingStations,'/',totalPollingStations,' - ',IF(totalPollingStations<>0 AND completedPollingStations<>0,concat(round(( completedPollingStations/totalPollingStations * 100 ))),0)) AS value FROM (\n    SELECT $totalPollingStations AS totalPollingStations,COUNT(pollingstationid) AS completedPollingStations\nFROM   (SELECT countingcentreid \n        FROM   `dashboard_status_PRE_34` \n        WHERE  status = \"verified\"\n        AND electionId = \"$electionId\"\n        GROUP  BY countingcentreid) AS countingCentres \n       LEFT JOIN area_map \n              ON countingCentres.countingcentreid = area_map.countingcentreid \n    ) AS T1\n\n",
+          "rawSql": "SELECT \n    concat(completedPollingStations,'/',totalPollingStations,' - ',IF(totalPollingStations<>0 AND completedPollingStations<>0,concat(round(( completedPollingStations/totalPollingStations * 100 ))),0)) AS value FROM (\n    SELECT $totalPollingStations AS totalPollingStations,COUNT(pollingstationid) AS completedPollingStations\nFROM   (SELECT countingcentreid \n        FROM   `dashboard_status_PRE_41` \n        WHERE  status = \"verified\"\n        AND electionId = \"$electionId\"\n        GROUP  BY countingcentreid) AS countingCentres \n       LEFT JOIN area_map \n              ON countingCentres.countingcentreid = area_map.countingcentreid \n    ) AS T1\n\n",
           "refId": "A",
           "select": [
             [
@@ -1440,7 +1316,7 @@
         "h": 2,
         "w": 4,
         "x": 8,
-        "y": 12
+        "y": 17
       },
       "id": 62,
       "interval": null,
@@ -1484,7 +1360,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \nconcat(if(completedCountingCentres is null,0,completedCountingCentres),'/',totalCountingCentres,' - ',IF(totalCountingCentres<>0 AND completedCountingCentres<>0,concat(round(( completedCountingCentres/totalCountingCentres * 100 ))),0)) AS value \nFROM (\nSELECT \n    $OrdinaryCountingCentres AS totalCountingCentres,\n    SUM(IF(status = \"Verified\",1,0)) AS completedCountingCentres\nFROM (\n    SELECT \n    countingCentreId,\n    status\n    FROM dashboard_status_PRE_34\n    WHERE electionId = \"$electionId\"\n    AND voteType = \"Ordinary\"\n    GROUP BY countingCentreId\n  ) AS counting_centre_wise_status\n) AS T1",
+          "rawSql": "SELECT \nconcat(if(completedCountingCentres is null,0,completedCountingCentres),'/',totalCountingCentres,' - ',IF(totalCountingCentres<>0 AND completedCountingCentres<>0,concat(round(( completedCountingCentres/totalCountingCentres * 100 ))),0)) AS value \nFROM (\nSELECT \n    $OrdinaryCountingCentres AS totalCountingCentres,\n    SUM(IF(status = \"Verified\",1,0)) AS completedCountingCentres\nFROM (\n    SELECT \n    countingCentreId,\n    status\n    FROM dashboard_status_PRE_41\n    WHERE electionId = \"$electionId\"\n    AND voteType = \"Ordinary\"\n    GROUP BY countingCentreId\n  ) AS counting_centre_wise_status\n) AS T1",
           "refId": "A",
           "select": [
             [
@@ -1545,7 +1421,7 @@
         "h": 2,
         "w": 4,
         "x": 12,
-        "y": 12
+        "y": 17
       },
       "id": 63,
       "interval": null,
@@ -1589,7 +1465,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n      concat(if(completedPollingDivisions is null,0,completedPollingDivisions),'/',$totalPollingDivisions,' - ',IF($totalPollingDivisions<>0 AND completedPollingDivisions<>0,concat(round(( completedPollingDivisions/$totalPollingDivisions * 100 ))),0)) AS value \nFROM\n  (\n    SELECT\n      SUM(IF(notCompletedCountingCentres = 0, 1, 0)) as completedPollingDivisions\n    FROM\n      (\n        SELECT \n          pollingDivision.*,\n          SUM(IF(status = \"Verified\",0,1)) as notCompletedCountingCentres\n        FROM \n          dashboard_status_PRE_34\n          join area_map on area_map.countingCentreId = dashboard_status_PRE_34.countingCentreId\n          join area as pollingDivision on pollingDivision.areaId = area_map.pollingDivisionId\n        WHERE \n          dashboard_status_PRE_34.electionId = \"$electionId\"\n          AND dashboard_status_PRE_34.voteType = \"Ordinary\"\n        GROUP BY\n          area_map.pollingDivisionId\n      ) as pollingDivision201Status\n    ) as pollingDivision201Summary",
+          "rawSql": "SELECT\n      concat(if(completedPollingDivisions is null,0,completedPollingDivisions),'/',$totalPollingDivisions,' - ',IF($totalPollingDivisions<>0 AND completedPollingDivisions<>0,concat(round(( completedPollingDivisions/$totalPollingDivisions * 100 ))),0)) AS value \nFROM\n  (\n    SELECT\n      SUM(IF(notCompletedCountingCentres = 0, 1, 0)) as completedPollingDivisions\n    FROM\n      (\n        SELECT \n          pollingDivision.*,\n          SUM(IF(status = \"Verified\",0,1)) as notCompletedCountingCentres\n        FROM \n          dashboard_status_PRE_41\n          join area_map on area_map.countingCentreId = dashboard_status_PRE_41.countingCentreId\n          join area as pollingDivision on pollingDivision.areaId = area_map.pollingDivisionId\n        WHERE \n          dashboard_status_PRE_41.electionId = \"$electionId\"\n          AND dashboard_status_PRE_41.voteType = \"Ordinary\"\n        GROUP BY\n          area_map.pollingDivisionId\n      ) as pollingDivision201Status\n    ) as pollingDivision201Summary",
           "refId": "A",
           "select": [
             [
@@ -1650,7 +1526,7 @@
         "h": 2,
         "w": 4,
         "x": 16,
-        "y": 12
+        "y": 17
       },
       "id": 78,
       "interval": null,
@@ -1694,7 +1570,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \nconcat(if(completedCountingCentres is null,0,completedCountingCentres),'/',totalCountingCentres,' - ',IF(totalCountingCentres<>0 AND completedCountingCentres<>0,concat(round(( completedCountingCentres/totalCountingCentres * 100 ))),0)) AS value \nFROM (\nSELECT \n    $totalPostalCountingCentres AS totalCountingCentres,\n    SUM(IF(status = \"Verified\",1,0)) AS completedCountingCentres\nFROM (\n    SELECT \n    countingCentreId,\n    status\n    FROM dashboard_status_PRE_34\n    WHERE electionId = \"$electionId\"\n    AND voteType = \"Postal\"\n    GROUP BY countingCentreId\n  ) AS counting_centre_wise_status\n) AS T1",
+          "rawSql": "SELECT \nconcat(if(completedCountingCentres is null,0,completedCountingCentres),'/',totalCountingCentres,' - ',IF(totalCountingCentres<>0 AND completedCountingCentres<>0,concat(round(( completedCountingCentres/totalCountingCentres * 100 ))),0)) AS value \nFROM (\nSELECT \n    $totalPostalCountingCentres AS totalCountingCentres,\n    SUM(IF(status = \"Verified\",1,0)) AS completedCountingCentres\nFROM (\n    SELECT \n    countingCentreId,\n    status\n    FROM dashboard_status_PRE_41\n    WHERE electionId = \"$electionId\"\n    AND voteType = \"Postal\"\n    GROUP BY countingCentreId\n  ) AS counting_centre_wise_status\n) AS T1",
           "refId": "A",
           "select": [
             [
@@ -1755,7 +1631,7 @@
         "h": 2,
         "w": 4,
         "x": 20,
-        "y": 12
+        "y": 17
       },
       "id": 76,
       "interval": null,
@@ -1799,7 +1675,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \nconcat(completedElectoralDistricts,'/',totalElectoralDistricts,' - ',IF(totalElectoralDistricts<>0 AND completedElectoralDistricts<>0,concat(round(( completedElectoralDistricts/totalElectoralDistricts * 100 ))),0)) AS value \nFROM (\n        SELECT \n        $totalElectoralDistricts AS totalElectoralDistricts,\n        SUM(IF(totalCountingCentres=completedCountingCentres,1,0)) AS completedElectoralDistricts\n        FROM (\n          SELECT \n            COUNT(DISTINCT dashboard_status_PRE_34.countingCentreId) AS completedCountingCentres,\n            COUNT(DISTINCT area_map.countingCentreId) AS totalCountingCentres,\n            electoralDistrict.areaName as electoralDistrict  \n          FROM \n            area_map\n            join area as pollingDivision on pollingDivision.areaId = area_map.pollingDivisionId\n            join area as electoralDistrict on electoralDistrict.areaId = area_map.electoralDistrictId\n            left join  dashboard_status_PRE_34 on dashboard_status_PRE_34.countingCentreId = area_map.countingCentreId\n              and dashboard_status_PRE_34.status = \"Verified\"\n              and dashboard_status_PRE_34.voteType = \"Ordinary\"\n              and dashboard_status_PRE_34.electionId = \"$electionId\"\n          GROUP BY\n            area_map.electoralDistrictId\n          ) AS T1\n          ) AS T2\n    \n    \n    \n    \n  \n          \n          \n          ",
+          "rawSql": "SELECT \nconcat(completedElectoralDistricts,'/',totalElectoralDistricts,' - ',IF(totalElectoralDistricts<>0 AND completedElectoralDistricts<>0,concat(round(( completedElectoralDistricts/totalElectoralDistricts * 100 ))),0)) AS value \nFROM (\n        SELECT \n        $totalElectoralDistricts AS totalElectoralDistricts,\n        SUM(IF(totalCountingCentres=completedCountingCentres,1,0)) AS completedElectoralDistricts\n        FROM (\n          SELECT \n            COUNT(DISTINCT dashboard_status_PRE_41.countingCentreId) AS completedCountingCentres,\n            COUNT(DISTINCT area_map.countingCentreId) AS totalCountingCentres,\n            electoralDistrict.areaName as electoralDistrict  \n          FROM \n            area_map\n            join area as pollingDivision on pollingDivision.areaId = area_map.pollingDivisionId\n            join area as electoralDistrict on electoralDistrict.areaId = area_map.electoralDistrictId\n            left join  dashboard_status_PRE_41 on dashboard_status_PRE_41.countingCentreId = area_map.countingCentreId\n              and dashboard_status_PRE_41.status = \"Verified\"\n              and dashboard_status_PRE_41.voteType = \"Ordinary\"\n              and dashboard_status_PRE_41.electionId = \"$electionId\"\n          GROUP BY\n            area_map.electoralDistrictId\n          ) AS T1\n          ) AS T2\n    \n    \n    \n    \n  \n          \n          \n          ",
           "refId": "A",
           "select": [
             [
@@ -1840,7 +1716,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -1848,8 +1724,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "Presidential Election 2019 - System Test 5 [ EC ]",
-          "value": "Presidential Election 2019 - System Test 5 [ EC ]"
+          "text": "Presidential Election 2019 [ EC System Test 7 ]",
+          "value": "Presidential Election 2019 [ EC System Test 7 ]"
         },
         "datasource": "MySQL",
         "definition": "SELECT electionName FROM election WHERE election.parentElectionId IS NULL",
@@ -1873,8 +1749,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "12846",
-          "value": "12846"
+          "text": "12845",
+          "value": "12845"
         },
         "datasource": "MySQL",
         "definition": "select count(DISTINCT pollingStationId) from area_map WHERE electionId=$electionId",
@@ -1898,8 +1774,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "15588973",
-          "value": "15588973"
+          "text": "15333066",
+          "value": "15333066"
         },
         "datasource": "MySQL",
         "definition": "select sum(pollingStation._registeredVotersCount) - $totalRegisteredPostalVoters from area_map    join election as election on election.electionId = area_map.electionId   join area as pollingStation on pollingStation.areaId = area_map.pollingStationId where area_map.voteType = \"NonPostal\" and election.electionName = \"$elections\"",
@@ -1923,8 +1799,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "1403448",
-          "value": "1403448"
+          "text": "657227",
+          "value": "657227"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(sum(voteCount) is null,0,sum(voteCount) ) AS totalVoteCount FROM dashboard_status_PRE_41  WHERE voteType = \"Ordinary\"  AND electionId = \"$electionId\" AND status=\"Verified\" AND candidateId IS NOT NULL",
@@ -1948,8 +1824,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "404123",
-          "value": "404123"
+          "text": "659030",
+          "value": "659030"
         },
         "datasource": "MySQL",
         "definition": " select sum(countingCentre._registeredVotersCount) from area_map    join election as election on election.electionId = area_map.electionId   join area as countingCentre on countingCentre.areaId = area_map.countingCentreId where area_map.voteType = \"Postal\" and election.electionName = \"$elections\"",
@@ -1973,8 +1849,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "59083",
-          "value": "59083"
+          "text": "30102",
+          "value": "30102"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(sum(voteCount) is null,0,sum(voteCount) ) AS totalVoteCount FROM dashboard_status_PRE_41  WHERE voteType = \"Ordinary\" AND status=\"Verified\" AND electionId = \"$electionId\"  AND candidateId IS NULL",
@@ -1998,8 +1874,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "26450",
-          "value": "26450"
+          "text": "14260",
+          "value": "14260"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(sum(voteCount) is null,0,sum(voteCount) ) AS totalVoteCount FROM dashboard_status_PRE_41  WHERE voteType = \"Postal\" AND status=\"Verified\"  AND electionId = \"$electionId\"  AND candidateId IS NOT NULL",
@@ -2023,8 +1899,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "374",
-          "value": "374"
+          "text": "1450",
+          "value": "1450"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(sum(voteCount) is null,0,sum(voteCount)) AS totalVoteCount FROM dashboard_status_PRE_41  WHERE voteType = \"Postal\"  AND electionId = \"$electionId\" AND status=\"Verified\"  AND candidateId IS NULL",
@@ -2073,8 +1949,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "370",
-          "value": "370"
+          "text": "371",
+          "value": "371"
         },
         "datasource": "MySQL",
         "definition": "select count(DISTINCT countingCentreId) from area_map WHERE electionId=$electionId and voteType=\"Postal\"",
@@ -2173,8 +2049,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "1042339",
-          "value": "1042339"
+          "text": "593239",
+          "value": "593239"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(SUM(totalVoteCount) is null,0,SUM(totalVoteCount))FROM ( SELECT candidateName as \"Candidate Name\",       totalVoteCount as totalVoteCount,        sum(secondPreferenceCount) AS \"2nd Preference\",       sum(thirdPreferenceCount) AS \"3rd Preference\",       sum(totalVoteCount + secondPreferenceCount + thirdPreferenceCount) AS Total,       concat(round(((totalVoteCount + if(secondPreferenceCount is null,0,secondPreferenceCount) + if(thirdPreferenceCount is null,0,thirdPreferenceCount))/($totalPolledValidOrdinaryVotes + $totalPolledRejectedOrdinaryVotes)*100),2),\"%\") AS '%'        from ( SELECT dashboard_status_PRE_41.candidateId,candidate.candidateName AS candidateName,SUM(dashboard_status_PRE_41.voteCount) AS totalVoteCount  FROM dashboard_status_PRE_41 join candidate on dashboard_status_PRE_41.candidateId = candidate.candidateId WHERE electionId = \"$electionId\" AND dashboard_status_PRE_41.candidateId IS NOT NULL GROUP BY dashboard_status_PRE_41.electionId,dashboard_status_PRE_41.candidateId ) as t1 LEFT JOIN dashboard_status_PRE_34 ON t1.candidateId = dashboard_status_PRE_34.candidateId GROUP BY t1.candidateId ORDER BY totalVoteCount DESC LIMIT 5) AS T1",
@@ -2248,8 +2124,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "1042339",
-          "value": "1042339"
+          "text": "593239",
+          "value": "593239"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(sum(Total) is null,0,sum(Total))FROM ( SELECT candidateName as \"Candidate Name\",       totalVoteCount as \"1st Preference\",        sum(secondPreferenceCount) AS \"2nd Preference\",       sum(thirdPreferenceCount) AS \"3rd Preference\",       sum(if(totalVoteCount is null,0,totalVoteCount) + if(secondPreferenceCount is null,0,secondPreferenceCount) + if(thirdPreferenceCount is null,0,thirdPreferenceCount)) AS Total,       concat(round(((totalVoteCount + if(secondPreferenceCount is null,0,secondPreferenceCount) + if(thirdPreferenceCount is null,0,thirdPreferenceCount))/($totalPolledValidOrdinaryVotes + $totalPolledRejectedOrdinaryVotes)*100),2),\"%\") AS '%'        from ( SELECT dashboard_status_PRE_41.candidateId,candidate.candidateName AS candidateName,SUM(dashboard_status_PRE_41.voteCount) AS totalVoteCount  FROM dashboard_status_PRE_41 join candidate on dashboard_status_PRE_41.candidateId = candidate.candidateId WHERE electionId = \"$electionId\" AND dashboard_status_PRE_41.candidateId IS NOT NULL GROUP BY dashboard_status_PRE_41.electionId,dashboard_status_PRE_41.candidateId ) as t1 LEFT JOIN dashboard_status_PRE_34 ON t1.candidateId = dashboard_status_PRE_34.candidateId GROUP BY t1.candidateId ORDER BY totalVoteCount DESC LIMIT 5) as t1",
@@ -2260,6 +2136,31 @@
         "name": "top5CandidateVoteCountTotal",
         "options": [],
         "query": "SELECT if(sum(Total) is null,0,sum(Total))FROM ( SELECT candidateName as \"Candidate Name\",       totalVoteCount as \"1st Preference\",        sum(secondPreferenceCount) AS \"2nd Preference\",       sum(thirdPreferenceCount) AS \"3rd Preference\",       sum(if(totalVoteCount is null,0,totalVoteCount) + if(secondPreferenceCount is null,0,secondPreferenceCount) + if(thirdPreferenceCount is null,0,thirdPreferenceCount)) AS Total,       concat(round(((totalVoteCount + if(secondPreferenceCount is null,0,secondPreferenceCount) + if(thirdPreferenceCount is null,0,thirdPreferenceCount))/($totalPolledValidOrdinaryVotes + $totalPolledRejectedOrdinaryVotes)*100),2),\"%\") AS '%'        from ( SELECT dashboard_status_PRE_41.candidateId,candidate.candidateName AS candidateName,SUM(dashboard_status_PRE_41.voteCount) AS totalVoteCount  FROM dashboard_status_PRE_41 join candidate on dashboard_status_PRE_41.candidateId = candidate.candidateId WHERE electionId = \"$electionId\" AND dashboard_status_PRE_41.candidateId IS NOT NULL GROUP BY dashboard_status_PRE_41.electionId,dashboard_status_PRE_41.candidateId ) as t1 LEFT JOIN dashboard_status_PRE_34 ON t1.candidateId = dashboard_status_PRE_34.candidateId GROUP BY t1.candidateId ORDER BY totalVoteCount DESC LIMIT 5) as t1",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "507682",
+          "value": "507682"
+        },
+        "datasource": "MySQL",
+        "definition": "SELECT if(SUM(totalVoteCount) is null,0,SUM(totalVoteCount))FROM ( SELECT candidateName as \"Candidate Name\",       totalVoteCount as totalVoteCount,        sum(secondPreferenceCount) AS \"2nd Preference\",       sum(thirdPreferenceCount) AS \"3rd Preference\",       sum(totalVoteCount + secondPreferenceCount + thirdPreferenceCount) AS Total,       concat(round(((totalVoteCount + if(secondPreferenceCount is null,0,secondPreferenceCount) + if(thirdPreferenceCount is null,0,thirdPreferenceCount))/($totalPolledValidOrdinaryVotes + $totalPolledRejectedOrdinaryVotes)*100),2),\"%\") AS '%'        from ( SELECT dashboard_status_PRE_41.candidateId,candidate.candidateName AS candidateName,SUM(dashboard_status_PRE_41.voteCount) AS totalVoteCount  FROM dashboard_status_PRE_41 join candidate on dashboard_status_PRE_41.candidateId = candidate.candidateId WHERE electionId = \"$electionId\" AND dashboard_status_PRE_41.candidateId IS NOT NULL GROUP BY dashboard_status_PRE_41.electionId,dashboard_status_PRE_41.candidateId ) as t1 LEFT JOIN dashboard_status_PRE_34 ON t1.candidateId = dashboard_status_PRE_34.candidateId GROUP BY t1.candidateId ORDER BY totalVoteCount DESC LIMIT 2) AS T1",
+        "hide": 2,
+        "includeAll": false,
+        "label": "top2CandidateVoteCount1stPref",
+        "multi": false,
+        "name": "top2CandidateVoteCount1stPref",
+        "options": [],
+        "query": "SELECT if(SUM(totalVoteCount) is null,0,SUM(totalVoteCount))FROM ( SELECT candidateName as \"Candidate Name\",       totalVoteCount as totalVoteCount,        sum(secondPreferenceCount) AS \"2nd Preference\",       sum(thirdPreferenceCount) AS \"3rd Preference\",       sum(totalVoteCount + secondPreferenceCount + thirdPreferenceCount) AS Total,       concat(round(((totalVoteCount + if(secondPreferenceCount is null,0,secondPreferenceCount) + if(thirdPreferenceCount is null,0,thirdPreferenceCount))/($totalPolledValidOrdinaryVotes + $totalPolledRejectedOrdinaryVotes)*100),2),\"%\") AS '%'        from ( SELECT dashboard_status_PRE_41.candidateId,candidate.candidateName AS candidateName,SUM(dashboard_status_PRE_41.voteCount) AS totalVoteCount  FROM dashboard_status_PRE_41 join candidate on dashboard_status_PRE_41.candidateId = candidate.candidateId WHERE electionId = \"$electionId\" AND dashboard_status_PRE_41.candidateId IS NOT NULL GROUP BY dashboard_status_PRE_41.electionId,dashboard_status_PRE_41.candidateId ) as t1 LEFT JOIN dashboard_status_PRE_34 ON t1.candidateId = dashboard_status_PRE_34.candidateId GROUP BY t1.candidateId ORDER BY totalVoteCount DESC LIMIT 2) AS T1",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2302,7 +2203,7 @@
     ]
   },
   "timezone": "",
-  "title": "National Results Status Unofficial (Preferential)",
-  "uid": "v6ETDp1Zk",
-  "version": 25
+  "title": "National Results Status Unofficial",
+  "uid": "_sbNFI1Zk",
+  "version": 5
 }
