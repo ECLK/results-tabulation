@@ -75,7 +75,7 @@ def create(tallySheetId):
         ElectionCandidate.Model.candidateId
     ).all()
 
-    is_complete = True  # TODO:Change other reports to validate like this
+    is_complete = True
     for row in query:
         if row.candidateId is not None and row.areaId is not None and row.count is not None:
             tallySheetVersion.add_row(
@@ -85,9 +85,6 @@ def create(tallySheetId):
             )
         else:
             is_complete = False
-
-    if is_complete:
-        tallySheetVersion.set_complete()
 
     rejected_vote_count_query = db.session.query(
         Submission.Model.areaId,
@@ -108,11 +105,17 @@ def create(tallySheetId):
     ).all()
 
     for row in rejected_vote_count_query:
-        tallySheetVersion.add_invalid_vote_count(
-            electionId=tallySheetVersion.submission.electionId,
-            areaId=row.areaId,
-            rejectedVoteCount=row.rejectedVoteCount
-        )
+        if tallySheetVersion.submission.electionId is not None and row.areaId is not None and row.rejectedVoteCount is not None:
+            tallySheetVersion.add_invalid_vote_count(
+                electionId=tallySheetVersion.submission.electionId,
+                areaId=row.areaId,
+                rejectedVoteCount=row.rejectedVoteCount
+            )
+        else:
+            is_complete=False
+
+    if is_complete:
+        tallySheetVersion.set_complete()
 
     db.session.commit()
 

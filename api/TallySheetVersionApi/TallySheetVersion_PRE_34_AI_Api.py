@@ -87,7 +87,6 @@ def create(tallySheetId):
     for row in query:
         if row.candidateId is not None and row.preferenceNumber is not None and row.preferenceCount and (
                 row.preferenceNumber != 1 or row.preferenceCount is not None):
-            print("========== row ======== ", row)
             tallySheetVersion.add_row(
                 electionId=row.electionId,
                 candidateId=row.candidateId,

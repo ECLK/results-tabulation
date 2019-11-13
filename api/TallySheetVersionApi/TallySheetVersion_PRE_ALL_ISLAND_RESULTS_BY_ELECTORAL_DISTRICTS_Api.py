@@ -25,7 +25,6 @@ def create(tallySheetId):
         tallySheetId=tallySheetId,
         tallySheetCode=TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
     )
-    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
 
     electoralDistricts = db.session.query(
         Area.Model.areaId
@@ -55,12 +54,16 @@ def create(tallySheetId):
         Submission.Model.areaId
     ).all()
 
+    is_complete = True
     for row in query:
-        tallySheetVersion.add_row(
-            candidateId=row.candidateId,
-            electoralDistrictId=row.electoralDistrictId,
-            count=row.count
-        )
+        if row.candidateId is not None and row.electoralDistrictId is not None and row.count is not None:
+            tallySheetVersion.add_row(
+                candidateId=row.candidateId,
+                electoralDistrictId=row.electoralDistrictId,
+                count=row.count
+            )
+        else:
+            is_complete = False
 
     rejected_vote_count_query = db.session.query(
         Submission.Model.areaId,
@@ -81,11 +84,17 @@ def create(tallySheetId):
     ).all()
 
     for row in rejected_vote_count_query:
-        tallySheetVersion.add_invalid_vote_count(
-            electionId=tallySheetVersion.submission.electionId,
-            areaId=row.areaId,
-            rejectedVoteCount=row.rejectedVoteCount
-        )
+        if tallySheetVersion.submission.electionId is not None and row.areaId is not None and row.rejectedVoteCount is not None:
+            tallySheetVersion.add_invalid_vote_count(
+                electionId=tallySheetVersion.submission.electionId,
+                areaId=row.areaId,
+                rejectedVoteCount=row.rejectedVoteCount
+            )
+        else:
+            is_complete = False
+
+    if is_complete:
+        tallySheetVersion.set_complete()
 
     db.session.commit()
 

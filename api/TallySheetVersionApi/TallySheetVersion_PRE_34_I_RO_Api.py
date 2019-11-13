@@ -100,7 +100,7 @@ def create(tallySheetId):
         Area.Model.areaId.in_([area.areaId for area in countingCentres])
     ).one_or_none()
 
-    is_complete = True  # TODO:Change other reports to validate like this
+    is_complete = True
     for row in query:
         if row.candidateId is not None and row.preferenceNumber is not None and row.preferenceNumber is not None:
             tallySheetVersion.add_row(

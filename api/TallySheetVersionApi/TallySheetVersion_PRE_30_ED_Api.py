@@ -70,9 +70,6 @@ def create(tallySheetId):
         else:
             is_complete = False
 
-    if is_complete:
-        tallySheetVersion.set_complete()
-
     rejected_vote_count_query = db.session.query(
         polling_division_and_electoral_district_subquery.c.areaId,
         Submission.Model.electionId,
@@ -97,11 +94,17 @@ def create(tallySheetId):
     ).all()
 
     for row in rejected_vote_count_query:
-        tallySheetVersion.add_invalid_vote_count(
-            electionId=row.electionId,
-            areaId=row.areaId,
-            rejectedVoteCount=row.rejectedVoteCount
-        )
+        if row.electionId is not None and row.areaId is not None and row.rejectedVoteCount is not None:
+            tallySheetVersion.add_invalid_vote_count(
+                electionId=row.electionId,
+                areaId=row.areaId,
+                rejectedVoteCount=row.rejectedVoteCount
+            )
+        else:
+            is_complete=False
+
+    if is_complete:
+        tallySheetVersion.set_complete()
 
     db.session.commit()
 

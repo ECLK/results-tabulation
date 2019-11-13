@@ -88,7 +88,7 @@ def create(tallySheetId):
         TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber
     ).all()
 
-    is_complete = True  # TODO:Change other reports to validate like this
+    is_complete = True
     for row in query:
         if row.candidateId is not None and row.preferenceNumber is not None and (
                 row.preferenceNumber != 1 or row.preferenceCount is not None):
