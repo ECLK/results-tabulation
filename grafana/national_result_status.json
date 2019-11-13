@@ -15,10 +15,118 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 10,
-  "iteration": 1573451531618,
+  "id": 7,
+  "iteration": 1573619703930,
   "links": [],
   "panels": [
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPostfix": true,
+      "colorValue": true,
+      "colors": [
+        "#299c46",
+        "#A352CC",
+        "#d44a3a"
+      ],
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 67,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": " - National Results Status",
+      "postfixFontSize": "80%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeatDirection": "h",
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "Presidential Election 2019 - System Test  [ LSF 1 ]",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select \"$elections\"",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "invoiceId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "invoice",
+          "timeColumn": "issuedAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
     {
       "cacheTimeout": null,
       "content": "# CE - 201 (PV)\n\n\n\n\n",
@@ -26,7 +134,7 @@
         "h": 2,
         "w": 4,
         "x": 0,
-        "y": 0
+        "y": 2
       },
       "id": 46,
       "links": [],
@@ -70,12 +178,12 @@
     },
     {
       "cacheTimeout": null,
-      "content": "\n# \n\n\n\n\n",
+      "content": "\n\n\n\n\n\n",
       "gridPos": {
         "h": 2,
         "w": 5,
         "x": 4,
-        "y": 0
+        "y": 2
       },
       "id": 48,
       "links": [],
@@ -139,7 +247,7 @@
         "h": 2,
         "w": 5,
         "x": 9,
-        "y": 0
+        "y": 2
       },
       "id": 10,
       "interval": null,
@@ -224,12 +332,12 @@
     },
     {
       "cacheTimeout": null,
-      "content": "\n# \n\n\n\n\n",
+      "content": "\n\n\n\n\n",
       "gridPos": {
         "h": 2,
         "w": 5,
         "x": 14,
-        "y": 0
+        "y": 2
       },
       "id": 49,
       "links": [],
@@ -293,7 +401,7 @@
         "h": 2,
         "w": 5,
         "x": 19,
-        "y": 0
+        "y": 2
       },
       "id": 66,
       "interval": null,
@@ -383,7 +491,7 @@
         "h": 2,
         "w": 4,
         "x": 0,
-        "y": 2
+        "y": 4
       },
       "id": 56,
       "links": [],
@@ -427,12 +535,12 @@
     },
     {
       "cacheTimeout": null,
-      "content": "\n# \n\n\n\n\n",
+      "content": "\n\n\n\n\n",
       "gridPos": {
         "h": 2,
         "w": 5,
         "x": 4,
-        "y": 2
+        "y": 4
       },
       "id": 58,
       "links": [],
@@ -496,7 +604,7 @@
         "h": 2,
         "w": 5,
         "x": 9,
-        "y": 2
+        "y": 4
       },
       "id": 57,
       "interval": null,
@@ -581,12 +689,12 @@
     },
     {
       "cacheTimeout": null,
-      "content": "\n# \n\n\n\n\n",
+      "content": "\n\n\n\n\n",
       "gridPos": {
         "h": 2,
         "w": 5,
         "x": 14,
-        "y": 2
+        "y": 4
       },
       "id": 59,
       "links": [],
@@ -650,7 +758,7 @@
         "h": 2,
         "w": 5,
         "x": 19,
-        "y": 2
+        "y": 4
       },
       "id": 55,
       "interval": null,
@@ -740,7 +848,7 @@
         "h": 2,
         "w": 4,
         "x": 0,
-        "y": 4
+        "y": 6
       },
       "id": 50,
       "links": [],
@@ -804,7 +912,7 @@
         "h": 2,
         "w": 5,
         "x": 4,
-        "y": 4
+        "y": 6
       },
       "id": 53,
       "interval": null,
@@ -909,7 +1017,7 @@
         "h": 2,
         "w": 5,
         "x": 9,
-        "y": 4
+        "y": 6
       },
       "id": 51,
       "interval": null,
@@ -1014,7 +1122,7 @@
         "h": 2,
         "w": 5,
         "x": 14,
-        "y": 4
+        "y": 6
       },
       "id": 52,
       "interval": null,
@@ -1119,7 +1227,7 @@
         "h": 2,
         "w": 5,
         "x": 19,
-        "y": 4
+        "y": 6
       },
       "id": 60,
       "interval": null,
@@ -1209,7 +1317,7 @@
         "h": 2,
         "w": 4,
         "x": 0,
-        "y": 6
+        "y": 8
       },
       "id": 61,
       "links": [],
@@ -1273,7 +1381,7 @@
         "h": 2,
         "w": 5,
         "x": 4,
-        "y": 6
+        "y": 8
       },
       "id": 64,
       "interval": null,
@@ -1378,7 +1486,7 @@
         "h": 2,
         "w": 5,
         "x": 9,
-        "y": 6
+        "y": 8
       },
       "id": 62,
       "interval": null,
@@ -1483,7 +1591,7 @@
         "h": 2,
         "w": 5,
         "x": 14,
-        "y": 6
+        "y": 8
       },
       "id": 63,
       "interval": null,
@@ -1588,7 +1696,7 @@
         "h": 2,
         "w": 5,
         "x": 19,
-        "y": 6
+        "y": 8
       },
       "id": 65,
       "interval": null,
@@ -1679,7 +1787,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 10
       },
       "id": 8,
       "links": [],
@@ -1755,12 +1863,12 @@
     },
     {
       "cacheTimeout": null,
-      "content": "# \n\n\n\n\n",
+      "content": "\n\n\n\n",
       "gridPos": {
         "h": 2,
         "w": 3,
         "x": 12,
-        "y": 8
+        "y": 10
       },
       "id": 23,
       "links": [],
@@ -1810,7 +1918,7 @@
         "h": 2,
         "w": 3,
         "x": 15,
-        "y": 8
+        "y": 10
       },
       "id": 24,
       "links": [],
@@ -1859,7 +1967,7 @@
         "h": 2,
         "w": 3,
         "x": 18,
-        "y": 8
+        "y": 10
       },
       "id": 25,
       "links": [],
@@ -1908,7 +2016,7 @@
         "h": 2,
         "w": 3,
         "x": 21,
-        "y": 8
+        "y": 10
       },
       "id": 26,
       "links": [],
@@ -1957,7 +2065,7 @@
         "h": 2,
         "w": 3,
         "x": 12,
-        "y": 10
+        "y": 12
       },
       "id": 20,
       "links": [],
@@ -2021,7 +2129,7 @@
         "h": 2,
         "w": 3,
         "x": 15,
-        "y": 10
+        "y": 12
       },
       "id": 47,
       "interval": "6h",
@@ -2058,7 +2166,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "15588973",
+      "tableColumn": "15333066",
       "targets": [
         {
           "format": "table",
@@ -2125,7 +2233,7 @@
         "h": 2,
         "w": 3,
         "x": 18,
-        "y": 10
+        "y": 12
       },
       "id": 11,
       "interval": null,
@@ -2162,7 +2270,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "404123",
+      "tableColumn": "659030",
       "targets": [
         {
           "format": "table",
@@ -2229,7 +2337,7 @@
         "h": 2,
         "w": 3,
         "x": 21,
-        "y": 10
+        "y": 12
       },
       "id": 29,
       "interval": null,
@@ -2266,7 +2374,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "15588973 + 404123",
+      "tableColumn": "15333066 + 659030",
       "targets": [
         {
           "format": "table",
@@ -2319,7 +2427,7 @@
         "h": 2,
         "w": 3,
         "x": 12,
-        "y": 12
+        "y": 14
       },
       "id": 19,
       "links": [],
@@ -2383,7 +2491,7 @@
         "h": 2,
         "w": 3,
         "x": 15,
-        "y": 12
+        "y": 14
       },
       "id": 15,
       "interval": null,
@@ -2420,7 +2528,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "1403448 + 59083",
+      "tableColumn": "800813 + 135466",
       "targets": [
         {
           "format": "table",
@@ -2487,7 +2595,7 @@
         "h": 2,
         "w": 3,
         "x": 18,
-        "y": 12
+        "y": 14
       },
       "id": 18,
       "interval": null,
@@ -2524,7 +2632,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "26450 + 374",
+      "tableColumn": "4601 + 1259",
       "targets": [
         {
           "format": "table",
@@ -2591,7 +2699,7 @@
         "h": 2,
         "w": 3,
         "x": 21,
-        "y": 12
+        "y": 14
       },
       "id": 31,
       "interval": null,
@@ -2628,7 +2736,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "1403448 + 26450 + 59083 + 374",
+      "tableColumn": "800813 + 4601 + 135466 + 1259",
       "targets": [
         {
           "format": "table",
@@ -2681,7 +2789,7 @@
         "h": 2,
         "w": 3,
         "x": 12,
-        "y": 14
+        "y": 16
       },
       "id": 27,
       "links": [],
@@ -2745,7 +2853,7 @@
         "h": 2,
         "w": 3,
         "x": 15,
-        "y": 14
+        "y": 16
       },
       "id": 28,
       "interval": null,
@@ -2850,7 +2958,7 @@
         "h": 2,
         "w": 3,
         "x": 18,
-        "y": 14
+        "y": 16
       },
       "id": 32,
       "interval": null,
@@ -2955,7 +3063,7 @@
         "h": 2,
         "w": 3,
         "x": 21,
-        "y": 14
+        "y": 16
       },
       "id": 33,
       "interval": null,
@@ -3045,7 +3153,7 @@
         "h": 2,
         "w": 3,
         "x": 12,
-        "y": 16
+        "y": 18
       },
       "id": 22,
       "links": [],
@@ -3108,7 +3216,7 @@
         "h": 2,
         "w": 3,
         "x": 15,
-        "y": 16
+        "y": 18
       },
       "id": 12,
       "interval": null,
@@ -3145,7 +3253,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "1403448",
+      "tableColumn": "800813",
       "targets": [
         {
           "format": "table",
@@ -3212,7 +3320,7 @@
         "h": 2,
         "w": 3,
         "x": 18,
-        "y": 16
+        "y": 18
       },
       "id": 38,
       "interval": null,
@@ -3249,7 +3357,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "26450",
+      "tableColumn": "4601",
       "targets": [
         {
           "format": "table",
@@ -3316,7 +3424,7 @@
         "h": 2,
         "w": 3,
         "x": 21,
-        "y": 16
+        "y": 18
       },
       "id": 42,
       "interval": null,
@@ -3353,7 +3461,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "1403448 + 26450",
+      "tableColumn": "800813 + 4601",
       "targets": [
         {
           "format": "table",
@@ -3406,7 +3514,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 17
+        "y": 19
       },
       "id": 17,
       "links": [],
@@ -3487,7 +3595,7 @@
         "h": 2,
         "w": 3,
         "x": 12,
-        "y": 18
+        "y": 20
       },
       "id": 35,
       "links": [],
@@ -3551,7 +3659,7 @@
         "h": 2,
         "w": 3,
         "x": 15,
-        "y": 18
+        "y": 20
       },
       "id": 34,
       "interval": null,
@@ -3657,7 +3765,7 @@
         "h": 2,
         "w": 3,
         "x": 18,
-        "y": 18
+        "y": 20
       },
       "id": 39,
       "interval": null,
@@ -3763,7 +3871,7 @@
         "h": 2,
         "w": 3,
         "x": 21,
-        "y": 18
+        "y": 20
       },
       "id": 43,
       "interval": null,
@@ -3853,7 +3961,7 @@
         "h": 2,
         "w": 3,
         "x": 12,
-        "y": 20
+        "y": 22
       },
       "id": 21,
       "links": [],
@@ -3916,7 +4024,7 @@
         "h": 2,
         "w": 3,
         "x": 15,
-        "y": 20
+        "y": 22
       },
       "id": 13,
       "interval": null,
@@ -3953,7 +4061,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "59083",
+      "tableColumn": "135466",
       "targets": [
         {
           "format": "table",
@@ -4020,7 +4128,7 @@
         "h": 2,
         "w": 3,
         "x": 18,
-        "y": 20
+        "y": 22
       },
       "id": 40,
       "interval": null,
@@ -4057,7 +4165,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "374",
+      "tableColumn": "1259",
       "targets": [
         {
           "format": "table",
@@ -4124,7 +4232,7 @@
         "h": 2,
         "w": 3,
         "x": 21,
-        "y": 20
+        "y": 22
       },
       "id": 44,
       "interval": null,
@@ -4161,7 +4269,7 @@
         "lineColor": "rgb(31, 120, 193)",
         "show": false
       },
-      "tableColumn": "374 + 59083",
+      "tableColumn": "1259 + 135466",
       "targets": [
         {
           "format": "table",
@@ -4214,7 +4322,7 @@
         "h": 2,
         "w": 3,
         "x": 12,
-        "y": 22
+        "y": 24
       },
       "id": 37,
       "links": [],
@@ -4278,7 +4386,7 @@
         "h": 2,
         "w": 3,
         "x": 15,
-        "y": 22
+        "y": 24
       },
       "id": 36,
       "interval": null,
@@ -4384,7 +4492,7 @@
         "h": 2,
         "w": 3,
         "x": 18,
-        "y": 22
+        "y": 24
       },
       "id": 41,
       "interval": null,
@@ -4490,7 +4598,7 @@
         "h": 2,
         "w": 3,
         "x": 21,
-        "y": 22
+        "y": 24
       },
       "id": 45,
       "interval": null,
@@ -4575,7 +4683,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -4583,8 +4691,10 @@
       {
         "allValue": null,
         "current": {
-          "text": "Presidential Election 2019 - System Test 5 [ EC ]",
-          "value": "Presidential Election 2019 - System Test 5 [ EC ]"
+          "selected": false,
+          "tags": [],
+          "text": "Presidential Election 2019 - System Test  [ LSF 1 ]",
+          "value": "Presidential Election 2019 - System Test  [ LSF 1 ]"
         },
         "datasource": "MySQL",
         "definition": "SELECT electionName FROM election WHERE election.parentElectionId IS NULL",
@@ -4608,8 +4718,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "12846",
-          "value": "12846"
+          "text": "12845",
+          "value": "12845"
         },
         "datasource": "MySQL",
         "definition": "select count(DISTINCT pollingStationId) from area_map WHERE electionId=$electionId",
@@ -4633,8 +4743,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "15588973",
-          "value": "15588973"
+          "text": "15333066",
+          "value": "15333066"
         },
         "datasource": "MySQL",
         "definition": "select sum(pollingStation._registeredVotersCount) - $totalRegisteredPostalVoters from area_map    join election as election on election.electionId = area_map.electionId   join area as pollingStation on pollingStation.areaId = area_map.pollingStationId where area_map.voteType = \"NonPostal\" and election.electionName = \"$elections\"",
@@ -4658,8 +4768,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "1403448",
-          "value": "1403448"
+          "text": "800813",
+          "value": "800813"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(sum(voteCount) is null,0,sum(voteCount) ) AS totalVoteCount FROM dashboard_status_PRE_41  WHERE voteType = \"Ordinary\"  AND electionId = \"$electionId\" AND status=\"Verified\" AND candidateId IS NOT NULL",
@@ -4683,8 +4793,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "404123",
-          "value": "404123"
+          "text": "659030",
+          "value": "659030"
         },
         "datasource": "MySQL",
         "definition": " select sum(countingCentre._registeredVotersCount) from area_map    join election as election on election.electionId = area_map.electionId   join area as countingCentre on countingCentre.areaId = area_map.countingCentreId where area_map.voteType = \"Postal\" and election.electionName = \"$elections\"",
@@ -4708,8 +4818,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "59083",
-          "value": "59083"
+          "text": "135466",
+          "value": "135466"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(sum(voteCount) is null,0,sum(voteCount) ) AS totalVoteCount FROM dashboard_status_PRE_41  WHERE voteType = \"Ordinary\" AND status=\"Verified\" AND electionId = \"$electionId\"  AND candidateId IS NULL",
@@ -4733,8 +4843,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "26450",
-          "value": "26450"
+          "text": "4601",
+          "value": "4601"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(sum(voteCount) is null,0,sum(voteCount) ) AS totalVoteCount FROM dashboard_status_PRE_41  WHERE voteType = \"Postal\" AND status=\"Verified\"  AND electionId = \"$electionId\"  AND candidateId IS NOT NULL",
@@ -4758,8 +4868,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "374",
-          "value": "374"
+          "text": "1259",
+          "value": "1259"
         },
         "datasource": "MySQL",
         "definition": "SELECT if(sum(voteCount) is null,0,sum(voteCount)) AS totalVoteCount FROM dashboard_status_PRE_41  WHERE voteType = \"Postal\"  AND electionId = \"$electionId\" AND status=\"Verified\"  AND candidateId IS NULL",
@@ -4783,8 +4893,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "1",
-          "value": "1"
+          "text": "19",
+          "value": "19"
         },
         "datasource": "MySQL",
         "definition": "select electionId from election where electionName = \"$elections\"",
@@ -4808,8 +4918,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "370",
-          "value": "370"
+          "text": "371",
+          "value": "371"
         },
         "datasource": "MySQL",
         "definition": "select count(DISTINCT countingCentreId) from area_map WHERE electionId=$electionId and voteType=\"Postal\"",
@@ -4939,5 +5049,5 @@
   "timezone": "",
   "title": "National Results Status New Design",
   "uid": "i0uqvC0Zz",
-  "version": 98
+  "version": 11
 }
