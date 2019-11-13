@@ -61,7 +61,7 @@ return function (callback) {
     var seriesName = 'argName';
     $.ajax({
         method: 'GET',
-        url: '/api/dashboards/uid/'+id
+        url: '/api/dashboards/uid/'+uid
     })
         .done(function (result) {
             
