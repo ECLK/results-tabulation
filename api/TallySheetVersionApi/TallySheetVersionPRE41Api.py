@@ -50,16 +50,24 @@ def create(tallySheetId, body):
     if len(pollingDivisionResult) > 0:
         pollingDivisionId = area.get_associated_areas(AreaTypeEnum.PollingDivision, electionId=electionId)[0].areaId
 
-    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_30_PD
     tally_sheet_content = request_body.get("content")
+    is_complete = True
     if tally_sheet_content is not None:
+
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
-            tallySheetVersion.add_row(
-                candidateId=party_count_body.get("candidateId"),
-                count=party_count_body.get("count"),
-                countInWords=party_count_body.get("countInWords")
-            )
+            candidateId = party_count_body.get("candidateId")
+            count = party_count_body.get("count")
+            countInWords = party_count_body.get("countInWords")
+
+            if (candidateId and count and countInWords) is not None:
+                tallySheetVersion.add_row(
+                    candidateId=candidateId,
+                    count=count,
+                    countInWords=countInWords
+                )
+            else:
+                is_complete = False
 
             voteCount = party_count_body.get("count")
             pollingStationId = party_count_body.get("areaId")
@@ -98,10 +106,16 @@ def create(tallySheetId, body):
 
     tally_sheet_summary_body = request_body.get("summary")
     if tally_sheet_summary_body is not None:
-        tallySheetVersion.add_invalid_vote_count(
-            electionId=tallySheetVersion.submission.electionId,
-            rejectedVoteCount=tally_sheet_summary_body.get("rejectedVoteCount")
-        )
+        electionId = tallySheetVersion.submission.electionId
+        rejectedVoteCount = tally_sheet_summary_body.get("rejectedVoteCount")
+
+        if (electionId and rejectedVoteCount) is not None:
+            tallySheetVersion.add_invalid_vote_count(
+                electionId=electionId,
+                rejectedVoteCount=rejectedVoteCount
+            )
+        else:
+            is_complete = False
 
         voteCount = tally_sheet_summary_body.get("rejectedVoteCount")
         candidateId = None
@@ -134,9 +148,11 @@ def create(tallySheetId, body):
                 existingStatus.pollingDivisionId = pollingDivisionId,
                 existingStatus.countingCentreId = countingCentreId,
                 existingStatus.voteCount = voteCount,
-                existingStatus.pollingStationId=pollingStationId,
+                existingStatus.pollingStationId = pollingStationId,
                 existingStatus.candidateId = candidateId
 
+    if is_complete:
+        tallySheetVersion.set_complete()
     db.session.commit()
 
     return TallySheetVersionSchema().dump(tallySheetVersion).data

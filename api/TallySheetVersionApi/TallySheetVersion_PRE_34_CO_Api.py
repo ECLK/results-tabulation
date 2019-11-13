@@ -52,14 +52,13 @@ def create(tallySheetId, body):
     if len(pollingDivisionResult) > 0:
         pollingDivisionId = area.get_associated_areas(AreaTypeEnum.PollingDivision, electionId=electionId)[0].areaId
 
-    tallySheetVersion.set_complete()  # TODO: valid before setting complete. Refer to PRE_34_CO
     tally_sheet_content = request_body.get("content")
 
     # summary
     summary = request_body.get("summary")
     ballotPapersNotCounted = summary['ballotPapersNotCounted']
     remainingBallotPapers = summary['remainingBallotPapers']
-    if ballotPapersNotCounted is not None and remainingBallotPapers is not None:
+    if (ballotPapersNotCounted and remainingBallotPapers) is not None:
         TallySheetVersionRow_PRE_34_summary.create(
             electionId=tallySheetVersion.submission.electionId,
             tallySheetVersionId=tallySheetVersion.tallySheetVersionId,
@@ -67,62 +66,72 @@ def create(tallySheetId, body):
             remainingBallotPapers=remainingBallotPapers
         )
 
+    is_complete = True
     if tally_sheet_content is not None:
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
-            tallySheetVersion.add_row(
-                electionId=tallySheetVersion.submission.electionId,
-                candidateId=party_count_body.get("candidateId"),
-                preferenceCount=party_count_body.get("preferenceCount"),
-                preferenceNumber=party_count_body.get("preferenceNumber"),
-            )
-            pollingStationId = party_count_body.get("areaId")
+            electionId = tallySheetVersion.submission.electionId
             candidateId = party_count_body.get("candidateId")
             preferenceCount = party_count_body.get("preferenceCount")
             preferenceNumber = party_count_body.get("preferenceNumber")
-            secondPreferenceCount = 0
-            thirdPreferenceCount = 0
-
-            if preferenceNumber == 2:
-                secondPreferenceCount = preferenceCount
-            if preferenceNumber == 3:
-                thirdPreferenceCount = preferenceCount
-
-            if election is not None:
-                existingStatus = StatusPRE34.get_status_record(
+            if (electionId and candidateId and preferenceCount and preferenceNumber) is not None:
+                tallySheetVersion.add_row(
                     electionId=electionId,
-                    electoralDistrictId=electoralDistrictId,
-                    pollingDivisionId=pollingDivisionId,
-                    countingCentreId=countingCentreId,
-                    candidateId=candidateId
+                    candidateId=candidateId,
+                    preferenceCount=preferenceCount,
+                    preferenceNumber=preferenceNumber,
                 )
-                if existingStatus is None:
-                    StatusPRE34.create(
-                        voteType=voteType,
-                        status=status,
+                pollingStationId = party_count_body.get("areaId")
+                candidateId = party_count_body.get("candidateId")
+                preferenceCount = party_count_body.get("preferenceCount")
+                preferenceNumber = party_count_body.get("preferenceNumber")
+                secondPreferenceCount = 0
+                thirdPreferenceCount = 0
+
+                if preferenceNumber == 2:
+                    secondPreferenceCount = preferenceCount
+                if preferenceNumber == 3:
+                    thirdPreferenceCount = preferenceCount
+
+                if election is not None:
+                    existingStatus = StatusPRE34.get_status_record(
                         electionId=electionId,
                         electoralDistrictId=electoralDistrictId,
                         pollingDivisionId=pollingDivisionId,
                         countingCentreId=countingCentreId,
-                        secondPreferenceCount=secondPreferenceCount,
-                        thirdPreferenceCount=thirdPreferenceCount,
-                        candidateId=candidateId,
-                        ballotPapersNotCounted=ballotPapersNotCounted,
-                        remainingBallotPapers=remainingBallotPapers
+                        candidateId=candidateId
                     )
-                else:
-                    existingStatus.voteType = voteType
-                    existingStatus.electionId = electionId
-                    existingStatus.electoralDistrictId = electoralDistrictId
-                    existingStatus.pollingDivisionId = pollingDivisionId
-                    existingStatus.countingCentreId = countingCentreId
-                    existingStatus.ballotPapersNotCounted = ballotPapersNotCounted
-                    existingStatus.remainingBallotPapers = remainingBallotPapers
-                    if secondPreferenceCount is not 0:
-                        existingStatus.secondPreferenceCount = secondPreferenceCount
-                    if thirdPreferenceCount is not 0:
-                        existingStatus.thirdPreferenceCount = thirdPreferenceCount
-                    existingStatus.candidateId = candidateId
+                    if existingStatus is None:
+                        StatusPRE34.create(
+                            voteType=voteType,
+                            status=status,
+                            electionId=electionId,
+                            electoralDistrictId=electoralDistrictId,
+                            pollingDivisionId=pollingDivisionId,
+                            countingCentreId=countingCentreId,
+                            secondPreferenceCount=secondPreferenceCount,
+                            thirdPreferenceCount=thirdPreferenceCount,
+                            candidateId=candidateId,
+                            ballotPapersNotCounted=ballotPapersNotCounted,
+                            remainingBallotPapers=remainingBallotPapers
+                        )
+                    else:
+                        existingStatus.voteType = voteType
+                        existingStatus.electionId = electionId
+                        existingStatus.electoralDistrictId = electoralDistrictId
+                        existingStatus.pollingDivisionId = pollingDivisionId
+                        existingStatus.countingCentreId = countingCentreId
+                        existingStatus.ballotPapersNotCounted = ballotPapersNotCounted
+                        existingStatus.remainingBallotPapers = remainingBallotPapers
+                        if secondPreferenceCount is not 0:
+                            existingStatus.secondPreferenceCount = secondPreferenceCount
+                        if thirdPreferenceCount is not 0:
+                            existingStatus.thirdPreferenceCount = thirdPreferenceCount
+                        existingStatus.candidateId = candidateId
+            else:
+                is_complete = False
+        if is_complete:
+            tallySheetVersion.set_complete()
 
     db.session.commit()
 
