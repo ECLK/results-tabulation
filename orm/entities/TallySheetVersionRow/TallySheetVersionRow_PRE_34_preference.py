@@ -13,26 +13,30 @@ class TallySheetVersionRow_PRE_34_preference_Model(db.Model):
                                     nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
     candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.Model.__table__.c.candidateId), nullable=True)
+    areaId = db.Column(db.Integer, db.ForeignKey(Area.Model.__table__.c.areaId), nullable=True)
     preferenceNumber = db.Column(db.Integer, nullable=False)
     preferenceCount = db.Column(db.Integer, nullable=False)
 
     candidate = relationship(Candidate.Model, foreign_keys=[candidateId])
+    area = relationship(Area.Model, foreign_keys=[areaId])
     election = relationship(Election.Model, foreign_keys=[electionId])
 
     areaName = association_proxy("area", "areaName")
 
     __table_args__ = (
-        db.UniqueConstraint('tallySheetVersionId', 'preferenceNumber', 'candidateId',
-                            name='TallySheetVersionRow_RejectedVoteCount_Model'),
+        db.UniqueConstraint('tallySheetVersionId', 'preferenceNumber', 'candidateId', 'areaId',
+                            name='TallySheetVersionRow_PRE_34_preference_Model_uk'),
     )
 
-    def __init__(self, electionId, tallySheetVersionId, preferenceNumber, preferenceCount, candidateId):
+    def __init__(self, electionId, tallySheetVersionId, preferenceNumber, preferenceCount, candidateId=None,
+                 areaId=None):
         super(TallySheetVersionRow_PRE_34_preference_Model, self).__init__(
             electionId=electionId,
             tallySheetVersionId=tallySheetVersionId,
             preferenceNumber=preferenceNumber,
             preferenceCount=preferenceCount,
-            candidateId=candidateId
+            candidateId=candidateId,
+            areaId=areaId
         )
         db.session.add(self)
         db.session.flush()
@@ -41,13 +45,14 @@ class TallySheetVersionRow_PRE_34_preference_Model(db.Model):
 Model = TallySheetVersionRow_PRE_34_preference_Model
 
 
-def create(electionId, tallySheetVersionId, preferenceNumber, preferenceCount, candidateId):
+def create(electionId, tallySheetVersionId, preferenceNumber, preferenceCount, candidateId=None, areaId=None):
     result = Model(
         electionId=electionId,
         tallySheetVersionId=tallySheetVersionId,
         preferenceNumber=preferenceNumber,
         preferenceCount=preferenceCount,
-        candidateId=candidateId
+        candidateId=candidateId,
+        areaId=areaId
     )
 
     return result

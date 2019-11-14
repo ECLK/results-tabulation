@@ -44,11 +44,37 @@ def create(tallySheetId):
         electoral_district_ids.append(electoral_district.electoralDistrictId)
 
     query = db.session.query(
-        func.count(Area.Model.areaId).label("areaCount"),
+        Area.Model.areaId,
         ElectionCandidate.Model.candidateId,
-        TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
-        func.sum(TallySheetVersionRow_PRE_34_preference.Model.preferenceCount).label("preferenceCount"),
-        Submission.Model.electionId
+        ElectionCandidate.Model.qualifiedForPreferences,
+        Submission.Model.electionId,
+        func.sum(
+            func.IF(
+                and_(
+                    TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber == 1
+                ),
+                TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
+                None
+            )
+        ).label("firstPreferenceCount"),
+        func.sum(
+            func.IF(
+                and_(
+                    TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber == 2
+                ),
+                TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
+                None
+            )
+        ).label("secondPreferenceCount"),
+        func.sum(
+            func.IF(
+                and_(
+                    TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber == 3
+                ),
+                TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
+                None
+            )
+        ).label("thirdPreferenceCount"),
     ).join(
         Submission.Model,
         Submission.Model.areaId == Area.Model.areaId
@@ -73,26 +99,46 @@ def create(tallySheetId):
             TallySheetVersionRow_PRE_34_preference.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
             TallySheetVersionRow_PRE_34_preference.Model.candidateId == ElectionCandidate.Model.candidateId
         ),
+        isouter=True
     ).filter(
-        Submission.Model.areaId.in_(electoral_district_ids)
+        Area.Model.areaId.in_(electoral_district_ids)
     ).group_by(
         ElectionCandidate.Model.candidateId,
-        TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber
+        Area.Model.areaId
     ).order_by(
-        TallySheetVersionRow_PRE_34_preference.Model.candidateId,
-        TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber
+        ElectionCandidate.Model.candidateId,
+        Area.Model.areaId
     ).all()
 
     is_complete = True
     for row in query:
-        if (row.candidateId and row.preferenceNumber and row.preferenceCount) is not None and (
-                row.preferenceNumber != 1 or row.preferenceCount is not None):
+        if (row.candidateId and row.firstPreferenceCount) is not None:
             tallySheetVersion.add_row(
                 electionId=row.electionId,
                 candidateId=row.candidateId,
-                preferenceNumber=row.preferenceNumber,
-                preferenceCount=row.preferenceCount
+                preferenceNumber=1,
+                preferenceCount=row.firstPreferenceCount,
+                areaId=row.areaId
             )
+
+            if row.qualifiedForPreferences is True:
+                if (row.secondPreferenceCount and row.thirdPreferenceCount) is not None:
+                    tallySheetVersion.add_row(
+                        electionId=row.electionId,
+                        candidateId=row.candidateId,
+                        preferenceNumber=2,
+                        preferenceCount=row.secondPreferenceCount,
+                        areaId=row.areaId
+                    )
+                    tallySheetVersion.add_row(
+                        electionId=row.electionId,
+                        candidateId=row.candidateId,
+                        preferenceNumber=3,
+                        preferenceCount=row.thirdPreferenceCount,
+                        areaId=row.areaId
+                    )
+                else:
+                    is_complete = False
         else:
             is_complete = False
 
