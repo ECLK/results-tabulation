@@ -154,10 +154,17 @@ def notify_results(tally_sheet, tally_sheet_version_id):
             result_code
         )
 
+        ed_name = ""
+        pd_name = ""
+        if ed_name in response:
+            ed_name = response['ed_name']
+        if pd_name in response:
+            pd_name = response['pd_name']
+
         params = {
             "level": get_result_level(tally_sheet),
-            "ed_name": response['ed_name'] or "",
-            "pd_name": response['pd_name'] or ""
+            "ed_name": ed_name,
+            "pd_name": pd_name
         }
 
         required_params_from_response = [PARAM_ED_NAME, PARAM_PD_NAME]

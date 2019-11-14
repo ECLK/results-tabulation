@@ -168,6 +168,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             pd_code = ed_code + 'P'
         else:
             pd_code, pd_name = split_area_name(polling_division)
+            pd_code = ed_code + pd_code
 
         response = {
             "timestamp": str(datetime.now()),
