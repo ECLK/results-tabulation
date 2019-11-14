@@ -125,7 +125,7 @@ return function (callback) {
                         district = '19 - Badulla';
                         break;
                     case 'monaragala-ro':
-                        district = '20 - monaragala';
+                        district = '20 - Monaragala';
                         break;
                     case 'ratnapura-ro':
                         district = '21 - Ratnapura';
