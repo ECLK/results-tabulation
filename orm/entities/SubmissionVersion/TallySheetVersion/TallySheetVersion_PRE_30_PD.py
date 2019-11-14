@@ -6,7 +6,8 @@ from orm.entities import Area, Candidate, Party, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_RejectedVoteCount
-from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage, convert_image_to_data_uri
+from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage, convert_image_to_data_uri, \
+    split_area_name
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 from datetime import datetime
 
@@ -171,7 +172,8 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
                 sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount)
             ).label("validVoteCount"),
             func.sum(
-                (sqlalchemy_num_or_zero(candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount) / vote_count_result.validVoteCount) * 100
+                (sqlalchemy_num_or_zero(
+                    candidate_and_area_wise_valid_vote_count_subquery.c.validVoteCount) / vote_count_result.validVoteCount) * 100
             ).label("validVotePercentage")
         ).join(
             ElectionCandidate.Model,
@@ -433,14 +435,12 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             })
 
         is_postal = self.submission.election.voteType == VoteTypeEnum.Postal
-        ed_name=electoral_district.split(" - ")[1]
-        ed_code= electoral_district.split(" - ")[0]
+        ed_code, ed_name = split_area_name(electoral_district)
         if is_postal:
-            pd_name="Postal Votes"
+            pd_name = "Postal Votes"
             pd_code = ed_code + 'P'
         else:
-            pd_name=polling_division.split("- ")[1]
-            pd_code = ed_code + polling_division.split("- ")[0]
+            pd_code, pd_name = split_area_name(polling_division)
 
         validVoteCount = vote_count_result.validVoteCount or 0
         rejectedVoteCount = vote_count_result.rejectedVoteCount or 0

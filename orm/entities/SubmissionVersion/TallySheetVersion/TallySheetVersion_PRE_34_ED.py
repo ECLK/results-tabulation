@@ -6,7 +6,8 @@ from orm.entities import Area, Candidate, Party, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference
-from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage, convert_image_to_data_uri
+from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage, convert_image_to_data_uri, \
+    split_area_name
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 from datetime import datetime
 
@@ -35,7 +36,6 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
 
     @hybrid_property
     def content(self):
-
         return db.session.query(
             ElectionCandidate.Model.candidateId,
             Candidate.Model.candidateName,
@@ -68,7 +68,6 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
         ).all()
 
     def html_letter(self):
-
         stamp = self.stamp
         content = {
             "election": {
@@ -133,7 +132,8 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
 
     def json_data(self):
         electoral_district = self.submission.area.areaName
-        candidate_wise_vote_count_result, total_valid_votes = TallySheetVersion.create_candidate_preference_struct(self.content)
+        candidate_wise_vote_count_result, total_valid_votes = TallySheetVersion.create_candidate_preference_struct(
+            self.content)
 
         candidates = []
         for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
@@ -149,8 +149,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
                 "candidate": candidate_wise_valid_vote_count_result_item['name']
             })
 
-        ed_name = electoral_district.split(" - ")[1]
-        ed_code = electoral_district.split(" - ")[0]
+        ed_code, ed_name = split_area_name(electoral_district)
 
         response = {
             "timestamp": str(datetime.now()),
