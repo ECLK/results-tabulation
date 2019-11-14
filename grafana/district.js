@@ -50,16 +50,21 @@ return function (callback) {
         from: "now-6h",
         to: "now"
     };
+    
+    //Get the Dashbord ID from url
+    var uid = 'of8-M-1Zz'
+    if (!_.isUndefined(ARGS.uid)) {
+        uid  = ARGS.uid;
+    }
 
     var rows = 1;
     var seriesName = 'argName';
-
     $.ajax({
         method: 'GET',
-        url: '/api/dashboards/uid/6CQ3Xj0Wk'
+        url: '/api/dashboards/uid/'+uid
     })
         .done(function (result) {
-            debugger;
+            
             var district = null
                 switch (user){
                     case 'colombo-ro':
@@ -98,14 +103,14 @@ return function (callback) {
                     case 'batticaloa-ro':
                         district = '12 - Batticaloa';
                         break;
-                    case 'digamdulla-ro':
-                        district = '13 - Digamdulla';
+                    case 'digamadulla-ro':
+                        district = '13 - Digamadulla';
                         break;
                     case 'trincomalee-ro':
                         district = '14 - Trincomalee';
                         break;
-                    case 'krunegala-ro':
-                        district = '15 - Krunegala';
+                    case 'kurunegala-ro':
+                        district = '15 - Kurunegala';
                         break;
                     case 'puttalam-ro':
                         district = '16 - Puttalam';
@@ -113,14 +118,14 @@ return function (callback) {
                     case 'anuradhapura-ro':
                         district = '17 - Anuradhapura';
                         break;
-                    case 'polannaruwa-ro':
-                        district = '18 - Polannaruwa';
+                    case 'polonnaruwa-ro':
+                        district = '18 - Polonnaruwa';
                         break;
                     case 'badulla-ro':
                         district = '19 - Badulla';
                         break;
                     case 'monaragala-ro':
-                        district = '20 - monaragala';
+                        district = '20 - Monaragala';
                         break;
                     case 'ratnapura-ro':
                         district = '21 - Ratnapura';
