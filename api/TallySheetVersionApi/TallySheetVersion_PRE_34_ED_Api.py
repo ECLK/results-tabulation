@@ -50,9 +50,35 @@ def create(tallySheetId):
     query = db.session.query(
         func.count(Area.Model.areaId).label("areaCount"),
         ElectionCandidate.Model.candidateId,
-        TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
-        func.sum(TallySheetVersionRow_PRE_34_preference.Model.preferenceCount).label("preferenceCount"),
-        Submission.Model.electionId
+        ElectionCandidate.Model.qualifiedForPreferences,
+        Submission.Model.electionId,
+        func.sum(
+            func.IF(
+                and_(
+                    TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber == 1
+                ),
+                TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
+                None
+            )
+        ).label("firstPreferenceCount"),
+        func.sum(
+            func.IF(
+                and_(
+                    TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber == 2
+                ),
+                TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
+                None
+            )
+        ).label("secondPreferenceCount"),
+        func.sum(
+            func.IF(
+                and_(
+                    TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber == 3
+                ),
+                TallySheetVersionRow_PRE_34_preference.Model.preferenceCount,
+                None
+            )
+        ).label("thirdPreferenceCount"),
     ).join(
         Submission.Model,
         Submission.Model.areaId == Area.Model.areaId
@@ -77,28 +103,42 @@ def create(tallySheetId):
             TallySheetVersionRow_PRE_34_preference.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
             TallySheetVersionRow_PRE_34_preference.Model.candidateId == ElectionCandidate.Model.candidateId
         ),
+        isouter=True
     ).filter(
         Submission.Model.areaId.in_(electoral_district_and_polling_division_ids),
         # ElectionCandidate.Model.qualifiedForPreferences == True
     ).group_by(
-        ElectionCandidate.Model.candidateId,
-        TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber
+        ElectionCandidate.Model.candidateId
     ).order_by(
-        TallySheetVersionRow_PRE_34_preference.Model.candidateId,
-        TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber
+        ElectionCandidate.Model.candidateId
     ).all()
 
     is_complete = True
     for row in query:
-        if (row.candidateId and row.preferenceNumber) is not None and (
-                row.preferenceNumber != 1 or row.preferenceCount is not None):
-
+        if (row.candidateId and row.firstPreferenceCount) is not None:
             tallySheetVersion.add_row(
                 electionId=row.electionId,
                 candidateId=row.candidateId,
-                preferenceNumber=row.preferenceNumber,
-                preferenceCount=row.preferenceCount
+                preferenceNumber=1,
+                preferenceCount=row.firstPreferenceCount
             )
+
+            if row.qualifiedForPreferences is True:
+                if (row.secondPreferenceCount and row.thirdPreferenceCount) is not None:
+                    tallySheetVersion.add_row(
+                        electionId=row.electionId,
+                        candidateId=row.candidateId,
+                        preferenceNumber=2,
+                        preferenceCount=row.secondPreferenceCount
+                    )
+                    tallySheetVersion.add_row(
+                        electionId=row.electionId,
+                        candidateId=row.candidateId,
+                        preferenceNumber=3,
+                        preferenceCount=row.thirdPreferenceCount
+                    )
+                else:
+                    is_complete = False
         else:
             is_complete = False
 
