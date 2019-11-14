@@ -103,14 +103,14 @@ return function (callback) {
                     case 'batticaloa-ro':
                         district = '12 - Batticaloa';
                         break;
-                    case 'digamdulla-ro':
-                        district = '13 - Digamdulla';
+                    case 'digamadulla-ro':
+                        district = '13 - Digamadulla';
                         break;
                     case 'trincomalee-ro':
                         district = '14 - Trincomalee';
                         break;
-                    case 'krunegala-ro':
-                        district = '15 - Krunegala';
+                    case 'kurunegala-ro':
+                        district = '15 - Kurunegala';
                         break;
                     case 'puttalam-ro':
                         district = '16 - Puttalam';
@@ -118,8 +118,8 @@ return function (callback) {
                     case 'anuradhapura-ro':
                         district = '17 - Anuradhapura';
                         break;
-                    case 'polannaruwa-ro':
-                        district = '18 - Polannaruwa';
+                    case 'polonnaruwa-ro':
+                        district = '18 - Polonnaruwa';
                         break;
                     case 'badulla-ro':
                         district = '19 - Badulla';
