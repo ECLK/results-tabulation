@@ -35,6 +35,8 @@ def create(tallySheetId):
         tallySheetCode=TallySheetCodeEnum.PRE_34_PD
     )
 
+    polling_division_id = tallySheet.submission.areaId
+
     query = db.session.query(
         Election.Model.electionId,
         Area.Model.areaId,
@@ -94,7 +96,7 @@ def create(tallySheetId):
         ),
         isouter=True
     ).filter(
-        Area.Model.areaId == tallySheet.submission.areaId,
+        Area.Model.areaId == polling_division_id,
         # ElectionCandidate.Model.qualifiedForPreferences == True
     ).group_by(
         ElectionCandidate.Model.candidateId,
@@ -115,7 +117,8 @@ def create(tallySheetId):
                 electionId=row.electionId,
                 candidateId=row.candidateId,
                 preferenceNumber=1,
-                preferenceCount=row.firstPreferenceCount
+                preferenceCount=row.firstPreferenceCount,
+                areaId=polling_division_id
             )
 
             if row.qualifiedForPreferences is True:
@@ -124,13 +127,15 @@ def create(tallySheetId):
                         electionId=row.electionId,
                         candidateId=row.candidateId,
                         preferenceNumber=2,
-                        preferenceCount=row.secondPreferenceCount
+                        preferenceCount=row.secondPreferenceCount,
+                        areaId=polling_division_id
                     )
                     tallySheetVersion.add_row(
                         electionId=row.electionId,
                         candidateId=row.candidateId,
                         preferenceNumber=3,
-                        preferenceCount=row.thirdPreferenceCount
+                        preferenceCount=row.thirdPreferenceCount,
+                        areaId=polling_division_id
                     )
                 else:
                     is_complete = False

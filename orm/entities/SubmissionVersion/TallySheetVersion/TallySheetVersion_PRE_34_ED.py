@@ -22,7 +22,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
         'polymorphic_identity': TallySheetCodeEnum.PRE_34_ED
     }
 
-    def add_row(self, preferenceNumber, preferenceCount, candidateId, electionId):
+    def add_row(self, preferenceNumber, preferenceCount, candidateId, electionId, areaId):
         from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference
 
         TallySheetVersionRow_PRE_34_preference.create(
@@ -30,7 +30,8 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
             electionId=electionId,
             preferenceNumber=preferenceNumber,
             preferenceCount=preferenceCount,
-            candidateId=candidateId
+            candidateId=candidateId,
+            areaId=areaId
         )
 
     @hybrid_property

@@ -37,7 +37,7 @@ def create(tallySheetId):
     )
 
     query = db.session.query(
-        func.count(Area.Model.areaId).label("areaCount"),
+        Area.Model.areaId,
         Election.Model.electionId,
         ElectionCandidate.Model.candidateId,
         TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
@@ -69,6 +69,7 @@ def create(tallySheetId):
         Area.Model.areaId.in_([area.areaId for area in countingCentres]),
         ElectionCandidate.Model.qualifiedForPreferences == True
     ).group_by(
+        Area.Model.areaId,
         ElectionCandidate.Model.candidateId,
         TallySheetVersionRow_PRE_34_preference.Model.preferenceNumber,
     ).order_by(
@@ -107,7 +108,8 @@ def create(tallySheetId):
                 electionId=row.electionId,
                 candidateId=row.candidateId,
                 preferenceNumber=row.preferenceNumber,
-                preferenceCount=row.preferenceCount
+                preferenceCount=row.preferenceCount,
+                areaId=row.areaId
             )
         else:
             is_complete = False

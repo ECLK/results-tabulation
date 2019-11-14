@@ -104,9 +104,17 @@
             </td>
             {% endfor %}
 
+            {% if content.summary is not none %}
             <td class="all" style="text-align:right;">{{ content.summary.ballotPapersNotCounted }}</td>
             <td class="all" style="text-align:right;">{{ content.summary.remainingBallotPapers }}</td>
-            <td class="all" style="text-align:right;">{{ content.summary.remainingBallotPapers + content.summary.ballotPapersNotCounted }}</td>
+            <td class="all" style="text-align:right;">{{ content.summary.remainingBallotPapers +
+                content.summary.ballotPapersNotCounted }}
+            </td>
+            {% else %}
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            <td class="all" style="text-align:right;"></td>
+            {% endif %}
         </tr>
 
         <tr style="font-size:14px;">

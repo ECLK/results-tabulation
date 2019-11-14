@@ -30,7 +30,8 @@ class TallySheetVersion_PRE_34_CO_Model(TallySheetVersion.Model):
             electionId=electionId,
             preferenceNumber=preferenceNumber,
             preferenceCount=preferenceCount,
-            candidateId=candidateId
+            candidateId=candidateId,
+            areaId=self.submission.areaId
         )
 
     @hybrid_property

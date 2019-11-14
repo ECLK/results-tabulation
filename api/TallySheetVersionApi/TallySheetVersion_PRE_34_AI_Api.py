@@ -44,7 +44,7 @@ def create(tallySheetId):
         electoral_district_ids.append(electoral_district.electoralDistrictId)
 
     query = db.session.query(
-        func.count(Area.Model.areaId).label("areaCount"),
+        Area.Model.areaId,
         ElectionCandidate.Model.candidateId,
         ElectionCandidate.Model.qualifiedForPreferences,
         Submission.Model.electionId,
@@ -101,11 +101,13 @@ def create(tallySheetId):
         ),
         isouter=True
     ).filter(
-        Submission.Model.areaId.in_(electoral_district_ids)
+        Area.Model.areaId.in_(electoral_district_ids)
     ).group_by(
-        ElectionCandidate.Model.candidateId
+        ElectionCandidate.Model.candidateId,
+        Area.Model.areaId
     ).order_by(
-        ElectionCandidate.Model.candidateId
+        ElectionCandidate.Model.candidateId,
+        Area.Model.areaId
     ).all()
 
     is_complete = True
@@ -115,7 +117,8 @@ def create(tallySheetId):
                 electionId=row.electionId,
                 candidateId=row.candidateId,
                 preferenceNumber=1,
-                preferenceCount=row.firstPreferenceCount
+                preferenceCount=row.firstPreferenceCount,
+                areaId=row.areaId
             )
 
             if row.qualifiedForPreferences is True:
@@ -124,13 +127,15 @@ def create(tallySheetId):
                         electionId=row.electionId,
                         candidateId=row.candidateId,
                         preferenceNumber=2,
-                        preferenceCount=row.secondPreferenceCount
+                        preferenceCount=row.secondPreferenceCount,
+                        areaId=row.areaId
                     )
                     tallySheetVersion.add_row(
                         electionId=row.electionId,
                         candidateId=row.candidateId,
                         preferenceNumber=3,
-                        preferenceCount=row.thirdPreferenceCount
+                        preferenceCount=row.thirdPreferenceCount,
+                        areaId=row.areaId
                     )
                 else:
                     is_complete = False

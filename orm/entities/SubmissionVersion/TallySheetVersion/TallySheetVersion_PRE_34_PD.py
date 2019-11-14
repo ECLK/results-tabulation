@@ -22,7 +22,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
         'polymorphic_identity': TallySheetCodeEnum.PRE_34_PD
     }
 
-    def add_row(self, preferenceNumber, preferenceCount, candidateId, electionId):
+    def add_row(self, preferenceNumber, preferenceCount, candidateId, electionId, areaId):
         from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference
 
         TallySheetVersionRow_PRE_34_preference.create(
@@ -30,7 +30,8 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             electionId=electionId,
             preferenceNumber=preferenceNumber,
             preferenceCount=preferenceCount,
-            candidateId=candidateId
+            candidateId=candidateId,
+            areaId=areaId
         )
 
     @hybrid_property
@@ -145,7 +146,8 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
 
         electoral_district = Area.get_associated_areas(self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName
         polling_division = self.submission.area.areaName
-        candidate_wise_vote_count_result, total_valid_votes = TallySheetVersion.create_candidate_preference_struct(self.content)
+        candidate_wise_vote_count_result, total_valid_votes = TallySheetVersion.create_candidate_preference_struct(
+            self.content)
         candidates = []
         for candidate_wise_valid_vote_count_result_item in candidate_wise_vote_count_result:
             total_vote_count = candidate_wise_valid_vote_count_result_item['total']
@@ -155,7 +157,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
                 "votes1st": str(candidate_wise_valid_vote_count_result_item['firstPreferenceCount']),
                 "votes2nd": str(candidate_wise_valid_vote_count_result_item['secondPreferenceCount']),
                 "votes3rd": str(candidate_wise_valid_vote_count_result_item['thirdPreferenceCount']),
-                "percentage": f'{round(total_vote_count*100/total_valid_votes,2)}',
+                "percentage": f'{round(total_vote_count * 100 / total_valid_votes, 2)}',
                 "party_name": candidate_wise_valid_vote_count_result_item['partyName'],
                 "candidate": candidate_wise_valid_vote_count_result_item['name']
             })
