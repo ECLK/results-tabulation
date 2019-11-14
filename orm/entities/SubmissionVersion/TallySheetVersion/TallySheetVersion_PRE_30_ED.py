@@ -6,7 +6,8 @@ from orm.entities import Area, Candidate, Party, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount
-from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage, convert_image_to_data_uri
+from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage, convert_image_to_data_uri, \
+    split_area_name
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
 from datetime import datetime
 
@@ -592,8 +593,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
                 "candidate": candidate_wise_valid_vote_count_result_item.candidateName
             })
 
-        ed_name = electoral_district.split(" - ")[1]
-        ed_code = electoral_district.split(" - ")[0]
+        ed_code, ed_name = split_area_name(electoral_district)
 
         validVoteCount = vote_count_result.validVoteCount or 0
         rejectedVoteCount = vote_count_result.rejectedVoteCount or 0
