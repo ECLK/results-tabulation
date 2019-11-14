@@ -1,13 +1,15 @@
 from api import TallySheetVersionApi
 from app import db
 from auth import authorize, NATIONAL_REPORT_VIEWER_ROLE, EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE
-from orm.entities import Submission, SubmissionVersion, Area
+from orm.entities import Submission, SubmissionVersion, Area, Election
+from orm.entities.Election import ElectionCandidate
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount
+from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_ED, TallySheetVersionRow_RejectedVoteCount, \
+    TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
 from orm.enums import AreaTypeEnum, TallySheetCodeEnum
 from schemas import TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema, TallySheetVersionSchema
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 
 @authorize(required_roles=[NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
@@ -34,22 +36,42 @@ def create(tallySheetId):
         Area.Model.electionId == tallySheetVersion.submission.electionId
     ).all()
 
+    electionId = tallySheetVersion.submission.electionId
+
     query = db.session.query(
-        TallySheetVersionRow_PRE_30_ED.Model.candidateId,
-        func.sum(TallySheetVersionRow_PRE_30_ED.Model.count).label("count"),
+        func.count(Area.Model.areaId).label("areaCount"),
+        ElectionCandidate.Model.candidateId,
+        Submission.Model.areaId.label("electoralDistrictId"),
+        func.sum(TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model.count).label("count"),
     ).join(
-        SubmissionVersion.Model,
-        SubmissionVersion.Model.submissionVersionId == TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId
+        Election.Model,
+        Election.Model.electionId == Area.Model.electionId
+    ).join(
+        ElectionCandidate.Model,
+        ElectionCandidate.Model.electionId == Election.Model.electionId
     ).join(
         Submission.Model,
-        Submission.Model.submissionId == SubmissionVersion.Model.submissionId
+        Submission.Model.areaId == Area.Model.areaId
+    ).join(
+        TallySheet.Model,
+        and_(
+            TallySheet.Model.tallySheetId == Submission.Model.submissionId,
+            TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+        )
+    ).join(
+        TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model,
+        and_(
+            TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
+            TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model.candidateId == ElectionCandidate.Model.candidateId
+        ),
+        isouter=True
     ).filter(
-        TallySheetVersionRow_PRE_30_ED.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
-        Submission.Model.areaId.in_([area.areaId for area in electoralDistricts])
+        Area.Model.areaType == AreaTypeEnum.Country,
+        Area.Model.electionId == electionId
     ).group_by(
-        TallySheetVersionRow_PRE_30_ED.Model.candidateId
+        ElectionCandidate.Model.candidateId
     ).order_by(
-        TallySheetVersionRow_PRE_30_ED.Model.candidateId
+        ElectionCandidate.Model.candidateId
     ).all()
 
     is_complete = True
@@ -63,25 +85,30 @@ def create(tallySheetId):
             is_complete = False
 
     rejected_vote_count_query = db.session.query(
-        func.count(Submission.Model.areaId).label("areaCount"),
+        func.count(Area.Model.areaId).label("areaCount"),
         func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
     ).join(
+        Submission.Model,
+        Submission.Model.areaId == Area.Model.areaId
+    ).join(
         TallySheet.Model,
-        TallySheet.Model.tallySheetId == Submission.Model.submissionId
+        and_(
+            TallySheet.Model.tallySheetId == Submission.Model.submissionId,
+            TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
+        )
     ).join(
         TallySheetVersionRow_RejectedVoteCount.Model,
-        TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.lockedVersionId
+        TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
+        isouter=True
     ).filter(
-        Submission.Model.areaId.in_([area.areaId for area in electoralDistricts]),
-        TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_30_ED
-    ).order_by(
-        Submission.Model.areaId
+        Area.Model.areaType == AreaTypeEnum.Country,
+        Area.Model.electionId == electionId
     ).all()
 
     for row in rejected_vote_count_query:
-        if row.areaCount > 0 and (tallySheetVersion.submission.electionId and row.rejectedVoteCount) is not None:
+        if row.areaCount > 0 and (electionId and row.rejectedVoteCount) is not None:
             tallySheetVersion.add_invalid_vote_count(
-                electionId=tallySheetVersion.submission.electionId,
+                electionId=electionId,
                 rejectedVoteCount=row.rejectedVoteCount
             )
         else:
