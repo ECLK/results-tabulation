@@ -91,13 +91,16 @@ def create(tallySheetId):
         func.sum(TallySheetVersionRow_RejectedVoteCount.Model.rejectedVoteCount).label("rejectedVoteCount"),
     ).join(
         TallySheet.Model,
-        TallySheet.Model.tallySheetId == Submission.Model.submissionId
+        and_(
+            TallySheet.Model.tallySheetId == Submission.Model.submissionId,
+            TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_41
+        )
     ).join(
         TallySheetVersionRow_RejectedVoteCount.Model,
-        TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.lockedVersionId
+        TallySheetVersionRow_RejectedVoteCount.Model.tallySheetVersionId == Submission.Model.lockedVersionId,
+        isouter=True
     ).filter(
-        Submission.Model.areaId.in_([area.areaId for area in countingCentres]),
-        TallySheet.Model.tallySheetCode == TallySheetCodeEnum.PRE_41
+        Submission.Model.areaId.in_([area.areaId for area in countingCentres])
     ).group_by(
         Submission.Model.areaId
     ).order_by(
