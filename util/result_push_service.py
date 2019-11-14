@@ -50,7 +50,7 @@ tally_sheet_code_result_level = {
 def get_result_level(tally_sheet):
     if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_34_AI, TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS]:
         return RESULT_LEVEL_NATIONAL_FINAL
-    elif tally_sheet.submission.election.voteType is not VoteTypeEnum.Postal and tally_sheet.tallySheetCode in [
+    elif tally_sheet.tallySheetCode in [
         TallySheetCodeEnum.PRE_30_PD, TallySheetCodeEnum.PRE_34_PD
     ]:
         return RESULT_LEVEL_POLLING_DIVISION
@@ -155,7 +155,9 @@ def notify_results(tally_sheet, tally_sheet_version_id):
         )
 
         params = {
-            "level": get_result_level(tally_sheet)
+            "level": get_result_level(tally_sheet),
+            "ed_name": response['ed_name'] or "",
+            "pd_name": response['pd_name'] or ""
         }
 
         required_params_from_response = [PARAM_ED_NAME, PARAM_PD_NAME]

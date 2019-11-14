@@ -204,6 +204,7 @@ def to_comma_seperated_num(value):
     else:
         return f'{value:,}'
 
+
 def convert_image_to_data_uri(value):
     data_image = ''
 
@@ -211,3 +212,11 @@ def convert_image_to_data_uri(value):
         data_image = base64.b64encode(img_file.read()).decode()
 
     return data_image
+
+
+def split_area_name(name):
+    split_array = name.split("-")
+    if len(split_array) == 2:
+        return split_array[0].strip(), split_array[1].strip()
+    print("Error: invalid are name", name)
+    return "None", name
