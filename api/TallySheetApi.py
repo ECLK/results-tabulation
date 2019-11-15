@@ -178,10 +178,17 @@ def notify(tallySheetId):
 
     db.session.commit()
 
-    result_push_service.notify_results(
-        tally_sheet=tally_sheet,
-        tally_sheet_version_id=tally_sheet.notifiedVersionId
-    )
+    try:
+        result_push_service.notify_results(
+            tally_sheet=tally_sheet,
+            tally_sheet_version_id=tally_sheet.notifiedVersionId
+        )
+    except:  # rollback notification flag
+        print("Result push service failed. Check the url configuration.")
+        tally_sheet.notifiedVersionId = None
+        tally_sheet.notifiedStampId = None
+        db.session.commit()
+        return "Push Service Failed. Please check configuration and try again.", 500
 
     return TallySheetSchema().dump(tally_sheet).data, 201
 
@@ -200,10 +207,17 @@ def release(tallySheetId):
 
     db.session.commit()
 
-    result_push_service.release_results(
-        tally_sheet=tally_sheet,
-        tally_sheet_version_id=tally_sheet.releasedVersionId
-    )
+    try:
+        result_push_service.release_results(
+            tally_sheet=tally_sheet,
+            tally_sheet_version_id=tally_sheet.releasedVersionId
+        )
+    except:  # rollback release flag
+        print("Result push service failed. Check the url configuration.")
+        tally_sheet.releasedVersionId = None
+        tally_sheet.releasedStampId = None
+        db.session.commit()
+        return "Push Service Failed. Please check configuration and try again.", 500
 
     return TallySheetSchema().dump(tally_sheet).data, 201
 
