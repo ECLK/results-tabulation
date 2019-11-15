@@ -27,6 +27,20 @@ tags:
 
 paths:
 
+  /healthz:
+    get:
+      tags:
+      - Election
+      - Health
+      - Check
+      - System
+      summary: System Health Check
+      operationId: api.HealthCheckApi.get
+      responses:
+        '200':
+          description: Health Check Success!
+
+
   /system-testing/election/{electionId}/root-token:
     get:
       tags:
