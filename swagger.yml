@@ -36,7 +36,6 @@ paths:
       - System
       summary: System Health Check
       operationId: api.HealthCheckApi.get
-
       responses:
         '200':
           description: Health Check Success!
