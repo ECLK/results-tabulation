@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block container %}
+{% for pageNumber in [1,2,3,4] %}
+<style>
+    .table td, .table th {
+        padding: 3px;
+        font-size: 15px;
+        color: black;
+        font-weight: 400;
+        border-color: black;
+    }
+
+    .table th {
+        font-weight: 800;
+    }
+
+    table.table.table-borderless.signatures {
+        margin-bottom: 15px;
+    }
+
+
+    .pre-all-island {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+</style>
+<div class="pre-all-island">
+    <table style="border: none;width: 100%">
+        <tbody>
+        <tr>
+            <td style="width:15%; font-size:12px; font-weight:bold;">OFFICIAL RESULTS</td>
+            <td style="text-align:center; vertical-align:middle; width:70%;" rowspan="2" class="report-header">
+                <span style="font-size: 11px;font-weight: 600;">DEPARTMENT OF ELECTIONS</span>
+                <span style="/* font-weight:bold; */font-weight: 700;font-weight: 600;font-size: 23px;">
+                    {{content.election.electionName}}
+                </span>
+                <span style="font-weight:bold;font-size: 15px;">{{content.resultTitle}}</span>
+                <span style="font-size:12px;font-weight: 900;">VOTES RECEIVED BY EACH CANDIDATE</span>
+            </td>
+            <td style="text-align:right; width:15%; font-size:12px; font-weight:bold;" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width:15%; text-align:center;" class="no-padding-bottom no-padding-top">
+                <img src="data:image/png;base64, {{content.logo}}" class="gov-logo" height="75px"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-sm">
+        <tbody>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name of the Candidate</th>
+            <th scope="col">Vote Count</th>
+            <th scope="col" style="text-align:right;">Second Preference Count</th>
+            <th scope="col" style="text-align:right;">Third Preference Count</th>
+            <th scope="col" style="text-align:right;">Grand Total</th>
+        </tr>
+        {% for row in content.data %}
+        <tr>
+            <td>{{loop.index}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}">{{row.name}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}">{{row.firstPreferenceCount}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}" style="text-align:right;">{{row.secondPreferenceCount}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}" style="text-align:right;">{{row.thirdPreferenceCount}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}" style="text-align:right;"> {{ row.total }}</td>
+        </tr>
+        {% endfor %}
+        <!--        </tbody>-->
+        <!--    </table>-->
+
+        <!--    <table class="table table-sm" style="margin-top: 15px">-->
+        <!--        <tbody>-->
+
+        <tr>
+            <td colspan="6" style="height: 40px;"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>Total Valid Votes</b></td>
+            <td class="{%if content.validVoteCounts[0]=='' %}missing-value{% endif %}" style="text-align:right;">
+                <b>{{content.validVoteCounts[0]}}</b>
+            </td>
+            <td class="{%if content.validVoteCounts[1]=='' %}missing-value{% endif %}" style="text-align:right;">
+                {{content.validVoteCounts[1]}}
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>Rejected Votes</b></td>
+            <td class="{%if content.rejectedVoteCounts[0]=='' %}missing-value{% endif %}" style="text-align:right;">
+                <b>{{content.rejectedVoteCounts[0]}}</b>
+            </td>
+            <td class="{%if content.rejectedVoteCounts[1]=='' %}missing-value{% endif %}" style="text-align:right;">
+                {{content.rejectedVoteCounts[1]}}
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>Total Polled</b></td>
+            <td class="{%if content.totalVoteCounts[0]=='' %}missing-value{% endif %}" style="text-align:right;">
+                <b>{{content.totalVoteCounts[0]}}</b>
+            </td>
+            <td class="{%if content.totalVoteCounts[1]=='' %}missing-value{% endif %}" style="text-align:right;">
+                {{content.totalVoteCounts[1]}}
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>Registered No. of Electors</b></td>
+            <td style="text-align:right"><b>{{content.registeredVoters[0]}}</b></td>
+            <td style="text-align:right"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>Time</b></td>
+            <td colspan="2" style="text-align:center;">{{content.time}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>Date</b></td>
+            <td colspan="2" style="text-align:center;">{{content.date}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <!--    <table class="table table-borderless">-->
+    <!--        <tbody>-->
+    <!--        <tr>-->
+    <!--            <td><u><i>Name of the Candidate</i></u></td>-->
+    <!--            <td style="text-align:center;"><u><i>Party Abbreviation</i></u></td>-->
+    <!--            <td style="text-align:center;"><u><i>Votes Recieved</i></u></td>-->
+    <!--            <td style="text-align:center;"><u><i>Percentage</i></u></td>-->
+    <!--        </tr>-->
+
+    <!--        {% for row in content.data %}-->
+    <!--        <tr>-->
+    <!--            <td class="all {%if row[0]=="-->
+    <!--            " %}missing-value{% endif %}">{{row[0]}}</td>-->
+    <!--            <td class="all" style="text-align:center;">{{row[1]}}</td>-->
+    <!--            <td class="all {%if row[2]=="-->
+    <!--            " %}missing-value{% endif %}" style="text-align:right;"><b>{{row[2]}}</b></td>-->
+    <!--            <td class="all {%if row[3]=="-->
+    <!--            " %}missing-value{% endif %}" style="text-align:right;">{{row[3]}}</td>-->
+    <!--        </tr>-->
+    <!--        {% endfor %}-->
+
+    <!--        <tr>-->
+    <!--            <td colspan="4"></td>-->
+    <!--        </tr>-->
+
+    <!--        <tr>-->
+    <!--            <td></td>-->
+    <!--            <td><b>Total Valid Votes</b></td>-->
+    <!--            <td class="{%if content.validVoteCounts[0]=="-->
+    <!--            " %}missing-value{% endif %}" style="text-align:right;"><b>{{content.validVoteCounts[0]}}</b></td>-->
+    <!--            <td class="{%if content.validVoteCounts[1]=="-->
+    <!--            " %}missing-value{% endif %}" style="text-align:right;">{{content.validVoteCounts[1]}}</td>-->
+    <!--        </tr>-->
+    <!--        <tr>-->
+    <!--            <td></td>-->
+    <!--            <td><b>Rejected Votes</b></td>-->
+    <!--            <td class="{%if content.rejectedVoteCounts[0]=="-->
+    <!--            " %}missing-value{% endif %}" style="text-align:right;"><b>{{content.rejectedVoteCounts[0]}}</b></td>-->
+    <!--            <td class="{%if content.rejectedVoteCounts[1]=="-->
+    <!--            " %}missing-value{% endif %}" style="text-align:right;">{{content.rejectedVoteCounts[1]}}</td>-->
+    <!--        </tr>-->
+    <!--        <tr>-->
+    <!--            <td></td>-->
+    <!--            <td><b>Total Polled</b></td>-->
+    <!--            <td class="{%if content.totalVoteCounts[0]=="-->
+    <!--            " %}missing-value{% endif %}" style="text-align:right;"><b>{{content.totalVoteCounts[0]}}</b></td>-->
+    <!--            <td class="{%if content.totalVoteCounts[1]=="-->
+    <!--            " %}missing-value{% endif %}" style="text-align:right;">{{content.totalVoteCounts[1]}}</td>-->
+    <!--        </tr>-->
+    <!--        <tr>-->
+    <!--            <td></td>-->
+    <!--            <td><b>Registered No. of Electors</b></td>-->
+    <!--            <td style="text-align:right"><b>{{content.registeredVoters[0]}}</b></td>-->
+    <!--            <td style="text-align:right"></td>-->
+    <!--        </tr>-->
+    <!--        <tr>-->
+    <!--            <td colspan="4"></td>-->
+    <!--        </tr>-->
+    <!--        <tr>-->
+    <!--            <td></td>-->
+    <!--            <td><b>Time: {{content.time}}</b></td>-->
+    <!--            <td colspan="2" style="text-align:center;"></td>-->
+    <!--        </tr>-->
+    <!--        <tr>-->
+    <!--            <td></td>-->
+    <!--            <td><b>Date: {{content.date}}</b></td>-->
+    <!--            <td colspan="2" style="text-align:center;"></td>-->
+    <!--        </tr>-->
+
+    <!--        <tr>-->
+    <!--            <td colspan="4" rowspan="4"></td>-->
+    <!--        </tr>-->
+    <!--        <tr></tr>-->
+    <!--        <tr></tr>-->
+    <!--        <tr></tr>-->
+
+
+    <!--        </tbody>-->
+    <!--    </table>-->
+    <table class="table table-borderless signatures" style="margin-top: 30px;margin-bottom: 20px;">
+        <tr style="text-align:center;">
+            {% if pageNumber in [1,2,3,4] %}
+            <td>
+                ....................................</br>
+                MAHINDA DESHAPRIYA</br>
+                Chairman</br>
+                Election Commission
+            </td>
+            {% endif %}
+            {% if pageNumber in [1,2] %}
+            <td>
+                ....................................</br>
+                N. J. ABEYESEKERE</br>
+                Member</br>
+                Election Commission
+            </td>
+            {% endif %}
+            {% if pageNumber in [1,3] %}
+            <td>
+                ....................................</br>
+                S. RATNAJEEVAN H. HOOLE</br>
+                Member</br>
+                Election Commission
+            </td>
+            {% endif %}
+        </tr>
+    </table>
+    <strong>Election Secretariat, Sarana Mawatha, Rajagiriya.</strong>
+
+</div>
+{% endfor %}
+{% endblock %}

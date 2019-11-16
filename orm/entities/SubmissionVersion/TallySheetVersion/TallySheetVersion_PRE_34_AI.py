@@ -71,6 +71,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
         stamp = self.stamp
 
         content = {
+            "resultTitle": "ALL ISLAND RESULT",
             "election": {
                 "electionName": self.submission.election.get_official_name(),
             },
@@ -100,7 +101,7 @@ class TallySheetVersion_PRE_34_AI_Model(TallySheetVersion.Model):
         content["logo"] = convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png")
 
         html = render_template(
-            'PRE-34-AI-LETTER.html',
+            'PRE_34_ALL_ISLAND_RESULTS.html',
             content=content
         )
 
