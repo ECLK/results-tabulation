@@ -70,6 +70,7 @@ def create(tallySheetId, body):
     if tally_sheet_content is not None:
         for row in tally_sheet_content:
             party_count_body = RequestBody(row)
+            electionId = tallySheetVersion.submission.electionId
             candidateId = party_count_body.get("candidateId")
             preferenceCount = party_count_body.get("preferenceCount")
             preferenceNumber = party_count_body.get("preferenceNumber")
