@@ -170,6 +170,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
         stamp = self.stamp
 
         content = {
+            "resultTitle": "ALL ISLAND RESULT",
             "election": {
                 "electionName": self.submission.election.get_official_name()
             },
