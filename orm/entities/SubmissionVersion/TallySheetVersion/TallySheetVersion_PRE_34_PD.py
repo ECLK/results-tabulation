@@ -104,7 +104,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
         }
 
         if self.submission.election.voteType == VoteTypeEnum.Postal:
-            content["tallySheetCode"] = "PRE/30/PV"
+            content["tallySheetCode"] = "PRE/34/PV"
             content["pollingDivision"] = "Postal"
             content["resultTitle"] = "Results of Electoral District %s (Postal)" % electoral_district.areaName
         else:
