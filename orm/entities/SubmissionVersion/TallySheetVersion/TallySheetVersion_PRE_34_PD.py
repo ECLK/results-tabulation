@@ -5,6 +5,8 @@ from app import db
 from orm.entities import Area, Candidate, Party, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.entities.SubmissionVersion.TallySheetVersion.fake_polling_division_voters_map import \
+    get_polling_division_total_registered_voters
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_34_preference
 from util import to_comma_seperated_num, sqlalchemy_num_or_zero, convert_image_to_data_uri, split_area_name
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
@@ -70,6 +72,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
     def html_letter(self):
 
         stamp = self.stamp
+        total_registered_voters = get_polling_division_total_registered_voters(tallySheetVersion=self)
 
         content = {
             "election": {
@@ -89,7 +92,7 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             "rejectedVoteCounts": [0, 0],
             "totalVoteCounts": [0, 0],
             "registeredVoters": [
-                to_comma_seperated_num(self.submission.area.registeredVotersCount),
+                to_comma_seperated_num(total_registered_voters),
                 100
             ],
             "electoralDistrict": Area.get_associated_areas(

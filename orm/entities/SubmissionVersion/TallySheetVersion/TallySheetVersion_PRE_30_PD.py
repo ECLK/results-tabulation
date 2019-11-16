@@ -5,6 +5,8 @@ from app import db
 from orm.entities import Area, Candidate, Party, Election
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.entities.SubmissionVersion.TallySheetVersion.fake_polling_division_voters_map import \
+    get_polling_division_total_registered_voters
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_RejectedVoteCount
 from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage, convert_image_to_data_uri, \
     split_area_name
@@ -248,26 +250,10 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             func.cast(Area.Model.areaName, db.Integer)
         ).all()
 
-    def get_total_registered_voters(self):
-        election = self.submission.election
-        total_registered_voters = 0
-
-        if election.voteType == VoteTypeEnum.Postal:
-            electoral_district = self.submission.area
-            postal_counting_centres = electoral_district.get_associated_areas(
-                areaType=AreaTypeEnum.CountingCentre,
-                electionId=election.electionId
-            )
-            for postal_counting_centre in postal_counting_centres:
-                total_registered_voters = total_registered_voters + postal_counting_centre._registeredVotersCount
-        else:
-            total_registered_voters = self.submission.area.registeredVotersCount
-        return total_registered_voters
-
     def html_letter(self):
 
         stamp = self.stamp
-        total_registered_voters = self.get_total_registered_voters()
+        total_registered_voters = get_polling_division_total_registered_voters(tallySheetVersion=self)
 
         content = {
             "election": {
@@ -417,7 +403,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
     def json_data(self):
 
-        total_registered_voters = self.get_total_registered_voters()
+        total_registered_voters = get_polling_division_total_registered_voters(tallySheetVersion=self)
 
         electoral_district = Area.get_associated_areas(self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName
         polling_division = self.submission.area.areaName
@@ -429,7 +415,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
             candidates.append({
                 "party_code": candidate_wise_valid_vote_count_result_item.partyAbbreviation,
                 "votes": str(candidate_wise_valid_vote_count_result_item.validVoteCount),
-                "percentage": f'{round(candidate_wise_valid_vote_count_result_item.validVotePercentage or 0,2)}',
+                "percentage": f'{round(candidate_wise_valid_vote_count_result_item.validVotePercentage or 0, 2)}',
                 "party_name": candidate_wise_valid_vote_count_result_item.partyName,
                 "candidate": candidate_wise_valid_vote_count_result_item.candidateName
             })
