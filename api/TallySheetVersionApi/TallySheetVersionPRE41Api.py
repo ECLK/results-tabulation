@@ -122,7 +122,7 @@ def create(tallySheetId, body):
         pollingStationId = None
         if election is not None:
             existingStatus = StatusPRE41.get_status_record(
-                electionId=electionId,
+                electionId=election.parentElectionId,
                 electoralDistrictId=electoralDistrictId,
                 pollingDivisionId=pollingDivisionId,
                 countingCentreId=countingCentreId,
@@ -132,7 +132,7 @@ def create(tallySheetId, body):
                 StatusPRE41.create(
                     voteType=voteType,
                     status=status,
-                    electionId=electionId,
+                    electionId=election.parentElectionId,
                     electoralDistrictId=electoralDistrictId,
                     pollingDivisionId=pollingDivisionId,
                     countingCentreId=countingCentreId,
@@ -143,7 +143,7 @@ def create(tallySheetId, body):
                 )
             else:
                 existingStatus.voteType = voteType,
-                existingStatus.electionId = electionId,
+                existingStatus.electionId = election.parentElectionId,
                 existingStatus.electoralDistrictId = electoralDistrictId,
                 existingStatus.pollingDivisionId = pollingDivisionId,
                 existingStatus.countingCentreId = countingCentreId,
