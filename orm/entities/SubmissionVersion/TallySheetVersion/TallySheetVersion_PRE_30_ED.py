@@ -415,8 +415,10 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
     def html_letter(self):
 
         stamp = self.stamp
+        electoralDistrict = self.submission.area
 
         content = {
+            "resultTitle": "Results of Electoral District %s" % electoralDistrict.areaName,
             "election": {
                 "electionName": self.submission.election.get_official_name()
             },
@@ -436,7 +438,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
                 to_comma_seperated_num(self.submission.area.registeredVotersCount),
                 100
             ],
-            "electoralDistrict": self.submission.area.areaName
+            "electoralDistrict": electoralDistrict.areaName
         }
 
         candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
@@ -468,7 +470,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
         content["logo"] = convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png")
 
         html = render_template(
-            'PRE-30-ED-LETTER.html',
+            'PRE_ALL_ISLAND_RESULTS.html',
             content=content
         )
 
@@ -588,7 +590,7 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
             candidates.append({
                 "party_code": candidate_wise_valid_vote_count_result_item.partyAbbreviation,
                 "votes": str(candidate_wise_valid_vote_count_result_item.validVoteCount),
-                "percentage": f'{round(candidate_wise_valid_vote_count_result_item.validVotePercentage or 0,2)}',
+                "percentage": f'{round(candidate_wise_valid_vote_count_result_item.validVotePercentage or 0, 2)}',
                 "party_name": candidate_wise_valid_vote_count_result_item.partyName,
                 "candidate": candidate_wise_valid_vote_count_result_item.candidateName
             })

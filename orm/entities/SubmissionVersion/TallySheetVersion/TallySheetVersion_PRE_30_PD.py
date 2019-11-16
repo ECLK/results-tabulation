@@ -254,8 +254,11 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
         stamp = self.stamp
         total_registered_voters = get_polling_division_total_registered_voters(tallySheetVersion=self)
+        electoral_district = Area.get_associated_areas(self.submission.area, AreaTypeEnum.ElectoralDistrict)[0]
+        polling_division = self.submission.area
 
         content = {
+            "resultTitle": "Results of PD",
             "election": {
                 "electionName": self.submission.election.get_official_name(),
                 "isPostal": self.submission.election.voteType == VoteTypeEnum.Postal
@@ -276,10 +279,20 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
                 to_comma_seperated_num(total_registered_voters),
                 100
             ],
-            "electoralDistrict": Area.get_associated_areas(
-                self.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-            "pollingDivision": self.submission.area.areaName
+            "electoralDistrict": electoral_district.areaName,
+            "pollingDivision": polling_division.areaName
         }
+
+        if self.submission.election.voteType == VoteTypeEnum.Postal:
+            content["tallySheetCode"] = "PRE/30/PV"
+            content["pollingDivision"] = "Postal"
+            content["resultTitle"] = "Results of Electoral District %s (Postal)" % electoral_district.areaName
+        else:
+            content["pollingDivision"] = self.submission.area.areaName
+            content["resultTitle"] = "Results of Electoral District %s - Polling Division %s" % (
+                electoral_district.areaName,
+                polling_division.areaName
+            )
 
         candidate_wise_vote_count_result = self.candidate_wise_vote_count().all()
         vote_count_result = self.vote_count_query().one_or_none()
@@ -310,7 +323,7 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
         content["logo"] = convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png")
 
         html = render_template(
-            'PRE-30-PD-LETTER.html',
+            'PRE_ALL_ISLAND_RESULTS.html',
             content=content
         )
 
