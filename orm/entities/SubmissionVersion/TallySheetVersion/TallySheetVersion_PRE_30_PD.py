@@ -307,12 +307,14 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
 
         content["validVoteCounts"] = [
             to_comma_seperated_num(vote_count_result.validVoteCount),
-            to_percentage(vote_count_result.validVoteCount * 100 / total_registered_voters)
+            to_percentage(vote_count_result.validVoteCount * 100 / vote_count_result.totalVoteCount)
+            if vote_count_result.totalVoteCount > 0 else ""
         ]
 
         content["rejectedVoteCounts"] = [
             to_comma_seperated_num(vote_count_result.rejectedVoteCount),
-            to_percentage(vote_count_result.rejectedVoteCount * 100 / total_registered_voters)
+            to_percentage(vote_count_result.rejectedVoteCount * 100 / vote_count_result.totalVoteCount)
+            if vote_count_result.totalVoteCount > 0 else ""
         ]
 
         content["totalVoteCounts"] = [
@@ -459,8 +461,8 @@ class TallySheetVersion_PRE_30_PD_Model(TallySheetVersion.Model):
                 "rejected": str(vote_count_result.rejectedVoteCount),
                 "polled": str(vote_count_result.totalVoteCount),
                 "electors": str(total_registered_voters),
-                "percent_valid": f'{round((validVoteCount * 100 / total_registered_voters), 2)}',
-                "percent_rejected": f'{round((rejectedVoteCount * 100 / total_registered_voters), 2)}',
+                "percent_valid": f'{round((validVoteCount * 100 / vote_count_result.totalVoteCount) if vote_count_result.totalVoteCount > 0 else "", 2)}',
+                "percent_rejected": f'{round((rejectedVoteCount * 100 / vote_count_result.totalVoteCount) if vote_count_result.totalVoteCount > 0 else "", 2)}',
                 "percent_polled": f'{round((totalVoteCount * 100 / total_registered_voters), 2)}',
             }
         }
