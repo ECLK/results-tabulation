@@ -70,7 +70,9 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
 
     def html_letter(self):
         stamp = self.stamp
+        electoralDistrict = self.submission.area
         content = {
+            "resultTitle": "Results of Electoral District %s" % electoralDistrict.areaName,
             "election": {
                 "electionName": self.submission.election.get_official_name()
             },
@@ -98,7 +100,7 @@ class TallySheetVersion_PRE_34_ED_Model(TallySheetVersion.Model):
         content["logo"] = convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png")
 
         html = render_template(
-            'PRE-34-ED-LETTER.html',
+            'PRE_34_ALL_ISLAND_RESULTS.html',
             content=content
         )
 

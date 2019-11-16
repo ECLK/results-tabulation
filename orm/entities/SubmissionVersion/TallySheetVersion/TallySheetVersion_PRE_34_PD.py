@@ -73,8 +73,11 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
 
         stamp = self.stamp
         total_registered_voters = get_polling_division_total_registered_voters(tallySheetVersion=self)
+        electoral_district = Area.get_associated_areas(self.submission.area, AreaTypeEnum.ElectoralDistrict)[0]
+        polling_division = self.submission.area
 
         content = {
+            "resultTitle": "Results of PD",
             "election": {
                 "electionName": self.submission.election.get_official_name(),
                 "isPostal": self.submission.election.voteType == VoteTypeEnum.Postal
@@ -100,12 +103,23 @@ class TallySheetVersion_PRE_34_PD_Model(TallySheetVersion.Model):
             "pollingDivision": self.submission.area.areaName
         }
 
+        if self.submission.election.voteType == VoteTypeEnum.Postal:
+            content["tallySheetCode"] = "PRE/34/PV"
+            content["pollingDivision"] = "Postal"
+            content["resultTitle"] = "Results of Electoral District %s (Postal)" % electoral_district.areaName
+        else:
+            content["pollingDivision"] = self.submission.area.areaName
+            content["resultTitle"] = "Results of Electoral District %s - Polling Division %s" % (
+                electoral_district.areaName,
+                polling_division.areaName
+            )
+
         content["data"], total_valid_vote_count = TallySheetVersion.create_candidate_preference_struct(self.content)
 
         content["logo"] = convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png")
 
         html = render_template(
-            'PRE-34-PD-LETTER.html',
+            'PRE_34_ALL_ISLAND_RESULTS.html',
             content=content
         )
 

@@ -53,17 +53,19 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Name of the Candidate</th>
-            <th scope="col">Party Abbreviation</th>
-            <th scope="col" style="text-align:right;">Votes Recieved</th>
-            <th scope="col" style="text-align:right;">Percentage</th>
+            <th scope="col">Vote Count</th>
+            <th scope="col" style="text-align:right;">Second Preference Count</th>
+            <th scope="col" style="text-align:right;">Third Preference Count</th>
+            <th scope="col" style="text-align:right;">Grand Total</th>
         </tr>
         {% for row in content.data %}
         <tr>
             <td>{{loop.index}}</td>
-            <td class="{%if row[0]=='' %}missing-value{% endif %}">{{row[0]}}</td>
-            <td class="{%if row[0]=='' %}missing-value{% endif %}">{{row[1]}}</td>
-            <td class="{%if row[0]=='' %}missing-value{% endif %}" style="text-align:right;">{{row[2]}}</td>
-            <td class="{%if row[0]=='' %}missing-value{% endif %}" style="text-align:right;">{{row[3]}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}">{{row.name}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}">{{row.firstPreferenceCount}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}" style="text-align:right;">{{row.secondPreferenceCount}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}" style="text-align:right;">{{row.thirdPreferenceCount}}</td>
+            <td class="{%if row[0]=='' %}missing-value{% endif %}" style="text-align:right;"> {{ row.total }}</td>
         </tr>
         {% endfor %}
         <!--        </tbody>-->
@@ -73,9 +75,10 @@
         <!--        <tbody>-->
 
         <tr>
-            <td colspan="5" style="height: 40px;"></td>
+            <td colspan="6" style="height: 40px;"></td>
         </tr>
         <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td><b>Total Valid Votes</b></td>
@@ -89,6 +92,7 @@
         <tr>
             <td></td>
             <td></td>
+            <td></td>
             <td><b>Rejected Votes</b></td>
             <td class="{%if content.rejectedVoteCounts[0]=='' %}missing-value{% endif %}" style="text-align:right;">
                 <b>{{content.rejectedVoteCounts[0]}}</b>
@@ -98,6 +102,7 @@
             </td>
         </tr>
         <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td><b>Total Polled</b></td>
@@ -111,6 +116,7 @@
         <tr>
             <td></td>
             <td></td>
+            <td></td>
             <td><b>Registered No. of Electors</b></td>
             <td style="text-align:right"><b>{{content.registeredVoters[0]}}</b></td>
             <td style="text-align:right"></td>
@@ -118,10 +124,12 @@
         <tr>
             <td></td>
             <td></td>
+            <td></td>
             <td><b>Time</b></td>
             <td colspan="2" style="text-align:center;">{{content.time}}</td>
         </tr>
         <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td><b>Date</b></td>
@@ -242,5 +250,6 @@
 
 </div>
     <p style="page-break-before: always">
+
 {% endfor %}
 {% endblock %}
