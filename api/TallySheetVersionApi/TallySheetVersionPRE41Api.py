@@ -106,7 +106,6 @@ def create(tallySheetId, body):
 
     tally_sheet_summary_body = request_body.get("summary")
     if tally_sheet_summary_body is not None:
-        electionId = tallySheetVersion.submission.electionId
         rejectedVoteCount = tally_sheet_summary_body.get("rejectedVoteCount")
 
         if (electionId and rejectedVoteCount) is not None:
