@@ -201,10 +201,11 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
                 candidate_wise_valid_vote_count_result_item.candidateName,
                 candidate_wise_valid_vote_count_result_item.partyAbbreviation,
                 to_comma_seperated_num(candidate_wise_valid_vote_count_result_item.validVoteCount),
-                to_percentage(candidate_wise_valid_vote_count_result_item.validVotePercentage)
+                to_percentage(candidate_wise_valid_vote_count_result_item.validVotePercentage),
+                candidate_wise_valid_vote_count_result_item.validVoteCount
             ])
 
-        content['data'] = sorted(content['data'], key=operator.itemgetter(2), reverse=True)
+        content['data'] = sorted(content['data'], key=operator.itemgetter(4), reverse=True)
         content["validVoteCounts"] = [
             to_comma_seperated_num(vote_count_result["validVoteCount"]),
             to_percentage(vote_count_result["validVoteCountPercentage"])
