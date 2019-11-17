@@ -11,6 +11,7 @@ from util import to_comma_seperated_num, to_percentage, sqlalchemy_num_or_zero, 
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
 from datetime import datetime
+import operator
 
 
 class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
@@ -203,6 +204,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
                 to_percentage(candidate_wise_valid_vote_count_result_item.validVotePercentage)
             ])
 
+        content['data'] = sorted(content['data'], key=operator.itemgetter(2), reverse=True)
         content["validVoteCounts"] = [
             to_comma_seperated_num(vote_count_result["validVoteCount"]),
             to_percentage(vote_count_result["validVoteCountPercentage"])
