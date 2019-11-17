@@ -166,7 +166,7 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
         ).group_by(
             candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
         ).order_by(
-            candidate_and_area_wise_valid_vote_count_subquery.c.candidateName
+            candidate_and_area_wise_valid_vote_count_subquery.c.candidateId
         )
 
     def vote_count_query(self):
