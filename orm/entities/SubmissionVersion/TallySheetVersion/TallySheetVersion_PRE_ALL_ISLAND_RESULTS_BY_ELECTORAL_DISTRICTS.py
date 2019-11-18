@@ -7,7 +7,7 @@ from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, \
     TallySheetVersionRow_RejectedVoteCount
-from util import to_comma_seperated_num, sqlalchemy_num_or_zero
+from util import to_comma_seperated_num, sqlalchemy_num_or_zero, to_percentage
 from orm.enums import TallySheetCodeEnum, AreaTypeEnum
 from sqlalchemy import and_
 
@@ -267,6 +267,11 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
         content["rejectedVoteCounts"].append(to_comma_seperated_num(vote_count_result.rejectedVoteCount))
         content["totalVoteCounts"].append(to_comma_seperated_num(vote_count_result.totalVoteCount))
 
+        # Append the percentages.
+        content["validVoteCounts"].append(to_percentage(vote_count_result.validVoteCount * 100 / vote_count_result.totalVoteCount))
+        content["rejectedVoteCounts"].append(to_percentage(vote_count_result.rejectedVoteCount * 100 / vote_count_result.totalVoteCount))
+        content["totalVoteCounts"].append(to_percentage(100))
+
         number_of_electoral_districts = len(area_wise_vote_count_result)
         number_of_candidates = len(candidate_wise_vote_count_result)
 
@@ -295,6 +300,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
                     to_comma_seperated_num(candidate_and_area_wise_valid_vote_count_result_item.validVoteCount))
 
             data_row.append(to_comma_seperated_num(candidate_wise_vote_count_result_item.validVoteCount))
+
+            candidate_wise_vote_count_percentage = (candidate_wise_vote_count_result_item.validVoteCount/vote_count_result.validVoteCount) * 100
+            data_row.append(to_percentage(candidate_wise_vote_count_percentage))
 
             content["data"].append(data_row)
 

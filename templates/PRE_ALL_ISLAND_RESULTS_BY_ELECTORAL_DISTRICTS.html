@@ -1,6 +1,36 @@
 {% extends 'base.html' %}
 
 {% block container %}
+<style>
+    @media print{
+        @page {
+            /*size: 16.5in 11.7in;*/
+            size: 40in 28.36in
+        }
+    }
+
+    .table td, .table th {
+        padding: 8px;
+        font-size: 20px;
+    }
+
+    .table td, .table th {
+        padding: 8px;
+        font-size: 20px;
+    }
+
+    .pre-all-ed .ed th div,
+    .pre-all-ed th.percentage-th div
+    {
+        -moz-transform: rotate(-90.0deg);
+        -o-transform: rotate(-90.0deg);
+        -webkit-transform: rotate(-90.0deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083);
+        -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)";
+        margin-top: 100px;
+        white-space: nowrap;
+    }
+</style>
 <div class="pre-all-ed">
     <div style="text-align: center; margin-bottom: 10px;">
         <b>{{content.election.electionName}}</b>
@@ -16,13 +46,17 @@
         <tbody>
 
         <tr>
-            <th class="left right top bottom" rowspan="2" style="width:200px">
+            <th class="left right top bottom"   rowspan="2"  style="width:40px" ># </th>
+            <th class="left right top bottom"  rowspan="2" style="width:500px">
                 Name of the Candidate (According to the order in the Ballot Paper)
             </th>
-            <th class="left right top bottom" colspan="{{content.electoralDistricts|length}}" style="width:{{content.electoralDistricts|length * 100}}px;">
+            <th class="left right top bottom" colspan="{{content.electoralDistricts|length}}" style="width:{{content.electoralDistricts|length * 110}}px;">
                 ELECTORAL DISTRICT {{ed_column_width}}
             </th>
-            <th class="left right top bottom" rowspan="2" style="width:100px">TOTAL</th>
+            <th class="left right top bottom" rowspan="2" style="width:150px">TOTAL</th>
+            <th class="left right top bottom percentage-th" rowspan="2" style="width:100px">
+                <div>Percentage</div>
+            </th>
             <th class="left right top bottom" rowspan="2" style="width:170px">TOTAL NUMBER OF VOTES IN WORDS</th>
         </tr>
         <tr class="ed">
@@ -33,6 +67,7 @@
 
         {% for row in content.data %}
         <tr>
+            <td class="left right top bottom">{{loop.index}}</td>
             {% for cell in row %}
             <td class="left right top bottom {%if cell=="" %}missing-value{% endif %}" style="text-align:right">{{cell}}</td>
             {% endfor %}
@@ -41,7 +76,11 @@
         {% endfor %}
 
         <tr>
-            <td class="left right top bottom">NO OF VALID VOTES</td>
+            <th colspan="{{content.electoralDistricts|length + 5}}"></th>
+        </tr>
+
+        <tr>
+            <th class="left right top bottom" colspan="2">NO OF VALID VOTES</th>
             {% for validVoteCount in content.validVoteCounts %}
             <td class="left right top bottom {%if validVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{validVoteCount}}</td>
             {% endfor %}
@@ -49,7 +88,7 @@
         </tr>
 
         <tr>
-            <td class="left right top bottom">NO OF REJECTED VOTES</td>
+            <th  colspan="2" class="left right top bottom">NO OF REJECTED VOTES</th>
             {% for rejectedVoteCount in content.rejectedVoteCounts %}
             <td class="left right top bottom {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{rejectedVoteCount}}</td>
             {% endfor %}
@@ -57,7 +96,7 @@
         </tr>
 
         <tr>
-            <td class="left right top bottom">TOTAL NO OF VOTES POLLED (INCLUDING REJECTED VOTES)</td>
+            <th  colspan="2" class="left right top bottom">TOTAL NO OF VOTES POLLED (INCLUDING REJECTED VOTES)</th>
             {% for totalVoteCount in content.totalVoteCounts %}
             <td class="left right top bottom {%if totalVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{totalVoteCount}}</td>
             {% endfor %}
