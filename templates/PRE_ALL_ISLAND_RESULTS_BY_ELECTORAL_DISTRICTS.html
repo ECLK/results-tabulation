@@ -19,7 +19,9 @@
         font-size: 20px;
     }
 
-    .pre-all-ed .ed th div {
+    .pre-all-ed .ed th div,
+    .pre-all-ed th.percentage-th div
+    {
         -moz-transform: rotate(-90.0deg);
         -o-transform: rotate(-90.0deg);
         -webkit-transform: rotate(-90.0deg);
@@ -48,10 +50,13 @@
             <th class="left right top bottom"  rowspan="2" style="width:500px">
                 Name of the Candidate (According to the order in the Ballot Paper)
             </th>
-            <th class="left right top bottom" colspan="{{content.electoralDistricts|length}}" style="width:{{content.electoralDistricts|length * 100}}px;">
+            <th class="left right top bottom" colspan="{{content.electoralDistricts|length}}" style="width:{{content.electoralDistricts|length * 110}}px;">
                 ELECTORAL DISTRICT {{ed_column_width}}
             </th>
-            <th class="left right top bottom" rowspan="2" style="width:100px">TOTAL</th>
+            <th class="left right top bottom" rowspan="2" style="width:150px">TOTAL</th>
+            <th class="left right top bottom percentage-th" rowspan="2" style="width:100px">
+                <div>Percentage</div>
+            </th>
             <th class="left right top bottom" rowspan="2" style="width:170px">TOTAL NUMBER OF VOTES IN WORDS</th>
         </tr>
         <tr class="ed">
@@ -69,6 +74,10 @@
             <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
         {% endfor %}
+
+        <tr>
+            <th colspan="{{content.electoralDistricts|length + 5}}"></th>
+        </tr>
 
         <tr>
             <th class="left right top bottom" colspan="2">NO OF VALID VOTES</th>
