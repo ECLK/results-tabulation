@@ -3,7 +3,7 @@ from typing import Set
 from app import db
 from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE
-from auth.AuthConstants import ALL_ROLES
+from auth.AuthConstants import ALL_ROLES, EC_LEADERSHIP_WRITE_ROLE
 from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
     MESSAGE_CODE_TALLY_SHEET_SUBMIT_IS_NOT_SUPPORTED, MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, \
@@ -167,7 +167,7 @@ def lock(tallySheetId, body):
 #     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=[EC_LEADERSHIP_ROLE])
+@authorize(required_roles=[EC_LEADERSHIP_WRITE_ROLE])
 def notify(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
@@ -193,7 +193,7 @@ def notify(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=[EC_LEADERSHIP_ROLE])
+@authorize(required_roles=[EC_LEADERSHIP_WRITE_ROLE])
 def release(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
