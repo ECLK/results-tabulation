@@ -33,7 +33,7 @@
 </style>
 <div class="pre-all-ed">
     <div style="text-align: center; margin-bottom: 10px;">
-        <b>{{content.election.electionName}}</b>
+        <b style="font-size: 45px;">{{content.election.electionName}}</b>
         <br/><br/>
         Detailed statement on the number of votes cast in favour of each candidate according to each Electoral
         District
@@ -57,7 +57,6 @@
             <th class="left right top bottom percentage-th" rowspan="2" style="width:100px">
                 <div>Percentage</div>
             </th>
-            <th class="left right top bottom" rowspan="2" style="width:170px">TOTAL NUMBER OF VOTES IN WORDS</th>
         </tr>
         <tr class="ed">
             {% for electoralDistrict in content.electoralDistricts %}
@@ -69,14 +68,17 @@
         <tr>
             <td class="left right top bottom">{{loop.index}}</td>
             {% for cell in row %}
+            {% if loop.index == 1 %}
+            <td class="left right top bottom {%if cell=="" %}missing-value{% endif %}" style="text-align:center">{{cell}}</td>
+            {% else %}
             <td class="left right top bottom {%if cell=="" %}missing-value{% endif %}" style="text-align:right">{{cell}}</td>
+            {% endif %}
             {% endfor %}
-            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
         {% endfor %}
 
         <tr>
-            <th colspan="{{content.electoralDistricts|length + 5}}"></th>
+            <th colspan="{{content.electoralDistricts|length + 4}}"></th>
         </tr>
 
         <tr>
@@ -84,7 +86,6 @@
             {% for validVoteCount in content.validVoteCounts %}
             <td class="left right top bottom {%if validVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{validVoteCount}}</td>
             {% endfor %}
-            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
 
         <tr>
@@ -92,7 +93,6 @@
             {% for rejectedVoteCount in content.rejectedVoteCounts %}
             <td class="left right top bottom {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{rejectedVoteCount}}</td>
             {% endfor %}
-            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
 
         <tr>
@@ -100,8 +100,15 @@
             {% for totalVoteCount in content.totalVoteCounts %}
             <td class="left right top bottom {%if totalVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{totalVoteCount}}</td>
             {% endfor %}
-            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
+        <tr>
+            <th  colspan="2" class="left right top bottom">REGISTERED NO. OF ELECTORS</th>
+            {% for registeredVoterCount in content.registeredVoterCounts %}
+            <td class="left right top bottom {%if totalVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{registeredVoterCount}}</td>
+            {% endfor %}
+        </tr>
+
+
 
         </tbody>
     </table>

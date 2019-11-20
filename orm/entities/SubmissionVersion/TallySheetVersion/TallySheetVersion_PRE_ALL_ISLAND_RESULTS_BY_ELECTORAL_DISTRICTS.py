@@ -1,8 +1,11 @@
 from flask import render_template
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func
+from sqlalchemy.orm import aliased
+
 from app import db
 from orm.entities import Candidate, Party, Area, Election
+from orm.entities.Area import AreaMap
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, \
@@ -125,9 +128,32 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
             candidate_and_area_wise_valid_vote_count_subquery.c.areaName
         )
 
+    def area_wise_registered_vote_count_query(self):
+        electoralDistrict = aliased(Area.Model)
+        pollingStation = aliased(Area.Model)
+
+        return db.session.query(
+            electoralDistrict.areaId,
+            electoralDistrict.areaName,
+            func.sum(pollingStation._registeredVotersCount).label("registeredVotersCount")
+        ).join(
+            AreaMap.Model,
+            AreaMap.Model.electoralDistrictId == electoralDistrict.areaId
+        ).join(
+            pollingStation,
+            pollingStation.areaId == AreaMap.Model.pollingStationId
+        ).filter(
+            AreaMap.Model.electionId == self.submission.electionId
+        ).group_by(
+            electoralDistrict.areaId
+        ).order_by(
+            electoralDistrict.areaName
+        )
+
     def area_wise_vote_count_query(self):
         area_wise_valid_vote_count_subquery = self.area_wise_valid_vote_count_query().subquery()
         area_wise_rejected_vote_count_subquery = self.area_wise_rejected_vote_count_query().subquery()
+        area_wise_registered_vote_count_subquery = self.area_wise_registered_vote_count_query().subquery()
 
         return db.session.query(
             area_wise_valid_vote_count_subquery.c.areaId,
@@ -142,10 +168,16 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
             func.sum(
                 sqlalchemy_num_or_zero(area_wise_valid_vote_count_subquery.c.validVoteCount) +
                 sqlalchemy_num_or_zero(area_wise_rejected_vote_count_subquery.c.rejectedVoteCount)
-            ).label("totalVoteCount")
+            ).label("totalVoteCount"),
+            func.sum(
+                area_wise_registered_vote_count_subquery.c.registeredVotersCount
+            ).label("registeredVotersCount"),
         ).join(
             area_wise_rejected_vote_count_subquery,
             area_wise_rejected_vote_count_subquery.c.areaId == area_wise_valid_vote_count_subquery.c.areaId
+        ).join(
+            area_wise_registered_vote_count_subquery,
+            area_wise_registered_vote_count_subquery.c.areaId == area_wise_valid_vote_count_subquery.c.areaId
         ).group_by(
             area_wise_valid_vote_count_subquery.c.areaId
         ).order_by(
@@ -181,7 +213,10 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
             ).label("rejectedVoteCount"),
             func.sum(
                 sqlalchemy_num_or_zero(area_wise_vote_count_subquery.c.totalVoteCount)
-            ).label("totalVoteCount")
+            ).label("totalVoteCount"),
+            func.sum(
+                sqlalchemy_num_or_zero(area_wise_vote_count_subquery.c.registeredVotersCount)
+            ).label("registeredVotersCount")
         )
 
     @hybrid_property
@@ -251,7 +286,8 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
             "data": [],
             "validVoteCounts": [],
             "rejectedVoteCounts": [],
-            "totalVoteCounts": []
+            "totalVoteCounts": [],
+            "registeredVoterCounts": []
         }
 
         # Append the area wise column totals
@@ -261,17 +297,23 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
             content["rejectedVoteCounts"].append(
                 to_comma_seperated_num(area_wise_vote_count_result_item.rejectedVoteCount))
             content["totalVoteCounts"].append(to_comma_seperated_num(area_wise_vote_count_result_item.totalVoteCount))
+            content["registeredVoterCounts"].append(
+                to_comma_seperated_num(area_wise_vote_count_result_item.registeredVotersCount))
 
         # Append the grand totals
         content["validVoteCounts"].append(to_comma_seperated_num(vote_count_result.validVoteCount))
         content["rejectedVoteCounts"].append(to_comma_seperated_num(vote_count_result.rejectedVoteCount))
         content["totalVoteCounts"].append(to_comma_seperated_num(vote_count_result.totalVoteCount))
+        content["registeredVoterCounts"].append(to_comma_seperated_num(vote_count_result.registeredVotersCount))
 
         # Append the percentages.
-        content["validVoteCounts"].append(to_percentage(vote_count_result.validVoteCount * 100 / vote_count_result.totalVoteCount))
-        content["rejectedVoteCounts"].append(to_percentage(vote_count_result.rejectedVoteCount * 100 / vote_count_result.totalVoteCount))
-        content["totalVoteCounts"].append(to_percentage(100))
-
+        content["validVoteCounts"].append(
+            to_percentage(vote_count_result.validVoteCount * 100 / vote_count_result.registeredVotersCount))
+        content["rejectedVoteCounts"].append(
+            to_percentage(vote_count_result.rejectedVoteCount * 100 / vote_count_result.registeredVotersCount))
+        content["totalVoteCounts"].append(
+            to_percentage(vote_count_result.totalVoteCount * 100 / vote_count_result.registeredVotersCount))
+ 
         number_of_electoral_districts = len(area_wise_vote_count_result)
         number_of_candidates = len(candidate_wise_vote_count_result)
 
@@ -301,7 +343,8 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
 
             data_row.append(to_comma_seperated_num(candidate_wise_vote_count_result_item.validVoteCount))
 
-            candidate_wise_vote_count_percentage = (candidate_wise_vote_count_result_item.validVoteCount/vote_count_result.validVoteCount) * 100
+            candidate_wise_vote_count_percentage = (
+                                                           candidate_wise_vote_count_result_item.validVoteCount / vote_count_result.validVoteCount) * 100
             data_row.append(to_percentage(candidate_wise_vote_count_percentage))
 
             content["data"].append(data_row)
