@@ -130,12 +130,12 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Model(TallySheetVersion.Model):
 
         if registered_voters_count > 0:
             vote_count_result["validVoteCountPercentage"] = (valid_vote_count_result.validVoteCount /
-                                                             registered_voters_count) * 100
+                                                             total_vote_count) * 100
             vote_count_result["totalVoteCountPercentage"] = (total_vote_count / registered_voters_count) * 100
 
             if rejected_vote_count_result.rejectedVoteCount is not None:
                 vote_count_result["rejectedVoteCountPercentage"] = (rejected_vote_count_result.rejectedVoteCount /
-                                                                    registered_voters_count) * 100
+                                                                    total_vote_count) * 100
 
         return vote_count_result
 
