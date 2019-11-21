@@ -308,9 +308,9 @@ class TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS_Model(Tall
 
         # Append the percentages.
         content["validVoteCounts"].append(
-            to_percentage(vote_count_result.validVoteCount * 100 / vote_count_result.registeredVotersCount))
+            to_percentage(vote_count_result.validVoteCount * 100 / vote_count_result.totalVoteCount))
         content["rejectedVoteCounts"].append(
-            to_percentage(vote_count_result.rejectedVoteCount * 100 / vote_count_result.registeredVotersCount))
+            to_percentage(vote_count_result.rejectedVoteCount * 100 / vote_count_result.totalVoteCount))
         content["totalVoteCounts"].append(
             to_percentage(vote_count_result.totalVoteCount * 100 / vote_count_result.registeredVotersCount))
  

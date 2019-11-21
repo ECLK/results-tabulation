@@ -454,12 +454,12 @@ class TallySheetVersion_PRE_30_ED_Model(TallySheetVersion.Model):
 
         content["validVoteCounts"] = [
             to_comma_seperated_num(vote_count_result.validVoteCount),
-            to_percentage(vote_count_result.validVoteCount * 100 / self.submission.area.registeredVotersCount)
+            to_percentage(vote_count_result.validVoteCount * 100 / vote_count_result.totalVoteCount)
         ]
 
         content["rejectedVoteCounts"] = [
             to_comma_seperated_num(vote_count_result.rejectedVoteCount),
-            to_percentage(vote_count_result.rejectedVoteCount * 100 / self.submission.area.registeredVotersCount)
+            to_percentage(vote_count_result.rejectedVoteCount * 100 / vote_count_result.totalVoteCount)
         ]
 
         content["totalVoteCounts"] = [
