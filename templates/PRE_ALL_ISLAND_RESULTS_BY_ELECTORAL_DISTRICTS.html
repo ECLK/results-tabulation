@@ -20,7 +20,8 @@
     }
 
     .pre-all-ed .ed th div,
-    .pre-all-ed th.percentage-th div
+    .pre-all-ed th.percentage-th div,
+    .pre-all-ed th.total-th div
     {
         -moz-transform: rotate(-90.0deg);
         -o-transform: rotate(-90.0deg);
@@ -31,18 +32,21 @@
         white-space: nowrap;
     }
 
-    .pre-ai-ed-signature {
-        font-size: 35px;padding-top: 25px;line-height: 39px;
+    td.pre-ai-ed-signature {
+            font-size: 26px;
+            padding-top: 60px;
+            line-height: 25px;
     }
 </style>
 <div class="pre-all-ed">
-    <div style="text-align: center; margin-bottom: 10px;">
-        <b style="font-size: 45px;">{{content.election.electionName}}</b>
-        <br/><br/>
-        Detailed statement on the number of votes cast in favour of each candidate according to each Electoral
-        District
-        <br/>
-        ALL ISLAND RESULTS
+    <div style="text-align: center; margin-bottom: 10px;line-height: 38px;">
+        <strong style="font-size: 45px;">{{content.election.electionName}}</strong>
+        <div style="font-size: 30px;">
+            Detailed statement on the number of votes cast in favour of each candidate according to each Electoral District
+        </div>
+        <div style="font-size: 35px;">
+            ALL ISLAND RESULTS
+        </div>
     </div>
 
 
@@ -50,15 +54,18 @@
         <tbody>
 
         <tr>
-            <th class="left right top bottom"   rowspan="2"  style="width:40px" ># </th>
-            <th class="left right top bottom"  rowspan="2" style="width:500px">
-                Name of the Candidate (According to the order in the Ballot Paper)
+<!--            <th class="left right top bottom"   rowspan="2"  style="width:40px" ># </th>-->
+            <th class="left right top bottom"  rowspan="2" style="text-align:center;width:500px">
+                Name of the Candidate </br>
+                (According to the order in the Ballot Paper)
             </th>
             <th class="left right top bottom" colspan="{{content.electoralDistricts|length}}" style="width:{{content.electoralDistricts|length * 110}}px;">
                 ELECTORAL DISTRICT {{ed_column_width}}
             </th>
-            <th class="left right top bottom" rowspan="2" style="width:150px">TOTAL</th>
-            <th class="left right top bottom percentage-th" rowspan="2" style="width:100px">
+            <th class="left right top bottom total-th" rowspan="2" style="text-align:left;width:150px;">
+                <div>TOTAL</div>
+            </th>
+            <th class="left right top bottom percentage-th" rowspan="2" style="text-align:left;width:150px;">
                 <div>Percentage</div>
             </th>
         </tr>
@@ -70,10 +77,10 @@
 
         {% for row in content.data %}
         <tr>
-            <td class="left right top bottom">{{loop.index}}</td>
+<!--            <td class="left right top bottom">{{loop.index}}</td>-->
             {% for cell in row %}
             {% if loop.index == 1 %}
-            <td class="left right top bottom {%if cell=="" %}missing-value{% endif %}" style="text-align:center">{{cell}}</td>
+            <td class="left right top bottom {%if cell=="" %}missing-value{% endif %}" style="text-align:left">{{cell}}</td>
             {% else %}
             <td class="left right top bottom {%if cell=="" %}missing-value{% endif %}" style="text-align:right">{{cell}}</td>
             {% endif %}
@@ -82,31 +89,31 @@
         {% endfor %}
 
         <tr>
-            <th colspan="{{content.electoralDistricts|length + 4}}"></th>
+            <th colspan="{{content.electoralDistricts|length + 3}}"></th>
         </tr>
 
         <tr>
-            <th class="left right top bottom" colspan="2">NO OF VALID VOTES</th>
+            <th class="left right top bottom" colspan="1">NO OF VALID VOTES</th>
             {% for validVoteCount in content.validVoteCounts %}
             <td class="left right top bottom {%if validVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{validVoteCount}}</td>
             {% endfor %}
         </tr>
 
         <tr>
-            <th  colspan="2" class="left right top bottom">NO OF REJECTED VOTES</th>
+            <th  colspan="1" class="left right top bottom">NO OF REJECTED VOTES</th>
             {% for rejectedVoteCount in content.rejectedVoteCounts %}
             <td class="left right top bottom {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{rejectedVoteCount}}</td>
             {% endfor %}
         </tr>
 
         <tr>
-            <th  colspan="2" class="left right top bottom">TOTAL NO OF VOTES POLLED (INCLUDING REJECTED VOTES)</th>
+            <th  colspan="1" class="left right top bottom">TOTAL NO OF VOTES POLLED (INCLUDING REJECTED VOTES)</th>
             {% for totalVoteCount in content.totalVoteCounts %}
             <td class="left right top bottom {%if totalVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{totalVoteCount}}</td>
             {% endfor %}
         </tr>
         <tr>
-            <th  colspan="2" class="left right top bottom">REGISTERED NO. OF ELECTORS</th>
+            <th  colspan="1" class="left right top bottom">REGISTERED NO. OF ELECTORS</th>
             {% for registeredVoterCount in content.registeredVoterCounts %}
             <td class="left right top bottom {%if totalVoteCount=="" %}missing-value{% endif %}" style="text-align:right">{{registeredVoterCount}}</td>
             {% endfor %}
@@ -119,19 +126,19 @@
     <table class="table table-borderless signatures">
       <tr style="text-align:center;">
         <td class="pre-ai-ed-signature">
-            ...................................................................</br></br>
+            ...................................................................</br></br></br>
             MAHINDA DESHAPRIYA</br>
             Chairman</br>
             Election Commission
         </td>
         <td class="pre-ai-ed-signature">
-            ...................................................................</br></br>
+            ...................................................................</br></br></br>
             N. J. ABEYESEKERE</br>
             Member</br>
             Election Commission
         </td>
         <td class="pre-ai-ed-signature">
-            ...................................................................</br></br>
+            ...................................................................</br></br></br>
             S. RATNAJEEVAN H. HOOLE</br>
             Member</br>
             Election Commission
