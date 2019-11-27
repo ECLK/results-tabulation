@@ -2,3 +2,6 @@ theme: jekyll-theme-minimal
 
 plugins:
   - jekyll-toc
+
+kramdown:
+  parse_block_html: true
