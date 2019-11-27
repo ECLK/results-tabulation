@@ -109,5 +109,5 @@ When the commits are merged and if there are migration files merged, it's requir
 **JWT generation sample**
 
 For testing, first a root token has to be taken. 
-Invoke the `/system-testing/election/{electionId}/root-token` and retrive a root token. Insert any number for electionId for the first time.
+Invoke the `/system-testing/election/{electionId}/root-token` and retrive a root token. Insert any number for the electionId for the first time.
 
