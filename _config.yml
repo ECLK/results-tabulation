@@ -1,5 +1,36 @@
 theme: jekyll-theme-minimal
 
-
 kramdown:
   parse_block_html: true
+
+exclude:
+  - "*node_modules"
+  - "*venv"
+  - "*Dockerfile"
+  - "web/*.js"
+  - "web/*.json"
+  - "web/*.css"
+  - "web/*.png"
+  - "web/*.jpeg"
+  - "web/*.jpg"
+  - "web/*.svg"
+  - "web/*.ico"
+  - "web/*.html"
+  - "web/*.yml"
+  - "web/*.lock"
+  - "rest/*.py"
+  - "rest/*.html"
+  - "rest/*.json"
+  - "rest/*.js"
+  - "rest/*.png"
+  - "rest/*.jpeg"
+  - "rest/*.jpg"
+  - "rest/*.svg"
+  - "rest/*.ico"
+  - "rest/*.css"
+  - "rest/*.cfg"
+  - "rest/*.yml"
+  - "rest/*.csv"
+  - "rest/*.tsv"
+  - "rest/*.dot"
+  - "rest/*.txt"

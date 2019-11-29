@@ -1,0 +1,230 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.fixed-loading-page {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #FF9800;
+    z-index: 11111;
+    color: white;
+    font-size: 47px;
+    padding-top: 100px;
+    text-align: center;
+}
+
+.page {
+    padding-top: 63px;
+}
+
+.page .page-content {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 30px;
+}
+
+
+ul.bread-crumb {
+    list-style: none;
+    background-color: #636667;
+    padding: 5px 10px;
+    padding-top: 2px;
+    color: white;
+    margin: 0px;
+    margin-bottom: 10px;
+}
+
+ul.bread-crumb li.bread-crumb-list-item {
+    display: inline;
+    padding: 0px;
+    line-height: 10px;
+}
+
+ul.bread-crumb li.bread-crumb-list-item a {
+    text-decoration: none;
+    color: white;
+    font-size: 13px;
+    line-height: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+ul.bread-crumb li.bread-crumb-list-item a:hover {
+    text-decoration: underline;
+}
+
+.election-grid {
+    border-right: 1px solid #ccc;
+}
+
+.tally-sheet-vote-type {
+    padding-bottom: 0 !important;
+}
+
+.tally-sheet-code-list {
+    margin-top: 0;
+    padding-left: 5px;
+}
+
+.tally-sheet-grid div {
+    display: block;
+}
+
+.tally-sheet-code-list li {
+    list-style: none;
+    font-weight: bold;
+    margin-top: 25px;
+}
+
+.btn-select {
+    background: green;
+    border: 1px solid green;
+}
+
+.btn-list {
+    background: #bbb;
+    border: 1px solid bbb;
+}
+
+.tally-sheet-code-list li a {
+    text-decoration: none;
+    margin-left: 10px !important;
+    font-weight: normal;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    float: right;
+    margin-right: 10px;
+    width: 50px;
+    height: 20px;
+    text-align: center;
+}
+
+.tally-sheet-code-list .tally-sheet-code-list-item {
+
+}
+
+.tally-sheet-code-grid {
+    padding-top: 0 !important;
+}
+
+.data-entry-edit-count-input {
+    text-align: right;
+    width: 100px;
+}
+
+.data-entry-edit-count-in-words-input {
+    width: 500px;
+}
+
+
+.data-entry-edit-header {
+    display: flex;
+    flex-direction: row;
+}
+
+.data-entry-edit-header .data-entry-edit-header-tally-sheet-code {
+    background-color: black;
+    border-radius: 3px;
+    padding: 11px;
+    color: white;
+    font-size: 20px;
+}
+
+.data-entry-edit-header .data-entry-edit-header-election-name {
+    flex: 1
+}
+
+.page-content .MuiButton-contained,
+.page-content .MuiButton-outlined {
+    margin-right: 10px;
+}
+
+.report-view-status .report-view-status-text {
+    background-color: #eeeeee;
+    padding: 10px;
+    border-radius: 5px;
+    color: #5178c8;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.report-view-status .report-view-status-actions {
+    text-align: right;
+}
+
+.tabulation-linear-progress-bar {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.tabulation-linear-progress-bar .tabulation-linear-progress-bar-label {
+    padding-bottom: 5px;
+    color: #607D8B;
+    font-size: 13px;
+}
+
+.election-list {
+    text-align: center;
+}
+
+.election-list a.election-list-item {
+    padding: 10px;
+    background-color: #e7e7e7;
+    margin: 26px;
+    /* margin-top: 50px; */
+    display: inline-block;
+    width: 400px;
+    color: #5178c8;
+    text-decoration: none;
+    border-radius: 7px;
+}
+
+#wraphalf { 
+    width: 600px;
+    height: 390px;
+    padding: 0;
+    overflow: hidden;
+ }
+#framehalf {
+    position: absolute;
+    float: right;
+    -ms-zoom: 0.5;
+    -moz-transform: scale(0.50);
+    -moz-transform-origin: 0 0;
+    -o-transform: scale(0.50);
+    -o-transform-origin: 0 0;
+    -webkit-transform: scale(0.50);
+    -webkit-transform-origin: 0 0;
+}
+
+#realease-header{
+    display:table;
+    width: 100%;
+}
+
+#realease-header-content{
+    display:table-row;
+}
+
+#realease-header-content>div{
+    display:table-cell;
+    text-align: center;
+}
+#upload-progress{
+    margin-bottom: -7px;
+    padding-left: 6px;
+}
