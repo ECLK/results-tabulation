@@ -1,0 +1,74 @@
+
+#main_nav {
+    display: flex;
+    background-color: black;
+}
+
+#main_nav ul {
+    background: transparent;
+    float: left;
+    -webkit-transition: .5s;
+    transition: .5s;
+    padding: 0px;
+    margin: 0px;
+}
+
+#main_nav li {
+    float: left;
+    position: relative;
+    width: 220px;
+    list-style: none;
+    -webkit-transition: .5s;
+    transition: .5s;
+}
+
+#main_nav a {
+    display: block;
+    text-decoration: none;
+    padding: 9px 15px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#main_nav ul ul {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    visibility: hidden;
+    opacity: 0;
+}
+
+#main_nav ul ul ul {
+    left: 100%;
+    top: 0;
+}
+
+#main_nav li:hover, #main_nav li:hover li {
+    background: #ddd;
+}
+
+#main_nav li:hover a, #main_nav li:hover li a {
+    color: black;
+}
+
+#main_nav li li:hover, #main_nav li li:hover li {
+    background: #bbb;
+}
+
+#main_nav li li:hover a, #main_nav li li:hover li a {
+    color: black;
+}
+
+#main_nav li li li:hover {
+    background: #999;
+}
+
+#main_nav li:hover > ul {
+    visibility: visible;
+    opacity: 1;
+}
+.MuiAppBar-colorPrimary {
+    color: #fff;
+    background-color: #4778cf;
+}

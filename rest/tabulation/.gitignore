@@ -1,5 +1,8 @@
 .idea
+venv
+data
 __pycache__/
 *.pyc
+run_dev_server\.sh
 _site
 .sass-cache

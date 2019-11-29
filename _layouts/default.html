@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {% seo %}
-    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+    <link rel="stylesheet" href="{{ '/docs/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
     <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
     <![endif]-->
@@ -54,25 +54,25 @@
                     <a href="{{ './docs/index.html' | relative_url }}">Elections</a>
                 </li>
                 <li>
-                    <a>Modules</a>
+                    <a>Backend</a>
                     <ul>
                         <li>
-                            <a href="{{ './api' | relative_url }}">API</a>
+                            <a href="{{ './rest/tabulation/api' | relative_url }}">API</a>
                         </li>
                         <li>
-                            <a href="{{ './orm' | relative_url }}">Object Relational Mappings</a>
+                            <a href="{{ './rest/tabulation/orm' | relative_url }}">Object Relational Mappings</a>
                         </li>
                         <li>
-                            <a href="{{ './schemas' | relative_url }}">Schemas</a>
+                            <a href="{{ './rest/tabulation/schemas' | relative_url }}">Schemas</a>
                         </li>
                         <li>
-                            <a href="{{ './migrations' | relative_url }}">Database Migrations</a>
+                            <a href="{{ './rest/tabulation/migrations' | relative_url }}">Database Migrations</a>
                         </li>
                         <li>
-                            <a href="{{ './grafana' | relative_url }}">Dashboards</a>
+                            <a href="{{ './rest/tabulation/grafana' | relative_url }}">Dashboards</a>
                         </li>
                         <li>
-                            <a href="{{ './templates' | relative_url }}">Report templates</a>
+                            <a href="{{ './rest/tabulation/templates' | relative_url }}">Report templates</a>
                         </li>
                     </ul>
                 </li>
