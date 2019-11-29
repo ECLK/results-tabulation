@@ -1,7 +1,13 @@
-# results-tabulation-ui-v2
+# results-tabulation-ui
 
 ## Get Started
 
- npm start
+**Install Dependencies**
+
+`npm install`
+
+**Run**
+
+`npm start`
  
- http://localhost:3000
+[http://localhost:3000](http://localhost:3000)
