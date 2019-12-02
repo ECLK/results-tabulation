@@ -1,12 +1,4 @@
 # Elections
 
-## Presidential Election 2019
-
-### Structure
-
-![High Level Architecture](./img/presidencial-election-structure.png)
-
-### Tally sheets
-
-![High Level Architecture](./img/presidencial-election-tally-sheets.png)
-
+* [Presidential Election 2019](./elections/presidencial-election.html)
+* [Parliamentary Election](./elections/parliamentary-election.html)
