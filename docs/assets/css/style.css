@@ -134,6 +134,8 @@ h1, h2, h3, h4, h5, h6 { color: #222; margin: 0 0 20px; }
 
 p, ul, ol, table, pre, dl { margin: 0 0 20px; }
 
+ul, ol, dl { margin: 0px; }
+
 h1, h2, h3 { line-height: 1.1; }
 
 h1 { font-size: 28px; }
@@ -190,7 +192,7 @@ strong { color: #222; font-weight: 700; }
 
 /*header ul a strong { font-size: 14px; display: block; color: #222; }*/
 
-section { flex: 1; float: right;}
+section { flex: 1; float: right; overflow: auto}
 
 small { font-size: 11px; }
 
