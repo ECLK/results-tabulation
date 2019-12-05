@@ -1,5 +1,9 @@
 # results-tabulation-ui
 
+## Prerequisites
+
+[setup prerequisites](./prerequisites.html)
+
 ## Get Started
 
 **Install Dependencies**

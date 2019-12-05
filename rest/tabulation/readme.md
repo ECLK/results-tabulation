@@ -1,5 +1,9 @@
 # results-tabulation-api
 
+## Prerequisites
+
+[setup prerequisites](./prerequisites.html)
+
 ## Get Started
 
 **Activate the python environment**
