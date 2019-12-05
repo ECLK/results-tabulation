@@ -15,13 +15,15 @@ class ElectionModel(db.Model):
     __tablename__ = 'election'
     electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electionName = db.Column(db.String(100), nullable=False)
+    rootElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId", name="fk_election_root_election_id"),
+                               nullable=True)
     parentElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=True)
     voteType = db.Column(db.Enum(VoteTypeEnum), nullable=False)
     _parties = relationship("ElectionPartyModel")
     _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
-
-    subElections = relationship("ElectionModel")
-    parentElection = relationship("ElectionModel", remote_side=[electionId])
+    subElections = relationship("ElectionModel", foreign_keys=[parentElectionId])
+    rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId])
+    parentElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[parentElectionId])
 
     pollingStationsDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
     postalCountingCentresDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
@@ -39,6 +41,12 @@ class ElectionModel(db.Model):
             parentElectionId=parentElectionId,
             voteType=voteType
         )
+
+        if parentElectionId is not None:
+            parentElection = get_by_id(parentElectionId)
+            self.rootElectionId = parentElection.rootElectionId
+        else:
+            self.rootElectionId = self.electionId
 
         db.session.add(self)
         db.session.flush()
@@ -117,10 +125,7 @@ class ElectionModel(db.Model):
         self.invalidVoteCategoriesDatasetId = dataset.fileId
 
     def get_root_election(self):
-        if self.parentElectionId is None:
-            return self
-        else:
-            return self.parentElection
+        return self.rootElection
 
     def get_official_name(self):
         if self.parentElectionId is None:
