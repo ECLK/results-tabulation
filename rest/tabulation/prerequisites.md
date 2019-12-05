@@ -1,6 +1,8 @@
 # Prerequisites
 
-**Python 3**
+**Python**
+
+3.6 or above
 
 **Virtual Environment**
 
@@ -11,3 +13,4 @@
 **My SQL**
 
 5.7 or above
+
