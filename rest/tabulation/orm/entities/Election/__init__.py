@@ -15,13 +15,17 @@ class ElectionModel(db.Model):
     __tablename__ = 'election'
     electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electionName = db.Column(db.String(100), nullable=False)
+    rootElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId", name="fk_election_root_election_id"),
+                               nullable=True)
     parentElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=True)
     voteType = db.Column(db.Enum(VoteTypeEnum), nullable=False)
+    isListed = db.Column(db.String(100), nullable=False)
+
     _parties = relationship("ElectionPartyModel")
     _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
-
-    subElections = relationship("ElectionModel")
-    parentElection = relationship("ElectionModel", remote_side=[electionId])
+    subElections = relationship("ElectionModel", foreign_keys=[parentElectionId])
+    rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId])
+    parentElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[parentElectionId])
 
     pollingStationsDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
     postalCountingCentresDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
@@ -33,12 +37,19 @@ class ElectionModel(db.Model):
     partyCandidateDataset = relationship(File.Model, foreign_keys=[partyCandidateDatasetId])
     invalidVoteCategoriesDataset = relationship(File.Model, foreign_keys=[invalidVoteCategoriesDatasetId])
 
-    def __init__(self, electionName, parentElectionId, voteType):
+    def __init__(self, electionName, parentElectionId, voteType, isListed):
         super(ElectionModel, self).__init__(
             electionName=electionName,
             parentElectionId=parentElectionId,
-            voteType=voteType
+            voteType=voteType,
+            isListed=isListed
         )
+
+        if parentElectionId is not None:
+            parentElection = get_by_id(parentElectionId)
+            self.rootElectionId = parentElection.rootElectionId
+        else:
+            self.rootElectionId = self.electionId
 
         db.session.add(self)
         db.session.flush()
@@ -74,11 +85,12 @@ class ElectionModel(db.Model):
         else:
             return self.parentElection.invalidVoteCategories
 
-    def add_sub_election(self, electionName, voteType):
+    def add_sub_election(self, electionName, voteType, isListed=False):
         return create(
             electionName=electionName,
             parentElectionId=self.electionId,
-            voteType=voteType
+            voteType=voteType,
+            isListed=isListed
         )
 
     def add_invalid_vote_category(self, categoryDescription):
@@ -117,10 +129,7 @@ class ElectionModel(db.Model):
         self.invalidVoteCategoriesDatasetId = dataset.fileId
 
     def get_root_election(self):
-        if self.parentElectionId is None:
-            return self
-        else:
-            return self.parentElection
+        return self.rootElection
 
     def get_official_name(self):
         if self.parentElectionId is None:
@@ -133,11 +142,12 @@ Model = ElectionModel
 
 
 def create(electionName, parentElectionId=None,
-           voteType=VoteTypeEnum.PostalAndNonPostal):
+           voteType=VoteTypeEnum.PostalAndNonPostal, isListed=False):
     election = Model(
         electionName=electionName,
         parentElectionId=parentElectionId,
-        voteType=voteType
+        voteType=voteType,
+        isListed=isListed
     )
 
     return election
@@ -171,7 +181,7 @@ def get_all():
 
     query = Model.query.filter(
         Model.electionId.in_(authorized_election_ids),
-        Model.parentElectionId == None
+        Model.isListed == True
     )
 
     return query

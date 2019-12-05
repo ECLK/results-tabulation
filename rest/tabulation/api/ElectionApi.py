@@ -43,7 +43,7 @@ def create(body):
     party_candidates_dataset = files.get("partyCandidatesDataset")
     invalid_vote_categories_dataset = files.get("invalidVoteCategoriesDataset")
 
-    election = Election.create(electionName=election_name)
+    election = Election.create(electionName=election_name, isListed=True)
     election.set_polling_stations_dataset(fileSource=polling_stations_dataset)
     election.set_postal_counting_centres_dataset(fileSource=postal_counting_centres_dataset)
     election.set_party_candidates_dataset(fileSource=party_candidates_dataset)
