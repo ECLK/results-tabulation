@@ -19,6 +19,8 @@ class ElectionModel(db.Model):
                                nullable=True)
     parentElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=True)
     voteType = db.Column(db.Enum(VoteTypeEnum), nullable=False)
+    isListed = db.Column(db.String(100), nullable=False)
+
     _parties = relationship("ElectionPartyModel")
     _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
     subElections = relationship("ElectionModel", foreign_keys=[parentElectionId])
@@ -35,11 +37,12 @@ class ElectionModel(db.Model):
     partyCandidateDataset = relationship(File.Model, foreign_keys=[partyCandidateDatasetId])
     invalidVoteCategoriesDataset = relationship(File.Model, foreign_keys=[invalidVoteCategoriesDatasetId])
 
-    def __init__(self, electionName, parentElectionId, voteType):
+    def __init__(self, electionName, parentElectionId, voteType, isListed):
         super(ElectionModel, self).__init__(
             electionName=electionName,
             parentElectionId=parentElectionId,
-            voteType=voteType
+            voteType=voteType,
+            isListed=isListed
         )
 
         if parentElectionId is not None:
@@ -82,11 +85,12 @@ class ElectionModel(db.Model):
         else:
             return self.parentElection.invalidVoteCategories
 
-    def add_sub_election(self, electionName, voteType):
+    def add_sub_election(self, electionName, voteType, isListed=False):
         return create(
             electionName=electionName,
             parentElectionId=self.electionId,
-            voteType=voteType
+            voteType=voteType,
+            isListed=isListed
         )
 
     def add_invalid_vote_category(self, categoryDescription):
@@ -138,11 +142,12 @@ Model = ElectionModel
 
 
 def create(electionName, parentElectionId=None,
-           voteType=VoteTypeEnum.PostalAndNonPostal):
+           voteType=VoteTypeEnum.PostalAndNonPostal, isListed=False):
     election = Model(
         electionName=electionName,
         parentElectionId=parentElectionId,
-        voteType=voteType
+        voteType=voteType,
+        isListed=isListed
     )
 
     return election
@@ -176,7 +181,7 @@ def get_all():
 
     query = Model.query.filter(
         Model.electionId.in_(authorized_election_ids),
-        Model.parentElectionId == None
+        Model.isListed == True
     )
 
     return query
