@@ -6,6 +6,6 @@
 
 **tabulation-api**
 
-[setup tabulation api](../../rest/tabulation)
+[setup tabulation api](../../rest/results-tabulation-api)
 
 
