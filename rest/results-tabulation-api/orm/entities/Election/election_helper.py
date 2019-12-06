@@ -1,12 +1,9 @@
 import csv
-import os
-
 from app import db
 from auth import AREA_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, \
     EC_LEADERSHIP_ROLE, SUB, ROLE_CLAIM, ROLE_PREFIX
-from auth.AuthConstants import NAMESPACE
 from orm.entities import *
 from orm.entities import Invoice, Area, Election
 from orm.entities.Area import AreaMap
@@ -94,16 +91,16 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
     ordinary_election = root_election.add_sub_election(electionName="Ordinary", voteType=VoteTypeEnum.NonPostal)
 
     if not party_candidate_dataset_file:
-        party_candidate_dataset_file = root_election.partyCandidateDataset.get_file_path()
+        party_candidate_dataset_file = root_election.partyCandidateDataset.fileContent
 
     if not polling_station_dataset_file:
-        polling_station_dataset_file = root_election.pollingStationsDataset.get_file_path()
+        polling_station_dataset_file = root_election.pollingStationsDataset.fileContent
 
     if not postal_counting_centers_dataset_file:
-        postal_counting_centers_dataset_file = root_election.postalCountingCentresDataset.get_file_path()
+        postal_counting_centers_dataset_file = root_election.postalCountingCentresDataset.fileContent
 
     if not invalid_vote_categories_dataset_file:
-        invalid_vote_categories_dataset_file = root_election.invalidVoteCategoriesDataset.get_file_path()
+        invalid_vote_categories_dataset_file = root_election.invalidVoteCategoriesDataset.fileContent
 
     data_stores = {}
 
@@ -285,18 +282,10 @@ def build_presidential_election(root_election: Election, party_candidate_dataset
 
         return obj
 
-    def get_rows_from_csv(csv_path):
-        csv_file_path = csv_path
-        if os.path.exists(csv_file_path) is True:
-            with open(csv_file_path, 'r') as f:
-                reader = csv.DictReader(f, delimiter=',')
-                rows = list(reader)
-        else:
-            rows = []
-
-        # for row in rows:
-        #     for cell_key in row:
-        #         row[cell_key] = row[cell_key].encode('unicode_escape')
+    def get_rows_from_csv(csv_file):
+        f = csv_file.decode("utf-8")
+        reader = csv.DictReader(f.splitlines())
+        rows = list(reader)
 
         return rows
 

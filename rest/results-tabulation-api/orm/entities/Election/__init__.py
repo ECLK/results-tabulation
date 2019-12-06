@@ -37,22 +37,22 @@ class ElectionModel(db.Model):
     partyCandidateDataset = relationship(File.Model, foreign_keys=[partyCandidateDatasetId])
     invalidVoteCategoriesDataset = relationship(File.Model, foreign_keys=[invalidVoteCategoriesDatasetId])
 
-    def __init__(self, electionName, parentElectionId, voteType, isListed):
+    def __init__(self, electionName, parentElection, voteType, isListed):
         super(ElectionModel, self).__init__(
             electionName=electionName,
-            parentElectionId=parentElectionId,
             voteType=voteType,
             isListed=isListed
         )
 
-        if parentElectionId is not None:
-            parentElection = get_by_id(parentElectionId)
-            self.rootElectionId = parentElection.rootElectionId
-        else:
-            self.rootElectionId = self.electionId
-
         db.session.add(self)
         db.session.flush()
+
+        if parentElection is not None:
+            self.parentElectionId = parentElection.electionId
+            self.rootElectionId = parentElection.rootElectionId
+        else:
+            self.parentElectionId = None
+            self.rootElectionId = self.electionId
 
     @hybrid_property
     def mappedElectionIds(self):
@@ -88,7 +88,7 @@ class ElectionModel(db.Model):
     def add_sub_election(self, electionName, voteType, isListed=False):
         return create(
             electionName=electionName,
-            parentElectionId=self.electionId,
+            parentElection=self,
             voteType=voteType,
             isListed=isListed
         )
@@ -141,11 +141,11 @@ class ElectionModel(db.Model):
 Model = ElectionModel
 
 
-def create(electionName, parentElectionId=None,
+def create(electionName, parentElection=None,
            voteType=VoteTypeEnum.PostalAndNonPostal, isListed=False):
     election = Model(
         electionName=electionName,
-        parentElectionId=parentElectionId,
+        parentElection=parentElection,
         voteType=voteType,
         isListed=isListed
     )
