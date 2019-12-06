@@ -1,8 +1,9 @@
-from flask import send_from_directory
+from io import BytesIO
+
+from flask import send_file
 
 from schemas import File_Schema as Schema
 from orm.entities.IO import File as Model
-from orm.entities.IO.File import FILE_DIRECTORY
 
 
 def get_by_id(fileId):
@@ -20,9 +21,8 @@ def response_file(fileId, as_attachment):
 
     fileName = "%d-%s" % (file.fileId, file.fileName)
 
-    return send_from_directory(
-        directory=FILE_DIRECTORY,
-        filename=str(file.fileId),
+    return send_file(
+        BytesIO(file.fileContent),
         mimetype=file.fileMimeType,
         attachment_filename=fileName,
         as_attachment=as_attachment

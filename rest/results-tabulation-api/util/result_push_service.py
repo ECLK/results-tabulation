@@ -78,7 +78,7 @@ def upload_proof_last_image(tally_sheet, tally_sheet_version):
         files = tally_sheet.submissionProof.scannedFiles
         last_file = files[len(files) - 1]
 
-        last_file_data = open(last_file.get_file_path(), 'rb').read()
+        last_file_data = last_file.fileContent
 
         print("#### RESULT_DISSEMINATION_API - Image Upload #### ", [url, response, last_file_data])
 
