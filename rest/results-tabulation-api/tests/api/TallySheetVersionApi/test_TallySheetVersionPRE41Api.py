@@ -4,7 +4,7 @@ from flask import Response
 
 from app import db
 from orm.entities.Submission.TallySheet import TallySheetModel
-from util import get_tally_sheet_code
+from tests.util import get_tally_sheet_code
 
 
 class TestTallySheetVersionPRE41Api:
@@ -45,10 +45,10 @@ class TestTallySheetVersionPRE41Api:
         count = 200
         count_in_words = "Two hundred"
 
-        from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE41
+        from orm.entities.SubmissionVersion import TallySheetVersion
 
-        tally_sheet_version = TallySheetVersionPRE41.create(tallySheetId=tally_sheet_id)
-        tally_sheet_version.add_row(candidateId=candidate_id, count=count, countInWords=count_in_words)
+        tally_sheet_version = random_tally_sheet.create_empty_version()
+
         db.session.commit()
 
         response: Response = test_client.get(

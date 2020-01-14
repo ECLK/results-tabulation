@@ -2,10 +2,10 @@ import connexion
 
 from app import db
 from auth import ADMIN_ROLE, authorize
-from auth.AuthConstants import ALL_ROLES
+from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_ELECTION_NOT_FOUND
-from orm.entities.Election.election_helper import get_root_token, build_presidential_election
+from orm.entities.Election.election_helper import get_root_token
 from orm.entities import Election, Area
 from schemas import ElectionSchema as Schema, SimpleAreaSchema
 from util import RequestBody, get_paginated_query
@@ -36,6 +36,7 @@ def get_by_id(electionId):
 def create(body):
     request_body = RequestBody(body)
     election_name = request_body.get("electionName")
+    election_template_name = request_body.get("electionTemplateName")
 
     files = connexion.request.files
     polling_stations_dataset = files.get("pollingStationsDataset")
@@ -43,13 +44,11 @@ def create(body):
     party_candidates_dataset = files.get("partyCandidatesDataset")
     invalid_vote_categories_dataset = files.get("invalidVoteCategoriesDataset")
 
-    election = Election.create(electionName=election_name, isListed=True)
-    election.set_polling_stations_dataset(fileSource=polling_stations_dataset)
-    election.set_postal_counting_centres_dataset(fileSource=postal_counting_centres_dataset)
-    election.set_party_candidates_dataset(fileSource=party_candidates_dataset)
-    election.set_invalid_vote_categories_dataset(fileSource=invalid_vote_categories_dataset)
-
-    build_presidential_election(root_election=election)
+    election = Election.create(electionTemplateName=election_template_name, electionName=election_name, isListed=True,
+                               party_candidate_dataset_file=party_candidates_dataset,
+                               polling_station_dataset_file=polling_stations_dataset,
+                               postal_counting_centers_dataset_file=postal_counting_centres_dataset,
+                               invalid_vote_categories_dataset_file=invalid_vote_categories_dataset)
 
     db.session.commit()
 

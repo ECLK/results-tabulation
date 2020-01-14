@@ -5,10 +5,9 @@ from sqlalchemy.orm import relationship, aliased
 
 from app import db
 from auth import get_user_access_area_ids
+from ext.Election import get_extended_election_class
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
-from orm.enums import VoteTypeEnum
-from sqlalchemy import and_, func, or_
 
 
 class ElectionModel(db.Model):
@@ -18,7 +17,8 @@ class ElectionModel(db.Model):
     rootElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId", name="fk_election_root_election_id"),
                                nullable=True)
     parentElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=True)
-    voteType = db.Column(db.Enum(VoteTypeEnum), nullable=False)
+    voteType = db.Column(db.String(100), nullable=False)
+    electionTemplateName = db.Column(db.String(100), nullable=False)
     isListed = db.Column(db.String(100), nullable=False)
 
     _parties = relationship("ElectionPartyModel")
@@ -37,8 +37,12 @@ class ElectionModel(db.Model):
     partyCandidateDataset = relationship(File.Model, foreign_keys=[partyCandidateDatasetId])
     invalidVoteCategoriesDataset = relationship(File.Model, foreign_keys=[invalidVoteCategoriesDatasetId])
 
-    def __init__(self, electionName, parentElection, voteType, isListed):
+    def __init__(self, electionTemplateName, electionName, parentElection, voteType, isListed,
+                 party_candidate_dataset_file=None,
+                 polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
+                 invalid_vote_categories_dataset_file=None):
         super(ElectionModel, self).__init__(
+            electionTemplateName=electionTemplateName,
             electionName=electionName,
             voteType=voteType,
             isListed=isListed
@@ -53,6 +57,19 @@ class ElectionModel(db.Model):
         else:
             self.parentElectionId = None
             self.rootElectionId = self.electionId
+
+        db.session.flush()
+
+        if self.electionId == self.rootElectionId:
+            self.set_polling_stations_dataset(fileSource=polling_station_dataset_file)
+            self.set_postal_counting_centres_dataset(fileSource=postal_counting_centers_dataset_file)
+            self.set_party_candidates_dataset(fileSource=party_candidate_dataset_file)
+            self.set_invalid_vote_categories_dataset(fileSource=invalid_vote_categories_dataset_file)
+
+            extended_election_class = get_extended_election_class(electionTemplateName=self.electionTemplateName)
+
+            if extended_election_class is not None:
+                extended_election_class.build_election(root_election=self)
 
     @hybrid_property
     def mappedElectionIds(self):
@@ -87,6 +104,7 @@ class ElectionModel(db.Model):
 
     def add_sub_election(self, electionName, voteType, isListed=False):
         return create(
+            electionTemplateName=self.electionTemplateName,
             electionName=electionName,
             parentElection=self,
             voteType=voteType,
@@ -140,14 +158,23 @@ class ElectionModel(db.Model):
 
 Model = ElectionModel
 
+PostalAndNonPostal = "PostalAndNonPostal"
 
-def create(electionName, parentElection=None,
-           voteType=VoteTypeEnum.PostalAndNonPostal, isListed=False):
+
+def create(electionTemplateName, electionName, parentElection=None, voteType=PostalAndNonPostal, isListed=False,
+           party_candidate_dataset_file=None,
+           polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
+           invalid_vote_categories_dataset_file=None):
     election = Model(
+        electionTemplateName=electionTemplateName,
         electionName=electionName,
         parentElection=parentElection,
         voteType=voteType,
-        isListed=isListed
+        isListed=isListed,
+        party_candidate_dataset_file=party_candidate_dataset_file,
+        polling_station_dataset_file=polling_station_dataset_file,
+        postal_counting_centers_dataset_file=postal_counting_centers_dataset_file,
+        invalid_vote_categories_dataset_file=invalid_vote_categories_dataset_file
     )
 
     return election

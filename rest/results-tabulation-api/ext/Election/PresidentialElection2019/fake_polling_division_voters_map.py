@@ -1,6 +1,9 @@
 # TODO remove this
 
-from orm.enums import VoteTypeEnum, AreaTypeEnum
+from orm.enums import AreaTypeEnum
+
+Postal = "Postal"
+NonPostal = "NonPostal"
 
 polling_division_postal_voters_count = {
     "3": 480,
@@ -171,7 +174,7 @@ def get_polling_division_total_registered_voters(tallySheetVersion):
     polling_division_id = tallySheetVersion.submission.areaId
     total_registered_voters = 0
 
-    if election.voteType == VoteTypeEnum.Postal:
+    if election.voteType == Postal:
         electoral_district = tallySheetVersion.submission.area
         postal_counting_centres = electoral_district.get_associated_areas(
             areaType=AreaTypeEnum.CountingCentre,

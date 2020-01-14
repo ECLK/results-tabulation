@@ -26,7 +26,7 @@ export const ENDPOINT_PATH_AREAS = () => "/area";
 export const ENDPOINT_PATH_TALLY_SHEETS = () => "/tally-sheet";
 export const ENDPOINT_PATH_TALLY_SHEETS_BY_ID = (tallySheetId) => `/tally-sheet/${tallySheetId}`;
 export const ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID = (tallySheetId, tallySheetCode, tallySheetVersionId) => {
-    let path = `/tally-sheet/${tallySheetCode}/${tallySheetId}/version`;
+    let path = `/tally-sheet/${tallySheetId}/version`;
     if (tallySheetVersionId) {
         path += `/${tallySheetVersionId}`;
     }
@@ -185,7 +185,7 @@ export function getTallySheetVersionById(tallySheetId, tallySheetCode, tallyShee
 }
 
 
-export function saveTallySheetVersion(tallySheetId, tallySheetCode, body) {
+export function saveTallySheetVersion(tallySheetId, tallySheetCode, body = {}) {
     return request({
         url: ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID(tallySheetId, tallySheetCode),
         method: 'post',

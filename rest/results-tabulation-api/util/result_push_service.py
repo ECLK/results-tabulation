@@ -1,11 +1,11 @@
 from exception import MethodNotAllowedException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_ALLOWED_TO_BE_RELEASED, \
     MESSAGE_CODE_TALLY_SHEET_NOT_ALLOWED_TO_BE_NOTIFIED
-from orm.entities.Submission.TallySheet import PREFERENCE_TALLY_SHEET_CODES
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.enums import TallySheetCodeEnum, VoteTypeEnum
 import requests
 from app import connex_app
+from constants.TALLY_SHEET_CODES import PRE_30_PD, PRE_30_ED, PRE_ALL_ISLAND_RESULTS, PRE_34_PD, PRE_34_ED, \
+    PRE_34_AI, PREFERENCE_TALLY_SHEET_CODES
 
 RESULT_DISSEMINATION_SYSTEM_URL = connex_app.app.config['RESULT_DISSEMINATION_SYSTEM_URL']
 RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE = connex_app.app.config['RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE']
@@ -18,21 +18,21 @@ NOTIFY_RESULTS_ENDPOINT = "result/notification"
 RESULTS_PROOF_IMAGE_UPLOAD_ENDPOINT = "result/image"
 
 release_allowed_tally_sheet_codes = [
-    TallySheetCodeEnum.PRE_30_PD,
-    TallySheetCodeEnum.PRE_30_ED,
-    TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
-    TallySheetCodeEnum.PRE_34_PD,
-    TallySheetCodeEnum.PRE_34_ED,
-    TallySheetCodeEnum.PRE_34_AI
+    PRE_30_PD,
+    PRE_30_ED,
+    PRE_ALL_ISLAND_RESULTS,
+    PRE_34_PD,
+    PRE_34_ED,
+    PRE_34_AI
 ]
 
 notify_allowed_tally_sheet_codes = [
-    TallySheetCodeEnum.PRE_30_PD,
-    TallySheetCodeEnum.PRE_30_ED,
-    TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS,
-    TallySheetCodeEnum.PRE_34_PD,
-    TallySheetCodeEnum.PRE_34_ED,
-    TallySheetCodeEnum.PRE_34_AI
+    PRE_30_PD,
+    PRE_30_ED,
+    PRE_ALL_ISLAND_RESULTS,
+    PRE_34_PD,
+    PRE_34_ED,
+    PRE_34_AI
 ]
 
 RESULT_LEVEL_NATIONAL_FINAL = "NATIONAL-FINAL"
@@ -48,10 +48,10 @@ tally_sheet_code_result_level = {
 
 
 def get_result_level(tally_sheet):
-    if tally_sheet.tallySheetCode in [TallySheetCodeEnum.PRE_34_AI, TallySheetCodeEnum.PRE_ALL_ISLAND_RESULTS]:
+    if tally_sheet.tallySheetCode in [PRE_34_AI, PRE_ALL_ISLAND_RESULTS]:
         return RESULT_LEVEL_NATIONAL_FINAL
     elif tally_sheet.tallySheetCode in [
-        TallySheetCodeEnum.PRE_30_PD, TallySheetCodeEnum.PRE_34_PD
+        PRE_30_PD, PRE_34_PD
     ]:
         return RESULT_LEVEL_POLLING_DIVISION
     else:

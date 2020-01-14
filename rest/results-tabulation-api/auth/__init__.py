@@ -5,20 +5,19 @@ from decorator import decorator
 from flask import request
 from jose import jwt
 
-from app import db, cache
-from auth.AuthConstants import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
+from app import cache
+from constants.AUTH_CONSTANTS import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, AREA_CLAIM_PREFIX, ADMIN_ROLE, \
-    JWT_TOKEN_HEADER_KEY, ACCESS_TYPE_READ, ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, ROLE_CLAIM, ROLE_PREFIX
-from auth.RoleBasedAccess import role_to_read_allowed_tallysheet_types, role_to_lock_allowed_tallysheet_types, \
-    role_to_unlock_allowed_tallysheet_types
+    JWT_TOKEN_HEADER_KEY, ROLE_CLAIM, ROLE_PREFIX
+
 from exception import UnauthorizedException
 
 import json
 
 from exception.messages import MESSAGE_CODE_USER_NOT_FOUND, MESSAGE_CODE_USER_NOT_AUTHENTICATED, \
     MESSAGE_CODE_USER_NOT_AUTHORIZED
-from orm.enums import TallySheetCodeEnum, AreaTypeEnum, VoteTypeEnum
+from ext.Election import get_role_based_access_config
 
 JWT_SECRET = "jwt_secret"
 AREA_ID = "areaId"
@@ -80,7 +79,7 @@ def init_global_area_map():
 
         sub_elections = electoral_district.election.subElections
         for sub_election in sub_elections:
-            if sub_election.voteType == VoteTypeEnum.Postal:
+            if sub_election.voteType == Postal:
                 global_area_map[ElectoralDistricts][CountingCentres][Postal][electoral_district.areaId] = [
                     counting_centre.areaId for counting_centre in
                     electoral_district.get_associated_areas(
@@ -88,7 +87,7 @@ def init_global_area_map():
                         electionId=sub_election.electionId
                     )
                 ]
-            elif sub_election.voteType == VoteTypeEnum.NonPostal:
+            elif sub_election.voteType == NonPostal:
                 global_area_map[ElectoralDistricts][CountingCentres][NonPostal][electoral_district.areaId] = [
                     counting_centre.areaId for counting_centre in
                     electoral_district.get_associated_areas(
@@ -106,7 +105,7 @@ def init_global_area_map():
 
         sub_elections = country.election.subElections
         for sub_election in sub_elections:
-            if sub_election.voteType == VoteTypeEnum.Postal:
+            if sub_election.voteType == Postal:
                 global_area_map[Countries][CountingCentres][Postal][country.areaId] = [
                     counting_centre.areaId for counting_centre in
                     country.get_associated_areas(
@@ -114,7 +113,7 @@ def init_global_area_map():
                         electionId=sub_election.electionId
                     )
                 ]
-            elif sub_election.voteType == VoteTypeEnum.NonPostal:
+            elif sub_election.voteType == NonPostal:
                 global_area_map[Countries][CountingCentres][NonPostal][country.areaId] = [
                     counting_centre.areaId for counting_centre in
                     country.get_associated_areas(
@@ -228,29 +227,16 @@ def get_user_access_area_ids() -> Set[int]:
 
 
 def has_role_based_access(tally_sheet, access_type):
-    tally_sheet_code = tally_sheet.tallySheetCode
+    election = tally_sheet.submission.election
+    role_based_access_config = get_role_based_access_config(election.electionTemplateName)
 
-    if access_type == ACCESS_TYPE_READ:
-        mapping = role_to_read_allowed_tallysheet_types
-    elif access_type == ACCESS_TYPE_LOCK:
-        mapping = role_to_lock_allowed_tallysheet_types
-    elif access_type == ACCESS_TYPE_UNLOCK:
-        mapping = role_to_unlock_allowed_tallysheet_types
+    tally_sheet_code = tally_sheet.template.templateName
 
     for role in connexion.context[USER_ROLES]:
-        if mapping.get(role) is not None and tally_sheet_code in mapping.get(role):
-
-            # special handling for PRE-30-PD
-            if access_type == ACCESS_TYPE_READ and tally_sheet_code == TallySheetCodeEnum.PRE_30_PD:
-                tally_sheet_area_type = tally_sheet.area.areaType
-                if role in [POLLING_DIVISION_REPORT_VIEWER_ROLE,
-                            POLLING_DIVISION_REPORT_VERIFIER_ROLE] and tally_sheet_area_type == AreaTypeEnum.PollingDivision:
+        if role in role_based_access_config:
+            if tally_sheet_code in role_based_access_config[role]:
+                if access_type in role_based_access_config[role][tally_sheet]:
                     return True
-                elif role in [ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE,
-                              ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE] and tally_sheet_area_type == AreaTypeEnum.ElectoralDistrict:
-                    return True
-            else:
-                return True
 
     return False
 

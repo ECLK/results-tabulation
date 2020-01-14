@@ -18,6 +18,7 @@ export default function DataEntryEdit_PRE_41({history, queryString, election, ta
     const [totalValidVoteCount, setTotalValidVoteCount] = useState(0);
     const [totalVoteCount, setTotalVoteCount] = useState(0);
 
+
     const setTallySheetContent = (tallySheetVersion) => {
         const latestCandidateWiseCounts = {};
         election.parties.map(party => {
@@ -33,18 +34,24 @@ export default function DataEntryEdit_PRE_41({history, queryString, election, ta
         if (tallySheetVersion) {
             const {content, summary} = tallySheetVersion;
             let validTotal = 0;
+            let rejectedVoteCount = 0;
             for (let i = 0; i < content.length; i++) {
                 let contentRow = content[i];
-                latestCandidateWiseCounts[contentRow.candidateId] = {
-                    candidateId: contentRow.candidateId,
-                    validVoteCount: contentRow.count,
-                    validVoteCountInWords: contentRow.countInWords
-                };
-                validTotal += contentRow.count;
+                if (contentRow.templateRowType === "CANDIDATE_FIRST_PREFERENCE") {
+                    latestCandidateWiseCounts[contentRow.candidateId] = {
+                        candidateId: contentRow.candidateId,
+                        validVoteCount: contentRow.numValue,
+                        validVoteCountInWords: contentRow.strValue
+                    };
+                    validTotal += contentRow.numValue;
+                } else if (contentRow.templateRowType === "REJECTED_VOTE") {
+                    rejectedVoteCount = contentRow.numValue;
+                    setRejectedVoteCount(contentRow.numValue);
+                }
+
             }
-            setRejectedVoteCount(summary.rejectedVoteCount);
             setTotalValidVoteCount(validTotal);
-            setTotalVoteCount((validTotal + summary.rejectedVoteCount));
+            setTotalVoteCount((validTotal + rejectedVoteCount));
         }
 
         setCandidateWiseCounts(latestCandidateWiseCounts);
@@ -64,24 +71,37 @@ export default function DataEntryEdit_PRE_41({history, queryString, election, ta
     };
 
     const getTallySheetRequestBody = () => {
-        const content = [];
+        const rejected_vote_rows = [{"numValue": rejectedVoteCount}];
+        const candidate_first_preference_rows = [];
         election.parties.map(party => {
+            const {partyId} = party;
             party.candidates.map(candidate => {
                 const {candidateId} = candidate;
                 const {validVoteCount, validVoteCountInWords} = candidateWiseCounts[candidateId];
-                content.push({
+                candidate_first_preference_rows.push({
+                    partyId: partyId,
                     candidateId: candidateId,
-                    count: validVoteCount,
-                    countInWords: validVoteCountInWords
+                    numValue: validVoteCount,
+                    strValue: validVoteCountInWords
                 })
             })
         });
 
         return {
-            content: content,
-            summary: {
-                rejectedVoteCount
-            }
+            content: tallySheet.template.rows.map(((templateRow) => {
+                const contentRow = {
+                    templateRowId: templateRow.templateRowId,
+                    rows: []
+                };
+
+                if (templateRow.templateRowType === "CANDIDATE_FIRST_PREFERENCE") {
+                    contentRow.rows = candidate_first_preference_rows
+                } else if (templateRow.templateRowType === "REJECTED_VOTE") {
+                    contentRow.rows = rejected_vote_rows;
+                }
+
+                return contentRow
+            }))
         }
     };
 

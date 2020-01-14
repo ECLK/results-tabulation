@@ -1,8 +1,12 @@
+import csv
+from app import db
 from auth import AREA_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, \
     EC_LEADERSHIP_ROLE, SUB, ROLE_CLAIM, ROLE_PREFIX
+
 from orm.entities import Area
+from orm.entities.Submission import TallySheet
 from orm.enums import AreaTypeEnum
 from jose import jwt
 
@@ -69,3 +73,19 @@ def get_root_token(electionId):
     encoded_jwt_token = jwt.encode(jwt_payload, key)
 
     return encoded_jwt_token
+
+
+def update_dashboard_tables():
+    tally_sheets = TallySheet.Model.query.all()
+    for tally_sheet in tally_sheets:
+        tally_sheet.update_status_report()
+
+    db.session.commit()
+
+
+def get_rows_from_csv(csv_file):
+    f = csv_file.decode("utf-8")
+    reader = csv.DictReader(f.splitlines())
+    rows = list(reader)
+
+    return rows

@@ -15,6 +15,8 @@ EC_LEADERSHIP_ROLE = "ec_leadership"
 EC_LEADERSHIP_WRITE_ROLE = "ec_leadership_write"
 
 ACCESS_TYPE_READ = 'read'
+ACCESS_TYPE_WRITE = 'write'
+ACCESS_TYPE_SUBMIT = 'submit'
 ACCESS_TYPE_LOCK = 'lock'
 ACCESS_TYPE_UNLOCK = 'unlock'
 
