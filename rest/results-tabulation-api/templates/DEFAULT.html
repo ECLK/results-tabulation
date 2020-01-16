@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block container %}
+    <table class="table table-borderless">
+        <thead>
+        <tr>
+            {% for column in content.columns %}
+                <th class="left right top bottom text-right {% if cell=="" %}missing-value{% endif %}"
+                    style="vertical-align: middle; padding-left:initial;">
+                    {{ column }}
+                </th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for row in content.data %}
+            <tr>
+                {% for cell in row %}
+                    <td class="left right top bottom text-right {% if cell=="" %}missing-value{% endif %}"
+                        style="vertical-align: middle; padding-left:initial;">{{ cell }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}

@@ -3,6 +3,7 @@ from constants.TALLY_SHEET_CODES import CE_201, CE_201_PV, PRE_41, PRE_30_PD, PR
     PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, PRE_ALL_ISLAND_RESULTS, PRE_34_CO, PRE_34_I_RO, PRE_34_II_RO, PRE_34, \
     PRE_34_PD, PRE_34_ED, PRE_34_AI
 from constants.VOTE_TYPES import Postal, NonPostal
+from ext import TallySheetMap
 from ext.Election.PresidentialElection2019 import RoleBasedAccess
 from ext.Election.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Election, Candidate, Template, Party
@@ -10,7 +11,6 @@ from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
 from orm.entities.Submission import TallySheet
-from orm.entities.Submission.TallySheet import TallySheetMap
 from orm.enums import AreaTypeEnum
 
 role_based_access_config = RoleBasedAccess.role_based_access_config

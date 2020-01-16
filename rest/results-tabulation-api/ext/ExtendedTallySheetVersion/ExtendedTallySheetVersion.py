@@ -19,7 +19,7 @@ class ExtendedTallySheetVersion:
             total_registered_voters = float(tallySheetVersion.submission.area.registeredVotersCount)
 
         content = {
-            "resultTitle": "All Island Result",
+            "resultTitle": title,
             "election": {
                 "electionName": tallySheetVersion.submission.election.get_official_name()
             },
@@ -84,7 +84,67 @@ class ExtendedTallySheetVersion:
         return html
 
     def html(self, title="", total_registered_voters=None):
-        return self.html_letter(title=title, total_registered_voters=total_registered_voters)
+        stamp = self.tallySheetVersion.stamp
+
+        content = {
+            "columns": [
+                "tallySheetVersionRowId",
+                "electionId",
+                "templateRowId",
+                "templateRowType",
+                "electionId",
+                "voteType",
+                "rootElectionId",
+                "areaId",
+                "areaName",
+                "candidateId",
+                "candidateName",
+                "partyId",
+                "partyName",
+                "partySymbol",
+                "partyAbbreviation",
+                "strValue",
+                "numValue"
+            ],
+            "data": [],
+            "stamp": {
+                "createdAt": stamp.createdAt,
+                "createdBy": stamp.createdBy,
+                "barcodeString": stamp.barcodeString
+            },
+        }
+
+        for row in self.tallySheetVersion.content:
+            content_row = [
+                row.tallySheetVersionRowId,
+                row.electionId,
+                row.templateRowId,
+                row.templateRowType,
+                row.electionId,
+                row.voteType,
+                row.rootElectionId,
+                row.areaId,
+                row.areaName,
+                row.candidateId,
+                row.candidateName,
+                row.partyId,
+                row.partyName,
+                row.partySymbol,
+                row.partyAbbreviation,
+                row.strValue,
+                row.numValue
+            ]
+
+            content_row = ["" if cell is None else cell for cell in content_row]
+
+            content["data"].append(content_row)
+
+        html = render_template(
+            'DEFAULT.html',
+            content=content
+        )
+
+        return html
 
     def get_candidate_and_area_wise_valid_non_postal_vote_count_result(self):
         df = self.df.copy()
