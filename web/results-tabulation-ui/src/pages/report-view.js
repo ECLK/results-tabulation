@@ -28,7 +28,7 @@ import {getTallySheetCodeStr} from "../utils/tallySheet";
 
 export default function ReportView(props) {
     const {history, election, messages} = props
-    const {electionId, electionName} = election;
+    const {electionId, rootElection} = election;
     const [tallySheet, setTallySheet] = useState(props.tallySheet);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState(null);
@@ -142,12 +142,11 @@ export default function ReportView(props) {
 
     function getTallySheetListLink() {
         const {tallySheetCode} = tallySheet;
-        const subElectionId = tallySheet.electionId;
 
         if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
-            return PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId)
+            return PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode)
         } else {
-            return PATH_ELECTION_REPORT(electionId, tallySheetCode, subElectionId)
+            return PATH_ELECTION_REPORT(electionId, tallySheetCode)
         }
     }
 
@@ -155,13 +154,12 @@ export default function ReportView(props) {
     const getReportViewJsx = () => {
         const {tallySheetCode, tallySheetStatus, area, tallySheetId} = tallySheet;
         const {areaName} = area;
-        const subElection = tallySheet.election;
 
         const breadCrumbLinkList = [
             {label: "elections", to: PATH_ELECTION()},
-            {label: electionName, to: PATH_ELECTION_BY_ID(electionId)},
+            {label: rootElection.electionName, to: PATH_ELECTION_BY_ID(rootElection.electionId)},
             {
-                label: getTallySheetCodeStr({tallySheetCode, election: subElection}).toLowerCase(),
+                label: getTallySheetCodeStr({tallySheetCode, election: election}).toLowerCase(),
                 to: getTallySheetListLink()
             },
             {
@@ -175,8 +173,8 @@ export default function ReportView(props) {
                 links={breadCrumbLinkList}
             />
             <div className="page-content">
-                <div>{electionName}</div>
-                <div>{getTallySheetCodeStr({tallySheetCode, election: subElection})}</div>
+                <div>{rootElection.electionName}</div>
+                <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
 
 
                 <div className="report-view-status">

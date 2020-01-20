@@ -173,7 +173,7 @@ export default function ReleaseView(props) {
 
     const getReportViewJsx = () => {
         const {tallySheetCode, tallySheetStatus} = tallySheet;
-        const subElectionId = tallySheet.electionId;
+        const electionId = tallySheet.electionId;
 
         const breadCrumbLinkList = [
             {label: "elections", to: PATH_ELECTION()},
@@ -181,8 +181,8 @@ export default function ReleaseView(props) {
         ];
         breadCrumbLinkList.push({
             label: tallySheetCode.toLowerCase() + " release",
-            to: PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode, subElectionId)
-        })
+            to: PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode, electionId)
+        });
         let leftPlane;
 
         if (latestProofId === PROOF_STATUS_ENUM.PROOF_LOADING) {

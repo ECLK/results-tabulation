@@ -52,7 +52,7 @@ import {VOTE_TYPE} from "../../services/tabulation-api/entities/election.entity"
 import PrintLetterButton from "../../components/tally-sheet/print-letter-button";
 
 
-export default function ReleaseList({history, queryString, election, subElection}) {
+export default function ReleaseList({history, queryString, election}) {
     const {electionId, electionName} = election;
     const {tallySheetCode} = queryString;
 
@@ -73,7 +73,7 @@ export default function ReleaseList({history, queryString, election, subElection
     };
 
     function getElection() {
-        return subElection ? subElection : election;
+        return election;
     }
 
     const fetchProofStatuses = async () => {
@@ -339,7 +339,7 @@ export default function ReleaseList({history, queryString, election, subElection
                 {
                     label: getTallySheetCodeStr({tallySheetCode, election: getElection()}).toLowerCase() + " release",
                     to: PATH_ELECTION_BY_ID(electionId)
-                    // TODO: should be PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode, *subElectionId*)
+                    // TODO: should be PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode)
                 },
             ]}
         />

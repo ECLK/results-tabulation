@@ -18,14 +18,10 @@ import Processing from "./components/processing";
 export const ROUTER_PREFIX = "";
 export const PATH_ELECTION = () => `${ROUTER_PREFIX}/election`;
 export const PATH_ELECTION_BY_ID = (electionId) => `${ROUTER_PREFIX}/election/${electionId}`;
-export const PATH_ELECTION_DATA_ENTRY = (electionId, tallySheetCode = null, subElectionId = null) => {
+export const PATH_ELECTION_DATA_ENTRY = (electionId, tallySheetCode = null) => {
     let path = `${ROUTER_PREFIX}/election/${electionId}/data-entry`;
     if (tallySheetCode) {
         path += `?tallySheetCode=${tallySheetCode}&`;
-    }
-
-    if (subElectionId) {
-        path += `subElectionId=${subElectionId}&`;
     }
 
     return path;
@@ -44,34 +40,19 @@ export const PATH_ELECTION_VERIFICATION = (electionId, tallySheetCode) => {
 export const PATH_ELECTION_VERIFICATION_EDIT = (electionId, tallySheetId) => {
     return `${ROUTER_PREFIX}/election/${electionId}/verification/${tallySheetId}`;
 };
-export const PATH_ELECTION_REPORT = (electionId, tallySheetCode, subElectionId) => {
+export const PATH_ELECTION_REPORT = (electionId, tallySheetCode) => {
     let path = `${ROUTER_PREFIX}/election/${electionId}/report`;
     if (tallySheetCode) {
         path += `?tallySheetCode=${tallySheetCode}&`;
     }
 
-    if (subElectionId) {
-        path += `subElectionId=${subElectionId}&`;
-    }
-
     return path;
 };
-export const PATH_ELECTION_RESULTS_RELEASE = (electionId, tallySheetCode, subElectionId) => {
+export const PATH_ELECTION_RESULTS_RELEASE = (electionId, tallySheetCode) => {
     let path = `${ROUTER_PREFIX}/election/${electionId}/release`;
-    if (tallySheetCode || subElectionId) {
-        path += '?';
-    }
 
     if (tallySheetCode) {
-        path += `tallySheetCode=${tallySheetCode}`;
-    }
-
-    if (tallySheetCode && subElectionId) {
-        path += '&';
-    }
-
-    if (subElectionId) {
-        path += `subElectionId=${subElectionId}`;
+        path += `?tallySheetCode=${tallySheetCode}`;
     }
 
     return path;

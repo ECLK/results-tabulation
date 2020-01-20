@@ -30,13 +30,12 @@ export default function DataEntryEdit_PRE_34_CO({history, queryString, election,
 
 
     const setTallySheetContent = (tallySheetVersion) => {
-        const subElectionId = tallySheet.electionId;
         const qualifiedParties = getQualifiedParties();
 
         if (qualifiedParties.length === 0) {
             messages.push("Error", MESSAGES_EN.error_preferences_not_enabled_yet, MESSAGE_TYPES.ERROR);
             // setTimeout(() => {
-            history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId));
+            history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
             //}, 5000);
         }
 
@@ -176,13 +175,12 @@ export default function DataEntryEdit_PRE_34_CO({history, queryString, election,
 
     //
     // useEffect(() => {
-    //     const subElectionId = tallySheet.electionId;
     //     const qualifiedParties = getQualifiedParties();
     //
     //     if (qualifiedParties.length === 0) {
     //         messages.push("Error", MESSAGES_EN.error_preferences_not_enabled_yet, MESSAGE_TYPES.ERROR);
     //         setTimeout(() => {
-    //             history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId));
+    //             history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
     //         }, 5000);
     //     } else if (tallySheet.latestVersionId) {
     //         getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheet.latestVersionId).then((tallySheetVersion) => {
@@ -321,8 +319,7 @@ export default function DataEntryEdit_PRE_34_CO({history, queryString, election,
     //
     //         messages.push("Success", MESSAGES_EN.success_pre41_submit, MESSAGE_TYPES.SUCCESS);
     //         setTimeout(() => {
-    //             const subElectionId = tallySheet.electionId;
-    //             history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId));
+    //             history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
     //         }, 1000)
     //     } catch (e) {
     //         messages.push("Error", MESSAGES_EN.error_tallysheet_submit, MESSAGE_TYPES.ERROR);

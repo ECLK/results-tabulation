@@ -217,8 +217,7 @@ export default function DataEntryEdit_CE_201_PV({history, queryString, election,
     //
     //         messages.push("Success", MESSAGES_EN.success_pre41_submit, MESSAGE_TYPES.SUCCESS);
     //         setTimeout(() => {
-    //             const subElectionId = tallySheet.electionId;
-    //             history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId));
+    //             history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
     //         }, 1000)
     //     } catch (e) {
     //         messages.push("Error", MESSAGES_EN.error_tallysheet_submit, MESSAGE_TYPES.ERROR);

@@ -19,7 +19,6 @@ import {MESSAGE_TYPES} from "../../services/messages.provider";
 
 export default function DataEntryEdit({history, queryString, election, tallySheet, messages}) {
     const {tallySheetId, tallySheetCode} = tallySheet;
-    const subElectionId = tallySheet.electionId;
     const {electionId, electionName} = election;
 
     function getEditorJsx() {
@@ -44,7 +43,7 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
                 {label: electionName, to: PATH_ELECTION_BY_ID(electionId)},
                 {
                     label: getTallySheetCodeStr(tallySheet).toLowerCase(),
-                    to: PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId)
+                    to: PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode)
                 },
                 {
                     label: tallySheet.area.areaName,
@@ -125,8 +124,7 @@ export function useTallySheetEdit(props) {
 
             messages.push("Success", MESSAGES_EN.success_pre41_submit, MESSAGE_TYPES.SUCCESS);
             setTimeout(() => {
-                const subElectionId = tallySheet.electionId;
-                history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId));
+                history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
             }, 1000)
         } catch (e) {
             messages.push("Error", MESSAGES_EN.error_tallysheet_submit, MESSAGE_TYPES.ERROR);
