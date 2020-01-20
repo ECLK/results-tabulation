@@ -3,14 +3,12 @@ from constants.TALLY_SHEET_CODES import PRE_ALL_ISLAND_RESULTS, PRE_ALL_ISLAND_R
 
 
 def get_extended_tally_sheet_version_class(templateName):
-    print("tttttttttttttttttttttt 1")
+    from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion import ExtendedTallySheetVersion
     from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_30_ED import ExtendedTallySheetVersion_PRE_30_ED
     from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_30_PD import ExtendedTallySheetVersion_PRE_30_PD
     from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_41 import ExtendedTallySheetVersion_PRE_41
     from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_AI import ExtendedTallySheetVersion_PRE_AI
     from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_AI_ED import ExtendedTallySheetVersion_PRE_AI_ED
-
-    print("tttttttttttttttttttttt 2")
 
     EXTENDED_TEMPLATE_MAP = {
         PRE_41: ExtendedTallySheetVersion_PRE_41,
@@ -23,4 +21,4 @@ def get_extended_tally_sheet_version_class(templateName):
     if templateName in EXTENDED_TEMPLATE_MAP:
         return EXTENDED_TEMPLATE_MAP[templateName]
     else:
-        return None
+        return ExtendedTallySheetVersion

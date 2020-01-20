@@ -12,10 +12,6 @@ class TemplateModel(db.Model):
 
     rows = relationship("TemplateRowModel")
 
-    __table_args__ = (
-        db.UniqueConstraint('templateName', name='TemplateModelUniqueKey'),
-    )
-
     def has_data_entry(self):
         has_data_entry = False
         for row in self.rows:

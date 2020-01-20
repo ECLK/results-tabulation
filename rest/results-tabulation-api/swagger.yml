@@ -2155,22 +2155,6 @@ paths:
           in: query
           schema:
             type: string
-            enum:
-              - CE-201
-              - CE-201-PV
-              - PRE-41
-              - PRE-21
-              - PRE-30-PD
-              - PRE-30-ED
-              - PRE-34-CO
-              - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
-              - PRE-ALL-ISLAND-RESULTS
-              - PRE-34-I-RO
-              - PRE-34-II-RO
-              - PRE-34
-              - PRE-34-PD
-              - PRE-34-ED
-              - PRE-34-AI
       responses:
         '200':
           description: Successful operation.
@@ -2210,21 +2194,6 @@ paths:
                       format: date-time
                     tallySheetCode:
                       type: string
-                      enum:
-                        - CE-201
-                        - CE-201-PV
-                        - PRE-41
-                        - PRE-21
-                        - PRE-30-PD
-                        - PRE-30-ED
-                        - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
-                        - PRE-ALL-ISLAND-RESULTS
-                        - PRE-34-I-RO
-                        - PRE-34-II-RO
-                        - PRE-34
-                        - PRE-34-PD
-                        - PRE-34-ED
-                        - PRE-34-AI
         '400':
           description: Bad request.
           content:
@@ -2301,15 +2270,6 @@ paths:
                     format: date-time
                   tallySheetCode:
                     type: string
-                    enum:
-                      - CE-201
-                      - CE-201-PV
-                      - PRE-41
-                      - PRE-21
-                      - PRE-30-PD
-                      - PRE-30-ED
-                      - PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS
-                      - PRE-ALL-ISLAND-RESULTS
         '400':
           description: Bad request.
           content:
