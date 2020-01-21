@@ -21,7 +21,7 @@ export default function DataEntryEdit_PRE_41({history, queryString, election, ta
 
     const setTallySheetContent = (tallySheetVersion) => {
         const latestCandidateWiseCounts = {};
-        election.parties.map(party => {
+        election.rootElection.parties.map(party => {
             party.candidates.map(candidate => {
                 latestCandidateWiseCounts[candidate.candidateId] = {
                     candidateId: candidate.candidateId,
@@ -73,7 +73,7 @@ export default function DataEntryEdit_PRE_41({history, queryString, election, ta
     const getTallySheetRequestBody = () => {
         const rejected_vote_rows = [{"numValue": rejectedVoteCount}];
         const candidate_first_preference_rows = [];
-        election.parties.map(party => {
+        election.rootElection.parties.map(party => {
             const {partyId} = party;
             party.candidates.map(candidate => {
                 const {candidateId} = candidate;
@@ -175,7 +175,7 @@ export default function DataEntryEdit_PRE_41({history, queryString, election, ta
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {election.parties.map(party => {
+                    {election.rootElection.parties.map(party => {
                         return party.candidates.map(candidate => {
                             const {candidateId, candidateName} = candidate;
                             const {partySymbol} = party;
@@ -237,7 +237,7 @@ export default function DataEntryEdit_PRE_41({history, queryString, election, ta
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {election.parties.map(party => {
+                    {election.rootElection.parties.map(party => {
                         return party.candidates.map(candidate => {
                             const {candidateId, candidateName} = candidate;
                             const {partySymbol} = party;

@@ -1,11 +1,14 @@
-import React, {Component, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {
     PATH_ELECTION, PATH_ELECTION_BY_ID,
-    PATH_ELECTION_DATA_ENTRY, PATH_ELECTION_DATA_ENTRY_EDIT,
+    PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_DATA_ENTRY_EDIT
+} from "../../App";
+
+import {
     TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_CE_201_PV,
     TALLY_SHEET_CODE_PRE_41, TALLY_SHEET_CODE_PRE_34_CO
-} from "../../App";
+} from "../../components/election/election-menu/PRESIDENTIAL_ELECTION_2019/TALLy_SHEET_CODES";
 import BreadCrumb from "../../components/bread-crumb";
 import DataEntryEdit_PRE_41 from "./data-entry-edit-pre-41";
 import DataEntryEdit_CE_201 from "./data-entry-edit-ce-201";
@@ -18,8 +21,8 @@ import {MESSAGE_TYPES} from "../../services/messages.provider";
 
 
 export default function DataEntryEdit({history, queryString, election, tallySheet, messages}) {
-    const {tallySheetId, tallySheetCode} = tallySheet;
-    const {electionId, electionName} = election;
+    const {tallySheetCode} = tallySheet;
+    const {electionId, rootElection} = election;
 
     function getEditorJsx() {
         const props = {history, queryString, election, tallySheet, messages};
@@ -40,10 +43,10 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
         <BreadCrumb
             links={[
                 {label: "elections", to: PATH_ELECTION()},
-                {label: electionName, to: PATH_ELECTION_BY_ID(electionId)},
+                {label: rootElection.electionName, to: PATH_ELECTION_BY_ID(rootElection.electionId)},
                 {
                     label: getTallySheetCodeStr(tallySheet).toLowerCase(),
-                    to: PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode)
+                    to: PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode)
                 },
                 {
                     label: tallySheet.area.areaName,
@@ -53,7 +56,7 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
         />
         <div className="page-content">
             <div className="data-entry-edit-header">
-                <div className="data-entry-edit-header-election-name">{electionName}</div>
+                <div className="data-entry-edit-header-election-name">{rootElection.electionName}</div>
                 <div className="data-entry-edit-header-tally-sheet-code">{getTallySheetCodeStr(tallySheet)}</div>
             </div>
             <div>{tallySheet.electoralDistrict ? 'Electoral District: ' + tallySheet.electoralDistrict.areaName : null}
@@ -124,7 +127,7 @@ export function useTallySheetEdit(props) {
 
             messages.push("Success", MESSAGES_EN.success_pre41_submit, MESSAGE_TYPES.SUCCESS);
             setTimeout(() => {
-                history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
+                history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode));
             }, 1000)
         } catch (e) {
             messages.push("Error", MESSAGES_EN.error_tallysheet_submit, MESSAGE_TYPES.ERROR);

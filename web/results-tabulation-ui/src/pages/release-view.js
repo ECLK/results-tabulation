@@ -1,17 +1,13 @@
-import React, {Component, useEffect, useState} from "react";
-
+import React, {useEffect, useState} from "react";
 import {
-    getTallySheetProof, getProofImage,
-    getTallySheetVersionHtml, lockTallySheet, finalizeProof,
-    saveTallySheetVersion,
-    TALLY_SHEET_STATUS_ENUM, unlockTallySheet, uploadTallySheetProof, notifyTallySheet, releaseTallySheet
+    getTallySheetProof, getProofImage, getTallySheetVersionHtml, saveTallySheetVersion,
+    TALLY_SHEET_STATUS_ENUM, uploadTallySheetProof, notifyTallySheet, releaseTallySheet
 } from "../services/tabulation-api";
 import {MESSAGE_TYPES} from "../services/messages.provider";
 import {
     PATH_ELECTION, PATH_ELECTION_BY_ID,
-    COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES, PATH_ELECTION_RESULTS_RELEASE
+    PATH_ELECTION_RESULTS_RELEASE
 } from "../App";
-import Processing from "../components/processing";
 import Error from "../components/error";
 import BreadCrumb from "../components/bread-crumb";
 import Button from "@material-ui/core/Button";
@@ -54,7 +50,7 @@ export default function ReleaseView(props) {
     const fetchTallySheetVersion = async () => {
         const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId, tallySheetStatus} = tallySheet;
         let tallySheetVersionId = null;
-        if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
+        if (!tallySheet.template.isDerived) {
             if (lockedVersionId) {
                 tallySheetVersionId = lockedVersionId;
             } else if (submittedVersionId) {

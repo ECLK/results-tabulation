@@ -3,7 +3,7 @@ import Button from "@material-ui/core/Button";
 import React from "react";
 import {TALLY_SHEET_STATUS_ENUM} from "../../../../services/tabulation-api";
 
-export default function TallySheetListRowActionEdit({history, electionId, tallySheetListRow}) {
+export default function TallySheetListRowActionRequestEdit({history, electionId, tallySheetListRow}) {
     return <Button
         variant="outlined" color="default"
         size="small"

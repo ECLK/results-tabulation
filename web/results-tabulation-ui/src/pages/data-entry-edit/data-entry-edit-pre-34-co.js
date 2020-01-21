@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {isNumeric, processNumericValue} from "../../utils";
 import {MESSAGE_TYPES} from "../../services/messages.provider";
-import {PATH_ELECTION_DATA_ENTRY} from "../../App";
+import {PATH_ELECTION_TALLY_SHEET_LIST} from "../../App";
 import Processing from "../../components/processing";
 import Error from "../../components/error";
 import Table from "@material-ui/core/Table";
@@ -19,15 +19,9 @@ import {useTallySheetEdit} from "./index";
 export default function DataEntryEdit_PRE_34_CO({history, queryString, election, tallySheet, messages}) {
     const {tallySheetId, tallySheetCode} = tallySheet;
     const {electionId} = election;
-
     const [candidateIds, setCandidateIds] = useState([]);
     const [candidateWiseCounts, setCandidateWiseCounts] = useState({});
-    // const [processing, setProcessing] = useState(true);
-    // const [tallySheetVersion, setTallySheetVersion] = useState(null);
-    // const [processingLabel, setProcessingLabel] = useState("Loading");
-    // const [saved, setSaved] = useState(false);
     const [summary, setSummary] = useState([]);
-
 
     const setTallySheetContent = (tallySheetVersion) => {
         const qualifiedParties = getQualifiedParties();
@@ -35,7 +29,7 @@ export default function DataEntryEdit_PRE_34_CO({history, queryString, election,
         if (qualifiedParties.length === 0) {
             messages.push("Error", MESSAGES_EN.error_preferences_not_enabled_yet, MESSAGE_TYPES.ERROR);
             // setTimeout(() => {
-            history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
+            history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode));
             //}, 5000);
         }
 
@@ -63,6 +57,26 @@ export default function DataEntryEdit_PRE_34_CO({history, queryString, election,
                     [preferenceNo]: contentRow.preferenceCount,
                     totalCount: total + contentRow.preferenceCount
                 };
+            }
+
+            for (let i = 0; i < content.length; i++) {
+                let contentRow = content[i];
+                if (contentRow.templateRowType === "CANDIDATE_SECOND_PREFERENCE") {
+                    latestCandidateWiseCounts[contentRow.candidateId] = {
+                        ...latestCandidateWiseCounts[contentRow.candidateId],
+                        candidateId: contentRow.candidateId,
+                        candidateName: contentRow.candidateName,
+                        secondPreferenceCount: contentRow.numValue
+                    };
+                } else if (contentRow.templateRowType === "CANDIDATE_THIRD_PREFERENCE") {
+                    latestCandidateWiseCounts[contentRow.candidateId] = {
+                        ...latestCandidateWiseCounts[contentRow.candidateId],
+                        candidateId: contentRow.candidateId,
+                        candidateName: contentRow.candidateName,
+                        thirdPreferenceCount: contentRow.numValue
+                    };
+                }
+
             }
 
             setCandidateWiseCounts(latestCandidateWiseCounts);
@@ -172,79 +186,6 @@ export default function DataEntryEdit_PRE_34_CO({history, queryString, election,
         return qualifiedParties
     }
 
-
-    //
-    // useEffect(() => {
-    //     const qualifiedParties = getQualifiedParties();
-    //
-    //     if (qualifiedParties.length === 0) {
-    //         messages.push("Error", MESSAGES_EN.error_preferences_not_enabled_yet, MESSAGE_TYPES.ERROR);
-    //         setTimeout(() => {
-    //             history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
-    //         }, 5000);
-    //     } else if (tallySheet.latestVersionId) {
-    //         getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheet.latestVersionId).then((tallySheetVersion) => {
-    //             const latestCandidateWiseCounts = {};
-    //             const {content} = tallySheetVersion;
-    //             for (let i = 0; i < content.length; i++) {
-    //                 let contentRow = content[i];
-    //                 let preferenceNo = "";
-    //                 let candidate = latestCandidateWiseCounts[contentRow.candidateId];
-    //                 let total = candidate == undefined ? 0 : candidate.totalCount;
-    //                 if (total === undefined) {
-    //                     total = 0;
-    //                 }
-    //                 if (contentRow.preferenceNumber === 2) {
-    //                     preferenceNo = "secondPreferenceCount"
-    //                     candidateIds.push(contentRow.candidateId);
-    //                 } else if (contentRow.preferenceNumber === 3) {
-    //                     preferenceNo = "thirdPreferenceCount"
-    //                 }
-    //                 latestCandidateWiseCounts[contentRow.candidateId] = {
-    //                     ...latestCandidateWiseCounts[contentRow.candidateId],
-    //                     candidateId: contentRow.candidateId,
-    //                     candidateName: contentRow.candidateName,
-    //                     [preferenceNo]: contentRow.preferenceCount,
-    //                     totalCount: total + contentRow.preferenceCount
-    //                 };
-    //             }
-    //             console.log("latest", candidateIds);
-    //             console.log("latest", latestCandidateWiseCounts);
-    //             setCandidateWiseCounts(latestCandidateWiseCounts);
-    //             setSummary({
-    //                 ballotPapersNotCounted: tallySheetVersion.summary.ballotPapersNotCounted,
-    //                 remainingBallotPapers: tallySheetVersion.summary.remainingBallotPapers,
-    //                 total: tallySheetVersion.summary.ballotPapersNotCounted + tallySheetVersion.summary.remainingBallotPapers
-    //             });
-    //         }).catch((error) => {
-    //             console.log("error:", error);
-    //             messages.push("Error", MESSAGES_EN.error_tallysheet_not_reachable, MESSAGE_TYPES.ERROR);
-    //         })
-    //     } else {
-    //         const initialCandidateWiseCounts = {};
-    //         election.parties.map(party => {
-    //             party.candidates.map(candidate => {
-    //                 if (candidate.qualifiedForPreferences) {
-    //                     initialCandidateWiseCounts[candidate.candidateId] = {
-    //                         candidateId: candidate.candidateId,
-    //                         candidateName: candidate.candidateName,
-    //                         secondPreferenceCount: 0,
-    //                         thirdPreferenceCount: 0,
-    //                         totalCount: 0
-    //                     };
-    //                     candidateIds.push(candidate.candidateId);
-    //                 }
-    //             });
-    //         });
-    //         setCandidateWiseCounts(initialCandidateWiseCounts);
-    //         setSummary({
-    //             ballotPapersNotCounted: 0,
-    //             remainingBallotPapers: 0,
-    //             total: 0
-    //         });
-    //     }
-    // }, []);
-
     const handleCountChange = (candidateId, preference) => event => {
         setCandidateWiseCounts({
             ...candidateWiseCounts,
@@ -261,94 +202,6 @@ export default function DataEntryEdit_PRE_34_CO({history, queryString, election,
             [key]: processNumericValue(event.target.value)
         })
     };
-
-    // const getTallySheetSaveRequestBody = () => {
-    //     const content = [];
-    //     election.parties.map(party => {
-    //         party.candidates.map(candidate => {
-    //             const {candidateId} = candidate;
-    //             if (candidateWiseCounts[candidateId] !== undefined) {
-    //                 const {secondPreferenceCount, thirdPreferenceCount} = candidateWiseCounts[candidateId];
-    //                 content.push({
-    //                     candidateId: candidateId,
-    //                     preferenceNumber: 2,
-    //                     preferenceCount: secondPreferenceCount
-    //                 })
-    //                 content.push({
-    //                     candidateId: candidateId,
-    //                     preferenceNumber: 3,
-    //                     preferenceCount: thirdPreferenceCount
-    //                 })
-    //             }
-    //         })
-    //     });
-    //
-    //     return {
-    //         content: content,
-    //         summary: summary
-    //     }
-    // };
-
-    // const handleClickNext = (saved = true) => async (event) => {
-    //     console.log(validateAllValues());
-    //     if (validateAllValues()) {
-    //         setSaved(saved)
-    //         setProcessing(true);
-    //         setProcessingLabel("Saving");
-    //         try {
-    //             const body = getTallySheetSaveRequestBody();
-    //             const tallySheetVersion = await saveTallySheetVersion(tallySheetId, tallySheetCode, body);
-    //
-    //             setTallySheetVersion(tallySheetVersion);
-    //         } catch (e) {
-    //             console.log(e);
-    //             messages.push("Error", MESSAGES_EN.error_tallysheet_save, MESSAGE_TYPES.ERROR);
-    //         }
-    //         setProcessing(false);
-    //     } else {
-    //         messages.push("Error", MESSAGES_EN.error_input, MESSAGE_TYPES.ERROR)
-    //     }
-    // };
-    //
-    // const handleClickSubmit = () => async (event) => {
-    //     setProcessing(true);
-    //     setProcessingLabel("Submitting");
-    //     try {
-    //         const {tallySheetVersionId} = tallySheetVersion;
-    //         const tallySheet = await submitTallySheet(tallySheetId, tallySheetVersionId);
-    //
-    //         messages.push("Success", MESSAGES_EN.success_pre41_submit, MESSAGE_TYPES.SUCCESS);
-    //         setTimeout(() => {
-    //             history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
-    //         }, 1000)
-    //     } catch (e) {
-    //         messages.push("Error", MESSAGES_EN.error_tallysheet_submit, MESSAGE_TYPES.ERROR);
-    //     }
-    //
-    //     setProcessing(false);
-    // };
-    //
-    // function validateAllValues() {
-    //     for (let key in candidateWiseCounts) {
-    //         let secondPreference = candidateWiseCounts[key]["secondPreferenceCount"];
-    //         let thirdPreference = candidateWiseCounts[key]["thirdPreferenceCount"];
-    //         let totalCount = candidateWiseCounts[key]["totalCount"];
-    //
-    //         if (!isNumeric(secondPreference)) {
-    //             return false;
-    //         }
-    //         if (!isNumeric(thirdPreference)) {
-    //             return false;
-    //         }
-    //         if (!isNumeric(totalCount)) {
-    //             return false;
-    //         }
-    //         if (totalCount !== secondPreference + thirdPreference) {
-    //             return false;
-    //         }
-    //     }
-    //     return (summary.ballotPapersNotCounted + summary.remainingBallotPapers === summary.total)
-    // }
 
     function getTallySheetEditForm() {
         if (saved) {

@@ -8,14 +8,8 @@ import {MESSAGE_TYPES} from "../services/messages.provider";
 import {
     PATH_ELECTION,
     PATH_ELECTION_BY_ID,
-    PATH_ELECTION_DATA_ENTRY,
+    PATH_ELECTION_TALLY_SHEET_LIST,
     PATH_ELECTION_DATA_ENTRY_EDIT,
-    TALLY_SHEET_CODE_CE_201,
-    TALLY_SHEET_CODE_CE_201_PV,
-    TALLY_SHEET_CODE_PRE_41,
-    TALLY_SHEET_CODE_PRE_34_CO,
-    COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES,
-    PATH_ELECTION_REPORT,
     PATH_ELECTION_REPORT_VIEW
 } from "../App";
 import Processing from "../components/processing";
@@ -42,7 +36,7 @@ export default function ReportView(props) {
     const fetchTallySheetVersion = async () => {
         const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId, tallySheetStatus} = tallySheet;
         let tallySheetVersionId = null;
-        if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
+        if (!tallySheet.template.isDerived) {
             if (lockedVersionId) {
                 tallySheetVersionId = lockedVersionId;
             } else if (submittedVersionId) {
@@ -143,11 +137,7 @@ export default function ReportView(props) {
     function getTallySheetListLink() {
         const {tallySheetCode} = tallySheet;
 
-        if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
-            return PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode)
-        } else {
-            return PATH_ELECTION_REPORT(electionId, tallySheetCode)
-        }
+        return PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode)
     }
 
 
@@ -190,7 +180,7 @@ export default function ReportView(props) {
                             Confirm
                         </Button>
                         {(() => {
-                            if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
+                            if (!tallySheet.template.isDerived) {
                                 return <Button
                                     variant="contained" size="small" color="primary"
                                     disabled={processing || !tallySheet.readyToLock}

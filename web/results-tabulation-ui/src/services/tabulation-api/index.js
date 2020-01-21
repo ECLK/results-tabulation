@@ -1,24 +1,9 @@
 import axios from 'axios';
 import {TABULATION_API_URL} from "../../config";
-import {
-    TALLY_SHEET_CODE_CE_201,
-    TALLY_SHEET_CODE_CE_201_PV,
-    TALLY_SHEET_CODE_PRE_30_ED,
-    TALLY_SHEET_CODE_PRE_30_PD,
-    TALLY_SHEET_CODE_PRE_41,
-    TALLY_SHEET_CODE_PRE_34_CO,
-    COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES,
-    ALL_ISLAND_TALLY_SHEET_CODES,
-    TALLY_SHEET_CODE_PRE_34_I_RO,
-    TALLY_SHEET_CODE_PRE_34_II_RO,
-    TALLY_SHEET_CODE_PRE_34,
-    TALLY_SHEET_CODE_PRE_34_PD, TALLY_SHEET_CODE_PRE_34_ED
-} from "../../App";
 import {getAccessToken} from "../../auth";
 import {AreaEntity} from "./entities/area.entity";
-import {ElectionEntity, VOTE_TYPE} from "./entities/election.entity";
-import {getFirstOrNull} from "../../utils";
-
+import {ElectionEntity} from "./entities/election.entity";
+import {mapRequiredAreasToTallySheet} from "../../components/election/election-menu";
 export const ENDPOINT_PATH_ELECTIONS = () => "/election";
 export const ENDPOINT_PATH_ELECTION_AREA = (electionId) => `/election/${electionId}/area`;
 export const ENDPOINT_PATH_ELECTIONS_BY_ID = (electionId) => `/election/${electionId}`;
@@ -93,7 +78,7 @@ async function refactorTallySheetObject(tallySheet) {
     const {tallySheetCode, lockedVersionId, submittedVersionId, latestVersionId} = tallySheet;
     let tallySheetStatus = "";
     let readyToLock = false;
-    if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
+    if (!tallySheet.template.isDerived) {
         if (lockedVersionId) {
             tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VERIFIED;
         } else if (submittedVersionId) {
@@ -117,36 +102,7 @@ async function refactorTallySheetObject(tallySheet) {
     tallySheet.readyToLock = readyToLock;
     tallySheet.area = await areaEntity.getById(tallySheet.areaId);
     tallySheet.election = await electionEntity.getById(tallySheet.electionId);
-    if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
-        if (tallySheet.election.voteType === VOTE_TYPE.POSTAL) {
-            const countingCentre = tallySheet.area;
-            const electoralDistrict = getFirstOrNull(countingCentre.electoralDistricts);
-            tallySheet.countingCentre = countingCentre;
-            tallySheet.electoralDistrict = electoralDistrict;
-        } else {
-            const countingCentre = tallySheet.area;
-            const pollingStation = getFirstOrNull(countingCentre.pollingStations);
-            const pollingDistrict = getFirstOrNull(pollingStation.pollingDistricts);
-            const pollingDivision = getFirstOrNull(pollingDistrict.pollingDivisions);
-            const electoralDistrict = getFirstOrNull(pollingDivision.electoralDistricts);
-            tallySheet.countingCentre = countingCentre;
-            tallySheet.pollingDivision = pollingDivision;
-            tallySheet.electoralDistrict = electoralDistrict;
-        }
-    } else if (tallySheetCode === TALLY_SHEET_CODE_PRE_30_PD || tallySheetCode === TALLY_SHEET_CODE_PRE_34_I_RO || tallySheetCode === TALLY_SHEET_CODE_PRE_34_PD) {
-        if (tallySheet.election.voteType === VOTE_TYPE.POSTAL) {
-            tallySheet.electoralDistrict = tallySheet.area;
-        } else {
-            const pollingDivision = tallySheet.area;
-            const electoralDistrict = getFirstOrNull(pollingDivision.electoralDistricts);
-            tallySheet.pollingDivision = pollingDivision;
-            tallySheet.electoralDistrict = electoralDistrict;
-        }
-    } else if (tallySheetCode === TALLY_SHEET_CODE_PRE_30_ED || tallySheetCode === TALLY_SHEET_CODE_PRE_34_II_RO || tallySheetCode === TALLY_SHEET_CODE_PRE_34 || tallySheetCode === TALLY_SHEET_CODE_PRE_34_ED) {
-        tallySheet.electoralDistrict = tallySheet.area;
-    } else if (ALL_ISLAND_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
-        tallySheet.country = tallySheet.area;
-    }
+    tallySheet = mapRequiredAreasToTallySheet(tallySheet);
 
     return tallySheet
 }
@@ -308,4 +264,3 @@ export function getProofImage(fileId) {
 export function generateReport(tallySheetId, tallySheetVersionId) {
     return saveTallySheetVersion(tallySheetId, tallySheetVersionId)
 }
-

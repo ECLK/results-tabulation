@@ -108,7 +108,7 @@ export default function DataEntryEdit_CE_201({history, queryString, election, ta
         for (let key in pollingStationMap) {
             total += parseInt(pollingStationMap[key]["ordinaryBallotCountFromBoxCount"])
         }
-        console.log(total);
+
         return total;
     }
 

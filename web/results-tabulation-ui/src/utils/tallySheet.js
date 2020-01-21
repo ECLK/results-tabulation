@@ -1,12 +1,10 @@
-import {VOTE_TYPE} from "../services/tabulation-api/entities/election.entity";
 import {
     TALLY_SHEET_CODE_CE_201,
     TALLY_SHEET_CODE_CE_201_PV,
-    TALLY_SHEET_CODE_PRE_30_PD,
-    TALLY_SHEET_CODE_PRE_30_PV,
     TALLY_SHEET_CODE_PRE_34_PD,
     TALLY_SHEET_CODE_PRE_34_ED,
-} from "../App";
+} from "../components/election/election-menu/PRESIDENTIAL_ELECTION_2019/TALLy_SHEET_CODES";
+import {VOTE_TYPE_POSTAL} from "../components/election/constants/VOTE_TYPE";
 
 export const getPollingDivisionName = (tallySheet) => {
     let pollingDivisionName = null;
@@ -43,10 +41,8 @@ export function getTallySheetCodeStr({tallySheetCode, election}) {
     if (tallySheetCode === TALLY_SHEET_CODE_PRE_34_ED) {
         tallySheetCodeStr = "REVISED-30-ED"
     }
-    if (tallySheetCode && election && election.voteType === VOTE_TYPE.POSTAL) {
-        if (tallySheetCode === TALLY_SHEET_CODE_PRE_30_PD) {
-            tallySheetCodeStr = TALLY_SHEET_CODE_PRE_30_PV
-        } else if (tallySheetCode === TALLY_SHEET_CODE_CE_201_PV || tallySheetCode === TALLY_SHEET_CODE_CE_201) {
+    if (tallySheetCode && election && election.voteType === VOTE_TYPE_POSTAL) {
+        if (tallySheetCode === TALLY_SHEET_CODE_CE_201_PV || tallySheetCode === TALLY_SHEET_CODE_CE_201) {
             tallySheetCodeStr = tallySheetCode
         } else {
             tallySheetCodeStr = tallySheetCode + "-PV"

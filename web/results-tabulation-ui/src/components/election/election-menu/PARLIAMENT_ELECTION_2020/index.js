@@ -1,26 +1,68 @@
-import BreadCrumb from "../../../bread-crumb";
 import Grid from "@material-ui/core/Grid";
 import {
-    PATH_ELECTION_DATA_ENTRY,
-    PATH_ELECTION_REPORT, PATH_ELECTION_RESULTS_RELEASE
+    PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_RESULTS_RELEASE
 } from "../../../../App";
+import {
+    TALLY_SHEET_CODE_CE_201,
+    TALLY_SHEET_CODE_CE_201_PV,
+    TALLY_SHEET_CODE_PE_27,
+    TALLY_SHEET_CODE_PE_4,
+    TALLY_SHEET_CODE_PE_CE_RO_V1,
+    TALLY_SHEET_CODE_PE_R1,
+    TALLY_SHEET_CODE_PE_CE_RO_V2,
+    TALLY_SHEET_CODE_PE_R2,
+    TALLY_SHEET_CODE_PE_CE_RO_PR_1,
+    TALLY_SHEET_CODE_PE_CE_RO_PR_2,
+    TALLY_SHEET_CODE_PE_CE_RO_PR_3,
+} from "./TALLy_SHEET_CODES";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import React from "react";
+import * as Settings from './settings'
+import {
+    AREA_TYPE_COUNTING_CENTRE, AREA_TYPE_COUNTRY,
+    AREA_TYPE_ELECTORAL_DISTRICT,
+    AREA_TYPE_POLLING_DIVISION
+} from "../../constants/AREA_TYPE";
+import {VOTE_TYPE_POSTAL} from "../../constants/VOTE_TYPE";
+import {getFirstOrNull} from "../../../../utils";
 
-const TALLY_SHEET_CODE_CE_201 = "CE-201";
-const TALLY_SHEET_CODE_CE_201_PV = "CE-201-PV";
-const TALLY_SHEET_CODE_PE_27 = "PE-27";
-const TALLY_SHEET_CODE_PE_4 = "PE-4";
-const TALLY_SHEET_CODE_PE_CE_RO_V1 = "PE-CE-RO-V1";
-const TALLY_SHEET_CODE_PE_R1 = "PE-R1";
-const TALLY_SHEET_CODE_PE_CE_RO_V2 = "PE-CE-RO-V2";
-const TALLY_SHEET_CODE_PE_R2 = "PE-R2";
-const TALLY_SHEET_CODE_PE_CE_RO_PR_1 = "PE-CE-RO-PR-1";
-const TALLY_SHEET_CODE_PE_CE_RO_PR_2 = "PE-CE-RO-PR-2";
-const TALLY_SHEET_CODE_PE_CE_RO_PR_3 = "PE-CE-RO-PR-3";
 
-export default function PARLIAMENT_ELECTION_2020(
+export const TALLY_SHEET_LIST_ACTIONS = Settings.TALLY_SHEET_LIST_ACTIONS;
+export const TALLY_SHEET_LIST_COLUMNS = Settings.TALLY_SHEET_LIST_COLUMNS;
+
+export const mapRequiredAreasToTallySheet = function (tallySheet) {
+    if (tallySheet.area.areaType === AREA_TYPE_COUNTING_CENTRE) {
+        if (tallySheet.election.voteType === VOTE_TYPE_POSTAL) {
+            const countingCentre = tallySheet.area;
+            const electoralDistrict = getFirstOrNull(countingCentre.electoralDistricts);
+            tallySheet.countingCentre = countingCentre;
+            tallySheet.electoralDistrict = electoralDistrict;
+        } else {
+            const countingCentre = tallySheet.area;
+            const pollingStation = getFirstOrNull(countingCentre.pollingStations);
+            const pollingDistrict = getFirstOrNull(pollingStation.pollingDistricts);
+            const pollingDivision = getFirstOrNull(pollingDistrict.pollingDivisions);
+            const electoralDistrict = getFirstOrNull(pollingDivision.electoralDistricts);
+            tallySheet.countingCentre = countingCentre;
+            tallySheet.pollingDivision = pollingDivision;
+            tallySheet.electoralDistrict = electoralDistrict;
+        }
+    } else if (tallySheet.area.areaType === AREA_TYPE_POLLING_DIVISION) {
+        const pollingDivision = tallySheet.area;
+        const electoralDistrict = getFirstOrNull(pollingDivision.electoralDistricts);
+        tallySheet.pollingDivision = pollingDivision;
+        tallySheet.electoralDistrict = electoralDistrict;
+    } else if (tallySheet.area.areaType === AREA_TYPE_ELECTORAL_DISTRICT) {
+        tallySheet.electoralDistrict = tallySheet.area;
+    } else if (tallySheet.area.areaType === AREA_TYPE_COUNTRY) {
+        tallySheet.country = tallySheet.area;
+    }
+
+    return tallySheet;
+};
+
+export const ElectionHome = function (
     {
         election
     }
@@ -52,7 +94,7 @@ export default function PARLIAMENT_ELECTION_2020(
                                     return <li key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
                                         <Link
                                             className="tally-sheet-code-list-item btn-list"
-                                            to={PATH_ELECTION_DATA_ENTRY(subElectionId, tallySheetCode)}
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                         >
                                             List
                                         </Link>
@@ -84,7 +126,7 @@ export default function PARLIAMENT_ELECTION_2020(
                                     return <li key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
                                         <Link
                                             className="tally-sheet-code-list-item btn-list"
-                                            to={PATH_ELECTION_DATA_ENTRY(subElectionId, tallySheetCode)}
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                         >
                                             List
                                         </Link>
@@ -112,7 +154,7 @@ export default function PARLIAMENT_ELECTION_2020(
                             return <li key={subElectionId}>{tallySheetCodeLabel}
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_REPORT(subElectionId, tallySheetCode)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                 >
                                     List
                                 </Link>
@@ -130,7 +172,7 @@ export default function PARLIAMENT_ELECTION_2020(
                             return <li key={subElectionId}>{tallySheetCodeLabel}
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_REPORT(subElectionId, tallySheetCode)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                 >
                                     List
                                 </Link>
@@ -140,7 +182,7 @@ export default function PARLIAMENT_ELECTION_2020(
                         <li>PE-CE-RO-V2
                             <Link
                                 className="tally-sheet-code-list-item btn-list"
-                                to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PE_CE_RO_V2)}
+                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_V2)}
                             >
                                 List
                             </Link>
@@ -149,7 +191,7 @@ export default function PARLIAMENT_ELECTION_2020(
                         <li>PE-R2
                             <Link
                                 className="tally-sheet-code-list-item btn-list"
-                                to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PE_R2)}
+                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_R2)}
                             >
                                 List
                             </Link>
@@ -177,7 +219,7 @@ export default function PARLIAMENT_ELECTION_2020(
                             return <li key={subElectionId}>{tallySheetCodeLabel}
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_REPORT(subElectionId, tallySheetCode)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                 >
                                     List
                                 </Link>
@@ -187,7 +229,7 @@ export default function PARLIAMENT_ELECTION_2020(
                         <li>PE-CE-RO-PR-2
                             <Link
                                 className="tally-sheet-code-list-item btn-list"
-                                to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_2)}
+                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_2)}
                             >
                                 List
                             </Link>
@@ -196,7 +238,7 @@ export default function PARLIAMENT_ELECTION_2020(
                         <li>PE-CE-RO-PR-3
                             <Link
                                 className="tally-sheet-code-list-item btn-list"
-                                to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_3)}
+                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_3)}
                             >
                                 List
                             </Link>

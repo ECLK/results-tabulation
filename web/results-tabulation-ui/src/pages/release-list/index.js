@@ -5,17 +5,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Dialog from '@material-ui/core/Dialog';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
 
 import {
     getTallySheet,
@@ -25,30 +14,24 @@ import {
 import {
     PATH_ELECTION,
     PATH_ELECTION_BY_ID,
-    PATH_ELECTION_DATA_ENTRY,
-    PATH_ELECTION_DATA_ENTRY_EDIT,
-    PATH_ELECTION_RESULTS_RELEASE,
-    PATH_ELECTION_REPORT_VIEW,
-    PATH_ELECTION_RESULTS_RELEASE_VIEW,
-    TALLY_SHEET_CODE_CE_201,
-    TALLY_SHEET_CODE_CE_201_PV,
+    PATH_ELECTION_RESULTS_RELEASE_VIEW
+} from "../../App";
+import {
     TALLY_SHEET_CODE_PRE_30_ED,
     TALLY_SHEET_CODE_PRE_30_PD,
-    TALLY_SHEET_CODE_PRE_41,
     TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS,
     TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS,
     TALLY_SHEET_CODE_PRE_34_PD,
     TALLY_SHEET_CODE_PRE_34_ED
-} from "../../App";
+} from "../../components/election/election-menu/PRESIDENTIAL_ELECTION_2019/TALLy_SHEET_CODES";
 import Processing from "../../components/processing";
 import Error from "../../components/error";
 import BreadCrumb from "../../components/bread-crumb";
 import Button from "@material-ui/core/Button";
 import {getTallySheetCodeStr} from "../../utils/tallySheet";
 import TextField from "@material-ui/core/TextField/TextField";
-import {fieldMatch, getFirstOrNull} from "../../utils";
+import {fieldMatch} from "../../utils";
 import {getAreaName} from "../../utils/tallySheet";
-import {VOTE_TYPE} from "../../services/tabulation-api/entities/election.entity";
 import PrintLetterButton from "../../components/tally-sheet/print-letter-button";
 
 

@@ -1,8 +1,8 @@
-import BreadCrumb from "../../../bread-crumb";
 import Grid from "@material-ui/core/Grid";
 import {
-    PATH_ELECTION_DATA_ENTRY,
-    PATH_ELECTION_REPORT, PATH_ELECTION_RESULTS_RELEASE,
+    PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_RESULTS_RELEASE
+} from "../../../../App";
+import {
     TALLY_SHEET_CODE_CE_201,
     TALLY_SHEET_CODE_CE_201_PV,
     TALLY_SHEET_CODE_PRE_30_ED,
@@ -11,12 +11,56 @@ import {
     TALLY_SHEET_CODE_PRE_41,
     TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS,
     TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
-} from "../../../../App";
+} from "./TALLy_SHEET_CODES";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import React from "react";
+import * as Settings from './settings'
+import {getFirstOrNull} from "../../../../utils";
+import {
+    AREA_TYPE_COUNTING_CENTRE,
+    AREA_TYPE_COUNTRY,
+    AREA_TYPE_ELECTORAL_DISTRICT,
+    AREA_TYPE_POLLING_DIVISION
+} from "../../constants/AREA_TYPE";
+import {VOTE_TYPE_POSTAL} from "../../constants/VOTE_TYPE";
 
-export default function PRESIDENTIAL_ELECTION_2019(
+export const TALLY_SHEET_LIST_ACTIONS = Settings.TALLY_SHEET_LIST_ACTIONS;
+export const TALLY_SHEET_LIST_COLUMNS = Settings.TALLY_SHEET_LIST_COLUMNS;
+
+
+export const mapRequiredAreasToTallySheet = function (tallySheet) {
+    if (tallySheet.area.areaType === AREA_TYPE_COUNTING_CENTRE) {
+        if (tallySheet.election.voteType === VOTE_TYPE_POSTAL) {
+            const countingCentre = tallySheet.area;
+            const electoralDistrict = getFirstOrNull(countingCentre.electoralDistricts);
+            tallySheet.countingCentre = countingCentre;
+            tallySheet.electoralDistrict = electoralDistrict;
+        } else {
+            const countingCentre = tallySheet.area;
+            const pollingStation = getFirstOrNull(countingCentre.pollingStations);
+            const pollingDistrict = getFirstOrNull(pollingStation.pollingDistricts);
+            const pollingDivision = getFirstOrNull(pollingDistrict.pollingDivisions);
+            const electoralDistrict = getFirstOrNull(pollingDivision.electoralDistricts);
+            tallySheet.countingCentre = countingCentre;
+            tallySheet.pollingDivision = pollingDivision;
+            tallySheet.electoralDistrict = electoralDistrict;
+        }
+    } else if (tallySheet.area.areaType === AREA_TYPE_POLLING_DIVISION) {
+        const pollingDivision = tallySheet.area;
+        const electoralDistrict = getFirstOrNull(pollingDivision.electoralDistricts);
+        tallySheet.pollingDivision = pollingDivision;
+        tallySheet.electoralDistrict = electoralDistrict;
+    } else if (tallySheet.area.areaType === AREA_TYPE_ELECTORAL_DISTRICT) {
+        tallySheet.electoralDistrict = tallySheet.area;
+    } else if (tallySheet.area.areaType === AREA_TYPE_COUNTRY) {
+        tallySheet.country = tallySheet.area;
+    }
+
+    return tallySheet;
+};
+
+export const ElectionHome = function (
     {
         election
     }
@@ -48,7 +92,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                                     return <li key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
                                         <Link
                                             className="tally-sheet-code-list-item btn-list"
-                                            to={PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId)}
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                         >
                                             List
                                         </Link>
@@ -80,7 +124,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                                     return <li key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
                                         <Link
                                             className="tally-sheet-code-list-item btn-list"
-                                            to={PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId)}
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                         >
                                             List
                                         </Link>
@@ -108,7 +152,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                             return <li key={subElectionId}>{tallySheetCodeLabel}
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_REPORT(electionId, tallySheetCode, subElectionId)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                 >
                                     List
                                 </Link>
@@ -117,7 +161,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                         <li>PRE 30 ED
                             <Link
                                 className="tally-sheet-code-list-item btn-list"
-                                to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PRE_30_ED)}
+                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_30_ED)}
                             >
                                 List
                             </Link>
@@ -127,7 +171,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                         <li>All Island ED
                             <Link
                                 className="tally-sheet-code-list-item btn-list"
-                                to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS)}
+                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS)}
                             >
                                 List
                             </Link>
@@ -135,7 +179,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                         <li>All Island
                             <Link
                                 className="tally-sheet-code-list-item btn-list"
-                                to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS)}
+                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS)}
                             >
                                 List
                             </Link>
@@ -161,24 +205,12 @@ export default function PRESIDENTIAL_ELECTION_2019(
                             return <li key={subElectionId}>{tallySheetCodeLabel}
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_REPORT(electionId, tallySheetCode, subElectionId)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                 >
                                     List
                                 </Link>
                             </li>
                         })}
-
-
-                        {/*<li>PRE 34*/}
-                        {/*<Link*/}
-                        {/*disabled={true}*/}
-                        {/*className="tally-sheet-code-list-item btn-list"*/}
-                        {/*to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PRE_34)}*/}
-                        {/*>*/}
-                        {/*List*/}
-                        {/*</Link>*/}
-                        {/*</li>*/}
-
                     </ul>
                 </Grid>
 
@@ -200,7 +232,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                             return <li key={subElectionId}>{tallySheetCodeLabel}
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_REPORT(electionId, tallySheetCode, subElectionId)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
                                 >
                                     List
                                 </Link>
@@ -209,7 +241,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                         <li>Revised 30 ED
                             <Link
                                 className="tally-sheet-code-list-item btn-list"
-                                to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PRE_34_ED)}
+                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_34_ED)}
                             >
                                 List
                             </Link>
@@ -217,7 +249,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                         <li>Revised All Island
                             <Link
                                 className="tally-sheet-code-list-item btn-list"
-                                to={PATH_ELECTION_REPORT(electionId, TALLY_SHEET_CODE_PRE_34_AI)}
+                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_34_AI)}
                             >
                                 List
                             </Link>
@@ -241,7 +273,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                             return <li key={subElectionId}>{tallySheetCodeLabel}
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode, subElectionId)}
+                                    to={PATH_ELECTION_RESULTS_RELEASE(subElectionId, tallySheetCode)}
                                 >
                                     List
                                 </Link>
@@ -291,7 +323,7 @@ export default function PRESIDENTIAL_ELECTION_2019(
                             return <li key={subElectionId}>{tallySheetCodeLabel}
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode, subElectionId)}
+                                    to={PATH_ELECTION_RESULTS_RELEASE(subElectionId, tallySheetCode)}
                                 >
                                     List
                                 </Link>
@@ -322,4 +354,4 @@ export default function PRESIDENTIAL_ELECTION_2019(
         </Grid>
 
     </div>
-}
+};

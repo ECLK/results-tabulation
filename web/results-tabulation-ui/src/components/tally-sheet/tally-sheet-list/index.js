@@ -2,10 +2,10 @@ import React, {useEffect, useState} from "react";
 import {getTallySheet} from "../../../services/tabulation-api";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import {getAreaName, getTallySheetCodeStr} from "../../../utils/tallySheet";
+import {getTallySheetCodeStr} from "../../../utils/tallySheet";
 import {
     PATH_ELECTION,
-    PATH_ELECTION_BY_ID, PATH_ELECTION_DATA_ENTRY
+    PATH_ELECTION_BY_ID, PATH_ELECTION_TALLY_SHEET_LIST
 } from "../../../App";
 import Processing from "../../processing";
 import Table from "@material-ui/core/Table";
@@ -14,22 +14,24 @@ import TextField from "@material-ui/core/TextField/TextField";
 import TableBody from "@material-ui/core/TableBody";
 import BreadCrumb from "../../bread-crumb";
 import TallySheetListRow from "./tally-sheet-list-row";
-import {TALLY_SHEET_LIST_ROW_ACTION} from "./tally-sheet-list-row-action";
+import {
+    TALLY_SHEET_LIST_ROW_ACTION_UNLOCK,
+    TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
+    TALLY_SHEET_LIST_ROW_ACTION_VIEW
+} from "../constants/TALLY_SHEET_ACTION";
+import {
+    TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE,
+    TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT, TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION,
+    TALLY_SHEET_LIST_COLUMN_STATUS
+} from "../constants/TALLY_SHEET_COLUMN";
 
-export const TALLY_SHEET_LIST_COLUMN = {
-    TALLY_SHEET_LIST_COLUMN_STATUS: "TALLY_SHEET_LIST_COLUMN_STATUS",
-    TALLY_SHEET_LIST_COLUMN_ACTIONS: "TALLY_SHEET_LIST_COLUMN_ACTIONS",
-    TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT: "TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT",
-    TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION: "TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION",
-    TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE: "TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE"
-};
 
 export const TALLY_SHEET_LIST_COLUMN_LABEL = {
-    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_STATUS]: "Status",
-    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_ACTIONS]: "Actions",
-    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: "Electoral District",
-    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: "Polling Division",
-    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: "Counting Centre"
+    [TALLY_SHEET_LIST_COLUMN_STATUS]: "Status",
+    [TALLY_SHEET_LIST_COLUMN_ACTIONS]: "Actions",
+    [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: "Electoral District",
+    [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: "Polling Division",
+    [TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: "Counting Centre"
 }
 
 
@@ -39,17 +41,17 @@ export default function TallySheetList(
         tallySheetCode,
         election,
         columns = [
-            TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_STATUS,
-            TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_ACTIONS
+            TALLY_SHEET_LIST_COLUMN_STATUS,
+            TALLY_SHEET_LIST_COLUMN_ACTIONS
         ],
         actions = [
-            TALLY_SHEET_LIST_ROW_ACTION.TALLY_SHEET_LIST_ROW_ACTION_VIEW,
-            TALLY_SHEET_LIST_ROW_ACTION.TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
-            TALLY_SHEET_LIST_ROW_ACTION.TALLY_SHEET_LIST_ROW_ACTION_UNLOCK
+            TALLY_SHEET_LIST_ROW_ACTION_VIEW,
+            TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
+            TALLY_SHEET_LIST_ROW_ACTION_UNLOCK
         ]
     }
 ) {
-    const {electionId, electionName, rootElectionId, rootElection} = election;
+    const {electionId, rootElectionId, rootElection} = election;
 
     const [tallySheetListRows, setTallySheetListRows] = useState([]);
     const [processing, setProcessing] = useState(true);
@@ -75,15 +77,14 @@ export default function TallySheetList(
             limit: 3000, //TODO fix
             offset: 0
         }).then((tallySheets) => {
-            debugger;
             setTallySheetListRows(tallySheets.map((tallySheet) => {
                 return {
                     ...tallySheet,
-                    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: tallySheet.countingCentre,
-                    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: tallySheet.pollingDivision,
-                    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: tallySheet.electoralDistrict,
-                    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_STATUS]: tallySheet.tallySheetStatus,
-                    [TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_ACTIONS]: []
+                    [TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: tallySheet.countingCentre,
+                    [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: tallySheet.pollingDivision,
+                    [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: tallySheet.electoralDistrict,
+                    [TALLY_SHEET_LIST_COLUMN_STATUS]: tallySheet.tallySheetStatus,
+                    [TALLY_SHEET_LIST_COLUMN_ACTIONS]: []
                 }
             }));
             setProcessing(false);
@@ -95,7 +96,6 @@ export default function TallySheetList(
 
 
     function getTallySheetListJsx() {
-        debugger;
 
         let tallySheetListJsx = [];
 
@@ -113,9 +113,10 @@ export default function TallySheetList(
             </TableRow>
         } else if (tallySheetListRows) {
             if (tallySheetListRows.length === 0) {
-                tallySheetListJsx = <TableRow>
-                    <TableCell colSpan={5} align="center">No tally sheets available or authorized to access.</TableCell>
-                </TableRow>
+                tallySheetListJsx.push(<TableRow>
+                    <TableCell colSpan={5} align="center">No tally sheets available or authorized to
+                        access.</TableCell>
+                </TableRow>)
             } else {
                 for (let i = 0; i < tallySheetListRows.length; i++) {
                     const tallySheetListRow = tallySheetListRows[i];
@@ -164,7 +165,7 @@ export default function TallySheetList(
                 {label: rootElection.electionName, to: PATH_ELECTION_BY_ID(rootElectionId)},
                 {
                     label: getTallySheetCodeStr({tallySheetCode, election: election}).toLowerCase(),
-                    to: PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, election.electionId)
+                    to: PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, election.electionId)
                 },
             ]}
         />
@@ -175,5 +176,3 @@ export default function TallySheetList(
         </div>
     </div>
 }
-
-

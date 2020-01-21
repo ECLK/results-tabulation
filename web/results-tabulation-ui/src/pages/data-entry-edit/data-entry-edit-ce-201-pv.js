@@ -14,9 +14,6 @@ import {isNumeric, processNumericValue} from "../../utils";
 import {useTallySheetEdit} from "./index";
 
 export default function DataEntryEdit_CE_201_PV({history, queryString, election, tallySheet, messages}) {
-    // const {tallySheetId, tallySheetCode} = tallySheet;
-    // const {electionId, electionName} = election;
-
     const [countingCentreSummary, setCountingCentreSummary] = useState({
         numberOfACoversRejected: 0,
         numberOfBCoversRejected: 0,
@@ -26,10 +23,6 @@ export default function DataEntryEdit_CE_201_PV({history, queryString, election,
     });
     const [ballotBoxList, setBallotBoxList] = useState([]);
     const [ballotBoxMap, setBallotBoxMap] = useState({});
-    // const [processing, setProcessing] = useState(true);
-    // const [tallySheetVersion, setTallySheetVersion] = useState(null);
-    // const [processingLabel, setProcessingLabel] = useState("Loading");
-    // const [saved, setSaved] = useState(false);
     const [totalNumberOfPVPackets, setTotalNumberOfPVPackets] = useState(0);
 
     const setTallySheetContent = (tallySheetVersion) => {
@@ -128,116 +121,6 @@ export default function DataEntryEdit_CE_201_PV({history, queryString, election,
         setBallotBoxList(ballotBoxList => [...ballotBoxList, refId]);
     };
 
-    // const fetchData = async () => {
-    //     try {
-    //         if (tallySheet.latestVersionId) {
-    //             const latestVersion = await getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheet.latestVersionId);
-    //             const {content, summary} = latestVersion;
-    //             let totalPV = 0;
-    //             for (let i = 0; i < content.length; i++) {
-    //                 let ballotBox = content[i];
-    //                 ballotBox.refId = i;
-    //                 totalPV += ballotBox.numberOfAPacketsFound;
-    //                 addBallotBox(ballotBox);
-    //             }
-    //             for (let i = content.length; i < 6; i++) {
-    //                 addBallotBox({refId: i});
-    //             }
-    //
-    //             console.log(latestVersion);
-    //             setTotalNumberOfPVPackets(totalPV);
-    //             // TODO: temporary fix for timezone issues, once the api does the timezone conversion right this can be resolved
-    //             summary["timeOfCommencementOfCount"] = Moment(summary.timeOfCommencementOfCount).format('YYYY-MM-DDThh:mm:00+11:00');
-    //             setCountingCentreSummary({...summary});
-    //             console.log(summary);
-    //
-    //         } else {
-    //             for (let i = 0; i < 6; i++) {
-    //                 addBallotBox({refId: i});
-    //             }
-    //         }
-    //     } catch (error) {
-    //         messages.push("Error", MESSAGES_EN.error_tallysheet_not_reachable, MESSAGE_TYPES.ERROR);
-    //     }
-    //
-    //     setProcessing(false);
-    // };
-    //
-    // useEffect(() => {
-    //     fetchData()
-    // }, []);
-
-
-    // const getTallySheetSaveRequestBody = () => {
-    //     const content = [];
-    //     let timeOfCommencement = countingCentreSummary.timeOfCommencementOfCount;
-    //     if (!timeOfCommencement.includes("+")) {
-    //         timeOfCommencement = countingCentreSummary.timeOfCommencementOfCount + ":00+05:30";
-    //     }
-    //     countingCentreSummary.timeOfCommencementOfCount = timeOfCommencement;
-    //     const summary = countingCentreSummary;
-    //
-    //     ballotBoxList.map(ballotBoxRefId => {
-    //         const ballotBox = ballotBoxMap[ballotBoxRefId];
-    //         let {ballotBoxId, numberOfAPacketsFound, numberOfPacketsInserted} = ballotBox;
-    //         content.push({ballotBoxId, numberOfAPacketsFound, numberOfPacketsInserted});
-    //     });
-    //
-    //     return {
-    //         content: content,
-    //         summary: summary
-    //     };
-    // };
-
-    // const handleClickNext = (saved = true) => async (event) => {
-    //     if (validateAllValues()) {
-    //         setSaved(saved)
-    //         setProcessing(true);
-    //         setProcessingLabel("Saving");
-    //         try {
-    //             const body = getTallySheetSaveRequestBody();
-    //             const tallySheetVersion = await saveTallySheetVersion(tallySheetId, tallySheetCode, body);
-    //
-    //             setTallySheetVersion(tallySheetVersion);
-    //         } catch (e) {
-    //             messages.push("Error", MESSAGES_EN.error_tallysheet_save, MESSAGE_TYPES.ERROR);
-    //         }
-    //         setProcessing(false);
-    //     } else {
-    //         messages.push("Error", MESSAGES_EN.error_input, MESSAGE_TYPES.ERROR)
-    //     }
-    // };
-    //
-    // const handleClickSubmit = () => async (event) => {
-    //     setProcessing(true);
-    //     setProcessingLabel("Submitting");
-    //     try {
-    //         const {tallySheetVersionId} = tallySheetVersion;
-    //         const tallySheet = await submitTallySheet(tallySheetId, tallySheetVersionId);
-    //
-    //         messages.push("Success", MESSAGES_EN.success_pre41_submit, MESSAGE_TYPES.SUCCESS);
-    //         setTimeout(() => {
-    //             history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode));
-    //         }, 1000)
-    //     } catch (e) {
-    //         messages.push("Error", MESSAGES_EN.error_tallysheet_submit, MESSAGE_TYPES.ERROR);
-    //     }
-    //
-    //     setProcessing(false);
-    // };
-
-    // function validateAllValues() {
-    //     for (let key in ballotBoxMap) {
-    //         if (!isNumeric(ballotBoxMap[key]["numberOfPacketsInserted"])) {
-    //             return false;
-    //         }
-    //         if (!isNumeric(ballotBoxMap[key]["numberOfAPacketsFound"])) {
-    //             return false;
-    //         }
-    //     }
-    //     return (calculateTotalNumberOfPVPackets() === totalNumberOfPVPackets)
-    // }
-
     const handleBallotBoxIdChange = ballotBoxRefId => event => {
         setBallotBoxMap({
             ...ballotBoxMap,
@@ -259,7 +142,6 @@ export default function DataEntryEdit_CE_201_PV({history, queryString, election,
     };
 
     const handleNumberOfAPacketsFoundChange = ballotBoxRefId => event => {
-        console.log()
         setBallotBoxMap({
             ...ballotBoxMap,
             [ballotBoxRefId]: {
@@ -302,7 +184,6 @@ export default function DataEntryEdit_CE_201_PV({history, queryString, election,
     };
 
     const handleTimeOfCommencementOfCountChange = () => event => {
-        console.log(event.target.value);
         setCountingCentreSummary({
             ...countingCentreSummary,
             timeOfCommencementOfCount: event.target.value
@@ -314,7 +195,7 @@ export default function DataEntryEdit_CE_201_PV({history, queryString, election,
         for (let key in ballotBoxMap) {
             total += parseInt(ballotBoxMap[key]["numberOfAPacketsFound"])
         }
-        console.log(total);
+
         return total;
     }
 

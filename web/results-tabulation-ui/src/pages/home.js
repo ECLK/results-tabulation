@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {getElections} from "../services/tabulation-api";
 import {Link} from "react-router-dom";
-import {PATH_ELECTION, PATH_ELECTION_BY_ID, PATH_ELECTION_DATA_ENTRY, TALLY_SHEET_CODE_PRE_41} from "../App";
+import {PATH_ELECTION, PATH_ELECTION_BY_ID} from "../App";
 import BreadCrumb from "../components/bread-crumb";
 import Processing from "../components/processing";
 import Error from "../components/error";

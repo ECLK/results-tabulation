@@ -1,10 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-
-import TallySheetListRowAction, {TALLY_SHEET_LIST_ROW_ACTION} from "./tally-sheet-list-row-action";
-import TextField from "@material-ui/core/TextField/TextField";
-import {TALLY_SHEET_LIST_COLUMN} from "./index";
+import {
+    TALLY_SHEET_LIST_ROW_ACTION_UNLOCK,
+    TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
+    TALLY_SHEET_LIST_ROW_ACTION_VIEW
+} from "../constants/TALLY_SHEET_ACTION";
+import TallySheetListRowAction from "./tally-sheet-list-row-action";
+import {TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_STATUS} from "../constants/TALLY_SHEET_COLUMN";
 
 
 export default function TallySheetListRow(
@@ -13,31 +16,37 @@ export default function TallySheetListRow(
         electionId,
         tallySheetListRow,
         columns = [
-            TALLY_SHEET_LIST_COLUMN,
-            TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_ACTIONS
+            TALLY_SHEET_LIST_COLUMN_STATUS,
+            TALLY_SHEET_LIST_COLUMN_ACTIONS
         ],
         actions = [
-            TALLY_SHEET_LIST_ROW_ACTION.TALLY_SHEET_LIST_ROW_ACTION_VIEW,
-            TALLY_SHEET_LIST_ROW_ACTION.TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
-            TALLY_SHEET_LIST_ROW_ACTION.TALLY_SHEET_LIST_ROW_ACTION_UNLOCK
+            TALLY_SHEET_LIST_ROW_ACTION_VIEW,
+            TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
+            TALLY_SHEET_LIST_ROW_ACTION_UNLOCK
         ]
     }
 ) {
 
     return <TableRow key={tallySheetListRow.tallySheetId}>
         {columns.map((column) => {
-            if (column == TALLY_SHEET_LIST_COLUMN.TALLY_SHEET_LIST_COLUMN_ACTIONS) {
+            if (column == TALLY_SHEET_LIST_COLUMN_ACTIONS) {
                 return actions.map((action) => {
                     return <TallySheetListRowAction
                         electionId={electionId} history={history} action={action} tallySheetListRow={tallySheetListRow}
                     />
                 });
             } else {
-                return <TableCell align="center">{tallySheetListRow[column]}</TableCell>
+                let columnStringValue = tallySheetListRow[column];
+                if (!columnStringValue) {
+                    columnStringValue = "";
+                }
+                if (typeof columnStringValue === "object" && columnStringValue.areaName) {
+                    columnStringValue = columnStringValue.areaName;
+                }
+
+                return <TableCell align="center">{columnStringValue}</TableCell>
             }
         })}
     </TableRow>
 
 }
-
-
