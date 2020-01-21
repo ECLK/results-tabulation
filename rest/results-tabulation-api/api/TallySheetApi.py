@@ -38,9 +38,7 @@ def get_by_id(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data
 
 
-@authorize(
-    required_roles=[POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
-                    NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE])
+@authorize(required_roles=ALL_ROLES)
 def unlock(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
@@ -87,9 +85,7 @@ def unlock(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(
-    required_roles=[DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
-                    NATIONAL_REPORT_VERIFIER_ROLE])
+@authorize(required_roles=ALL_ROLES)
 def lock(tallySheetId, body):
     request_body = RequestBody(body)
     tallySheetVersionId = request_body.get("lockedVersionId")
@@ -162,7 +158,7 @@ def lock(tallySheetId, body):
 #     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=[EC_LEADERSHIP_WRITE_ROLE])
+@authorize(required_roles=ALL_ROLES)
 def notify(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
@@ -188,7 +184,7 @@ def notify(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=[EC_LEADERSHIP_WRITE_ROLE])
+@authorize(required_roles=ALL_ROLES)
 def release(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
@@ -217,7 +213,7 @@ def release(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=[DATA_EDITOR_ROLE])
+@authorize(required_roles=ALL_ROLES)
 def request_edit(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
@@ -241,7 +237,7 @@ def request_edit(tallySheetId):
     return TallySheetSchema().dump(tally_sheet).data, 201
 
 
-@authorize(required_roles=[DATA_EDITOR_ROLE])
+@authorize(required_roles=ALL_ROLES)
 def submit(tallySheetId, body):
     request_body = RequestBody(body)
     tallySheetVersionId = request_body.get("submittedVersionId")

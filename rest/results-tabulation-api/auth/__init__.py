@@ -231,12 +231,14 @@ def has_role_based_access(tally_sheet, access_type):
     role_based_access_config = get_role_based_access_config(election.electionTemplateName)
 
     tally_sheet_code = tally_sheet.template.templateName
+    vote_type = election.voteType
 
     for role in connexion.context[USER_ROLES]:
         if role in role_based_access_config:
             if tally_sheet_code in role_based_access_config[role]:
-                if access_type in role_based_access_config[role][tally_sheet]:
-                    return True
+                if vote_type in role_based_access_config[role][tally_sheet_code]:
+                    if access_type in role_based_access_config[role][tally_sheet_code][vote_type]:
+                        return True
 
     return False
 
