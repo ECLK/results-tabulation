@@ -1,3 +1,4 @@
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from ext import ExtendedTallySheetVersion
@@ -11,6 +12,13 @@ class TemplateModel(db.Model):
     templateName = db.Column(db.String(100), nullable=False)
 
     rows = relationship("TemplateRowModel")
+
+    @hybrid_property
+    def isDerived(self):
+        if self.has_data_entry():
+            return False
+        else:
+            return True
 
     def has_data_entry(self):
         has_data_entry = False

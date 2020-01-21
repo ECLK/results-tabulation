@@ -110,7 +110,9 @@ class ElectionSchema(ma.ModelSchema):
     invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
     subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType", "rootElectionId",
                                            "rootElection"], many=True)
-    rootElection = ma.Nested("self", only=["electionId", "electionName", "voteType"])
+    rootElection = ma.Nested("self", only=[
+        "electionId", "electionName", "voteType", "electionTemplateName", "parties", "invalidVoteCategories"
+    ])
 
 
 class TallySheetVersionRow_Schema(ma.ModelSchema):
@@ -401,7 +403,8 @@ class TemplateSchema(ma.ModelSchema):
         fields = (
             "templateId",
             "templateName",
-            "rows"
+            "rows",
+            "isDerived"
         )
 
         model = Template.Model
