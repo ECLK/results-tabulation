@@ -11,7 +11,7 @@ import {
     TALLY_SHEET_CODE_PRE_41,
     TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS,
     TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
-} from "./TALLy_SHEET_CODES";
+} from "./TALLY_SHEET_CODE";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import React from "react";

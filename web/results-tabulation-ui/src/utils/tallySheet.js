@@ -3,7 +3,7 @@ import {
     TALLY_SHEET_CODE_CE_201_PV,
     TALLY_SHEET_CODE_PRE_34_PD,
     TALLY_SHEET_CODE_PRE_34_ED,
-} from "../components/election/extended-election/PresidentialElection2019/TALLy_SHEET_CODES";
+} from "../components/election/extended-election/PresidentialElection2019/TALLY_SHEET_CODE";
 import {VOTE_TYPE_POSTAL} from "../components/election/constants/VOTE_TYPE";
 
 export function getTallySheetCodeStr({tallySheetCode, election}) {

@@ -23,7 +23,7 @@ import {
     TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS,
     TALLY_SHEET_CODE_PRE_34_PD,
     TALLY_SHEET_CODE_PRE_34_ED
-} from "../../components/election/extended-election/PresidentialElection2019/TALLy_SHEET_CODES";
+} from "../../components/election/extended-election/PresidentialElection2019/TALLY_SHEET_CODE";
 import Processing from "../../components/processing";
 import Error from "../../components/error";
 import BreadCrumb from "../../components/bread-crumb";
