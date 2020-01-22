@@ -3,7 +3,8 @@ import {TABULATION_API_URL} from "../../config";
 import {getAccessToken} from "../../auth";
 import {AreaEntity} from "./entities/area.entity";
 import {ElectionEntity} from "./entities/election.entity";
-import {mapRequiredAreasToTallySheet} from "../../components/election/election-menu";
+import ExtendedElection from "../../components/election/extended-election";
+
 export const ENDPOINT_PATH_ELECTIONS = () => "/election";
 export const ENDPOINT_PATH_ELECTION_AREA = (electionId) => `/election/${electionId}/area`;
 export const ENDPOINT_PATH_ELECTIONS_BY_ID = (electionId) => `/election/${electionId}`;
@@ -102,7 +103,9 @@ async function refactorTallySheetObject(tallySheet) {
     tallySheet.readyToLock = readyToLock;
     tallySheet.area = await areaEntity.getById(tallySheet.areaId);
     tallySheet.election = await electionEntity.getById(tallySheet.electionId);
-    tallySheet = mapRequiredAreasToTallySheet(tallySheet);
+
+    const extendedElection = ExtendedElection(tallySheet.election);
+    tallySheet = extendedElection.mapRequiredAreasToTallySheet(tallySheet);
 
     return tallySheet
 }

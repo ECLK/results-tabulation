@@ -1,11 +1,12 @@
 import BreadCrumb from "../components/bread-crumb";
 import {PATH_ELECTION, PATH_ELECTION_BY_ID} from "../App";
 import React from "react";
-import {ElectionHome} from "../components/election/election-menu";
+import ExtendedElection from "../components/election/extended-election";
 
 export default function Election(props) {
     const {election} = props;
     const {electionId, electionName} = election;
+    const extendedElection = ExtendedElection(election);
 
     return <div className="page">
         <BreadCrumb
@@ -14,6 +15,6 @@ export default function Election(props) {
                 {label: electionName, to: PATH_ELECTION_BY_ID(electionId)}
             ]}
         />
-        <ElectionHome election={election}/>
+        {extendedElection.getElectionHome()}
     </div>
 }

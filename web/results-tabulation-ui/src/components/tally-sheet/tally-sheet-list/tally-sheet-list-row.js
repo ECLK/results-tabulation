@@ -36,15 +36,7 @@ export default function TallySheetListRow(
                     />
                 });
             } else {
-                let columnStringValue = tallySheetListRow[column];
-                if (!columnStringValue) {
-                    columnStringValue = "";
-                }
-                if (typeof columnStringValue === "object" && columnStringValue.areaName) {
-                    columnStringValue = columnStringValue.areaName;
-                }
-
-                return <TableCell align="center">{columnStringValue}</TableCell>
+                return <TableCell align="center">{tallySheetListRow[column]}</TableCell>
             }
         })}
     </TableRow>

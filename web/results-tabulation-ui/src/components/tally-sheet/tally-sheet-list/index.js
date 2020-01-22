@@ -21,18 +21,9 @@ import {
 } from "../constants/TALLY_SHEET_ACTION";
 import {
     TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE,
-    TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT, TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION,
-    TALLY_SHEET_LIST_COLUMN_STATUS
+    TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT, TALLY_SHEET_LIST_COLUMN_LABEL, TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION,
+    TALLY_SHEET_LIST_COLUMN_STATUS, TALLY_SHEET_LIST_COLUMN_VALUE_KEY
 } from "../constants/TALLY_SHEET_COLUMN";
-
-
-export const TALLY_SHEET_LIST_COLUMN_LABEL = {
-    [TALLY_SHEET_LIST_COLUMN_STATUS]: "Status",
-    [TALLY_SHEET_LIST_COLUMN_ACTIONS]: "Actions",
-    [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: "Electoral District",
-    [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: "Polling Division",
-    [TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: "Counting Centre"
-}
 
 
 export default function TallySheetList(
@@ -78,14 +69,25 @@ export default function TallySheetList(
             offset: 0
         }).then((tallySheets) => {
             setTallySheetListRows(tallySheets.map((tallySheet) => {
-                return {
-                    ...tallySheet,
-                    [TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: tallySheet.countingCentre,
-                    [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: tallySheet.pollingDivision,
-                    [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: tallySheet.electoralDistrict,
-                    [TALLY_SHEET_LIST_COLUMN_STATUS]: tallySheet.tallySheetStatus,
-                    [TALLY_SHEET_LIST_COLUMN_ACTIONS]: []
-                }
+                tallySheet = {...tallySheet};
+
+                // Append the values for columns.
+                columns.map((column) => {
+                    let columnValue = tallySheet[TALLY_SHEET_LIST_COLUMN_VALUE_KEY[column]];
+                    if (!columnValue) {
+                        columnValue = "";
+                    }
+
+                    // If the value is an area object, assign areaName as the value.
+                    if (typeof columnValue === "object" && columnValue.areaName) {
+                        columnValue = columnValue.areaName;
+                    }
+
+                    tallySheet[column] = columnValue;
+                });
+
+                return tallySheet;
+
             }));
             setProcessing(false);
         }).catch((error) => {
@@ -127,7 +129,6 @@ export default function TallySheetList(
                 }
             }
         }
-
 
         return <Table aria-label="simple table">
             <TableHead>

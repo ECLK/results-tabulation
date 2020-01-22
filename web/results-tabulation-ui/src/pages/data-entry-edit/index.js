@@ -8,7 +8,7 @@ import {
 import {
     TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_CE_201_PV,
     TALLY_SHEET_CODE_PRE_41, TALLY_SHEET_CODE_PRE_34_CO
-} from "../../components/election/election-menu/PRESIDENTIAL_ELECTION_2019/TALLy_SHEET_CODES";
+} from "../../components/election/extended-election/PresidentialElection2019/TALLy_SHEET_CODES";
 import BreadCrumb from "../../components/bread-crumb";
 import DataEntryEdit_PRE_41 from "./data-entry-edit-pre-41";
 import DataEntryEdit_CE_201 from "./data-entry-edit-ce-201";
