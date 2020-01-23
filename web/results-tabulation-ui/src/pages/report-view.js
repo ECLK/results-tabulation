@@ -9,8 +9,7 @@ import {
     PATH_ELECTION,
     PATH_ELECTION_BY_ID,
     PATH_ELECTION_TALLY_SHEET_LIST,
-    PATH_ELECTION_DATA_ENTRY_EDIT,
-    PATH_ELECTION_REPORT_VIEW
+    PATH_ELECTION_TALLY_SHEET_VIEW
 } from "../App";
 import Processing from "../components/processing";
 import Error from "../components/error";
@@ -85,9 +84,6 @@ export default function ReportView(props) {
             const tallySheet = await requestEditForTallySheet(tallySheetId);
             setTallySheet(tallySheet);
             messages.push("Success", MESSAGES_EN.success_report_editable, MESSAGE_TYPES.SUCCESS);
-            setTimeout(() => {
-                history.push(PATH_ELECTION_DATA_ENTRY_EDIT(electionId, tallySheetId))
-            }, 1000)
         } catch (e) {
             messages.push("Error", MESSAGES_EN.error_updating_report, MESSAGE_TYPES.ERROR);
         }
@@ -154,7 +150,7 @@ export default function ReportView(props) {
             },
             {
                 label: areaName.toLowerCase(),
-                to: PATH_ELECTION_REPORT_VIEW(electionId, tallySheetId)
+                to: PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetId)
             }
         ];
 

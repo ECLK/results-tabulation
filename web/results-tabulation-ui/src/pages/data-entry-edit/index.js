@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 
 import {
     PATH_ELECTION, PATH_ELECTION_BY_ID,
-    PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_DATA_ENTRY_EDIT
+    PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_TALLY_SHEET_VIEW
 } from "../../App";
 
 import {
@@ -50,7 +50,7 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
                 },
                 {
                     label: tallySheet.area.areaName,
-                    to: PATH_ELECTION_DATA_ENTRY_EDIT(electionId, tallySheet.tallySheetId)
+                    to: PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheet.tallySheetId)
                 },
             ]}
         />
