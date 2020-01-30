@@ -19,7 +19,7 @@ class ElectionModel(db.Model):
     parentElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=True)
     voteType = db.Column(db.String(100), nullable=False)
     electionTemplateName = db.Column(db.String(100), nullable=False)
-    isListed = db.Column(db.String(100), nullable=False)
+    isListed = db.Column(db.Boolean, nullable=False, default=False)
 
     _parties = relationship("ElectionPartyModel")
     _invalidVoteCategories = relationship("InvalidVoteCategoryModel")

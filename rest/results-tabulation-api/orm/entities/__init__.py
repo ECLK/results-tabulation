@@ -19,10 +19,6 @@ from orm.entities.Area.Office import DistrictCentre, CountingCentre, PollingStat
 from orm.entities import Submission, SubmissionVersion
 from orm.entities.SubmissionVersion import TallySheetVersion
 
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_PRE_41, TallySheetVersionRow_CE_201, \
-    TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_PRE_30_ED, \
-    TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_34_summary
-
 from orm.entities.Election import InvalidVoteCategory
 from orm.entities.Dashboard import StatusCE201
 from orm.entities.Dashboard import StatusPRE41
