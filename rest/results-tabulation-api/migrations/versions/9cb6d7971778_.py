@@ -223,6 +223,63 @@ def upgrade():
 
         submission = relationship("_Submission", foreign_keys=[tallySheetId])
 
+        def add_parent(self, parentTallySheet):
+            parentTallySheet.add_child(self.tallySheetId)
+
+            return self
+
+        def add_child(self, childTallySheet):
+            existing_mapping = session.query(_TallySheetTallySheet).filter(
+                _TallySheetTallySheet.parentTallySheetId == self.tallySheetId,
+                _TallySheetTallySheet.childTallySheetId == childTallySheet.tallySheetId
+            ).one_or_none()
+
+            if existing_mapping is None:
+                session.add(_TallySheetTallySheet(
+                    parentTallySheetId=self.tallySheetId,
+                    childTallySheetId=childTallySheet.tallySheetId
+                ))
+                session.flush()
+
+            return self
+
+    class _TallySheetTallySheet(Base):
+        __tablename__ = 'tallySheet_tallySheet'
+        parentTallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), primary_key=True)
+        childTallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), primary_key=True)
+
+    class _TallySheetMap(Base):
+        __tablename__ = 'tallySheet_map'
+        tallySheetMapId = db.Column(db.Integer, primary_key=True)
+
+        pre_41_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pre_34_co_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        ce_201_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        ce_201_pv_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+
+        pre_30_pd_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pre_34_i_ro_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pre_34_pd_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+
+        pre_30_ed_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pre_34_ii_ro_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pre_34_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pre_34_ed_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+
+        pre_all_island_ed_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pre_all_island_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pre_34_ai_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+
+        pe_27_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pe_4_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pe_ce_ro_v1_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pe_r1_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pe_ce_ro_pr_1_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pe_ce_ro_v2_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pe_r2_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pe_ce_ro_pr_2_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+        pe_ce_ro_pr_3_tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), nullable=True)
+
     class _TallySheetVersion(Base):
         __tablename__ = 'tallySheetVersion'
         tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"),
@@ -258,6 +315,9 @@ def upgrade():
         templateName = db.Column(db.String(100), nullable=False)
 
         def add_row(self, templateRowType, hasMany=False, isDerived=False, columns=[]):
+            session.add(self)
+            session.flush()
+
             templateRow = _TemplateRow(
                 templateId=self.templateId,
                 templateRowType=templateRowType,
@@ -265,8 +325,12 @@ def upgrade():
                 isDerived=isDerived
             )
 
+            session.add(templateRow)
+            session.flush()
+
             for column in columns:
-                templateRow.add_column(column["columnName"], grouped=column["grouped"], func=column["func"])
+                session.add(
+                    templateRow.add_column(column["columnName"], grouped=column["grouped"], func=column["func"]))
 
             return templateRow
 
@@ -279,10 +343,11 @@ def upgrade():
         isDerived = db.Column(db.Boolean, nullable=False, default=False)
 
         def add_derivative_template_row(self, derivativeTemplateRow):
-            _TemplateRow_DerivativeTemplateRow(
+            session.add(_TemplateRow_DerivativeTemplateRow(
                 templateRowId=self.templateRowId,
                 derivativeTemplateRowId=derivativeTemplateRow.templateRowId
-            )
+            ))
+            session.flush()
 
             return self
 
@@ -304,8 +369,9 @@ def upgrade():
 
     class _TemplateRow_DerivativeTemplateRow(Base):
         __tablename__ = 'templateRow_derivativeTemplateRow'
-        templateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True)
-        derivativeTemplateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True)
+        templateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True, default=0)
+        derivativeTemplateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True,
+                                            default=0)
 
     existing_tally_sheet_version_rows = []
 
@@ -322,6 +388,193 @@ def upgrade():
         session.add(existing_election)
 
     session.flush()
+
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # Update mappings between tally sheets
+    #################################################################################################################
+    for existing_election in existing_elections:
+        counting_centres = session.query(
+            _AreaMap.countingCentreId,
+            _AreaMap.pollingDivisionId,
+            _AreaMap.electoralDistrictId,
+            _AreaMap.countryId,
+            _AreaMap.voteType
+        ).filter(
+            _AreaMap.electionId == existing_election.electionId
+        ).group_by(
+            _AreaMap.countingCentreId,
+            _AreaMap.pollingDivisionId,
+            _AreaMap.electoralDistrictId,
+            _AreaMap.countryId,
+            _AreaMap.voteType
+        ).all()
+
+        for counting_centre in counting_centres:
+            pre_ai_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "PRE_ALL_ISLAND_RESULTS",
+                _Submission.areaId == counting_centre.countryId
+            ).one_or_none()
+            pre_ai_ed_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS",
+                _Submission.areaId == counting_centre.countryId
+            ).one_or_none()
+            pre_34_ai_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "PRE_34_AI",
+                _Submission.areaId == counting_centre.countryId
+            ).one_or_none()
+            pre_30_ed_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "PRE_30_ED",
+                _Submission.areaId == counting_centre.electoralDistrictId
+            ).one_or_none()
+            pre_34_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "PRE_34",
+                _Submission.areaId == counting_centre.electoralDistrictId
+            ).one_or_none()
+            pre_34_ii_ro_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "PRE_34_II_RO",
+                _Submission.areaId == counting_centre.electoralDistrictId
+            ).one_or_none()
+            pre_34_ed_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "PRE_34_ED",
+                _Submission.areaId == counting_centre.electoralDistrictId
+            ).one_or_none()
+
+            if counting_centre.voteType == "Postal":
+                pre_30_pd_tally_sheet = session.query(_TallySheet).join(
+                    _Submission,
+                    _Submission.submissionId == _TallySheet.tallySheetId
+                ).filter(
+                    _TallySheet.tallySheetCode == "PRE_30_PD",
+                    _Submission.areaId == counting_centre.electoralDistrictId
+                ).one_or_none()
+                pre_34_pd_tally_sheet = session.query(_TallySheet).join(
+                    _Submission,
+                    _Submission.submissionId == _TallySheet.tallySheetId
+                ).filter(
+                    _TallySheet.tallySheetCode == "PRE_34_PD",
+                    _Submission.areaId == counting_centre.electoralDistrictId
+                ).one_or_none()
+                pre_34_i_ro_tally_sheet = session.query(_TallySheet).join(
+                    _Submission,
+                    _Submission.submissionId == _TallySheet.tallySheetId
+                ).filter(
+                    _TallySheet.tallySheetCode == "PRE_34_I_RO",
+                    _Submission.areaId == counting_centre.electoralDistrictId
+                ).one_or_none()
+            else:
+                pre_30_pd_tally_sheet = session.query(_TallySheet).join(
+                    _Submission,
+                    _Submission.submissionId == _TallySheet.tallySheetId
+                ).filter(
+                    _TallySheet.tallySheetCode == "PRE_30_PD",
+                    _Submission.areaId == counting_centre.pollingDivisionId
+                ).one_or_none()
+                pre_34_pd_tally_sheet = session.query(_TallySheet).join(
+                    _Submission,
+                    _Submission.submissionId == _TallySheet.tallySheetId
+                ).filter(
+                    _TallySheet.tallySheetCode == "PRE_34_PD",
+                    _Submission.areaId == counting_centre.pollingDivisionId
+                ).one_or_none()
+                pre_34_i_ro_tally_sheet = session.query(_TallySheet).join(
+                    _Submission,
+                    _Submission.submissionId == _TallySheet.tallySheetId
+                ).filter(
+                    _TallySheet.tallySheetCode == "PRE_34_I_RO",
+                    _Submission.areaId == counting_centre.pollingDivisionId
+                ).one_or_none()
+
+            pre_41_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "PRE_41",
+                _Submission.areaId == counting_centre.countingCentreId
+            ).one_or_none()
+            pre_34_co_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "PRE_34_CO",
+                _Submission.areaId == counting_centre.countingCentreId
+            ).one_or_none()
+
+            ce_201_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "CE_201",
+                _Submission.areaId == counting_centre.countingCentreId
+            ).one_or_none()
+
+            ce_201_pv_tally_sheet = session.query(_TallySheet).join(
+                _Submission,
+                _Submission.submissionId == _TallySheet.tallySheetId
+            ).filter(
+                _TallySheet.tallySheetCode == "CE_201_PV",
+                _Submission.areaId == counting_centre.countingCentreId
+            ).one_or_none()
+
+            pre_30_pd_tally_sheet.add_child(pre_41_tally_sheet)
+            pre_30_ed_tally_sheet.add_child(pre_30_pd_tally_sheet)
+            pre_ai_ed_tally_sheet.add_child(pre_30_ed_tally_sheet)
+            pre_ai_tally_sheet.add_child(pre_ai_ed_tally_sheet)
+
+            pre_34_i_ro_tally_sheet.add_child(pre_34_co_tally_sheet)
+            pre_34_ii_ro_tally_sheet.add_child(pre_34_i_ro_tally_sheet)
+            pre_34_tally_sheet.add_child(pre_34_ii_ro_tally_sheet)
+
+            pre_34_pd_tally_sheet.add_child(pre_30_pd_tally_sheet)
+            pre_34_pd_tally_sheet.add_child(pre_34_i_ro_tally_sheet)
+            pre_34_ed_tally_sheet.add_child(pre_34_pd_tally_sheet)
+            pre_34_ai_tally_sheet.add_child(pre_34_ed_tally_sheet)
+
+            tally_sheet_map = _TallySheetMap(
+                pre_41_tallySheetId=pre_41_tally_sheet.tallySheetId,
+                pre_34_co_tallySheetId=pre_34_co_tally_sheet.tallySheetId,
+                ce_201_tallySheetId=None if ce_201_tally_sheet is None else ce_201_tally_sheet.tallySheetId,
+                ce_201_pv_tallySheetId=None if ce_201_pv_tally_sheet is None else ce_201_pv_tally_sheet.tallySheetId,
+
+                pre_30_pd_tallySheetId=pre_30_pd_tally_sheet.tallySheetId,
+                pre_34_i_ro_tallySheetId=pre_34_i_ro_tally_sheet.tallySheetId,
+                pre_34_pd_tallySheetId=pre_34_pd_tally_sheet.tallySheetId,
+
+                pre_30_ed_tallySheetId=pre_30_ed_tally_sheet.tallySheetId,
+                pre_34_ii_ro_tallySheetId=pre_34_ii_ro_tally_sheet.tallySheetId,
+                pre_34_tallySheetId=pre_34_tally_sheet.tallySheetId,
+                pre_34_ed_tallySheetId=pre_34_ed_tally_sheet.tallySheetId,
+
+                pre_all_island_ed_tallySheetId=pre_ai_ed_tally_sheet.tallySheetId,
+                pre_all_island_tallySheetId=pre_ai_tally_sheet.tallySheetId,
+                pre_34_ai_tallySheetId=pre_34_ai_tally_sheet.tallySheetId,
+            )
+
+            session.add(tally_sheet_map)
+
+    session.commit()
 
     # END ###########################################################################################################
 
@@ -835,7 +1088,6 @@ def upgrade():
                     existing_tally_sheet_version_row, tally_sheet_version_row_attribute_name
                 )
 
-        print("##### [INSERT] tallySheetVersionRow ", tally_sheet_version_row_dict)
         session.add(_TallySheetVersionRow(**tally_sheet_version_row_dict))
 
     session.commit()
