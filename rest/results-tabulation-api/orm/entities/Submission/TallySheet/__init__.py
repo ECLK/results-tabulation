@@ -67,7 +67,7 @@ class TallySheetModel(db.Model):
                            )
 
     def add_parent(self, parentTallySheet):
-        parentTallySheet.add_child(self.areaId)
+        parentTallySheet.add_child(self.tallySheetId)
 
         return self
 
