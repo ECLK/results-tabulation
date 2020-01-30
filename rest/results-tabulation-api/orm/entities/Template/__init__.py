@@ -87,10 +87,12 @@ class TemplateRowModel(db.Model):
         db.session.flush()
 
     def add_derivative_template_row(self, derivativeTemplateRow):
-        return TemplateRow_DerivativeTemplateRow_Model(
+        TemplateRow_DerivativeTemplateRow_Model(
             self.templateRowId,
             derivativeTemplateRow.templateRowId
         )
+
+        return self
 
     def add_column(self, templateRowColumnName, grouped=False, func=None):
         return TemplateRowColumnModel(

@@ -108,16 +108,6 @@ class TallySheetVersionModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-    def add_invalid_vote_count(self, electionId, rejectedVoteCount, areaId=None):
-        from orm.entities.TallySheetVersionRow import TallySheetVersionRow_RejectedVoteCount
-
-        TallySheetVersionRow_RejectedVoteCount.createAreaWiseCount(
-            electionId=electionId,
-            tallySheetVersionId=self.tallySheetVersionId,
-            areaId=areaId,
-            rejectedVoteCount=rejectedVoteCount
-        )
-
 
 Model = TallySheetVersionModel
 
