@@ -159,8 +159,6 @@ def upgrade():
     op.add_column('tallySheet', sa.Column('templateId', sa.Integer(), nullable=True))
     op.create_foreign_key(None, 'tallySheet', 'template', ['templateId'], ['templateId'])
 
-    #############################################################
-
     class _Election(Base):
         __tablename__ = 'election'
         electionId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
@@ -169,21 +167,6 @@ def upgrade():
                                    sa.ForeignKey("election.electionId", name="fk_election_root_election_id"),
                                    nullable=True)
         parentElectionId = sa.Column(sa.Integer, sa.ForeignKey("election.electionId"), nullable=True)
-
-    existing_elections = session.query(
-        _Election
-    ).all()
-
-    # Update all existing election's template to "PRESIDENTIAL_ELECTION_2019"
-    for existing_election in existing_elections:
-        existing_election.electionTemplateName = "PRESIDENTIAL_ELECTION_2019"
-        session.add(existing_election)
-
-    session.flush()
-
-    #############################################################
-
-    #############################################################
 
     class _ElectionCandidate(Base):
         __tablename__ = 'election_candidate'
@@ -259,52 +242,6 @@ def upgrade():
         numValue = db.Column(db.Integer, nullable=True)
         strValue = db.Column(db.String(100), nullable=True)
 
-    class _TallySheetVersionRow_PRE_41(Base):
-        __tablename__ = 'tallySheetVersionRow_PRE_41'
-        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
-        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
-                                        nullable=False)
-        candidateId = db.Column(db.Integer, nullable=False)
-        count = db.Column(db.Integer, nullable=False)
-        countInWords = db.Column(db.String(1000), nullable=True)
-
-    class _TallySheetVersionRow_PRE_30_PD(Base):
-        __tablename__ = 'tallySheetVersionRow_PRE_30_PD'
-        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
-        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
-                                        nullable=False)
-        candidateId = db.Column(db.Integer, nullable=False)
-        countingCentreId = db.Column(db.Integer, nullable=False)
-        count = db.Column(db.Integer, nullable=False)
-
-    class _TallySheetVersionRow_PRE_30_ED(Base):
-        __tablename__ = 'tallySheetVersionRow_PRE_30_ED'
-        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
-        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
-                                        nullable=False)
-        electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=False)
-        areaId = db.Column(db.Integer, nullable=True)
-        candidateId = db.Column(db.Integer, nullable=False)
-        countingCentreId = db.Column(db.Integer, nullable=False)
-        count = db.Column(db.Integer, nullable=False)
-
-    class _TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS(Base):
-        __tablename__ = 'tallySheetVersionRow_ALL_ISLAND_RESULTS_BY_ED'
-        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
-        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
-                                        nullable=False)
-        electoralDistrictId = db.Column(db.Integer, nullable=True)
-        candidateId = db.Column(db.Integer, nullable=False)
-        count = db.Column(db.Integer, nullable=False)
-
-    class _TallySheetVersionRow_ALL_ISLAND_RESULT(Base):
-        __tablename__ = 'tallySheetVersionRow_ALL_ISLAND_RESULT'
-        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
-        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
-                                        nullable=False)
-        candidateId = db.Column(db.Integer, nullable=False)
-        count = db.Column(db.Integer, nullable=False)
-
     class _TallySheetVersionRow_RejectedVoteCount(Base):
         __tablename__ = 'tallySheetVersionRow_RejectedVoteCount'
         tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
@@ -370,26 +307,38 @@ def upgrade():
         templateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True)
         derivativeTemplateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True)
 
-    PRE_28 = "PRE-28"
-    PRE_41 = "PRE-41"
-    PRE_30_PD = "PRE-30-PD"
-    PRE_30_ED = "PRE-30-ED"
-    PRE_21 = "PRE-21"
-    PRE_34_CO = "PRE-34-CO"
-    PRE_34_I_RO = "PRE-34-I-RO"
-    PRE_34_II_RO = "PRE-34-II-RO"
-    PRE_34 = "PRE-34"
-    PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS = "PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS"
-    PRE_ALL_ISLAND_RESULTS = "PRE-ALL-ISLAND-RESULTS"
-    CE_201_PV = "CE-201-PV"
-    PRE_30_PD_PV = "PRE-30-PD-PV"
-    CE_201 = "CE-201"
-    PRE_34_PD = "PRE-34-PD"
-    PRE_34_ED = "PRE-34-ED"
-    PRE_34_AI = "PRE-34-AI"
+    existing_tally_sheet_version_rows = []
+
+    #################################################################################################################
+    # Update existing election's electionTemplateName
+    #################################################################################################################
+    existing_elections = session.query(
+        _Election
+    ).all()
+
+    # Update all existing election's template to "PRESIDENTIAL_ELECTION_2019"
+    for existing_election in existing_elections:
+        existing_election.electionTemplateName = "PRESIDENTIAL_ELECTION_2019"
+        session.add(existing_election)
+
+    session.flush()
+
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE 41 rows
+    #################################################################################################################
+    class _TallySheetVersionRow_PRE_41(Base):
+        __tablename__ = 'tallySheetVersionRow_PRE_41'
+        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
+        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
+                                        nullable=False)
+        candidateId = db.Column(db.Integer, nullable=False)
+        count = db.Column(db.Integer, nullable=False)
+        countInWords = db.Column(db.String(1000), nullable=True)
 
     tally_sheet_template_pre_41 = _Template(
-        templateName=PRE_41
+        templateName="PRE-41"
     )
     tally_sheet_template_pre_41_candidate_wise_first_preference_row = tally_sheet_template_pre_41.add_row(
         templateRowType="CANDIDATE_FIRST_PREFERENCE",
@@ -415,8 +364,81 @@ def upgrade():
         ]
     )
 
+    session.add(tally_sheet_template_pre_41)
+    session.add(tally_sheet_template_pre_41_candidate_wise_first_preference_row)
+    session.add(tally_sheet_template_pre_41_rejected_vote_row)
+    session.flush()
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_41"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_41.templateId
+
+    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+        _TallySheetVersionRow_PRE_41.tallySheetVersionId,
+        _Submission.electionId,
+        _Submission.areaId,
+        _ElectionCandidate.partyId,
+        _TallySheetVersionRow_PRE_41.candidateId,
+        _TallySheetVersionRow_PRE_41.count.label("numValue"),
+        _TallySheetVersionRow_PRE_41.countInWords.label("strValue"),
+        literal(tally_sheet_template_pre_41_candidate_wise_first_preference_row.templateRowId).label("templateRowId")
+    ).join(
+        _TallySheetVersion,
+        _TallySheetVersion.tallySheetVersionId == _TallySheetVersionRow_PRE_41.tallySheetVersionId
+    ).join(
+        _SubmissionVersion,
+        _SubmissionVersion.submissionVersionId == _TallySheetVersion.tallySheetVersionId
+    ).join(
+        _Submission,
+        _Submission.submissionId == _SubmissionVersion.submissionId
+    ).join(
+        _ElectionCandidate,
+        _ElectionCandidate.candidateId == _TallySheetVersionRow_PRE_41.candidateId
+    ).all()
+
+    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+        _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId,
+        _Submission.electionId,
+        _Submission.areaId,
+        _TallySheetVersionRow_RejectedVoteCount.rejectedVoteCount.label("numValue"),
+        literal(tally_sheet_template_pre_41_rejected_vote_row.templateRowId).label("templateRowId")
+    ).join(
+        _TallySheetVersion,
+        _TallySheetVersion.tallySheetVersionId == _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId
+    ).join(
+        _SubmissionVersion,
+        _SubmissionVersion.submissionVersionId == _TallySheetVersion.tallySheetVersionId
+    ).join(
+        _Submission,
+        _Submission.submissionId == _SubmissionVersion.submissionId
+    ).join(
+        _TallySheet,
+        _TallySheet.tallySheetId == _Submission.submissionId
+    ).filter(
+        _TallySheet.templateId == tally_sheet_template_pre_41.templateId
+    ).all()
+
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE 30 PD rows
+    #################################################################################################################
+    class _TallySheetVersionRow_PRE_30_PD(Base):
+        __tablename__ = 'tallySheetVersionRow_PRE_30_PD'
+        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
+        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
+                                        nullable=False)
+        candidateId = db.Column(db.Integer, nullable=False)
+        countingCentreId = db.Column(db.Integer, nullable=False)
+        count = db.Column(db.Integer, nullable=False)
+
     tally_sheet_template_pre_30_pd = _Template(
-        templateName=PRE_30_PD
+        templateName="PRE-30-PD"
     )
     tally_sheet_template_pre_30_pd_candidate_wise_first_preference_row = tally_sheet_template_pre_30_pd.add_row(
         templateRowType="CANDIDATE_FIRST_PREFERENCE",
@@ -441,8 +463,82 @@ def upgrade():
         ]
     ).add_derivative_template_row(tally_sheet_template_pre_41_rejected_vote_row)
 
+    session.add(tally_sheet_template_pre_30_pd)
+    session.add(tally_sheet_template_pre_30_pd_candidate_wise_first_preference_row)
+    session.add(tally_sheet_template_pre_30_pd_rejected_vote_row)
+    session.flush()
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_30_PD"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_30_pd.templateId
+
+    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+        _TallySheetVersionRow_PRE_30_PD.tallySheetVersionId,
+        _Submission.electionId,
+        _TallySheetVersionRow_PRE_30_PD.countingCentreId.label("areaId"),
+        _ElectionCandidate.partyId,
+        _TallySheetVersionRow_PRE_30_PD.candidateId,
+        _TallySheetVersionRow_PRE_30_PD.count.label("numValue"),
+        literal(tally_sheet_template_pre_30_pd_candidate_wise_first_preference_row.templateRowId).label("templateRowId")
+    ).join(
+        _TallySheetVersion,
+        _TallySheetVersion.tallySheetVersionId == _TallySheetVersionRow_PRE_30_PD.tallySheetVersionId
+    ).join(
+        _SubmissionVersion,
+        _SubmissionVersion.submissionVersionId == _TallySheetVersion.tallySheetVersionId
+    ).join(
+        _Submission,
+        _Submission.submissionId == _SubmissionVersion.submissionId
+    ).join(
+        _ElectionCandidate,
+        _ElectionCandidate.candidateId == _TallySheetVersionRow_PRE_30_PD.candidateId
+    ).all()
+
+    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+        _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId,
+        _Submission.electionId,
+        _TallySheetVersionRow_RejectedVoteCount.areaId,
+        _TallySheetVersionRow_RejectedVoteCount.rejectedVoteCount.label("numValue"),
+        literal(tally_sheet_template_pre_30_pd_rejected_vote_row.templateRowId).label("templateRowId")
+    ).join(
+        _TallySheetVersion,
+        _TallySheetVersion.tallySheetVersionId == _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId
+    ).join(
+        _SubmissionVersion,
+        _SubmissionVersion.submissionVersionId == _TallySheetVersion.tallySheetVersionId
+    ).join(
+        _Submission,
+        _Submission.submissionId == _SubmissionVersion.submissionId
+    ).join(
+        _TallySheet,
+        _TallySheet.tallySheetId == _Submission.submissionId
+    ).filter(
+        _TallySheet.templateId == tally_sheet_template_pre_30_pd.templateId
+    ).all()
+
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE 30 ED rows
+    #################################################################################################################
+    class _TallySheetVersionRow_PRE_30_ED(Base):
+        __tablename__ = 'tallySheetVersionRow_PRE_30_ED'
+        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
+        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
+                                        nullable=False)
+        electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=False)
+        areaId = db.Column(db.Integer, nullable=True)
+        candidateId = db.Column(db.Integer, nullable=False)
+        countingCentreId = db.Column(db.Integer, nullable=False)
+        count = db.Column(db.Integer, nullable=False)
+
     tally_sheet_template_pre_30_ed = _Template(
-        templateName=PRE_30_ED
+        templateName="PRE-30-ED"
     )
     tally_sheet_template_pre_30_ed_candidate_wise_first_preference_row = tally_sheet_template_pre_30_ed.add_row(
         templateRowType="CANDIDATE_FIRST_PREFERENCE",
@@ -467,208 +563,20 @@ def upgrade():
         ]
     ).add_derivative_template_row(tally_sheet_template_pre_30_pd_rejected_vote_row)
 
-    tally_sheet_template_pre_all_island_ed = _Template(
-        templateName=PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS
-    )
-    tally_sheet_template_pre_all_island_ed_candidate_wise_first_preference_row = tally_sheet_template_pre_all_island_ed.add_row(
-        templateRowType="CANDIDATE_FIRST_PREFERENCE",
-        hasMany=True,
-        isDerived=True,
-        columns=[
-            {"columnName": "electionId", "grouped": True, "func": None},
-            {"columnName": "areaId", "grouped": True, "func": None},
-            {"columnName": "partyId", "grouped": True, "func": None},
-            {"columnName": "candidateId", "grouped": True, "func": None},
-            {"columnName": "numValue", "grouped": False, "func": "sum"}
-        ]
-    ).add_derivative_template_row(tally_sheet_template_pre_30_ed_candidate_wise_first_preference_row)
-    tally_sheet_template_pre_all_island_ed_rejected_vote_row = tally_sheet_template_pre_all_island_ed.add_row(
-        templateRowType="REJECTED_VOTE",
-        hasMany=False,
-        isDerived=True,
-        columns=[
-            {"columnName": "electionId", "grouped": True, "func": None},
-            {"columnName": "areaId", "grouped": True, "func": None},
-            {"columnName": "numValue", "grouped": False, "func": "sum"}
-        ]
-    ).add_derivative_template_row(tally_sheet_template_pre_30_ed_rejected_vote_row)
-
-    tally_sheet_template_pre_all_island = _Template(
-        templateName=PRE_ALL_ISLAND_RESULTS
-    )
-    tally_sheet_template_pre_all_island_candidate_wise_first_preference_row = tally_sheet_template_pre_all_island.add_row(
-        templateRowType="CANDIDATE_FIRST_PREFERENCE",
-        hasMany=True,
-        isDerived=True,
-        columns=[
-            {"columnName": "electionId", "grouped": True, "func": None},
-            {"columnName": "areaId", "grouped": True, "func": None},
-            {"columnName": "partyId", "grouped": True, "func": None},
-            {"columnName": "candidateId", "grouped": True, "func": None},
-            {"columnName": "numValue", "grouped": False, "func": "sum"}
-        ]
-    ).add_derivative_template_row(tally_sheet_template_pre_all_island_ed_candidate_wise_first_preference_row)
-    tally_sheet_template_pre_all_island_rejected_vote_row = tally_sheet_template_pre_all_island.add_row(
-        templateRowType="REJECTED_VOTE",
-        hasMany=True,
-        isDerived=True,
-        columns=[
-            {"columnName": "electionId", "grouped": True, "func": None},
-            {"columnName": "areaId", "grouped": True, "func": None},
-            {"columnName": "numValue", "grouped": False, "func": "sum"}
-        ]
-    ).add_derivative_template_row(tally_sheet_template_pre_all_island_ed_rejected_vote_row)
-
-    session.add(tally_sheet_template_pre_41)
-    session.add(tally_sheet_template_pre_41_candidate_wise_first_preference_row)
-    session.add(tally_sheet_template_pre_41_rejected_vote_row)
-    session.add(tally_sheet_template_pre_30_pd)
-    session.add(tally_sheet_template_pre_30_pd_candidate_wise_first_preference_row)
-    session.add(tally_sheet_template_pre_30_pd_rejected_vote_row)
     session.add(tally_sheet_template_pre_30_ed)
     session.add(tally_sheet_template_pre_30_ed_candidate_wise_first_preference_row)
     session.add(tally_sheet_template_pre_30_ed_rejected_vote_row)
-    session.add(tally_sheet_template_pre_all_island_ed)
-    session.add(tally_sheet_template_pre_all_island_ed_candidate_wise_first_preference_row)
-    session.add(tally_sheet_template_pre_all_island_ed_rejected_vote_row)
-    session.add(tally_sheet_template_pre_all_island)
-    session.add(tally_sheet_template_pre_all_island_candidate_wise_first_preference_row)
-    session.add(tally_sheet_template_pre_all_island_rejected_vote_row)
     session.flush()
 
     existing_tally_sheets = session.query(
         _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_30_ED"
     ).all()
 
     for existing_tally_sheet in existing_tally_sheets:
-        if existing_tally_sheet.tallySheetCode == "PRE_41":
-            existing_tally_sheet.templateId = tally_sheet_template_pre_41.templateId
-            print("##### [UPDATED] tallySheet[%d][%s] templateId : %d" % (
-                existing_tally_sheet.tallySheetId, existing_tally_sheet.tallySheetCode,
-                tally_sheet_template_pre_41.templateId))
-        elif existing_tally_sheet.tallySheetCode == "PRE_30_PD":
-            existing_tally_sheet.templateId = tally_sheet_template_pre_30_pd.templateId
-            print("##### [UPDATED] tallySheet[%d][%s] templateId : %d" % (
-                existing_tally_sheet.tallySheetId, existing_tally_sheet.tallySheetCode,
-                tally_sheet_template_pre_30_pd.templateId))
-        elif existing_tally_sheet.tallySheetCode == "PRE_30_ED":
-            existing_tally_sheet.templateId = tally_sheet_template_pre_30_ed.templateId
-            print("##### [UPDATED] tallySheet[%d][%s] templateId : %d" % (
-                existing_tally_sheet.tallySheetId, existing_tally_sheet.tallySheetCode,
-                tally_sheet_template_pre_30_ed.templateId))
-        elif existing_tally_sheet.tallySheetCode == "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS":
-            existing_tally_sheet.templateId = tally_sheet_template_pre_all_island_ed.templateId
-            print("##### [UPDATED] tallySheet[%d][%s] templateId : %d" % (
-                existing_tally_sheet.tallySheetId, existing_tally_sheet.tallySheetCode,
-                tally_sheet_template_pre_all_island_ed.templateId))
-        elif existing_tally_sheet.tallySheetCode == "PRE_ALL_ISLAND_RESULTS":
-            existing_tally_sheet.templateId = tally_sheet_template_pre_all_island.templateId
-            print("##### [UPDATED] tallySheet[%d][%s] templateId : %d" % (
-                existing_tally_sheet.tallySheetId, existing_tally_sheet.tallySheetCode,
-                tally_sheet_template_pre_all_island.templateId))
+        existing_tally_sheet.templateId = tally_sheet_template_pre_30_ed.templateId
 
-    session.flush()
-
-    existing_tally_sheet_version_rows = []
-
-    ######################################################
-    ## PRE 41 rows
-    ######################################################
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
-        _TallySheetVersionRow_PRE_41.tallySheetVersionId,
-        _Submission.electionId,
-        _Submission.areaId,
-        _ElectionCandidate.partyId,
-        _TallySheetVersionRow_PRE_41.candidateId,
-        _TallySheetVersionRow_PRE_41.count.label("numValue"),
-        _TallySheetVersionRow_PRE_41.countInWords.label("strValue"),
-        literal(tally_sheet_template_pre_30_pd_candidate_wise_first_preference_row.templateRowId).label("templateRowId")
-    ).join(
-        _TallySheetVersion,
-        _TallySheetVersion.tallySheetVersionId == _TallySheetVersionRow_PRE_41.tallySheetVersionId
-    ).join(
-        _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersion.tallySheetVersionId
-    ).join(
-        _Submission,
-        _Submission.submissionId == _SubmissionVersion.submissionId
-    ).join(
-        _ElectionCandidate,
-        _ElectionCandidate.candidateId == _TallySheetVersionRow_PRE_41.candidateId
-    ).all()
-
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
-        _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId,
-        _Submission.electionId,
-        _Submission.areaId,
-        _TallySheetVersionRow_RejectedVoteCount.rejectedVoteCount.label("numValue"),
-        literal(tally_sheet_template_pre_30_pd_rejected_vote_row.templateRowId).label("templateRowId")
-    ).join(
-        _TallySheetVersion,
-        _TallySheetVersion.tallySheetVersionId == _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId
-    ).join(
-        _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersion.tallySheetVersionId
-    ).join(
-        _Submission,
-        _Submission.submissionId == _SubmissionVersion.submissionId
-    ).join(
-        _TallySheet,
-        _TallySheet.tallySheetId == _Submission.submissionId
-    ).filter(
-        _TallySheet.templateId == tally_sheet_template_pre_41.templateId
-    ).all()
-
-    ######################################################
-    ## PRE 30 PD rows
-    ######################################################
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
-        _TallySheetVersionRow_PRE_30_PD.tallySheetVersionId,
-        _Submission.electionId,
-        _TallySheetVersionRow_PRE_30_PD.countingCentreId.label("areaId"),
-        _ElectionCandidate.partyId,
-        _TallySheetVersionRow_PRE_30_PD.candidateId,
-        _TallySheetVersionRow_PRE_30_PD.count.label("numValue"),
-        literal(tally_sheet_template_pre_41_candidate_wise_first_preference_row.templateRowId).label("templateRowId")
-    ).join(
-        _TallySheetVersion,
-        _TallySheetVersion.tallySheetVersionId == _TallySheetVersionRow_PRE_30_PD.tallySheetVersionId
-    ).join(
-        _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersion.tallySheetVersionId
-    ).join(
-        _Submission,
-        _Submission.submissionId == _SubmissionVersion.submissionId
-    ).join(
-        _ElectionCandidate,
-        _ElectionCandidate.candidateId == _TallySheetVersionRow_PRE_30_PD.candidateId
-    ).all()
-
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
-        _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId,
-        _Submission.electionId,
-        _TallySheetVersionRow_RejectedVoteCount.areaId,
-        _TallySheetVersionRow_RejectedVoteCount.rejectedVoteCount.label("numValue"),
-        literal(tally_sheet_template_pre_41_rejected_vote_row.templateRowId).label("templateRowId")
-    ).join(
-        _TallySheetVersion,
-        _TallySheetVersion.tallySheetVersionId == _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId
-    ).join(
-        _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersion.tallySheetVersionId
-    ).join(
-        _Submission,
-        _Submission.submissionId == _SubmissionVersion.submissionId
-    ).join(
-        _TallySheet,
-        _TallySheet.tallySheetId == _Submission.submissionId
-    ).filter(
-        _TallySheet.templateId == tally_sheet_template_pre_30_pd.templateId
-    ).all()
-
-    ######################################################
-    ## PRE 30 ED rows
-    ######################################################
     existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
         _TallySheetVersionRow_PRE_30_ED.tallySheetVersionId,
         _TallySheetVersionRow_PRE_30_ED.electionId,
@@ -713,9 +621,60 @@ def upgrade():
         _TallySheet.templateId == tally_sheet_template_pre_30_ed.templateId
     ).all()
 
-    ######################################################
-    ## PRE All Island ED rows
-    ######################################################
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE All Island ED rows
+    #################################################################################################################
+    class _TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS(Base):
+        __tablename__ = 'tallySheetVersionRow_ALL_ISLAND_RESULTS_BY_ED'
+        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
+        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
+                                        nullable=False)
+        electoralDistrictId = db.Column(db.Integer, nullable=True)
+        candidateId = db.Column(db.Integer, nullable=False)
+        count = db.Column(db.Integer, nullable=False)
+
+    tally_sheet_template_pre_all_island_ed = _Template(
+        templateName="PRE-ALL-ISLAND-RESULTS-BY-ELECTORAL-DISTRICTS"
+    )
+    tally_sheet_template_pre_all_island_ed_candidate_wise_first_preference_row = tally_sheet_template_pre_all_island_ed.add_row(
+        templateRowType="CANDIDATE_FIRST_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_30_ed_candidate_wise_first_preference_row)
+    tally_sheet_template_pre_all_island_ed_rejected_vote_row = tally_sheet_template_pre_all_island_ed.add_row(
+        templateRowType="REJECTED_VOTE",
+        hasMany=False,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_30_ed_rejected_vote_row)
+
+    session.add(tally_sheet_template_pre_all_island_ed)
+    session.add(tally_sheet_template_pre_all_island_ed_candidate_wise_first_preference_row)
+    session.add(tally_sheet_template_pre_all_island_ed_rejected_vote_row)
+    session.flush()
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_all_island_ed.templateId
+
     existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
         _TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.tallySheetVersionId,
         _Submission.electionId,
@@ -761,9 +720,59 @@ def upgrade():
         _TallySheet.templateId == tally_sheet_template_pre_all_island_ed.templateId
     ).all()
 
-    ######################################################
-    ## PRE All Island rows
-    ######################################################
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE All Island rows
+    #################################################################################################################
+    class _TallySheetVersionRow_ALL_ISLAND_RESULT(Base):
+        __tablename__ = 'tallySheetVersionRow_ALL_ISLAND_RESULT'
+        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
+        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
+                                        nullable=False)
+        candidateId = db.Column(db.Integer, nullable=False)
+        count = db.Column(db.Integer, nullable=False)
+
+    tally_sheet_template_pre_all_island = _Template(
+        templateName="PRE-ALL-ISLAND-RESULTS"
+    )
+    tally_sheet_template_pre_all_island_candidate_wise_first_preference_row = tally_sheet_template_pre_all_island.add_row(
+        templateRowType="CANDIDATE_FIRST_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_all_island_ed_candidate_wise_first_preference_row)
+    tally_sheet_template_pre_all_island_rejected_vote_row = tally_sheet_template_pre_all_island.add_row(
+        templateRowType="REJECTED_VOTE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_all_island_ed_rejected_vote_row)
+
+    session.add(tally_sheet_template_pre_all_island)
+    session.add(tally_sheet_template_pre_all_island_candidate_wise_first_preference_row)
+    session.add(tally_sheet_template_pre_all_island_rejected_vote_row)
+    session.flush()
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_ALL_ISLAND_RESULTS"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_all_island.templateId
+
     existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
         _TallySheetVersionRow_ALL_ISLAND_RESULT.tallySheetVersionId,
         _Submission.electionId,
@@ -809,6 +818,12 @@ def upgrade():
         _TallySheet.templateId == tally_sheet_template_pre_all_island.templateId
     ).all()
 
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # Insert all the tally sheet version rows
+    #################################################################################################################
+
     tally_sheet_version_row_attribute_names = ["tallySheetVersionId", "templateRowId", "electionId", "areaId",
                                                "partyId", "candidateId",
                                                "numValue", "strValue"]
@@ -825,7 +840,7 @@ def upgrade():
 
     session.commit()
 
-    #############################################################
+    # END ###########################################################################################################
 
     op.drop_table('tallySheetVersionRow_PRE_41')
     op.drop_table('tallySheetVersionRow_PRE_34_summary')
@@ -842,7 +857,6 @@ def upgrade():
     # op.drop_table('tallySheetVersionRow_CE_201')
     op.drop_column('tallySheet', 'tallySheetCode')
     op.drop_column('tallySheetVersion', 'tallySheetVersionCode')
-    ### end Alembic commands ###
 
 
 def downgrade():
