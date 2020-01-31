@@ -8,17 +8,17 @@ from orm.entities import Area, Election, Candidate, Party
 class TallySheetVersionRow_Model(db.Model):
     __tablename__ = 'tallySheetVersionRow'
     tallySheetVersionRowId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    templateRowId = db.Column(db.Integer,
-                              #db.ForeignKey("templateRow.templateRowId"),
-                              nullable=False)
+    templateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), nullable=False)
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
                                     nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
     areaId = db.Column(db.Integer, db.ForeignKey(Area.Model.__table__.c.areaId), nullable=True)
     candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.Model.__table__.c.candidateId), nullable=True)
     partyId = db.Column(db.Integer, db.ForeignKey(Party.Model.__table__.c.partyId), nullable=True)
+    ballotBoxId = db.Column(db.String(100), nullable=True)
     numValue = db.Column(db.Integer, nullable=True)
     strValue = db.Column(db.String(100), nullable=True)
+    dateValue = db.Column(db.DateTime, nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     area = relationship(Area.Model, foreign_keys=[areaId])
@@ -29,7 +29,7 @@ class TallySheetVersionRow_Model(db.Model):
 
     def __init__(self, templateRow, electionId, tallySheetVersion, numValue=None, strValue=None,
                  areaId=None, candidateId=None,
-                 partyId=None):
+                 partyId=None, ballotBoxId=None):
         super(TallySheetVersionRow_Model, self).__init__(
             templateRowId=templateRow.templateRowId,
             electionId=electionId,
@@ -38,7 +38,8 @@ class TallySheetVersionRow_Model(db.Model):
             strValue=strValue,
             areaId=areaId,
             candidateId=candidateId,
-            partyId=partyId
+            partyId=partyId,
+            ballotBoxId=ballotBoxId
         )
         db.session.add(self)
         db.session.flush()
@@ -48,7 +49,7 @@ Model = TallySheetVersionRow_Model
 
 
 def create(templateRow, electionId, tallySheetVersion, numValue=None, strValue=None, areaId=None,
-           candidateId=None, partyId=None):
+           candidateId=None, partyId=None, ballotBoxId=None):
     result = Model(
         templateRow=templateRow,
         electionId=electionId,
@@ -57,7 +58,8 @@ def create(templateRow, electionId, tallySheetVersion, numValue=None, strValue=N
         strValue=strValue,
         areaId=areaId,
         candidateId=candidateId,
-        partyId=partyId
+        partyId=partyId,
+        ballotBoxId=None
     )
 
     return result

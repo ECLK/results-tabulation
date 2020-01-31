@@ -37,9 +37,170 @@ def build_election(root_election: Election, party_candidate_dataset_file=None,
     tally_sheet_template_ce_201 = Template.create(
         templateName=CE_201
     )
+    tally_sheet_template_ce_201_ballot_box_row = tally_sheet_template_ce_201.add_row(
+        templateRowType="BALLOT_BOX",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "ballotBoxId", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_number_of_ballots_received = tally_sheet_template_ce_201.add_row(
+        templateRowType="NUMBER_OF_BALLOTS_RECEIVED",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_number_of_ballots_spoilt = tally_sheet_template_ce_201.add_row(
+        templateRowType="NUMBER_OF_BALLOTS_SPOILT",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_number_of_ballots_issued = tally_sheet_template_ce_201.add_row(
+        templateRowType="NUMBER_OF_BALLOTS_ISSUED",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_number_of_ballots_unused = tally_sheet_template_ce_201.add_row(
+        templateRowType="NUMBER_OF_BALLOTS_UNUSED",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_number_of_ordinary_ballots_in_ballot_paper_account = tally_sheet_template_ce_201.add_row(
+        templateRowType="NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_PAPER_ACCOUNT",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_number_of_ordinary_ballots_in_ballot_box = tally_sheet_template_ce_201.add_row(
+        templateRowType="NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_BOX",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_number_of_tendered_ballots_in_ballot_paper_account = tally_sheet_template_ce_201.add_row(
+        templateRowType="NUMBER_OF_TENDERED_BALLOTS_IN_BALLOT_PAPER_ACCOUNT",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_number_of_tendered_ballots_in_ballot_box = tally_sheet_template_ce_201.add_row(
+        templateRowType="NUMBER_OF_TENDERED_BALLOTS_IN_BALLOT_BOX",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
 
     tally_sheet_template_ce_201_pv = Template.create(
         templateName=CE_201_PV
+    )
+
+    tally_sheet_template_ce_201_pv_situation_row = tally_sheet_template_ce_201_pv.add_row(
+        templateRowType="SITUATION",
+        hasMany=False,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "strValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_pv_time_of_commencement_row = tally_sheet_template_ce_201_pv.add_row(
+        templateRowType="TIME_OF_COMMENCEMENT",
+        hasMany=False,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "strValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_pv_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
+        templateRowType="BALLOT_BOX",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "ballotBoxId", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_pv_number_of_packets_inserted_to_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
+        templateRowType="NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_pv_number_of_packets_found_inside_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
+        templateRowType="NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_pv_number_of_packets_rejected_after_opening_cover_a_row = tally_sheet_template_ce_201_pv.add_row(
+        templateRowType="NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A",
+        hasMany=False,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_ce_201_pv_number_of_packets_rejected_after_opening_cover_b_row = tally_sheet_template_ce_201_pv.add_row(
+        templateRowType="NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B",
+        hasMany=False,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
     )
 
     tally_sheet_template_pre_41 = Template.create(
