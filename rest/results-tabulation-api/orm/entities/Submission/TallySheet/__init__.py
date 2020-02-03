@@ -454,7 +454,8 @@ class TallySheetModel(db.Model):
     def get_extended_tally_sheet_version(self, tallySheetVersionId):
         tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=self.tallySheetId,
                                                           tallySheetVersionId=tallySheetVersionId)
-        extended_tally_sheet_version_class = self.template.get_extended_tally_sheet_version_class()
+        extended_election = self.submission.election.get_extended_election()
+        extended_tally_sheet_version_class = extended_election.get_extended_tally_sheet_version_class(self.template.templateName)
         extended_tally_sheet_version = extended_tally_sheet_version_class(tally_sheet_version)
 
         return extended_tally_sheet_version

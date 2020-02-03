@@ -17,7 +17,6 @@ import json
 
 from exception.messages import MESSAGE_CODE_USER_NOT_FOUND, MESSAGE_CODE_USER_NOT_AUTHENTICATED, \
     MESSAGE_CODE_USER_NOT_AUTHORIZED
-from ext.Election import get_role_based_access_config
 
 JWT_SECRET = "jwt_secret"
 AREA_ID = "areaId"
@@ -227,8 +226,11 @@ def get_user_access_area_ids() -> Set[int]:
 
 
 def has_role_based_access(tally_sheet, access_type):
+    from ext.Election import get_extended_election
+
     election = tally_sheet.submission.election
-    role_based_access_config = get_role_based_access_config(election.electionTemplateName)
+    extended_election = get_extended_election(election=election)
+    role_based_access_config = extended_election.role_based_access_config
 
     tally_sheet_code = tally_sheet.template.templateName
     vote_type = election.voteType

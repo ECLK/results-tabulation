@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship, aliased
 
 from app import db
 from auth import get_user_access_area_ids
-from ext.Election import get_extended_election_class
+from ext.Election import get_extended_election
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
 
@@ -66,10 +66,14 @@ class ElectionModel(db.Model):
             self.set_party_candidates_dataset(fileSource=party_candidate_dataset_file)
             self.set_invalid_vote_categories_dataset(fileSource=invalid_vote_categories_dataset_file)
 
-            extended_election_class = get_extended_election_class(electionTemplateName=self.electionTemplateName)
+            extended_election = self.get_extended_election()
 
-            if extended_election_class is not None:
-                extended_election_class.build_election(root_election=self)
+            if extended_election is not None:
+                extended_election.build_election()
+
+    def get_extended_election(self):
+        extended_election = get_extended_election(election=self)
+        return extended_election
 
     @hybrid_property
     def mappedElectionIds(self):
