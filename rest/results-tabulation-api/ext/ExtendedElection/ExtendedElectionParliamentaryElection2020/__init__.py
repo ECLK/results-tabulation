@@ -1,11 +1,11 @@
 from app import db
-from ext.Election.ParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, PE_R1, PE_CE_RO_PR_1, \
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, PE_R1, PE_CE_RO_PR_1, \
     PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3
 from constants.VOTE_TYPES import Postal, NonPostal
 from ext import TallySheetMap
-from ext.Election import ExtendedElection
-from ext.Election.ParliamentaryElection2020 import RoleBasedAccess
-from ext.Election.util import get_rows_from_csv, update_dashboard_tables
+from ext.ExtendedElection import ExtendedElection
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import RoleBasedAccess
+from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Election, Candidate, Template, Party
 from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict

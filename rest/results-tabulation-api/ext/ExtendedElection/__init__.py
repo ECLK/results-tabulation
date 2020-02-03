@@ -1,7 +1,7 @@
 def get_extended_election(election):
     from constants.ELECTION_TEMPLATES import PRESIDENTIAL_ELECTION_2019, PARLIAMENT_ELECTION_2020
-    from ext.Election.ParliamentaryElection2020 import ExtendedElectionParliamentaryElection2020
-    from ext.Election.PresidentialElection2019 import ExtendedElectionPresidentialElection2019
+    from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import ExtendedElectionParliamentaryElection2020
+    from ext.ExtendedElection.ExtendedElectionPresidentialElection2019 import ExtendedElectionPresidentialElection2019
 
     EXTENDED_ELECTION_MAP = {
         PRESIDENTIAL_ELECTION_2019: ExtendedElectionPresidentialElection2019,

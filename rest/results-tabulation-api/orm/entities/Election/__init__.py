@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship, aliased
 
 from app import db
 from auth import get_user_access_area_ids
-from ext.Election import get_extended_election
+from ext.ExtendedElection import get_extended_election
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
 

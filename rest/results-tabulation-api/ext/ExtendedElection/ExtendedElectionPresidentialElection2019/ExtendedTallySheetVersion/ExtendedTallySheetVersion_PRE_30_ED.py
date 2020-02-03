@@ -1,6 +1,5 @@
 from flask import render_template
-
-from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion import ExtendedTallySheetVersion
+from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
 from orm.entities import Area
 from constants.VOTE_TYPES import Postal
 from util import to_comma_seperated_num

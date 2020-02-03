@@ -226,7 +226,7 @@ def get_user_access_area_ids() -> Set[int]:
 
 
 def has_role_based_access(tally_sheet, access_type):
-    from ext.Election import get_extended_election
+    from ext.ExtendedElection import get_extended_election
 
     election = tally_sheet.submission.election
     extended_election = get_extended_election(election=election)
