@@ -1,64 +1,30 @@
-import React, {useEffect, useState} from "react";
-
-import {
-    PATH_ELECTION, PATH_ELECTION_BY_ID,
-    PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_TALLY_SHEET_VIEW
-} from "../../App";
-
-import {
-    TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_CE_201_PV,
-    TALLY_SHEET_CODE_PRE_41, TALLY_SHEET_CODE_PRE_34_CO
-} from "../../components/election/extended-election/PresidentialElection2019/TALLY_SHEET_CODE";
-import BreadCrumb from "../../components/bread-crumb";
-import DataEntryEdit_PRE_41 from "./data-entry-edit-pre-41";
-import DataEntryEdit_CE_201 from "./data-entry-edit-ce-201";
-import DataEntryEdit_CE_201_PV from "./data-entry-edit-ce-201-pv";
-import DataEntryEdit_PRE_34_CO from "./data-entry-edit-pre-34-co";
-import {getTallySheetCodeStr} from "../../utils/tallySheet";
-import * as tabulationApi from "../../services/tabulation-api";
-import {MESSAGES_EN} from "../../locale/messages_en";
-import {MESSAGE_TYPES} from "../../services/messages.provider";
-import ExtendedElection from "../../components/election/extended-election";
+import React, {useEffect, useState, Component} from "react";
+import * as tabulationApi from "../../../services/tabulation-api";
+import {MESSAGES_EN} from "../../../locale/messages_en";
+import {MESSAGE_TYPES} from "../../../services/messages.provider";
+import {PATH_ELECTION_TALLY_SHEET_LIST} from "../../../App";
 
 
-export default function DataEntryEdit({history, queryString, election, tallySheet, messages}) {
-    const {tallySheetCode} = tallySheet;
-    const {electionId, rootElection} = election;
-
-    function getEditorJsx() {debugger;
-        const props = {history, queryString, election, tallySheet, messages};
-        const extendedElection = ExtendedElection(election);debugger;
-
-        return <extendedElection.TallySheetEditComponent {...props}/>
+export default class TallySheetEdit extends Component {
+    getTallySheetEditForm(tallySheetCode) {
+        return null;
     }
 
-    return <div className="page">
-        <BreadCrumb
-            links={[
-                {label: "elections", to: PATH_ELECTION()},
-                {label: rootElection.electionName, to: PATH_ELECTION_BY_ID(rootElection.electionId)},
-                {
-                    label: getTallySheetCodeStr(tallySheet).toLowerCase(),
-                    to: PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode)
-                },
-                {
-                    label: tallySheet.area.areaName,
-                    to: PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheet.tallySheetId)
-                },
-            ]}
-        />
-        <div className="page-content">
-            <div className="data-entry-edit-header">
-                <div className="data-entry-edit-header-election-name">{rootElection.electionName}</div>
-                <div className="data-entry-edit-header-tally-sheet-code">{getTallySheetCodeStr(tallySheet)}</div>
-            </div>
-            <div>{tallySheet.electoralDistrict ? 'Electoral District: ' + tallySheet.electoralDistrict.areaName : null}
-                {tallySheet.pollingDivision ? ' > Polling Division: ' + tallySheet.pollingDivision.areaName : null}
-                {tallySheet.countingCentre ? ' > Counting Centre: ' + tallySheet.countingCentre.areaName : null}</div>
-            {getEditorJsx()}
-        </div>
-    </div>
+    render() {
+        const {tallySheet} = this.props;
+        const {tallySheetCode} = tallySheet;
+        const TallySheetEditComponent = this.getTallySheetEditForm(tallySheetCode);
+
+        if (TallySheetEditComponent) {
+            return <TallySheetEditComponent {...this.props} />
+        } else {
+            return <div>
+                Tally sheet edit form has not been implemented yet.
+            </div>;
+        }
+    }
 }
+
 
 export function useTallySheetEdit(props) {
     const {messages, history, election, setTallySheetContent, validateTallySheetContent, getTallySheetRequestBody} = props;
@@ -73,7 +39,7 @@ export function useTallySheetEdit(props) {
 
     useEffect(() => {
         setProcessing(true);
-        if (tallySheet.latestVersionId) {
+        if (true || tallySheet.latestVersionId) {
             tabulationApi.getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheet.latestVersionId).then((tallySheetVersion) => {
                 setTallySheetContent(tallySheetVersion);
                 setProcessing(false);
