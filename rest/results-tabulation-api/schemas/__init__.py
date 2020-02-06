@@ -342,6 +342,7 @@ class TallySheetVersionSchema(ma.ModelSchema):
         sqla_session = db.session
 
     submission = EnumField(SubmissionSchema)
+    content = ma.Nested(TallySheetVersionRow_Schema, many=True)
 
 
 class TallySheetSchema(ma.ModelSchema):
