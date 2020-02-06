@@ -1,3 +1,6 @@
+from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
+
+
 def get_extended_election(election):
     from constants.ELECTION_TEMPLATES import PRESIDENTIAL_ELECTION_2019, PARLIAMENT_ELECTION_2020
     from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import ExtendedElectionParliamentaryElection2020
@@ -19,12 +22,11 @@ class ExtendedElection:
 
     role_based_access_config = None
 
-    def __init__(self, election, role_based_access_config=None):
+    def __init__(self, election: Election, role_based_access_config=None):
         self.election = election
         self.role_based_access_config = role_based_access_config
 
     def get_extended_tally_sheet_version_class(self, templateName):
-        from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion import ExtendedTallySheetVersion
 
         EXTENDED_TEMPLATE_MAP = {
             # TODO
@@ -35,7 +37,7 @@ class ExtendedElection:
         else:
             return ExtendedTallySheetVersion
 
-    def build_election(root_election: Election, party_candidate_dataset_file=None,
+    def build_election(self, party_candidate_dataset_file=None,
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
                        invalid_vote_categories_dataset_file=None):
         pass

@@ -50,9 +50,10 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                 templateName=templateName
             )
 
-    def build_election(root_election: Election, party_candidate_dataset_file=None,
+    def build_election(self, party_candidate_dataset_file=None,
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
                        invalid_vote_categories_dataset_file=None):
+        root_election = self.election
         postal_election = root_election.add_sub_election(electionName="Postal", voteType=Postal)
         ordinary_election = root_election.add_sub_election(electionName="Ordinary", voteType=NonPostal)
 
