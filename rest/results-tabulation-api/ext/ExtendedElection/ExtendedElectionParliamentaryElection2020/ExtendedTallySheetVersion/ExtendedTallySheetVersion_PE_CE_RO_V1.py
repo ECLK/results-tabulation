@@ -1,10 +1,7 @@
 from flask import render_template
-
-from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion import ExtendedTallySheetVersion
+from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
 from orm.entities import Area
 from constants.VOTE_TYPES import Postal
-from ext.Election.PresidentialElection2019.fake_polling_division_voters_map import \
-    get_polling_division_total_registered_voters
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
@@ -62,7 +59,6 @@ class ExtendedTallySheetVersion_PE_CE_RO_V1(ExtendedTallySheetVersion):
             content["countingCentres"].append(area_wise_valid_vote_count_result_item.areaName)
             content["validVoteCounts"].append(to_comma_seperated_num(area_wise_valid_vote_count_result_item.numValue))
             total_valid_vote_count += area_wise_valid_vote_count_result_item.numValue
-            print(total_valid_vote_count)
 
         for area_wise_rejected_vote_count_result_item_index, area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.iterrows():
             content["rejectedVoteCounts"].append(
@@ -103,10 +99,6 @@ class ExtendedTallySheetVersion_PE_CE_RO_V1(ExtendedTallySheetVersion):
             data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item.numValue))
 
             content["data"].append(data_row)
-
-        # print("###########  content ", content)
-        #
-        # return content
 
         html = render_template(
             'PE-CE-RO-V1.html',

@@ -1,9 +1,8 @@
 from flask import render_template
-
-from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion import ExtendedTallySheetVersion
+from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
 from orm.entities import Area
 from constants.VOTE_TYPES import Postal
-from ext.Election.PresidentialElection2019.fake_polling_division_voters_map import \
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.fake_polling_division_voters_map import \
     get_polling_division_total_registered_voters
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum

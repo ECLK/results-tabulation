@@ -28,11 +28,12 @@ import {
 } from "../../constants/AREA_TYPE";
 import {VOTE_TYPE_POSTAL} from "../../constants/VOTE_TYPE";
 import ExtendedElectionDefault from "../extended-election-default";
+import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
 
 export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
 
     constructor(election) {
-        super(election, Settings.TALLY_SHEET_LIST_COLUMNS, Settings.TALLY_SHEET_LIST_ACTIONS);
+        super(election, Settings.TALLY_SHEET_LIST_COLUMNS, Settings.TALLY_SHEET_LIST_ACTIONS, ParliamentElection2020TallySheetEdit);
     }
 
     getElectionHome() {
@@ -45,7 +46,6 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                 <Grid item xs={4} className="election-grid">
 
                     <Grid item xs={12}><h2>Data Entry</h2></Grid>
-
 
                     {subElections.map((subElection) => {
                         const subElectionId = subElection.electionId;

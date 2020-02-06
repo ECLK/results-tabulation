@@ -1,5 +1,5 @@
 from flask import render_template
-from ext.ExtendedTallySheetVersion.ExtendedTallySheetVersion import ExtendedTallySheetVersion
+from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
 from orm.entities import Area
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum

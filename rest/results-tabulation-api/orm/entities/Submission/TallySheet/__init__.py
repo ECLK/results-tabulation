@@ -23,6 +23,8 @@ from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, Templ
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
 from sqlalchemy import and_, func
 
+from util import get_dict_key_value_or_none
+
 
 class TallySheetModel(db.Model):
     __tablename__ = 'tallySheet'
@@ -307,11 +309,6 @@ class TallySheetModel(db.Model):
             "group_concat": func.group_concat
         }
 
-        content_dict = {}
-        if content is not None:
-            for content_row in content:
-                content_dict[content_row["templateRowId"]] = content_row["rows"]
-
         election = self.submission.election
         tallySheetVersion = self.create_empty_version()
         is_tally_sheet_version_complete = True
@@ -416,7 +413,9 @@ class TallySheetModel(db.Model):
 
                     content_rows.append(content_row)
             else:
-                content_rows = content_dict[templateRow.templateRowId]
+                content_rows = [
+                    content_row for content_row in content if content_row["templateRowId"] == templateRow.templateRowId
+                ]
 
                 if templateRow.hasMany is False:
                     content_rows = [content_rows[0]]
@@ -443,7 +442,13 @@ class TallySheetModel(db.Model):
                 TallySheetVersionRow.create(
                     templateRow=templateRow,
                     tallySheetVersion=tallySheetVersion,
-                    **content_row
+                    electionId=get_dict_key_value_or_none(content_row, "electionId"),
+                    numValue=get_dict_key_value_or_none(content_row, "numValue"),
+                    strValue=get_dict_key_value_or_none(content_row, "strValue"),
+                    areaId=get_dict_key_value_or_none(content_row, "areaId"),
+                    candidateId=get_dict_key_value_or_none(content_row, "candidateId"),
+                    partyId=get_dict_key_value_or_none(content_row, "partyId"),
+                    ballotBoxId=get_dict_key_value_or_none(content_row, "ballotBoxId")
                 )
 
         if is_tally_sheet_version_complete:
@@ -454,7 +459,9 @@ class TallySheetModel(db.Model):
     def get_extended_tally_sheet_version(self, tallySheetVersionId):
         tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=self.tallySheetId,
                                                           tallySheetVersionId=tallySheetVersionId)
-        extended_tally_sheet_version_class = self.template.get_extended_tally_sheet_version_class()
+        extended_election = self.submission.election.get_extended_election()
+        extended_tally_sheet_version_class = extended_election.get_extended_tally_sheet_version_class(
+            self.template.templateName)
         extended_tally_sheet_version = extended_tally_sheet_version_class(tally_sheet_version)
 
         return extended_tally_sheet_version
