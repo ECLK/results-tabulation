@@ -6,6 +6,8 @@ from constants.VOTE_TYPES import Postal, NonPostal
 from ext import TallySheetMap
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import RoleBasedAccess
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_V1 import \
+    ExtendedTallySheetVersion_PE_CE_RO_V1
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Election, Candidate, Template, Party
 from orm.entities.Area import AreaMap
@@ -23,6 +25,18 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             election=election,
             role_based_access_config=role_based_access_config
         )
+
+    def get_extended_tally_sheet_version_class(self, templateName):
+        EXTENDED_TEMPLATE_MAP = {
+            PE_CE_RO_V1: ExtendedTallySheetVersion_PE_CE_RO_V1
+        }
+
+        if templateName in EXTENDED_TEMPLATE_MAP:
+            return EXTENDED_TEMPLATE_MAP[templateName]
+        else:
+            return super(ExtendedElectionPresidentialElection2019, self).get_extended_tally_sheet_version_class(
+                templateName=templateName
+            )
 
     def build_election(self, party_candidate_dataset_file=None,
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,

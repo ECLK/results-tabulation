@@ -358,16 +358,42 @@ class ExtendedTallySheetVersion:
 
         return df
 
+
+    def get_party_and_area_wise_valid_vote_count_result(self):
+        df = self.df.copy()
+
+        df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
+
+        df = df.sort_values(
+            by=['partyId', 'areaId'], ascending=True
+        ).reset_index()
+
+        return df
+
     def get_area_wise_valid_vote_count_result(self):
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
 
-        df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
+        df = df.loc[(df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
 
         df = df.groupby(
             ['areaId', "areaName"]
         ).agg(sum).sort_values(
             by=['areaId'], ascending=True
+        ).reset_index()
+
+        return df
+
+    def get_party_wise_valid_vote_count_result(self):
+        df = self.df.copy()
+        df['numValue'] = df['numValue'].astype(float)
+
+        df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
+
+        df = df.groupby(
+            ['partyId', 'partyName', 'partyAbbreviation']
+        ).agg(sum).sort_values(
+            by=['partyId'], ascending=True
         ).reset_index()
 
         return df
