@@ -1,11 +1,14 @@
-import React, {Component, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {
     PATH_ELECTION, PATH_ELECTION_BY_ID,
-    PATH_ELECTION_DATA_ENTRY, PATH_ELECTION_DATA_ENTRY_EDIT,
+    PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_TALLY_SHEET_VIEW
+} from "../../App";
+
+import {
     TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_CE_201_PV,
     TALLY_SHEET_CODE_PRE_41, TALLY_SHEET_CODE_PRE_34_CO
-} from "../../App";
+} from "../../components/election/extended-election/PresidentialElection2019/TALLY_SHEET_CODE";
 import BreadCrumb from "../../components/bread-crumb";
 import DataEntryEdit_PRE_41 from "./data-entry-edit-pre-41";
 import DataEntryEdit_CE_201 from "./data-entry-edit-ce-201";
@@ -15,46 +18,38 @@ import {getTallySheetCodeStr} from "../../utils/tallySheet";
 import * as tabulationApi from "../../services/tabulation-api";
 import {MESSAGES_EN} from "../../locale/messages_en";
 import {MESSAGE_TYPES} from "../../services/messages.provider";
+import ExtendedElection from "../../components/election/extended-election";
 
 
 export default function DataEntryEdit({history, queryString, election, tallySheet, messages}) {
-    const {tallySheetId, tallySheetCode} = tallySheet;
-    const subElectionId = tallySheet.electionId;
-    const {electionId, electionName} = election;
+    const {tallySheetCode} = tallySheet;
+    const {electionId, rootElection} = election;
 
-    function getEditorJsx() {
+    function getEditorJsx() {debugger;
         const props = {history, queryString, election, tallySheet, messages};
-        if (tallySheetCode === TALLY_SHEET_CODE_PRE_41) {
-            return <DataEntryEdit_PRE_41 {...props} />
-        } else if (tallySheetCode === TALLY_SHEET_CODE_CE_201) {
-            return <DataEntryEdit_CE_201 {...props} />
-        } else if (tallySheetCode === TALLY_SHEET_CODE_CE_201_PV) {
-            return <DataEntryEdit_CE_201_PV {...props} />
-        } else if (tallySheetCode === TALLY_SHEET_CODE_PRE_34_CO) {
-            return <DataEntryEdit_PRE_34_CO {...props} />
-        } else {
-            return null;
-        }
+        const extendedElection = ExtendedElection(election);debugger;
+
+        return <extendedElection.TallySheetEditComponent {...props}/>
     }
 
     return <div className="page">
         <BreadCrumb
             links={[
                 {label: "elections", to: PATH_ELECTION()},
-                {label: electionName, to: PATH_ELECTION_BY_ID(electionId)},
+                {label: rootElection.electionName, to: PATH_ELECTION_BY_ID(rootElection.electionId)},
                 {
                     label: getTallySheetCodeStr(tallySheet).toLowerCase(),
-                    to: PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId)
+                    to: PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode)
                 },
                 {
                     label: tallySheet.area.areaName,
-                    to: PATH_ELECTION_DATA_ENTRY_EDIT(electionId, tallySheet.tallySheetId)
+                    to: PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheet.tallySheetId)
                 },
             ]}
         />
         <div className="page-content">
             <div className="data-entry-edit-header">
-                <div className="data-entry-edit-header-election-name">{electionName}</div>
+                <div className="data-entry-edit-header-election-name">{rootElection.electionName}</div>
                 <div className="data-entry-edit-header-tally-sheet-code">{getTallySheetCodeStr(tallySheet)}</div>
             </div>
             <div>{tallySheet.electoralDistrict ? 'Electoral District: ' + tallySheet.electoralDistrict.areaName : null}
@@ -125,8 +120,7 @@ export function useTallySheetEdit(props) {
 
             messages.push("Success", MESSAGES_EN.success_pre41_submit, MESSAGE_TYPES.SUCCESS);
             setTimeout(() => {
-                const subElectionId = tallySheet.electionId;
-                history.push(PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId));
+                history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode));
             }, 1000)
         } catch (e) {
             messages.push("Error", MESSAGES_EN.error_tallysheet_submit, MESSAGE_TYPES.ERROR);

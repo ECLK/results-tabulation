@@ -8,15 +8,8 @@ import {MESSAGE_TYPES} from "../services/messages.provider";
 import {
     PATH_ELECTION,
     PATH_ELECTION_BY_ID,
-    PATH_ELECTION_DATA_ENTRY,
-    PATH_ELECTION_DATA_ENTRY_EDIT,
-    TALLY_SHEET_CODE_CE_201,
-    TALLY_SHEET_CODE_CE_201_PV,
-    TALLY_SHEET_CODE_PRE_41,
-    TALLY_SHEET_CODE_PRE_34_CO,
-    COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES,
-    PATH_ELECTION_REPORT,
-    PATH_ELECTION_REPORT_VIEW
+    PATH_ELECTION_TALLY_SHEET_LIST,
+    PATH_ELECTION_TALLY_SHEET_VIEW
 } from "../App";
 import Processing from "../components/processing";
 import Error from "../components/error";
@@ -28,7 +21,7 @@ import {getTallySheetCodeStr} from "../utils/tallySheet";
 
 export default function ReportView(props) {
     const {history, election, messages} = props
-    const {electionId, electionName} = election;
+    const {electionId, rootElection} = election;
     const [tallySheet, setTallySheet] = useState(props.tallySheet);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState(null);
@@ -42,7 +35,7 @@ export default function ReportView(props) {
     const fetchTallySheetVersion = async () => {
         const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId, tallySheetStatus} = tallySheet;
         let tallySheetVersionId = null;
-        if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
+        if (!tallySheet.template.isDerived) {
             if (lockedVersionId) {
                 tallySheetVersionId = lockedVersionId;
             } else if (submittedVersionId) {
@@ -91,9 +84,6 @@ export default function ReportView(props) {
             const tallySheet = await requestEditForTallySheet(tallySheetId);
             setTallySheet(tallySheet);
             messages.push("Success", MESSAGES_EN.success_report_editable, MESSAGE_TYPES.SUCCESS);
-            setTimeout(() => {
-                history.push(PATH_ELECTION_DATA_ENTRY_EDIT(electionId, tallySheetId))
-            }, 1000)
         } catch (e) {
             messages.push("Error", MESSAGES_EN.error_updating_report, MESSAGE_TYPES.ERROR);
         }
@@ -142,31 +132,25 @@ export default function ReportView(props) {
 
     function getTallySheetListLink() {
         const {tallySheetCode} = tallySheet;
-        const subElectionId = tallySheet.electionId;
 
-        if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
-            return PATH_ELECTION_DATA_ENTRY(electionId, tallySheetCode, subElectionId)
-        } else {
-            return PATH_ELECTION_REPORT(electionId, tallySheetCode, subElectionId)
-        }
+        return PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode)
     }
 
 
     const getReportViewJsx = () => {
         const {tallySheetCode, tallySheetStatus, area, tallySheetId} = tallySheet;
         const {areaName} = area;
-        const subElection = tallySheet.election;
 
         const breadCrumbLinkList = [
             {label: "elections", to: PATH_ELECTION()},
-            {label: electionName, to: PATH_ELECTION_BY_ID(electionId)},
+            {label: rootElection.electionName, to: PATH_ELECTION_BY_ID(rootElection.electionId)},
             {
-                label: getTallySheetCodeStr({tallySheetCode, election: subElection}).toLowerCase(),
+                label: getTallySheetCodeStr({tallySheetCode, election: election}).toLowerCase(),
                 to: getTallySheetListLink()
             },
             {
                 label: areaName.toLowerCase(),
-                to: PATH_ELECTION_REPORT_VIEW(electionId, tallySheetId)
+                to: PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetId)
             }
         ];
 
@@ -175,8 +159,8 @@ export default function ReportView(props) {
                 links={breadCrumbLinkList}
             />
             <div className="page-content">
-                <div>{electionName}</div>
-                <div>{getTallySheetCodeStr({tallySheetCode, election: subElection})}</div>
+                <div>{rootElection.electionName}</div>
+                <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
 
 
                 <div className="report-view-status">
@@ -192,7 +176,7 @@ export default function ReportView(props) {
                             Confirm
                         </Button>
                         {(() => {
-                            if (COUNTING_CENTRE_WISE_DATA_ENTRY_TALLY_SHEET_CODES.indexOf(tallySheetCode) >= 0) {
+                            if (!tallySheet.template.isDerived) {
                                 return <Button
                                     variant="contained" size="small" color="primary"
                                     disabled={processing || !tallySheet.readyToLock}

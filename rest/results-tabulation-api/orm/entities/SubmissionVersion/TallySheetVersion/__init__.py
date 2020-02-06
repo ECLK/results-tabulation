@@ -5,11 +5,9 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from app import db
 from sqlalchemy.orm import relationship
 
-from auth import get_user_access_area_ids
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
-from orm.enums import TallySheetCodeEnum
-from util import get_tally_sheet_code_string, get_tally_sheet_version_class
-from orm.entities import SubmissionVersion
+from orm.entities.Template import TemplateRowModel
+from orm.entities import SubmissionVersion, TallySheetVersionRow, Area, Candidate, Party, Election
 from orm.entities.Submission import TallySheet
 from exception import NotFoundException
 from flask import request
@@ -19,7 +17,6 @@ class TallySheetVersionModel(db.Model):
     __tablename__ = 'tallySheetVersion'
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
                                     primary_key=True)
-    tallySheetVersionCode = db.Column(db.Enum(TallySheetCodeEnum), nullable=False)
     isComplete = db.Column(db.Boolean, default=False, nullable=False)
     submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[tallySheetVersionId])
 
@@ -36,6 +33,59 @@ class TallySheetVersionModel(db.Model):
         self.submissionVersion.set_locked()
 
     @hybrid_property
+    def content(self):
+        try:
+            query_args = [
+                TallySheetVersionRow.Model.tallySheetVersionRowId,
+                TallySheetVersionRow.Model.electionId,
+                TemplateRowModel.templateRowId,
+                TemplateRowModel.templateRowType,
+                Election.Model.electionId,
+                Election.Model.voteType,
+                Election.Model.rootElectionId,
+                Area.Model.areaId,
+                Area.Model.areaName,
+                Candidate.Model.candidateId,
+                Candidate.Model.candidateName,
+                Party.Model.partyId,
+                Party.Model.partyName,
+                Party.Model.partySymbol,
+                Party.Model.partyAbbreviation,
+                TallySheetVersionRow.Model.strValue,
+                TallySheetVersionRow.Model.numValue
+            ]
+            return db.session.query(
+                *query_args
+            ).join(
+                TemplateRowModel,
+                TemplateRowModel.templateRowId == TallySheetVersionRow.Model.templateRowId
+            ).join(
+                Election.Model,
+                Election.Model.electionId == TallySheetVersionRow.Model.electionId,
+                isouter=True
+            ).join(
+                Area.Model,
+                Area.Model.areaId == TallySheetVersionRow.Model.areaId,
+                isouter=True
+            ).join(
+                Candidate.Model,
+                Candidate.Model.candidateId == TallySheetVersionRow.Model.candidateId,
+                isouter=True
+            ).join(
+                Party.Model,
+                Party.Model.partyId == TallySheetVersionRow.Model.partyId,
+                isouter=True
+            ).filter(
+                TallySheetVersionRow.Model.tallySheetVersionId == self.tallySheetVersionId
+            ).order_by(
+                Party.Model.partyId,
+                Candidate.Model.candidateId,
+                Area.Model.areaId
+            ).all()
+        except Exception as e:
+            print("\n\n\n\n\n\n\n### ERROR ### ", e)
+
+    @hybrid_property
     def htmlUrl(self):
         return "%stally-sheet/%d/version/%d/html" % (request.host_url, self.tallySheetId, self.tallySheetVersionId)
 
@@ -43,7 +93,7 @@ class TallySheetVersionModel(db.Model):
     def contentUrl(self):
         return "%stally-sheet/%s/%d/version/%d" % (
             request.host_url,
-            get_tally_sheet_code_string(tally_sheet_code=self.tallySheetVersionCode),
+            "",
             self.tallySheetId,
             self.tallySheetVersionId
         )
@@ -57,20 +107,6 @@ class TallySheetVersionModel(db.Model):
 
         db.session.add(self)
         db.session.flush()
-
-    def add_invalid_vote_count(self, electionId, rejectedVoteCount, areaId=None):
-        from orm.entities.TallySheetVersionRow import TallySheetVersionRow_RejectedVoteCount
-
-        TallySheetVersionRow_RejectedVoteCount.createAreaWiseCount(
-            electionId=electionId,
-            tallySheetVersionId=self.tallySheetVersionId,
-            areaId=areaId,
-            rejectedVoteCount=rejectedVoteCount
-        )
-
-    __mapper_args__ = {
-        'polymorphic_on': tallySheetVersionCode
-    }
 
 
 Model = TallySheetVersionModel
@@ -93,7 +129,7 @@ def get_by_id(tallySheetId, tallySheetVersionId):
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
-    tallySheetVersion = get_tally_sheet_version_class(tallySheet.tallySheetCode).Model.query.filter(
+    tallySheetVersion = Model.query.filter(
         Model.tallySheetVersionId == tallySheetVersionId,
         Model.tallySheetId == tallySheetId
     ).one_or_none()

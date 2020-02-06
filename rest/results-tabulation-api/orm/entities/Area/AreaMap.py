@@ -1,17 +1,11 @@
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
-
 from app import db
-from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
-from orm.entities.IO import File
-from orm.enums import VoteTypeEnum
 
 
 class AreaMapModel(db.Model):
     __tablename__ = 'area_map'
     areaMapId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=True)
-    voteType = db.Column(db.Enum(VoteTypeEnum), nullable=True)
+    voteType = db.Column(db.String(100), nullable=False)
     pollingStationId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
     countingCentreId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
     districtCentreId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
@@ -20,7 +14,6 @@ class AreaMapModel(db.Model):
     pollingDivisionId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
     electoralDistrictId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
     countryId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
-
 
     def __init__(
             self,

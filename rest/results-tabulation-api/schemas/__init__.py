@@ -2,7 +2,8 @@ from marshmallow.fields import Integer, String
 
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
-    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook, Candidate
+    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook, Candidate, Template, \
+    TallySheetVersionRow
 from orm.entities.Area import AreaAreaModel
 from orm.entities.Audit import Stamp
 from orm.entities.Election import InvalidVoteCategory, ElectionCandidate
@@ -10,18 +11,9 @@ from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
-from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionCE201, TallySheetVersionPRE41, \
-    TallySheetVersionPRE21, TallySheetVersion_PRE_30_PD, TallySheetVersion_PRE_30_ED, TallySheetVersion_PRE_34_CO, \
-    TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersion_PRE_ALL_ISLAND_RESULT, \
-    TallySheetVersion_CE_201_PV
-from orm.entities.TallySheetVersionRow import TallySheetVersionRow_CE_201_PV, TallySheetVersionRow_CE_201, \
-    TallySheetVersionRow_PRE_41, TallySheetVersionRow_PRE_34_preference, \
-    TallySheetVersionRow_PRE_21, TallySheetVersionRow_PRE_ALL_ISLAND_RESULT, TallySheetVersionRow_PRE_30_ED, \
-    TallySheetVersionRow_PRE_30_PD, TallySheetVersionRow_CE_201_PV_CC, TallySheetVersionRow_RejectedVoteCount, \
-    TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, TallySheetVersionRow_PRE_34_summary
-from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, TallySheetCodeEnum, OfficeTypeEnum, \
-    SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum, BallotTypeEnum, VoteTypeEnum
-
+from orm.entities.Template import TemplateRowModel
+from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, OfficeTypeEnum, SubmissionTypeEnum, ElectorateTypeEnum, \
+    AreaTypeEnum, BallotTypeEnum
 from marshmallow_enum import EnumField
 
 
@@ -100,6 +92,7 @@ class ElectionSchema(ma.ModelSchema):
         fields = (
             "electionId",
             "electionName",
+            "electionTemplateName",
             "parties",
             "invalidVoteCategories",
             "subElections",
@@ -113,193 +106,35 @@ class ElectionSchema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    voteType = EnumField(VoteTypeEnum)
     parties = ma.Nested(PartySchema, many=True)
     invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
-    subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType"], many=True)
-    rootElection = ma.Nested("self", only=["electionId", "electionName", "voteType"])
+    subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType", "rootElectionId",
+                                           "rootElection"], many=True)
+    rootElection = ma.Nested("self", only=[
+        "electionId", "electionName", "voteType", "electionTemplateName", "parties", "invalidVoteCategories"
+    ])
 
 
-class TallySheetVersionRow_PRE_41_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "candidateId",
-            "count",
-            "countInWords"
-        )
-
-        model = TallySheetVersionRow_PRE_41.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "electoralDistrictId",
-            "electoralDistrictName",
-            "candidateId",
-            "count"
-        )
-
-        model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "candidateId",
-            "count"
-        )
-
-        model = TallySheetVersionRow_PRE_ALL_ISLAND_RESULT.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_PRE_30_ED_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "candidateId",
-            "areaId",
-            "count",
-            "electionId",
-            "voteType"
-        )
-
-        model = TallySheetVersionRow_PRE_30_ED.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    voteType = EnumField(VoteTypeEnum)
-
-
-class TallySheetVersionRow_CE_201_PV_Schema(ma.ModelSchema):
+class TallySheetVersionRow_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "tallySheetVersionRowId",
-            "tallySheetVersionId",
-            "ballotBoxId",
-            "numberOfPacketsInserted",
-            "numberOfAPacketsFound"
-        )
-
-        model = TallySheetVersionRow_CE_201_PV.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_CE_201_PV_CC_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetVersionRowId",
-            "tallySheetVersionId",
-            "countingCentreId",
-            "situation",
-            "timeOfCommencementOfCount",
-            "numberOfAPacketsFound",
-            "numberOfACoversRejected",
-            "numberOfBCoversRejected",
-            "numberOfValidBallotPapers"
-        )
-
-        model = TallySheetVersionRow_CE_201_PV_CC.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_PRE_34_CO_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "electionId",
-            "tallySheetVersionId",
-            "preferenceNumber",
-            "preferenceCount",
-            "candidateId",
-            "candidateName"
-        )
-
-        model = TallySheetVersionRow_PRE_34_preference.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_PRE_30_PD_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "candidateId",
-            "countingCentreId",
-            "count"
-        )
-
-        model = TallySheetVersionRow_PRE_30_PD.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_Summary_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "areaCount",
-            "rejectedVoteCount",
-            "validVoteCount",
-            "totalVoteCount",
-        )
-
-        model = TallySheetVersionRow_RejectedVoteCount.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_PRE_21_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "count",
-            "invalidVoteCategoryId",
-            "categoryDescription"
-        )
-
-        model = TallySheetVersionRow_PRE_21.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersionRow_CE_201_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
+            "templateRowId",
+            "templateRowType",
             "areaId",
             "areaName",
-            "ballotBoxesIssued",
-            "ballotBoxesReceived",
-            "ballotsIssued",
-            "ballotsReceived",
-            "ballotsSpoilt",
-            "ballotsUnused",
-            "ordinaryBallotCountFromBoxCount",
-            "tenderedBallotCountFromBoxCount",
-            "ordinaryBallotCountFromBallotPaperAccount",
-            "tenderedBallotCountFromBallotPaperAccount"
+            "candidateId",
+            "candidateName",
+            "partyId",
+            "partyName",
+            "numValue",
+            "strValue"
         )
 
-        model = TallySheetVersionRow_CE_201.Model
+        model = TallySheetVersionRow.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
-
-    ballotBoxesIssued = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
-    ballotBoxesReceived = ma.Nested("BallotBox_Schema", only=["ballotBoxId", "stationaryItemId"], many=True)
 
 
 class SimpleAreaSchema(ma.ModelSchema):
@@ -495,8 +330,9 @@ class TallySheetVersionSchema(ma.ModelSchema):
             "tallySheetVersionId",
             "createdBy",
             "createdAt",
-            "htmlUrl",
-            "contentUrl",
+            # "htmlUrl",
+            # "contentUrl",
+            "content",
             "isComplete"
         )
 
@@ -508,211 +344,13 @@ class TallySheetVersionSchema(ma.ModelSchema):
     submission = EnumField(SubmissionSchema)
 
 
-class TallySheetVersionPRE41Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "htmlUrl",
-            "content",
-            "summary"
-        )
-
-        model = TallySheetVersionPRE41.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    content = ma.Nested(TallySheetVersionRow_PRE_41_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_Summary_Schema)
-
-
-class TallySheetVersion_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "htmlUrl",
-            "content"
-        )
-
-        model = TallySheetVersion_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    content = ma.Nested(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_BY_ELECTORAL_DISTRICTS_Schema, many=True)
-
-
-class TallySheetVersion_PRE_ALL_ISLAND_RESULT_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "htmlUrl",
-            "content"
-        )
-
-        model = TallySheetVersion_PRE_ALL_ISLAND_RESULT.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    content = ma.Nested(TallySheetVersionRow_PRE_ALL_ISLAND_RESULT_Schema, many=True)
-
-
-class TallySheetVersion_CE_201_PV_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "htmlUrl",
-            "content",
-            "summary"
-        )
-
-        model = TallySheetVersion_CE_201_PV.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    content = ma.Nested(TallySheetVersionRow_CE_201_PV_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_CE_201_PV_CC_Schema)
-
-
-class TallySheetVersion_PRE_30_ED_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "htmlUrl",
-            "content"
-        )
-
-        model = TallySheetVersion_PRE_30_ED.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    content = ma.Nested(TallySheetVersionRow_PRE_30_ED_Schema, many=True)
-    areas = ma.Nested(AreaSchema, many=True)
-
-
-class TallySheetVersionRow_PRE_34_CO_Summary_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "ballotPapersNotCounted",
-            "remainingBallotPapers"
-        )
-
-        model = TallySheetVersionRow_PRE_34_summary.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class TallySheetVersion_PRE_34_CO_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "htmlUrl",
-            "content",
-            "summary",
-        )
-
-        model = TallySheetVersion_PRE_34_CO.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    content = ma.Nested(TallySheetVersionRow_PRE_34_CO_Schema, many=True)
-    summary = ma.Nested(TallySheetVersionRow_PRE_34_CO_Summary_Schema)
-
-
-class TallySheetVersion_PRE_30_PD_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "htmlUrl",
-            "content"
-        )
-
-        model = TallySheetVersion_PRE_30_PD.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    content = ma.Nested(TallySheetVersionRow_PRE_30_PD_Schema, many=True)
-
-
-class TallySheetVersionPRE21Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "htmlUrl",
-            "content"
-        )
-
-        model = TallySheetVersionPRE21.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    content = ma.Nested(TallySheetVersionRow_PRE_21_Schema, many=True)
-
-
-class TallySheetVersionCE201Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetVersionId",
-            "createdBy",
-            "createdAt",
-            "htmlUrl",
-            "content"
-        )
-
-        model = TallySheetVersionCE201.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # submission = ma.Nested(SubmissionSchema)
-    content = ma.Nested(TallySheetVersionRow_CE_201_Schema, many=True)
-
-
 class TallySheetSchema(ma.ModelSchema):
     class Meta:
         fields = (
             "tallySheetId",
             "tallySheetCode",
+            "templateId",
+            "template",
             "electionId",
             "areaId",
             "latestVersionId",
@@ -735,7 +373,7 @@ class TallySheetSchema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    tallySheetCode = EnumField(TallySheetCodeEnum)
+    template = ma.Nested("TemplateSchema")
     area = ma.Nested(AreaSchema)
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
     latestVersion = ma.Nested(SubmissionVersionSchema)
@@ -745,44 +383,36 @@ class TallySheetSchema(ma.ModelSchema):
     submissionProof = ma.Nested(Proof_Schema)
 
 
-# class TallySheet_PRE_41__party_Schema(ma.ModelSchema):
-#     class Meta:
-#         fields = ("partyId", "voteCount")
-#
-#         model = TallySheetPRE41Party.Model
-#         # optionally attach a Session
-#         # to use for deserialization
-#         sqla_session = db.session
+class TemplateRowSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "templateRowId",
+            "templateRowType",
+            "hasMany",
+            "isDerived"
+        )
+
+        model = TemplateRowModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
 
 
-# class TallySheet_PRE_41_Schema(ma.ModelSchema):
-#     class Meta:
-#         fields = (
-#             "tallySheetId",
-#             "tallySheetCode",
-#             "electionId",
-#             "areaId",
-#             "latestVersionId",
-#
-#             "tallySheetVersionId",
-#             "createdBy",
-#             "createdAt",
-#
-#             "electoralDistrictId",
-#             "countingCentreId",
-#             "countingCentreId",
-#             "party_wise_results",
-#         )
-#
-#         model = TallySheetPRE41.Model
-#         # optionally attach a Session
-#         # to use for deserialization
-#         sqla_session = db.session
-#
-#     createdBy = ma.Integer()
-#     createdAt = ma.String()
-#
-#     party_wise_results = ma.Nested(TallySheet_PRE_41__party_Schema, many=True)
+class TemplateSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "templateId",
+            "templateName",
+            "rows",
+            "isDerived"
+        )
+
+        model = Template.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    rows = ma.Nested(TemplateRowSchema, many=True)
 
 
 class StationaryItem_Schema(ma.ModelSchema):

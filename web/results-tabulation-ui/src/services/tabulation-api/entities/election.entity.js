@@ -2,10 +2,6 @@ import {ENDPOINT_PATH_ELECTION_AREA, ENDPOINT_PATH_ELECTIONS_BY_ID, request} fro
 import Entity from "./entity";
 import {AreaEntity} from "./area.entity";
 
-export const VOTE_TYPE = {
-    POSTAL: "Postal",
-    NON_POSTAL: "NonPostal"
-};
 
 export class ElectionEntity extends Entity {
     constructor() {

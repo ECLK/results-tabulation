@@ -7,7 +7,7 @@ class PollingStationModel(Office.Model):
         'polymorphic_identity': AreaTypeEnum.PollingStation
     }
 
-    def __init__(self, officeName, electionId, registeredVotersCount):
+    def __init__(self, officeName, electionId, registeredVotersCount=None):
         self._registeredVotersCount = registeredVotersCount
         super(PollingStationModel, self).__init__(
             officeName=officeName,
@@ -18,7 +18,7 @@ class PollingStationModel(Office.Model):
 Model = PollingStationModel
 
 
-def create(officeName, electionId, registeredVotersCount):
+def create(officeName, electionId, registeredVotersCount=None):
     result = Model(
         officeName=officeName,
         electionId=electionId,

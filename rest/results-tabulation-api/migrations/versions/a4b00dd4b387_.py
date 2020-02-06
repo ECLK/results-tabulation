@@ -34,7 +34,6 @@ def upgrade():
     op.add_column('file', sa.Column('fileContent', mysql.LONGBLOB(), nullable=True))
 
     for filename in os.listdir("./data"):
-        print(filename)
         file = session.query(_File).filter(_File.fileId == filename).one_or_none()
         if file is not None:
             with open("./data/%s" % filename, "r") as file:

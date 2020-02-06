@@ -1,6 +1,5 @@
 from app import db
 from auth import authorize, EC_LEADERSHIP_ROLE
-from auth.AuthConstants import ALL_ROLES
 from exception import NotFoundException
 from util import RequestBody, get_paginated_query
 import connexion

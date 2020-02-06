@@ -5,50 +5,35 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app import db
-from auth import get_user_access_area_ids, get_user_name, has_role_based_access, ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, \
-    ACCESS_TYPE_READ, DATA_EDITOR_ROLE, get_user_roles
-from exception import NotFoundException, MethodNotAllowedException, ForbiddenException
+from auth import get_user_access_area_ids, get_user_name, has_role_based_access
+from constants.AUTH_CONSTANTS import ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK
+from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
     MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK, \
-    MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW, \
-    MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
-    MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_LOCK, \
+    MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK, MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, \
+    MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
+    MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
     MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED
-from orm.entities import Submission, Election
-from orm.entities.Area import AreaMap
+from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area
 from orm.entities.Dashboard import StatusReport
+from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.enums import TallySheetCodeEnum, SubmissionTypeEnum, VoteTypeEnum, AreaTypeEnum
-from util import get_tally_sheet_code, get_tally_sheet_version_class
-
-DATA_ENTRY_TALLY_SHEET_CODES = [
-    TallySheetCodeEnum.PRE_41,
-    TallySheetCodeEnum.CE_201,
-    TallySheetCodeEnum.CE_201_PV,
-    TallySheetCodeEnum.PRE_34_CO
-]
-
-PREFERENCE_TALLY_SHEET_CODES = [
-    TallySheetCodeEnum.PRE_34_CO,
-    TallySheetCodeEnum.PRE_34_I_RO,
-    TallySheetCodeEnum.PRE_34_II_RO,
-    TallySheetCodeEnum.PRE_34,
-    TallySheetCodeEnum.PRE_34_PD,
-    TallySheetCodeEnum.PRE_34_ED,
-    TallySheetCodeEnum.PRE_34_AI
-]
+from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
+from orm.enums import SubmissionTypeEnum, AreaTypeEnum
+from sqlalchemy import and_, func
 
 
 class TallySheetModel(db.Model):
     __tablename__ = 'tallySheet'
 
     tallySheetId = db.Column(db.Integer, db.ForeignKey(Submission.Model.__table__.c.submissionId), primary_key=True)
-    tallySheetCode = db.Column(db.Enum(TallySheetCodeEnum), nullable=False)
+    templateId = db.Column(db.Integer, db.ForeignKey(Template.Model.__table__.c.templateId), nullable=False)
     statusReportId = db.Column(db.Integer, db.ForeignKey(StatusReport.Model.__table__.c.statusReportId), nullable=True)
 
     submission = relationship("SubmissionModel", foreign_keys=[tallySheetId])
     statusReport = relationship(StatusReport.Model, foreign_keys=[statusReportId])
+    template = relationship(Template.Model, foreign_keys=[templateId])
 
     electionId = association_proxy("submission", "electionId")
     areaId = association_proxy("submission", "areaId")
@@ -72,6 +57,43 @@ class TallySheetModel(db.Model):
     submissionProof = association_proxy("submission", "submissionProof")
     versions = association_proxy("submission", "versions")
 
+    children = relationship("TallySheetModel", secondary="tallySheet_tallySheet", lazy="subquery",
+                            primaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId",
+                            secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.childTallySheetId"
+                            )
+    parents = relationship("TallySheetModel", secondary="tallySheet_tallySheet", lazy="subquery",
+                           primaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.childTallySheetId",
+                           secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId"
+                           )
+
+    def add_parent(self, parentTallySheet):
+        parentTallySheet.add_child(self.tallySheetId)
+
+        return self
+
+    def add_child(self, childTallySheet):
+        existing_mapping = TallySheetTallySheetModel.query.filter(
+            TallySheetTallySheetModel.parentTallySheetId == self.tallySheetId,
+            TallySheetTallySheetModel.childTallySheetId == childTallySheet.tallySheetId
+        ).one_or_none()
+
+        if existing_mapping is None:
+            tallySheetAssociation = TallySheetTallySheetModel(
+                parentTallySheetId=self.tallySheetId,
+                childTallySheetId=childTallySheet.tallySheetId
+            )
+            db.session.add(tallySheetAssociation)
+            db.session.flush()
+
+        return self
+
+    @hybrid_property
+    def tallySheetCode(self):
+        print("\n\n\n\n\n\n\n\n############################ self.template : ", self.template)
+        print("\n\n\n\n\n\n\n\n############################ self.template.templateName : ", self.template.templateName)
+
+        return self.template.templateName
+
     def get_status_report_type(self):
         electoral_district_name = ""
         polling_division_name = ""
@@ -79,36 +101,36 @@ class TallySheetModel(db.Model):
 
         election = self.submission.election
         submission_area = self.submission.area
-        if self.tallySheetCode is TallySheetCodeEnum.PRE_30_PD:
-            if election.voteType is VoteTypeEnum.Postal:
-                electoral_district_name = submission_area.areaName
-                status_report_type = "PV"
-            else:
-                electoral_district_name = _get_electoral_district_name(submission_area)
-                polling_division_name = submission_area.areaName
-                status_report_type = "PD"
-        elif self.tallySheetCode is TallySheetCodeEnum.PRE_34_PD:
-            if election.voteType is VoteTypeEnum.Postal:
-                electoral_district_name = submission_area.areaName
-                status_report_type = "PV [Revised]"
-            else:
-                electoral_district_name = _get_electoral_district_name(submission_area)
-                polling_division_name = submission_area.areaName
-                status_report_type = "PD [Revised]"
-        elif self.tallySheetCode is TallySheetCodeEnum.PRE_30_ED:
-            electoral_district_name = submission_area.areaName
-            status_report_type = "ED"
-        elif self.tallySheetCode is TallySheetCodeEnum.PRE_34_ED:
-            electoral_district_name = submission_area.areaName
-            status_report_type = "ED [Revised]"
-        else:
-            # TODO
-            status_report_type = self.tallySheetCode.name
+        # if self.tallySheetCode == PRE_30_PD:
+        #     if election.voteType is Postal:
+        #         electoral_district_name = submission_area.areaName
+        #         status_report_type = "PV"
+        #     else:
+        #         electoral_district_name = _get_electoral_district_name(submission_area)
+        #         polling_division_name = submission_area.areaName
+        #         status_report_type = "PD"
+        # elif self.tallySheetCode == PRE_34_PD:
+        #     if election.voteType is Postal:
+        #         electoral_district_name = submission_area.areaName
+        #         status_report_type = "PV [Revised]"
+        #     else:
+        #         electoral_district_name = _get_electoral_district_name(submission_area)
+        #         polling_division_name = submission_area.areaName
+        #         status_report_type = "PD [Revised]"
+        # elif self.tallySheetCode == PRE_30_ED:
+        #     electoral_district_name = submission_area.areaName
+        #     status_report_type = "ED"
+        # elif self.tallySheetCode == PRE_34_ED:
+        #     electoral_district_name = submission_area.areaName
+        #     status_report_type = "ED [Revised]"
+        # else:
+        # TODO
+        status_report_type = self.tallySheetCode
 
         return electoral_district_name, polling_division_name, status_report_type
 
     def get_report_status(self):
-        if self.tallySheetCode in DATA_ENTRY_TALLY_SHEET_CODES:
+        if self.template.has_data_entry():
             if self.locked:
                 if self.released:
                     return "RELEASED"
@@ -174,7 +196,7 @@ class TallySheetModel(db.Model):
 
             self.submission.set_locked_version(submissionVersion=None)
         else:
-            if self.tallySheetCode in DATA_ENTRY_TALLY_SHEET_CODES:
+            if self.template.is_submit_allowed():
                 if self.submittedVersionId is None:
                     raise ForbiddenException(
                         message="Data entry tally sheet cannot be locked before submitting",
@@ -248,7 +270,7 @@ class TallySheetModel(db.Model):
             TallySheetVersion.Model.tallySheetVersionId == self.latestVersionId
         ).one_or_none()
 
-    def __init__(self, tallySheetCode, electionId, areaId):
+    def __init__(self, template, electionId, areaId):
         submission = Submission.create(
             submissionType=SubmissionTypeEnum.TallySheet,
             electionId=electionId,
@@ -257,29 +279,203 @@ class TallySheetModel(db.Model):
 
         super(TallySheetModel, self).__init__(
             tallySheetId=submission.submissionId,
-            tallySheetCode=tallySheetCode,
+            templateId=template.templateId,
         )
 
         db.session.add(self)
         db.session.flush()
 
     def create_empty_version(self):
-        tallySheetVersion = get_tally_sheet_version_class(self.tallySheetCode).Model(
+        tallySheetVersion = TallySheetVersion.Model(
             tallySheetId=self.tallySheetId
         )
 
         return tallySheetVersion
 
-    def create_version(self):
-        # if self.locked is True:
-        #     raise MethodNotAllowedException("Tally sheet is Locked. (tallySheetId=%d)" % self.tallySheetId)
+    def create_version(self, content=None):
+        COLUMN_NAME_MAP = {
+            "electionId": Election.Model.electionId,
+            "areaId": Area.Model.areaId,
+            "candidateId": Candidate.Model.candidateId,
+            "partyId": Party.Model.partyId,
+            "numValue": TallySheetVersionRow.Model.numValue,
+            "strValue": TallySheetVersionRow.Model.strValue
+        }
+        COLUMN_FUNC_MAP = {
+            "sum": func.sum,
+            "count": func.count,
+            "group_concat": func.group_concat
+        }
 
+        content_dict = {}
+        if content is not None:
+            for content_row in content:
+                content_dict[content_row["templateRowId"]] = content_row["rows"]
+
+        election = self.submission.election
         tallySheetVersion = self.create_empty_version()
+        is_tally_sheet_version_complete = True
+
+        for templateRow in self.template.rows:
+            query_args = [
+                TallySheetModel.tallySheetId
+            ]
+            group_by_args = []
+
+            for templateRowColumn in templateRow.columns:
+                column_name = templateRowColumn.templateRowColumnName
+                column = COLUMN_NAME_MAP[column_name]
+
+                if templateRowColumn.func is not None:
+                    column_func = COLUMN_FUNC_MAP[templateRowColumn.func]
+                    column = column_func(column).label(column_name)
+
+                query_args.append(column)
+
+                if templateRowColumn.grouped:
+                    group_by_args.append(column)
+
+            content_rows = []
+
+            if templateRow.isDerived is True:
+
+                tally_sheet_version_row_join_condition = [
+                    TallySheetVersionRow.Model.templateRowId == TemplateRowModel.templateRowId,
+                    TallySheetVersionRow.Model.tallySheetVersionId == Submission.Model.lockedVersionId
+                ]
+
+                aggregated_results = db.session.query(
+                    *query_args
+                ).join(
+                    Submission.Model,
+                    Submission.Model.submissionId == TallySheetModel.tallySheetId
+                )
+
+                if Area.Model.areaId in query_args:
+                    aggregated_results = aggregated_results.join(
+                        Area.Model,
+                        Area.Model.areaId == Submission.Model.areaId
+                    )
+
+                if Election.Model.electionId in query_args or Candidate.Model.candidateId in query_args or Party.Model.partyId in query_args:
+                    aggregated_results = aggregated_results.join(
+                        Election.Model,
+                        Election.Model.electionId == Submission.Model.electionId
+                    )
+
+                if Candidate.Model.candidateId in query_args or Party.Model.partyId in query_args:
+                    aggregated_results = aggregated_results.join(
+                        ElectionCandidate.Model,
+                        ElectionCandidate.Model.electionId == Election.Model.rootElectionId
+                    )
+
+                if Candidate.Model.candidateId in query_args:
+                    aggregated_results = aggregated_results.join(
+                        Candidate.Model,
+                        Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
+                    )
+                    tally_sheet_version_row_join_condition.append(
+                        TallySheetVersionRow.Model.candidateId == Candidate.Model.candidateId)
+
+                if Party.Model.partyId in query_args:
+                    aggregated_results = aggregated_results.join(
+                        Party.Model,
+                        Party.Model.partyId == ElectionCandidate.Model.partyId
+                    )
+                    tally_sheet_version_row_join_condition.append(
+                        TallySheetVersionRow.Model.partyId == Party.Model.partyId)
+
+                aggregated_results = aggregated_results.join(
+                    TallySheetTallySheetModel,
+                    TallySheetTallySheetModel.childTallySheetId == TallySheetModel.tallySheetId
+                ).join(
+                    TemplateRowModel,
+                    TemplateRowModel.templateId == TallySheetModel.templateId
+                ).join(
+                    TemplateRow_DerivativeTemplateRow_Model,
+                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowId == TemplateRowModel.templateRowId
+                ).join(
+                    TallySheetVersionRow.Model,
+                    and_(
+                        *tally_sheet_version_row_join_condition
+                    ),
+                    isouter=True
+                ).filter(
+                    TallySheetTallySheetModel.parentTallySheetId == self.tallySheetId,
+                    TemplateRow_DerivativeTemplateRow_Model.templateRowId == templateRow.templateRowId
+                ).group_by(
+                    *group_by_args
+                ).all()
+
+                for aggregated_result in aggregated_results:
+                    content_row = {}
+
+                    for templateRowColumn in templateRow.columns:
+                        column_name = templateRowColumn.templateRowColumnName
+                        content_row[column_name] = getattr(aggregated_result, column_name)
+
+                    content_rows.append(content_row)
+            else:
+                content_rows = content_dict[templateRow.templateRowId]
+
+                if templateRow.hasMany is False:
+                    content_rows = [content_rows[0]]
+
+                for content_row in content_rows:
+                    content_row["electionId"] = election.electionId
+                    content_row["areaId"] = self.submission.areaId
+
+                    if "partyId" not in content_row:
+                        content_row["partyId"] = None
+
+                    if "candidateId" not in content_row:
+                        content_row["candidateId"] = None
+
+                    if "strValue" not in content_row:
+                        content_row["strValue"] = None
+
+            for content_row in content_rows:
+
+                # Update the completed flag to False if there are null values in any row.
+                if content_row["numValue"] is None:
+                    is_tally_sheet_version_complete = False
+
+                TallySheetVersionRow.create(
+                    templateRow=templateRow,
+                    tallySheetVersion=tallySheetVersion,
+                    **content_row
+                )
+
+        if is_tally_sheet_version_complete:
+            tallySheetVersion.set_complete()
 
         return tallySheetVersion
 
+    def get_extended_tally_sheet_version(self, tallySheetVersionId):
+        tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=self.tallySheetId,
+                                                          tallySheetVersionId=tallySheetVersionId)
+        extended_election = self.submission.election.get_extended_election()
+        extended_tally_sheet_version_class = extended_election.get_extended_tally_sheet_version_class(self.template.templateName)
+        extended_tally_sheet_version = extended_tally_sheet_version_class(tally_sheet_version)
+
+        return extended_tally_sheet_version
+
+    def html(self, tallySheetVersionId):
+        extended_tally_sheet_version = self.get_extended_tally_sheet_version(tallySheetVersionId=tallySheetVersionId)
+        return extended_tally_sheet_version.html()
+
+    def html_letter(self, tallySheetVersionId):
+        extended_tally_sheet_version = self.get_extended_tally_sheet_version(tallySheetVersionId=tallySheetVersionId)
+        return extended_tally_sheet_version.html_letter()
+
 
 Model = TallySheetModel
+
+
+class TallySheetTallySheetModel(db.Model):
+    __tablename__ = 'tallySheet_tallySheet'
+    parentTallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), primary_key=True)
+    childTallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"), primary_key=True)
 
 
 def _get_electoral_district_name(polling_division):
@@ -298,24 +494,21 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     query = Model.query.join(
         Submission.Model,
         Submission.Model.submissionId == Model.tallySheetId
+    ).join(
+        Template.Model,
+        Template.Model.templateId == Model.templateId
     ).filter(
         Model.tallySheetId == tallySheetId
     )
 
     if tallySheetCode is not None:
-        query = query.filter(Model.tallySheetCode == tallySheetCode)
+        query = query.filter(Template.Model.templateName == tallySheetCode)
 
     # Filter by authorized areas
     user_access_area_ids: Set[int] = get_user_access_area_ids()
     query = query.filter(Submission.Model.areaId.in_(user_access_area_ids))
 
     result = query.one_or_none()
-
-    # if not has_role_based_access(result, ACCESS_TYPE_READ):
-    #     raise ForbiddenException(
-    #         message="User doesn't have access to tally sheet.",
-    #         code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
-    #     )
 
     return result
 
@@ -326,6 +519,9 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None):
     query = Model.query.join(
         Submission.Model,
         Submission.Model.submissionId == Model.tallySheetId
+    ).join(
+        Template.Model,
+        Template.Model.templateId == Model.templateId
     ).join(
         Election.Model,
         Election.Model.electionId == Submission.Model.electionId
@@ -340,7 +536,7 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None):
         query = query.filter(Submission.Model.areaId == areaId)
 
     if tallySheetCode is not None:
-        query = query.filter(Model.tallySheetCode == get_tally_sheet_code(tallySheetCode))
+        query = query.filter(Template.Model.templateName == tallySheetCode)
 
     # Filter by authorized areas
     user_access_area_ids: Set[int] = get_user_access_area_ids()
@@ -349,9 +545,9 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None):
     return query
 
 
-def create(tallySheetCode, electionId, areaId):
+def create(template, electionId, areaId):
     result = Model(
-        tallySheetCode=tallySheetCode,
+        template=template,
         electionId=electionId,
         areaId=areaId
     )
@@ -359,8 +555,8 @@ def create(tallySheetCode, electionId, areaId):
     return result
 
 
-def create_empty_version(tallySheetId, tallySheetCode=None):
-    tallySheet = get_by_id(tallySheetId=tallySheetId, tallySheetCode=tallySheetCode)
+def create_empty_version(tallySheetId):
+    tallySheet = get_by_id(tallySheetId=tallySheetId)
     if tallySheet is None:
         raise NotFoundException(
             message="Tally sheet not found. (tallySheetId=%d)" % tallySheetId,
@@ -372,21 +568,22 @@ def create_empty_version(tallySheetId, tallySheetCode=None):
     return tallySheet, tallySheetVersion
 
 
-def create_version(tallySheetId, tallySheetCode=None):
-    tallySheet = get_by_id(tallySheetId=tallySheetId, tallySheetCode=tallySheetCode)
+def create_version(tallySheetId, content=None):
+    print("\n\n\n\n\n\n####### create_version #####")
+    tallySheet = get_by_id(tallySheetId=tallySheetId)
     if tallySheet is None:
         raise NotFoundException(
-            message="Tally sheet not found. (tallySheetId=%d, tallySheetCode=%s)" % (tallySheetId, tallySheetCode.name),
+            message="Tally sheet not found. (tallySheetId=%d)" % (tallySheetId),
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
-    tallySheetVersion = tallySheet.create_version()
+    tallySheetVersion = tallySheet.create_version(content=content)
 
     return tallySheet, tallySheetVersion
 
 
-def create_latest_version(tallySheetId, tallySheetCode=None):
-    tallySheet, tallySheetVersion = create_version(tallySheetId, tallySheetCode)
+def create_latest_version(tallySheetId, content=None):
+    tallySheet, tallySheetVersion = create_version(tallySheetId, content=content)
     tallySheet.set_latest_version(tallySheetVersion=tallySheetVersion)
 
     return tallySheet, tallySheetVersion

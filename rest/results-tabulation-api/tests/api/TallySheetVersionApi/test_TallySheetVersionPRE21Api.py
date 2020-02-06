@@ -4,7 +4,7 @@ from flask import Response
 
 from app import db
 from orm.entities.Submission.TallySheet import TallySheetModel
-from util import get_tally_sheet_code
+from tests.util import get_tally_sheet_code
 
 
 class TestTallySheetVersionPRE21Api:
@@ -43,13 +43,9 @@ class TestTallySheetVersionPRE21Api:
         count = 75
         invalid_vote_category_id = 2
 
-        from orm.entities.SubmissionVersion.TallySheetVersion import TallySheetVersionPRE21
+        from orm.entities.SubmissionVersion import TallySheetVersion
 
-        tally_sheet_version = TallySheetVersionPRE21.create(
-            tallySheetId=tally_sheet_id)
-        tally_sheet_version.add_row(
-            count=count, invalidVoteCategoryId=invalid_vote_category_id)
-        db.session.commit()
+        tally_sheet_version = random_tally_sheet.create_empty_version()
 
         response: Response = test_client.get(
             f"/tally-sheet/{self.tally_sheet_code}/{tally_sheet_id}/version/{tally_sheet_version.tallySheetVersionId}")

@@ -1,13 +1,13 @@
 from flask import Response
 from app import db
 from auth import authorize
-from auth.AuthConstants import ALL_ROLES
+from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetVersionSchema
-from util import get_paginated_query
+from util import get_paginated_query, RequestBody
 
 
 def get_all(tallySheetId):
@@ -57,7 +57,7 @@ def letter_html(tallySheetId, tallySheetVersionId):
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
-    return Response(tally_sheet_version.html_letter(), mimetype='text/html')
+    return Response(tally_sheet.html_letter(tallySheetVersionId=tallySheetVersionId), mimetype='text/html')
 
 
 @authorize(required_roles=ALL_ROLES)
@@ -79,4 +79,35 @@ def html(tallySheetId, tallySheetVersionId):
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
-    return Response(tally_sheet_version.html(), mimetype='text/html')
+    return Response(tally_sheet.html(tallySheetVersionId=tallySheetVersionId), mimetype='text/html')
+
+
+@authorize(required_roles=ALL_ROLES)
+def get_by_id(tallySheetId, tallySheetVersionId):
+    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    if tallySheet is None:
+        raise NotFoundException(
+            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
+
+    result = TallySheetVersion.get_by_id(
+        tallySheetId=tallySheetId,
+        tallySheetVersionId=tallySheetVersionId
+    )
+
+    return TallySheetVersionSchema().dump(result).data
+
+
+@authorize(required_roles=ALL_ROLES)
+def create(tallySheetId, body):
+    request_body = RequestBody(body)
+
+    tallySheet, tallySheetVersion = TallySheet.create_latest_version(
+        tallySheetId=tallySheetId,
+        content=request_body.get("content")
+    )
+
+    db.session.commit()
+
+    return TallySheetVersionSchema().dump(tallySheetVersion).data
