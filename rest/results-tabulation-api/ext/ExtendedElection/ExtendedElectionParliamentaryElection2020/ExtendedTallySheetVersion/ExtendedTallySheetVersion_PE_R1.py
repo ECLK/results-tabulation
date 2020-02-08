@@ -53,7 +53,6 @@ class ExtendedTallySheetVersion_PE_R1(ExtendedTallySheetVersion):
         total_rejected_vote_count = 0
         total_vote_count = 0
 
-
         # Append the area wise column totals
         for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
             total_valid_vote_count += area_wise_valid_vote_count_result_item.numValue
