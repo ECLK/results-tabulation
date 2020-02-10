@@ -34,7 +34,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         if templateName in EXTENDED_TEMPLATE_MAP:
             return EXTENDED_TEMPLATE_MAP[templateName]
         else:
-            return super(ExtendedElectionPresidentialElection2019, self).get_extended_tally_sheet_version_class(
+            return super(ExtendedElectionParliamentaryElection2020, self).get_extended_tally_sheet_version_class(
                 templateName=templateName
             )
 

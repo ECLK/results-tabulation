@@ -39,7 +39,7 @@ export function useTallySheetEdit(props) {
 
     useEffect(() => {
         setProcessing(true);
-        if (true || tallySheet.latestVersionId) {
+        if (tallySheet.latestVersionId) {
             tabulationApi.getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheet.latestVersionId).then((tallySheetVersion) => {
                 setTallySheetContent(tallySheetVersion);
                 setProcessing(false);
