@@ -11,8 +11,12 @@ from sqlalchemy import literal
 from sqlalchemy.dialects import mysql
 from sqlalchemy.orm import Session, relationship
 from sqlalchemy.ext.declarative import declarative_base
+from tqdm import tqdm
 
 # revision identifiers, used by Alembic.
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019 import PRE_34_CO, PRE_34_I_RO, PRE_34_II_RO, PRE_34, \
+    PRE_34_PD, PRE_34_ED, PRE_34_AI
+
 revision = '9cb6d7971778'
 down_revision = 'a4b00dd4b387'
 branch_labels = None
@@ -319,6 +323,11 @@ def upgrade():
         templateId = db.Column(db.Integer, primary_key=True, autoincrement=True)
         templateName = db.Column(db.String(100), nullable=False)
 
+        def __init__(self, templateName):
+            super(_Template, self).__init__(templateName=templateName)
+            session.add(self)
+            session.flush()
+
         def add_row(self, templateRowType, hasMany=False, isDerived=False, columns=[]):
             session.add(self)
             session.flush()
@@ -378,13 +387,15 @@ def upgrade():
         derivativeTemplateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True,
                                             default=0)
 
-    def save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows):
+    def save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows, label=""):
         tally_sheet_version_row_attribute_names = ["tallySheetVersionId", "templateRowId", "electionId", "areaId",
                                                    "partyId", "candidateId",
                                                    "numValue", "strValue", "dateValue", "ballotBoxId"]
         existing_tally_sheet_version_rows_count = len(existing_tally_sheet_version_rows)
         existing_tally_sheet_version_rows_last_index = existing_tally_sheet_version_rows_count - 1
-        for existing_tally_sheet_version_row_index in range(existing_tally_sheet_version_rows_count):
+
+        print(" -- migrate tally sheet rows (%s)" % label)
+        for existing_tally_sheet_version_row_index in tqdm(range(existing_tally_sheet_version_rows_count)):
             existing_tally_sheet_version_row = existing_tally_sheet_version_rows[existing_tally_sheet_version_row_index]
             tally_sheet_version_row_dict = {}
             for tally_sheet_version_row_attribute_name in tally_sheet_version_row_attribute_names:
@@ -402,8 +413,6 @@ def upgrade():
             # To commit the last batch
             if existing_tally_sheet_version_row_index == existing_tally_sheet_version_rows_last_index:
                 session.commit()
-
-            print("[INSERT] _TallySheetVersionRow ", tally_sheet_version_row_dict)
 
     #################################################################################################################
     # Update existing election's electionTemplateName
@@ -424,7 +433,8 @@ def upgrade():
     #################################################################################################################
     # Update mappings between tally sheets
     #################################################################################################################
-    for existing_election in existing_elections:
+    print(" -- update mappings (parent/ child) between tally sheets")
+    for existing_election in tqdm(existing_elections):
         counting_centres = session.query(
             _AreaMap.countingCentreId,
             _AreaMap.pollingDivisionId,
@@ -718,28 +728,28 @@ def upgrade():
         existing_tally_sheet.templateId = tally_sheet_template_ce_201_pv.templateId
 
     existing_tally_sheet_version_rows = session.query(
-        _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
+        _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId,
         _Submission.electionId,
         _Submission.areaId,
         _TallySheetVersionRow_CE_201_PV_CC.situation.label("strValue"),
         literal(tally_sheet_template_ce_201_pv_situation_row.templateRowId).label("templateRowId")
     ).join(
         _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
+        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId
     ).join(
         _Submission,
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
-        _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
+    existing_tally_sheet_version_rows += session.query(
+        _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId,
         _Submission.electionId,
         _Submission.areaId,
         _TallySheetVersionRow_CE_201_PV_CC.timeOfCommencementOfCount.label("dateValue"),
         literal(tally_sheet_template_ce_201_pv_time_of_commencement_row.templateRowId).label("templateRowId")
     ).join(
         _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
+        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId
     ).join(
         _Submission,
         _Submission.submissionId == _SubmissionVersion.submissionId
@@ -759,7 +769,7 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
         _Submission.electionId,
         _Submission.areaId,
@@ -775,7 +785,7 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
         _Submission.electionId,
         _Submission.areaId,
@@ -791,8 +801,8 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
-        _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
+    existing_tally_sheet_version_rows += session.query(
+        _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId,
         _Submission.electionId,
         _Submission.areaId,
         _TallySheetVersionRow_CE_201_PV_CC.numberOfACoversRejected.label("numValue"),
@@ -801,14 +811,14 @@ def upgrade():
         ).label("templateRowId")
     ).join(
         _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
+        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId
     ).join(
         _Submission,
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
-        _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
+    existing_tally_sheet_version_rows += session.query(
+        _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId,
         _Submission.electionId,
         _Submission.areaId,
         _TallySheetVersionRow_CE_201_PV_CC.numberOfBCoversRejected.label("numValue"),
@@ -817,7 +827,7 @@ def upgrade():
         ).label("templateRowId")
     ).join(
         _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
+        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId
     ).join(
         _Submission,
         _Submission.submissionId == _SubmissionVersion.submissionId
@@ -825,7 +835,7 @@ def upgrade():
 
     session.commit()
 
-    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows)
+    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows, label="CE-201-PV")
 
     # END ###########################################################################################################
 
@@ -964,7 +974,7 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201.tallySheetVersionId,
         _Submission.electionId,
         _TallySheetVersionRow_CE_201.areaId.label("areaId"),
@@ -978,7 +988,7 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201.tallySheetVersionId,
         _Submission.electionId,
         _TallySheetVersionRow_CE_201.areaId.label("areaId"),
@@ -992,7 +1002,7 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201.tallySheetVersionId,
         _Submission.electionId,
         _TallySheetVersionRow_CE_201.areaId.label("areaId"),
@@ -1006,7 +1016,7 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201.tallySheetVersionId,
         _Submission.electionId,
         _TallySheetVersionRow_CE_201.areaId.label("areaId"),
@@ -1022,7 +1032,7 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201.tallySheetVersionId,
         _Submission.electionId,
         _TallySheetVersionRow_CE_201.areaId.label("areaId"),
@@ -1038,7 +1048,7 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201.tallySheetVersionId,
         _Submission.electionId,
         _TallySheetVersionRow_CE_201.areaId.label("areaId"),
@@ -1054,7 +1064,7 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201.tallySheetVersionId,
         _Submission.electionId,
         _TallySheetVersionRow_CE_201.areaId.label("areaId"),
@@ -1072,7 +1082,7 @@ def upgrade():
 
     session.commit()
 
-    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows)
+    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows, label="CE-201")
 
     # END ###########################################################################################################
 
@@ -1115,11 +1125,6 @@ def upgrade():
         ]
     )
 
-    session.add(tally_sheet_template_pre_41)
-    session.add(tally_sheet_template_pre_41_candidate_wise_first_preference_row)
-    session.add(tally_sheet_template_pre_41_rejected_vote_row)
-    session.flush()
-
     existing_tally_sheets = session.query(
         _TallySheet
     ).filter(
@@ -1152,7 +1157,7 @@ def upgrade():
         _ElectionCandidate.candidateId == _TallySheetVersionRow_PRE_41.candidateId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId,
         _Submission.electionId,
         _Submission.areaId,
@@ -1176,7 +1181,7 @@ def upgrade():
 
     session.commit()
 
-    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows)
+    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows, label="PRE-41")
 
     # END ###########################################################################################################
 
@@ -1218,11 +1223,6 @@ def upgrade():
         ]
     ).add_derivative_template_row(tally_sheet_template_pre_41_rejected_vote_row)
 
-    session.add(tally_sheet_template_pre_30_pd)
-    session.add(tally_sheet_template_pre_30_pd_candidate_wise_first_preference_row)
-    session.add(tally_sheet_template_pre_30_pd_rejected_vote_row)
-    session.flush()
-
     existing_tally_sheets = session.query(
         _TallySheet
     ).filter(
@@ -1254,7 +1254,7 @@ def upgrade():
         _ElectionCandidate.candidateId == _TallySheetVersionRow_PRE_30_PD.candidateId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId,
         _Submission.electionId,
         _TallySheetVersionRow_RejectedVoteCount.areaId,
@@ -1278,7 +1278,7 @@ def upgrade():
 
     session.commit()
 
-    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows)
+    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows, label="PRE-30-PD")
 
     # END ###########################################################################################################
 
@@ -1322,11 +1322,6 @@ def upgrade():
         ]
     ).add_derivative_template_row(tally_sheet_template_pre_30_pd_rejected_vote_row)
 
-    session.add(tally_sheet_template_pre_30_ed)
-    session.add(tally_sheet_template_pre_30_ed_candidate_wise_first_preference_row)
-    session.add(tally_sheet_template_pre_30_ed_rejected_vote_row)
-    session.flush()
-
     existing_tally_sheets = session.query(
         _TallySheet
     ).filter(
@@ -1358,7 +1353,7 @@ def upgrade():
         _ElectionCandidate.candidateId == _TallySheetVersionRow_PRE_30_ED.candidateId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId,
         _TallySheetVersionRow_RejectedVoteCount.electionId,
         _TallySheetVersionRow_RejectedVoteCount.areaId,
@@ -1382,7 +1377,7 @@ def upgrade():
 
     session.commit()
 
-    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows)
+    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows, label="PRE-30-ED")
 
     # END ###########################################################################################################
 
@@ -1424,11 +1419,6 @@ def upgrade():
         ]
     ).add_derivative_template_row(tally_sheet_template_pre_30_ed_rejected_vote_row)
 
-    session.add(tally_sheet_template_pre_all_island_ed)
-    session.add(tally_sheet_template_pre_all_island_ed_candidate_wise_first_preference_row)
-    session.add(tally_sheet_template_pre_all_island_ed_rejected_vote_row)
-    session.flush()
-
     existing_tally_sheets = session.query(
         _TallySheet
     ).filter(
@@ -1461,7 +1451,7 @@ def upgrade():
         _ElectionCandidate.candidateId == _TallySheetVersionRow_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS.candidateId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId,
         _TallySheetVersionRow_RejectedVoteCount.electionId,
         _TallySheetVersionRow_RejectedVoteCount.areaId,
@@ -1485,7 +1475,7 @@ def upgrade():
 
     session.commit()
 
-    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows)
+    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows, label="PRE-AI-ED")
 
     # END ###########################################################################################################
 
@@ -1526,11 +1516,6 @@ def upgrade():
         ]
     ).add_derivative_template_row(tally_sheet_template_pre_all_island_ed_rejected_vote_row)
 
-    session.add(tally_sheet_template_pre_all_island)
-    session.add(tally_sheet_template_pre_all_island_candidate_wise_first_preference_row)
-    session.add(tally_sheet_template_pre_all_island_rejected_vote_row)
-    session.flush()
-
     existing_tally_sheets = session.query(
         _TallySheet
     ).filter(
@@ -1563,7 +1548,7 @@ def upgrade():
         _ElectionCandidate.candidateId == _TallySheetVersionRow_ALL_ISLAND_RESULT.candidateId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
+    existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_RejectedVoteCount.tallySheetVersionId,
         _TallySheetVersionRow_RejectedVoteCount.electionId,
         _TallySheetVersionRow_RejectedVoteCount.areaId,
@@ -1587,15 +1572,377 @@ def upgrade():
 
     session.commit()
 
-    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows)
+    save_existing_tally_sheet_version_rows(existing_tally_sheet_version_rows, label="PRE-AI")
 
     # END ###########################################################################################################
 
     #################################################################################################################
-    # Insert all the tally sheet version rows
+    # PRE 34 CO
     #################################################################################################################
+    class TallySheetVersionRow_PRE_34_preference_Model(Base):
+        __tablename__ = 'tallySheetVersionRow_PRE_34_Preference'
+        tallySheetVersionRowId = db.Column(db.Integer, primary_key=True)
+        tallySheetVersionId = db.Column(db.Integer, db.ForeignKey("tallySheetVersion.tallySheetVersionId"),
+                                        nullable=False)
+        electionId = db.Column(db.Integer, nullable=False)
+        candidateId = db.Column(db.Integer, nullable=True)
+        areaId = db.Column(db.Integer, nullable=True)
+        preferenceNumber = db.Column(db.Integer, nullable=False)
+        preferenceCount = db.Column(db.Integer, nullable=False)
+
+    tally_sheet_template_pre_34_co = _Template(
+        templateName=PRE_34_CO
+    )
+    tally_sheet_template_pre_34_co_candidate_wise_second_preference_row = tally_sheet_template_pre_34_co.add_row(
+        templateRowType="CANDIDATE_SECOND_PREFERENCE",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "partyId", "grouped": False, "func": None},
+            {"columnName": "candidateId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+    tally_sheet_template_pre_34_co_candidate_wise_third_preference_row = tally_sheet_template_pre_34_co.add_row(
+        templateRowType="CANDIDATE_THIRD_PREFERENCE",
+        hasMany=True,
+        isDerived=False,
+        columns=[
+            {"columnName": "electionId", "grouped": False, "func": None},
+            {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "partyId", "grouped": False, "func": None},
+            {"columnName": "candidateId", "grouped": False, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": None}
+        ]
+    )
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_34_CO"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_34_co.templateId
+
+    session.commit()
 
     # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE 34 I RO
+    #################################################################################################################
+
+    tally_sheet_template_pre_34_i_ro = _Template(
+        templateName=PRE_34_I_RO
+    )
+    tally_sheet_template_pre_34_i_ro_candidate_wise_second_preference_row = tally_sheet_template_pre_34_i_ro.add_row(
+        templateRowType="CANDIDATE_SECOND_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_co_candidate_wise_second_preference_row)
+    tally_sheet_template_pre_34_i_ro_candidate_wise_third_preference_row = tally_sheet_template_pre_34_i_ro.add_row(
+        templateRowType="CANDIDATE_THIRD_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_co_candidate_wise_third_preference_row)
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_34_I_RO"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_34_i_ro.templateId
+
+    session.commit()
+
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE 34 II RO
+    #################################################################################################################
+    tally_sheet_template_pre_34_ii_ro = _Template(
+        templateName=PRE_34_II_RO
+    )
+    tally_sheet_template_pre_34_ii_ro_candidate_wise_second_preference_row = tally_sheet_template_pre_34_ii_ro.add_row(
+        templateRowType="CANDIDATE_SECOND_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_i_ro_candidate_wise_second_preference_row)
+    tally_sheet_template_pre_34_ii_ro_candidate_wise_third_preference_row = tally_sheet_template_pre_34_ii_ro.add_row(
+        templateRowType="CANDIDATE_THIRD_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_i_ro_candidate_wise_third_preference_row)
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_34_II_RO"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_34_ii_ro.templateId
+
+    session.commit()
+
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE 34
+    #################################################################################################################
+
+    tally_sheet_template_pre_34 = _Template(
+        templateName=PRE_34
+    )
+    tally_sheet_template_pre_34_candidate_wise_second_preference_row = tally_sheet_template_pre_34.add_row(
+        templateRowType="CANDIDATE_SECOND_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_ii_ro_candidate_wise_second_preference_row)
+    tally_sheet_template_pre_34_candidate_wise_second_preference_row = tally_sheet_template_pre_34.add_row(
+        templateRowType="CANDIDATE_THIRD_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_ii_ro_candidate_wise_third_preference_row)
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_34"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_34.templateId
+
+    session.commit()
+
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE 34 PD
+    #################################################################################################################
+    tally_sheet_template_pre_34_pd = _Template(
+        templateName=PRE_34_PD
+    )
+    tally_sheet_template_pre_34_pd_candidate_wise_first_preference_row = tally_sheet_template_pre_34_pd.add_row(
+        templateRowType="CANDIDATE_FIRST_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_30_pd_candidate_wise_first_preference_row)
+    tally_sheet_template_pre_34_pd_candidate_wise_second_preference_row = tally_sheet_template_pre_34_pd.add_row(
+        templateRowType="CANDIDATE_SECOND_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_i_ro_candidate_wise_second_preference_row)
+    tally_sheet_template_pre_34_pd_candidate_wise_third_preference_row = tally_sheet_template_pre_34_pd.add_row(
+        templateRowType="CANDIDATE_THIRD_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_i_ro_candidate_wise_third_preference_row)
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_34_PD"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_34_pd.templateId
+
+    session.commit()
+
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE 34 ED
+    #################################################################################################################
+
+    tally_sheet_template_pre_34_ed = _Template(
+        templateName=PRE_34_ED
+    )
+    tally_sheet_template_pre_34_ed_candidate_wise_first_preference_row = tally_sheet_template_pre_34_ed.add_row(
+        templateRowType="CANDIDATE_FIRST_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_pd_candidate_wise_first_preference_row)
+    tally_sheet_template_pre_34_ed_candidate_wise_second_preference_row = tally_sheet_template_pre_34_ed.add_row(
+        templateRowType="CANDIDATE_SECOND_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_pd_candidate_wise_second_preference_row)
+    tally_sheet_template_pre_34_ed_candidate_wise_third_preference_row = tally_sheet_template_pre_34_ed.add_row(
+        templateRowType="CANDIDATE_THIRD_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_pd_candidate_wise_third_preference_row)
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_34_ED"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_34_ed.templateId
+
+    session.commit()
+
+    # END ###########################################################################################################
+
+    #################################################################################################################
+    # PRE 34 AI
+    #################################################################################################################
+
+    tally_sheet_template_pre_34_ai = _Template(
+        templateName=PRE_34_AI
+    )
+    tally_sheet_template_pre_34_ai_candidate_wise_first_preference_row = tally_sheet_template_pre_34_ai.add_row(
+        templateRowType="CANDIDATE_FIRST_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_ed_candidate_wise_first_preference_row)
+    tally_sheet_template_pre_34_ai_candidate_wise_second_preference_row = tally_sheet_template_pre_34_ai.add_row(
+        templateRowType="CANDIDATE_SECOND_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_ed_candidate_wise_second_preference_row)
+    tally_sheet_template_pre_34_ai_candidate_wise_third_preference_row = tally_sheet_template_pre_34_ai.add_row(
+        templateRowType="CANDIDATE_THIRD_PREFERENCE",
+        hasMany=True,
+        isDerived=True,
+        columns=[
+            {"columnName": "electionId", "grouped": True, "func": None},
+            {"columnName": "areaId", "grouped": True, "func": None},
+            {"columnName": "partyId", "grouped": True, "func": None},
+            {"columnName": "candidateId", "grouped": True, "func": None},
+            {"columnName": "numValue", "grouped": False, "func": "sum"}
+        ]
+    ).add_derivative_template_row(tally_sheet_template_pre_34_ed_candidate_wise_third_preference_row)
+
+    existing_tally_sheets = session.query(
+        _TallySheet
+    ).filter(
+        _TallySheet.tallySheetCode == "PRE_34_AI"
+    ).all()
+
+    for existing_tally_sheet in existing_tally_sheets:
+        existing_tally_sheet.templateId = tally_sheet_template_pre_34_ai.templateId
+
+    session.commit()
+
+    # END ###########################################################################################################
+
+    op.alter_column(
+        'election', 'electionTemplateName',
+        existing_type=mysql.VARCHAR(collation='utf8mb4_unicode_ci', length=100),
+        nullable=False)
+    op.alter_column(
+        'tallySheet', 'templateId',
+        existing_type=mysql.INTEGER(display_width=11),
+        nullable=False)
 
     op.drop_table('tallySheetVersionRow_PRE_41')
     op.drop_table('tallySheetVersionRow_PRE_34_summary')
@@ -1612,15 +1959,6 @@ def upgrade():
     op.drop_table('tallySheetVersionRow_CE_201')
     op.drop_column('tallySheet', 'tallySheetCode')
     op.drop_column('tallySheetVersion', 'tallySheetVersionCode')
-
-    op.alter_column(
-        'election', 'electionTemplateName',
-        existing_type=mysql.VARCHAR(collation='utf8mb4_unicode_ci', length=100),
-        nullable=False)
-    op.alter_column(
-        'tallySheet', 'templateId',
-        existing_type=mysql.INTEGER(display_width=11),
-        nullable=False)
 
 
 def downgrade():

@@ -22,3 +22,4 @@ psycopg2-binary==2.8.2
 PyMySQL==0.9.3
 SQLAlchemy==1.3.3
 swagger-ui-bundle==0.0.3
+tqdm==4.42.1

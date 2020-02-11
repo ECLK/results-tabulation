@@ -91,9 +91,6 @@ class TallySheetModel(db.Model):
 
     @hybrid_property
     def tallySheetCode(self):
-        print("\n\n\n\n\n\n\n\n############################ self.template : ", self.template)
-        print("\n\n\n\n\n\n\n\n############################ self.template.templateName : ", self.template.templateName)
-
         return self.template.templateName
 
     def get_status_report_type(self):
