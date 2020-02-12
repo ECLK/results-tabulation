@@ -3,11 +3,19 @@ import * as tabulationApi from "../../../services/tabulation-api";
 import {MESSAGES_EN} from "../../../locale/messages_en";
 import {MESSAGE_TYPES} from "../../../services/messages.provider";
 import {PATH_ELECTION_TALLY_SHEET_LIST} from "../../../App";
+import {
+    TALLY_SHEET_CODE_CE_201
+} from "../constants/TALLY_SHEET_CODE";
+import TallySheetEdit_CE_201 from "./tally-sheet-edit-ce-201";
 
 
 export default class TallySheetEdit extends Component {
-    getTallySheetEditForm(tallySheetCode) {
-        return null;
+    getTallySheetEditForm(tallySheetCode) {debugger;
+        if (tallySheetCode === TALLY_SHEET_CODE_CE_201) {
+            return TallySheetEdit_CE_201;
+        } else {
+            return null
+        }
     }
 
     render() {
@@ -44,6 +52,7 @@ export function useTallySheetEdit(props) {
                 setTallySheetContent(tallySheetVersion);
                 setProcessing(false);
             }).catch((error) => {
+                debugger;
                 messages.push("Error", MESSAGES_EN.error_tallysheet_not_reachable, MESSAGE_TYPES.ERROR);
                 setProcessing(false);
             })
