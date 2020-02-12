@@ -1,7 +1,7 @@
 from orm.enums import AreaTypeEnum
-from constants.TALLY_SHEET_CODES import PRE_41, PRE_30_PD, PRE_30_ED, PRE_21, PRE_34_CO, \
-    PRE_34_I_RO, PRE_34_II_RO, PRE_34, PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, PRE_ALL_ISLAND_RESULTS, CE_201_PV, \
-    PRE_30_PD_PV, CE_201, PRE_34_PD, PRE_34_ED, PRE_34_AI
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.TALLY_SHEET_CODES import PRE_41, PRE_30_PD, \
+    PRE_30_ED, PRE_21, PRE_34_CO, PRE_34_I_RO, PRE_34_II_RO, PRE_34, PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, \
+    PRE_ALL_ISLAND_RESULTS, CE_201_PV, PRE_30_PD_PV, CE_201, PRE_34_PD, PRE_34_ED, PRE_34_AI
 
 
 def get_tally_sheet_code(tally_sheet_code_str):

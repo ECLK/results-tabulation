@@ -31,9 +31,6 @@ class TemplateModel(db.Model):
     def is_submit_allowed(self):
         return self.has_data_entry()
 
-    def get_extended_tally_sheet_version_class(self):
-        return ExtendedTallySheetVersion.get_extended_tally_sheet_version_class(templateName=self.templateName)
-
     def __init__(self, templateName):
         super(TemplateModel, self).__init__(
             templateName=templateName

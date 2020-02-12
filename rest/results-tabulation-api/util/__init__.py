@@ -114,6 +114,13 @@ def convert_image_to_data_uri(value):
     return data_image
 
 
+def get_dict_key_value_or_none(dict, key):
+    if key in dict:
+        return dict[key]
+    else:
+        return None
+
+
 def split_area_name(name):
     split_array = name.split("-")
     if len(split_array) == 2:

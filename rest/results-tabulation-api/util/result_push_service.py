@@ -4,8 +4,8 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_ALLOWED_TO_BE_RELEAS
 from orm.entities.SubmissionVersion import TallySheetVersion
 import requests
 from app import connex_app
-from constants.TALLY_SHEET_CODES import PRE_30_PD, PRE_30_ED, PRE_ALL_ISLAND_RESULTS, PRE_34_PD, PRE_34_ED, \
-    PRE_34_AI, PREFERENCE_TALLY_SHEET_CODES
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.TALLY_SHEET_CODES import PRE_30_PD, PRE_30_ED, \
+    PRE_ALL_ISLAND_RESULTS, PRE_34_PD, PRE_34_ED, PRE_34_AI
 
 RESULT_DISSEMINATION_SYSTEM_URL = connex_app.app.config['RESULT_DISSEMINATION_SYSTEM_URL']
 RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE = connex_app.app.config['RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE']
@@ -63,8 +63,8 @@ def upload_proof_last_image(tally_sheet, tally_sheet_version):
         response, result_code = tally_sheet_version.json_data()
 
         result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE
-        if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
-            result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
+        # if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
+        #     result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
 
         response['type'] = result_dissemination_result_type
 
@@ -105,8 +105,8 @@ def release_results(tally_sheet, tally_sheet_version_id):
         response, result_code = tally_sheet_version.json_data()
 
         result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE
-        if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
-            result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
+        # if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
+        #     result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
 
         response['type'] = result_dissemination_result_type
 
@@ -141,8 +141,8 @@ def notify_results(tally_sheet, tally_sheet_version_id):
         response, result_code = tally_sheet_version.json_data()
 
         result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_VOTE
-        if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
-            result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
+        # if tally_sheet.tallySheetCode in PREFERENCE_TALLY_SHEET_CODES:
+        #     result_dissemination_result_type = RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF
 
         response['type'] = result_dissemination_result_type
 

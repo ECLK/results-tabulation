@@ -1,16 +1,4 @@
 from app import db
-from constants.TALLY_SHEET_CODES import PRE_41, PRE_30_PD, PRE_30_ED, \
-    PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, PRE_ALL_ISLAND_RESULTS, CE_201, CE_201_PV
-
-TALLY_SHEET_CODE_MAP_COLUMN_NAME = {
-    PRE_41: "pre_41_tallySheetId",
-    PRE_30_PD: "pre_30_pd_tallySheetId",
-    PRE_30_ED: "pre_30_ed_tallySheetId",
-    PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS: "pre_all_island_ed_tallySheetId",
-    PRE_ALL_ISLAND_RESULTS: "pre_all_island_tallySheetId",
-    CE_201: "ce_201_tallySheetId",
-    CE_201_PV: "ce_201_pv_tallySheetId"
-}
 
 
 class TallySheetMapModel(db.Model):
