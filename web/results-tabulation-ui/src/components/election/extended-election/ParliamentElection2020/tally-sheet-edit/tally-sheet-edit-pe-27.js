@@ -54,15 +54,10 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
             for (let i = 0; i < content.length; i++) {
                 let contentRow = content[i];
                 if (contentRow.templateRowType === "PARTY_WISE_VOTE") {
-                    _partWiseVoteCountRowsMap[contentRow.partyId].numValue = contentRow.numValue;
-                    _partWiseVoteCountRowsMap[contentRow.partyId].strValue = contentRow.strValue;
-                    _partWiseVoteCountRowsMap[contentRow.partyId].templateRowId = contentRow.templateRowId;
-                    _partWiseVoteCountRowsMap[contentRow.partyId].templateRowType = contentRow.templateRowType;
+                    Object.assign(_partWiseVoteCountRowsMap[contentRow.partyId], contentRow);
                     _validVoteCountRow.numValue += contentRow.numValue;
                 } else if (contentRow.templateRowType === "REJECTED_VOTE") {
-                    _rejectedVoteCountRow.numValue = contentRow.numValue;
-                    _rejectedVoteCountRow.templateRowId = contentRow.templateRowId;
-                    _rejectedVoteCountRow.templateRowType = contentRow.templateRowType;
+                    Object.assign(_rejectedVoteCountRow, contentRow);
                 }
             }
 
@@ -95,21 +90,6 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                 ...partWiseVoteCountRows,
                 rejectedVoteCountRow
             ]
-
-            //     tallySheet.template.rows.map(((templateRow) => {
-            //     const contentRow = {
-            //         templateRowId: templateRow.templateRowId,
-            //         rows: []
-            //     };
-            //
-            //     if (templateRow.templateRowType === "PARTY_WISE_VOTE") {
-            //         contentRow.rows = partWiseVoteCountRows
-            //     } else if (templateRow.templateRowType === "REJECTED_VOTE") {
-            //         contentRow.rows = [rejectedVoteCountRow];
-            //     }
-            //
-            //     return contentRow
-            // }))
         }
     };
 
