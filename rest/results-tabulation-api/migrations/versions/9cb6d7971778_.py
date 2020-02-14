@@ -164,7 +164,7 @@ def upgrade():
         type_=sa.String(length=100),
         existing_nullable=False)
     op.add_column('tallySheet', sa.Column('templateId', sa.Integer(), nullable=True))
-    op.create_foreign_key(None, 'tallySheet', 'template', ['templateId'], ['templateId'])
+    op.create_foreign_key('tally_sheet_fk_template_id', 'tallySheet', 'template', ['templateId'], ['templateId'])
 
     class _Election(Base):
         __tablename__ = 'election'
