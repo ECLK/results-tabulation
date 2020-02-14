@@ -5,15 +5,11 @@ import TallySheetEdit_PE_27 from "./tally-sheet-edit-pe-27";
 
 export default class ParliamentElection2020TallySheetEdit extends TallySheetEdit {
     getTallySheetEditForm(tallySheetCode) {
-
         if (tallySheetCode === TALLY_SHEET_CODE_PE_27) {
             return TallySheetEdit_PE_27
+        } else {
+            return super.getTallySheetEditForm(tallySheetCode)
         }
-
-        // TODO
-
-
-        return null
     }
 }
 

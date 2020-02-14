@@ -91,9 +91,6 @@ class TallySheetModel(db.Model):
 
     @hybrid_property
     def tallySheetCode(self):
-        print("\n\n\n\n\n\n\n\n############################ self.template : ", self.template)
-        print("\n\n\n\n\n\n\n\n############################ self.template.templateName : ", self.template.templateName)
-
         return self.template.templateName
 
     def get_status_report_type(self):
@@ -301,7 +298,8 @@ class TallySheetModel(db.Model):
             "candidateId": Candidate.Model.candidateId,
             "partyId": Party.Model.partyId,
             "numValue": TallySheetVersionRow.Model.numValue,
-            "strValue": TallySheetVersionRow.Model.strValue
+            "strValue": TallySheetVersionRow.Model.strValue,
+            "ballotBoxId": TallySheetVersionRow.Model.ballotBoxId
         }
         COLUMN_FUNC_MAP = {
             "sum": func.sum,
@@ -421,8 +419,11 @@ class TallySheetModel(db.Model):
                     content_rows = [content_rows[0]]
 
                 for content_row in content_rows:
-                    content_row["electionId"] = election.electionId
-                    content_row["areaId"] = self.submission.areaId
+                    if "electionId" not in content_row:
+                        content_row["electionId"] = election.electionId
+
+                    if "areaId" not in content_row:
+                        content_row["areaId"] = self.submission.areaId
 
                     if "partyId" not in content_row:
                         content_row["partyId"] = None

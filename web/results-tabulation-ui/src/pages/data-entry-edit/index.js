@@ -1,19 +1,9 @@
 import React, {useEffect, useState} from "react";
-
 import {
     PATH_ELECTION, PATH_ELECTION_BY_ID,
     PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_TALLY_SHEET_VIEW
 } from "../../App";
-
-import {
-    TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_CE_201_PV,
-    TALLY_SHEET_CODE_PRE_41, TALLY_SHEET_CODE_PRE_34_CO
-} from "../../components/election/extended-election/PresidentialElection2019/TALLY_SHEET_CODE";
 import BreadCrumb from "../../components/bread-crumb";
-import DataEntryEdit_PRE_41 from "./data-entry-edit-pre-41";
-import DataEntryEdit_CE_201 from "./data-entry-edit-ce-201";
-import DataEntryEdit_CE_201_PV from "./data-entry-edit-ce-201-pv";
-import DataEntryEdit_PRE_34_CO from "./data-entry-edit-pre-34-co";
 import {getTallySheetCodeStr} from "../../utils/tallySheet";
 import * as tabulationApi from "../../services/tabulation-api";
 import {MESSAGES_EN} from "../../locale/messages_en";
@@ -25,9 +15,9 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
     const {tallySheetCode} = tallySheet;
     const {electionId, rootElection} = election;
 
-    function getEditorJsx() {debugger;
+    function getEditorJsx() {
         const props = {history, queryString, election, tallySheet, messages};
-        const extendedElection = ExtendedElection(election);debugger;
+        const extendedElection = ExtendedElection(election);
 
         return <extendedElection.TallySheetEditComponent {...props}/>
     }
