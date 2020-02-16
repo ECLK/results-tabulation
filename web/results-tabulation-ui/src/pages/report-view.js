@@ -84,6 +84,9 @@ export default function ReportView(props) {
             const tallySheet = await requestEditForTallySheet(tallySheetId);
             setTallySheet(tallySheet);
             messages.push("Success", MESSAGES_EN.success_report_editable, MESSAGE_TYPES.SUCCESS);
+            setTimeout(() => {
+                history.push(PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetId))
+            }, 500)
         } catch (e) {
             messages.push("Error", MESSAGES_EN.error_updating_report, MESSAGE_TYPES.ERROR);
         }
