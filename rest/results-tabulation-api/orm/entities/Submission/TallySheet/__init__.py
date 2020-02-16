@@ -431,22 +431,6 @@ class TallySheetModel(db.Model):
                 if templateRow.hasMany is False:
                     content_rows = [content_rows[0]]
 
-                # for content_row in content_rows:
-                #     if "electionId" not in content_row:
-                #         content_row["electionId"] = election.electionId
-                #
-                #     if "areaId" not in content_row:
-                #         content_row["areaId"] = self.submission.areaId
-                #
-                #     if "partyId" not in content_row:
-                #         content_row["partyId"] = None
-                #
-                #     if "candidateId" not in content_row:
-                #         content_row["candidateId"] = None
-                #
-                #     if "strValue" not in content_row:
-                #         content_row["strValue"] = None
-
             for content_row in content_rows:
 
                 # Update the completed flag to False if there are null values in any row.
