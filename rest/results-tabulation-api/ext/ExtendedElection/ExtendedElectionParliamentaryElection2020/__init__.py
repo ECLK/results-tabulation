@@ -1,4 +1,6 @@
 from app import db
+from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, TALLY_SHEET_COLUMN_SOURCE_CONTENT, \
+    TALLY_SHEET_COLUMN_SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
     PE_R1, PE_CE_RO_PR_1, \
     PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV
@@ -13,7 +15,7 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_V2 import \
     ExtendedTallySheetVersion_PE_CE_RO_V2
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
-from orm.entities import Election, Candidate, Template, Party
+from orm.entities import Election, Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
@@ -71,9 +73,10 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "ballotBoxId", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "ballotBoxId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ballots_received = tally_sheet_template_ce_201.add_row(
@@ -81,9 +84,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ballots_spoilt = tally_sheet_template_ce_201.add_row(
@@ -91,9 +94,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ballots_issued = tally_sheet_template_ce_201.add_row(
@@ -101,9 +104,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ballots_unused = tally_sheet_template_ce_201.add_row(
@@ -111,9 +114,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ordinary_ballots_in_ballot_paper_account = tally_sheet_template_ce_201.add_row(
@@ -121,9 +124,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ordinary_ballots_in_ballot_box = tally_sheet_template_ce_201.add_row(
@@ -131,9 +134,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_tendered_ballots_in_ballot_paper_account = tally_sheet_template_ce_201.add_row(
@@ -141,9 +144,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_tendered_ballots_in_ballot_box = tally_sheet_template_ce_201.add_row(
@@ -151,9 +154,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
 
@@ -166,9 +169,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "strValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_time_of_commencement_row = tally_sheet_template_ce_201_pv.add_row(
@@ -176,9 +179,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "strValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
@@ -186,9 +189,10 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "ballotBoxId", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "ballotBoxId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_number_of_packets_inserted_to_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
@@ -196,9 +200,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_number_of_packets_found_inside_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
@@ -206,9 +210,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_number_of_packets_rejected_after_opening_cover_a_row = tally_sheet_template_ce_201_pv.add_row(
@@ -216,9 +220,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_number_of_packets_rejected_after_opening_cover_b_row = tally_sheet_template_ce_201_pv.add_row(
@@ -226,9 +230,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
 
@@ -240,11 +244,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "partyId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None},
-                {"columnName": "strValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_pe_27_rejected_vote_row = tally_sheet_template_pe_27.add_row(
@@ -252,9 +256,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
 
@@ -266,10 +270,10 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_27_party_wise_vote_row)
         tally_sheet_template_pe_ce_ro_v1_rejected_vote_row = tally_sheet_template_pe_ce_ro_v1.add_row(
@@ -277,9 +281,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_27_rejected_vote_row)
 
@@ -291,10 +295,10 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_party_wise_vote_row)
         tally_sheet_template_pe_r1_rejected_vote_row = tally_sheet_template_pe_r1.add_row(
@@ -302,9 +306,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_rejected_vote_row)
 
@@ -316,10 +320,10 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_party_wise_vote_row)
         tally_sheet_template_pe_ce_ro_v2_rejected_vote_row = tally_sheet_template_pe_ce_ro_v2.add_row(
@@ -327,9 +331,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_rejected_vote_row)
 
@@ -341,10 +345,10 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v2_party_wise_vote_row)
         tally_sheet_template_pe_r2_rejected_vote_row = tally_sheet_template_pe_r2.add_row(
@@ -352,9 +356,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v2_rejected_vote_row)
 
@@ -366,11 +370,12 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "partyId", "grouped": False, "func": None},
-                {"columnName": "candidateId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "candidateId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
 
@@ -382,11 +387,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_4_candidate_wise_first_preference_row)
 
@@ -398,11 +403,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_pr_1_candidate_wise_first_preference_row)
 
@@ -414,11 +419,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_pr_2_candidate_wise_first_preference_row)
 
@@ -484,33 +489,68 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 tally_sheets = [
                     TallySheet.create(
                         template=tally_sheet_template_pe_ce_ro_v2, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pe_r2, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pe_ce_ro_v1, electionId=postal_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": postal_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pe_r1, electionId=postal_election.electionId,
-                        areaId=area.areaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_1, electionId=postal_election.electionId,
-                        areaId=area.areaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_2, electionId=election.electionId,
-                        areaId=area.areaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_3, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": postal_election.electionId
+                        }).metaId
                     )
                 ]
+
+                for party in election.parties:
+                    tally_sheets += [
+                        TallySheet.create(
+                            template=tally_sheet_template_pe_ce_ro_pr_1, electionId=postal_election.electionId,
+                            areaId=area.areaId,
+                            metaId=Meta.create({
+                                "areaId": area.areaId,
+                                "partyId": party.partyId,
+                                "electionId": postal_election.electionId
+                            }).metaId
+                        ),
+                        TallySheet.create(
+                            template=tally_sheet_template_pe_ce_ro_pr_2, electionId=election.electionId,
+                            areaId=area.areaId,
+                            metaId=Meta.create({
+                                "areaId": area.areaId,
+                                "partyId": party.partyId,
+                                "electionId": election.electionId
+                            }).metaId
+                        ),
+                        TallySheet.create(
+                            template=tally_sheet_template_pe_ce_ro_pr_3, electionId=election.electionId,
+                            areaId=area.areaId,
+                            metaId=Meta.create({
+                                "areaId": area.areaId,
+                                "partyId": party.partyId,
+                                "electionId": election.electionId
+                            }).metaId
+                        )
+                    ]
 
                 return tally_sheets
 
@@ -528,17 +568,32 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 tally_sheets = [
                     TallySheet.create(
                         template=tally_sheet_template_pe_ce_ro_v1, electionId=ordinary_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pe_r1, electionId=ordinary_election.electionId,
-                        areaId=area.areaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_1, electionId=ordinary_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
                     )
                 ]
+
+                for party in election.parties:
+                    tally_sheets.append(TallySheet.create(
+                        template=tally_sheet_template_pe_ce_ro_pr_1, electionId=ordinary_election.electionId,
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "partyId": party.partyId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
+                    ))
 
                 return tally_sheets
 
@@ -586,23 +641,42 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             def _create_counting_centre_tally_sheets(area):
                 tally_sheets = [
                     TallySheet.create(
-                        template=tally_sheet_template_pe_27, electionId=election.electionId, areaId=area.areaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_4, electionId=election.electionId,
-                        areaId=area.areaId
+                        template=tally_sheet_template_pe_27, electionId=election.electionId, areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     )
                 ]
 
+                for party in election.parties:
+                    tally_sheets.append(TallySheet.create(
+                        template=tally_sheet_template_pe_4, electionId=election.electionId,
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "partyId": party.partyId,
+                            "electionId": election.electionId
+                        }).metaId
+                    ))
+
                 if election.voteType is NonPostal:
                     tally_sheets.append(TallySheet.create(
-                        template=tally_sheet_template_ce_201, electionId=election.electionId, areaId=area.areaId
+                        template=tally_sheet_template_ce_201, electionId=election.electionId, areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ))
                 elif election.voteType is Postal:
                     area._registeredVotersCount = row["Registered Voters"]
                     tally_sheets.append(TallySheet.create(
                         template=tally_sheet_template_ce_201_pv, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ))
 
                 return tally_sheets

@@ -19,11 +19,9 @@ import {
     TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
     TALLY_SHEET_LIST_ROW_ACTION_VIEW
 } from "../constants/TALLY_SHEET_ACTION";
-import {
-    TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE,
-    TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT, TALLY_SHEET_LIST_COLUMN_LABEL, TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION,
-    TALLY_SHEET_LIST_COLUMN_STATUS, TALLY_SHEET_LIST_COLUMN_VALUE_KEY
-} from "../constants/TALLY_SHEET_COLUMN";
+import {TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_STATUS} from "../constants/TALLY_SHEET_COLUMN";
+import TallySheetListTableBody from "./tally-sheet-list-table-body";
+import TallySheetListTableHead from "./tally-sheet-list-table-head";
 
 
 export default function TallySheetList(
@@ -43,121 +41,7 @@ export default function TallySheetList(
     }
 ) {
     const {electionId, rootElectionId, rootElection} = election;
-
-    const [tallySheetListRows, setTallySheetListRows] = useState([]);
-    const [processing, setProcessing] = useState(true);
-    const [error, setError] = useState(false);
-
-    const [searchParameters, setSearchParameters] = React.useState({});
-
-    const handleChange = name => event => {
-        setSearchParameters({...searchParameters, [name]: event.target.value});
-    };
-
-
-    useEffect(() => {
-        columns.filter((column) => {
-            setSearchParameters({...searchParameters, [column]: ""})
-        });
-    }, []);
-
-    useEffect(() => {
-        getTallySheet({
-            electionId: electionId,
-            tallySheetCode,
-            limit: 3000, //TODO fix
-            offset: 0
-        }).then((tallySheets) => {
-            setTallySheetListRows(tallySheets.map((tallySheet) => {
-                tallySheet = {...tallySheet};
-
-                // Append the values for columns.
-                columns.map((column) => {
-                    let columnValue = tallySheet[TALLY_SHEET_LIST_COLUMN_VALUE_KEY[column]];
-                    if (!columnValue) {
-                        columnValue = "";
-                    }
-
-                    // If the value is an area object, assign areaName as the value.
-                    if (typeof columnValue === "object" && columnValue.areaName) {
-                        columnValue = columnValue.areaName;
-                    }
-
-                    tallySheet[column] = columnValue;
-                });
-
-                return tallySheet;
-
-            }));
-            setProcessing(false);
-        }).catch((error) => {
-            setError(true);
-            setProcessing(false);
-        })
-    }, []);
-
-
-    function getTallySheetListJsx() {
-
-        let tallySheetListJsx = [];
-
-        if (processing) {
-            tallySheetListJsx = <TableRow>
-                <TableCell colSpan={5} align="center">
-                    <Processing/>
-                </TableCell>
-            </TableRow>
-        } else if (!tallySheetListRows || error) {
-            tallySheetListJsx = <TableRow>
-                <TableCell colSpan={5} align="center">
-                    Tally sheet list cannot be accessed
-                </TableCell>
-            </TableRow>
-        } else if (tallySheetListRows) {
-            if (tallySheetListRows.length === 0) {
-                tallySheetListJsx.push(<TableRow>
-                    <TableCell colSpan={5} align="center">No tally sheets available or authorized to
-                        access.</TableCell>
-                </TableRow>)
-            } else {
-                for (let i = 0; i < tallySheetListRows.length; i++) {
-                    const tallySheetListRow = tallySheetListRows[i];
-                    tallySheetListJsx.push(<TallySheetListRow
-                        tallySheetListRow={tallySheetListRow} history={history} electionId={electionId}
-                        actions={actions} columns={columns}
-                    />)
-                }
-            }
-        }
-
-        return <Table aria-label="simple table">
-            <TableHead>
-                <TableRow>
-                    {columns.map((column) => {
-
-                        return <TableCell align="center">
-                            <TextField
-                                style={{width: "100%"}}
-                                value={searchParameters.electoralDistrict}
-                                margin="dense"
-                                variant="outlined"
-                                placeholder={TALLY_SHEET_LIST_COLUMN_LABEL[column]}
-                                onChange={handleChange('electoralDistrict')}
-                            />
-                        </TableCell>
-                    })}
-                </TableRow>
-                <TableRow>
-                    {columns.map((column) => {
-                        return <TableCell align="center">{TALLY_SHEET_LIST_COLUMN_LABEL[column]}</TableCell>
-                    })}
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {tallySheetListJsx}
-            </TableBody>
-        </Table>
-    }
+    const [columnMetaMap, setColumnMetaMap] = React.useState({});
 
     return <div className="page">
         <BreadCrumb
@@ -173,7 +57,20 @@ export default function TallySheetList(
         <div className="page-content">
             <div>{rootElection.electionName}</div>
             <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
-            {getTallySheetListJsx()}
+            <Table aria-label="simple table">
+                <TallySheetListTableHead
+                    columns={columns}
+                    onColumnMetaChange={setColumnMetaMap}
+                />
+                <TallySheetListTableBody
+                    history={history}
+                    tallySheetCode={tallySheetCode}
+                    election={election}
+                    columns={columns}
+                    columnMetaMap={columnMetaMap}
+                    actions={actions}
+                />
+            </Table>
         </div>
     </div>
 }

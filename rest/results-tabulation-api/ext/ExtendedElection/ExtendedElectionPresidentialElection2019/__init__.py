@@ -1,5 +1,8 @@
 from app import db
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.TALLY_SHEET_CODES import CE_201, CE_201_PV, PRE_41, PRE_30_PD, PRE_30_ED, \
+from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, TALLY_SHEET_COLUMN_SOURCE_CONTENT, \
+    TALLY_SHEET_COLUMN_SOURCE_QUERY
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.TALLY_SHEET_CODES import CE_201, CE_201_PV, PRE_41, \
+    PRE_30_PD, PRE_30_ED, \
     PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, PRE_ALL_ISLAND_RESULTS, PRE_34_CO, PRE_34_I_RO, PRE_34_II_RO, PRE_34, \
     PRE_34_PD, PRE_34_ED, PRE_34_AI
 from constants.VOTE_TYPES import Postal, NonPostal
@@ -17,7 +20,7 @@ from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTally
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_AI_ED import \
     ExtendedTallySheetVersion_PRE_AI_ED
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
-from orm.entities import Election, Candidate, Template, Party
+from orm.entities import Election, Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
@@ -77,9 +80,10 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "ballotBoxId", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "ballotBoxId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ballots_received = tally_sheet_template_ce_201.add_row(
@@ -87,9 +91,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ballots_spoilt = tally_sheet_template_ce_201.add_row(
@@ -97,9 +101,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ballots_issued = tally_sheet_template_ce_201.add_row(
@@ -107,9 +111,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ballots_unused = tally_sheet_template_ce_201.add_row(
@@ -117,9 +121,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ordinary_ballots_in_ballot_paper_account = tally_sheet_template_ce_201.add_row(
@@ -127,9 +131,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_ordinary_ballots_in_ballot_box = tally_sheet_template_ce_201.add_row(
@@ -137,9 +141,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_tendered_ballots_in_ballot_paper_account = tally_sheet_template_ce_201.add_row(
@@ -147,9 +151,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_number_of_tendered_ballots_in_ballot_box = tally_sheet_template_ce_201.add_row(
@@ -157,9 +161,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
 
@@ -172,9 +176,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "strValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_time_of_commencement_row = tally_sheet_template_ce_201_pv.add_row(
@@ -182,9 +186,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "strValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
@@ -192,9 +196,10 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "ballotBoxId", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "ballotBoxId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_number_of_packets_inserted_to_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
@@ -202,9 +207,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_number_of_packets_found_inside_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
@@ -212,9 +217,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_number_of_packets_rejected_after_opening_cover_a_row = tally_sheet_template_ce_201_pv.add_row(
@@ -222,9 +227,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_number_of_packets_rejected_after_opening_cover_b_row = tally_sheet_template_ce_201_pv.add_row(
@@ -232,9 +237,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
 
@@ -246,12 +251,13 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "partyId", "grouped": False, "func": None},
-                {"columnName": "candidateId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None},
-                {"columnName": "strValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "candidateId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_pre_41_rejected_vote_row = tally_sheet_template_pre_41.add_row(
@@ -259,9 +265,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=False,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
 
@@ -273,11 +279,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_41_candidate_wise_first_preference_row)
         tally_sheet_template_pre_30_pd_rejected_vote_row = tally_sheet_template_pre_30_pd.add_row(
@@ -285,9 +291,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_41_rejected_vote_row)
 
@@ -299,11 +305,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_30_pd_candidate_wise_first_preference_row)
         tally_sheet_template_pre_30_ed_rejected_vote_row = tally_sheet_template_pre_30_ed.add_row(
@@ -311,9 +317,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_30_pd_rejected_vote_row)
 
@@ -325,11 +331,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_30_ed_candidate_wise_first_preference_row)
         tally_sheet_template_pre_all_island_ed_rejected_vote_row = tally_sheet_template_pre_all_island_ed.add_row(
@@ -337,9 +343,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=False,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_30_ed_rejected_vote_row)
 
@@ -351,11 +357,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_all_island_ed_candidate_wise_first_preference_row)
         tally_sheet_template_pre_all_island_rejected_vote_row = tally_sheet_template_pre_all_island.add_row(
@@ -363,9 +369,9 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_all_island_ed_rejected_vote_row)
 
@@ -377,11 +383,12 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "partyId", "grouped": False, "func": None},
-                {"columnName": "candidateId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "candidateId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_pre_34_co_candidate_wise_third_preference_row = tally_sheet_template_pre_34_co.add_row(
@@ -389,11 +396,12 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=False,
             columns=[
-                {"columnName": "electionId", "grouped": False, "func": None},
-                {"columnName": "areaId", "grouped": False, "func": None},
-                {"columnName": "partyId", "grouped": False, "func": None},
-                {"columnName": "candidateId", "grouped": False, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": None}
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "candidateId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
 
@@ -405,11 +413,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_co_candidate_wise_second_preference_row)
         tally_sheet_template_pre_34_i_ro_candidate_wise_third_preference_row = tally_sheet_template_pre_34_i_ro.add_row(
@@ -417,11 +425,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_co_candidate_wise_third_preference_row)
 
@@ -433,11 +441,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_i_ro_candidate_wise_second_preference_row)
         tally_sheet_template_pre_34_ii_ro_candidate_wise_third_preference_row = tally_sheet_template_pre_34_ii_ro.add_row(
@@ -445,11 +453,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_i_ro_candidate_wise_third_preference_row)
 
@@ -461,11 +469,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_ii_ro_candidate_wise_second_preference_row)
         tally_sheet_template_pre_34_candidate_wise_second_preference_row = tally_sheet_template_pre_34.add_row(
@@ -473,11 +481,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_ii_ro_candidate_wise_third_preference_row)
 
@@ -489,11 +497,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_30_pd_candidate_wise_first_preference_row)
         tally_sheet_template_pre_34_pd_candidate_wise_second_preference_row = tally_sheet_template_pre_34_pd.add_row(
@@ -501,11 +509,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_i_ro_candidate_wise_second_preference_row)
         tally_sheet_template_pre_34_pd_candidate_wise_third_preference_row = tally_sheet_template_pre_34_pd.add_row(
@@ -513,11 +521,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_i_ro_candidate_wise_third_preference_row)
 
@@ -529,11 +537,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_pd_candidate_wise_first_preference_row)
         tally_sheet_template_pre_34_ed_candidate_wise_second_preference_row = tally_sheet_template_pre_34_ed.add_row(
@@ -541,11 +549,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_pd_candidate_wise_second_preference_row)
         tally_sheet_template_pre_34_ed_candidate_wise_third_preference_row = tally_sheet_template_pre_34_ed.add_row(
@@ -553,11 +561,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_pd_candidate_wise_third_preference_row)
 
@@ -569,11 +577,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_ed_candidate_wise_first_preference_row)
         tally_sheet_template_pre_34_ai_candidate_wise_second_preference_row = tally_sheet_template_pre_34_ai.add_row(
@@ -581,11 +589,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_ed_candidate_wise_second_preference_row)
         tally_sheet_template_pre_34_ai_candidate_wise_third_preference_row = tally_sheet_template_pre_34_ai.add_row(
@@ -593,11 +601,11 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             hasMany=True,
             isDerived=True,
             columns=[
-                {"columnName": "electionId", "grouped": True, "func": None},
-                {"columnName": "areaId", "grouped": True, "func": None},
-                {"columnName": "partyId", "grouped": True, "func": None},
-                {"columnName": "candidateId", "grouped": True, "func": None},
-                {"columnName": "numValue", "grouped": False, "func": "sum"}
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pre_34_ed_candidate_wise_third_preference_row)
 
@@ -650,17 +658,29 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                     TallySheet.create(
                         template=tally_sheet_template_pre_all_island,
                         electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_all_island_ed,
                         electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_ai,
                         electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     )
                 ]
 
@@ -679,31 +699,59 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                 tally_sheets = [
                     TallySheet.create(
                         template=tally_sheet_template_pre_30_ed, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_ed, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_30_pd, electionId=postal_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": postal_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_pd, electionId=postal_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": postal_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_i_ro, electionId=postal_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": postal_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_ii_ro, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     )
                 ]
 
@@ -723,15 +771,27 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                 tally_sheets = [
                     TallySheet.create(
                         template=tally_sheet_template_pre_30_pd, electionId=ordinary_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_pd, electionId=ordinary_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_i_ro, electionId=ordinary_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
                     )
                 ]
 
@@ -782,23 +842,39 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
 
                 tally_sheets = [
                     TallySheet.create(
-                        template=tally_sheet_template_pre_41, electionId=election.electionId, areaId=area.areaId
+                        template=tally_sheet_template_pre_41, electionId=election.electionId, areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_co, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     )
                 ]
 
                 if election.voteType is NonPostal:
                     tally_sheets.append(TallySheet.create(
-                        template=tally_sheet_template_ce_201, electionId=election.electionId, areaId=area.areaId
+                        template=tally_sheet_template_ce_201, electionId=election.electionId, areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ))
                 elif election.voteType is Postal:
                     area._registeredVotersCount = row["Registered Voters"]
                     tally_sheets.append(TallySheet.create(
                         template=tally_sheet_template_ce_201_pv, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ))
 
                 return tally_sheets

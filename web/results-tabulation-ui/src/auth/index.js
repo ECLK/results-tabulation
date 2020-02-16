@@ -30,7 +30,8 @@ export function getUserInfo() {
     if (userInfo !== undefined) {
         try {
             userInfo = JSON.parse(userInfo);
-        } catch (e) {
+        } catch (error) {
+            console.log(error.stack);
             userInfo = {};
         }
     } else {
@@ -110,7 +111,8 @@ function LoadElectionAndThen(props) {
             const election = await getElectionById(electionId);
 
             setElection(election);
-        } catch (e) {
+        } catch (error) {
+            console.log(error.stack);
             setError(true);
         }
 
@@ -147,7 +149,8 @@ function LoadTallySheetAndThen(props) {
         try {
             setElection(await getElectionById(electionId));
             setTallySheet(await getTallySheetById(tallySheetId));
-        } catch (e) {
+        } catch (error) {
+            console.log(error.stack);
             setError(true);
         }
         setProcessing(false);

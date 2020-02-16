@@ -9,6 +9,7 @@ from orm.entities.Audit import Stamp
 from orm.entities.Election import InvalidVoteCategory, ElectionCandidate
 from orm.entities.IO import File
 from orm.entities.Invoice import InvoiceStationaryItem
+from orm.entities.Meta import MetaData
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel
@@ -26,6 +27,19 @@ class StampSchema(ma.ModelSchema):
         )
 
         model = Stamp.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class MetaDataSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "metaDataKey",
+            "metaDataValue"
+        )
+
+        model = MetaData.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -109,7 +123,7 @@ class ElectionSchema(ma.ModelSchema):
     parties = ma.Nested(PartySchema, many=True)
     invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
     subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType", "rootElectionId",
-                                           "rootElection"], many=True)
+                                           "rootElection", "parties"], many=True)
     rootElection = ma.Nested("self", only=[
         "electionId", "electionName", "voteType", "electionTemplateName", "parties", "invalidVoteCategories"
     ])
@@ -366,7 +380,8 @@ class TallySheetSchema(ma.ModelSchema):
             "released",
             # "latestVersion",
             "submissionProofId",
-            "versions"
+            "versions",
+            "metaDataList"
         )
 
         model = TallySheet.Model
@@ -382,6 +397,7 @@ class TallySheetSchema(ma.ModelSchema):
     lockedStamp = ma.Nested(StampSchema)
     submittedStamp = ma.Nested(StampSchema)
     submissionProof = ma.Nested(Proof_Schema)
+    metaDataList = ma.Nested(MetaDataSchema, many=True)
 
 
 class TemplateRowSchema(ma.ModelSchema):

@@ -33,11 +33,14 @@ class _File(Base):
 def upgrade():
     op.add_column('file', sa.Column('fileContent', mysql.LONGBLOB(), nullable=True))
 
-    for filename in os.listdir("./data"):
-        file = session.query(_File).filter(_File.fileId == filename).one_or_none()
-        if file is not None:
-            with open("./data/%s" % filename, "r") as file:
-                file.fileContent = file.read()
+    data_directory_path = "./data"
+
+    if os.path.isdir(data_directory_path):
+        for filename in os.listdir(data_directory_path):
+            file = session.query(_File).filter(_File.fileId == filename).one_or_none()
+            if file is not None:
+                with open("./data/%s" % filename, "r") as file:
+                    file.fileContent = file.read()
 
     session.commit()
 

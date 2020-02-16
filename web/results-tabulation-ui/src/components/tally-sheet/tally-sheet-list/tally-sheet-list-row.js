@@ -8,6 +8,7 @@ import {
 } from "../constants/TALLY_SHEET_ACTION";
 import TallySheetListRowAction from "./tally-sheet-list-row-action";
 import {TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_STATUS} from "../constants/TALLY_SHEET_COLUMN";
+import {fieldMatch} from "../../../utils";
 
 
 export default function TallySheetListRow(
@@ -19,6 +20,7 @@ export default function TallySheetListRow(
             TALLY_SHEET_LIST_COLUMN_STATUS,
             TALLY_SHEET_LIST_COLUMN_ACTIONS
         ],
+        columnMetaMap = {},
         actions = [
             TALLY_SHEET_LIST_ROW_ACTION_VIEW,
             TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
@@ -27,18 +29,39 @@ export default function TallySheetListRow(
     }
 ) {
 
-    return <TableRow key={tallySheetListRow.tallySheetId}>
-        {columns.map((column) => {
-            if (column == TALLY_SHEET_LIST_COLUMN_ACTIONS) {
-                return actions.map((action) => {
-                    return <TallySheetListRowAction
-                        electionId={electionId} history={history} action={action} tallySheetListRow={tallySheetListRow}
-                    />
-                });
-            } else {
-                return <TableCell align="center">{tallySheetListRow[column]}</TableCell>
+    const hasFilterMatch = () => {
+        let _hasFilterMatch = true;
+        for (let i = 0; i < columns.length; i++) {
+            const column = columns[i];
+            if (columnMetaMap[column] && columnMetaMap[column].filter && columnMetaMap[column].filter !== "") {
+                if (_hasFilterMatch && !fieldMatch(tallySheetListRow[column], columnMetaMap[column].filter)) {
+                    _hasFilterMatch = false;
+                    break;
+                }
             }
-        })}
-    </TableRow>
+        }
+
+        return _hasFilterMatch;
+    };
+
+    if (hasFilterMatch()) {
+        return <TableRow key={tallySheetListRow.tallySheetId}>
+            {columns.map((column) => {
+                if (column == TALLY_SHEET_LIST_COLUMN_ACTIONS) {
+                    return actions.map((action) => {
+                        return <TallySheetListRowAction
+                            electionId={electionId} history={history} action={action}
+                            tallySheetListRow={tallySheetListRow}
+                        />
+                    });
+                } else {
+                    return <TableCell align="center">{tallySheetListRow[column]}</TableCell>
+                }
+            })}
+        </TableRow>
+    } else {
+        return null;
+    }
+
 
 }
