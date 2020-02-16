@@ -169,6 +169,18 @@ class ExtendedTallySheetVersion:
 
         return df
 
+    def get_party_and_area_wise_valid_non_postal_vote_count_result(self):
+        df = self.df.copy()
+
+        df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
+        df = df.loc[df['voteType'] == NonPostal]
+
+        df = df.sort_values(
+            by=['partyId', 'areaId'], ascending=True
+        ).reset_index()
+
+        return df
+
     def get_candidate_wise_valid_non_postal_vote_count_result(self):
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
@@ -199,6 +211,21 @@ class ExtendedTallySheetVersion:
 
         return df
 
+    def get_party_wise_valid_postal_vote_count_result(self):
+        df = self.df.copy()
+        df['numValue'] = df['numValue'].astype(float)
+
+        df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
+        df = df.loc[df['voteType'] == Postal]
+
+        df = df.groupby(
+            ['partyId', 'partyName', 'partyAbbreviation']
+        ).agg({'numValue': lambda x: x.sum(skipna=False)}).sort_values(
+            by=['partyId'], ascending=True
+        ).reset_index()
+
+        return df
+
     def get_candidate_wise_valid_vote_count_result(self):
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
@@ -217,7 +244,7 @@ class ExtendedTallySheetVersion:
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
 
-        df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
+        df = df.loc[(df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
         df = df.loc[df['voteType'] == NonPostal]
 
         df = df.groupby(
@@ -299,6 +326,17 @@ class ExtendedTallySheetVersion:
 
         return df
 
+    def get_party_wise_postal_valid_vote_count_result(self):
+        df = self.df.copy()
+        df['numValue'] = df['numValue'].astype(float)
+
+        df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
+        df = df.loc[df['voteType'] == Postal]
+
+        df = df.groupby(lambda a: True).agg(sum)
+
+        return df
+
     def get_postal_rejected_vote_count_result(self):
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
@@ -323,7 +361,7 @@ class ExtendedTallySheetVersion:
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
 
-        df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
+        df = df.loc[(df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
 
         df = df.groupby(lambda a: True).agg(sum)
 
@@ -367,7 +405,6 @@ class ExtendedTallySheetVersion:
         df = df.sort_values(
             by=['partyId', 'areaId'], ascending=True
         ).reset_index()
-
         return df
 
     def get_area_wise_valid_vote_count_result(self):

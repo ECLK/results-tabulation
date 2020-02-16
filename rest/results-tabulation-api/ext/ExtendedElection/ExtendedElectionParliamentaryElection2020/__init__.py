@@ -12,6 +12,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
     ExtendedTallySheetVersion_PE_CE_RO_V1
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_R1 import \
     ExtendedTallySheetVersion_PE_R1
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_V2 import \
+    ExtendedTallySheetVersion_PE_CE_RO_V2
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Election, Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -33,7 +35,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
     def get_extended_tally_sheet_version_class(self, templateName):
         EXTENDED_TEMPLATE_MAP = {
             PE_CE_RO_V1: ExtendedTallySheetVersion_PE_CE_RO_V1,
-            PE_R1: ExtendedTallySheetVersion_PE_R1
+            PE_R1: ExtendedTallySheetVersion_PE_R1,
+            PE_CE_RO_V2: ExtendedTallySheetVersion_PE_CE_RO_V2
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
@@ -313,7 +316,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             templateName=PE_CE_RO_V2
         )
         tally_sheet_template_pe_ce_ro_v2_party_wise_vote_row = tally_sheet_template_pe_ce_ro_v2.add_row(
-            templateRowType="CANDIDATE_FIRST_PREFERENCE",
+            templateRowType="PARTY_WISE_VOTE",
             hasMany=True,
             isDerived=True,
             columns=[
