@@ -220,7 +220,7 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['partyId', 'partyName', 'partyAbbreviation']
-        ).agg(sum).sort_values(
+        ).agg({'numValue': lambda x: x.sum(skipna=False)}).sort_values(
             by=['partyId'], ascending=True
         ).reset_index()
 
