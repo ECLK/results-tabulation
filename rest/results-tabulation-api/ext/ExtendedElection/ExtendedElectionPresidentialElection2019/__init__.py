@@ -17,7 +17,7 @@ from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTally
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_AI_ED import \
     ExtendedTallySheetVersion_PRE_AI_ED
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
-from orm.entities import Election, Candidate, Template, Party
+from orm.entities import Election, Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
@@ -650,17 +650,29 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                     TallySheet.create(
                         template=tally_sheet_template_pre_all_island,
                         electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_all_island_ed,
                         electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_ai,
                         electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     )
                 ]
 
@@ -679,31 +691,59 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                 tally_sheets = [
                     TallySheet.create(
                         template=tally_sheet_template_pre_30_ed, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_ed, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_30_pd, electionId=postal_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": postal_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_pd, electionId=postal_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": postal_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_i_ro, electionId=postal_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": postal_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_ii_ro, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     )
                 ]
 
@@ -723,15 +763,27 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                 tally_sheets = [
                     TallySheet.create(
                         template=tally_sheet_template_pre_30_pd, electionId=ordinary_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_pd, electionId=ordinary_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_i_ro, electionId=ordinary_election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
                     )
                 ]
 
@@ -782,23 +834,39 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
 
                 tally_sheets = [
                     TallySheet.create(
-                        template=tally_sheet_template_pre_41, electionId=election.electionId, areaId=area.areaId
+                        template=tally_sheet_template_pre_41, electionId=election.electionId, areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ),
                     TallySheet.create(
                         template=tally_sheet_template_pre_34_co, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     )
                 ]
 
                 if election.voteType is NonPostal:
                     tally_sheets.append(TallySheet.create(
-                        template=tally_sheet_template_ce_201, electionId=election.electionId, areaId=area.areaId
+                        template=tally_sheet_template_ce_201, electionId=election.electionId, areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ))
                 elif election.voteType is Postal:
                     area._registeredVotersCount = row["Registered Voters"]
                     tally_sheets.append(TallySheet.create(
                         template=tally_sheet_template_ce_201_pv, electionId=election.electionId,
-                        areaId=area.areaId
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": election.electionId
+                        }).metaId
                     ))
 
                 return tally_sheets
