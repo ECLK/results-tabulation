@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import Moment from "moment";
 import {isNumeric, processNumericValue} from "../../../../../utils";
-import {useTallySheetEdit} from "../../../../../pages/data-entry-edit";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -11,6 +10,7 @@ import TableFooter from "@material-ui/core/TableFooter";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Processing from "../../../../processing";
+import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
 export default function TallySheetEdit_CE_201_PV({history, queryString, election, tallySheet, messages}) {
     const [countingCentreSummary, setCountingCentreSummary] = useState({
