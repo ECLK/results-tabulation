@@ -426,7 +426,7 @@ class TallySheetModel(db.Model):
                                 template_row_column_name = template_row_column.templateRowColumnName
                                 content_row[template_row_column_name] = meta_data_map[template_row_column_name]
 
-                            content_rows.append(content_row)
+                        content_rows.append(content_row)
 
                 if templateRow.hasMany is False:
                     content_rows = [content_rows[0]]
