@@ -14,6 +14,8 @@ export class ElectionEntity extends Entity {
         const election = await super.push(obj, pk);
         buildAreas && await this.buildAreas(obj[pk]);
 
+        this.buildPartiesAndCandidates(election);
+
         return election;
     }
 
@@ -26,6 +28,28 @@ export class ElectionEntity extends Entity {
 
 
         await this.areas.pushList(areas, "areaId");
+    }
+
+    buildPartiesAndCandidates(election) {
+        const {parties} = election;
+        const partyMap = {};
+        for (let i = 0; i < parties.length; i++) {
+            const party = parties[i];
+            const {candidates} = party;
+            const candidateMap = {};
+
+            for (let j = 0; j < candidates.length; j++) {
+                const candidate = candidates[j];
+                candidateMap[candidate.candidateId] = candidate;
+            }
+
+            party.candidateMap = candidateMap;
+            partyMap[party.partyId] = party;
+        }
+
+        election.partyMap = partyMap;
+
+        return election;
     }
 
     async fetchAndPush(electionId) {

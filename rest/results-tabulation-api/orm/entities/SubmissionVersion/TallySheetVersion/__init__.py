@@ -35,6 +35,19 @@ class TallySheetVersionModel(db.Model):
     @hybrid_property
     def content(self):
         try:
+            meta_data_key_to_column_map = {
+                # "areaId": Area.Model.areaId,
+                "partyId": Party.Model.partyId
+            }
+
+            tally_sheet = TallySheet.get_by_id(tallySheetId=self.tallySheetId)
+            query_filter = []
+            for meta_data in tally_sheet.meta.metaDataList:
+                if meta_data.metaDataKey in meta_data_key_to_column_map:
+                    query_filter.append(
+                        meta_data_key_to_column_map[meta_data.metaDataKey] == meta_data.metaDataValue
+                    )
+
             query_args = [
                 TallySheetVersionRow.Model.tallySheetVersionRowId,
                 TallySheetVersionRow.Model.electionId,
@@ -76,7 +89,8 @@ class TallySheetVersionModel(db.Model):
                 Party.Model.partyId == TallySheetVersionRow.Model.partyId,
                 isouter=True
             ).filter(
-                TallySheetVersionRow.Model.tallySheetVersionId == self.tallySheetVersionId
+                TallySheetVersionRow.Model.tallySheetVersionId == self.tallySheetVersionId,
+                *query_filter
             ).order_by(
                 Party.Model.partyId,
                 Candidate.Model.candidateId,

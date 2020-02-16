@@ -4,6 +4,7 @@ export const TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT = "TALLY_SHEET_LIST_COLU
 export const TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION = "TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION";
 export const TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE = "TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE";
 export const TALLY_SHEET_LIST_COLUMN_COUNTRY = "TALLY_SHEET_LIST_COLUMN_COUNTRY";
+export const TALLY_SHEET_LIST_COLUMN_PARTY = "TALLY_SHEET_LIST_COLUMN_PARTY";
 
 export const TALLY_SHEET_LIST_COLUMN_LABEL = {
     [TALLY_SHEET_LIST_COLUMN_STATUS]: "Status",
@@ -11,14 +12,18 @@ export const TALLY_SHEET_LIST_COLUMN_LABEL = {
     [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: "Electoral District",
     [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: "Polling Division",
     [TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: "Counting Centre",
-    [TALLY_SHEET_LIST_COLUMN_COUNTRY]: "Country"
+    [TALLY_SHEET_LIST_COLUMN_COUNTRY]: "Country",
+    [TALLY_SHEET_LIST_COLUMN_PARTY]: "Party"
 };
 
-export const TALLY_SHEET_LIST_COLUMN_VALUE_KEY = {
-    [TALLY_SHEET_LIST_COLUMN_STATUS]: "tallySheetStatus",
-    [TALLY_SHEET_LIST_COLUMN_ACTIONS]: "actions",
-    [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: "electoralDistrict",
-    [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: "pollingDivision",
-    [TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: "countingCentre",
-    [TALLY_SHEET_LIST_COLUMN_COUNTRY]: "country"
+export const TALLY_SHEET_LIST_COLUMN_VALUE = {
+    [TALLY_SHEET_LIST_COLUMN_STATUS]: (tallySheet) => tallySheet["tallySheetStatus"],
+    [TALLY_SHEET_LIST_COLUMN_ACTIONS]: (tallySheet) => tallySheet["actions"],
+    [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: (tallySheet) => tallySheet["electoralDistrict"],
+    [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: (tallySheet) => tallySheet["pollingDivision"],
+    [TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: (tallySheet) => tallySheet["countingCentre"],
+    [TALLY_SHEET_LIST_COLUMN_COUNTRY]: (tallySheet) => tallySheet["country"],
+    [TALLY_SHEET_LIST_COLUMN_PARTY]: (tallySheet) => {
+        return tallySheet.election.partyMap[tallySheet.metaDataMap["partyId"]].partyName;
+    },
 };

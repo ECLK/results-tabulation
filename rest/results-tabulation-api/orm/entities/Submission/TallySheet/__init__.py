@@ -7,6 +7,7 @@ from sqlalchemy.orm import relationship
 from app import db
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access
 from constants.AUTH_CONSTANTS import ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK
+from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META
 from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
     MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK, \
@@ -15,7 +16,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
     MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED
-from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area
+from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
 from orm.entities.Dashboard import StatusReport
 from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -32,10 +33,12 @@ class TallySheetModel(db.Model):
     tallySheetId = db.Column(db.Integer, db.ForeignKey(Submission.Model.__table__.c.submissionId), primary_key=True)
     templateId = db.Column(db.Integer, db.ForeignKey(Template.Model.__table__.c.templateId), nullable=False)
     statusReportId = db.Column(db.Integer, db.ForeignKey(StatusReport.Model.__table__.c.statusReportId), nullable=True)
+    metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=True)
 
     submission = relationship("SubmissionModel", foreign_keys=[tallySheetId])
     statusReport = relationship(StatusReport.Model, foreign_keys=[statusReportId])
     template = relationship(Template.Model, foreign_keys=[templateId])
+    meta = relationship(Meta.Model, foreign_keys=[metaId])
 
     electionId = association_proxy("submission", "electionId")
     areaId = association_proxy("submission", "areaId")
@@ -58,6 +61,7 @@ class TallySheetModel(db.Model):
     submissionProofId = association_proxy("submission", "submissionProofId")
     submissionProof = association_proxy("submission", "submissionProof")
     versions = association_proxy("submission", "versions")
+    metaDataList = association_proxy("meta", "metaDataList")
 
     children = relationship("TallySheetModel", secondary="tallySheet_tallySheet", lazy="subquery",
                             primaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId",
@@ -269,7 +273,7 @@ class TallySheetModel(db.Model):
             TallySheetVersion.Model.tallySheetVersionId == self.latestVersionId
         ).one_or_none()
 
-    def __init__(self, template, electionId, areaId):
+    def __init__(self, template, electionId, areaId, metaId):
         submission = Submission.create(
             submissionType=SubmissionTypeEnum.TallySheet,
             electionId=electionId,
@@ -279,6 +283,7 @@ class TallySheetModel(db.Model):
         super(TallySheetModel, self).__init__(
             tallySheetId=submission.submissionId,
             templateId=template.templateId,
+            metaId=metaId
         )
 
         db.session.add(self)
@@ -292,7 +297,7 @@ class TallySheetModel(db.Model):
         return tallySheetVersion
 
     def create_version(self, content=None):
-        COLUMN_NAME_MAP = {
+        column_name_map = {
             "electionId": Election.Model.electionId,
             "areaId": Area.Model.areaId,
             "candidateId": Candidate.Model.candidateId,
@@ -301,14 +306,17 @@ class TallySheetModel(db.Model):
             "strValue": TallySheetVersionRow.Model.strValue,
             "ballotBoxId": TallySheetVersionRow.Model.ballotBoxId
         }
-        COLUMN_FUNC_MAP = {
+        column_function_map = {
             "sum": func.sum,
             "count": func.count,
             "group_concat": func.group_concat
         }
 
-        election = self.submission.election
-        tallySheetVersion = self.create_empty_version()
+        meta_data_map = {}
+        for metaData in self.meta.metaDataList:
+            meta_data_map[metaData.metaDataKey] = metaData.metaDataValue
+
+        tally_sheet_version = self.create_empty_version()
         is_tally_sheet_version_complete = True
 
         for templateRow in self.template.rows:
@@ -319,10 +327,10 @@ class TallySheetModel(db.Model):
 
             for templateRowColumn in templateRow.columns:
                 column_name = templateRowColumn.templateRowColumnName
-                column = COLUMN_NAME_MAP[column_name]
+                column = column_name_map[column_name]
 
                 if templateRowColumn.func is not None:
-                    column_func = COLUMN_FUNC_MAP[templateRowColumn.func]
+                    column_func = column_function_map[templateRowColumn.func]
                     column = column_func(column).label(column_name)
 
                 query_args.append(column)
@@ -411,28 +419,17 @@ class TallySheetModel(db.Model):
 
                     content_rows.append(content_row)
             else:
-                content_rows = [
-                    content_row for content_row in content if content_row["templateRowId"] == templateRow.templateRowId
-                ]
+                for content_row in content:
+                    if content_row["templateRowId"] == templateRow.templateRowId:
+                        for template_row_column in templateRow.columns:
+                            if template_row_column.source == TALLY_SHEET_COLUMN_SOURCE_META:
+                                template_row_column_name = template_row_column.templateRowColumnName
+                                content_row[template_row_column_name] = meta_data_map[template_row_column_name]
+
+                            content_rows.append(content_row)
 
                 if templateRow.hasMany is False:
                     content_rows = [content_rows[0]]
-
-                for content_row in content_rows:
-                    if "electionId" not in content_row:
-                        content_row["electionId"] = election.electionId
-
-                    if "areaId" not in content_row:
-                        content_row["areaId"] = self.submission.areaId
-
-                    if "partyId" not in content_row:
-                        content_row["partyId"] = None
-
-                    if "candidateId" not in content_row:
-                        content_row["candidateId"] = None
-
-                    if "strValue" not in content_row:
-                        content_row["strValue"] = None
 
             for content_row in content_rows:
 
@@ -442,7 +439,7 @@ class TallySheetModel(db.Model):
 
                 TallySheetVersionRow.create(
                     templateRow=templateRow,
-                    tallySheetVersion=tallySheetVersion,
+                    tallySheetVersion=tally_sheet_version,
                     electionId=get_dict_key_value_or_none(content_row, "electionId"),
                     numValue=get_dict_key_value_or_none(content_row, "numValue"),
                     strValue=get_dict_key_value_or_none(content_row, "strValue"),
@@ -453,9 +450,9 @@ class TallySheetModel(db.Model):
                 )
 
         if is_tally_sheet_version_complete:
-            tallySheetVersion.set_complete()
+            tally_sheet_version.set_complete()
 
-        return tallySheetVersion
+        return tally_sheet_version
 
     def get_extended_tally_sheet_version(self, tallySheetVersionId):
         tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=self.tallySheetId,
@@ -552,11 +549,12 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None):
     return query
 
 
-def create(template, electionId, areaId):
+def create(template, electionId, areaId, metaId):
     result = Model(
         template=template,
         electionId=electionId,
-        areaId=areaId
+        areaId=areaId,
+        metaId=metaId
     )
 
     return result

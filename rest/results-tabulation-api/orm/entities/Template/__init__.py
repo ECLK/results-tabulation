@@ -1,6 +1,7 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
+from constants import TALLY_SHEET_COLUMN_SOURCE
 from ext import ExtendedTallySheetVersion
 from app import db
 
@@ -48,7 +49,8 @@ class TemplateModel(db.Model):
         )
 
         for column in columns:
-            templateRow.add_column(column["columnName"], grouped=column["grouped"], func=column["func"])
+            templateRow.add_column(column["columnName"], source=column["source"], grouped=column["grouped"],
+                                   func=column["func"])
 
         return templateRow
 
@@ -91,12 +93,14 @@ class TemplateRowModel(db.Model):
 
         return self
 
-    def add_column(self, templateRowColumnName, grouped=False, func=None):
+    def add_column(self, templateRowColumnName, source=TALLY_SHEET_COLUMN_SOURCE.TALLY_SHEET_COLUMN_SOURCE_CONTENT,
+                   grouped=False, func=None):
         return TemplateRowColumnModel(
             templateRow=self,
             templateRowColumnName=templateRowColumnName,
             grouped=grouped,
-            func=func
+            func=func,
+            source=source
         )
 
 
@@ -105,13 +109,16 @@ class TemplateRowColumnModel(db.Model):
     templateRowColumnId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     templateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"))
     templateRowColumnName = db.Column(db.String(200), nullable=False)
+    source = db.Column(db.String(50), nullable=False)  # Meta, Content, Query
     grouped = db.Column(db.Boolean, default=False, nullable=False)
     func = db.Column(db.String(200), nullable=True)
 
-    def __init__(self, templateRow, templateRowColumnName, grouped=False, func=None):
+    def __init__(self, templateRow, templateRowColumnName,
+                 source=TALLY_SHEET_COLUMN_SOURCE.TALLY_SHEET_COLUMN_SOURCE_CONTENT, grouped=False, func=None):
         super(TemplateRowColumnModel, self).__init__(
             templateRowId=templateRow.templateRowId,
             templateRowColumnName=templateRowColumnName,
+            source=source,
             grouped=grouped,
             func=func
         )
