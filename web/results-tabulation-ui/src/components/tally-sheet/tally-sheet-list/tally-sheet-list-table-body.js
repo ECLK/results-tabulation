@@ -2,17 +2,8 @@ import React, {useEffect, useState} from "react";
 import {getTallySheet} from "../../../services/tabulation-api";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import {getTallySheetCodeStr} from "../../../utils/tallySheet";
-import {
-    PATH_ELECTION,
-    PATH_ELECTION_BY_ID, PATH_ELECTION_TALLY_SHEET_LIST
-} from "../../../App";
 import Processing from "../../processing";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TextField from "@material-ui/core/TextField/TextField";
 import TableBody from "@material-ui/core/TableBody";
-import BreadCrumb from "../../bread-crumb";
 import TallySheetListRow from "./tally-sheet-list-row";
 import {
     TALLY_SHEET_LIST_ROW_ACTION_UNLOCK,
@@ -20,9 +11,9 @@ import {
     TALLY_SHEET_LIST_ROW_ACTION_VIEW
 } from "../constants/TALLY_SHEET_ACTION";
 import {
-    TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE,
-    TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT, TALLY_SHEET_LIST_COLUMN_LABEL, TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION,
-    TALLY_SHEET_LIST_COLUMN_STATUS, TALLY_SHEET_LIST_COLUMN_VALUE_KEY
+    TALLY_SHEET_LIST_COLUMN_ACTIONS,
+    TALLY_SHEET_LIST_COLUMN_STATUS,
+    TALLY_SHEET_LIST_COLUMN_VALUE
 } from "../constants/TALLY_SHEET_COLUMN";
 
 
@@ -62,7 +53,7 @@ export default function TallySheetListTableBody(
 
                 // Append the values for columns.
                 columns.map((column) => {
-                    let columnValue = tallySheet[TALLY_SHEET_LIST_COLUMN_VALUE_KEY[column]];
+                    let columnValue = TALLY_SHEET_LIST_COLUMN_VALUE[column](tallySheet);
                     if (!columnValue) {
                         columnValue = "";
                     }
@@ -80,6 +71,7 @@ export default function TallySheetListTableBody(
             }));
             setProcessing(false);
         }).catch((error) => {
+            console.log(error.stack);
             setError(true);
             setProcessing(false);
         })

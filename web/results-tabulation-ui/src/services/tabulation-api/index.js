@@ -104,6 +104,11 @@ async function refactorTallySheetObject(tallySheet) {
     tallySheet.area = await areaEntity.getById(tallySheet.areaId);
     tallySheet.election = await electionEntity.getById(tallySheet.electionId);
 
+    tallySheet.metaDataMap = {};
+    tallySheet.metaDataList.map((metaData) => {
+        tallySheet.metaDataMap[metaData.metaDataKey] = metaData.metaDataValue;
+    });
+
     const extendedElection = ExtendedElection(tallySheet.election);
     tallySheet = extendedElection.mapRequiredAreasToTallySheet(tallySheet);
 
