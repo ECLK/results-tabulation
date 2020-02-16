@@ -61,6 +61,7 @@ class TallySheetModel(db.Model):
     submissionProofId = association_proxy("submission", "submissionProofId")
     submissionProof = association_proxy("submission", "submissionProof")
     versions = association_proxy("submission", "versions")
+    metaDataList = association_proxy("meta", "metaDataList")
 
     children = relationship("TallySheetModel", secondary="tallySheet_tallySheet", lazy="subquery",
                             primaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId",
