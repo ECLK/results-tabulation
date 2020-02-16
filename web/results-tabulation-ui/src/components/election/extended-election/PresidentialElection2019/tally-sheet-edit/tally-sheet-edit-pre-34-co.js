@@ -3,7 +3,6 @@ import {MESSAGES_EN} from "../../../../../locale/messages_en";
 import {MESSAGE_TYPES} from "../../../../../services/messages.provider";
 import {PATH_ELECTION_TALLY_SHEET_LIST} from "../../../../../App";
 import {isNumeric, processNumericValue} from "../../../../../utils";
-import {useTallySheetEdit} from "../../../../../pages/data-entry-edit";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
@@ -13,6 +12,7 @@ import TableFooter from "@material-ui/core/TableFooter";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Processing from "../../../../processing";
+import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
 export default function TallySheetEdit_PRE_34_CO({history, queryString, election, tallySheet, messages}) {
     const {tallySheetId, tallySheetCode} = tallySheet;
