@@ -69,6 +69,8 @@ export class ElectionEntity extends Entity {
                 const subElection = election.subElections[i];
                 await this.push(subElection, "electionId", false);
             }
+
+            await this.push(election.rootElection, "electionId", false);
         }
 
         return election;
