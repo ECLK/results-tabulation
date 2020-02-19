@@ -112,7 +112,8 @@ class ElectionSchema(ma.ModelSchema):
             "subElections",
             "voteType",
             "rootElectionId",
-            "rootElection"
+            "rootElection",
+            "parentElection"
         )
 
         model = Election.Model
@@ -125,6 +126,9 @@ class ElectionSchema(ma.ModelSchema):
     subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType", "rootElectionId",
                                            "rootElection", "parties"], many=True)
     rootElection = ma.Nested("self", only=[
+        "electionId", "electionName", "voteType", "electionTemplateName", "parties", "invalidVoteCategories"
+    ])
+    parentElection = ma.Nested("self", only=[
         "electionId", "electionName", "voteType", "electionTemplateName", "parties", "invalidVoteCategories"
     ])
 
@@ -158,7 +162,7 @@ class SimpleAreaSchema(ma.ModelSchema):
             "areaName",
             "areaType",
             "electionId",
-            # "parents",
+            "parents",
             "children"
         )
 
@@ -169,8 +173,9 @@ class SimpleAreaSchema(ma.ModelSchema):
 
     areaType = EnumField(AreaTypeEnum)
     electorateType = EnumField(ElectorateTypeEnum)
-    parents = ma.Nested('self', only="areaId", many=True)
+    # parents = ma.Nested('self', only="areaId", many=True)
     children = ma.Nested('AreaAreaSchema', only="childAreaId", many=True)
+    parents = ma.Nested('AreaAreaSchema', only="parentAreaId", many=True)
 
 
 class AreaAreaSchema(ma.ModelSchema):
@@ -194,7 +199,7 @@ class AreaSchema(ma.ModelSchema):
             "areaType",
             "electionId",
             # "parents",
-            # "children",
+            "children",
             # "pollingStations",
             # "countingCentres",
             # "districtCentres",
