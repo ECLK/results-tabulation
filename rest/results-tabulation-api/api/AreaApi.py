@@ -1,8 +1,7 @@
-from util import RequestBody, get_area_type, get_paginated_query
+from util import get_area_type
 
-from schemas import AreaSchema as Schema
+from schemas import SimpleAreaSchema
 from orm.entities import Area
-import connexion
 
 
 def get_all(electionId=None, areaName=None, associatedAreaId=None, areaType=None):
@@ -13,6 +12,13 @@ def get_all(electionId=None, areaName=None, associatedAreaId=None, areaType=None
         area_type=get_area_type(area_type=areaType)
     )
 
-    result = get_paginated_query(result).all()
+    # result = get_paginated_query(result).all()
+    result = result.all()
 
-    return Schema(many=True).dump(result).data
+    return SimpleAreaSchema(many=True).dump(result).data
+
+
+def get_by_id(areaId):
+    result = Area.get_by_id(areaId=areaId)
+
+    return SimpleAreaSchema().dump(result).data

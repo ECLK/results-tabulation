@@ -36,7 +36,7 @@ export function getFirstOrNull(list) {
         return list[0];
     }
 
-    return 0;
+    return null;
 }
 
 export function fieldMatch(key, value) {

@@ -37,8 +37,7 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
         let _validFirstPreferenceCountRow = {numValue: 0};
         let _firstPreferenceCountRow = {numValue: 0};
 
-        debugger;
-        election.rootElection.partyMap[tallySheet.metaDataMap["partyId"]].candidates.map(candidate => {
+        election.partyMap[tallySheet.metaDataMap["partyId"]].candidates.map(candidate => {
             const _candidateWiseFirstPreferenceCountRow = {
                 ...candidate,
                 ..._candidateWiseFirstPreferenceCountTemplateRow,

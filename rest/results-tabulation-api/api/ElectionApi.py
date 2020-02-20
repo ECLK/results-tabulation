@@ -60,9 +60,9 @@ def getRootToken(electionId):
     return get_root_token(electionId=electionId)
 
 
-def get_all_areas(electionId):
-    result = Area.get_all_areas_of_root_election(
-        election_id=electionId
-    )
-
-    return SimpleAreaSchema(many=True).dump(result).data
+# def get_all_areas(electionId):
+#     result = Area.get_all_areas_of_root_election(
+#         election_id=electionId
+#     )
+#
+#     return SimpleAreaSchema(many=True).dump(result).data
