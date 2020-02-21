@@ -4,7 +4,7 @@ from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, 
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
     PE_R1, PE_CE_RO_PR_1, \
     PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV
-from constants.VOTE_TYPES import Postal, NonPostal
+from constants.VOTE_TYPES import Postal, NonPostal, PostalAndNonPostal
 from ext import TallySheetMap
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import RoleBasedAccess
@@ -487,7 +487,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             if electoral_district_name not in electoral_district_election_store:
                 election = root_election.add_sub_election(
                     electionName="%s - %s" % (root_election.electionName, electoral_district_name),
-                    voteType=Postal, isListed=True
+                    voteType=PostalAndNonPostal, isListed=True
                 )
                 postal_election = election.add_sub_election(
                     electionName="%s - %s - Postal" % (root_election.electionName, electoral_district_name),
