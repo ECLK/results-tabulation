@@ -50,12 +50,14 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
 
                     {subElections.map((subElection) => {
                         const subElectionId = subElection.electionId;
-                        let subElectionSuffix = "";
-                        let tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27];
-                        let tallySheetCodeLabels = ["CE 201", "PE-27"];
+                        let tallySheetCodes = [];
+                        let tallySheetCodeLabels = [];
                         if (subElection.voteType === "Postal") {
                             tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27];
                             tallySheetCodeLabels = ["CE 201 PV (Postal)", "PE-27 PV (Postal)"];
+                        } else if (subElection.voteType === "NonPostal") {
+                            tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27];
+                            tallySheetCodeLabels = ["CE 201", "PE-27"];
                         }
                         return <Grid item xs={12} key={subElectionId}>
                             <Grid item xs={12}>
@@ -83,11 +85,14 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
 
                     {subElections.map((subElection) => {
                         const subElectionId = subElection.electionId;
-                        let tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
-                        let tallySheetCodeLabels = ["PE-4"];
+                        let tallySheetCodes = [];
+                        let tallySheetCodeLabels = [];
                         if (subElection.voteType === "Postal") {
                             tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
                             tallySheetCodeLabels = ["PE-4 PV (Postal)"];
+                        } else if (subElection.voteType === "NonPostal") {
+                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
+                            tallySheetCodeLabels = ["PE-4"];
                         }
                         return <Grid item xs={12} key={subElectionId}>
                             <Grid item xs={12}>
@@ -115,38 +120,50 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         <ul className="tally-sheet-code-list">
                             {subElections.map((subElection) => {
                                 const subElectionId = subElection.electionId;
-                                let tallySheetCode = TALLY_SHEET_CODE_PE_CE_RO_V1;
-                                let tallySheetCodeLabel = "PE-CE-RO-V1";
+                                let tallySheetCodes = [];
+                                let tallySheetCodeLabels = [];
                                 if (subElection.voteType === "Postal") {
-                                    tallySheetCodeLabel = "PE-CE-RO-V1 (Postal)";
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1];
+                                    tallySheetCodeLabels = ["PE-CE-RO-V1 (Postal)"];
+                                } else if (subElection.voteType === "NonPostal") {
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1];
+                                    tallySheetCodeLabels = ["PE-CE-RO-V1"];
                                 }
 
-                                return <li key={subElectionId}>{tallySheetCodeLabel}
-                                    <Link
-                                        className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
-                                    >
-                                        List
-                                    </Link>
-                                </li>
+                                return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                    return <li key={subElectionId}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                        <Link
+                                            className="tally-sheet-code-list-item btn-list"
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
+                                        >
+                                            List
+                                        </Link>
+                                    </li>
+                                });
                             })}
 
                             {subElections.map((subElection) => {
                                 const subElectionId = subElection.electionId;
-                                let tallySheetCode = TALLY_SHEET_CODE_PE_R1;
-                                let tallySheetCodeLabel = "PE-R1";
+                                let tallySheetCodes = [];
+                                let tallySheetCodeLabels = [];
                                 if (subElection.voteType === "Postal") {
-                                    tallySheetCodeLabel = "PE-R1 (Postal)";
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_R1];
+                                    tallySheetCodeLabels = ["PE-R1 (Postal)"];
+                                } else if (subElection.voteType === "NonPostal") {
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_R1];
+                                    tallySheetCodeLabels = ["PE-R1"];
                                 }
 
-                                return <li key={subElectionId}>{tallySheetCodeLabel}
-                                    <Link
-                                        className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
-                                    >
-                                        List
-                                    </Link>
-                                </li>
+                                return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                    return <li key={subElectionId}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                        <Link
+                                            className="tally-sheet-code-list-item btn-list"
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
+                                        >
+                                            List
+                                        </Link>
+                                    </li>
+                                });
                             })}
 
                             <li>PE-CE-RO-V2
@@ -180,20 +197,26 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         <ul className="tally-sheet-code-list">
                             {subElections.map((subElection) => {
                                 const subElectionId = subElection.electionId;
-                                let tallySheetCode = TALLY_SHEET_CODE_PE_CE_RO_PR_1;
-                                let tallySheetCodeLabel = "PE-CE-RO-PR-1";
+                                let tallySheetCodes = [];
+                                let tallySheetCodeLabels = [];
                                 if (subElection.voteType === "Postal") {
-                                    tallySheetCodeLabel = "PE-CE-RO-PR-1 (Postal)";
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
+                                    tallySheetCodeLabels = ["PE-CE-RO-PR-1 (Postal)"];
+                                } else if (subElection.voteType === "NonPostal") {
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
+                                    tallySheetCodeLabels = ["PE-CE-RO-PR-1"];
                                 }
 
-                                return <li key={subElectionId}>{tallySheetCodeLabel}
-                                    <Link
-                                        className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
-                                    >
-                                        List
-                                    </Link>
-                                </li>
+                                return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                    return <li key={subElectionId}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                        <Link
+                                            className="tally-sheet-code-list-item btn-list"
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
+                                        >
+                                            List
+                                        </Link>
+                                    </li>
+                                });
                             })}
 
                             <li>PE-CE-RO-PR-2
