@@ -7,23 +7,7 @@ import ExtendedElection from "../../components/election/extended-election";
 
 export const ENDPOINT_PATH_ELECTIONS = () => "/election";
 export const ENDPOINT_PATH_ELECTIONS_BY_ID = (electionId) => `/election/${electionId}`;
-export const ENDPOINT_PATH_AREAS = (electionId, associatedAreaId, areaType) => {
-    let path = "/area?";
-
-    if (electionId) {
-        path += `electionId=${electionId}&`
-    }
-
-    if (associatedAreaId) {
-        path += `associatedAreaId=${associatedAreaId}&`
-    }
-
-    if (areaType) {
-        path += `areaType=${areaType}&`
-    }
-
-    return path
-};
+export const ENDPOINT_PATH_AREAS = () => "/area";
 export const ENDPOINT_PATH_AREAS_BY_ID = (areaId) => `/area/${areaId}`;
 export const ENDPOINT_PATH_TALLY_SHEETS = () => "/tally-sheet";
 export const ENDPOINT_PATH_TALLY_SHEETS_BY_ID = (tallySheetId) => `/tally-sheet/${tallySheetId}`;
@@ -75,10 +59,11 @@ export function getElections() {
     })
 }
 
-export function getAreas(electionId, associatedAreaId, areaType) {
+export function getAreas({electionId, associatedAreaId, areaType, limit = 10000, offset = 0}) {
     return request({
-        url: ENDPOINT_PATH_AREAS(electionId, associatedAreaId, areaType),
+        url: ENDPOINT_PATH_AREAS(),
         method: 'get', // default,
+        params: {electionId, associatedAreaId, areaType, limit, offset}
     })
 }
 
@@ -147,7 +132,7 @@ async function refactorTallySheetObject(tallySheet) {
     return tallySheet
 }
 
-export async function getTallySheet({electionId, areaId, tallySheetCode, limit = 20, offset = 0}) {
+export async function getTallySheet({electionId, areaId, tallySheetCode, limit = 10000, offset = 0}) {
     const tallySheets = await request({
         url: ENDPOINT_PATH_TALLY_SHEETS(),
         method: 'get',

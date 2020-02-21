@@ -110,7 +110,7 @@ export class AreaEntity extends Entity {
     }
 
     async getAreas(electionId = null, associatedAreaId = null, areaType = null) {
-        const areas = await tabulationApi.getAreas(electionId, associatedAreaId, areaType);
+        const areas = await tabulationApi.getAreas({electionId, associatedAreaId, areaType});
 
         for (let i = 0; i < areas.length; i++) {
             const area = areas[i];

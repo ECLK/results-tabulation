@@ -51,7 +51,7 @@ export default function ReleaseList({history, queryString, election}) {
 
     const additionalBreadCrumbLinks = [
         {
-            label: getTallySheetCodeStr({tallySheetCode, election: getElection()}).toLowerCase() + " release",
+            label: getTallySheetCodeStr({tallySheetCode, election: election}).toLowerCase() + " release",
             to: PATH_ELECTION_BY_ID(electionId)
             // TODO: should be PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode)
         }
@@ -61,10 +61,6 @@ export default function ReleaseList({history, queryString, election}) {
         setSearchParameters({...searchParameters, [name]: event.target.value});
     };
 
-    function getElection() {
-        return election;
-    }
-
     const fetchProofStatuses = async () => {
         const proofStatuses = [];
         for (var i = 0; i < tallySheets.length; i++) {
@@ -73,16 +69,11 @@ export default function ReleaseList({history, queryString, election}) {
             proofStatuses[i] = proofStates;
             setProofStatuses([...proofStatuses]);
         }
-    }
+    };
 
 
     useEffect(() => {
-        getTallySheet({
-            electionId: getElection().electionId,
-            tallySheetCode,
-            limit: 3000,
-            offset: 0
-        }).then((tallySheets) => {
+        getTallySheet({electionId, tallySheetCode}).then((tallySheets) => {
             setTallySheets(tallySheets);
             setProcessing(false);
         }).catch((error) => {
@@ -323,7 +314,7 @@ export default function ReleaseList({history, queryString, election}) {
     return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
         <div className="page-content">
             <div>{electionName}</div>
-            <div>{getTallySheetCodeStr({tallySheetCode, election: getElection()})}</div>
+            <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
             {getTallySheetListJsx()}
         </div>
     </TabulationPage>

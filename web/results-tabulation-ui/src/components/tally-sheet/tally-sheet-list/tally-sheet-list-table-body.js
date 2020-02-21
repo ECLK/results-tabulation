@@ -42,12 +42,7 @@ export default function TallySheetListTableBody(
 
 
     useEffect(() => {
-        getTallySheet({
-            electionId: electionId,
-            tallySheetCode,
-            limit: 3000, //TODO fix
-            offset: 0
-        }).then((tallySheets) => {
+        getTallySheet({electionId, tallySheetCode}).then((tallySheets) => {
             setTallySheetListRows(tallySheets.map((tallySheet) => {
                 tallySheet = {...tallySheet};
 
