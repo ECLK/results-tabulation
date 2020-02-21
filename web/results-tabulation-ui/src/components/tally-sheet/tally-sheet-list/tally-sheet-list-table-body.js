@@ -11,7 +11,7 @@ import {
     TALLY_SHEET_LIST_ROW_ACTION_VIEW
 } from "../constants/TALLY_SHEET_ACTION";
 import {
-    TALLY_SHEET_LIST_COLUMN_ACTIONS,
+    TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_LABEL,
     TALLY_SHEET_LIST_COLUMN_STATUS,
     TALLY_SHEET_LIST_COLUMN_VALUE
 } from "../constants/TALLY_SHEET_COLUMN";
@@ -42,17 +42,13 @@ export default function TallySheetListTableBody(
 
 
     useEffect(() => {
-        getTallySheet({
-            electionId: electionId,
-            tallySheetCode,
-            limit: 3000, //TODO fix
-            offset: 0
-        }).then((tallySheets) => {
+        getTallySheet({electionId, tallySheetCode}).then((tallySheets) => {
             setTallySheetListRows(tallySheets.map((tallySheet) => {
                 tallySheet = {...tallySheet};
 
                 // Append the values for columns.
-                columns.map((column) => {
+                for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+                    const column = columns[columnIndex];
                     let columnValue = TALLY_SHEET_LIST_COLUMN_VALUE[column](tallySheet);
                     if (!columnValue) {
                         columnValue = "";
@@ -64,7 +60,7 @@ export default function TallySheetListTableBody(
                     }
 
                     tallySheet[column] = columnValue;
-                });
+                }
 
                 return tallySheet;
 

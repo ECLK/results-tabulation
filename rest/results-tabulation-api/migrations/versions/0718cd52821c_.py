@@ -74,6 +74,11 @@ def upgrade():
 
         session.commit()
 
+    op.alter_column(
+        'templateRowColumn', 'source',
+        existing_type=mysql.VARCHAR(collation='utf8mb4_unicode_ci', length=50),
+        nullable=False)
+
 
 def downgrade():
     op.drop_column('templateRowColumn', 'source')

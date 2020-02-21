@@ -30,10 +30,10 @@ paths:
   /healthz:
     get:
       tags:
-      - Election
-      - Health
-      - Check
-      - System
+        - Election
+        - Health
+        - Check
+        - System
       summary: System Health Check
       operationId: api.HealthCheckApi.get
       responses:
@@ -155,51 +155,6 @@ paths:
                                 format: int64
                               candidateProfileImageFile:
                                 type: object
-        '400':
-          description: Bad request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '404':
-          description: Resource was not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '500':
-          description: Unexpected error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-
-  /election/{electionId}/area:
-    get:
-      tags:
-        - Election
-      summary: Get by ID
-      operationId: api.ElectionApi.get_all_areas
-      parameters:
-        - name: electionId
-          required: true
-          in: path
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
         '400':
           description: Bad request.
           content:
@@ -2079,6 +2034,52 @@ paths:
               - ElectoralDistrict
               - PollingDivision
               - PollingDistrict
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+  /area/{areaId}:
+    get:
+      tags:
+        - Area
+      summary: Get by ID
+      operationId: api.AreaApi.get_by_id
+      parameters:
+        - name: areaId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK

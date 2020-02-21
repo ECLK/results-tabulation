@@ -1,4 +1,3 @@
-import React from "react";
 import ExtendedElectionPresidentialElection2019 from "./PresidentialElection2019";
 import ExtendedElectionParliamentElection2020 from "./ParliamentElection2020";
 import ExtendedElectionDefault from "./extended-election-default";
@@ -11,7 +10,6 @@ const ELECTION_TEMPLATE_NAME = {
 export default function (election) {
     return getExtendedElection(election);
 }
-
 
 export function getExtendedElectionClass(election) {
     const {electionTemplateName} = election.rootElection;

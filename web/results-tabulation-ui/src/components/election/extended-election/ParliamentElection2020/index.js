@@ -26,9 +26,9 @@ import {
     AREA_TYPE_ELECTORAL_DISTRICT,
     AREA_TYPE_POLLING_DIVISION
 } from "../../constants/AREA_TYPE";
-import {VOTE_TYPE_POSTAL} from "../../constants/VOTE_TYPE";
 import ExtendedElectionDefault from "../extended-election-default";
 import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
+import {AreaEntity} from "../../../../services/tabulation-api/entities/area.entity";
 
 export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
 
@@ -49,12 +49,14 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
 
                     {subElections.map((subElection) => {
                         const subElectionId = subElection.electionId;
-                        let subElectionSuffix = "";
-                        let tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27];
-                        let tallySheetCodeLabels = ["CE 201", "PE-27"];
+                        let tallySheetCodes = [];
+                        let tallySheetCodeLabels = [];
                         if (subElection.voteType === "Postal") {
                             tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27];
                             tallySheetCodeLabels = ["CE 201 PV (Postal)", "PE-27 PV (Postal)"];
+                        } else if (subElection.voteType === "NonPostal") {
+                            tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27];
+                            tallySheetCodeLabels = ["CE 201", "PE-27"];
                         }
                         return <Grid item xs={12} key={subElectionId}>
                             <Grid item xs={12}>
@@ -82,11 +84,14 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
 
                     {subElections.map((subElection) => {
                         const subElectionId = subElection.electionId;
-                        let tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
-                        let tallySheetCodeLabels = ["PE-4"];
+                        let tallySheetCodes = [];
+                        let tallySheetCodeLabels = [];
                         if (subElection.voteType === "Postal") {
                             tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
                             tallySheetCodeLabels = ["PE-4 PV (Postal)"];
+                        } else if (subElection.voteType === "NonPostal") {
+                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
+                            tallySheetCodeLabels = ["PE-4"];
                         }
                         return <Grid item xs={12} key={subElectionId}>
                             <Grid item xs={12}>
@@ -114,38 +119,50 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         <ul className="tally-sheet-code-list">
                             {subElections.map((subElection) => {
                                 const subElectionId = subElection.electionId;
-                                let tallySheetCode = TALLY_SHEET_CODE_PE_CE_RO_V1;
-                                let tallySheetCodeLabel = "PE-CE-RO-V1";
+                                let tallySheetCodes = [];
+                                let tallySheetCodeLabels = [];
                                 if (subElection.voteType === "Postal") {
-                                    tallySheetCodeLabel = "PE-CE-RO-V1 (Postal)";
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1];
+                                    tallySheetCodeLabels = ["PE-CE-RO-V1 (Postal)"];
+                                } else if (subElection.voteType === "NonPostal") {
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1];
+                                    tallySheetCodeLabels = ["PE-CE-RO-V1"];
                                 }
 
-                                return <li key={subElectionId}>{tallySheetCodeLabel}
-                                    <Link
-                                        className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
-                                    >
-                                        List
-                                    </Link>
-                                </li>
+                                return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                    return <li key={subElectionId}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                        <Link
+                                            className="tally-sheet-code-list-item btn-list"
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
+                                        >
+                                            List
+                                        </Link>
+                                    </li>
+                                });
                             })}
 
                             {subElections.map((subElection) => {
                                 const subElectionId = subElection.electionId;
-                                let tallySheetCode = TALLY_SHEET_CODE_PE_R1;
-                                let tallySheetCodeLabel = "PE-R1";
+                                let tallySheetCodes = [];
+                                let tallySheetCodeLabels = [];
                                 if (subElection.voteType === "Postal") {
-                                    tallySheetCodeLabel = "PE-R1 (Postal)";
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_R1];
+                                    tallySheetCodeLabels = ["PE-R1 (Postal)"];
+                                } else if (subElection.voteType === "NonPostal") {
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_R1];
+                                    tallySheetCodeLabels = ["PE-R1"];
                                 }
 
-                                return <li key={subElectionId}>{tallySheetCodeLabel}
-                                    <Link
-                                        className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
-                                    >
-                                        List
-                                    </Link>
-                                </li>
+                                return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                    return <li key={subElectionId}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                        <Link
+                                            className="tally-sheet-code-list-item btn-list"
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
+                                        >
+                                            List
+                                        </Link>
+                                    </li>
+                                });
                             })}
 
                             <li>PE-CE-RO-V2
@@ -179,20 +196,26 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         <ul className="tally-sheet-code-list">
                             {subElections.map((subElection) => {
                                 const subElectionId = subElection.electionId;
-                                let tallySheetCode = TALLY_SHEET_CODE_PE_CE_RO_PR_1;
-                                let tallySheetCodeLabel = "PE-CE-RO-PR-1";
+                                let tallySheetCodes = [];
+                                let tallySheetCodeLabels = [];
                                 if (subElection.voteType === "Postal") {
-                                    tallySheetCodeLabel = "PE-CE-RO-PR-1 (Postal)";
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
+                                    tallySheetCodeLabels = ["PE-CE-RO-PR-1 (Postal)"];
+                                } else if (subElection.voteType === "NonPostal") {
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
+                                    tallySheetCodeLabels = ["PE-CE-RO-PR-1"];
                                 }
 
-                                return <li key={subElectionId}>{tallySheetCodeLabel}
-                                    <Link
-                                        className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
-                                    >
-                                        List
-                                    </Link>
-                                </li>
+                                return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                    return <li key={subElectionId}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                        <Link
+                                            className="tally-sheet-code-list-item btn-list"
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(subElectionId, tallySheetCode)}
+                                        >
+                                            List
+                                        </Link>
+                                    </li>
+                                });
                             })}
 
                             <li>PE-CE-RO-PR-2
@@ -226,26 +249,58 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
         </div>
     }
 
-    mapRequiredAreasToTallySheet(tallySheet) {
+    async mapRequiredAreasToTallySheet(tallySheet) {
+        const areaEntity = new AreaEntity();
+
         if (tallySheet.area.areaType === AREA_TYPE_COUNTING_CENTRE) {
-            if (tallySheet.election.voteType === VOTE_TYPE_POSTAL) {
-                const countingCentre = tallySheet.area;
-                const electoralDistrict = getFirstOrNull(countingCentre.electoralDistricts);
-                tallySheet.countingCentre = countingCentre;
-                tallySheet.electoralDistrict = electoralDistrict;
-            } else {
-                const countingCentre = tallySheet.area;
-                const pollingStation = getFirstOrNull(countingCentre.pollingStations);
-                const pollingDistrict = getFirstOrNull(pollingStation.pollingDistricts);
-                const pollingDivision = getFirstOrNull(pollingDistrict.pollingDivisions);
-                const electoralDistrict = getFirstOrNull(pollingDivision.electoralDistricts);
-                tallySheet.countingCentre = countingCentre;
-                tallySheet.pollingDivision = pollingDivision;
-                tallySheet.electoralDistrict = electoralDistrict;
+            let countingCentre = null;
+            let pollingStation = null;
+            let pollingDistrict = null;
+            let pollingDivision = null;
+            let electoralDistrict = null;
+
+            if (tallySheet.area) {
+                const countingCentreId = tallySheet.area.areaId;
+                countingCentre = await areaEntity.getById(countingCentreId);
             }
+
+            if (countingCentre) {
+                const pollingStationId = getFirstOrNull(countingCentre.pollingStationIds);
+                pollingStation = await areaEntity.getById(pollingStationId);
+            }
+
+            if (pollingStation) {
+                const pollingDistrictId = getFirstOrNull(pollingStation.pollingDistrictIds);
+                pollingDistrict = await areaEntity.getById(pollingDistrictId);
+            }
+
+            if (pollingDistrict) {
+                const pollingDivisionId = getFirstOrNull(pollingDistrict.pollingDivisionIds);
+                pollingDivision = await areaEntity.getById(pollingDivisionId);
+            }
+
+            if (pollingDivision) {
+                const electoralDistrictId = getFirstOrNull(pollingDivision.electoralDistrictIds);
+                electoralDistrict = await areaEntity.getById(electoralDistrictId);
+            }
+
+            tallySheet.countingCentre = countingCentre;
+            tallySheet.pollingDivision = pollingDivision;
+            tallySheet.electoralDistrict = electoralDistrict;
         } else if (tallySheet.area.areaType === AREA_TYPE_POLLING_DIVISION) {
-            const pollingDivision = tallySheet.area;
-            const electoralDistrict = getFirstOrNull(pollingDivision.electoralDistricts);
+            let pollingDivision = null;
+            let electoralDistrict = null;
+
+            if (tallySheet.area) {
+                const pollingDivisionId = tallySheet.area.areaId;
+                pollingDivision = await areaEntity.getById(pollingDivisionId);
+            }
+
+            if (pollingDivision) {
+                const electoralDistrictId = getFirstOrNull(pollingDivision.electoralDistrictIds);
+                electoralDistrict = await areaEntity.getById(electoralDistrictId);
+            }
+
             tallySheet.pollingDivision = pollingDivision;
             tallySheet.electoralDistrict = electoralDistrict;
         } else if (tallySheet.area.areaType === AREA_TYPE_ELECTORAL_DISTRICT) {

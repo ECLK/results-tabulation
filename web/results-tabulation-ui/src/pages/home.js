@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {getElections} from "../services/tabulation-api";
 import {Link} from "react-router-dom";
-import {PATH_ELECTION, PATH_ELECTION_BY_ID} from "../App";
-import BreadCrumb from "../components/bread-crumb";
+import {PATH_ELECTION_BY_ID} from "../App";
 import Processing from "../components/processing";
 import Error from "../components/error";
+import TabulationPage from "./index";
 
 
 export default function Home() {
@@ -49,15 +49,9 @@ export default function Home() {
         }
     }
 
-
-    return <div className="page">
-        <BreadCrumb
-            links={[
-                {label: "elections", to: PATH_ELECTION()}
-            ]}
-        />
+    return <TabulationPage>
         <div className="page-content">
             {getElectionListJsx()}
         </div>
-    </div>
+    </TabulationPage>
 }

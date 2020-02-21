@@ -112,7 +112,9 @@ class ElectionSchema(ma.ModelSchema):
             "subElections",
             "voteType",
             "rootElectionId",
-            "rootElection"
+            "rootElection",
+            "parentElection",
+            "isListed"
         )
 
         model = Election.Model
@@ -125,6 +127,9 @@ class ElectionSchema(ma.ModelSchema):
     subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType", "rootElectionId",
                                            "rootElection", "parties"], many=True)
     rootElection = ma.Nested("self", only=[
+        "electionId", "electionName", "voteType", "electionTemplateName", "parties", "invalidVoteCategories"
+    ])
+    parentElection = ma.Nested("self", only=[
         "electionId", "electionName", "voteType", "electionTemplateName", "parties", "invalidVoteCategories"
     ])
 
@@ -151,14 +156,14 @@ class TallySheetVersionRow_Schema(ma.ModelSchema):
         sqla_session = db.session
 
 
-class SimpleAreaSchema(ma.ModelSchema):
+class AreaSchema(ma.ModelSchema):
     class Meta:
         fields = (
             "areaId",
             "areaName",
             "areaType",
             "electionId",
-            # "parents",
+            "parents",
             "children"
         )
 
@@ -169,8 +174,9 @@ class SimpleAreaSchema(ma.ModelSchema):
 
     areaType = EnumField(AreaTypeEnum)
     electorateType = EnumField(ElectorateTypeEnum)
-    parents = ma.Nested('self', only="areaId", many=True)
+    # parents = ma.Nested('self', only="areaId", many=True)
     children = ma.Nested('AreaAreaSchema', only="childAreaId", many=True)
+    parents = ma.Nested('AreaAreaSchema', only="parentAreaId", many=True)
 
 
 class AreaAreaSchema(ma.ModelSchema):
@@ -184,40 +190,6 @@ class AreaAreaSchema(ma.ModelSchema):
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
-
-
-class AreaSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "areaId",
-            "areaName",
-            "areaType",
-            "electionId",
-            # "parents",
-            # "children",
-            # "pollingStations",
-            # "countingCentres",
-            # "districtCentres",
-            # "pollingDistricts",
-            # "electoralDistricts",
-            # "pollingDivisions"
-        )
-
-        model = Area.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    areaType = EnumField(AreaTypeEnum)
-    electorateType = EnumField(ElectorateTypeEnum)
-    parents = ma.Nested('self', many=True)
-    children = ma.Nested('self', only="areaId", many=True)
-    pollingStations = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-    countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-    districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-    pollingDistricts = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-    electoralDistricts = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-    pollingDivisions = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
 
 
 class ElectorateSchema(ma.ModelSchema):

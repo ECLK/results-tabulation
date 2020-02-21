@@ -1,18 +1,22 @@
-from util import RequestBody, get_area_type, get_paginated_query
-
-from schemas import AreaSchema as Schema
+from schemas import AreaSchema
+from util import get_area_type, get_paginated_query
 from orm.entities import Area
-import connexion
 
 
 def get_all(electionId=None, areaName=None, associatedAreaId=None, areaType=None):
-    result = Area.get_all(
+    query = Area.get_all(
         election_id=electionId,
         area_name=areaName,
         associated_area_id=associatedAreaId,
         area_type=get_area_type(area_type=areaType)
     )
+    query = get_paginated_query(query)
+    result = query.all()
 
-    result = get_paginated_query(result).all()
+    return AreaSchema(many=True).dump(result).data
 
-    return Schema(many=True).dump(result).data
+
+def get_by_id(areaId):
+    result = Area.get_by_id(areaId=areaId)
+
+    return AreaSchema().dump(result).data

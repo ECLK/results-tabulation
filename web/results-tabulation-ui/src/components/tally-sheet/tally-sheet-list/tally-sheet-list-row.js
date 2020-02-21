@@ -48,12 +48,14 @@ export default function TallySheetListRow(
         return <TableRow key={tallySheetListRow.tallySheetId}>
             {columns.map((column) => {
                 if (column == TALLY_SHEET_LIST_COLUMN_ACTIONS) {
-                    return actions.map((action) => {
-                        return <TallySheetListRowAction
-                            electionId={electionId} history={history} action={action}
-                            tallySheetListRow={tallySheetListRow}
-                        />
-                    });
+                    return <TableCell align="center">
+                        {actions.map((action, actionIndex) => {
+                            return <TallySheetListRowAction
+                                key={actionIndex} tallySheetListRow={tallySheetListRow}
+                                electionId={electionId} history={history} action={action}
+                            />
+                        })}
+                    </TableCell>
                 } else {
                     return <TableCell align="center">{tallySheetListRow[column]}</TableCell>
                 }

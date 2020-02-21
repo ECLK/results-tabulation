@@ -1,13 +1,12 @@
 import connexion
-
 from app import db
 from auth import ADMIN_ROLE, authorize
 from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_ELECTION_NOT_FOUND
 from orm.entities.Election.election_helper import get_root_token
-from orm.entities import Election, Area
-from schemas import ElectionSchema as Schema, SimpleAreaSchema
+from orm.entities import Election
+from schemas import ElectionSchema as Schema
 from util import RequestBody, get_paginated_query
 
 
@@ -58,11 +57,3 @@ def create(body):
 @authorize(required_roles=[ADMIN_ROLE])
 def getRootToken(electionId):
     return get_root_token(electionId=electionId)
-
-
-def get_all_areas(electionId):
-    result = Area.get_all_areas_of_root_election(
-        election_id=electionId
-    )
-
-    return SimpleAreaSchema(many=True).dump(result).data
