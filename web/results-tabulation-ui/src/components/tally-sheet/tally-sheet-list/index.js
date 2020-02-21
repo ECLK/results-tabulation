@@ -5,7 +5,7 @@ import TableCell from "@material-ui/core/TableCell";
 import {getTallySheetCodeStr} from "../../../utils/tallySheet";
 import {
     PATH_ELECTION,
-    PATH_ELECTION_BY_ID, PATH_ELECTION_TALLY_SHEET_LIST
+    PATH_ELECTION_BY_ID, PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_TALLY_SHEET_VIEW
 } from "../../../App";
 import Processing from "../../processing";
 import Table from "@material-ui/core/Table";
@@ -43,34 +43,22 @@ export default function TallySheetList(
     const {electionId, rootElectionId, rootElection} = election;
     const [columnMetaMap, setColumnMetaMap] = React.useState({});
 
-    return <div className="page">
-        <BreadCrumb
-            links={[
-                {label: "elections", to: PATH_ELECTION()},
-                {label: rootElection.electionName, to: PATH_ELECTION_BY_ID(rootElectionId)},
-                {
-                    label: getTallySheetCodeStr({tallySheetCode, election: election}).toLowerCase(),
-                    to: PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, election.electionId)
-                },
-            ]}
-        />
-        <div className="page-content">
-            <div>{rootElection.electionName}</div>
-            <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
-            <Table aria-label="simple table">
-                <TallySheetListTableHead
-                    columns={columns}
-                    onColumnMetaChange={setColumnMetaMap}
-                />
-                <TallySheetListTableBody
-                    history={history}
-                    tallySheetCode={tallySheetCode}
-                    election={election}
-                    columns={columns}
-                    columnMetaMap={columnMetaMap}
-                    actions={actions}
-                />
-            </Table>
-        </div>
+    return <div className="page-content">
+        <div>{rootElection.electionName}</div>
+        <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
+        <Table aria-label="simple table">
+            <TallySheetListTableHead
+                columns={columns}
+                onColumnMetaChange={setColumnMetaMap}
+            />
+            <TallySheetListTableBody
+                history={history}
+                tallySheetCode={tallySheetCode}
+                election={election}
+                columns={columns}
+                columnMetaMap={columnMetaMap}
+                actions={actions}
+            />
+        </Table>
     </div>
 }

@@ -5,16 +5,14 @@ import {
 } from "../services/tabulation-api";
 import {MESSAGE_TYPES} from "../services/messages.provider";
 import {
-    PATH_ELECTION, PATH_ELECTION_BY_ID,
     PATH_ELECTION_RESULTS_RELEASE
 } from "../App";
 import Error from "../components/error";
-import BreadCrumb from "../components/bread-crumb";
 import Button from "@material-ui/core/Button";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {MESSAGES_EN} from "../locale/messages_en";
 import PrintLetterButton from "../components/tally-sheet/print-letter-button";
-
+import TabulationPage from "./index";
 
 export default function ReleaseView(props) {
     const PROOF_STATUS_ENUM = {
@@ -30,7 +28,7 @@ export default function ReleaseView(props) {
         RELEASE_FINISHED: 1,
     };
 
-    const {history, election, messages} = props
+    const {history, election, messages} = props;
     const {electionId, electionName} = election;
     const [tallySheet, setTallySheet] = useState(props.tallySheet);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
@@ -97,7 +95,7 @@ export default function ReleaseView(props) {
             setLatestProof(null);
             setLatestProofId(PROOF_STATUS_ENUM.PROOF_NOT_UPLOADED);
         }
-    }
+    };
 
     const fetchProofImage = async () => {
         setTallySheetProof("Loading proof image ...");
@@ -170,15 +168,13 @@ export default function ReleaseView(props) {
     const getReportViewJsx = () => {
         const {tallySheetCode, tallySheetStatus} = tallySheet;
         const electionId = tallySheet.electionId;
-
-        const breadCrumbLinkList = [
-            {label: "elections", to: PATH_ELECTION()},
-            {label: electionName, to: PATH_ELECTION_BY_ID(electionId)}
+        const additionalBreadCrumbLinks = [
+            {
+                label: tallySheetCode.toLowerCase() + " release",
+                to: PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode, electionId)
+            }
         ];
-        breadCrumbLinkList.push({
-            label: tallySheetCode.toLowerCase() + " release",
-            to: PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode, electionId)
-        });
+
         let leftPlane;
 
         if (latestProofId === PROOF_STATUS_ENUM.PROOF_LOADING) {
@@ -207,10 +203,7 @@ export default function ReleaseView(props) {
             progressStyle.visibility = "hidden";
         }
 
-        return <div className="page">
-            <BreadCrumb
-                links={breadCrumbLinkList}
-            />
+        return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
             <div className="page-content">
                 <div>{electionName}</div>
                 <div>{tallySheetCode}</div>
@@ -280,8 +273,8 @@ export default function ReleaseView(props) {
 
                 </iframe>
             </div>
-        </div>
-    }
+        </TabulationPage>
+    };
 
     return getReportViewJsx()
 }

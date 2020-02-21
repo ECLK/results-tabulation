@@ -1,5 +1,4 @@
-import React, {Component, useEffect, useState} from "react";
-import {Link} from 'react-router-dom';
+import React, {useEffect, useState} from "react";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -12,7 +11,6 @@ import {
     getTallySheetProof
 } from "../../services/tabulation-api";
 import {
-    PATH_ELECTION,
     PATH_ELECTION_BY_ID,
     PATH_ELECTION_RESULTS_RELEASE_VIEW
 } from "../../App";
@@ -26,13 +24,13 @@ import {
 } from "../../components/election/extended-election/PresidentialElection2019/TALLY_SHEET_CODE";
 import Processing from "../../components/processing";
 import Error from "../../components/error";
-import BreadCrumb from "../../components/bread-crumb";
 import Button from "@material-ui/core/Button";
 import {getTallySheetCodeStr} from "../../utils/tallySheet";
 import TextField from "@material-ui/core/TextField/TextField";
 import {fieldMatch} from "../../utils";
 import {getAreaName} from "../../utils/tallySheet";
 import PrintLetterButton from "../../components/tally-sheet/print-letter-button";
+import TabulationPage from "../index";
 
 
 export default function ReleaseList({history, queryString, election}) {
@@ -50,6 +48,14 @@ export default function ReleaseList({history, queryString, election}) {
         countingCentre: '',
         status: ''
     });
+
+    const additionalBreadCrumbLinks = [
+        {
+            label: getTallySheetCodeStr({tallySheetCode, election: getElection()}).toLowerCase() + " release",
+            to: PATH_ELECTION_BY_ID(electionId)
+            // TODO: should be PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode)
+        }
+    ];
 
     const handleChange = name => event => {
         setSearchParameters({...searchParameters, [name]: event.target.value});
@@ -314,24 +320,13 @@ export default function ReleaseList({history, queryString, election}) {
         </Table>
     }
 
-    return <div className="page">
-        <BreadCrumb
-            links={[
-                {label: "elections", to: PATH_ELECTION()},
-                {label: electionName, to: PATH_ELECTION_BY_ID(electionId)},
-                {
-                    label: getTallySheetCodeStr({tallySheetCode, election: getElection()}).toLowerCase() + " release",
-                    to: PATH_ELECTION_BY_ID(electionId)
-                    // TODO: should be PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode)
-                },
-            ]}
-        />
+    return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
         <div className="page-content">
             <div>{electionName}</div>
             <div>{getTallySheetCodeStr({tallySheetCode, election: getElection()})}</div>
             {getTallySheetListJsx()}
         </div>
-    </div>
+    </TabulationPage>
 }
 
 
