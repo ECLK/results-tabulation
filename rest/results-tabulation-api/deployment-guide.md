@@ -38,8 +38,6 @@ RESULT_DISSEMINATION_SYSTEM_RESULT_TYPE_PREF = "PRESIDENTIAL-PREF"
 PROD_ENV = True
 
 ```
-* Mount a volume to be persistent
-    * PATH - /app/data
 
 ### On API Manager
 
