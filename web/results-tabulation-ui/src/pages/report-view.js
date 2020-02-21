@@ -10,26 +10,25 @@ import {
     PATH_ELECTION_TALLY_SHEET_VIEW
 } from "../App";
 import Processing from "../components/processing";
-import Error from "../components/error";
 import Button from "@material-ui/core/Button";
 import {MESSAGES_EN} from "../locale/messages_en";
 import {getTallySheetCodeStr} from "../utils/tallySheet";
 import TabulationPage from "./index";
 
 export default function ReportView(props) {
-    const {history, election, messages} = props
+    const {history, election, messages} = props;
     const {electionId, rootElection} = election;
     const [tallySheet, setTallySheet] = useState(props.tallySheet);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState(null);
     const [processing, setProcessing] = useState(true);
     const [iframeHeight, setIframeHeight] = useState(600);
-    const [iframeWidth, setIframeWidth] = useState("100%");
+    const [iframeWidth] = useState("100%");
     const iframeRef = React.createRef();
 
 
     const fetchTallySheetVersion = async () => {
-        const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId, tallySheetStatus} = tallySheet;
+        const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId} = tallySheet;
         let tallySheetVersionId = null;
         if (!tallySheet.template.isDerived) {
             if (lockedVersionId) {

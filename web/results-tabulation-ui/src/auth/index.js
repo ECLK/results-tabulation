@@ -1,6 +1,5 @@
-import {Redirect, Route} from "react-router";
+import {Route} from "react-router";
 import React, {Component, useEffect, useState} from "react";
-import {} from "../config";
 import {
     API_ACCESS_TOKEN_KEY,
     API_USER_INFO_KEY,
@@ -9,11 +8,10 @@ import {
 } from "./constants";
 import {AUTH_APP_URL} from "../config";
 import Cookies from 'js-cookie';
-import {getElectionById, getElections, getTallySheetById} from "../services/tabulation-api";
+import {getElectionById, getTallySheetById} from "../services/tabulation-api";
 import Error from "../components/error";
 import Processing from "../components/processing";
-import {MessagesConsumer, MessagesProvider} from "../services/messages.provider"
-
+import {MessagesConsumer} from "../services/messages.provider"
 
 export function getAuthAppSignInUrl() {
     return `${AUTH_APP_URL}${AUTH_APP_SIGN_IN_URL_PATH}`;
@@ -175,7 +173,6 @@ function LoadTallySheetAndThen(props) {
     }
 }
 
-
 export class ElectionProtectedRoute extends Component {
     constructor(props) {
         super(props)
@@ -201,7 +198,6 @@ export class ElectionProtectedRoute extends Component {
         />
     }
 }
-
 
 export class TallySheetProtectedRoute extends Component {
     constructor(props) {

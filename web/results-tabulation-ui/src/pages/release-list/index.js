@@ -328,5 +328,3 @@ export default function ReleaseList({history, queryString, election}) {
         </div>
     </TabulationPage>
 }
-
-

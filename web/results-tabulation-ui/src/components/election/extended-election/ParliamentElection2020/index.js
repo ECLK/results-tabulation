@@ -26,7 +26,6 @@ import {
     AREA_TYPE_ELECTORAL_DISTRICT,
     AREA_TYPE_POLLING_DIVISION
 } from "../../constants/AREA_TYPE";
-import {VOTE_TYPE_POSTAL} from "../../constants/VOTE_TYPE";
 import ExtendedElectionDefault from "../extended-election-default";
 import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
 import {AreaEntity} from "../../../../services/tabulation-api/entities/area.entity";

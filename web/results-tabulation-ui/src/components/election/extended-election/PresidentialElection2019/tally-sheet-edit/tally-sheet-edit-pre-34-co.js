@@ -15,7 +15,7 @@ import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
 export default function TallySheetEdit_PRE_34_CO({history, queryString, election, tallySheet, messages}) {
-    const {tallySheetId, tallySheetCode} = tallySheet;
+    const {tallySheetCode} = tallySheet;
     const {electionId} = election;
     const [candidateIds, setCandidateIds] = useState([]);
     const [candidateWiseCounts, setCandidateWiseCounts] = useState({});
@@ -23,6 +23,7 @@ export default function TallySheetEdit_PRE_34_CO({history, queryString, election
 
     const setTallySheetContent = (tallySheetVersion) => {
         const qualifiedParties = getQualifiedParties();
+        const candidateIds = [];
 
         if (qualifiedParties.length === 0) {
             messages.push("Error", MESSAGES_EN.error_preferences_not_enabled_yet, MESSAGE_TYPES.ERROR);
@@ -83,6 +84,7 @@ export default function TallySheetEdit_PRE_34_CO({history, queryString, election
                 remainingBallotPapers: tallySheetVersion.summary.remainingBallotPapers,
                 total: tallySheetVersion.summary.ballotPapersNotCounted + tallySheetVersion.summary.remainingBallotPapers
             });
+            setCandidateIds(candidateIds);
         } else {
             const initialCandidateWiseCounts = {};
             election.parties.map(party => {
@@ -105,6 +107,7 @@ export default function TallySheetEdit_PRE_34_CO({history, queryString, election
                 remainingBallotPapers: 0,
                 total: 0
             });
+            setCandidateIds(candidateIds);
         }
     };
 
@@ -158,7 +161,7 @@ export default function TallySheetEdit_PRE_34_CO({history, queryString, election
         }
     };
 
-    const {processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit} = useTallySheetEdit({
+    const {processing, processingLabel, saved, handleClickNext, handleClickSubmit} = useTallySheetEdit({
         messages,
         history,
         election,
@@ -394,7 +397,6 @@ export default function TallySheetEdit_PRE_34_CO({history, queryString, election
             return null;
         }
     }
-
 
     return <Processing showProgress={processing} label={processingLabel}>
         {getTallySheetEditForm()}

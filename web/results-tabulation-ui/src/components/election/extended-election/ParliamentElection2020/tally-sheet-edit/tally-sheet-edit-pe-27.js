@@ -19,17 +19,33 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
     const [voteCountRow, setVoteCountRow] = useState({"numValue": 0});
 
 
+    const _forEachTallySheetTemplateRow = (callback) => {
+        for (let i = 0; i < tallySheet.template.rows.length; i++) {
+            const templateRow = tallySheet.template.rows[i];
+            callback(templateRow)
+        }
+    };
+
+
+    const _forEachParty = (callback) => {
+        const {parties} = election;
+        for (let partyIndex = 0; partyIndex < parties.length; partyIndex++) {
+            const party = parties[partyIndex];
+            callback(party);
+        }
+    };
+
     const setTallySheetContent = (tallySheetVersion) => {
         let _partyWiseVoteCountTemplateRow = {};
         let _rejectedVoteCountTemplateRow = {};
 
-        tallySheet.template.rows.map(((templateRow) => {
+        _forEachTallySheetTemplateRow((templateRow) => {
             if (templateRow.templateRowType === "PARTY_WISE_VOTE") {
                 _partyWiseVoteCountTemplateRow = templateRow;
             } else if (templateRow.templateRowType === "REJECTED_VOTE") {
                 _rejectedVoteCountTemplateRow = templateRow;
             }
-        }));
+        });
 
         let _partWiseVoteCountRowsMap = {};
         let _partWiseVoteCountRows = [];
@@ -37,7 +53,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
         let _validVoteCountRow = {numValue: 0};
         let _voteCountRow = {numValue: 0};
 
-        election.rootElection.parties.map(party => {
+        _forEachParty((party) => {
             const _partWiseVoteCountRow = {
                 ...party,
                 ..._partyWiseVoteCountTemplateRow,
@@ -48,15 +64,15 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
             _partWiseVoteCountRows.push(_partWiseVoteCountRow);
         });
 
-
         if (tallySheetVersion) {
             const {content} = tallySheetVersion;
             for (let i = 0; i < content.length; i++) {
                 let contentRow = content[i];
-                if (contentRow.templateRowType === "PARTY_WISE_VOTE") {
+                const {templateRowType} = contentRow
+                if (templateRowType === "PARTY_WISE_VOTE") {
                     Object.assign(_partWiseVoteCountRowsMap[contentRow.partyId], contentRow);
                     _validVoteCountRow.numValue += contentRow.numValue;
-                } else if (contentRow.templateRowType === "REJECTED_VOTE") {
+                } else if (templateRowType === "REJECTED_VOTE") {
                     Object.assign(_rejectedVoteCountRow, contentRow);
                 }
             }
@@ -246,7 +262,6 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                     </TableRow>
                 </TableHead>
                 <TableBody>
-
                     {partWiseVoteCountRows.map((partWiseVoteCountRow, partWiseVoteCountRowIndex) => {
                         const {partyId, partyName, partySymbol, strValue, numValue} = partWiseVoteCountRow;
                         console.log("==== partWiseVoteCountRow : ", partWiseVoteCountRow);
@@ -346,7 +361,6 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
             return null;
         }
     }
-
 
     return <Processing showProgress={processing} label={processingLabel}>
         {getTallySheetEditForm()}

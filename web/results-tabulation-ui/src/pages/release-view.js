@@ -7,7 +7,6 @@ import {MESSAGE_TYPES} from "../services/messages.provider";
 import {
     PATH_ELECTION_RESULTS_RELEASE
 } from "../App";
-import Error from "../components/error";
 import Button from "@material-ui/core/Button";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {MESSAGES_EN} from "../locale/messages_en";
@@ -28,8 +27,8 @@ export default function ReleaseView(props) {
         RELEASE_FINISHED: 1,
     };
 
-    const {history, election, messages} = props;
-    const {electionId, electionName} = election;
+    const {election, messages} = props;
+    const {electionName} = election;
     const [tallySheet, setTallySheet] = useState(props.tallySheet);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState("");
@@ -39,14 +38,13 @@ export default function ReleaseView(props) {
     const [releaseState, setReleaseState] = useState(RELEASE_STATUS_ENUM.RELEASE_STATE_NOT_LOADED);
     const [progress, setProgress] = useState(-1);
     const [processing, setProcessing] = useState(false);
-    const [error, setError] = useState(false);
     const [iframeHeight, setIframeHeight] = useState(600);
-    const [iframeWidth, setIframeWidth] = useState("100%");
+    const [iframeWidth] = useState("100%");
     const iframeRef = React.createRef();
 
 
     const fetchTallySheetVersion = async () => {
-        const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId, tallySheetStatus} = tallySheet;
+        const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId} = tallySheet;
         let tallySheetVersionId = null;
         if (!tallySheet.template.isDerived) {
             if (lockedVersionId) {
@@ -166,7 +164,7 @@ export default function ReleaseView(props) {
     };
 
     const getReportViewJsx = () => {
-        const {tallySheetCode, tallySheetStatus} = tallySheet;
+        const {tallySheetCode} = tallySheet;
         const electionId = tallySheet.electionId;
         const additionalBreadCrumbLinks = [
             {
@@ -196,7 +194,7 @@ export default function ReleaseView(props) {
 
         const isUploadDisabled = tallySheet.tallySheetStatus !== TALLY_SHEET_STATUS_ENUM.VERIFIED ||
             releaseState !== RELEASE_STATUS_ENUM.RELEASE_UNFINISHED;
-        const isReleaseDisabled = isUploadDisabled || latestProofId < 0;
+        // const isReleaseDisabled = isUploadDisabled || latestProofId < 0;
         const imageTitle = releaseState === RELEASE_STATUS_ENUM.RELEASE_FINISHED ? "Released proof" : "Signed draft";
         const progressStyle = {};
         if (progress < 0) {

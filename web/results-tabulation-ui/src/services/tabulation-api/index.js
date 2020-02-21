@@ -107,7 +107,7 @@ export const TALLY_SHEET_STATUS_ENUM = {
 
 async function refactorTallySheetObject(tallySheet) {
     tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
-    const {tallySheetCode, lockedVersionId, submittedVersionId, latestVersionId} = tallySheet;
+    const {lockedVersionId, submittedVersionId, latestVersionId} = tallySheet;
     let tallySheetStatus = "";
     let readyToLock = false;
     if (!tallySheet.template.isDerived) {
@@ -136,9 +136,10 @@ async function refactorTallySheetObject(tallySheet) {
     tallySheet.election = await electionEntity.getById(tallySheet.electionId);
 
     tallySheet.metaDataMap = {};
-    tallySheet.metaDataList.map((metaData) => {
-        tallySheet.metaDataMap[metaData.metaDataKey] = metaData.metaDataValue;
-    });
+    for (let i = 0; i < tallySheet.metaDataList.length; i++) {
+        const {metaDataKey, metaDataValue} = tallySheet.metaDataList[i];
+        tallySheet.metaDataMap[metaDataKey] = metaDataValue;
+    }
 
     const extendedElection = ExtendedElection(tallySheet.election);
     tallySheet = await extendedElection.mapRequiredAreasToTallySheet(tallySheet);

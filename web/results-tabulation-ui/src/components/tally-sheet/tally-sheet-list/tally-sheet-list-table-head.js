@@ -24,9 +24,11 @@ export default function TallySheetListTableHead(
 
     useEffect(() => {
         const columnMetaMap = {};
-        columns.map((column) => {
+        for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+            const column = columns[columnIndex];
             columnMetaMap[column] = {filter: "", label: TALLY_SHEET_LIST_COLUMN_LABEL[column]};
-        });
+        }
+
         setColumnMetaMap(columnMetaMap);
     }, [columns]);
 
