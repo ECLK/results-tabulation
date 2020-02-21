@@ -113,7 +113,8 @@ class ElectionSchema(ma.ModelSchema):
             "voteType",
             "rootElectionId",
             "rootElection",
-            "parentElection"
+            "parentElection",
+            "isListed"
         )
 
         model = Election.Model
