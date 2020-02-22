@@ -6,34 +6,29 @@ import {
 } from "../services/tabulation-api";
 import {MESSAGE_TYPES} from "../services/messages.provider";
 import {
-    PATH_ELECTION,
-    PATH_ELECTION_BY_ID,
     PATH_ELECTION_TALLY_SHEET_LIST,
     PATH_ELECTION_TALLY_SHEET_VIEW
 } from "../App";
 import Processing from "../components/processing";
-import Error from "../components/error";
-import BreadCrumb from "../components/bread-crumb";
 import Button from "@material-ui/core/Button";
 import {MESSAGES_EN} from "../locale/messages_en";
 import {getTallySheetCodeStr} from "../utils/tallySheet";
-
+import TabulationPage from "./index";
 
 export default function ReportView(props) {
-    const {history, election, messages} = props
+    const {history, election, messages} = props;
     const {electionId, rootElection} = election;
     const [tallySheet, setTallySheet] = useState(props.tallySheet);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState(null);
     const [processing, setProcessing] = useState(true);
-    const [error, setError] = useState(false);
     const [iframeHeight, setIframeHeight] = useState(600);
-    const [iframeWidth, setIframeWidth] = useState("100%");
+    const [iframeWidth] = useState("100%");
     const iframeRef = React.createRef();
 
 
     const fetchTallySheetVersion = async () => {
-        const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId, tallySheetStatus} = tallySheet;
+        const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId} = tallySheet;
         let tallySheetVersionId = null;
         if (!tallySheet.template.isDerived) {
             if (lockedVersionId) {
@@ -144,9 +139,7 @@ export default function ReportView(props) {
         const {tallySheetCode, tallySheetStatus, area, tallySheetId} = tallySheet;
         const {areaName} = area;
 
-        const breadCrumbLinkList = [
-            {label: "elections", to: PATH_ELECTION()},
-            {label: rootElection.electionName, to: PATH_ELECTION_BY_ID(rootElection.electionId)},
+        const additionalBreadCrumbLinks = [
             {
                 label: getTallySheetCodeStr({tallySheetCode, election: election}).toLowerCase(),
                 to: getTallySheetListLink()
@@ -157,10 +150,7 @@ export default function ReportView(props) {
             }
         ];
 
-        return <div className="page">
-            <BreadCrumb
-                links={breadCrumbLinkList}
-            />
+        return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
             <div className="page-content">
                 <div>{rootElection.electionName}</div>
                 <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
@@ -226,8 +216,8 @@ export default function ReportView(props) {
                     </iframe>
                 </Processing>
             </div>
-        </div>
-    }
+        </TabulationPage>
+    };
 
     return getReportViewJsx()
 }

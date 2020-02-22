@@ -12,90 +12,74 @@ import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PE_27({history, queryString, election, tallySheet, messages}) {
-    const [partWiseVoteCountRows, setPartWiseVoteCountRows] = useState([]);
-    const [rejectedVoteCountRow, setRejectedVoteCountRow] = useState({"numValue": 0});
-    const [validVoteCountRow, setValidVoteCountRow] = useState({"numValue": 0});
-    const [voteCountRow, setVoteCountRow] = useState({"numValue": 0});
+export default function TallySheetEdit_PE_4({history, queryString, election, tallySheet, messages}) {
+    const [candidateWiseFirstPreferenceCountRows, setCandidateWiseFirstPreferenceCountRows] = useState([]);
+    const [rejectedFirstPreferenceCountRow, setRejectedFirstPreferenceCountRow] = useState({"numValue": 0});
+    const [validFirstPreferenceCountRow, setValidFirstPreferenceCountRow] = useState({"numValue": 0});
+    const [firstPreferenceCountRow, setFirstPreferenceCountRow] = useState({"numValue": 0});
 
-
-    const _forEachTallySheetTemplateRow = (callback) => {
-        for (let i = 0; i < tallySheet.template.rows.length; i++) {
-            const templateRow = tallySheet.template.rows[i];
-            callback(templateRow)
-        }
-    };
-
-
-    const _forEachParty = (callback) => {
-        const {parties} = election;
-        for (let partyIndex = 0; partyIndex < parties.length; partyIndex++) {
-            const party = parties[partyIndex];
-            callback(party);
-        }
-    };
 
     const setTallySheetContent = (tallySheetVersion) => {
-        let _partyWiseVoteCountTemplateRow = {};
-        let _rejectedVoteCountTemplateRow = {};
+        let _candidateWiseFirstPreferenceCountTemplateRow = {};
+        let _rejectedFirstPreferenceCountTemplateRow = {};
 
-        _forEachTallySheetTemplateRow((templateRow) => {
-            if (templateRow.templateRowType === "PARTY_WISE_VOTE") {
-                _partyWiseVoteCountTemplateRow = templateRow;
+        tallySheet.template.rows.map(((templateRow) => {
+            if (templateRow.templateRowType === "CANDIDATE_FIRST_PREFERENCE") {
+                _candidateWiseFirstPreferenceCountTemplateRow = templateRow;
             } else if (templateRow.templateRowType === "REJECTED_VOTE") {
-                _rejectedVoteCountTemplateRow = templateRow;
+                _rejectedFirstPreferenceCountTemplateRow = templateRow;
             }
-        });
+        }));
 
-        let _partWiseVoteCountRowsMap = {};
-        let _partWiseVoteCountRows = [];
-        let _rejectedVoteCountRow = {..._rejectedVoteCountTemplateRow, numValue: 0};
-        let _validVoteCountRow = {numValue: 0};
-        let _voteCountRow = {numValue: 0};
+        let _candidateWiseFirstPreferenceCountRowsMap = {};
+        let _candidateWiseFirstPreferenceCountRows = [];
+        let _rejectedFirstPreferenceCountRow = {..._rejectedFirstPreferenceCountTemplateRow, numValue: 0};
+        let _validFirstPreferenceCountRow = {numValue: 0};
+        let _firstPreferenceCountRow = {numValue: 0};
 
-        _forEachParty((party) => {
-            const _partWiseVoteCountRow = {
-                ...party,
-                ..._partyWiseVoteCountTemplateRow,
+        election.partyMap[tallySheet.metaDataMap["partyId"]].candidates.map(candidate => {
+            const _candidateWiseFirstPreferenceCountRow = {
+                ...candidate,
+                ..._candidateWiseFirstPreferenceCountTemplateRow,
                 numValue: 0,
                 strValue: ""
             };
-            _partWiseVoteCountRowsMap[party.partyId] = _partWiseVoteCountRow;
-            _partWiseVoteCountRows.push(_partWiseVoteCountRow);
+            _candidateWiseFirstPreferenceCountRowsMap[candidate.candidateId] = _candidateWiseFirstPreferenceCountRow;
+            _candidateWiseFirstPreferenceCountRows.push(_candidateWiseFirstPreferenceCountRow);
         });
+
 
         if (tallySheetVersion) {
             const {content} = tallySheetVersion;
             for (let i = 0; i < content.length; i++) {
                 let contentRow = content[i];
-                const {templateRowType} = contentRow
-                if (templateRowType === "PARTY_WISE_VOTE") {
-                    Object.assign(_partWiseVoteCountRowsMap[contentRow.partyId], contentRow);
-                    _validVoteCountRow.numValue += contentRow.numValue;
-                } else if (templateRowType === "REJECTED_VOTE") {
-                    Object.assign(_rejectedVoteCountRow, contentRow);
+                if (contentRow.templateRowType === "CANDIDATE_FIRST_PREFERENCE") {
+                    Object.assign(_candidateWiseFirstPreferenceCountRowsMap[contentRow.candidateId], contentRow);
+                    _validFirstPreferenceCountRow.numValue += contentRow.numValue;
+                } else if (contentRow.templateRowType === "REJECTED_VOTE") {
+                    Object.assign(_rejectedFirstPreferenceCountRow, contentRow);
                 }
             }
 
-            _voteCountRow.numValue = _validVoteCountRow.numValue + _rejectedVoteCountRow.numValue;
+            _firstPreferenceCountRow.numValue = _validFirstPreferenceCountRow.numValue + _rejectedFirstPreferenceCountRow.numValue;
         }
 
-        setPartWiseVoteCountRows(_partWiseVoteCountRows);
-        setRejectedVoteCountRow(_rejectedVoteCountRow);
-        setValidVoteCountRow(_validVoteCountRow);
-        setVoteCountRow(_voteCountRow);
+        setCandidateWiseFirstPreferenceCountRows(_candidateWiseFirstPreferenceCountRows);
+        setRejectedFirstPreferenceCountRow(_rejectedFirstPreferenceCountRow);
+        setValidFirstPreferenceCountRow(_validFirstPreferenceCountRow);
+        setFirstPreferenceCountRow(_firstPreferenceCountRow);
     };
 
     const validateTallySheetContent = () => {
-        for (let i = 0; i < partWiseVoteCountRows.length; i++) {
-            if (!isNumeric(partWiseVoteCountRows[i]["numValue"])) {
+        for (let i = 0; i < candidateWiseFirstPreferenceCountRows.length; i++) {
+            if (!isNumeric(candidateWiseFirstPreferenceCountRows[i]["numValue"])) {
                 return false;
             }
         }
 
-        return (isNumeric(rejectedVoteCountRow.numValue) &&
-            calculateTotalVoteCount() === voteCountRow.numValue &&
-            calculateTotalValidVoteCount() === validVoteCountRow.numValue
+        return (isNumeric(rejectedFirstPreferenceCountRow.numValue) &&
+            calculateTotalFirstPreferenceCount() === firstPreferenceCountRow.numValue &&
+            calculateTotalValidFirstPreferenceCount() === validFirstPreferenceCountRow.numValue
         )
     };
 
@@ -103,8 +87,8 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
 
         return {
             content: [
-                ...partWiseVoteCountRows,
-                rejectedVoteCountRow
+                ...candidateWiseFirstPreferenceCountRows,
+                // rejectedFirstPreferenceCountRow TODO
             ]
         }
     };
@@ -120,74 +104,74 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
     });
 
 
-    const handleValidVoteCountChange = partWiseVoteCountRowIndex => event => {
+    const handleValidFirstPreferenceCountChange = candidateWiseFirstPreferenceCountRowIndex => event => {
         const {value} = event.target;
-        setPartWiseVoteCountRows((partWiseVoteCountRows) => {
-            const _partWiseVoteCountRows = [...partWiseVoteCountRows];
+        setCandidateWiseFirstPreferenceCountRows((candidateWiseFirstPreferenceCountRows) => {
+            const _candidateWiseFirstPreferenceCountRows = [...candidateWiseFirstPreferenceCountRows];
 
-            _partWiseVoteCountRows[partWiseVoteCountRowIndex] = {
-                ..._partWiseVoteCountRows[partWiseVoteCountRowIndex],
+            _candidateWiseFirstPreferenceCountRows[candidateWiseFirstPreferenceCountRowIndex] = {
+                ..._candidateWiseFirstPreferenceCountRows[candidateWiseFirstPreferenceCountRowIndex],
                 numValue: processNumericValue(value)
             };
 
-            return _partWiseVoteCountRows
+            return _candidateWiseFirstPreferenceCountRows
         });
     };
 
-    const handleValidVoteCountInWordsChange = partWiseVoteCountRowIndex => event => {
+    const handleValidFirstPreferenceCountInWordsChange = candidateWiseFirstPreferenceCountRowIndex => event => {
         const {value} = event.target;
-        setPartWiseVoteCountRows((partWiseVoteCountRows) => {
-            const _partWiseVoteCountRows = [...partWiseVoteCountRows];
+        setCandidateWiseFirstPreferenceCountRows((candidateWiseFirstPreferenceCountRows) => {
+            const _candidateWiseFirstPreferenceCountRows = [...candidateWiseFirstPreferenceCountRows];
 
-            _partWiseVoteCountRows[partWiseVoteCountRowIndex] = {
-                ..._partWiseVoteCountRows[partWiseVoteCountRowIndex],
+            _candidateWiseFirstPreferenceCountRows[candidateWiseFirstPreferenceCountRowIndex] = {
+                ..._candidateWiseFirstPreferenceCountRows[candidateWiseFirstPreferenceCountRowIndex],
                 strValue: value
             };
 
-            return _partWiseVoteCountRows
+            return _candidateWiseFirstPreferenceCountRows
         });
     };
 
 
-    function calculateTotalValidVoteCount() {
+    function calculateTotalValidFirstPreferenceCount() {
         let total = 0;
-        for (let i = 0; i < partWiseVoteCountRows.length; i++) {
-            total += parseInt(partWiseVoteCountRows[i]["numValue"])
+        for (let i = 0; i < candidateWiseFirstPreferenceCountRows.length; i++) {
+            total += parseInt(candidateWiseFirstPreferenceCountRows[i]["numValue"])
         }
 
         return total;
     }
 
-    function calculateTotalVoteCount() {
-        return calculateTotalValidVoteCount() + parseInt(rejectedVoteCountRow.numValue);
+    function calculateTotalFirstPreferenceCount() {
+        return calculateTotalValidFirstPreferenceCount() + parseInt(rejectedFirstPreferenceCountRow.numValue);
     }
 
 
-    const handleTotalValidVoteCountChange = () => event => {
+    const handleTotalValidFirstPreferenceCountChange = () => event => {
         const {value} = event.target;
-        setValidVoteCountRow((validVoteCountRow) => {
+        setValidFirstPreferenceCountRow((validFirstPreferenceCountRow) => {
             return {
-                ...validVoteCountRow,
+                ...validFirstPreferenceCountRow,
                 numValue: processNumericValue(value)
             }
         });
     };
 
-    const handleRejectedVoteCountChange = () => event => {
+    const handleRejectedFirstPreferenceCountChange = () => event => {
         const {value} = event.target;
-        setRejectedVoteCountRow((rejectedVoteCountRow) => {
+        setRejectedFirstPreferenceCountRow((rejectedFirstPreferenceCountRow) => {
             return {
-                ...rejectedVoteCountRow,
+                ...rejectedFirstPreferenceCountRow,
                 numValue: processNumericValue(value)
             }
         });
     };
 
-    const handleTotalVoteCountChange = () => event => {
+    const handleTotalFirstPreferenceCountChange = () => event => {
         const {value} = event.target;
-        setVoteCountRow((voteCountRow) => {
+        setFirstPreferenceCountRow((firstPreferenceCountRow) => {
             return {
-                ...voteCountRow,
+                ...firstPreferenceCountRow,
                 numValue: processNumericValue(value)
             }
         });
@@ -198,18 +182,18 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
             return <Table aria-label="simple table" size={saved ? "small" : "medium"}>
                 <TableHead>
                     <TableRow>
-                        <TableCell align="center">Party Name</TableCell>
-                        <TableCell align="center">Party Symbol</TableCell>
+                        <TableCell align="center">Candidate Name</TableCell>
+                        <TableCell align="center">Candidate Number</TableCell>
                         <TableCell align="center">Count in words</TableCell>
                         <TableCell align="right">Count in figures</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {partWiseVoteCountRows.map((partWiseVoteCountRow) => {
-                        const {partyId, partyName, partySymbol, strValue, numValue} = partWiseVoteCountRow;
-                        return <TableRow key={partyId}>
-                            <TableCell align="center">{partyName}</TableCell>
-                            <TableCell align="center">{partySymbol}</TableCell>
+                    {candidateWiseFirstPreferenceCountRows.map((candidateWiseFirstPreferenceCountRow) => {
+                        const {candidateId, candidateName, strValue, numValue} = candidateWiseFirstPreferenceCountRow;
+                        return <TableRow key={candidateId}>
+                            <TableCell align="center">{candidateName}</TableCell>
+                            <TableCell align="center"></TableCell>
                             <TableCell align="center">{strValue}</TableCell>
                             <TableCell align="right">{numValue}</TableCell>
                         </TableRow>
@@ -219,15 +203,15 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                 <TableFooter>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>Total valid vote count</TableCell>
-                        <TableCell align="right">{calculateTotalValidVoteCount()}</TableCell>
+                        <TableCell align="right">{calculateTotalValidFirstPreferenceCount()}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>Total rejected vote count</TableCell>
-                        <TableCell align="right">{rejectedVoteCountRow.numValue}</TableCell>
+                        <TableCell align="right">{rejectedFirstPreferenceCountRow.numValue}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>Total vote count</TableCell>
-                        <TableCell align="right">{calculateTotalVoteCount()}</TableCell>
+                        <TableCell align="right">{calculateTotalFirstPreferenceCount()}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={4}>
@@ -255,19 +239,20 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
             return <Table aria-label="simple table" size={saved ? "small" : "medium"}>
                 <TableHead>
                     <TableRow>
-                        <TableCell align="center">Party Name</TableCell>
-                        <TableCell align="center">Party Symbol</TableCell>
+                        <TableCell align="center">Candidate Name</TableCell>
+                        <TableCell align="center">Candidate Number</TableCell>
                         <TableCell align="center">Count in words</TableCell>
                         <TableCell align="right">Count in figures</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {partWiseVoteCountRows.map((partWiseVoteCountRow, partWiseVoteCountRowIndex) => {
-                        const {partyId, partyName, partySymbol, strValue, numValue} = partWiseVoteCountRow;
-                        console.log("==== partWiseVoteCountRow : ", partWiseVoteCountRow);
-                        return <TableRow key={partyId}>
-                            <TableCell align="center">{partyName}</TableCell>
-                            <TableCell align="center">{partySymbol}</TableCell>
+
+                    {candidateWiseFirstPreferenceCountRows.map((candidateWiseFirstPreferenceCountRow, candidateWiseFirstPreferenceCountRowIndex) => {
+                        const {candidateId, candidateName, strValue, numValue} = candidateWiseFirstPreferenceCountRow;
+                        console.log("==== candidateWiseFirstPreferenceCountRow : ", candidateWiseFirstPreferenceCountRow);
+                        return <TableRow key={candidateId}>
+                            <TableCell align="center">{candidateName}</TableCell>
+                            <TableCell align="center"></TableCell>
                             <TableCell align="center">
                                 <TextField
                                     required
@@ -275,7 +260,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                                     className={"data-entry-edit-count-in-words-input"}
                                     value={strValue}
                                     margin="normal"
-                                    onChange={handleValidVoteCountInWordsChange(partWiseVoteCountRowIndex)}
+                                    onChange={handleValidFirstPreferenceCountInWordsChange(candidateWiseFirstPreferenceCountRowIndex)}
                                     inputProps={{
                                         style: {
                                             height: '10px'
@@ -291,7 +276,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                                     helperText={!isNumeric(numValue) ? "Only numeric values are valid" : ''}
                                     value={numValue}
                                     margin="normal"
-                                    onChange={handleValidVoteCountChange(partWiseVoteCountRowIndex)}
+                                    onChange={handleValidFirstPreferenceCountChange(candidateWiseFirstPreferenceCountRowIndex)}
                                     inputProps={{
                                         style: {
                                             height: '10px'
@@ -309,11 +294,11 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                         <TableCell align="right">
                             <TextField
                                 required
-                                error={calculateTotalValidVoteCount() !== validVoteCountRow.numValue}
-                                helperText={calculateTotalValidVoteCount() !== validVoteCountRow.numValue ? 'Total valid vote count mismatch!' : ' '}
-                                value={validVoteCountRow.numValue}
+                                error={calculateTotalValidFirstPreferenceCount() !== validFirstPreferenceCountRow.numValue}
+                                helperText={calculateTotalValidFirstPreferenceCount() !== validFirstPreferenceCountRow.numValue ? 'Total valid vote count mismatch!' : ' '}
+                                value={validFirstPreferenceCountRow.numValue}
                                 margin="normal"
-                                onChange={handleTotalValidVoteCountChange()}
+                                onChange={handleTotalValidFirstPreferenceCountChange()}
                             />
                         </TableCell>
                     </TableRow>
@@ -321,11 +306,11 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                         <TableCell align="right" colSpan={3}>Total rejected vote count</TableCell>
                         <TableCell align="right"><TextField
                             required
-                            error={!isNumeric(rejectedVoteCountRow.numValue)}
-                            helperText={!isNumeric(rejectedVoteCountRow.numValue) ? "Only numeric values are valid" : ''}
-                            value={rejectedVoteCountRow.numValue}
+                            error={!isNumeric(rejectedFirstPreferenceCountRow.numValue)}
+                            helperText={!isNumeric(rejectedFirstPreferenceCountRow.numValue) ? "Only numeric values are valid" : ''}
+                            value={rejectedFirstPreferenceCountRow.numValue}
                             margin="normal"
-                            onChange={handleRejectedVoteCountChange()}
+                            onChange={handleRejectedFirstPreferenceCountChange()}
                         /></TableCell>
                     </TableRow>
                     <TableRow>
@@ -333,11 +318,11 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                         <TableCell align="right">
                             <TextField
                                 required
-                                error={calculateTotalVoteCount() !== voteCountRow.numValue}
-                                helperText={calculateTotalVoteCount() !== voteCountRow.numValue ? 'Total vote count mismatch!' : ' '}
-                                value={voteCountRow.numValue}
+                                error={calculateTotalFirstPreferenceCount() !== firstPreferenceCountRow.numValue}
+                                helperText={calculateTotalFirstPreferenceCount() !== firstPreferenceCountRow.numValue ? 'Total vote count mismatch!' : ' '}
+                                value={firstPreferenceCountRow.numValue}
                                 margin="normal"
-                                onChange={handleTotalVoteCountChange()}
+                                onChange={handleTotalFirstPreferenceCountChange()}
                             />
                         </TableCell>
                     </TableRow>
@@ -361,6 +346,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
             return null;
         }
     }
+
 
     return <Processing showProgress={processing} label={processingLabel}>
         {getTallySheetEditForm()}

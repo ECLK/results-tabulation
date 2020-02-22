@@ -1,14 +1,16 @@
 import Entity from "./entity";
+import * as tabulationApi from "../index";
 
 
 const AREA_TYPE_LIST_NAMES_ENUM = {
-    "PollingStation": "pollingStations",
-    "PollingDistrict": "pollingDistricts",
-    "CountingCentre": "countingCentres",
-    "PollingDivision": "pollingDivisions",
-    "ElectoralDistrict": "electoralDistricts",
-    "Country": "countries",
-    "DistrictCentre": "districtCentres"
+    "PollingStation": "pollingStationIds",
+    "PollingDistrict": "pollingDistrictIds",
+    "CountingCentre": "countingCentreIds",
+    "PollingDivision": "pollingDivisionIds",
+    "ElectoralDistrict": "electoralDistrictIds",
+    "Country": "countryIds",
+    "DistrictCentre": "districtCentreIds",
+    "ElectionCommission": "electionCommissionIds"
 };
 
 function getChildAreaListName({areaType}) {
@@ -16,14 +18,18 @@ function getChildAreaListName({areaType}) {
 }
 
 function appendChildArea(parentArea, childArea) {
-    const childAreaListName = getChildAreaListName(childArea);
-    let childAreaList = parentArea[childAreaListName];
-    if (!childAreaList) {
-        childAreaList = [];
-        parentArea[childAreaListName] = childAreaList;
-    }
+    if (parentArea && childArea) {
+        const childAreaListName = getChildAreaListName(childArea);
+        let childAreaList = parentArea[childAreaListName];
+        if (!childAreaList) {
+            childAreaList = [];
+            parentArea[childAreaListName] = childAreaList;
+        }
 
-    childAreaList.push(childArea)
+        childAreaList.push(childArea.areaId)
+    } else {
+        console.log("==== appendChildArea [incomplete] ", [parentArea, childArea])
+    }
 }
 
 
@@ -36,27 +42,82 @@ export class AreaEntity extends Entity {
         "ElectoralDistrict": "electoralDistricts",
         "Country": "countries",
         "DistrictCentre": "districtCentres"
-    }
+    };
 
     constructor() {
         super("area");
     }
 
+    async buildAreaParentsAndChildren() {
+        const areaIdList = this.list();
+        const areaMap = this.map();
 
-    async pushList(list, pk) {
-        await super.pushList(list, pk);
+        for (let j = 0; j < areaIdList.length; j++) {
+            const areaId = areaIdList[j];
+            const area = areaMap[areaId];
 
-        //Map the children
-        for (let i = 0; i < list.length; i++) {
-            const parentArea = list[i];
-            const {children} = parentArea;
-            for (let j = 0; j < children.length; j++) {
-                const childAreaId = children[j];
-                const childArea = await this.getById(childAreaId);
-                appendChildArea(parentArea, childArea);
-                appendChildArea(childArea, parentArea);
+            if (area.built) {
+                continue;
+            } else {
+                area.built = true;
             }
-            this.push(list[i], pk);
+
+            for (let i = 0; i < area.parents.length; i++) {
+                const parentArea = await this.getById(area.parents[i]);
+                appendChildArea(area, parentArea);
+                appendChildArea(parentArea, area);
+            }
+
+            for (let i = 0; i < area.children.length; i++) {
+                const childArea = await this.getById(area.children[i]);
+                appendChildArea(area, childArea);
+                appendChildArea(childArea, area);
+            }
         }
+    }
+
+    async fetchAndPush(areaId) {
+        let area = await super.getById(areaId);
+
+        if (!area) {
+            area = {
+                areaId,
+                request: new Promise(async (resolve, reject) => {
+                    try {
+                        area = await tabulationApi.getAreaById(areaId);
+
+                        delete area.request;
+                        area = await this.push(area, "areaId");
+
+                        resolve(area);
+                    } catch (error) {
+                        reject(error)
+                    }
+                })
+            };
+            area = await this.push(area, "areaId");
+            area = await area.request;
+
+            area = await this.push(area, "areaId");
+
+        } else if (area) {
+            if (area.request) {
+                area = await area.request;
+            }
+        }
+
+        return area;
+    }
+
+    async getAreas(electionId = null, associatedAreaId = null, areaType = null) {
+        const areas = await tabulationApi.getAreas({electionId, associatedAreaId, areaType});
+
+        for (let i = 0; i < areas.length; i++) {
+            const area = areas[i];
+            area.built = false;
+            this.push(area, "areaId");
+        }
+
+        return areas
     }
 }

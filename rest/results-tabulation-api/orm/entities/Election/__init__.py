@@ -94,10 +94,11 @@ class ElectionModel(db.Model):
 
     @hybrid_property
     def parties(self):
-        if self.parentElectionId is None:
-            return self._parties
-        else:
-            return self.parentElection.parties
+        return self._parties
+        # if self.parentElectionId is None:
+        #     return self._parties
+        # else:
+        #     return self.parentElection.parties
 
     @hybrid_property
     def invalidVoteCategories(self):
@@ -116,23 +117,49 @@ class ElectionModel(db.Model):
         )
 
     def add_invalid_vote_category(self, categoryDescription):
-        return InvalidVoteCategory.create(
-            electionId=self.electionId,
-            categoryDescription=categoryDescription
-        )
+        invalid_vote_category = db.session.query(InvalidVoteCategory).filter(
+            InvalidVoteCategory.Model.electionId == self.electionId,
+            InvalidVoteCategory.Model.categoryDescription == categoryDescription
+        ).one_or_none()
+
+        if invalid_vote_category is None:
+            invalid_vote_category = InvalidVoteCategory.create(
+                electionId=self.electionId,
+                categoryDescription=categoryDescription
+            )
+
+        return invalid_vote_category
 
     def add_party(self, partyId):
-        return ElectionParty.create(
-            electionId=self.electionId,
-            partyId=partyId
-        )
+        election_party = db.session.query(ElectionParty.Model).filter(
+            ElectionParty.Model.partyId == partyId,
+            ElectionParty.Model.electionId == self.electionId
+        ).one_or_none()
+
+        if election_party is None:
+            election_party = ElectionParty.create(
+                electionId=self.electionId,
+                partyId=partyId
+            )
+
+        return election_party
 
     def add_candidate(self, partyId, candidateId):
-        return ElectionCandidate.create(
-            electionId=self.electionId,
-            partyId=partyId,
-            candidateId=candidateId
-        )
+
+        election_candidate = db.session.query(ElectionCandidate.Model).filter(
+            ElectionCandidate.Model.partyId == partyId,
+            ElectionCandidate.Model.candidateId == candidateId,
+            ElectionCandidate.Model.electionId == self.electionId
+        ).one_or_none()
+
+        if election_candidate is None:
+            election_candidate = ElectionCandidate.create(
+                electionId=self.electionId,
+                partyId=partyId,
+                candidateId=candidateId
+            )
+
+        return election_candidate
 
     def set_polling_stations_dataset(self, fileSource):
         dataset = File.createFromFileSource(fileSource=fileSource)
@@ -211,7 +238,7 @@ def get_all():
     authorized_election_ids = get_authorized_election_ids()
 
     query = Model.query.filter(
-        Model.electionId.in_(authorized_election_ids),
+        # Model.electionId.in_(authorized_election_ids),
         Model.isListed == True
     )
 
@@ -223,7 +250,7 @@ def get_by_id(electionId):
 
     result = Model.query.filter(
         Model.electionId == electionId,
-        Model.electionId.in_(authorized_election_ids)
+        # Model.electionId.in_(authorized_election_ids)
     ).one_or_none()
 
     return result

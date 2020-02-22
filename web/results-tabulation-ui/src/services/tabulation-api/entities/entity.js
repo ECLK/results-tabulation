@@ -21,8 +21,15 @@ export default class Entity {
 
     async push(obj, pk) {
         const pkValue = obj[pk];
-        this.cache.map[pkValue] = obj; // TODO
-        this.cache.list = [...this.cache.list, pkValue];
+
+        if (this.cache.map[pkValue]) {
+            // Update if already exists.
+            Object.assign(this.cache.map[pkValue], obj)
+        } else {
+            // Created if doesn't exists.
+            this.cache.map[pkValue] = obj; // TODO
+            this.cache.list = [...this.cache.list, pkValue];
+        }
 
         return obj;
     }

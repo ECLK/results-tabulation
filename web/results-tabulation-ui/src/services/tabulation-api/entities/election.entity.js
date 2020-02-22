@@ -1,4 +1,4 @@
-import {ENDPOINT_PATH_ELECTION_AREA, ENDPOINT_PATH_ELECTIONS_BY_ID, request} from "../index";
+import {ENDPOINT_PATH_ELECTIONS_BY_ID, request} from "../index";
 import Entity from "./entity";
 import {AreaEntity} from "./area.entity";
 
@@ -6,28 +6,19 @@ import {AreaEntity} from "./area.entity";
 export class ElectionEntity extends Entity {
     constructor() {
         super("election");
-        this.areas = new AreaEntity()
+        this.areas = new AreaEntity();
     }
 
-    async push(obj, pk, buildAreas = true) {
+    async setAreas(election) {
+        await this.areas.getAreas(election.electionId);
+    }
 
+    async push(obj, pk) {
         const election = await super.push(obj, pk);
-        buildAreas && await this.buildAreas(obj[pk]);
-
         this.buildPartiesAndCandidates(election);
+        await this.setAreas(election);
 
         return election;
-    }
-
-    async buildAreas(electionId) {
-
-        const areas = await request({
-            url: ENDPOINT_PATH_ELECTION_AREA(electionId),
-            method: 'get', // default,
-        });
-
-
-        await this.areas.pushList(areas, "areaId");
     }
 
     buildPartiesAndCandidates(election) {
@@ -61,14 +52,29 @@ export class ElectionEntity extends Entity {
         return await this.push(election, "electionId");
     }
 
-    async getById(electionId) {
+    async getById(electionId, fetchSubElections = true) {
         let election = await super.getById(electionId);
         if (!election) {
             election = await this.fetchAndPush(electionId);
+        }
+
+
+        if (fetchSubElections) {
             for (let i = 0; i < election.subElections.length; i++) {
                 const subElection = election.subElections[i];
-                await this.push(subElection, "electionId", false);
+                const subElectionId = subElection.electionId;
+                Object.assign(subElection, await this.getById(subElectionId));
             }
+        }
+
+        const {parentElection} = election;
+        if (parentElection) {
+            const parentElectionId = parentElection.electionId;
+            Object.assign(parentElection, await this.getById(parentElectionId, false))
+        }
+
+        if (election.rootElection.electionId === election.electionId) {
+            await this.areas.buildAreaParentsAndChildren();
         }
 
         return election;

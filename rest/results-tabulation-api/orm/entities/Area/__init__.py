@@ -17,6 +17,7 @@ class AreaModel(db.Model):
     # parentAreaId = db.Column(db.Integer, db.ForeignKey(areaId), nullable=True)
 
     _registeredVotersCount = db.Column(db.Integer(), nullable=True)
+    _registeredPostalVotersCount = db.Column(db.Integer(), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
     # parentArea = relationship("AreaModel", remote_side=[areaId])
@@ -26,6 +27,8 @@ class AreaModel(db.Model):
     # this relationship is used for persistence
     children = relationship("AreaAreaModel", lazy="joined",
                             primaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId")
+    parents = relationship("AreaAreaModel", lazy="joined",
+                           primaryjoin="AreaModel.areaId==AreaAreaModel.childAreaId")
 
     # children = relationship("AreaModel", secondary="area_area", lazy="subquery",
     #                         primaryjoin="AreaModel.areaId==AreaAreaModel.parentAreaId",
@@ -125,6 +128,17 @@ class AreaModel(db.Model):
         ).scalar()
 
         return total_registered_voters_count
+
+    @hybrid_property
+    def registeredPostalVotersCount(self):
+        polling_stations_subquery = get_associated_areas_query(areas=[self],
+                                                               areaType=AreaTypeEnum.PollingStation).subquery()
+
+        total_registered_postal_voters_count = db.session.query(
+            func.sum(polling_stations_subquery.c._registeredPostalVotersCount)
+        ).scalar()
+
+        return total_registered_postal_voters_count
 
     __mapper_args__ = {
         'polymorphic_on': areaType
@@ -300,10 +314,7 @@ def get_all(election_id=None, area_name=None, associated_area_id=None, area_type
 
     if election is not None:
         query = query.filter(
-            or_(
-                Model.electionId.in_(election.mappedElectionIds),
-                Model.electionId.in_(election.subElectionIds)
-            )
+            Model.electionId == election_id
         )
 
     if area_type is not None:

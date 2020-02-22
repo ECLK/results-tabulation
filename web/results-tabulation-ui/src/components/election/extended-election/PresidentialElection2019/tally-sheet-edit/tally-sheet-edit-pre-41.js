@@ -12,39 +12,59 @@ import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PRE_41({history, queryString, election, tallySheet, messages}) {
+export default function TallySheetEdit_PRE_41({history, election, tallySheet, messages}) {
     const [candidateWiseCounts, setCandidateWiseCounts] = useState({});
     const [rejectedVoteCount, setRejectedVoteCount] = useState(0);
     const [totalValidVoteCount, setTotalValidVoteCount] = useState(0);
     const [totalVoteCount, setTotalVoteCount] = useState(0);
 
+    const _forEachCandidate = (callback) => {
+        const {parties} = election;
+        for (let partyIndex = 0; partyIndex < parties.length; partyIndex++) {
+            const party = parties[partyIndex];
+            const {candidates} = party;
+            for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
+                const candidate = candidates[candidateIndex];
+                callback(candidate, party);
+            }
+        }
+    };
+
+    const _mapEachCandidate = (callback) => {
+        const _mapList = [];
+        _forEachCandidate(() => {
+            _mapList.push(_forEachCandidate);
+        });
+
+        return _mapList
+    };
 
     const setTallySheetContent = (tallySheetVersion) => {
         const latestCandidateWiseCounts = {};
-        election.rootElection.parties.map(party => {
-            party.candidates.map(candidate => {
-                latestCandidateWiseCounts[candidate.candidateId] = {
-                    candidateId: candidate.candidateId,
-                    validVoteCount: 0,
-                    validVoteCountInWords: ""
-                };
-            });
+        const {parties} = election;
+        _forEachCandidate((candidate) => {
+            latestCandidateWiseCounts[candidate.candidateId] = {
+                candidateId: candidate.candidateId,
+                validVoteCount: 0,
+                validVoteCountInWords: ""
+            };
         });
 
         if (tallySheetVersion) {
-            const {content, summary} = tallySheetVersion;
+            const {content} = tallySheetVersion;
             let validTotal = 0;
             let rejectedVoteCount = 0;
             for (let i = 0; i < content.length; i++) {
                 let contentRow = content[i];
-                if (contentRow.templateRowType === "CANDIDATE_FIRST_PREFERENCE") {
+                const {templateRowType} = contentRow;
+                if (templateRowType === "CANDIDATE_FIRST_PREFERENCE") {
                     latestCandidateWiseCounts[contentRow.candidateId] = {
                         candidateId: contentRow.candidateId,
                         validVoteCount: contentRow.numValue,
                         validVoteCountInWords: contentRow.strValue
                     };
                     validTotal += contentRow.numValue;
-                } else if (contentRow.templateRowType === "REJECTED_VOTE") {
+                } else if (templateRowType === "REJECTED_VOTE") {
                     rejectedVoteCount = contentRow.numValue;
                     setRejectedVoteCount(contentRow.numValue);
                 }
@@ -73,17 +93,16 @@ export default function TallySheetEdit_PRE_41({history, queryString, election, t
     const getTallySheetRequestBody = () => {
         const rejected_vote_rows = [{"numValue": rejectedVoteCount}];
         const candidate_first_preference_rows = [];
-        election.rootElection.parties.map(party => {
+
+        _forEachCandidate((candidate, party) => {
+            const {candidateId} = candidate;
             const {partyId} = party;
-            party.candidates.map(candidate => {
-                const {candidateId} = candidate;
-                const {validVoteCount, validVoteCountInWords} = candidateWiseCounts[candidateId];
-                candidate_first_preference_rows.push({
-                    partyId: partyId,
-                    candidateId: candidateId,
-                    numValue: validVoteCount,
-                    strValue: validVoteCountInWords
-                })
+            const {validVoteCount, validVoteCountInWords} = candidateWiseCounts[candidateId];
+            candidate_first_preference_rows.push({
+                partyId: partyId,
+                candidateId: candidateId,
+                numValue: validVoteCount,
+                strValue: validVoteCountInWords
             })
         });
 
@@ -175,19 +194,17 @@ export default function TallySheetEdit_PRE_41({history, queryString, election, t
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {election.rootElection.parties.map(party => {
-                        return party.candidates.map(candidate => {
-                            const {candidateId, candidateName} = candidate;
-                            const {partySymbol} = party;
-                            const candidateWiseCount = candidateWiseCounts[candidateId];
-                            const {validVoteCount, validVoteCountInWords} = candidateWiseCount;
-                            return <TableRow key={candidateId}>
-                                <TableCell align="center">{candidateName}</TableCell>
-                                <TableCell align="center">{partySymbol}</TableCell>
-                                <TableCell align="center">{validVoteCountInWords}</TableCell>
-                                <TableCell align="right">{validVoteCount}</TableCell>
-                            </TableRow>
-                        });
+                    {_mapEachCandidate((candidate, party) => {
+                        const {candidateId, candidateName} = candidate;
+                        const {partySymbol} = party;
+                        const candidateWiseCount = candidateWiseCounts[candidateId];
+                        const {validVoteCount, validVoteCountInWords} = candidateWiseCount;
+                        return <TableRow key={candidateId}>
+                            <TableCell align="center">{candidateName}</TableCell>
+                            <TableCell align="center">{partySymbol}</TableCell>
+                            <TableCell align="center">{validVoteCountInWords}</TableCell>
+                            <TableCell align="right">{validVoteCount}</TableCell>
+                        </TableRow>
                     })}
                 </TableBody>
 
@@ -237,48 +254,46 @@ export default function TallySheetEdit_PRE_41({history, queryString, election, t
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {election.rootElection.parties.map(party => {
-                        return party.candidates.map(candidate => {
-                            const {candidateId, candidateName} = candidate;
-                            const {partySymbol} = party;
-                            const candidateWiseCount = candidateWiseCounts[candidateId];
-                            const {validVoteCount, validVoteCountInWords} = candidateWiseCount;
-                            return <TableRow key={candidateId}>
-                                <TableCell align="center">{candidateName}</TableCell>
-                                <TableCell align="center">{partySymbol}</TableCell>
-                                <TableCell align="center">
-                                    <TextField
-                                        required
-                                        variant="outlined"
-                                        className={"data-entry-edit-count-in-words-input"}
-                                        value={validVoteCountInWords}
-                                        margin="normal"
-                                        onChange={handleValidVoteCountInWordsChange(candidateId)}
-                                        inputProps={{
-                                            style: {
-                                                height: '10px'
-                                            },
-                                        }}
-                                    />
-                                </TableCell>
-                                <TableCell align="center">
-                                    <TextField
-                                        required
-                                        variant="outlined"
-                                        error={!isNumeric(validVoteCount)}
-                                        helperText={!isNumeric(validVoteCount) ? "Only numeric values are valid" : ''}
-                                        value={validVoteCount}
-                                        margin="normal"
-                                        onChange={handleValidVoteCountChange(candidateId)}
-                                        inputProps={{
-                                            style: {
-                                                height: '10px'
-                                            },
-                                        }}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        });
+                    {_mapEachCandidate((candidate, party) => {
+                        const {candidateId, candidateName} = candidate;
+                        const {partySymbol} = party;
+                        const candidateWiseCount = candidateWiseCounts[candidateId];
+                        const {validVoteCount, validVoteCountInWords} = candidateWiseCount;
+                        return <TableRow key={candidateId}>
+                            <TableCell align="center">{candidateName}</TableCell>
+                            <TableCell align="center">{partySymbol}</TableCell>
+                            <TableCell align="center">
+                                <TextField
+                                    required
+                                    variant="outlined"
+                                    className={"data-entry-edit-count-in-words-input"}
+                                    value={validVoteCountInWords}
+                                    margin="normal"
+                                    onChange={handleValidVoteCountInWordsChange(candidateId)}
+                                    inputProps={{
+                                        style: {
+                                            height: '10px'
+                                        },
+                                    }}
+                                />
+                            </TableCell>
+                            <TableCell align="center">
+                                <TextField
+                                    required
+                                    variant="outlined"
+                                    error={!isNumeric(validVoteCount)}
+                                    helperText={!isNumeric(validVoteCount) ? "Only numeric values are valid" : ''}
+                                    value={validVoteCount}
+                                    margin="normal"
+                                    onChange={handleValidVoteCountChange(candidateId)}
+                                    inputProps={{
+                                        style: {
+                                            height: '10px'
+                                        },
+                                    }}
+                                />
+                            </TableCell>
+                        </TableRow>
                     })}
                 </TableBody>
 
@@ -340,7 +355,6 @@ export default function TallySheetEdit_PRE_41({history, queryString, election, t
             return null;
         }
     }
-
 
     return <Processing showProgress={processing} label={processingLabel}>
         {getTallySheetEditForm()}
