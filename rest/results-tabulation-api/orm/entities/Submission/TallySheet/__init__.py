@@ -72,6 +72,13 @@ class TallySheetModel(db.Model):
                            secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId"
                            )
 
+    @hybrid_property
+    def areaMapList(self):
+        extended_election = self.submission.election.get_extended_election()
+        area_map = extended_election.get_area_map_for_tally_sheet(tally_sheet=self)
+
+        return area_map
+
     def add_parent(self, parentTallySheet):
         parentTallySheet.add_child(self.tallySheetId)
 

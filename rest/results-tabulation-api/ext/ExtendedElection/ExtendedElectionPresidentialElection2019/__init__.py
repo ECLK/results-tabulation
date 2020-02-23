@@ -56,118 +56,7 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                 templateName=templateName
             )
 
-    def get_area_map(self, area):
-        from orm.enums import AreaTypeEnum
-
-        vote_type = area.election.voteType
-        if vote_type == Postal:
-            area_map_subquery = self.get_area_map_query_postal().subquery()
-        else:
-            area_map_subquery = self.get_area_map_query().subquery()
-
-        area_map = []
-        if area.areaType == AreaTypeEnum.CountingCentre:
-            if vote_type is Postal:
-                area_map = db.session.query(
-                    bindparam("pollingStationId", None),
-                    bindparam("pollingStationName", None),
-                    area_map_subquery.c.countingCentreId,
-                    area_map_subquery.c.countingCentreName,
-                    bindparam("pollingDivisionId", None),
-                    bindparam("pollingDivisionName", None),
-                    area_map_subquery.c.electoralDistrictId,
-                    area_map_subquery.c.electoralDistrictName,
-                    area_map_subquery.c.countryId,
-                    area_map_subquery.c.countryName
-                ).filter(
-                    area_map_subquery.c.countingCentreId == area.areaId
-                ).group_by(
-                    area_map_subquery.c.countingCentreId,
-                    area_map_subquery.c.electoralDistrictId,
-                    area_map_subquery.c.countryId
-                ).all()
-            else:
-                area_map = db.session.query(
-                    bindparam("pollingStationId", None),
-                    bindparam("pollingStationName", None),
-                    area_map_subquery.c.countingCentreId,
-                    area_map_subquery.c.countingCentreName,
-                    area_map_subquery.c.pollingDivisionId,
-                    area_map_subquery.c.pollingDivisionName,
-                    area_map_subquery.c.electoralDistrictId,
-                    area_map_subquery.c.electoralDistrictName,
-                    area_map_subquery.c.countryId,
-                    area_map_subquery.c.countryName
-                ).filter(
-                    area_map_subquery.c.countingCentreId == area.areaId
-                ).group_by(
-                    area_map_subquery.c.countingCentreId,
-                    area_map_subquery.c.pollingDivisionId,
-                    area_map_subquery.c.electoralDistrictId,
-                    area_map_subquery.c.countryId
-                ).all()
-        elif area.areaType == AreaTypeEnum.PollingDivision:
-            area_map = db.session.query(
-                bindparam("pollingStationId", None),
-                bindparam("pollingStationName", None),
-                bindparam("countingCentreId", None),
-                bindparam("countingCentreName", None),
-                area_map_subquery.c.pollingDivisionId,
-                area_map_subquery.c.pollingDivisionName,
-                area_map_subquery.c.electoralDistrictId,
-                area_map_subquery.c.electoralDistrictName,
-                area_map_subquery.c.countryId,
-                area_map_subquery.c.countryName
-            ).filter(
-                area_map_subquery.c.pollingDivisionId == area.areaId
-            ).group_by(
-                area_map_subquery.c.pollingDivisionId,
-                area_map_subquery.c.electoralDistrictId,
-                area_map_subquery.c.countryId
-            ).all()
-        elif area.areaType == AreaTypeEnum.ElectoralDistrict:
-            area_map = db.session.query(
-                bindparam("pollingStationId", None),
-                bindparam("pollingStationName", None),
-                bindparam("countingCentreId", None),
-                bindparam("countingCentreName", None),
-                bindparam("pollingDivisionId", None),
-                bindparam("pollingDivisionName", None),
-                area_map_subquery.c.electoralDistrictId,
-                area_map_subquery.c.electoralDistrictName,
-                area_map_subquery.c.countryId,
-                area_map_subquery.c.countryName
-            ).filter(
-                area_map_subquery.c.electoralDistrictId == area.areaId
-            ).group_by(
-                area_map_subquery.c.pollingDivisionId,
-                area_map_subquery.c.electoralDistrictId,
-                area_map_subquery.c.countryId
-            ).all()
-        elif area.areaType == AreaTypeEnum.Country:
-            area_map = db.session.query(
-                bindparam("pollingStationId", None),
-                bindparam("pollingStationName", None),
-                bindparam("countingCentreId", None),
-                bindparam("countingCentreName", None),
-                bindparam("pollingDivisionId", None),
-                bindparam("pollingDivisionName", None),
-                bindparam("electoralDistrictId", None),
-                bindparam("electoralDistrictName", None),
-                area_map_subquery.c.countryId,
-                area_map_subquery.c.countryName
-            ).filter(
-                area_map_subquery.c.countryId == area.areaId
-            ).group_by(
-                area_map_subquery.c.pollingDivisionId,
-                area_map_subquery.c.electoralDistrictId,
-                area_map_subquery.c.countryId
-            ).all()
-
-        return area_map
-
     def get_area_map_query(self):
-
         from orm.entities import Election, Area
         from orm.entities.Area import AreaAreaModel
         from orm.enums import AreaTypeEnum
@@ -197,37 +86,22 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
         district_centre__counting_centre = aliased(AreaAreaModel)
         election_commission__district_centre = aliased(AreaAreaModel)
 
+        # For postal vote counting centres.
         electoral_district__counting_centre = aliased(AreaAreaModel)
 
-        query = db.session.query(
+        query_args = [
             country.c.areaId.label("countryId"),
             country.c.areaName.label("countryName"),
             electoral_district.c.areaId.label("electoralDistrictId"),
             electoral_district.c.areaName.label("electoralDistrictName"),
-            polling_division.c.areaId.label("pollingDivisionId"),
-            polling_division.c.areaName.label("pollingDivisionName"),
-            polling_district.c.areaId.label("pollingDistrictId"),
-            polling_district.c.areaName.label("pollingDistrictName"),
-            polling_station.c.areaId.label("pollingStationId"),
-            polling_station.c.areaName.label("pollingStationName"),
             counting_centre.c.areaId.label("countingCentreId"),
             counting_centre.c.areaName.label("countingCentreName"),
             Election.Model.voteType
-        ).filter(
+        ]
+
+        query_filter = [
             country__electoral_district.parentAreaId == country.c.areaId,
             country__electoral_district.childAreaId == electoral_district.c.areaId,
-
-            electoral_district__polling_division.parentAreaId == electoral_district.c.areaId,
-            electoral_district__polling_division.childAreaId == polling_division.c.areaId,
-
-            polling_division__polling_district.parentAreaId == polling_division.c.areaId,
-            polling_division__polling_district.childAreaId == polling_district.c.areaId,
-
-            polling_district__polling_station.parentAreaId == polling_district.c.areaId,
-            polling_district__polling_station.childAreaId == polling_station.c.areaId,
-
-            counting_centre__polling_station.parentAreaId == counting_centre.c.areaId,
-            counting_centre__polling_station.childAreaId == polling_station.c.areaId,
 
             district_centre__counting_centre.parentAreaId == district_centre.c.areaId,
             district_centre__counting_centre.childAreaId == counting_centre.c.areaId,
@@ -236,55 +110,45 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             election_commission__district_centre.childAreaId == district_centre.c.areaId,
 
             Election.Model.electionId == counting_centre.c.electionId
-        )
+        ]
 
-        return query
+        if self.election.voteType == Postal:
+            query_args += [
+                bindparam("pollingDivisionId", None),
+                bindparam("pollingDivisionName", None),
+                bindparam("pollingDistrictId", None),
+                bindparam("pollingDistrictName", None),
+                bindparam("pollingStationId", None),
+                bindparam("pollingStationName", None)
+            ]
+            query_filter += [
+                electoral_district__counting_centre.parentAreaId == electoral_district.c.areaId,
+                electoral_district__counting_centre.childAreaId == counting_centre.c.areaId
+            ]
+        else:
+            query_args += [
+                polling_division.c.areaId.label("pollingDivisionId"),
+                polling_division.c.areaName.label("pollingDivisionName"),
+                polling_district.c.areaId.label("pollingDistrictId"),
+                polling_district.c.areaName.label("pollingDistrictName"),
+                polling_station.c.areaId.label("pollingStationId"),
+                polling_station.c.areaName.label("pollingStationName")
+            ]
+            query_filter += [
+                electoral_district__polling_division.parentAreaId == electoral_district.c.areaId,
+                electoral_district__polling_division.childAreaId == polling_division.c.areaId,
 
-    def get_area_map_query_postal(self):
+                polling_division__polling_district.parentAreaId == polling_division.c.areaId,
+                polling_division__polling_district.childAreaId == polling_district.c.areaId,
 
-        from orm.entities import Election, Area
-        from orm.entities.Area import AreaAreaModel
-        from orm.enums import AreaTypeEnum
+                polling_district__polling_station.parentAreaId == polling_district.c.areaId,
+                polling_district__polling_station.childAreaId == polling_station.c.areaId,
 
-        country = db.session.query(Area.Model).filter(
-            Area.Model.areaType == AreaTypeEnum.Country).subquery()
-        electoral_district = db.session.query(Area.Model).filter(
-            Area.Model.areaType == AreaTypeEnum.ElectoralDistrict).subquery()
-        counting_centre = db.session.query(Area.Model).filter(
-            Area.Model.areaType == AreaTypeEnum.CountingCentre).subquery()
-        district_centre = db.session.query(Area.Model).filter(
-            Area.Model.areaType == AreaTypeEnum.DistrictCentre).subquery()
-        election_commission = db.session.query(Area.Model).filter(
-            Area.Model.areaType == AreaTypeEnum.ElectionCommission).subquery()
+                counting_centre__polling_station.parentAreaId == counting_centre.c.areaId,
+                counting_centre__polling_station.childAreaId == polling_station.c.areaId
+            ]
 
-        country__electoral_district = aliased(AreaAreaModel)
-        electoral_district__counting_centre = aliased(AreaAreaModel)
-        district_centre__counting_centre = aliased(AreaAreaModel)
-        election_commission__district_centre = aliased(AreaAreaModel)
-
-        query = db.session.query(
-            country.c.areaId.label("countryId"),
-            country.c.areaName.label("countryName"),
-            electoral_district.c.areaId.label("electoralDistrictId"),
-            electoral_district.c.areaName.label("electoralDistrictName"),
-            counting_centre.c.areaId.label("countingCentreId"),
-            counting_centre.c.areaName.label("countingCentreName"),
-            Election.Model.voteType
-        ).filter(
-            country__electoral_district.parentAreaId == country.c.areaId,
-            country__electoral_district.childAreaId == electoral_district.c.areaId,
-
-            electoral_district__counting_centre.parentAreaId == electoral_district.c.areaId,
-            electoral_district__counting_centre.childAreaId == counting_centre.c.areaId,
-
-            district_centre__counting_centre.parentAreaId == district_centre.c.areaId,
-            district_centre__counting_centre.childAreaId == counting_centre.c.areaId,
-
-            election_commission__district_centre.parentAreaId == election_commission.c.areaId,
-            election_commission__district_centre.childAreaId == district_centre.c.areaId,
-
-            Election.Model.electionId == counting_centre.c.electionId
-        )
+        query = db.session.query(*query_args).filter(*query_filter)
 
         return query
 
@@ -1093,7 +957,7 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                     )
                 ]
 
-                if election.voteType is NonPostal:
+                if election.voteType == NonPostal:
                     tally_sheets.append(TallySheet.create(
                         template=tally_sheet_template_ce_201, electionId=election.electionId, areaId=area.areaId,
                         metaId=Meta.create({
@@ -1101,7 +965,7 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                             "electionId": election.electionId
                         }).metaId
                     ))
-                elif election.voteType is Postal:
+                elif election.voteType == Postal:
                     area._registeredVotersCount = row["Registered Voters"]
                     tally_sheets.append(TallySheet.create(
                         template=tally_sheet_template_ce_201_pv, electionId=election.electionId,

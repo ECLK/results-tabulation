@@ -24,12 +24,8 @@ export default class ExtendedElectionDefault {
     }
 
     async mapRequiredAreasToTallySheet(tallySheet) {
-        const areaEntity = new AreaEntity();
-        if (!tallySheet.area) {
-            tallySheet.area = await areaEntity.getById(tallySheet.areaId);
-        }
-
-        const firstAreaMap = getFirstOrNull(tallySheet.area.areaMapList);
+        const {areaMapList} = tallySheet;
+        const firstAreaMap = getFirstOrNull(areaMapList);
         if (firstAreaMap) {
             const {
                 countingCentreName = "", pollingDivisionName = "", electoralDistrictName = "", countryName = ""

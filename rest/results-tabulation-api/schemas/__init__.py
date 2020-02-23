@@ -163,8 +163,8 @@ class AreaSchema(ma.ModelSchema):
             "areaName",
             "areaType",
             "electionId",
-            "parents",
-            "children",
+            # "parents",
+            # "children",
             "areaMapList"
         )
 
@@ -357,6 +357,7 @@ class TallySheetSchema(ma.ModelSchema):
             "electionId",
             "areaId",
             "area",
+            "areaMapList",
             "latestVersionId",
             "latestStamp",
             "lockedVersionId",
@@ -379,7 +380,7 @@ class TallySheetSchema(ma.ModelSchema):
         sqla_session = db.session
 
     template = ma.Nested("TemplateSchema")
-    area = ma.Nested(AreaSchema)
+    area = ma.Nested(AreaSchema, only=["areaId", "areaName"])
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
     latestVersion = ma.Nested(SubmissionVersionSchema)
     latestStamp = ma.Nested(StampSchema)
@@ -387,6 +388,7 @@ class TallySheetSchema(ma.ModelSchema):
     submittedStamp = ma.Nested(StampSchema)
     submissionProof = ma.Nested(Proof_Schema)
     metaDataList = ma.Nested(MetaDataSchema, many=True)
+    areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
 
 
 class TemplateRowSchema(ma.ModelSchema):
