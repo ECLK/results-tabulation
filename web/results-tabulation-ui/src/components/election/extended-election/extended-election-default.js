@@ -1,6 +1,5 @@
 import React from "react";
 import TallySheetEdit from "../../tally-sheet/tally-sheet-edit";
-import {AreaEntity} from "../../../services/tabulation-api/entities/area.entity";
 import {getFirstOrNull} from "../../../utils";
 
 export default class ExtendedElectionDefault {
@@ -55,5 +54,4 @@ export default class ExtendedElectionDefault {
             return null;
         }
     }
-
 }

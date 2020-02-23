@@ -19,16 +19,8 @@ import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import React from "react";
 import * as Settings from './settings'
-import {getFirstOrNull} from "../../../../utils";
-import {
-    AREA_TYPE_COUNTING_CENTRE,
-    AREA_TYPE_COUNTRY,
-    AREA_TYPE_ELECTORAL_DISTRICT,
-    AREA_TYPE_POLLING_DIVISION
-} from "../../constants/AREA_TYPE";
 import ExtendedElectionDefault from "../extended-election-default";
 import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
-import {AreaEntity} from "../../../../services/tabulation-api/entities/area.entity";
 
 export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
 
