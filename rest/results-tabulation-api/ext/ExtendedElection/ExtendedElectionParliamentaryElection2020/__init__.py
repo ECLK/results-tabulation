@@ -14,6 +14,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
     ExtendedTallySheetVersion_PE_R1
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_V2 import \
     ExtendedTallySheetVersion_PE_CE_RO_V2
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_27 import \
+    ExtendedTallySheetVersion_PE_27
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Election, Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -36,7 +38,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         EXTENDED_TEMPLATE_MAP = {
             PE_CE_RO_V1: ExtendedTallySheetVersion_PE_CE_RO_V1,
             PE_R1: ExtendedTallySheetVersion_PE_R1,
-            PE_CE_RO_V2: ExtendedTallySheetVersion_PE_CE_RO_V2
+            PE_CE_RO_V2: ExtendedTallySheetVersion_PE_CE_RO_V2,
+            PE_27: ExtendedTallySheetVersion_PE_27
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
