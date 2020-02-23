@@ -1,5 +1,6 @@
 import React from "react";
 import TallySheetEdit from "../../tally-sheet/tally-sheet-edit";
+import {getFirstOrNull} from "../../../utils";
 
 export default class ExtendedElectionDefault {
     TALLY_SHEET_LIST_COLUMNS = {};
@@ -21,8 +22,17 @@ export default class ExtendedElectionDefault {
         return <div>TODO: Define the default election template.</div>
     }
 
-    mapRequiredAreasToTallySheet(tallySheet) {
-        return tallySheet
+    async mapRequiredAreasToTallySheet(tallySheet) {
+        const {areaMapList} = tallySheet;
+        const firstAreaMap = getFirstOrNull(areaMapList);
+        if (firstAreaMap) {
+            const {
+                countingCentreName = "", pollingDivisionName = "", electoralDistrictName = "", countryName = ""
+            } = firstAreaMap;
+            Object.assign(tallySheet, {countingCentreName, pollingDivisionName, electoralDistrictName, countryName});
+        }
+
+        return tallySheet;
     }
 
     getTallySheetListColumns(tallySheetCode) {
@@ -44,5 +54,4 @@ export default class ExtendedElectionDefault {
             return null;
         }
     }
-
 }

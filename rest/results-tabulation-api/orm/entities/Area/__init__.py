@@ -90,6 +90,12 @@ class AreaModel(db.Model):
     #     return [report for report in self.reports if report.reportCode is reportCode]
 
     @hybrid_property
+    def areaMapList(self):
+        extended_election = self.election.get_extended_election()
+
+        return extended_election.get_area_map(area=self)
+
+    @hybrid_property
     def pollingStations(self):
         return get_associated_areas(self, AreaTypeEnum.PollingStation)
 

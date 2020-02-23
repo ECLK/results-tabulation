@@ -22,6 +22,7 @@ import {
 import {isNumeric, processNumericValue} from "../../../utils";
 import {useTallySheetEdit} from "./index";
 import Processing from "../../processing";
+import {getAreas} from "../../../services/tabulation-api";
 
 export default function TallySheetEdit_CE_201({history, queryString, election, tallySheet, messages}) {
 
@@ -55,7 +56,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
         }
     });
 
-    const {pollingStations} = tallySheet.area;
+    const [pollingStations, setPollingStations] = useState([]);
 
 
     const handleNumValueChange = (areaId, templateRowType) => event => {
@@ -86,7 +87,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
     };
 
 
-    const setTallySheetContent = (tallySheetVersion) => {
+    const setTallySheetContent = async (tallySheetVersion) => {
         const _tallySheetRows = {...tallySheetRows};
 
         // Get the `templateRow` assigned to each type of tally sheet rows.
@@ -95,6 +96,20 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                 Object.assign(_tallySheetRows[templateRow.templateRowType].templateRow, templateRow)
             }
         }));
+
+        const pollingStations = await getAreas({associatedAreaId: tallySheet.areaId, areaType: "PollingStation"});
+        for (var i = 0; i < pollingStations.length; i++) {
+            const _pollingStation = pollingStations[i];
+            const _areaMapList = _pollingStation.areaMapList;
+            if (_areaMapList) {
+                _pollingStation.pollingDistricts = _areaMapList.map((areaMap) => {
+                    return {
+                        areaId: areaMap.pollingDistrictId,
+                        areaName: areaMap.pollingDistrictName
+                    }
+                });
+            }
+        }
 
         // Set default values to rows.
         pollingStations.map((pollingStation) => {
@@ -135,6 +150,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
             }
         }
 
+        setPollingStations(pollingStations);
         setTallySheetRows(_tallySheetRows);
     };
 

@@ -19,10 +19,10 @@ export const TALLY_SHEET_LIST_COLUMN_LABEL = {
 export const TALLY_SHEET_LIST_COLUMN_VALUE = {
     [TALLY_SHEET_LIST_COLUMN_STATUS]: (tallySheet) => tallySheet["tallySheetStatus"],
     [TALLY_SHEET_LIST_COLUMN_ACTIONS]: (tallySheet) => tallySheet["actions"],
-    [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: (tallySheet) => tallySheet["electoralDistrict"],
-    [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: (tallySheet) => tallySheet["pollingDivision"],
-    [TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: (tallySheet) => tallySheet["countingCentre"],
-    [TALLY_SHEET_LIST_COLUMN_COUNTRY]: (tallySheet) => tallySheet["country"],
+    [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: (tallySheet) => tallySheet["electoralDistrictName"],
+    [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: (tallySheet) => tallySheet["pollingDivisionName"],
+    [TALLY_SHEET_LIST_COLUMN_COUNTING_CENTRE]: (tallySheet) => tallySheet["countingCentreName"],
+    [TALLY_SHEET_LIST_COLUMN_COUNTRY]: (tallySheet) => tallySheet["countryName"],
     [TALLY_SHEET_LIST_COLUMN_PARTY]: (tallySheet) => {
         return tallySheet.election.partyMap[tallySheet.metaDataMap["partyId"]].partyName;
     },
