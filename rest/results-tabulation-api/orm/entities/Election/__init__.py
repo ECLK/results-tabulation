@@ -21,7 +21,7 @@ class ElectionModel(db.Model):
     electionTemplateName = db.Column(db.String(100), nullable=False)
     isListed = db.Column(db.Boolean, nullable=False, default=False)
 
-    _parties = relationship("ElectionPartyModel")
+    parties = relationship("ElectionPartyModel")
     _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
     subElections = relationship("ElectionModel", foreign_keys=[parentElectionId])
     rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId])
@@ -91,14 +91,6 @@ class ElectionModel(db.Model):
         # TODO
 
         return [subElection.electionId for subElection in self.subElections]
-
-    @hybrid_property
-    def parties(self):
-        return self._parties
-        # if self.parentElectionId is None:
-        #     return self._parties
-        # else:
-        #     return self.parentElection.parties
 
     @hybrid_property
     def invalidVoteCategories(self):
@@ -254,9 +246,3 @@ def get_by_id(electionId):
     ).one_or_none()
 
     return result
-
-
-def create_tally_sheets(electionId, electionType):
-    election = get_by_id(electionId=electionId)
-
-    # if electionType == "Precidential":

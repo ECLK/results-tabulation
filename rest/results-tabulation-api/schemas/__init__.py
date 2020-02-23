@@ -164,7 +164,8 @@ class AreaSchema(ma.ModelSchema):
             "areaType",
             "electionId",
             "parents",
-            "children"
+            "children",
+            "areaMapList"
         )
 
         model = Area.Model
@@ -177,6 +178,21 @@ class AreaSchema(ma.ModelSchema):
     # parents = ma.Nested('self', only="areaId", many=True)
     children = ma.Nested('AreaAreaSchema', only="childAreaId", many=True)
     parents = ma.Nested('AreaAreaSchema', only="parentAreaId", many=True)
+    areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
+
+
+class AreaMapSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "pollingStationId",
+            "pollingStationName",
+            "countingCentreId",
+            "countingCentreName",
+            "pollingDivisionId",
+            "pollingDivisionName",
+            "electoralDistrictId",
+            "electoralDistrictName"
+        )
 
 
 class AreaAreaSchema(ma.ModelSchema):
@@ -340,6 +356,7 @@ class TallySheetSchema(ma.ModelSchema):
             "template",
             "electionId",
             "areaId",
+            "area",
             "latestVersionId",
             "latestStamp",
             "lockedVersionId",

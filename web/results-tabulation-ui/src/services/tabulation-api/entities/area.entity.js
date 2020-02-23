@@ -48,33 +48,33 @@ export class AreaEntity extends Entity {
         super("area");
     }
 
-    async buildAreaParentsAndChildren() {
-        const areaIdList = this.list();
-        const areaMap = this.map();
-
-        for (let j = 0; j < areaIdList.length; j++) {
-            const areaId = areaIdList[j];
-            const area = areaMap[areaId];
-
-            if (area.built) {
-                continue;
-            } else {
-                area.built = true;
-            }
-
-            for (let i = 0; i < area.parents.length; i++) {
-                const parentArea = await this.getById(area.parents[i]);
-                appendChildArea(area, parentArea);
-                appendChildArea(parentArea, area);
-            }
-
-            for (let i = 0; i < area.children.length; i++) {
-                const childArea = await this.getById(area.children[i]);
-                appendChildArea(area, childArea);
-                appendChildArea(childArea, area);
-            }
-        }
-    }
+    // async buildAreaParentsAndChildren() {
+    //     const areaIdList = this.list();
+    //     const areaMap = this.map();
+    //
+    //     for (let j = 0; j < areaIdList.length; j++) {
+    //         const areaId = areaIdList[j];
+    //         const area = areaMap[areaId];
+    //
+    //         if (area.built) {
+    //             continue;
+    //         } else {
+    //             area.built = true;
+    //         }
+    //
+    //         for (let i = 0; i < area.parents.length; i++) {
+    //             const parentArea = await this.getById(area.parents[i]);
+    //             appendChildArea(area, parentArea);
+    //             appendChildArea(parentArea, area);
+    //         }
+    //
+    //         for (let i = 0; i < area.children.length; i++) {
+    //             const childArea = await this.getById(area.children[i]);
+    //             appendChildArea(area, childArea);
+    //             appendChildArea(childArea, area);
+    //         }
+    //     }
+    // }
 
     async fetchAndPush(areaId) {
         let area = await super.getById(areaId);
@@ -109,15 +109,24 @@ export class AreaEntity extends Entity {
         return area;
     }
 
-    async getAreas(electionId = null, associatedAreaId = null, areaType = null) {
-        const areas = await tabulationApi.getAreas({electionId, associatedAreaId, areaType});
-
-        for (let i = 0; i < areas.length; i++) {
-            const area = areas[i];
-            area.built = false;
-            this.push(area, "areaId");
+    async getById(areaId) {
+        let area = await super.getById(areaId);
+        if (!area) {
+            area = await this.fetchAndPush(areaId);
         }
 
-        return areas
+        return area
     }
+
+    // async getAreas(electionId = null, associatedAreaId = null, areaType = null) {
+    //     const areas = await tabulationApi.getAreas({electionId, associatedAreaId, areaType});
+    //
+    //     for (let i = 0; i < areas.length; i++) {
+    //         const area = areas[i];
+    //         area.built = false;
+    //         this.push(area, "areaId");
+    //     }
+    //
+    //     return areas
+    // }
 }
