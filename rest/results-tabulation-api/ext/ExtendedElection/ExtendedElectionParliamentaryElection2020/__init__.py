@@ -41,7 +41,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             PE_CE_RO_V1: ExtendedTallySheetVersion_PE_CE_RO_V1,
             PE_R1: ExtendedTallySheetVersion_PE_R1,
             PE_CE_RO_V2: ExtendedTallySheetVersion_PE_CE_RO_V2,
-            PE_27: ExtendedTallySheetVersion_PE_27
+            PE_27: ExtendedTallySheetVersion_PE_27,
+            PE_4: ExtendedTallySheetVersion_PE_4
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
