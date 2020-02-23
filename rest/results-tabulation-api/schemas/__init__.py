@@ -186,6 +186,8 @@ class AreaMapSchema(ma.ModelSchema):
         fields = (
             "pollingStationId",
             "pollingStationName",
+            "pollingDistrictId",
+            "pollingDistrictName",
             "countingCentreId",
             "countingCentreName",
             "pollingDivisionId",

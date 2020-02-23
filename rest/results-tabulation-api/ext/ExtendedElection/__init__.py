@@ -95,7 +95,7 @@ class ExtendedElection:
             ],
             AreaTypeEnum.PollingStation: [
                 "pollingDistrictId",
-                "pollingDistrictName"
+                "pollingDistrictName",
                 "pollingStationId",
                 "pollingStationName",
                 "countingCentreId",
