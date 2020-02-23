@@ -117,7 +117,7 @@ async function refactorTallySheetObject(tallySheet) {
 
     tallySheet.tallySheetStatus = tallySheetStatus;
     tallySheet.readyToLock = readyToLock;
-    tallySheet.area = await areaEntity.getById(tallySheet.areaId);
+    // tallySheet.area = await areaEntity.getById(tallySheet.areaId);
     tallySheet.election = await electionEntity.getById(tallySheet.electionId);
 
     tallySheet.metaDataMap = {};

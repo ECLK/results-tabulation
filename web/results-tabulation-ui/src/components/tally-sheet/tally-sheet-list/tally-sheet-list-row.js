@@ -47,18 +47,19 @@ export default function TallySheetListRow(
     if (hasFilterMatch()) {
         return <TableRow key={tallySheetListRow.tallySheetId}>
             {columns.map((column) => {
+                let columnCellContent = null;
                 if (column == TALLY_SHEET_LIST_COLUMN_ACTIONS) {
-                    return <TableCell align="center">
-                        {actions.map((action, actionIndex) => {
-                            return <TallySheetListRowAction
-                                key={actionIndex} tallySheetListRow={tallySheetListRow}
-                                electionId={electionId} history={history} action={action}
-                            />
-                        })}
-                    </TableCell>
+                    columnCellContent = actions.map((action, actionIndex) => {
+                        return <TallySheetListRowAction
+                            key={actionIndex} tallySheetListRow={tallySheetListRow}
+                            electionId={electionId} history={history} action={action}
+                        />
+                    });
                 } else {
-                    return <TableCell align="center">{tallySheetListRow[column]}</TableCell>
+                    columnCellContent = tallySheetListRow[column];
                 }
+
+                return <TableCell align="center">{columnCellContent}</TableCell>
             })}
         </TableRow>
     } else {

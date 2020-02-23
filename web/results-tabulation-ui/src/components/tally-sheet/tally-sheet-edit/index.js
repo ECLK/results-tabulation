@@ -45,20 +45,25 @@ export function useTallySheetEdit(props) {
     const {tallySheetId, tallySheetCode} = tallySheet;
     const {electionId} = election;
 
-    useEffect(() => {
+    const init = async () => {
         setProcessing(true);
         if (tallySheet.latestVersionId) {
-            tabulationApi.getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheet.latestVersionId).then((tallySheetVersion) => {
-                setTallySheetContent(tallySheetVersion);
+            try {
+                const tallySheetVersion = await tabulationApi.getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheet.latestVersionId);
+                await setTallySheetContent(tallySheetVersion);
                 setProcessing(false);
-            }).catch((error) => {
+            } catch (error) {
                 messages.push("Error", MESSAGES_EN.error_tallysheet_not_reachable, MESSAGE_TYPES.ERROR);
                 setProcessing(false);
-            })
+            }
         } else {
             setTallySheetContent(tallySheetVersion);
             setProcessing(false);
         }
+    };
+
+    useEffect(() => {
+        init();
     }, []);
 
     const handleClickBackToEdit = (body) => async (event) => {
