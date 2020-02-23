@@ -16,6 +16,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
     ExtendedTallySheetVersion_PE_CE_RO_V2
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_27 import \
     ExtendedTallySheetVersion_PE_27
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_4 import \
+    ExtendedTallySheetVersion_PE_4
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Election, Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -728,7 +730,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
-                            "electionId": election.electionId
+                            "electionId": ordinary_election.electionId
                         }).metaId
                     )
                 ]
@@ -740,7 +742,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
-                            "electionId": election.electionId
+                            "electionId": ordinary_election.electionId
                         }).metaId
                     ))
 
@@ -748,7 +750,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     template=tally_sheet_template_ce_201, electionId=ordinary_election.electionId, areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": election.electionId
+                        "electionId": ordinary_election.electionId
                     }).metaId
                 ))
 
