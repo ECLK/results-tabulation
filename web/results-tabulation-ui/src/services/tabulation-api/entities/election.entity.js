@@ -1,22 +1,14 @@
 import {ENDPOINT_PATH_ELECTIONS_BY_ID, request} from "../index";
 import Entity from "./entity";
-// import {AreaEntity} from "./area.entity";
-
 
 export class ElectionEntity extends Entity {
     constructor() {
         super("election");
-        // this.areas = new AreaEntity();
     }
-
-    // async setAreas(election) {
-    //     await this.areas.getAreas(election.electionId);
-    // }
 
     async push(obj, pk) {
         const election = await super.push(obj, pk);
         this.buildPartiesAndCandidates(election);
-        // await this.setAreas(election);
 
         return election;
     }
@@ -72,10 +64,6 @@ export class ElectionEntity extends Entity {
             const parentElectionId = parentElection.electionId;
             Object.assign(parentElection, await this.getById(parentElectionId, false))
         }
-
-        // if (election.rootElection.electionId === election.electionId) {
-        //     await this.areas.buildAreaParentsAndChildren();
-        // }
 
         return election;
     }

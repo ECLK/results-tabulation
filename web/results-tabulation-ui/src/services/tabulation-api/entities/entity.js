@@ -1,6 +1,5 @@
 import getCache from "../cache";
 
-
 export default class Entity {
     constructor(entityId) {
         const cache = getCache();
