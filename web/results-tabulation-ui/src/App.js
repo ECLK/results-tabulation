@@ -15,19 +15,19 @@ import TallySheetView from "./pages/tally-sheet-view";
 export const ROUTER_PREFIX = "";
 export const PATH_ELECTION = () => `${ROUTER_PREFIX}/election`;
 export const PATH_ELECTION_BY_ID = (electionId) => `${ROUTER_PREFIX}/election/${electionId}`;
-export const PATH_ELECTION_TALLY_SHEET_LIST = (electionId, tallySheetCode = null) => {
-    let path = `${ROUTER_PREFIX}/election/${electionId}/tally-sheet`;
+export const PATH_ELECTION_TALLY_SHEET_LIST = (electionId = null, tallySheetCode = null, voteType = null) => {
+    let path = `${ROUTER_PREFIX}/tally-sheet`;
     if (tallySheetCode) {
         path += `?tallySheetCode=${tallySheetCode}&`;
     }
+    if (electionId) {
+        path += `electionId=${electionId}&`;
+    }
+    if (voteType) {
+        path += `voteType=${voteType}&`;
+    }
 
     return path;
-};
-export const PATH_ELECTION_VERIFICATION = (electionId, tallySheetCode) => {
-    return `${ROUTER_PREFIX}/election/${electionId}/verification?tallySheetCode=${tallySheetCode}`;
-};
-export const PATH_ELECTION_VERIFICATION_EDIT = (electionId, tallySheetId) => {
-    return `${ROUTER_PREFIX}/election/${electionId}/verification/${tallySheetId}`;
 };
 export const PATH_ELECTION_RESULTS_RELEASE = (electionId, tallySheetCode) => {
     let path = `${ROUTER_PREFIX}/election/${electionId}/release`;
@@ -43,8 +43,8 @@ export const PATH_ELECTION_RESULTS_RELEASE_VIEW = (electionId, tallySheetId) => 
     return `${ROUTER_PREFIX}/election/${electionId}/release/${tallySheetId}`;
 };
 
-export const PATH_ELECTION_TALLY_SHEET_VIEW = (electionId, tallySheetId, tallySheetVersionId) => {
-    let path = `${ROUTER_PREFIX}/election/${electionId}/tally-sheet/${tallySheetId}`;
+export const PATH_ELECTION_TALLY_SHEET_VIEW = (tallySheetId, tallySheetVersionId) => {
+    let path = `${ROUTER_PREFIX}/tally-sheet/${tallySheetId}`;
     if (tallySheetVersionId) {
         path += `/${tallySheetVersionId}`
     }
@@ -82,12 +82,12 @@ function App() {
                 />
                 <ElectionProtectedRoute
                     exact
-                    path={PATH_ELECTION_TALLY_SHEET_LIST(":electionId")}
+                    path={PATH_ELECTION_TALLY_SHEET_LIST()}
                     component={TallySheetListView}
                 />
                 <TallySheetProtectedRoute
                     exact
-                    path={PATH_ELECTION_TALLY_SHEET_VIEW(":electionId", ":tallySheetId", ":tallySheetVersionId?")}
+                    path={PATH_ELECTION_TALLY_SHEET_VIEW(":tallySheetId", ":tallySheetVersionId?")}
                     component={TallySheetView}
                 />
                 <ElectionProtectedRoute

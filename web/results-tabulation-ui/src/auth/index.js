@@ -145,8 +145,10 @@ function LoadTallySheetAndThen(props) {
 
     const fetchData = async () => {
         try {
-            setElection(await getElectionById(electionId));
-            setTallySheet(await getTallySheetById(tallySheetId));
+            const _tallySheet = await getTallySheetById(tallySheetId);
+            const _election = await getElectionById(_tallySheet.electionId);
+            setTallySheet(_tallySheet);
+            setElection(_election);
         } catch (error) {
             console.log(error.stack);
             setError(true);
@@ -182,8 +184,11 @@ export class ElectionProtectedRoute extends Component {
         return <ProtectedRoute
             {...this.props}
             component={(props) => {
-                const {electionId} = props.match.params;
+                let {electionId} = props.match.params;
                 const queryString = getQueryStringObject(this.props.location.search);
+                if (!electionId) {
+                    electionId = queryString.electionId;
+                }
                 return <LoadElectionAndThen
                     electionId={electionId}
                     then={(electionProps) => {
@@ -208,9 +213,8 @@ export class TallySheetProtectedRoute extends Component {
         return <ProtectedRoute
             {...this.props}
             component={(props) => {
-                const {electionId, tallySheetId} = props.match.params;
+                const {tallySheetId} = props.match.params;
                 return <LoadTallySheetAndThen
-                    electionId={electionId}
                     tallySheetId={tallySheetId}
                     then={(election, tallySheet) => {
                         return <this.props.component

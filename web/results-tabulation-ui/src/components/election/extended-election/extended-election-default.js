@@ -35,9 +35,7 @@ export default class ExtendedElectionDefault {
         return tallySheet;
     }
 
-    getTallySheetListColumns(tallySheetCode) {
-        const {voteType} = this.election;
-
+    getTallySheetListColumns(tallySheetCode, voteType) {
         if (this.TALLY_SHEET_LIST_COLUMNS[tallySheetCode]) {
             return this.TALLY_SHEET_LIST_COLUMNS[tallySheetCode][voteType];
         } else {
@@ -45,9 +43,7 @@ export default class ExtendedElectionDefault {
         }
     }
 
-    getTallySheetListActions(tallySheetCode) {
-        const {voteType} = this.election;
-
+    getTallySheetListActions(tallySheetCode, voteType) {
         if (this.TALLY_SHEET_LIST_ACTIONS[tallySheetCode]) {
             return this.TALLY_SHEET_LIST_ACTIONS[tallySheetCode][voteType];
         } else {

@@ -8,24 +8,24 @@ import {PATH_ELECTION_TALLY_SHEET_LIST} from "../App";
 
 export default function TallySheetListView({history, queryString, election}) {
     const extendedElection = ExtendedElection(election);
-    const {tallySheetCode} = queryString;
+    const {tallySheetCode, voteType} = queryString;
 
-    const props = {history, election, tallySheetCode};
+    const props = {history, election, tallySheetCode, voteType};
 
-    const columns = extendedElection.getTallySheetListColumns(tallySheetCode);
+    const columns = extendedElection.getTallySheetListColumns(tallySheetCode, voteType);
     if (columns) {
         props.columns = columns
     }
 
-    const actions = extendedElection.getTallySheetListActions(tallySheetCode);
+    const actions = extendedElection.getTallySheetListActions(tallySheetCode, voteType);
     if (actions) {
         props.actions = actions
     }
 
     const additionalBreadCrumbLinks = [
         {
-            label: getTallySheetCodeStr({tallySheetCode, election: election}).toLowerCase(),
-            to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode)
+            label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase(),
+            to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode, voteType)
         }
     ];
 

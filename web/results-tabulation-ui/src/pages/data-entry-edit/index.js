@@ -9,11 +9,11 @@ import TabulationPage from "../index";
 
 export default function DataEntryEdit({history, queryString, election, tallySheet, messages}) {
     const {tallySheetCode} = tallySheet;
-    const {electionId, rootElection} = election;
+    const {electionId, rootElection, voteType} = election;
     const additionalBreadCrumbLinks = [
         {
-            label: getTallySheetCodeStr(tallySheet).toLowerCase(),
-            to: PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode)
+            label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase(),
+            to: PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)
         },
         {
             label: tallySheet.area.areaName,
@@ -32,7 +32,9 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
         <div className="page-content">
             <div className="data-entry-edit-header">
                 <div className="data-entry-edit-header-election-name">{rootElection.electionName}</div>
-                <div className="data-entry-edit-header-tally-sheet-code">{getTallySheetCodeStr(tallySheet)}</div>
+                <div className="data-entry-edit-header-tally-sheet-code">
+                    {getTallySheetCodeStr({tallySheetCode, voteType})}
+                </div>
             </div>
             <div>{tallySheet.electoralDistrict ? 'Electoral District: ' + tallySheet.electoralDistrict.areaName : null}
                 {tallySheet.pollingDivision ? ' > Polling Division: ' + tallySheet.pollingDivision.areaName : null}
