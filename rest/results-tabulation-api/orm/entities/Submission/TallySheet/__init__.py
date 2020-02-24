@@ -501,26 +501,22 @@ def _get_electoral_district_name(polling_division):
 
 
 def get_by_id(tallySheetId, tallySheetCode=None):
-    query = Model.query.join(
-        Submission.Model,
-        Submission.Model.submissionId == Model.tallySheetId
-    ).join(
-        Template.Model,
-        Template.Model.templateId == Model.templateId
-    ).filter(
-        Model.tallySheetId == tallySheetId
-    )
-
-    if tallySheetCode is not None:
-        query = query.filter(Template.Model.templateName == tallySheetCode)
-
     # Filter by authorized areas
     user_access_area_ids: Set[int] = get_user_access_area_ids()
-    query = query.filter(Submission.Model.areaId.in_(user_access_area_ids))
 
-    result = query.one_or_none()
+    query_args = [TallySheetModel]
+    query_filters = [
+        TallySheetModel.tallySheetId == tallySheetId,
+        Submission.Model.areaId.in_(user_access_area_ids),
+        Template.Model.templateId == Model.templateId,
+        Submission.Model.submissionId == Model.tallySheetId
+    ]
+    query_group_by = [Model.tallySheetId]
 
-    return result
+    if tallySheetCode is not None:
+        query_filters.append(Template.Model.templateName == tallySheetCode)
+
+    return db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by).one_or_none()
 
 
 def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
