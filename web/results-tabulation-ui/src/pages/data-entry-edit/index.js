@@ -17,7 +17,7 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
         },
         {
             label: tallySheet.area.areaName,
-            to: PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheet.tallySheetId)
+            to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
         }
     ];
 
