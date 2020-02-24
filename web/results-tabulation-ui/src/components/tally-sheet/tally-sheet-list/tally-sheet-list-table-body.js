@@ -21,6 +21,7 @@ export default function TallySheetListTableBody(
     {
         history,
         tallySheetCode,
+        voteType,
         election,
         columns = [
             TALLY_SHEET_LIST_COLUMN_STATUS,
@@ -42,7 +43,7 @@ export default function TallySheetListTableBody(
 
 
     useEffect(() => {
-        getTallySheet({electionId, tallySheetCode}).then((tallySheets) => {
+        getTallySheet({electionId, tallySheetCode, voteType}).then((tallySheets) => {
             setTallySheetListRows(tallySheets.map((tallySheet) => {
                 tallySheet = {...tallySheet};
 

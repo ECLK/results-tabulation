@@ -14,6 +14,7 @@ export default function TallySheetList(
     {
         history,
         tallySheetCode,
+        voteType,
         election,
         columns = [
             TALLY_SHEET_LIST_COLUMN_STATUS,
@@ -31,7 +32,7 @@ export default function TallySheetList(
 
     return <div className="page-content">
         <div>{rootElection.electionName}</div>
-        <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
+        <div>{getTallySheetCodeStr({tallySheetCode, voteType})}</div>
         <Table aria-label="simple table">
             <TallySheetListTableHead
                 columns={columns}
@@ -40,6 +41,7 @@ export default function TallySheetList(
             <TallySheetListTableBody
                 history={history}
                 tallySheetCode={tallySheetCode}
+                voteType={voteType}
                 election={election}
                 columns={columns}
                 columnMetaMap={columnMetaMap}

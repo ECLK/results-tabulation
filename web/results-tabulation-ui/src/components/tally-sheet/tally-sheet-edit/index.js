@@ -43,7 +43,7 @@ export function useTallySheetEdit(props) {
     const [saved, setSaved] = useState(false);
 
     const {tallySheetId, tallySheetCode} = tallySheet;
-    const {electionId} = election;
+    const {electionId, voteType} = election;
 
     const init = async () => {
         setProcessing(true);
@@ -99,7 +99,7 @@ export function useTallySheetEdit(props) {
 
             messages.push("Success", MESSAGES_EN.success_pre41_submit, MESSAGE_TYPES.SUCCESS);
             setTimeout(() => {
-                history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode));
+                history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType));
             }, 1000)
         } catch (e) {
             messages.push("Error", MESSAGES_EN.error_tallysheet_submit, MESSAGE_TYPES.ERROR);

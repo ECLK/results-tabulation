@@ -1,9 +1,7 @@
 from typing import Set
-
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-
 from app import db
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access
 from constants.AUTH_CONSTANTS import ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK
@@ -22,7 +20,7 @@ from orm.entities.Election import ElectionCandidate
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, or_
 
 from util import get_dict_key_value_or_none
 
@@ -41,6 +39,7 @@ class TallySheetModel(db.Model):
     meta = relationship(Meta.Model, foreign_keys=[metaId])
 
     electionId = association_proxy("submission", "electionId")
+    election = association_proxy("submission", "election")
     areaId = association_proxy("submission", "areaId")
     area = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
@@ -502,58 +501,51 @@ def _get_electoral_district_name(polling_division):
 
 
 def get_by_id(tallySheetId, tallySheetCode=None):
-    query = Model.query.join(
-        Submission.Model,
-        Submission.Model.submissionId == Model.tallySheetId
-    ).join(
-        Template.Model,
-        Template.Model.templateId == Model.templateId
-    ).filter(
-        Model.tallySheetId == tallySheetId
-    )
-
-    if tallySheetCode is not None:
-        query = query.filter(Template.Model.templateName == tallySheetCode)
-
     # Filter by authorized areas
     user_access_area_ids: Set[int] = get_user_access_area_ids()
-    query = query.filter(Submission.Model.areaId.in_(user_access_area_ids))
 
-    result = query.one_or_none()
-
-    return result
-
-
-def get_all(electionId=None, areaId=None, tallySheetCode=None):
-    election = Election.get_by_id(electionId=electionId)
-
-    query = Model.query.join(
-        Submission.Model,
+    query_args = [TallySheetModel]
+    query_filters = [
+        TallySheetModel.tallySheetId == tallySheetId,
+        Submission.Model.areaId.in_(user_access_area_ids),
+        Template.Model.templateId == Model.templateId,
         Submission.Model.submissionId == Model.tallySheetId
-    ).join(
-        Template.Model,
-        Template.Model.templateId == Model.templateId
-    ).join(
-        Election.Model,
-        Election.Model.electionId == Submission.Model.electionId
-    )
+    ]
+    query_group_by = [Model.tallySheetId]
 
-    if electionId is not None:
-        query = query.filter(
-            Election.Model.electionId.in_(election.mappedElectionIds)
-        )
+    if tallySheetCode is not None:
+        query_filters.append(Template.Model.templateName == tallySheetCode)
+
+    return db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by).one_or_none()
+
+
+def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
+    # Filter by authorized areas
+    user_access_area_ids: Set[int] = get_user_access_area_ids()
+
+    query_args = [Model]
+    query_filters = [
+        Submission.Model.areaId.in_(user_access_area_ids),
+        Template.Model.templateId == Model.templateId,
+        Submission.Model.submissionId == Model.tallySheetId,
+        Election.Model.electionId == Submission.Model.electionId
+    ]
+    query_group_by = [Model.tallySheetId]
 
     if areaId is not None:
-        query = query.filter(Submission.Model.areaId == areaId)
+        query_filters.append(Submission.Model.areaId == areaId)
+
+    if electionId is not None:
+        election = Election.get_by_id(electionId=electionId)
+        query_filters.append(Election.Model.electionId.in_(election.get_this_and_below_election_ids()))
 
     if tallySheetCode is not None:
-        query = query.filter(Template.Model.templateName == tallySheetCode)
+        query_filters.append(Template.Model.templateName == tallySheetCode)
 
-    # Filter by authorized areas
-    user_access_area_ids: Set[int] = get_user_access_area_ids()
-    query = query.filter(Submission.Model.areaId.in_(user_access_area_ids))
+    if voteType is not None:
+        query_filters.append(Election.Model.voteType == voteType)
 
-    return query
+    return db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by)
 
 
 def create(template, electionId, areaId, metaId):

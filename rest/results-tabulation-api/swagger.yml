@@ -2156,6 +2156,11 @@ paths:
           in: query
           schema:
             type: string
+        - name: voteType
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation.

@@ -19,7 +19,7 @@ export default function TallySheetListRowActionEnterOrEdit({history, electionId,
         variant="outlined" color="default"
         size="small"
         disabled={disabled}
-        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetListRow.tallySheetId))}
+        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetListRow.tallySheetId))}
     >
         {buttonText}
     </Button>

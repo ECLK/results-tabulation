@@ -17,7 +17,7 @@ import TabulationPage from "./index";
 
 export default function ReportView(props) {
     const {history, election, messages} = props;
-    const {electionId, rootElection} = election;
+    const {electionId, rootElection, voteType} = election;
     const [tallySheet, setTallySheet] = useState(props.tallySheet);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState(null);
@@ -80,7 +80,7 @@ export default function ReportView(props) {
             setTallySheet(tallySheet);
             messages.push("Success", MESSAGES_EN.success_report_editable, MESSAGE_TYPES.SUCCESS);
             setTimeout(() => {
-                history.push(PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetId))
+                history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId))
             }, 500)
         } catch (e) {
             messages.push("Error", MESSAGES_EN.error_updating_report, MESSAGE_TYPES.ERROR);
@@ -131,7 +131,7 @@ export default function ReportView(props) {
     function getTallySheetListLink() {
         const {tallySheetCode} = tallySheet;
 
-        return PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode)
+        return PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)
     }
 
 
@@ -141,19 +141,19 @@ export default function ReportView(props) {
 
         const additionalBreadCrumbLinks = [
             {
-                label: getTallySheetCodeStr({tallySheetCode, election: election}).toLowerCase(),
+                label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase(),
                 to: getTallySheetListLink()
             },
             {
                 label: areaName.toLowerCase(),
-                to: PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetId)
+                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId)
             }
         ];
 
         return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
             <div className="page-content">
                 <div>{rootElection.electionName}</div>
-                <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
+                <div>{getTallySheetCodeStr({tallySheetCode, voteType})}</div>
 
 
                 <div className="report-view-status">

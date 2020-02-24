@@ -6,7 +6,7 @@ export default function TallySheetListRowActionView({history, electionId, tallyS
     return <Button
         variant="outlined" color="default"
         size="small"
-        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetListRow.tallySheetId))}
+        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetListRow.tallySheetId))}
     >
         View
     </Button>

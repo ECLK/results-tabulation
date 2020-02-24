@@ -16,7 +16,7 @@ import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
 export default function TallySheetEdit_PRE_34_CO({history, queryString, election, tallySheet, messages}) {
     const {tallySheetCode} = tallySheet;
-    const {electionId} = election;
+    const {electionId, voteType} = election;
     const [candidateIds, setCandidateIds] = useState([]);
     const [candidateWiseCounts, setCandidateWiseCounts] = useState({});
     const [summary, setSummary] = useState([]);
@@ -28,7 +28,7 @@ export default function TallySheetEdit_PRE_34_CO({history, queryString, election
         if (qualifiedParties.length === 0) {
             messages.push("Error", MESSAGES_EN.error_preferences_not_enabled_yet, MESSAGE_TYPES.ERROR);
             // setTimeout(() => {
-            history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode));
+            history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType));
             //}, 5000);
         }
 

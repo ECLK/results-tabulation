@@ -8,13 +8,12 @@ from jose import jwt
 
 
 def get_root_token(electionId):
-    electoral_districts = Area.Model.query.filter(
-        Area.Model.areaType == AreaTypeEnum.ElectoralDistrict,
-        Area.Model.electionId == electionId
+    electoral_districts = Area.get_associated_areas_query(
+        areas=[], areaType=AreaTypeEnum.ElectoralDistrict, electionId=electionId
     ).all()
-    countries = Area.Model.query.filter(
-        Area.Model.areaType == AreaTypeEnum.Country,
-        Area.Model.electionId == electionId
+
+    countries = Area.get_associated_areas_query(
+        areas=[], areaType=AreaTypeEnum.Country, electionId=electionId
     ).all()
 
     jwt_payload = {

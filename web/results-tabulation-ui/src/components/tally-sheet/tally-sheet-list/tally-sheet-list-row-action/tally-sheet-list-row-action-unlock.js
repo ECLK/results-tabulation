@@ -9,7 +9,7 @@ export default function TallySheetListRowActionUnlock({history, electionId, tall
         disabled={tallySheetListRow.lockedVersionId === null}
         size="small"
         disabled={!(tallySheetListRow.tallySheetStatus === TALLY_SHEET_STATUS_ENUM.VERIFIED)}
-        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetListRow.tallySheetId))}
+        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetListRow.tallySheetId))}
     >
         Unlock
     </Button>

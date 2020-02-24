@@ -13,11 +13,12 @@ from util import RequestBody, get_paginated_query, result_push_service
 
 
 @authorize(required_roles=ALL_ROLES)
-def getAll(electionId=None, areaId=None, tallySheetCode=None):
+def getAll(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
     result = TallySheet.get_all(
         electionId=electionId,
         areaId=areaId,
-        tallySheetCode=tallySheetCode
+        tallySheetCode=tallySheetCode,
+        voteType=voteType
     )
 
     result = get_paginated_query(result).all()

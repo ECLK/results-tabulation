@@ -8,7 +8,7 @@ export default function TallySheetListRowActionVerify({history, electionId, tall
         variant="outlined" color="default"
         disabled={!(tallySheetListRow.tallySheetStatus === TALLY_SHEET_STATUS_ENUM.SUBMITTED)}
         size="small"
-        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetListRow.tallySheetId))}
+        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetListRow.tallySheetId))}
     >
         Verify
     </Button>

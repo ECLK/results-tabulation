@@ -184,22 +184,30 @@ def authenticate(func, *args, **kwargs):
 def _get_role_area_ids(parentAreaIds, areaType, voteTypes=[]):
     from orm.entities import Area, Election
 
-    parentAreas = db.session.query(Area.Model).filter(Area.Model.areaId.in_(parentAreaIds)).all()
-    associated_areas_subquery = Area.get_associated_areas_query(
-        areas=parentAreas,
-        areaType=areaType
-    ).subquery()
+    _role_area_ids = []
 
-    query = db.session.query(
-        associated_areas_subquery.c.areaId
-    ).filter(
-        Election.Model.electionId == associated_areas_subquery.c.electionId
-    )
+    if parentAreaIds is not None and len(parentAreaIds) > 0:
+        parentAreas = db.session.query(Area.Model).filter(Area.Model.areaId.in_(parentAreaIds)).all()
+        associated_areas_subquery = Area.get_associated_areas_query(
+            areas=parentAreas,
+            areaType=areaType
+        ).subquery()
 
-    if len(voteTypes) > 0:
-        query = query.filter(Election.Model.voteType.in_(voteTypes))
+        query = db.session.query(
+            associated_areas_subquery.c.areaId
+        )
 
-    return query.all()
+        if len(voteTypes) > 0:
+            query = query.filter(
+                Election.Model.electionId == associated_areas_subquery.c.electionId,
+                Election.Model.voteType.in_(voteTypes)
+            )
+
+        _role_area_ids = query.group_by(
+            associated_areas_subquery.c.areaId
+        ).all()
+
+    return _role_area_ids
 
 
 @decorator

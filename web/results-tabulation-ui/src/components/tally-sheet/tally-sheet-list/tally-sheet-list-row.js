@@ -46,7 +46,7 @@ export default function TallySheetListRow(
 
     if (hasFilterMatch()) {
         return <TableRow key={tallySheetListRow.tallySheetId}>
-            {columns.map((column) => {
+            {columns.map((column, columnIndex) => {
                 let columnCellContent = null;
                 if (column == TALLY_SHEET_LIST_COLUMN_ACTIONS) {
                     columnCellContent = actions.map((action, actionIndex) => {
@@ -59,7 +59,7 @@ export default function TallySheetListRow(
                     columnCellContent = tallySheetListRow[column];
                 }
 
-                return <TableCell align="center">{columnCellContent}</TableCell>
+                return <TableCell key={columnIndex} align="center">{columnCellContent}</TableCell>
             })}
         </TableRow>
     } else {

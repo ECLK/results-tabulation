@@ -35,7 +35,7 @@ import TabulationPage from "../index";
 
 export default function ReleaseList({history, queryString, election}) {
     const {electionId, electionName} = election;
-    const {tallySheetCode} = queryString;
+    const {tallySheetCode, voteType} = queryString;
 
     const [tallySheets, setTallySheets] = useState([]);
     const [proofStatuses, setProofStatuses] = useState([]);
@@ -51,7 +51,7 @@ export default function ReleaseList({history, queryString, election}) {
 
     const additionalBreadCrumbLinks = [
         {
-            label: getTallySheetCodeStr({tallySheetCode, election: election}).toLowerCase() + " release",
+            label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase() + " release",
             to: PATH_ELECTION_BY_ID(electionId)
             // TODO: should be PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode)
         }
@@ -314,7 +314,7 @@ export default function ReleaseList({history, queryString, election}) {
     return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
         <div className="page-content">
             <div>{electionName}</div>
-            <div>{getTallySheetCodeStr({tallySheetCode, election: election})}</div>
+            <div>{getTallySheetCodeStr({tallySheetCode, voteType})}</div>
             {getTallySheetListJsx()}
         </div>
     </TabulationPage>

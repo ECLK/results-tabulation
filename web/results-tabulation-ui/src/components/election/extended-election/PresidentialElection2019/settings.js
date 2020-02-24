@@ -21,8 +21,7 @@ import {
 } from "./TALLY_SHEET_CODE";
 import {
     VOTE_TYPE_NON_POSTAL,
-    VOTE_TYPE_POSTAL,
-    VOTE_TYPE_POSTAL_AND_NON_POSTAL
+    VOTE_TYPE_POSTAL
 } from "../../constants/VOTE_TYPE";
 import {
     TALLY_SHEET_LIST_ROW_ACTION_ENTER_OR_EDIT,
@@ -71,25 +70,25 @@ export const TALLY_SHEET_LIST_COLUMNS = {
         [VOTE_TYPE_POSTAL]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_30_ED]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
+        [undefined]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_34_II_RO]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
+        [undefined]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_34]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
+        [undefined]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_34_ED]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
+        [undefined]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_country_status_actions
+        [undefined]: columns_country_status_actions
     },
     [TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_country_status_actions
+        [undefined]: columns_country_status_actions
     },
     [TALLY_SHEET_CODE_PRE_34_AI]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_country_status_actions
+        [undefined]: columns_country_status_actions
     }
 };
 
@@ -126,24 +125,24 @@ export const TALLY_SHEET_LIST_ACTIONS = {
         [VOTE_TYPE_POSTAL]: actions_view_verify_unlock
     },
     [TALLY_SHEET_CODE_PRE_30_ED]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: actions_view_verify_unlock
+        [undefined]: actions_view_verify_unlock
     },
     [TALLY_SHEET_CODE_PRE_34_II_RO]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: actions_view_verify_unlock
+        [undefined]: actions_view_verify_unlock
     },
     [TALLY_SHEET_CODE_PRE_34]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: actions_view_verify_unlock
+        [undefined]: actions_view_verify_unlock
     },
     [TALLY_SHEET_CODE_PRE_34_ED]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: actions_view_verify_unlock
+        [undefined]: actions_view_verify_unlock
     },
     [TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: actions_view_verify_unlock
+        [undefined]: actions_view_verify_unlock
     },
     [TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: actions_view_verify_unlock
+        [undefined]: actions_view_verify_unlock
     },
     [TALLY_SHEET_CODE_PRE_34_AI]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: actions_view_verify_unlock
+        [undefined]: actions_view_verify_unlock
     }
 };

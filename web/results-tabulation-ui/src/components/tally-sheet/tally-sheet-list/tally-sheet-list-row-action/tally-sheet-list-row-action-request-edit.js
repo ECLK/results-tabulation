@@ -8,7 +8,7 @@ export default function TallySheetListRowActionRequestEdit({history, electionId,
         variant="outlined" color="default"
         size="small"
         disabled={!(tallySheetListRow.tallySheetStatus === TALLY_SHEET_STATUS_ENUM.ENTERED)}
-        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(electionId, tallySheetListRow.tallySheetId))}
+        onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetListRow.tallySheetId))}
     >
         Edit
     </Button>

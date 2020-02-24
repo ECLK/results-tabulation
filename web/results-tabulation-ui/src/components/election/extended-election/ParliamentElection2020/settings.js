@@ -19,8 +19,7 @@ import {
 } from "./TALLY_SHEET_CODE";
 import {
     VOTE_TYPE_NON_POSTAL,
-    VOTE_TYPE_POSTAL,
-    VOTE_TYPE_POSTAL_AND_NON_POSTAL
+    VOTE_TYPE_POSTAL
 } from "../../constants/VOTE_TYPE";
 import {
     TALLY_SHEET_LIST_ROW_ACTION_ENTER_OR_EDIT,
@@ -82,16 +81,16 @@ export const TALLY_SHEET_LIST_COLUMNS = {
         [VOTE_TYPE_POSTAL]: columns_ed_party_status_actions
     },
     [TALLY_SHEET_CODE_PE_CE_RO_PR_2]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_party_status_actions
+        [undefined]: columns_ed_party_status_actions
     },
     [TALLY_SHEET_CODE_PE_CE_RO_PR_3]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_party_status_actions
+        [undefined]: columns_ed_party_status_actions
     },
     [TALLY_SHEET_CODE_PE_CE_RO_V2]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
+        [undefined]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PE_R2]: {
-        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
+        [undefined]: columns_ed_status_actions
     }
 };
 
