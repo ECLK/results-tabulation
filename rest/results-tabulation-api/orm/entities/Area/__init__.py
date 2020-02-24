@@ -1,6 +1,6 @@
 from app import db
-from sqlalchemy.orm import relationship, aliased, backref
-from sqlalchemy import and_, func, or_
+from sqlalchemy.orm import relationship
+from sqlalchemy import func
 
 from orm.entities.Area import AreaMap
 from orm.enums import AreaTypeEnum
@@ -122,7 +122,7 @@ def get_associated_areas_query(areas, areaType, electionId=None):
                   AreaTypeEnum.DistrictCentre, AreaTypeEnum.ElectionCommission]
 
     area_type_to_column_map = {
-        AreaTypeEnum.Country: presidential_area_map_sub_query.c.pollingStationId,
+        AreaTypeEnum.Country: presidential_area_map_sub_query.c.countryId,
         AreaTypeEnum.ElectoralDistrict: presidential_area_map_sub_query.c.electoralDistrictId,
         AreaTypeEnum.PollingDivision: presidential_area_map_sub_query.c.pollingDivisionId,
         AreaTypeEnum.PollingDistrict: presidential_area_map_sub_query.c.pollingDistrictId,
@@ -145,6 +145,11 @@ def get_associated_areas_query(areas, areaType, electionId=None):
         area_type_to_column_map[areaType] == AreaModel.areaId
     ]
     query_group_by = [AreaModel.areaId]
+
+    if electionId is not None:
+        election = db.session.query(Election.Model).filter(Election.Model.electionId == electionId).one_or_none()
+        election_ids = election.get_this_and_above_election_ids() + election.get_this_and_below_election_ids()
+        query_filters.append(AreaModel.electionId.in_(election_ids))
 
     for area_type in area_types:
         if area_type in area_type_to_query_area_ids:

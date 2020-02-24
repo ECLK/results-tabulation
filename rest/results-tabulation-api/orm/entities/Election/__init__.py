@@ -1,8 +1,6 @@
 from typing import Set
-
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship, aliased
-
+from sqlalchemy.orm import relationship
 from app import db
 from auth import get_user_access_area_ids
 from ext.ExtendedElection import get_extended_election
@@ -75,6 +73,19 @@ class ElectionModel(db.Model):
         extended_election = get_extended_election(election=self)
         return extended_election
 
+    def get_this_and_above_election_ids(self):
+        if self.parentElectionId is None:
+            return [self.electionId]
+        else:
+            return [self.electionId] + self.parentElection.get_this_and_above_election_ids()
+
+    def get_this_and_below_election_ids(self):
+        _this_and_below_election_ids = [self.electionId]
+        for subElection in self.subElections:
+            _this_and_below_election_ids += subElection.get_this_and_below_election_ids()
+
+        return _this_and_below_election_ids
+
     @hybrid_property
     def mappedElectionIds(self):
 
@@ -84,13 +95,6 @@ class ElectionModel(db.Model):
             return [self.electionId]
         else:
             return [self.electionId, self.parentElectionId]
-
-    @hybrid_property
-    def subElectionIds(self):
-
-        # TODO
-
-        return [subElection.electionId for subElection in self.subElections]
 
     @hybrid_property
     def invalidVoteCategories(self):
@@ -209,19 +213,18 @@ def get_authorized_election_ids():
     user_access_area_ids: Set[int] = get_user_access_area_ids()
 
     authorized_elections = db.session.query(
-        Model
-    ).join(
-        Area.Model,
-        Area.Model.electionId == Model.electionId
+        ElectionModel
     ).filter(
+        ElectionModel.electionId == Area.Model.electionId,
         Area.Model.areaId.in_(user_access_area_ids)
     ).group_by(
-        Area.Model.electionId
+        ElectionModel.electionId
     ).all()
 
     authorized_election_ids = []
     for authorized_election in authorized_elections:
-        authorized_election_ids.extend(authorized_election.mappedElectionIds)
+        authorized_election_ids.extend(authorized_election.get_this_and_above_election_ids())
+        authorized_election_ids.extend(authorized_election.get_this_and_below_election_ids())
 
     return authorized_election_ids
 
@@ -230,7 +233,7 @@ def get_all():
     authorized_election_ids = get_authorized_election_ids()
 
     query = Model.query.filter(
-        # Model.electionId.in_(authorized_election_ids),
+        Model.electionId.in_(authorized_election_ids),
         Model.isListed == True
     )
 
@@ -242,7 +245,7 @@ def get_by_id(electionId):
 
     result = Model.query.filter(
         Model.electionId == electionId,
-        # Model.electionId.in_(authorized_election_ids)
+        Model.electionId.in_(authorized_election_ids)
     ).one_or_none()
 
     return result
