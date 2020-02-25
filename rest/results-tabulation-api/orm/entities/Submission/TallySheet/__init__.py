@@ -16,7 +16,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
 from orm.entities.Dashboard import StatusReport
-from orm.entities.Election import ElectionCandidate
+from orm.entities.Election import ElectionCandidate, ElectionParty
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
@@ -372,24 +372,28 @@ class TallySheetModel(db.Model):
                         Election.Model.electionId == Submission.Model.electionId
                     )
 
-                if Candidate.Model.candidateId in query_args or Party.Model.partyId in query_args:
-                    aggregated_results = aggregated_results.join(
-                        ElectionCandidate.Model,
-                        ElectionCandidate.Model.electionId == Election.Model.rootElectionId
-                    )
-
                 if Candidate.Model.candidateId in query_args:
                     aggregated_results = aggregated_results.join(
+                        ElectionCandidate.Model,
+                        ElectionCandidate.Model.electionId == Election.Model.electionId
+                    ).join(
                         Candidate.Model,
                         Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
-                    )
-                    tally_sheet_version_row_join_condition.append(
-                        TallySheetVersionRow.Model.candidateId == Candidate.Model.candidateId)
-
-                if Party.Model.partyId in query_args:
-                    aggregated_results = aggregated_results.join(
+                    ).join(
                         Party.Model,
                         Party.Model.partyId == ElectionCandidate.Model.partyId
+                    )
+                    tally_sheet_version_row_join_condition += [
+                        TallySheetVersionRow.Model.candidateId == Candidate.Model.candidateId,
+                        TallySheetVersionRow.Model.partyId == Party.Model.partyId
+                    ]
+                elif Party.Model.partyId in query_args:
+                    aggregated_results = aggregated_results.join(
+                        ElectionParty.Model,
+                        ElectionParty.Model.electionId == Election.Model.electionId
+                    ).join(
+                        Party.Model,
+                        Party.Model.partyId == ElectionParty.Model.partyId
                     )
                     tally_sheet_version_row_join_condition.append(
                         TallySheetVersionRow.Model.partyId == Party.Model.partyId)
