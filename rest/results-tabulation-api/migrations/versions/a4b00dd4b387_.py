@@ -38,7 +38,7 @@ def upgrade():
         for filename in os.listdir(data_directory_path):
             file = session.query(_File).filter(_File.fileId == filename).one_or_none()
             if file is not None:
-                with open("./data/%s" % filename, "r") as file:
+                with open("./data/%s" % filename, "rb") as file:
                     file.fileContent = file.read()
 
     session.commit()
