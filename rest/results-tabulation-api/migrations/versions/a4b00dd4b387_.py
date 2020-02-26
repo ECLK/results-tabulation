@@ -24,14 +24,13 @@ bind = op.get_bind()
 session = Session(bind=bind)
 
 
-class _File(Base):
-    __tablename__ = 'file'
-    fileId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-    fileContent = sa.Column(LONGBLOB, nullable=True)
-
-
 def upgrade():
     op.add_column('file', sa.Column('fileContent', mysql.LONGBLOB(), nullable=True))
+
+    class _File(Base):
+        __tablename__ = 'file'
+        fileId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+        fileContent = sa.Column(LONGBLOB, nullable=True)
 
     data_directory_path = "./data"
 
