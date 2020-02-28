@@ -78,7 +78,6 @@ def upgrade():
         sa.UniqueConstraint('metaId', 'metaDataKey', name='MetaDataModelUK')
     )
     op.add_column('tallySheet', sa.Column('metaId', sa.Integer(), nullable=True))
-    op.create_foreign_key('tally_sheet_fk_meta_id', 'tallySheet', 'meta', ['metaId'], ['metaId'])
 
     tally_sheets = session.query(
         _TallySheet
@@ -100,6 +99,7 @@ def upgrade():
         'tallySheet', 'metaId',
         existing_type=mysql.INTEGER(display_width=11),
         nullable=False)
+    op.create_foreign_key('tally_sheet_fk_meta_id', 'tallySheet', 'meta', ['metaId'], ['metaId'])
 
 
 def downgrade():
