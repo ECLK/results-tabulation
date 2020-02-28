@@ -201,6 +201,18 @@ paths:
           schema:
             type: integer
             default: 0
+        - name: parentElectionId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: rootElectionId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation.

@@ -164,7 +164,6 @@ def upgrade():
         type_=sa.String(length=100),
         existing_nullable=False)
     op.add_column('tallySheet', sa.Column('templateId', sa.Integer(), nullable=True))
-    op.create_foreign_key('tally_sheet_fk_template_id', 'tallySheet', 'template', ['templateId'], ['templateId'])
 
     class _Election(Base):
         __tablename__ = 'election'
@@ -1943,6 +1942,7 @@ def upgrade():
         'tallySheet', 'templateId',
         existing_type=mysql.INTEGER(display_width=11),
         nullable=False)
+    op.create_foreign_key('tally_sheet_fk_template_id', 'tallySheet', 'template', ['templateId'], ['templateId'])
 
     op.drop_table('tallySheetVersionRow_PRE_41')
     op.drop_table('tallySheetVersionRow_PRE_34_summary')

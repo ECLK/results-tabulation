@@ -52,10 +52,11 @@ export function request(config) {
     return axiosInstance.request(config).then((res) => res.data)
 }
 
-export function getElections() {
+export function getElections({parentElectionId = null, rootElectionId = null}) {
     return request({
         url: ENDPOINT_PATH_ELECTIONS(),
         method: 'get', // default,
+        params: {parentElectionId, rootElectionId}
     })
 }
 

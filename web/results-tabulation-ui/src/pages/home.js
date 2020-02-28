@@ -17,7 +17,7 @@ export default function Home() {
 
     // Similar to componentDidMount and componentDidUpdate:
     useEffect(() => {
-        getElections().then((electionsList) => {
+        getElections({}).then((electionsList) => {
             setState({electionsList});
             setProcessing(false);
         }).catch(() => {
