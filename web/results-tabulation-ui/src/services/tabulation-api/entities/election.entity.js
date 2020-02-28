@@ -1,5 +1,6 @@
 import {ENDPOINT_PATH_ELECTIONS_BY_ID, request} from "../index";
 import Entity from "./entity";
+import * as tabulationApi from "../index";
 
 export class ElectionEntity extends Entity {
     constructor() {
@@ -36,7 +37,7 @@ export class ElectionEntity extends Entity {
     }
 
     async fetchAndPush(electionId) {
-        const election = await request({
+        let election = await request({
             url: ENDPOINT_PATH_ELECTIONS_BY_ID(electionId),
             method: 'get', // default,
         });

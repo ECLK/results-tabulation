@@ -229,15 +229,22 @@ def get_authorized_election_ids():
     return authorized_election_ids
 
 
-def get_all():
+def get_all(parentElectionId=None, rootElectionId=None, isListed=True):
     authorized_election_ids = get_authorized_election_ids()
 
-    query = Model.query.filter(
-        Model.electionId.in_(authorized_election_ids),
-        Model.isListed == True
-    )
+    query_args = [ElectionModel]
+    query_filters = [Model.electionId.in_(authorized_election_ids)]
 
-    return query
+    if parentElectionId is not None:
+        query_filters.append(ElectionModel.parentElectionId == parentElectionId)
+
+    if rootElectionId is not None:
+        query_filters.append(ElectionModel.rootElectionId == rootElectionId)
+
+    if isListed is not None:
+        query_filters.append(ElectionModel.isListed == isListed)
+
+    return db.session.query(*query_args).filter(*query_filters)
 
 
 def get_by_id(electionId):
