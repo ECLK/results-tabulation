@@ -71,8 +71,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         # if not postal_counting_centers_dataset_file:
         #     postal_counting_centers_dataset_file = root_election.postalCountingCentresDataset.fileContent
         #
-        # if not invalid_vote_categories_dataset_file:
-        #     invalid_vote_categories_dataset_file = root_election.invalidVoteCategoriesDataset.fileContent
+        if not invalid_vote_categories_dataset_file:
+            invalid_vote_categories_dataset_file = root_election.invalidVoteCategoriesDataset.fileContent
 
         tally_sheet_template_ce_201 = Template.create(
             templateName=CE_201
@@ -837,8 +837,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         for row in get_rows_from_csv(party_candidate_dataset_file):
             _get_candidate(row)
 
-        # for row in get_rows_from_csv(invalid_vote_categories_dataset_file):
-        #     root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
+        for row in get_rows_from_csv(invalid_vote_categories_dataset_file):
+            root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
 
         for row in get_rows_from_csv(polling_station_dataset_file):
             row["Country"] = "Sri Lanka"
