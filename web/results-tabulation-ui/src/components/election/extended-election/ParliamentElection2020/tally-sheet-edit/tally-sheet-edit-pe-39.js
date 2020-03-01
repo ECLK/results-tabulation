@@ -11,7 +11,6 @@ import Button from '@material-ui/core/Button';
 import { isNumeric, processNumericValue } from "../../../../../utils";
 import Processing from "../../../../processing";
 import { useTallySheetEdit } from "../../../../tally-sheet/tally-sheet-edit";
-import { convertColorToString } from "material-ui/utils/colorManipulator";
 
 export default function TallySheetEdit_PE_39({ history, election, tallySheet, messages }) {
     const [rejectionReasonWiseVoteCountRows, setRejectionReasonWiseVoteCountRows] = useState([]);
