@@ -16,7 +16,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
 from orm.entities.Dashboard import StatusReport
-from orm.entities.Election import ElectionCandidate, ElectionParty
+from orm.entities.Election import ElectionCandidate, ElectionParty, InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
@@ -310,7 +310,8 @@ class TallySheetModel(db.Model):
             "partyId": Party.Model.partyId,
             "numValue": TallySheetVersionRow.Model.numValue,
             "strValue": TallySheetVersionRow.Model.strValue,
-            "ballotBoxId": TallySheetVersionRow.Model.ballotBoxId
+            "ballotBoxId": TallySheetVersionRow.Model.ballotBoxId,
+            "invalidVoteCategoryId": InvalidVoteCategory.Model.invalidVoteCategoryId
         }
         column_function_map = {
             "sum": func.sum,
@@ -456,7 +457,8 @@ class TallySheetModel(db.Model):
                     areaId=get_dict_key_value_or_none(content_row, "areaId"),
                     candidateId=get_dict_key_value_or_none(content_row, "candidateId"),
                     partyId=get_dict_key_value_or_none(content_row, "partyId"),
-                    ballotBoxId=get_dict_key_value_or_none(content_row, "ballotBoxId")
+                    ballotBoxId=get_dict_key_value_or_none(content_row, "ballotBoxId"),
+                    invalidVoteCategoryId=get_dict_key_value_or_none(content_row, "invalidVoteCategoryId")
                 )
 
         if is_tally_sheet_version_complete:

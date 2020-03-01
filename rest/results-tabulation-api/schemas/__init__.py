@@ -147,7 +147,8 @@ class TallySheetVersionRow_Schema(ma.ModelSchema):
             "partyId",
             "partyName",
             "numValue",
-            "strValue"
+            "strValue",
+            "invalidVoteCategoryId"
         )
 
         model = TallySheetVersionRow.Model
