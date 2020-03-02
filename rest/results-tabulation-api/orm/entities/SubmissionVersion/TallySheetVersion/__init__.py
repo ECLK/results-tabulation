@@ -67,7 +67,8 @@ class TallySheetVersionModel(db.Model):
                 Party.Model.partySymbol,
                 Party.Model.partyAbbreviation,
                 TallySheetVersionRow.Model.strValue,
-                TallySheetVersionRow.Model.numValue
+                TallySheetVersionRow.Model.numValue,
+                TallySheetVersionRow.Model.invalidVoteCategoryId
             ]
             return db.session.query(
                 *query_args
