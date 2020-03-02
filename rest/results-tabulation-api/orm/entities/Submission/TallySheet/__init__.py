@@ -437,7 +437,7 @@ class TallySheetModel(db.Model):
 
                         content_rows.append(content_row)
 
-                if templateRow.hasMany is False:
+                if templateRow.hasMany is False and len(content_rows) > 0:
                     content_rows = [content_rows[0]]
 
             for content_row in content_rows:
