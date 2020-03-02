@@ -12,6 +12,7 @@ import {getElectionById, getTallySheetById} from "../services/tabulation-api";
 import Error from "../components/error";
 import Processing from "../components/processing";
 import {MessagesConsumer} from "../services/messages.provider"
+import TabulationPage from "../pages";
 
 export function getAuthAppSignInUrl() {
     return `${AUTH_APP_URL}${AUTH_APP_SIGN_IN_URL_PATH}`;
@@ -122,15 +123,21 @@ function LoadElectionAndThen(props) {
     }, []);
 
     if (processing) {
-        return <div className="page">
+        return <TabulationPage>
             <div className="page-content">
                 <Processing/>
             </div>
-        </div>
+        </TabulationPage>
+
     } else if (error) {
-        return <Error
-            title={"Election not found"}
-        />
+        return <TabulationPage>
+            <div className="page-content">
+                <Error
+                    title={"Election not found"}
+                />
+            </div>
+        </TabulationPage>
+
     } else {
         return then({election});
     }
@@ -161,15 +168,21 @@ function LoadTallySheetAndThen(props) {
     }, []);
 
     if (processing) {
-        return <div className="page">
+        return <TabulationPage>
             <div className="page-content">
                 <Processing/>
             </div>
-        </div>
+        </TabulationPage>
+
     } else if (error) {
-        return <Error
-            title={"Tally sheet not found"}
-        />
+        return <TabulationPage>
+            <div className="page-content">
+                <Error
+                    title={"Tally sheet not found"}
+                />
+            </div>
+        </TabulationPage>
+
     } else {
         return then(election, tallySheet);
     }

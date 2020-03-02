@@ -186,8 +186,11 @@ def _get_role_area_ids(parentAreaIds, areaType, voteTypes=[]):
 
     _role_area_ids = []
 
+    parentAreas = []
     if parentAreaIds is not None and len(parentAreaIds) > 0:
         parentAreas = db.session.query(Area.Model).filter(Area.Model.areaId.in_(parentAreaIds)).all()
+
+    if len(parentAreas) > 0:
         associated_areas_subquery = Area.get_associated_areas_query(
             areas=parentAreas,
             areaType=areaType
