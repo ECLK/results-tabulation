@@ -10,11 +10,11 @@ class ExtendedTallySheetVersion_PE_39(ExtendedTallySheetVersion):
 
     def __init__(self, tallySheetVersion):
         super(ExtendedTallySheetVersion_PE_39, self).__init__(tallySheetVersion)
-
-    def html_letter(self, title="", total_registered_voters=None):
-        # TODO: implement
-        pass
-
-    def html(self, title="", total_registered_voters=None):
-        # TODO: implement
-        pass
+    #
+    # def html_letter(self, title="", total_registered_voters=None):
+    #     # TODO: implement
+    #     pass
+    #
+    # def html(self, title="", total_registered_voters=None):
+    #     # TODO: implement
+    #     pass

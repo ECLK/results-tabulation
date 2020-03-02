@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableFooter from "@material-ui/core/TableFooter";
@@ -8,23 +8,21 @@ import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
 
 import Button from '@material-ui/core/Button';
-import { isNumeric, processNumericValue } from "../../../../../utils";
+import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
-import { useTallySheetEdit } from "../../../../tally-sheet/tally-sheet-edit";
+import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PE_39({ history, election, tallySheet, messages }) {
+export default function TallySheetEdit_PE_39({history, election, tallySheet, messages}) {
     const [rejectionReasonWiseVoteCountRows, setRejectionReasonWiseVoteCountRows] = useState([]);
-    const [rejectedVoteCountRow, setRejectedVoteCountRow] = useState({ "numValue": 0 });
+    const [rejectedVoteCountRow, setRejectedVoteCountRow] = useState({"numValue": 0});
 
     const setTallySheetContent = (tallySheetVersion) => {
         let _rejectionReasonWiseVoteCountTemplateRow = {};
-        let _rejectedVoteCountTemplateRow = {};
+        let _rejectedVoteCountRow = {"numValue": 0};
 
         tallySheet.template.rows.map(templateRow => {
             if (templateRow.templateRowType === "NUMBER_OF_VOTES_REJECTED_AGAINST_GROUNDS_FOR_REJECTION") {
                 _rejectionReasonWiseVoteCountTemplateRow = templateRow;
-            } else if (templateRow.templateRowType === "REJECTED_VOTE") {
-                _rejectedVoteCountTemplateRow = templateRow;
             }
         });
 
@@ -41,28 +39,20 @@ export default function TallySheetEdit_PE_39({ history, election, tallySheet, me
             _rejectionReasonWiseVoteCountRows.push(_rejectionReasonWiseVoteCountRow);
         });
 
-        const _rejectedVoteCountRow = {
-            ...tallySheet.area,
-            ..._rejectedVoteCountTemplateRow,
-            numValue: 0
-        };
-
         if (tallySheetVersion) {
-            const { content } = tallySheetVersion;
+            const {content} = tallySheetVersion;
             for (let i = 0; i < content.length; i++) {
                 const contentRow = content[i];
 
                 if (contentRow.templateRowType === "NUMBER_OF_VOTES_REJECTED_AGAINST_GROUNDS_FOR_REJECTION") {
                     Object.assign(_rejectionReasonWiseVoteCountRowsMap[contentRow.invalidVoteCategoryId], contentRow);
-                } else if (contentRow.templateRowType === "REJECTED_VOTE") {
-                    Object.assign(_rejectedVoteCountRow, contentRow);
+                    _rejectedVoteCountRow.numValue += contentRow.numValue;
                 }
             }
         }
 
-
         setRejectionReasonWiseVoteCountRows(_rejectionReasonWiseVoteCountRows);
-        setRejectedVoteCountRow(_rejectedVoteCountRow);
+        setRejectedVoteCountRow(_rejectedVoteCountRow)
     };
 
     function calculateTotalRejectedVoteCount() {
@@ -70,6 +60,7 @@ export default function TallySheetEdit_PE_39({ history, election, tallySheet, me
         for (let i = 0; i < rejectionReasonWiseVoteCountRows.length; i++) {
             totalRejectedVotes += rejectionReasonWiseVoteCountRows[i].numValue;
         }
+
         return totalRejectedVotes;
     }
 
@@ -80,20 +71,19 @@ export default function TallySheetEdit_PE_39({ history, election, tallySheet, me
             }
         }
 
-        return  (isNumeric(rejectedVoteCountRow.numValue) && (calculateTotalRejectedVoteCount() === rejectedVoteCountRow.numValue));
+        return (isNumeric(rejectedVoteCountRow.numValue) && (calculateTotalRejectedVoteCount() === rejectedVoteCountRow.numValue));
     };
 
     const getTallySheetRequestBody = () => {
 
         return {
             content: [
-                ...rejectionReasonWiseVoteCountRows,
-                rejectedVoteCountRow
+                ...rejectionReasonWiseVoteCountRows
             ]
         }
     };
 
-    const { processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit } = useTallySheetEdit({
+    const {processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit} = useTallySheetEdit({
         messages,
         history,
         election,
@@ -104,7 +94,7 @@ export default function TallySheetEdit_PE_39({ history, election, tallySheet, me
     });
 
     const handleRejectionReasonWiseVoteCountChange = rejectionReasonWiseVoteCountRowIndex => event => {
-        const { value } = event.target;
+        const {value} = event.target;
         setRejectionReasonWiseVoteCountRows(rejectionReasonWiseVoteCountRows => {
             const _rejectionReasonWiseVoteCountRows = [...rejectionReasonWiseVoteCountRows];
 
@@ -118,7 +108,7 @@ export default function TallySheetEdit_PE_39({ history, election, tallySheet, me
     }
 
     const handleRejectedVoteCountChange = () => event => {
-        const { value } = event.target;
+        const {value} = event.target;
         setRejectedVoteCountRow((rejectedVoteCountRow) => {
             return {
                 ...rejectedVoteCountRow,
@@ -139,7 +129,7 @@ export default function TallySheetEdit_PE_39({ history, election, tallySheet, me
                 </TableHead>
                 <TableBody>
                     {rejectionReasonWiseVoteCountRows.map(rejectionReasonWiseVoteCountRow => {
-                        const { invalidVoteCategoryId, categoryDescription, numValue } = rejectionReasonWiseVoteCountRow;
+                        const {invalidVoteCategoryId, categoryDescription, numValue} = rejectionReasonWiseVoteCountRow;
                         return <TableRow key={invalidVoteCategoryId}>
                             <TableCell align="left">{categoryDescription}</TableCell>
                             <TableCell align="right">{numValue}</TableCell>
@@ -184,7 +174,7 @@ export default function TallySheetEdit_PE_39({ history, election, tallySheet, me
                 </TableHead>
                 <TableBody>
                     {rejectionReasonWiseVoteCountRows.map((rejectionReasonWiseVoteCountRow, rejectionReasonWiseVoteCountRowIndex) => {
-                        const { invalidVoteCategoryId, categoryDescription, numValue } = rejectionReasonWiseVoteCountRow;
+                        const {invalidVoteCategoryId, categoryDescription, numValue} = rejectionReasonWiseVoteCountRow;
                         return <TableRow key={invalidVoteCategoryId}>
                             <TableCell align="left">{categoryDescription}</TableCell>
                             <TableCell align="right">

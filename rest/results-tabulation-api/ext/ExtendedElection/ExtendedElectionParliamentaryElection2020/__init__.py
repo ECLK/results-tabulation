@@ -277,7 +277,6 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_39 = Template.create(
             templateName=PE_39
         )
-
         tally_sheet_template_pe_39_ground_of_rejection_wise_row = tally_sheet_template_pe_39.add_row(
             templateRowType="NUMBER_OF_VOTES_REJECTED_AGAINST_GROUNDS_FOR_REJECTION",
             hasMany=True,
@@ -285,18 +284,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             columns=[
                 {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "invalidVoteCategoryId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-
-        tally_sheet_template_pe_39_rejected_vote_row = tally_sheet_template_pe_39.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=False,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "invalidVoteCategoryId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
                 {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
