@@ -193,12 +193,13 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
     border-radius: 7px;
 }
 
-#wraphalf { 
+#wraphalf {
     width: 600px;
     height: 390px;
     padding: 0;
     overflow: hidden;
- }
+}
+
 #framehalf {
     position: absolute;
     float: right;
@@ -211,20 +212,28 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
     -webkit-transform-origin: 0 0;
 }
 
-#realease-header{
-    display:table;
+#realease-header {
+    display: table;
     width: 100%;
 }
 
-#realease-header-content{
-    display:table-row;
+#realease-header-content {
+    display: table-row;
 }
 
-#realease-header-content>div{
-    display:table-cell;
+#realease-header-content > div {
+    display: table-cell;
     text-align: center;
 }
-#upload-progress{
+
+#upload-progress {
     margin-bottom: -7px;
     padding-left: 6px;
+}
+
+.tabulation-page-message {
+    padding: 20px;
+    text-align: center;
+    background-color: rgb(245, 247, 252);
+    color: rgb(99, 102, 103);
 }

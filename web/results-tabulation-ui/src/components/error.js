@@ -7,8 +7,8 @@ export default function Error(
         body = "This could be because you are trying to access a resource you aren't authorized."
     }
 ) {
-    return <div>
-        <h3>{title}</h3>
+    return <div className="tabulation-page-message">
+        <strong>{title}</strong>
         <p>{body}</p>
 
         <small>Check your internet connection.</small>

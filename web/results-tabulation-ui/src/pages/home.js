@@ -8,9 +8,7 @@ import TabulationPage from "./index";
 
 
 export default function Home() {
-    const [state, setState] = useState({
-        electionsList: []
-    });
+    const [electionsList, setElectionsList] = useState([]);
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);
 
@@ -18,7 +16,7 @@ export default function Home() {
     // Similar to componentDidMount and componentDidUpdate:
     useEffect(() => {
         getElections({}).then((electionsList) => {
-            setState({electionsList});
+            setElectionsList(electionsList);
             setProcessing(false);
         }).catch(() => {
             setError(true);
@@ -31,11 +29,15 @@ export default function Home() {
             return <Processing/>
         } else if (error) {
             return <Error
-                title="Tally sheet list cannot be accessed"
+                title="Tally sheet list cannot be accessed."
+            />
+        } else if (electionsList.length === 0) {
+            return <Error
+                title="No elections available or authorized to access."
             />
         } else {
             return <div className="election-list">
-                {state.electionsList.map((election) => {
+                {electionsList.map((election) => {
                     const {electionId, electionName} = election;
 
                     return <Link
