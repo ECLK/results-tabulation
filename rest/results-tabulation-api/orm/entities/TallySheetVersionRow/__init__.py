@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from app import db
 from orm.entities import Area, Election, Candidate, Party
+from orm.entities.Election import InvalidVoteCategory
 
 
 class TallySheetVersionRow_Model(db.Model):
@@ -15,6 +16,9 @@ class TallySheetVersionRow_Model(db.Model):
     areaId = db.Column(db.Integer, db.ForeignKey(Area.Model.__table__.c.areaId), nullable=True)
     candidateId = db.Column(db.Integer, db.ForeignKey(Candidate.Model.__table__.c.candidateId), nullable=True)
     partyId = db.Column(db.Integer, db.ForeignKey(Party.Model.__table__.c.partyId), nullable=True)
+    invalidVoteCategoryId = db.Column(db.Integer,
+                                      db.ForeignKey(InvalidVoteCategory.Model.__table__.c.invalidVoteCategoryId),
+                                      nullable=True)
     ballotBoxId = db.Column(db.String(100), nullable=True)
     numValue = db.Column(db.Integer, nullable=True)
     strValue = db.Column(db.String(100), nullable=True)
@@ -24,12 +28,13 @@ class TallySheetVersionRow_Model(db.Model):
     area = relationship(Area.Model, foreign_keys=[areaId])
     candidate = relationship(Candidate.Model, foreign_keys=[candidateId])
     party = relationship(Party.Model, foreign_keys=[partyId])
+    invalidVoteCategory = relationship(InvalidVoteCategory.Model, foreign_keys=[invalidVoteCategoryId])
 
     areaName = association_proxy("area", "areaName")
 
     def __init__(self, templateRow, electionId, tallySheetVersion, numValue=None, strValue=None,
                  areaId=None, candidateId=None,
-                 partyId=None, ballotBoxId=None):
+                 partyId=None, ballotBoxId=None, invalidVoteCategoryId=None):
         super(TallySheetVersionRow_Model, self).__init__(
             templateRowId=templateRow.templateRowId,
             electionId=electionId,
@@ -39,7 +44,8 @@ class TallySheetVersionRow_Model(db.Model):
             areaId=areaId,
             candidateId=candidateId,
             partyId=partyId,
-            ballotBoxId=ballotBoxId
+            ballotBoxId=ballotBoxId,
+            invalidVoteCategoryId=invalidVoteCategoryId
         )
         db.session.add(self)
         db.session.flush()
@@ -49,7 +55,7 @@ Model = TallySheetVersionRow_Model
 
 
 def create(templateRow, electionId, tallySheetVersion, numValue=None, strValue=None, areaId=None,
-           candidateId=None, partyId=None, ballotBoxId=None):
+           candidateId=None, partyId=None, ballotBoxId=None, invalidVoteCategoryId=None):
     result = Model(
         templateRow=templateRow,
         electionId=electionId,
@@ -59,7 +65,8 @@ def create(templateRow, electionId, tallySheetVersion, numValue=None, strValue=N
         areaId=areaId,
         candidateId=candidateId,
         partyId=partyId,
-        ballotBoxId=None
+        ballotBoxId=None,
+        invalidVoteCategoryId=invalidVoteCategoryId
     )
 
     return result

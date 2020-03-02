@@ -114,6 +114,8 @@ class ExtendedTallySheetVersion:
                 "partyName",
                 "partySymbol",
                 "partyAbbreviation",
+                "invalidVoteCategoryId",
+                "invalidVoteCategoryDescription",
                 "strValue",
                 "numValue"
             ],
@@ -142,6 +144,8 @@ class ExtendedTallySheetVersion:
                 row.partyName,
                 row.partySymbol,
                 row.partyAbbreviation,
+                row.invalidVoteCategoryId,
+                row.invalidVoteCategoryDescription,
                 row.strValue,
                 row.numValue
             ]

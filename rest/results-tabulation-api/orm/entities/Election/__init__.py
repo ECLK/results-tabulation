@@ -113,7 +113,7 @@ class ElectionModel(db.Model):
         )
 
     def add_invalid_vote_category(self, categoryDescription):
-        invalid_vote_category = db.session.query(InvalidVoteCategory).filter(
+        invalid_vote_category = db.session.query(InvalidVoteCategory.Model).filter(
             InvalidVoteCategory.Model.electionId == self.electionId,
             InvalidVoteCategory.Model.categoryDescription == categoryDescription
         ).one_or_none()

@@ -8,6 +8,7 @@ from sqlalchemy.orm import relationship
 from auth import has_role_based_access
 from constants.AUTH_CONSTANTS import ACCESS_TYPE_WRITE
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_SAVE
+from orm.entities.Election import InvalidVoteCategory
 from orm.entities.Template import TemplateRowModel
 from orm.entities import SubmissionVersion, TallySheetVersionRow, Area, Candidate, Party, Election
 from orm.entities.Submission import TallySheet
@@ -66,6 +67,8 @@ class TallySheetVersionModel(db.Model):
                 Party.Model.partyName,
                 Party.Model.partySymbol,
                 Party.Model.partyAbbreviation,
+                InvalidVoteCategory.Model.invalidVoteCategoryId,
+                InvalidVoteCategory.Model.categoryDescription.label("invalidVoteCategoryDescription"),
                 TallySheetVersionRow.Model.strValue,
                 TallySheetVersionRow.Model.numValue
             ]
@@ -90,10 +93,15 @@ class TallySheetVersionModel(db.Model):
                 Party.Model,
                 Party.Model.partyId == TallySheetVersionRow.Model.partyId,
                 isouter=True
+            ).join(
+                InvalidVoteCategory.Model,
+                InvalidVoteCategory.Model.invalidVoteCategoryId == TallySheetVersionRow.Model.invalidVoteCategoryId,
+                isouter=True
             ).filter(
                 TallySheetVersionRow.Model.tallySheetVersionId == self.tallySheetVersionId,
                 *query_filter
             ).order_by(
+                InvalidVoteCategory.Model.invalidVoteCategoryId,
                 Party.Model.partyId,
                 Candidate.Model.candidateId,
                 Area.Model.areaId

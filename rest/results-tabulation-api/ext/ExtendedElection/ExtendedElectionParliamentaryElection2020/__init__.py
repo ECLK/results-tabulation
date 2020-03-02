@@ -6,7 +6,7 @@ from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, 
     TALLY_SHEET_COLUMN_SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
     PE_R1, PE_CE_RO_PR_1, \
-    PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV
+    PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39
 from constants.VOTE_TYPES import Postal, NonPostal, PostalAndNonPostal
 from ext import TallySheetMap
 from ext.ExtendedElection import ExtendedElection
@@ -21,6 +21,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
     ExtendedTallySheetVersion_PE_27
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_4 import \
     ExtendedTallySheetVersion_PE_4
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_39 import \
+    ExtendedTallySheetVersion_PE_39
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -45,6 +47,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             PE_R1: ExtendedTallySheetVersion_PE_R1,
             PE_CE_RO_V2: ExtendedTallySheetVersion_PE_CE_RO_V2,
             PE_27: ExtendedTallySheetVersion_PE_27,
+            PE_39: ExtendedTallySheetVersion_PE_39,
             PE_4: ExtendedTallySheetVersion_PE_4
         }
 
@@ -71,8 +74,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         # if not postal_counting_centers_dataset_file:
         #     postal_counting_centers_dataset_file = root_election.postalCountingCentresDataset.fileContent
         #
-        # if not invalid_vote_categories_dataset_file:
-        #     invalid_vote_categories_dataset_file = root_election.invalidVoteCategoriesDataset.fileContent
+        if not invalid_vote_categories_dataset_file:
+            invalid_vote_categories_dataset_file = root_election.invalidVoteCategoriesDataset.fileContent
 
         tally_sheet_template_ce_201 = Template.create(
             templateName=CE_201
@@ -267,6 +270,22 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             columns=[
                 {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
+            ]
+        )
+
+        tally_sheet_template_pe_39 = Template.create(
+            templateName=PE_39
+        )
+        tally_sheet_template_pe_39_ground_of_rejection_wise_row = tally_sheet_template_pe_39.add_row(
+            templateRowType="NUMBER_OF_VOTES_REJECTED_AGAINST_GROUNDS_FOR_REJECTION",
+            hasMany=True,
+            isDerived=False,
+            columns=[
+                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "invalidVoteCategoryId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
                 {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
@@ -736,6 +755,14 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "areaId": area.areaId,
                             "electionId": ordinary_election.electionId
                         }).metaId
+                    ),
+                    TallySheet.create(
+                        template=tally_sheet_template_pe_39, electionId=ordinary_election.electionId,
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": ordinary_election.electionId
+                        }).metaId
                     )
                 ]
 
@@ -778,6 +805,14 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 tally_sheets = [
                     TallySheet.create(
                         template=tally_sheet_template_pe_27, electionId=postal_election.electionId, areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "electionId": postal_election.electionId
+                        }).metaId
+                    ),
+                    TallySheet.create(
+                        template=tally_sheet_template_pe_39, electionId=postal_election.electionId,
+                        areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "electionId": postal_election.electionId
@@ -837,8 +872,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         for row in get_rows_from_csv(party_candidate_dataset_file):
             _get_candidate(row)
 
-        # for row in get_rows_from_csv(invalid_vote_categories_dataset_file):
-        #     root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
+        for row in get_rows_from_csv(invalid_vote_categories_dataset_file):
+            root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
 
         for row in get_rows_from_csv(polling_station_dataset_file):
             row["Country"] = "Sri Lanka"
