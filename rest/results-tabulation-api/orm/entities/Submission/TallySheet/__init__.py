@@ -4,7 +4,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from app import db
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access
-from constants.AUTH_CONSTANTS import ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK
+from constants.AUTH_CONSTANTS import ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, ACCESS_TYPE_READ, ACCESS_TYPE_WRITE
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META
 from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
@@ -13,7 +13,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
-    MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED
+    MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
 from orm.entities.Dashboard import StatusReport
 from orm.entities.Election import ElectionCandidate, ElectionParty
@@ -296,11 +296,9 @@ class TallySheetModel(db.Model):
         db.session.flush()
 
     def create_empty_version(self):
-        tallySheetVersion = TallySheetVersion.Model(
-            tallySheetId=self.tallySheetId
-        )
+        tally_sheet_version = TallySheetVersion.create(tallySheetId=self.tallySheetId)
 
-        return tallySheetVersion
+        return tally_sheet_version
 
     def create_version(self, content=None):
         column_name_map = {
@@ -520,7 +518,16 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     if tallySheetCode is not None:
         query_filters.append(Template.Model.templateName == tallySheetCode)
 
-    return db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by).one_or_none()
+    tally_sheet = db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by).one_or_none()
+
+    # Validate the authorization
+    if not has_role_based_access(tally_sheet=tally_sheet, access_type=ACCESS_TYPE_READ):
+        raise NotFoundException(
+            message="Not authorized to view tally sheet. (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
+        )
+
+    return tally_sheet
 
 
 def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
@@ -577,17 +584,16 @@ def create_empty_version(tallySheetId):
 
 
 def create_version(tallySheetId, content=None):
-    print("\n\n\n\n\n\n####### create_version #####")
-    tallySheet = get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
+    tally_sheet = get_by_id(tallySheetId=tallySheetId)
+    if tally_sheet is None:
         raise NotFoundException(
             message="Tally sheet not found. (tallySheetId=%d)" % (tallySheetId),
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
-    tallySheetVersion = tallySheet.create_version(content=content)
+    tallySheetVersion = tally_sheet.create_version(content=content)
 
-    return tallySheet, tallySheetVersion
+    return tally_sheet, tallySheetVersion
 
 
 def create_latest_version(tallySheetId, content=None):

@@ -5,7 +5,9 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from app import db
 from sqlalchemy.orm import relationship
 
-from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+from auth import has_role_based_access
+from constants.AUTH_CONSTANTS import ACCESS_TYPE_WRITE
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_SAVE
 from orm.entities.Template import TemplateRowModel
 from orm.entities import SubmissionVersion, TallySheetVersionRow, Area, Candidate, Party, Election
 from orm.entities.Submission import TallySheet
@@ -122,33 +124,55 @@ class TallySheetVersionModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
+    @classmethod
+    def create(cls, tallySheetId):
+        tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+        if tally_sheet is None:
+            raise NotFoundException(
+                message="Tally sheet not found. (tallySheetId=%d)" % tallySheetId,
+                code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+            )
+
+        # Validate the authorization
+        if not has_role_based_access(tally_sheet=tally_sheet, access_type=ACCESS_TYPE_WRITE):
+            raise NotFoundException(
+                message="Not authorized to edit tally sheet. (tallySheetId=%d)" % tallySheetId,
+                code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_SAVE
+            )
+
+        return TallySheetVersionModel(tallySheetId=tallySheetId)
+
+    @classmethod
+    def get_by_id(cls, tallySheetId, tallySheetVersionId):
+        tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+        if tallySheet is None:
+            raise NotFoundException(
+                message="Tally sheet not found. (tallySheetId=%d)" % tallySheetId,
+                code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+            )
+
+        tallySheetVersion = Model.query.filter(
+            Model.tallySheetVersionId == tallySheetVersionId,
+            Model.tallySheetId == tallySheetId
+        ).one_or_none()
+
+        return tallySheetVersion
+
+    @classmethod
+    def get_all(cls, tallySheetId, tallySheetCode=None):
+        query = Model.query.filter(Model.tallySheetId == tallySheetId)
+
+        if tallySheetCode is not None:
+            query = query.filter(Model.tallySheetCode == tallySheetCode)
+
+        return query
+
 
 Model = TallySheetVersionModel
 
-
-def get_all(tallySheetId, tallySheetCode=None):
-    query = Model.query.filter(Model.tallySheetId == tallySheetId)
-
-    if tallySheetCode is not None:
-        query = query.filter(Model.tallySheetCode == tallySheetCode)
-
-    return query
-
-
-def get_by_id(tallySheetId, tallySheetVersionId):
-    tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
-    if tallySheet is None:
-        raise NotFoundException(
-            message="Tally sheet not found. (tallySheetId=%d)" % tallySheetId,
-            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
-        )
-
-    tallySheetVersion = Model.query.filter(
-        Model.tallySheetVersionId == tallySheetVersionId,
-        Model.tallySheetId == tallySheetId
-    ).one_or_none()
-
-    return tallySheetVersion
+create = TallySheetVersionModel.create
+get_by_id = TallySheetVersionModel.get_by_id
+get_all = TallySheetVersionModel.get_all
 
 
 def create_candidate_preference_struct(tallySheetContent):
