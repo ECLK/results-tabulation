@@ -110,4 +110,8 @@ def create(tallySheetId, body):
 
     db.session.commit()
 
+    tallySheet.create_tally_sheet_version_rows(tally_sheet_version=tallySheetVersion, post_save=True)
+
+    db.session.commit()
+
     return TallySheetVersionSchema().dump(tallySheetVersion).data

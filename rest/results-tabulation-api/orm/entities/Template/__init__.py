@@ -40,12 +40,13 @@ class TemplateModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-    def add_row(self, templateRowType, hasMany=False, isDerived=False, columns=[]):
+    def add_row(self, templateRowType, hasMany=False, isDerived=False, loadOnPostSave=False, columns=[]):
         templateRow = TemplateRowModel(
             templateId=self.templateId,
             templateRowType=templateRowType,
             hasMany=hasMany,
-            isDerived=isDerived
+            isDerived=isDerived,
+            loadOnPostSave=loadOnPostSave
         )
 
         for column in columns:
@@ -65,6 +66,7 @@ class TemplateRowModel(db.Model):
     templateRowType = db.Column(db.String(200), nullable=False)
     hasMany = db.Column(db.Boolean, nullable=False, default=False)
     isDerived = db.Column(db.Boolean, nullable=False, default=False)
+    loadOnPostSave = db.Column(db.Boolean, nullable=False, default=False)
 
     derivativeTemplateRows = relationship(
         "TemplateRowModel", secondary="templateRow_derivativeTemplateRow", lazy="subquery",
@@ -74,12 +76,13 @@ class TemplateRowModel(db.Model):
 
     columns = relationship("TemplateRowColumnModel")
 
-    def __init__(self, templateId, templateRowType, hasMany=False, isDerived=False):
+    def __init__(self, templateId, templateRowType, hasMany=False, isDerived=False, loadOnPostSave=False):
         super(TemplateRowModel, self).__init__(
             templateId=templateId,
             templateRowType=templateRowType,
             hasMany=hasMany,
-            isDerived=isDerived
+            isDerived=isDerived,
+            loadOnPostSave=loadOnPostSave
         )
 
         db.session.add(self)
