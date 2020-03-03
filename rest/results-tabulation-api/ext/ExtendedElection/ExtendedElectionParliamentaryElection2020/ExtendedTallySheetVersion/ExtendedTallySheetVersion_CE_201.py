@@ -20,7 +20,7 @@ class ExtendedTallySheetVersion_CE_201(ExtendedTallySheetVersion):
         # polling_station_wise_number_of_spoilt_ballot_papers = self.get_polling_station_wise_number_of_spoilt_ballot_papers()
         # polling_station_wise_number_of_issued_ballot_papers = self.get_polling_station_wise_number_of_issued_ballot_papers()
         # polling_station_wise_number_of_unused_ballot_papers = self.get_polling_station_wise_number_of_unused_ballot_papers()
-        polling_station_wise_number_of_ordinary_ballots_in_ballot_paper_account = self.get_polling_station_wise_number_of_ordinary_ballots_in_ballot_paper_account()
+        # polling_station_wise_number_of_ordinary_ballots_in_ballot_paper_account = self.get_polling_station_wise_number_of_ordinary_ballots_in_ballot_paper_account()
         polling_station_wise_number_of_ordinary_ballots_in_ballot_box = self.get_polling_station_wise_number_of_ordinary_ballots_in_ballot_box()
 
         stamp = tallySheetVersion.stamp
@@ -68,8 +68,8 @@ class ExtendedTallySheetVersion_CE_201(ExtendedTallySheetVersion):
             #             polling_station_wise_number_of_ballots_recieved_item_index]))
             # data_row.append(to_comma_seperated_num(polling_station_wise_number_of_unused_ballot_papers["numValue"].values[
             #             polling_station_wise_number_of_ballots_recieved_item_index]))
-            data_row.append(to_comma_seperated_num(polling_station_wise_number_of_ordinary_ballots_in_ballot_paper_account["numValue"].values[
-                        polling_station_wise_number_of_ballots_recieved_item_index]))
+            # data_row.append(to_comma_seperated_num(polling_station_wise_number_of_ordinary_ballots_in_ballot_paper_account["numValue"].values[
+            #             polling_station_wise_number_of_ballots_recieved_item_index]))
             data_row.append(to_comma_seperated_num(polling_station_wise_number_of_ordinary_ballots_in_ballot_box["numValue"].values[
                         polling_station_wise_number_of_ballots_recieved_item_index]))
 
