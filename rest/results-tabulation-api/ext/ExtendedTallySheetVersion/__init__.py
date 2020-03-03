@@ -464,3 +464,81 @@ class ExtendedTallySheetVersion:
         ).reset_index()
 
         return df
+
+    def get_polling_station_wise_number_of_ballots_recieved(self):
+        df = self.df.copy()
+        df['numValue'] = df['numValue'].astype(float)
+        df = df.loc[df['templateRowType'] == "NUMBER_OF_BALLOTS_RECEIVED"]
+
+        df = df.groupby(
+            ['areaId', "areaName"]
+        ).agg(sum).sort_values(
+            by=['areaId'], ascending=True
+        ).reset_index()
+
+        return df
+
+    # def get_polling_station_wise_number_of_spoilt_ballot_papers(self):
+    #     df = self.df.copy()
+    #     df['numValue'] = df['numValue'].astype(float)
+    #     df = df.loc[df['templateRowType'] == "NUMBER_OF_BALLOTS_SPOILT"]
+    #
+    #     df = df.groupby(
+    #         ['areaId', "areaName"]
+    #     ).agg(sum).sort_values(
+    #         by=['areaId'], ascending=True
+    #     ).reset_index()
+    #
+    #     return df
+    #
+    # def get_polling_station_wise_number_of_issued_ballot_papers(self):
+    #     df = self.df.copy()
+    #     df['numValue'] = df['numValue'].astype(float)
+    #     df = df.loc[df['templateRowType'] == "NUMBER_OF_BALLOTS_ISSUED"]
+    #
+    #     df = df.groupby(
+    #         ['areaId', "areaName"]
+    #     ).agg(sum).sort_values(
+    #         by=['areaId'], ascending=True
+    #     ).reset_index()
+    #
+    #     return df
+    #
+    # def get_polling_station_wise_number_of_unused_ballot_papers(self):
+    #     df = self.df.copy()
+    #     df['numValue'] = df['numValue'].astype(float)
+    #     df = df.loc[df['templateRowType'] == "NUMBER_OF_BALLOTS_UNUSED"]
+    #
+    #     df = df.groupby(
+    #         ['areaId', "areaName"]
+    #     ).agg(sum).sort_values(
+    #         by=['areaId'], ascending=True
+    #     ).reset_index()
+    #
+    #     return df
+    # 
+    # def get_polling_station_wise_number_of_ordinary_ballots_in_ballot_paper_account(self):
+    #     df = self.df.copy()
+    #     df['numValue'] = df['numValue'].astype(float)
+    #     df = df.loc[df['templateRowType'] == "NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_PAPER_ACCOUNT"]
+    #
+    #     df = df.groupby(
+    #         ['areaId', "areaName"]
+    #     ).agg(sum).sort_values(
+    #         by=['areaId'], ascending=True
+    #     ).reset_index()
+    #
+    #     return df
+
+    def get_polling_station_wise_number_of_ordinary_ballots_in_ballot_box(self):
+        df = self.df.copy()
+        df['numValue'] = df['numValue'].astype(float)
+        df = df.loc[df['templateRowType'] == "NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_BOX"]
+
+        df = df.groupby(
+            ['areaId', "areaName"]
+        ).agg(sum).sort_values(
+            by=['areaId'], ascending=True
+        ).reset_index()
+
+        return df
