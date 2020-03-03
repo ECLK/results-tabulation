@@ -493,7 +493,8 @@ class InvalidVoteCategory_Schema(ma.ModelSchema):
     class Meta:
         fields = (
             "invalidVoteCategoryId",
-            "categoryDescription"
+            "categoryDescription",
+            "invalidVoteCategoryType"
         )
 
         model = InvalidVoteCategory.Model
