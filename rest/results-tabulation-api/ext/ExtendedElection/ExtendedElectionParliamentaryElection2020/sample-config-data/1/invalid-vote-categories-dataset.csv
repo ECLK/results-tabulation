@@ -1,4 +1,4 @@
-Invalid Vote Category Description
+Invalid Vote Category Description,Invalid Vote Category Type
 Does not bear the official mark.
 Votes are given for more than one recognized political party.
 Votes are given for more than one Independent Group.
@@ -6,3 +6,6 @@ Votes are given for a combination of one ore more recognized political party and
 Something is written or marked by which the voter can be identified.
 Unmarked.
 Void for Uncertainty.
+No. of Ballot Papers with Preferences Indicated for more than 3 Candidates,PARTY_SPECIFIC
+No. of Ballot Papers where all Preferences are void uncertainty,PARTY_SPECIFIC
+No. of Ballot Papers with no Preferences,PARTY_SPECIFIC
