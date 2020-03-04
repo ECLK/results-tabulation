@@ -44,30 +44,49 @@
         </tr>
         {% for row in content.data %}
         <tr>
-            <td class="all align-middle {%if row[0]=="" %}missing-value{% endif %}">{{row[0]}}</td>
-            <td class="all align-middle {%if row[1]=="" %}missing-value{% endif %}">{{row[1]}}</td>
-            <td class="all align-middle">{{row[2]}}</td>
-            <td class="all align-middle">{{row[3]}}</td>
-            <td class="all align-middle">{{row[4]}}</td>
-            <td class="all align-middle {%if row[5]=="" %}missing-value{% endif %}"></td>
-            <td class="all align-middle {%if row[6]=="" %}missing-value{% endif %}"></td>
-            <td class="all align-middle {%if row[7]=="" %}missing-value{% endif %}"></td>
-            <td class="all align-middle {%if row[8]=="" %}missing-value{% endif %}"></td>
-            <td class="all align-middle {%if row[9]=="" %}missing-value{% endif %}"></td>
-            <td class="all align-middle {%if row[10]=="" %}missing-value{% endif %}" style="text-align:right">{{row[10]}}</td>
-            <td class="all align-middle {%if row[11]=="" %}missing-value{% endif %}"></td>
-            <td class="all align-middle {%if row[12]=="" %}missing-value{% endif %}"></td>
-            <td class="all align-middle {%if row[13]=="" %}missing-value{% endif %}"></td>
-            <td class="all align-middle {%if row[14]=="" %}missing-value{% endif %}"></td>
+            {%if content.parliamentaryElection %}
+                <td class="all align-middle {%if row[0]=="" %}missing-value{% endif %}">{{row[0]}}</td>
+                <td class="all align-middle {%if row[1]=="" %}missing-value{% endif %}">{{row[1]}}</td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle {%if row[2]=="" %}missing-value{% endif %}">{{row[2]}}</td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+                <td class="all align-middle"></td>
+            {% else %}
+                <td class="all align-middle {%if row[0]=="" %}missing-value{% endif %}">{{row[0]}}</td>
+                <td class="all align-middle {%if row[1]=="" %}missing-value{% endif %}">{{row[1]}}</td>
+                <td class="all align-middle">{{row[2]}}</td>
+                <td class="all align-middle">{{row[3]}}</td>
+                <td class="all align-middle">{{row[4]}}</td>
+                <td class="all align-middle {%if row[5]=="" %}missing-value{% endif %}"></td>
+                <td class="all align-middle {%if row[6]=="" %}missing-value{% endif %}"></td>
+                <td class="all align-middle {%if row[7]=="" %}missing-value{% endif %}"></td>
+                <td class="all align-middle {%if row[8]=="" %}missing-value{% endif %}"></td>
+                <td class="all align-middle {%if row[9]=="" %}missing-value{% endif %}"></td>
+                <td class="all align-middle {%if row[10]=="" %}missing-value{% endif %}" style="text-align:right">{{row[10]}}</td>
+                <td class="all align-middle {%if row[11]=="" %}missing-value{% endif %}"></td>
+                <td class="all align-middle {%if row[12]=="" %}missing-value{% endif %}"></td>
+                <td class="all align-middle {%if row[13]=="" %}missing-value{% endif %}"></td>
+                <td class="all align-middle {%if row[14]=="" %}missing-value{% endif %}"></td>
+            {% endif %}
         </tr>
         {% endfor %}
 
+        {%if content.parliamentaryElection != 1 %}
         <tr>
             <td colspan="9"></td>
             <td colspan="1">Total</td>
             <td colspan="1"><div class="top" style="border-bottom: double; padding-top: 0.3rem; padding-bottom: 0.3rem;text-align: right">{{ content.totalBallotBoxCount }}</div></td>
         </tr>
-
+        {% endif %}
         <tr>
             <td colspan="9"></td>
             <td colspan="6"><br/>...........................................<br/>

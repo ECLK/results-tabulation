@@ -21,6 +21,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
     ExtendedTallySheetVersion_PE_27
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_4 import \
     ExtendedTallySheetVersion_PE_4
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_CE_201 import \
+    ExtendedTallySheetVersion_CE_201
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_39 import \
     ExtendedTallySheetVersion_PE_39
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_22 import \
@@ -49,8 +51,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             PE_R1: ExtendedTallySheetVersion_PE_R1,
             PE_CE_RO_V2: ExtendedTallySheetVersion_PE_CE_RO_V2,
             PE_27: ExtendedTallySheetVersion_PE_27,
-            PE_39: ExtendedTallySheetVersion_PE_39,
             PE_4: ExtendedTallySheetVersion_PE_4,
+            CE_201: ExtendedTallySheetVersion_CE_201,
+            PE_39: ExtendedTallySheetVersion_PE_39,
             PE_22: ExtendedTallySheetVersion_PE_22
         }
 
