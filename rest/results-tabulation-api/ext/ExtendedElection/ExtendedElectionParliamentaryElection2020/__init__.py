@@ -935,16 +935,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             _get_candidate(row)
 
         for row in get_rows_from_csv(invalid_vote_categories_dataset_file):
-            root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
-
-        # TODO: read from csv file
-        party_specific_invalid_vote_categories = [
-            "No. of Ballot Papers with Preferences Indicated for more than 3 Candidates",
-            "No. of Ballot Papers where all Preferences are void uncertainty",
-            "No. of Ballot Papers with no Preferences"
-        ]
-        for invalid_vote_category in party_specific_invalid_vote_categories:
-            root_election.add_invalid_vote_category(invalid_vote_category, 'PARTY_SPECIFIC')
+            if "Invalid Vote Category Type" in row.keys():
+                root_election.add_invalid_vote_category(row["Invalid Vote Category Description"],
+                                                        row["Invalid Vote Category Type"])
+            else:
+                root_election.add_invalid_vote_category(row["Invalid Vote Category Description"])
 
         for row in get_rows_from_csv(polling_station_dataset_file):
             row["Country"] = "Sri Lanka"
