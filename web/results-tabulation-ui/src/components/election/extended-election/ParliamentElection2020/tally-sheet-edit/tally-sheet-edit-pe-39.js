@@ -205,7 +205,7 @@ export default function TallySheetEdit_PE_39({history, election, tallySheet, mes
                         <TableCell align="right"><TextField
                             required
                             error={calculateTotalRejectedVoteCount() !== rejectedVoteCountRow.numValue}
-                            helperText={calculateTotalRejectedVoteCount() !== rejectedVoteCountRow.numValue ? 'Total valid vote count mismatch!' : ' '}
+                            helperText={calculateTotalRejectedVoteCount() !== rejectedVoteCountRow.numValue ? 'Total invalid vote count mismatch!' : ' '}
                             value={rejectedVoteCountRow.numValue}
                             margin="normal"
                             onChange={handleRejectedVoteCountChange()}
