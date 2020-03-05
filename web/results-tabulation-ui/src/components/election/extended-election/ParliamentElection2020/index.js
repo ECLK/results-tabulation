@@ -14,7 +14,8 @@ import {
     TALLY_SHEET_CODE_PE_CE_RO_V2,
     TALLY_SHEET_CODE_PE_R1,
     TALLY_SHEET_CODE_PE_R2,
-    TALLY_SHEET_CODE_PE_39
+    TALLY_SHEET_CODE_PE_39,
+    TALLY_SHEET_CODE_PE_22
 } from "./TALLY_SHEET_CODE";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
@@ -79,11 +80,11 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         let tallySheetCodes = [];
                         let tallySheetCodeLabels = [];
                         if (voteType === "Postal") {
-                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
-                            tallySheetCodeLabels = ["PE-4 PV (Postal)"];
+                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
+                            tallySheetCodeLabels = ["PE-4 PV (Postal)", "PE-22 (Postal)"];
                         } else if (voteType === "NonPostal") {
-                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
-                            tallySheetCodeLabels = ["PE-4"];
+                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
+                            tallySheetCodeLabels = ["PE-4", "PE-22"];
                         }
                         return <Grid item xs={12} key={voteType}>
                             <Grid item xs={12}>
