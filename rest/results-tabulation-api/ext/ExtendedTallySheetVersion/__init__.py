@@ -391,6 +391,7 @@ class ExtendedTallySheetVersion:
 
     def get_candidate_and_area_wise_valid_vote_count_result(self):
         df = self.df.copy()
+        df['numValue'] = df['numValue'].astype(float)
 
         df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
 
@@ -399,7 +400,6 @@ class ExtendedTallySheetVersion:
         ).reset_index()
 
         return df
-
 
     def get_party_and_area_wise_valid_vote_count_result(self):
         df = self.df.copy()
@@ -516,7 +516,7 @@ class ExtendedTallySheetVersion:
     #     ).reset_index()
     #
     #     return df
-    # 
+    #
     # def get_polling_station_wise_number_of_ordinary_ballots_in_ballot_paper_account(self):
     #     df = self.df.copy()
     #     df['numValue'] = df['numValue'].astype(float)

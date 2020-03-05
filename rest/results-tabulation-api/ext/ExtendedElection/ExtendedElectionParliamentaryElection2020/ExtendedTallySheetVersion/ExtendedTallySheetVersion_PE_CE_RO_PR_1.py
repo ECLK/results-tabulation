@@ -78,9 +78,7 @@ class ExtendedTallySheetVersion_PE_CE_RO_PR_1(ExtendedTallySheetVersion):
                                                candidate_and_area_wise_valid_vote_count_result_item_index]
                 data_row.append(to_comma_seperated_num(candidate_area_vote))
 
-                candidate_area_vote_available = math.isnan(candidate_area_vote)
-
-                if candidate_area_vote_available == False :
+                if candidate_area_vote is not None and not math.isnan(candidate_area_vote):
                     total_votes_for_each_candidate += candidate_area_vote
 
             data_row.append(to_comma_seperated_num(total_votes_for_each_candidate))
