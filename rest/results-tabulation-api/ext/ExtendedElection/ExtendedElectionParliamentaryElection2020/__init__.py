@@ -51,13 +51,16 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         EXTENDED_TEMPLATE_MAP = {
             PE_CE_RO_V1: ExtendedTallySheetVersion_PE_CE_RO_V1,
             PE_R1: ExtendedTallySheetVersion_PE_R1,
+            PE_R2: ExtendedTallySheetVersion_PE_R2,
             PE_CE_RO_V2: ExtendedTallySheetVersion_PE_CE_RO_V2,
             PE_27: ExtendedTallySheetVersion_PE_27,
             PE_4: ExtendedTallySheetVersion_PE_4,
             CE_201: ExtendedTallySheetVersion_CE_201,
             PE_39: ExtendedTallySheetVersion_PE_39,
+            PE_22: ExtendedTallySheetVersion_PE_22,
             PE_CE_RO_PR_1: ExtendedTallySheetVersion_PE_CE_RO_PR_1,
             PE_CE_RO_PR_2: ExtendedTallySheetVersion_PE_CE_RO_PR_2
+
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
