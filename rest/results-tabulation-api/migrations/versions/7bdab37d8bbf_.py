@@ -18,128 +18,124 @@ down_revision = 'eb0d667f2b5e'
 branch_labels = None
 depends_on = None
 
-Base = declarative_base()
-bind = op.get_bind()
-session = Session(bind=bind)
-db = sa
 
+def upgrade():
+    Base = declarative_base()
+    bind = op.get_bind()
+    session = Session(bind=bind)
+    db = sa
 
-class _ElectionParty(Base):
-    __tablename__ = 'election_party'
-    electionPartyId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    electionId = db.Column(db.Integer)
-    partyId = db.Column(db.Integer)
+    class _ElectionParty(Base):
+        __tablename__ = 'election_party'
+        electionPartyId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        electionId = db.Column(db.Integer)
+        partyId = db.Column(db.Integer)
 
-    @classmethod
-    def create(cls, electionId, partyId):
-        party = _ElectionParty(
-            electionId=electionId,
-            partyId=partyId
-        )
-
-        session.add(party)
-        session.flush()
-
-        return party
-
-
-class _ElectionCandidate(Base):
-    __tablename__ = 'election_candidate'
-    electionCandidateId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    electionId = db.Column(db.Integer)
-    partyId = db.Column(db.Integer)
-    candidateId = db.Column(db.Integer)
-    qualifiedForPreferences = db.Column(db.Boolean, default=False, nullable=False)
-
-    @classmethod
-    def create(cls, electionId, candidateId, partyId):
-        candidate = _ElectionCandidate(
-            electionId=electionId,
-            candidateId=candidateId,
-            partyId=partyId
-        )
-
-        session.add(candidate)
-        session.flush()
-
-        return candidate
-
-
-class _InvalidVoteCategory(Base):
-    __tablename__ = 'election_invalidVoteCategory'
-    invalidVoteCategoryId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    electionId = db.Column(db.Integer)
-    categoryDescription = db.Column(db.String(300))
-
-    @classmethod
-    def create(cls, electionId, categoryDescription):
-        invalid_vote_category = _InvalidVoteCategory(
-            electionId=electionId,
-            categoryDescription=categoryDescription
-        )
-
-        session.add(invalid_vote_category)
-        session.flush()
-
-        return invalid_vote_category
-
-
-class _Election(Base):
-    __tablename__ = 'election'
-    electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    electionName = db.Column(db.String(100))
-    rootElectionId = db.Column(db.Integer)
-    parentElectionId = db.Column(db.Integer)
-    voteType = db.Column(db.String(100))
-    electionTemplateName = db.Column(db.String(100))
-    isListed = db.Column(db.Boolean)
-
-    def add_invalid_vote_category(self, categoryDescription):
-        invalid_vote_category = session.query(_InvalidVoteCategory).filter(
-            _InvalidVoteCategory.electionId == self.electionId,
-            _InvalidVoteCategory.categoryDescription == categoryDescription
-        ).one_or_none()
-
-        if invalid_vote_category is None:
-            invalid_vote_category = _InvalidVoteCategory.create(
-                electionId=self.electionId,
-                categoryDescription=categoryDescription
-            )
-
-        return invalid_vote_category
-
-    def add_party(self, partyId):
-        election_party = session.query(_ElectionParty).filter(
-            _ElectionParty.partyId == partyId,
-            _ElectionParty.electionId == self.electionId
-        ).one_or_none()
-
-        if election_party is None:
-            election_party = _ElectionParty.create(
-                electionId=self.electionId,
+        @classmethod
+        def create(cls, electionId, partyId):
+            party = _ElectionParty(
+                electionId=electionId,
                 partyId=partyId
             )
 
-        return election_party
+            session.add(party)
+            session.flush()
 
-    def add_candidate(self, partyId, candidateId):
-        election_candidate = session.query(_ElectionCandidate).filter(
-            _ElectionCandidate.partyId == partyId,
-            _ElectionCandidate.candidateId == candidateId,
-            _ElectionCandidate.electionId == self.electionId
-        ).one_or_none()
+            return party
 
-        if election_candidate is None:
-            election_candidate = _ElectionCandidate.create(
-                electionId=self.electionId,
-                partyId=partyId,
-                candidateId=candidateId
+    class _ElectionCandidate(Base):
+        __tablename__ = 'election_candidate'
+        electionCandidateId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        electionId = db.Column(db.Integer)
+        partyId = db.Column(db.Integer)
+        candidateId = db.Column(db.Integer)
+        qualifiedForPreferences = db.Column(db.Boolean, default=False, nullable=False)
+
+        @classmethod
+        def create(cls, electionId, candidateId, partyId):
+            candidate = _ElectionCandidate(
+                electionId=electionId,
+                candidateId=candidateId,
+                partyId=partyId
             )
 
-        return election_candidate
+            session.add(candidate)
+            session.flush()
 
+            return candidate
 
-def upgrade():
+    class _InvalidVoteCategory(Base):
+        __tablename__ = 'election_invalidVoteCategory'
+        invalidVoteCategoryId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        electionId = db.Column(db.Integer)
+        categoryDescription = db.Column(db.String(300))
+
+        @classmethod
+        def create(cls, electionId, categoryDescription):
+            invalid_vote_category = _InvalidVoteCategory(
+                electionId=electionId,
+                categoryDescription=categoryDescription
+            )
+
+            session.add(invalid_vote_category)
+            session.flush()
+
+            return invalid_vote_category
+
+    class _Election(Base):
+        __tablename__ = 'election'
+        electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        electionName = db.Column(db.String(100))
+        rootElectionId = db.Column(db.Integer)
+        parentElectionId = db.Column(db.Integer)
+        voteType = db.Column(db.String(100))
+        electionTemplateName = db.Column(db.String(100))
+        isListed = db.Column(db.Boolean)
+
+        def add_invalid_vote_category(self, categoryDescription):
+            invalid_vote_category = session.query(_InvalidVoteCategory).filter(
+                _InvalidVoteCategory.electionId == self.electionId,
+                _InvalidVoteCategory.categoryDescription == categoryDescription
+            ).one_or_none()
+
+            if invalid_vote_category is None:
+                invalid_vote_category = _InvalidVoteCategory.create(
+                    electionId=self.electionId,
+                    categoryDescription=categoryDescription
+                )
+
+            return invalid_vote_category
+
+        def add_party(self, partyId):
+            election_party = session.query(_ElectionParty).filter(
+                _ElectionParty.partyId == partyId,
+                _ElectionParty.electionId == self.electionId
+            ).one_or_none()
+
+            if election_party is None:
+                election_party = _ElectionParty.create(
+                    electionId=self.electionId,
+                    partyId=partyId
+                )
+
+            return election_party
+
+        def add_candidate(self, partyId, candidateId):
+            election_candidate = session.query(_ElectionCandidate).filter(
+                _ElectionCandidate.partyId == partyId,
+                _ElectionCandidate.candidateId == candidateId,
+                _ElectionCandidate.electionId == self.electionId
+            ).one_or_none()
+
+            if election_candidate is None:
+                election_candidate = _ElectionCandidate.create(
+                    electionId=self.electionId,
+                    partyId=partyId,
+                    candidateId=candidateId
+                )
+
+            return election_candidate
+
     existing_elections = session.query(_Election).all()
 
     print(" -- Adding mappings to parties, candidates and invalid vote categories of each election.")

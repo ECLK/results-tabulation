@@ -301,6 +301,21 @@ class TallySheetModel(db.Model):
         return tally_sheet_version
 
     def create_version(self, content=None):
+        tally_sheet_version = self.create_empty_version()
+        self.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, content=content, post_save=False)
+
+        return tally_sheet_version
+
+    def create_tally_sheet_version_rows(self, tally_sheet_version, content=None, post_save=False):
+        if content is None:
+            content = []
+
+        if post_save:
+            extended_tally_sheet_version = self.get_extended_tally_sheet_version(
+                tallySheetVersionId=tally_sheet_version.tallySheetVersionId
+            )
+            content += extended_tally_sheet_version.get_post_save_request_content()
+
         column_name_map = {
             "electionId": Election.Model.electionId,
             "areaId": Area.Model.areaId,
@@ -321,8 +336,7 @@ class TallySheetModel(db.Model):
         for metaData in self.meta.metaDataList:
             meta_data_map[metaData.metaDataKey] = metaData.metaDataValue
 
-        tally_sheet_version = self.create_empty_version()
-        is_tally_sheet_version_complete = True
+        is_tally_sheet_version_complete = tally_sheet_version.isComplete
 
         for templateRow in self.template.rows:
             query_args = [
@@ -345,7 +359,7 @@ class TallySheetModel(db.Model):
 
             content_rows = []
 
-            if templateRow.isDerived is True:
+            if not post_save and templateRow.isDerived is True and templateRow.loadOnPostSave is False:
 
                 tally_sheet_version_row_join_condition = [
                     TallySheetVersionRow.Model.templateRowId == TemplateRowModel.templateRowId,
@@ -427,7 +441,7 @@ class TallySheetModel(db.Model):
                         content_row[column_name] = getattr(aggregated_result, column_name)
 
                     content_rows.append(content_row)
-            else:
+            elif not templateRow.isDerived or (templateRow.isDerived and templateRow.loadOnPostSave and post_save):
                 for content_row in content:
                     if content_row["templateRowId"] == templateRow.templateRowId:
                         for template_row_column in templateRow.columns:
@@ -460,9 +474,9 @@ class TallySheetModel(db.Model):
                 )
 
         if is_tally_sheet_version_complete:
-            tally_sheet_version.set_complete()
-
-        return tally_sheet_version
+            tally_sheet_version.isComplete = True
+        else:
+            tally_sheet_version.isComplete = False
 
     def get_extended_tally_sheet_version(self, tallySheetVersionId):
         tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=self.tallySheetId,

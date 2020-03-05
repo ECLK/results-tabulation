@@ -17,21 +17,6 @@ down_revision = '6a07b608d1fb'
 branch_labels = None
 depends_on = None
 
-Base = declarative_base()
-bind = op.get_bind()
-session = Session(bind=bind)
-
-
-class _Election(Base):
-    __tablename__ = 'election'
-    electionId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-    rootElectionId = sa.Column(sa.Integer,
-                               sa.ForeignKey("election.electionId", name="fk_election_root_election_id"),
-                               nullable=True)
-    parentElectionId = sa.Column(sa.Integer, sa.ForeignKey("election.electionId"), nullable=True)
-
-    parentElection = relationship("_Election", remote_side=[electionId], foreign_keys=[parentElectionId])
-
 
 def get_most_parent_election(election):
     if election.parentElection is not None:
@@ -41,6 +26,20 @@ def get_most_parent_election(election):
 
 
 def upgrade():
+    Base = declarative_base()
+    bind = op.get_bind()
+    session = Session(bind=bind)
+
+    class _Election(Base):
+        __tablename__ = 'election'
+        electionId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+        rootElectionId = sa.Column(sa.Integer,
+                                   sa.ForeignKey("election.electionId", name="fk_election_root_election_id"),
+                                   nullable=True)
+        parentElectionId = sa.Column(sa.Integer, sa.ForeignKey("election.electionId"), nullable=True)
+
+        parentElection = relationship("_Election", remote_side=[electionId], foreign_keys=[parentElectionId])
+
     op.add_column('election', sa.Column('rootElectionId', sa.Integer(), nullable=True))
     op.create_foreign_key('fk_election_root_election_id', 'election', 'election', ['rootElectionId'], ['electionId'])
 

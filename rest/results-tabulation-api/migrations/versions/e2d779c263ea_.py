@@ -20,7 +20,8 @@ depends_on = None
 
 def upgrade():
     op.add_column('dashboard_status_report', sa.Column('electionId', sa.Integer(), nullable=True))
-    op.create_foreign_key("dashboard_status_report_fk_election_id", 'dashboard_status_report', 'election', ['electionId'], ['electionId'])
+    op.create_foreign_key("dashboard_status_report_fk_election_id", 'dashboard_status_report', 'election',
+                          ['electionId'], ['electionId'])
 
     Base = declarative_base()
 

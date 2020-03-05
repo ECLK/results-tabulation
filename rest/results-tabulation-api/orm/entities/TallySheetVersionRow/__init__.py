@@ -20,7 +20,7 @@ class TallySheetVersionRow_Model(db.Model):
                                       db.ForeignKey(InvalidVoteCategory.Model.__table__.c.invalidVoteCategoryId),
                                       nullable=True)
     ballotBoxId = db.Column(db.String(100), nullable=True)
-    numValue = db.Column(db.Integer, nullable=True)
+    numValue = db.Column(db.FLOAT, nullable=True)
     strValue = db.Column(db.String(100), nullable=True)
     dateValue = db.Column(db.DateTime, nullable=True)
 

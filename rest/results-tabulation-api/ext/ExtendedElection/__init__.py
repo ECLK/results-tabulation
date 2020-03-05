@@ -44,7 +44,7 @@ class ExtendedElection:
 
     def build_election(self, party_candidate_dataset_file=None,
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
-                       invalid_vote_categories_dataset_file=None):
+                       invalid_vote_categories_dataset_file=None, number_of_seats_dataset_file=None):
         pass
 
     def get_area_map_for_tally_sheet(self, tally_sheet):

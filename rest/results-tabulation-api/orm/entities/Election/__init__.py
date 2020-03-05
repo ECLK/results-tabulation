@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from app import db
 from auth import get_user_access_area_ids
 from ext.ExtendedElection import get_extended_election
+from orm.entities import Meta
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
 
@@ -18,32 +19,38 @@ class ElectionModel(db.Model):
     voteType = db.Column(db.String(100), nullable=False)
     electionTemplateName = db.Column(db.String(100), nullable=False)
     isListed = db.Column(db.Boolean, nullable=False, default=False)
+    metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=True)
 
     parties = relationship("ElectionPartyModel")
     _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
     subElections = relationship("ElectionModel", foreign_keys=[parentElectionId])
     rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId])
     parentElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[parentElectionId])
+    meta = relationship(Meta.Model, foreign_keys=[metaId])
 
     pollingStationsDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
     postalCountingCentresDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
     partyCandidateDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
     invalidVoteCategoriesDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
+    numberOfSeatsDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
 
     pollingStationsDataset = relationship(File.Model, foreign_keys=[pollingStationsDatasetId])
     postalCountingCentresDataset = relationship(File.Model, foreign_keys=[postalCountingCentresDatasetId])
     partyCandidateDataset = relationship(File.Model, foreign_keys=[partyCandidateDatasetId])
     invalidVoteCategoriesDataset = relationship(File.Model, foreign_keys=[invalidVoteCategoriesDatasetId])
+    numberOfSeatsDataset = relationship(File.Model, foreign_keys=[numberOfSeatsDatasetId])
 
     def __init__(self, electionTemplateName, electionName, parentElection, voteType, isListed,
                  party_candidate_dataset_file=None,
                  polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
-                 invalid_vote_categories_dataset_file=None):
+                 invalid_vote_categories_dataset_file=None,
+                 number_of_seats_dataset_file=None):
         super(ElectionModel, self).__init__(
             electionTemplateName=electionTemplateName,
             electionName=electionName,
             voteType=voteType,
-            isListed=isListed
+            isListed=isListed,
+            metaId=Meta.create().metaId
         )
 
         db.session.add(self)
@@ -63,6 +70,7 @@ class ElectionModel(db.Model):
             self.set_postal_counting_centres_dataset(fileSource=postal_counting_centers_dataset_file)
             self.set_party_candidates_dataset(fileSource=party_candidate_dataset_file)
             self.set_invalid_vote_categories_dataset(fileSource=invalid_vote_categories_dataset_file)
+            self.set_number_of_seats_dataset(fileSource=number_of_seats_dataset_file)
 
             extended_election = self.get_extended_election()
 
@@ -174,6 +182,10 @@ class ElectionModel(db.Model):
         dataset = File.createFromFileSource(fileSource=fileSource)
         self.invalidVoteCategoriesDatasetId = dataset.fileId
 
+    def set_number_of_seats_dataset(self, fileSource):
+        dataset = File.createFromFileSource(fileSource=fileSource)
+        self.numberOfSeatsDatasetId = dataset.fileId
+
     def get_root_election(self):
         return self.rootElection
 
@@ -192,7 +204,8 @@ PostalAndNonPostal = "PostalAndNonPostal"
 def create(electionTemplateName, electionName, parentElection=None, voteType=PostalAndNonPostal, isListed=False,
            party_candidate_dataset_file=None,
            polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
-           invalid_vote_categories_dataset_file=None):
+           invalid_vote_categories_dataset_file=None,
+           number_of_seats_dataset_file=None):
     election = Model(
         electionTemplateName=electionTemplateName,
         electionName=electionName,
@@ -202,7 +215,8 @@ def create(electionTemplateName, electionName, parentElection=None, voteType=Pos
         party_candidate_dataset_file=party_candidate_dataset_file,
         polling_station_dataset_file=polling_station_dataset_file,
         postal_counting_centers_dataset_file=postal_counting_centers_dataset_file,
-        invalid_vote_categories_dataset_file=invalid_vote_categories_dataset_file
+        invalid_vote_categories_dataset_file=invalid_vote_categories_dataset_file,
+        number_of_seats_dataset_file=number_of_seats_dataset_file
     )
 
     return election

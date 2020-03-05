@@ -327,6 +327,10 @@ paths:
                   description: Postal counting centres CSV file
                   type: string
                   format: binary
+                numberOfSeatsDataset:
+                  description: number of seats allocated CSV file
+                  type: string
+                  format: binary
               required:
                 - electionName
                 - pollingStationsDataset

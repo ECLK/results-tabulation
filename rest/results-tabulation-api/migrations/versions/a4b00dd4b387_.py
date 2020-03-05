@@ -19,12 +19,12 @@ down_revision = '65900aaf5afd'
 branch_labels = None
 depends_on = None
 
-Base = declarative_base()
-bind = op.get_bind()
-session = Session(bind=bind)
-
 
 def upgrade():
+    Base = declarative_base()
+    bind = op.get_bind()
+    session = Session(bind=bind)
+
     op.add_column('file', sa.Column('fileContent', mysql.LONGBLOB(), nullable=True))
 
     class _File(Base):

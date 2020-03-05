@@ -15,12 +15,48 @@ def get_extended_tally_sheet_version_class(templateName):
         return ExtendedTallySheetVersion
 
 
+DEFAULT_HTML_TABLE_COLUMNS = [
+    "tallySheetVersionRowId",
+    "electionId",
+    # "electionName",
+    "templateRowId",
+    "templateRowType",
+    "voteType",
+    "rootElectionId",
+    "areaId",
+    "areaName",
+    "candidateId",
+    "candidateName",
+    "partyId",
+    "partyName",
+    "partySymbol",
+    "partyAbbreviation",
+    "invalidVoteCategoryId",
+    "invalidVoteCategoryDescription",
+    "strValue",
+    "numValue"
+]
+
+
 class ExtendedTallySheetVersion:
     def __init__(self, tallySheetVersion):
         self.tallySheetVersion = tallySheetVersion
 
-        data = tallySheetVersion.content
-        self.df = pd.DataFrame(data)
+        tallySheetVersionContent = tallySheetVersion.content
+
+        index = []
+        columns = DEFAULT_HTML_TABLE_COLUMNS
+        data = []
+
+        for content_row_index in range(len(tallySheetVersion.content)):
+            content_row = tallySheetVersionContent[content_row_index]
+            index.append(content_row_index)
+            data.append([getattr(content_row, column) for column in columns])
+
+        self.df = pd.DataFrame(data=data, index=index, columns=columns)
+
+    def get_post_save_request_content(self):
+        return []
 
     def html_letter(self, title="", total_registered_voters=None):
         tallySheetVersion = self.tallySheetVersion
@@ -94,32 +130,17 @@ class ExtendedTallySheetVersion:
 
         return html
 
-    def html(self, title="", total_registered_voters=None):
+    def html(self, title="", total_registered_voters=None, columns=None, df=None):
         stamp = self.tallySheetVersion.stamp
+        data = []
+        if columns is None:
+            columns = DEFAULT_HTML_TABLE_COLUMNS
+        if df is None:
+            df = self.df
 
         content = {
-            "columns": [
-                "tallySheetVersionRowId",
-                "electionId",
-                "templateRowId",
-                "templateRowType",
-                "electionId",
-                "voteType",
-                "rootElectionId",
-                "areaId",
-                "areaName",
-                "candidateId",
-                "candidateName",
-                "partyId",
-                "partyName",
-                "partySymbol",
-                "partyAbbreviation",
-                "invalidVoteCategoryId",
-                "invalidVoteCategoryDescription",
-                "strValue",
-                "numValue"
-            ],
-            "data": [],
+            "columns": columns,
+            "data": data,
             "stamp": {
                 "createdAt": stamp.createdAt,
                 "createdBy": stamp.createdBy,
@@ -127,32 +148,16 @@ class ExtendedTallySheetVersion:
             },
         }
 
-        for row in self.tallySheetVersion.content:
-            content_row = [
-                row.tallySheetVersionRowId,
-                row.electionId,
-                row.templateRowId,
-                row.templateRowType,
-                row.electionId,
-                row.voteType,
-                row.rootElectionId,
-                row.areaId,
-                row.areaName,
-                row.candidateId,
-                row.candidateName,
-                row.partyId,
-                row.partyName,
-                row.partySymbol,
-                row.partyAbbreviation,
-                row.invalidVoteCategoryId,
-                row.invalidVoteCategoryDescription,
-                row.strValue,
-                row.numValue
-            ]
+        for index, row in df.iterrows():
+            data_row = []
+            for column in columns:
+                cell_value = df.at[index, column]
+                if cell_value is None:
+                    cell_value = ""
 
-            content_row = ["" if cell is None else cell for cell in content_row]
+                data_row.append(cell_value)
 
-            content["data"].append(content_row)
+            data.append(data_row)
 
         html = render_template(
             'DEFAULT.html',
@@ -248,7 +253,8 @@ class ExtendedTallySheetVersion:
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
 
-        df = df.loc[(df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
+        df = df.loc[
+            (df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
         df = df.loc[df['voteType'] == NonPostal]
 
         df = df.groupby(
@@ -365,7 +371,8 @@ class ExtendedTallySheetVersion:
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
 
-        df = df.loc[(df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
+        df = df.loc[
+            (df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
 
         df = df.groupby(lambda a: True).agg(sum)
 
@@ -415,7 +422,8 @@ class ExtendedTallySheetVersion:
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
 
-        df = df.loc[(df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
+        df = df.loc[
+            (df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
 
         df = df.groupby(
             ['areaId', "areaName"]
@@ -432,7 +440,7 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
 
         df = df.groupby(
-            ['partyId', 'partyName', 'partyAbbreviation']
+            ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
         ).agg(sum).sort_values(
             by=['partyId'], ascending=True
         ).reset_index()

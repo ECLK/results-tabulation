@@ -21,12 +21,12 @@ down_revision = '5d7ed731c34a'
 branch_labels = None
 depends_on = None
 
-Base = declarative_base()
-bind = op.get_bind()
-session = Session(bind=bind)
-
 
 def upgrade():
+    Base = declarative_base()
+    bind = op.get_bind()
+    session = Session(bind=bind)
+
     op.add_column('templateRowColumn', sa.Column('source', sa.String(length=50), nullable=True))
 
     class _TemplateRow(Base):
