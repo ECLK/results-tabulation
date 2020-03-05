@@ -22,13 +22,13 @@ down_revision = 'a4b00dd4b387'
 branch_labels = None
 depends_on = None
 
-Base = declarative_base()
-bind = op.get_bind()
-session = Session(bind=bind)
-db = sa
-
 
 def upgrade():
+    Base = declarative_base()
+    bind = op.get_bind()
+    session = Session(bind=bind)
+    db = sa
+
     op.create_table(
         'template',
         sa.Column('templateId', sa.Integer(), nullable=False),

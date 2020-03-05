@@ -18,50 +18,46 @@ down_revision = '9cb6d7971778'
 branch_labels = None
 depends_on = None
 
-Base = declarative_base()
-bind = op.get_bind()
-session = Session(bind=bind)
-
-
-class _TallySheet(Base):
-    __tablename__ = 'tallySheet'
-    tallySheetId = sa.Column(sa.Integer, primary_key=True)
-    metaId = sa.Column(sa.Integer)
-
-
-class _Submission(Base):
-    __tablename__ = 'submission'
-    submissionId = sa.Column(sa.Integer, primary_key=True)
-    areaId = sa.Column(sa.Integer)
-    electionId = sa.Column(sa.Integer)
-
-
-class _Meta(Base):
-    __tablename__ = 'meta'
-
-    metaId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-
-    def __init__(self):
-        super(_Meta, self).__init__()
-        session.add(self)
-        session.flush()
-
-
-class _MetaData(Base):
-    __tablename__ = 'metaData'
-
-    metaDataId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-    metaId = sa.Column(sa.Integer)
-    metaDataKey = sa.Column(sa.String(100), nullable=False)
-    metaDataValue = sa.Column(sa.String(100), nullable=False)
-
-    def __init__(self, metaId, metaDataKey, metaDataValue):
-        super(_MetaData, self).__init__(metaId=metaId, metaDataKey=metaDataKey, metaDataValue=metaDataValue)
-        session.add(self)
-        session.flush()
-
 
 def upgrade():
+    Base = declarative_base()
+    bind = op.get_bind()
+    session = Session(bind=bind)
+
+    class _TallySheet(Base):
+        __tablename__ = 'tallySheet'
+        tallySheetId = sa.Column(sa.Integer, primary_key=True)
+        metaId = sa.Column(sa.Integer)
+
+    class _Submission(Base):
+        __tablename__ = 'submission'
+        submissionId = sa.Column(sa.Integer, primary_key=True)
+        areaId = sa.Column(sa.Integer)
+        electionId = sa.Column(sa.Integer)
+
+    class _Meta(Base):
+        __tablename__ = 'meta'
+
+        metaId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+
+        def __init__(self):
+            super(_Meta, self).__init__()
+            session.add(self)
+            session.flush()
+
+    class _MetaData(Base):
+        __tablename__ = 'metaData'
+
+        metaDataId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+        metaId = sa.Column(sa.Integer)
+        metaDataKey = sa.Column(sa.String(100), nullable=False)
+        metaDataValue = sa.Column(sa.String(100), nullable=False)
+
+        def __init__(self, metaId, metaDataKey, metaDataValue):
+            super(_MetaData, self).__init__(metaId=metaId, metaDataKey=metaDataKey, metaDataValue=metaDataValue)
+            session.add(self)
+            session.flush()
+
     op.create_table(
         'meta',
         sa.Column('metaId', sa.Integer(), nullable=False),

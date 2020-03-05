@@ -17,23 +17,22 @@ down_revision = '8da6a3e78339'
 branch_labels = None
 depends_on = None
 
-Base = declarative_base()
-bind = op.get_bind()
-session = Session(bind=bind)
-
-
-class _NewTallySheetVersionRow_PRE_34_preference_Model(Base):
-    __tablename__ = 'tallySheetVersionRow_PRE_34_Preference'
-    tallySheetVersionRowId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-    tallySheetVersionId = sa.Column(sa.Integer, nullable=False)
-    electionId = sa.Column(sa.Integer, nullable=False)
-    candidateId = sa.Column(sa.Integer, nullable=True)
-    areaId = sa.Column(sa.Integer, nullable=True)
-    preferenceNumber = sa.Column(sa.Integer, nullable=False)
-    preferenceCount = sa.Column(sa.Integer, nullable=False)
-
 
 def upgrade():
+    Base = declarative_base()
+    bind = op.get_bind()
+    session = Session(bind=bind)
+
+    class _NewTallySheetVersionRow_PRE_34_preference_Model(Base):
+        __tablename__ = 'tallySheetVersionRow_PRE_34_Preference'
+        tallySheetVersionRowId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+        tallySheetVersionId = sa.Column(sa.Integer, nullable=False)
+        electionId = sa.Column(sa.Integer, nullable=False)
+        candidateId = sa.Column(sa.Integer, nullable=True)
+        areaId = sa.Column(sa.Integer, nullable=True)
+        preferenceNumber = sa.Column(sa.Integer, nullable=False)
+        preferenceCount = sa.Column(sa.Integer, nullable=False)
+
     existing_records = session.query(
         _NewTallySheetVersionRow_PRE_34_preference_Model.tallySheetVersionRowId,
         _NewTallySheetVersionRow_PRE_34_preference_Model.tallySheetVersionId,
@@ -75,6 +74,20 @@ def upgrade():
 
 
 def downgrade():
+    Base = declarative_base()
+    bind = op.get_bind()
+    session = Session(bind=bind)
+
+    class _NewTallySheetVersionRow_PRE_34_preference_Model(Base):
+        __tablename__ = 'tallySheetVersionRow_PRE_34_Preference'
+        tallySheetVersionRowId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+        tallySheetVersionId = sa.Column(sa.Integer, nullable=False)
+        electionId = sa.Column(sa.Integer, nullable=False)
+        candidateId = sa.Column(sa.Integer, nullable=True)
+        areaId = sa.Column(sa.Integer, nullable=True)
+        preferenceNumber = sa.Column(sa.Integer, nullable=False)
+        preferenceCount = sa.Column(sa.Integer, nullable=False)
+
     existing_records = session.query(
         _NewTallySheetVersionRow_PRE_34_preference_Model.tallySheetVersionRowId,
         _NewTallySheetVersionRow_PRE_34_preference_Model.tallySheetVersionId,
