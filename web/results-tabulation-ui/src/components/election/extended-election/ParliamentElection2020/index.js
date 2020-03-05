@@ -46,11 +46,11 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         let tallySheetCodes = [];
                         let tallySheetCodeLabels = [];
                         if (voteType === "Postal") {
-                            tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39, TALLY_SHEET_CODE_PE_22];
-                            tallySheetCodeLabels = ["CE 201 PV (Postal)", "PE-27 PV (Postal)", "PE-39 (Postal)", "PE-22 (Postal)"];
+                            tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39];
+                            tallySheetCodeLabels = ["CE 201 PV (Postal)", "PE-27 PV (Postal)", "PE-39 (Postal)"];
                         } else if (voteType === "NonPostal") {
-                            tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39, TALLY_SHEET_CODE_PE_22];
-                            tallySheetCodeLabels = ["CE 201", "PE-27", "PE-39", "PE-22"];
+                            tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39];
+                            tallySheetCodeLabels = ["CE 201", "PE-27", "PE-39"];
                         }
                         return <Grid item xs={12} key={voteType}>
                             <Grid item xs={12}>
@@ -80,11 +80,11 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         let tallySheetCodes = [];
                         let tallySheetCodeLabels = [];
                         if (voteType === "Postal") {
-                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
-                            tallySheetCodeLabels = ["PE-4 PV (Postal)"];
+                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
+                            tallySheetCodeLabels = ["PE-4 PV (Postal)", "PE-22 (Postal)"];
                         } else if (voteType === "NonPostal") {
-                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
-                            tallySheetCodeLabels = ["PE-4"];
+                            tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
+                            tallySheetCodeLabels = ["PE-4", "PE-22"];
                         }
                         return <Grid item xs={12} key={voteType}>
                             <Grid item xs={12}>
