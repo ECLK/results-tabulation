@@ -55,6 +55,9 @@ role_based_access_config = {
         PE_39: {
             NonPostal: [READ, UNLOCK]
         },
+        PE_22: {
+          NonPostal: [READ, UNLOCK]
+        },
         CE_201: {
             NonPostal: [READ, UNLOCK]
         },
@@ -99,6 +102,9 @@ role_based_access_config = {
             Postal: [READ, UNLOCK]
         },
         PE_39: {
+            Postal: [READ, UNLOCK]
+        },
+        PE_22: {
             Postal: [READ, UNLOCK]
         },
         CE_201_PV: {
