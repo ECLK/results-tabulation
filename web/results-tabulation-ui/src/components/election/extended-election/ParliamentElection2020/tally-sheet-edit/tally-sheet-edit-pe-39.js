@@ -29,7 +29,7 @@ export default function TallySheetEdit_PE_39({history, election, tallySheet, mes
         const _rejectionReasonWiseVoteCountRows = [];
         const _rejectionReasonWiseVoteCountRowsMap = {};
         election.invalidVoteCategories.filter(invalidVoteCategory => {
-            return invalidVoteCategory.invalidVoteCategoryType === null
+            return invalidVoteCategory.invalidVoteCategoryType === "ELECTION"
         }).map(invalidVoteCategory => {
             const _rejectionReasonWiseVoteCountRow = {
                 ...tallySheet.area,
