@@ -7,6 +7,7 @@ class InvalidVoteCategoryModel(db.Model):
     invalidVoteCategoryId = db.Column(db.Integer, primary_key=True, autoincrement=True)
     electionId = db.Column(db.Integer, db.ForeignKey("election.electionId"))
     categoryDescription = db.Column(db.String(300), nullable=False)
+    invalidVoteCategoryType = db.Column(db.String(50), nullable=True)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
 
@@ -14,10 +15,11 @@ class InvalidVoteCategoryModel(db.Model):
         db.UniqueConstraint('electionId', 'categoryDescription', name='InvalidCategoryPerElection'),
     )
 
-    def __init__(self, electionId, categoryDescription):
+    def __init__(self, electionId, categoryDescription, invalidVoteCategoryType):
         super(InvalidVoteCategoryModel, self).__init__(
             electionId=electionId,
-            categoryDescription=categoryDescription
+            categoryDescription=categoryDescription,
+            invalidVoteCategoryType=invalidVoteCategoryType
         )
 
         db.session.add(self)
@@ -27,7 +29,7 @@ class InvalidVoteCategoryModel(db.Model):
 Model = InvalidVoteCategoryModel
 
 
-def get_all(electionId=None, categoryDescription=None):
+def get_all(electionId=None, categoryDescription=None, invalidVoteCategoryType=None):
     query = Model.query
 
     if electionId is not None:
@@ -35,6 +37,9 @@ def get_all(electionId=None, categoryDescription=None):
 
     if categoryDescription is not None:
         query = query.filter(Model.categoryDescription == categoryDescription)
+
+    if invalidVoteCategoryType is not None:
+        query = query.filter(Model.invalidVoteCategoryType == invalidVoteCategoryType)
 
     return query
 
@@ -48,10 +53,11 @@ def get_by_id(electionId, partyId):
     return result
 
 
-def create(electionId, categoryDescription):
+def create(electionId, categoryDescription, invalidVoteCategoryType=None):
     result = Model(
         electionId=electionId,
-        categoryDescription=categoryDescription
+        categoryDescription=categoryDescription,
+        invalidVoteCategoryType=invalidVoteCategoryType
     )
 
     return result
