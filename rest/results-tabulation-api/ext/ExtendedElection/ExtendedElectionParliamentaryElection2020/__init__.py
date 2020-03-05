@@ -28,7 +28,7 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
-    TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_QUALIFIED_FOR_SEAT_ALLOCATION
+    TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -408,7 +408,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             ]
         )
         tally_sheet_template_pe_r2_valid_vote_count_qualified_for_seat_allocation = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_QUALIFIED_FOR_SEAT_ALLOCATION,
+            templateRowType=TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION,
             hasMany=True,
             isDerived=True,
             loadOnPostSave=True,

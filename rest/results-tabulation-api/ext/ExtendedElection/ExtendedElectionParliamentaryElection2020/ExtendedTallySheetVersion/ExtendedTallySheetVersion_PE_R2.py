@@ -4,11 +4,23 @@ from exception.messages import MESSAGE_CODE_CANNOT_DIVIDE_BY_ZERO
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
-    TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_QUALIFIED_FOR_SEAT_ALLOCATION
+    TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
+    TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION
 from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
+import pandas as pd
+import numpy as np
+
+template_row_to_df_num_value_column_map = {
+    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: "seatsAllocatedFromRound1",
+    TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: "validVotesRemainFromRound1",
+    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: "seatsAllocatedFromRound2",
+    TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: "bonusSeatsAllocated",
+    TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: "voteCountCeilPerSeat",
+    TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION: "minimumVoteCountRequiredForSeatAllocation"
+}
 
 
 class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
@@ -16,9 +28,12 @@ class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
     def get_post_save_request_content(self):
         tally_sheet_id = self.tallySheetVersion.tallySheetId
 
-        total_valid_vote_count, total_valid_vote_count_of_qualified_parties, valid_vote_count_required_per_seat, \
-        valid_vote_count_required_per_seat_ceil, df = self.get_seats_per_party(
-            minimum_vote_count_percentage_required=0.1,
+        df = self.populate_seats_per_party(
+
+            # TODO take out
+            minimum_vote_count_percentage_required=0.3,
+
+            # TODO take out
             number_of_seats_allocated=10
         )
 
@@ -28,14 +43,7 @@ class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
             TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: [],
             TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: [],
             TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: [],
-            TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_QUALIFIED_FOR_SEAT_ALLOCATION: []
-        }
-
-        template_row_to_df_num_value_column_map = {
-            TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: "seatsAllocatedFromRound1",
-            TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: "validVotesRemainFromRound1",
-            TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: "seatsAllocatedFromRound2",
-            TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: "bonusSeatsAllocated"
+            TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION: []
         }
 
         for templateRowType in template_row_to_df_num_value_column_map.keys():
@@ -52,7 +60,7 @@ class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
 
         content = []
 
-        for index, row in df.iterrows():
+        for index in df.index:
             for templateRowType in template_row_to_df_num_value_column_map.keys():
                 for templateRow in template_row_map[templateRowType]:
                     content.append({
@@ -62,30 +70,9 @@ class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
                         "numValue": float(df.at[index, template_row_to_df_num_value_column_map[templateRowType]])
                     })
 
-        for templateRow in template_row_map[TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT]:
-            content.append({
-                "templateRowId": templateRow.templateRowId,
-                "templateRowType": TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT,
-                "partyId": int(df.at[index, "partyId"]),
-                "numValue": valid_vote_count_required_per_seat_ceil
-            })
-
-        for templateRow in template_row_map[TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_QUALIFIED_FOR_SEAT_ALLOCATION]:
-            content.append({
-                "templateRowId": templateRow.templateRowId,
-                "templateRowType": TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_QUALIFIED_FOR_SEAT_ALLOCATION,
-                "partyId": int(df.at[index, "partyId"]),
-                "numValue": total_valid_vote_count_of_qualified_parties
-            })
-
-        print("##################################")
-        print("template_row_map : ", template_row_map)
-        print(df)
-        print("##################################")
-
         return content
 
-    def get_seats_per_party(self, minimum_vote_count_percentage_required, number_of_seats_allocated=0):
+    def populate_seats_per_party(self, minimum_vote_count_percentage_required, number_of_seats_allocated=0):
         df = self.get_party_wise_valid_vote_count_result()
 
         total_valid_vote_count = df['numValue'].sum()
@@ -101,7 +88,7 @@ class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
 
         total_valid_vote_count_of_qualified_parties = 0
 
-        for index, row in df.iterrows():
+        for index in df.index:
             if df.at[index, 'numValue'] >= _minimum_valid_vote_count_required_per_party_to_be_qualified:
                 df.at[index, 'qualifiedForSeatsAllocation'] = True
                 total_valid_vote_count_of_qualified_parties += df.at[index, 'numValue']
@@ -110,8 +97,8 @@ class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
 
         max_valid_vote_count_per_party = df['numValue'].max()
 
-        for index, row in df.iterrows():
-            if row.numValue == max_valid_vote_count_per_party:
+        for index in df.index:
+            if df.at[index, 'numValue'] == max_valid_vote_count_per_party:
                 df.at[index, 'bonusSeatsAllocated'] = 1
                 number_of_seats_allocated -= 1
             else:
@@ -120,18 +107,19 @@ class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
         valid_vote_count_required_per_seat = total_valid_vote_count_of_qualified_parties / number_of_seats_allocated
         valid_vote_count_required_per_seat_ceil = math.ceil(valid_vote_count_required_per_seat)
 
-        for index, row in df.iterrows():
+        for index in df.index:
+            num_value = df.at[index, 'numValue']
             if df.at[index, 'qualifiedForSeatsAllocation']:
-                number_of_seats_qualified = math.floor(row.numValue / valid_vote_count_required_per_seat_ceil)
+                number_of_seats_qualified = math.floor(num_value / valid_vote_count_required_per_seat_ceil)
                 df.at[index, 'seatsAllocatedFromRound1'] = number_of_seats_qualified
                 number_of_seats_allocated -= number_of_seats_qualified
-                df.at[index, 'validVotesRemainFromRound1'] = row.numValue % valid_vote_count_required_per_seat_ceil
+                df.at[index, 'validVotesRemainFromRound1'] = num_value % valid_vote_count_required_per_seat_ceil
             else:
                 df.at[index, 'seatsAllocatedFromRound1'] = 0
                 df.at[index, 'validVotesRemainFromRound1'] = 0
 
         df = df.sort_values(by=['validVotesRemainFromRound1'], ascending=False)
-        for index, row in df.iterrows():
+        for index in df.index:
             if df.at[index, 'qualifiedForSeatsAllocation'] and number_of_seats_allocated > 0:
                 number_of_seats_qualified = 1
                 df.at[index, 'seatsAllocatedFromRound2'] = number_of_seats_qualified
@@ -143,36 +131,66 @@ class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
 
         df = df.sort_values(by=['numValue'], ascending=False)
 
-        return total_valid_vote_count, total_valid_vote_count_of_qualified_parties, \
-               valid_vote_count_required_per_seat, valid_vote_count_required_per_seat_ceil, df
+        df["voteCountCeilPerSeat"] = pd.Series(
+            np.full(len(df.index), valid_vote_count_required_per_seat_ceil),
+            index=df.index)
+        df["minimumVoteCountRequiredForSeatAllocation"] = pd.Series(
+            np.full(len(df.index), _minimum_valid_vote_count_required_per_party_to_be_qualified),
+            index=df.index)
 
-    # def html(self, title="", total_registered_voters=None):
-    #     total_valid_vote_count, total_valid_vote_count_of_qualified_parties, valid_vote_count_required_per_seat, \
-    #     valid_vote_count_required_per_seat_ceil, df = self.get_seats_per_party(
-    #         minimum_vote_count_percentage_required=0.1,
-    #         number_of_seats_allocated=10
-    #     )
-    #
-    #     print(df)
-    #
-    #     return super(ExtendedTallySheetVersion_PE_R2, self).html(
-    #         title="PE-R2 : %s" % self.tallySheetVersion.submission.area.areaName,
-    #         columns=[
-    #             "tallySheetVersionRowId",
-    #             "electionId",
-    #             "partyId",
-    #             "partyName",
-    #             "partySymbol",
-    #             "partyAbbreviation",
-    #             "numValue",
-    #             "qualifiedForSeatsAllocation",
-    #             "bonusSeatsAllocated",
-    #             "seatsAllocatedFromRound1",
-    #             "validVotesRemainFromRound1",
-    #             "seatsAllocatedFromRound2",
-    #             "seatsAllocated"
-    #         ],
-    #         df=df
-    #     )
+        return df
 
-    # TODO
+    def get_party_wise_seat_calculations(self):
+        party_wise_calculations_df = self.get_party_wise_valid_vote_count_result()
+
+        for template_row_type in template_row_to_df_num_value_column_map:
+            df_column_name = template_row_to_df_num_value_column_map[template_row_type]
+            party_wise_calculations_df[df_column_name] = pd.Series(
+                np.zeros(len(party_wise_calculations_df.index)),
+                index=party_wise_calculations_df.index
+            )
+
+        for index_1 in party_wise_calculations_df.index:
+            party_id = party_wise_calculations_df.at[index_1, "partyId"]
+            filtered_df = self.df.loc[self.df['partyId'] == party_id]
+
+            for index_2 in filtered_df.index:
+                template_row_type = filtered_df.at[index_2, "templateRowType"]
+                num_value = filtered_df.at[index_2, "numValue"]
+                if template_row_type in template_row_to_df_num_value_column_map:
+                    df_column_name = template_row_to_df_num_value_column_map[template_row_type]
+                    party_wise_calculations_df.at[index_1, df_column_name] = num_value
+
+        party_wise_calculations_df[
+            'seatsAllocated'] = party_wise_calculations_df.seatsAllocatedFromRound1 + party_wise_calculations_df.seatsAllocatedFromRound2 + party_wise_calculations_df.bonusSeatsAllocated
+
+        party_wise_calculations_df = party_wise_calculations_df.sort_values(by=['seatsAllocated'], ascending=False)
+
+        return party_wise_calculations_df
+
+    def html(self, title="", total_registered_voters=None):
+        party_wise_seat_calculations = self.get_party_wise_seat_calculations()
+
+        valid_vote_count_ceil_per_seat = 0
+        valid_vote_count_qualified_for_seat_allocation = 0
+
+        return super(ExtendedTallySheetVersion_PE_R2, self).html(
+            title="PE-R2 : %s" % self.tallySheetVersion.submission.area.areaName,
+            columns=[
+                "tallySheetVersionRowId",
+                "electionId",
+                "partyId",
+                "partyName",
+                "partySymbol",
+                "partyAbbreviation",
+                "numValue",
+                "voteCountCeilPerSeat",
+                "minimumVoteCountRequiredForSeatAllocation",
+                "bonusSeatsAllocated",
+                "seatsAllocatedFromRound1",
+                "validVotesRemainFromRound1",
+                "seatsAllocatedFromRound2",
+                "seatsAllocated"
+            ],
+            df=party_wise_seat_calculations
+        )
