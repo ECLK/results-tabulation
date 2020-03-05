@@ -299,33 +299,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_22 = Template.create(
             templateName=PE_22
         )
-        tally_sheet_template_pe_22_preferences_indicated_for_more_than_three_candidates_row = tally_sheet_template_pe_22.add_row(
-            templateRowType="PARTY_WISE_INVALID_VOTE_COUNT",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "invalidVoteCategoryId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_22_more_than_three_candidates_all_preferences_are_void_uncertainty_row = tally_sheet_template_pe_22.add_row(
-            templateRowType="PARTY_WISE_INVALID_VOTE_COUNT",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "invalidVoteCategoryId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_22_more_than_three_candidates_no_preferences_row = tally_sheet_template_pe_22.add_row(
+        tally_sheet_template_pe_22_party_and_invalid_vote_category_wise_vote_count_row = tally_sheet_template_pe_22.add_row(
             templateRowType="PARTY_WISE_INVALID_VOTE_COUNT",
             hasMany=True,
             isDerived=False,
