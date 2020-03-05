@@ -45,27 +45,7 @@ class ExtendedTallySheetVersion:
         tallySheetVersionContent = tallySheetVersion.content
 
         index = []
-        columns = [
-            "tallySheetVersionRowId",
-            "electionId",
-            # "electionName"
-            "templateRowId",
-            "templateRowType",
-            "voteType",
-            "rootElectionId",
-            "areaId",
-            "areaName",
-            "candidateId",
-            "candidateName",
-            "partyId",
-            "partyName",
-            "partySymbol",
-            "partyAbbreviation",
-            "invalidVoteCategoryId",
-            "invalidVoteCategoryDescription",
-            "strValue",
-            "numValue"
-        ]
+        columns = DEFAULT_HTML_TABLE_COLUMNS
         data = []
 
         for content_row_index in range(len(tallySheetVersion.content)):

@@ -316,10 +316,6 @@ class TallySheetModel(db.Model):
             )
             content += extended_tally_sheet_version.get_post_save_request_content()
 
-            # print(" content : ", content)
-            #
-            # raise Exception("Stop here")
-
         column_name_map = {
             "electionId": Election.Model.electionId,
             "areaId": Area.Model.areaId,
@@ -454,24 +450,15 @@ class TallySheetModel(db.Model):
                                 content_row[template_row_column_name] = meta_data_map[template_row_column_name]
 
                         content_rows.append(content_row)
-                    else:
-                        print(" ----- templateRow.templateRowId : ", templateRow.templateRowId)
 
                 if templateRow.hasMany is False and len(content_rows) > 0:
                     content_rows = [content_rows[0]]
-
-                # if post_save:
-                #     print("\n\n\ntemplateRow : ", templateRow.templateRowType)
-                #     print("\n\n\ncontent_rows : ", content_rows)
-                #     raise Exception("Stop here")
 
             for content_row in content_rows:
 
                 # Update the completed flag to False if there are null values in any row.
                 if content_row["numValue"] is None:
                     is_tally_sheet_version_complete = False
-
-                print("------  content_row ---- ", content_row)
 
                 TallySheetVersionRow.create(
                     templateRow=templateRow,
