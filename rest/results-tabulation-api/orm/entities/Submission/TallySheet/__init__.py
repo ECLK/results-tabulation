@@ -336,7 +336,7 @@ class TallySheetModel(db.Model):
         for metaData in self.meta.metaDataList:
             meta_data_map[metaData.metaDataKey] = metaData.metaDataValue
 
-        is_tally_sheet_version_complete = True
+        is_tally_sheet_version_complete = tally_sheet_version.isComplete
 
         for templateRow in self.template.rows:
             query_args = [
@@ -474,7 +474,9 @@ class TallySheetModel(db.Model):
                 )
 
         if is_tally_sheet_version_complete:
-            tally_sheet_version.set_complete()
+            tally_sheet_version.isComplete = True
+        else:
+            tally_sheet_version.isComplete = False
 
     def get_extended_tally_sheet_version(self, tallySheetVersionId):
         tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=self.tallySheetId,

@@ -20,7 +20,7 @@ class TallySheetVersionModel(db.Model):
     __tablename__ = 'tallySheetVersion'
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
                                     primary_key=True)
-    isComplete = db.Column(db.Boolean, default=False, nullable=False)
+    isComplete = db.Column(db.Boolean, default=True, nullable=False)
     submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[tallySheetVersionId])
 
     submission = association_proxy("submissionVersion", "submission")

@@ -42,12 +42,15 @@ def create(body):
     postal_counting_centres_dataset = files.get("postalCountingCentresDataset")
     party_candidates_dataset = files.get("partyCandidatesDataset")
     invalid_vote_categories_dataset = files.get("invalidVoteCategoriesDataset")
+    number_of_seats_dataset_file = files.get("numberOfSeatsDataset")
 
-    election = Election.create(electionTemplateName=election_template_name, electionName=election_name, isListed=True,
-                               party_candidate_dataset_file=party_candidates_dataset,
-                               polling_station_dataset_file=polling_stations_dataset,
-                               postal_counting_centers_dataset_file=postal_counting_centres_dataset,
-                               invalid_vote_categories_dataset_file=invalid_vote_categories_dataset)
+    election = Election.create(
+        electionTemplateName=election_template_name, electionName=election_name, isListed=True,
+        party_candidate_dataset_file=party_candidates_dataset,
+        polling_station_dataset_file=polling_stations_dataset,
+        postal_counting_centers_dataset_file=postal_counting_centres_dataset,
+        invalid_vote_categories_dataset_file=invalid_vote_categories_dataset,
+        number_of_seats_dataset_file=number_of_seats_dataset_file)
 
     db.session.commit()
 
