@@ -11,13 +11,30 @@ class MetaModel(db.Model):
     metaDataList = relationship(MetaData.Model)
 
     @classmethod
-    def create(cls, metaDataDict):
+    def create(cls, metaDataDict=None):
         meta = MetaModel()
-        for meta_key in metaDataDict:
-            meta_value = metaDataDict[meta_key]
-            MetaData.create(metaId=meta.metaId, metaDataKey=meta_key, metaDataValue=meta_value)
+        if metaDataDict:
+            for meta_key in metaDataDict:
+                meta_value = metaDataDict[meta_key]
+                meta.add_meta_data(metaDataKey=meta_key, metaDataValue=meta_value)
 
         return meta
+
+    def add_meta_data(self, metaDataKey, metaDataValue):
+        return MetaData.create(metaId=self.metaId, metaDataKey=metaDataKey, metaDataValue=metaDataValue)
+
+    def get_meta_data(self, metaDataKey):
+        meta_data = db.session.query(
+            MetaData.Model.metaDataValue
+        ).filter(
+            MetaData.Model.metaId == self.metaId,
+            MetaData.Model.metaDataKey == metaDataKey
+        ).one_or_none()
+
+        if meta_data:
+            return meta_data.metaDataValue
+        else:
+            return None
 
     def __init__(self):
         db.session.add(self)

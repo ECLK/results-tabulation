@@ -135,6 +135,12 @@ role_based_access_config = {
 
     },
     EC_LEADERSHIP_ROLE: {
+        PE_CE_RO_V1: {
+            Postal: [READ, WRITE, UNLOCK]
+        },
+        PE_R1: {
+            Postal: [READ, WRITE, UNLOCK]
+        },
         PE_CE_RO_V2: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK]
         },

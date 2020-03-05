@@ -6,6 +6,9 @@ from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, 
     TALLY_SHEET_COLUMN_SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_R2 import \
     ExtendedTallySheetVersion_PE_R2
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
+    META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED, \
+    META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
     PE_R1, PE_CE_RO_PR_1, \
     PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39
@@ -28,7 +31,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
-    TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION
+    TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
+    TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -67,7 +71,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
     def build_election(self, party_candidate_dataset_file=None,
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
-                       invalid_vote_categories_dataset_file=None):
+                       invalid_vote_categories_dataset_file=None, number_of_seats_dataset_file=None):
         root_election = self.election
         # postal_election = root_election.add_sub_election(electionName="Postal", voteType=Postal)
         # ordinary_election = root_election.add_sub_election(electionName="Ordinary", voteType=NonPostal)
@@ -78,9 +82,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         if not polling_station_dataset_file:
             polling_station_dataset_file = root_election.pollingStationsDataset.fileContent
 
-        # if not postal_counting_centers_dataset_file:
-        #     postal_counting_centers_dataset_file = root_election.postalCountingCentresDataset.fileContent
-        #
+        if not number_of_seats_dataset_file:
+            number_of_seats_dataset_file = root_election.numberOfSeatsDataset.fileContent
+
         if not invalid_vote_categories_dataset_file:
             invalid_vote_categories_dataset_file = root_election.invalidVoteCategoriesDataset.fileContent
 
@@ -957,7 +961,6 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             row["Election Commission"] = "Sri Lanka Election Commission"
             row["Polling Station"] = row["Polling Station (English)"]
 
-            print("[ROW] ========= ", row)
             country_entry = _get_country_entry(row=row)
 
             electoral_district_entry = _get_electoral_district_entry(row=row)
@@ -1063,65 +1066,17 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 pe_ce_ro_pr_3_tallySheetId=pe_ce_ro_pr_3_tally_sheet.tallySheetId
             )
 
-        # for row in get_rows_from_csv(postal_counting_centers_dataset_file):
-        #     row["Country"] = "Sri Lanka"
-        #     row["Election Commission"] = "Sri Lanka Election Commission"
-        #     row["Counting Centre"] = row["Postal Vote Counting Centre"]
-        #
-        #     print("[POSTAL ROW] ========= ", row)
-        #     country_entry = _get_country_entry(election=root_election, row=row)
-        #     electoral_district_entry = _get_electoral_district_entry(election=root_election, row=row)
-        #     election_commission_entry = _get_election_commission_entry(election=root_election, row=row)
-        #     district_centre_entry = _get_district_centre_entry(election=root_election, row=row)
-        #     counting_centre_entry = _get_counting_centre_entry(election=postal_election, row=row)
-        #
-        #     country_entry["area"].add_child(electoral_district_entry["area"].areaId)
-        #     electoral_district_entry["area"].add_child(counting_centre_entry["area"].areaId)
-        #     district_centre_entry["area"].add_child(counting_centre_entry["area"].areaId)
-        #     election_commission_entry["area"].add_child(district_centre_entry["area"].areaId)
-        #
-        #     AreaMap.create(
-        #         electionId=root_election.electionId,
-        #         voteType=Postal,
-        #         countingCentreId=counting_centre_entry["area"].areaId,
-        #         districtCentreId=district_centre_entry["area"].areaId,
-        #         electionCommissionId=election_commission_entry["area"].areaId,
-        #         electoralDistrictId=electoral_district_entry["area"].areaId,
-        #         countryId=country_entry["area"].areaId
-        #     )
-        #
-        #     pe_27_tally_sheet = counting_centre_entry["tallySheets"][PE_27][0]
-        #     pe_4_tally_sheet = counting_centre_entry["tallySheets"][PE_4][0]
-        #
-        #     pe_ce_ro_v1_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_V1][0]
-        #     pe_r1_tally_sheet = electoral_district_entry["tallySheets"][PE_R1][0]
-        #     pe_ce_ro_pr_1_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_PR_1][0]
-        #
-        #     pe_ce_ro_v2_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_V2][0]
-        #     pe_r2_tally_sheet = electoral_district_entry["tallySheets"][PE_R2][0]
-        #     pe_ce_ro_pr_2_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_PR_2][0]
-        #     pe_ce_ro_pr_3_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_PR_3][0]
-        #
-        #     pe_ce_ro_v1_tally_sheet.add_child(pe_27_tally_sheet)
-        #     pe_r1_tally_sheet.add_child(pe_ce_ro_v1_tally_sheet)
-        #     pe_ce_ro_v2_tally_sheet.add_child(pe_ce_ro_v1_tally_sheet)
-        #     pe_r2_tally_sheet.add_child(pe_ce_ro_v2_tally_sheet)
-        #
-        #     pe_ce_ro_pr_1_tally_sheet.add_child(pe_4_tally_sheet)
-        #     pe_ce_ro_pr_2_tally_sheet.add_child(pe_ce_ro_pr_1_tally_sheet)
-        #     pe_ce_ro_pr_3_tally_sheet.add_child(pe_ce_ro_pr_2_tally_sheet)
-        #
-        #     TallySheetMap.create(
-        #         pe_27_tallySheetId=pe_27_tally_sheet.tallySheetId,
-        #         pe_4_tallySheetId=pe_4_tally_sheet.tallySheetId,
-        #         pe_ce_ro_v1_tallySheetId=pe_ce_ro_v1_tally_sheet.tallySheetId,
-        #         pe_r1_tallySheetId=pe_r1_tally_sheet.tallySheetId,
-        #         pe_ce_ro_pr_1_tallySheetId=pe_ce_ro_pr_1_tally_sheet.tallySheetId,
-        #         pe_ce_ro_v2_tallySheetId=pe_ce_ro_v2_tally_sheet.tallySheetId,
-        #         pe_r2_tallySheetId=pe_r2_tally_sheet.tallySheetId,
-        #         pe_ce_ro_pr_2_tallySheetId=pe_ce_ro_pr_2_tally_sheet.tallySheetId,
-        #         pe_ce_ro_pr_3_tallySheetId=pe_ce_ro_pr_3_tally_sheet.tallySheetId
-        #     )
+        for row in get_rows_from_csv(number_of_seats_dataset_file):
+            # pass
+            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election.meta.add_meta_data(
+                metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED,
+                metaDataValue=row["Number of seats"]
+            )
+            election.meta.add_meta_data(
+                metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION,
+                metaDataValue=row["Required percentage of valid votes"]
+            )
 
         db.session.commit()
 

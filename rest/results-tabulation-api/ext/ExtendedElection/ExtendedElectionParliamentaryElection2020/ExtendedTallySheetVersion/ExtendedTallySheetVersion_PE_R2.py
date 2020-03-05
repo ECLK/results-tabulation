@@ -1,6 +1,9 @@
 from app import db
 from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_CANNOT_DIVIDE_BY_ZERO
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
+    META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION, \
+    META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
@@ -26,15 +29,22 @@ template_row_to_df_num_value_column_map = {
 class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
 
     def get_post_save_request_content(self):
+        election = self.tallySheetVersion.submission.election
         tally_sheet_id = self.tallySheetVersion.tallySheetId
 
+        minimum_vote_count_percentage_required = election.meta.get_meta_data(
+            metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION)
+        if minimum_vote_count_percentage_required is not None:
+            minimum_vote_count_percentage_required = float(minimum_vote_count_percentage_required)
+
+        number_of_seats_allocated = election.meta.get_meta_data(
+            metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED)
+        if number_of_seats_allocated is not None:
+            number_of_seats_allocated = float(number_of_seats_allocated)
+
         df = self.populate_seats_per_party(
-
-            # TODO take out
-            minimum_vote_count_percentage_required=0.3,
-
-            # TODO take out
-            number_of_seats_allocated=10
+            minimum_vote_count_percentage_required=minimum_vote_count_percentage_required,
+            number_of_seats_allocated=number_of_seats_allocated
         )
 
         template_row_map = {

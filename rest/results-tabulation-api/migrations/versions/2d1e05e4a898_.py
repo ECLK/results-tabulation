@@ -21,7 +21,13 @@ def upgrade():
     op.create_foreign_key('election_fk_numberOfSeatsDatasetId', 'election', 'file', ['numberOfSeatsDatasetId'],
                           ['fileId'])
 
+    op.add_column('election', sa.Column('metaId', sa.Integer(), nullable=True))
+    op.create_foreign_key("election_fk_metaId", 'election', 'meta', ['metaId'], ['metaId'])
+
 
 def downgrade():
     op.drop_constraint('election_fk_numberOfSeatsDatasetId', 'election', type_='foreignkey')
     op.drop_column('election', 'numberOfSeatsDatasetId')
+
+    op.drop_constraint('election_fk_metaId', 'election', type_='foreignkey')
+    op.drop_column('election', 'metaId')

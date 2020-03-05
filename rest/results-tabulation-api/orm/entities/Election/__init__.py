@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from app import db
 from auth import get_user_access_area_ids
 from ext.ExtendedElection import get_extended_election
+from orm.entities import Meta
 from orm.entities.Election import ElectionParty, ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
 
@@ -18,12 +19,14 @@ class ElectionModel(db.Model):
     voteType = db.Column(db.String(100), nullable=False)
     electionTemplateName = db.Column(db.String(100), nullable=False)
     isListed = db.Column(db.Boolean, nullable=False, default=False)
+    metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=True)
 
     parties = relationship("ElectionPartyModel")
     _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
     subElections = relationship("ElectionModel", foreign_keys=[parentElectionId])
     rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId])
     parentElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[parentElectionId])
+    meta = relationship(Meta.Model, foreign_keys=[metaId])
 
     pollingStationsDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
     postalCountingCentresDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
@@ -46,7 +49,8 @@ class ElectionModel(db.Model):
             electionTemplateName=electionTemplateName,
             electionName=electionName,
             voteType=voteType,
-            isListed=isListed
+            isListed=isListed,
+            metaId=Meta.create().metaId
         )
 
         db.session.add(self)
