@@ -26,6 +26,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
     ExtendedTallySheetVersion_PE_27
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_4 import \
     ExtendedTallySheetVersion_PE_4
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_CE_201 import \
+    ExtendedTallySheetVersion_CE_201
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_39 import \
     ExtendedTallySheetVersion_PE_39
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
@@ -33,6 +35,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
     TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_PR_1 import \
+    ExtendedTallySheetVersion_PE_CE_RO_PR_1
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -58,8 +62,10 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             PE_R2: ExtendedTallySheetVersion_PE_R2,
             PE_CE_RO_V2: ExtendedTallySheetVersion_PE_CE_RO_V2,
             PE_27: ExtendedTallySheetVersion_PE_27,
+            PE_4: ExtendedTallySheetVersion_PE_4,
+            CE_201: ExtendedTallySheetVersion_CE_201,
             PE_39: ExtendedTallySheetVersion_PE_39,
-            PE_4: ExtendedTallySheetVersion_PE_4
+            PE_CE_RO_PR_1: ExtendedTallySheetVersion_PE_CE_RO_PR_1
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
