@@ -39,6 +39,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_PR_1 import \
     ExtendedTallySheetVersion_PE_CE_RO_PR_1
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_PR_2 import \
+    ExtendedTallySheetVersion_PE_CE_RO_PR_2
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -68,7 +70,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             CE_201: ExtendedTallySheetVersion_CE_201,
             PE_39: ExtendedTallySheetVersion_PE_39,
             PE_22: ExtendedTallySheetVersion_PE_22,
-            PE_CE_RO_PR_1: ExtendedTallySheetVersion_PE_CE_RO_PR_1
+            PE_CE_RO_PR_1: ExtendedTallySheetVersion_PE_CE_RO_PR_1,
+            PE_CE_RO_PR_2: ExtendedTallySheetVersion_PE_CE_RO_PR_2
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:

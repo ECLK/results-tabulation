@@ -14,6 +14,8 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
     MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
+    META_DATA_KEY_TALLY_SHEET_PARTY_ID
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
 from orm.entities.Dashboard import StatusReport
 from orm.entities.Election import ElectionCandidate, ElectionParty, InvalidVoteCategory
@@ -411,6 +413,17 @@ class TallySheetModel(db.Model):
                     tally_sheet_version_row_join_condition.append(
                         TallySheetVersionRow.Model.partyId == Party.Model.partyId)
 
+                query_filters = [
+                    TallySheetTallySheetModel.parentTallySheetId == self.tallySheetId,
+                    TemplateRow_DerivativeTemplateRow_Model.templateRowId == templateRow.templateRowId
+                ]
+
+                for meta_data_key in ["partyId"]:
+                    if meta_data_key in column_name_map:
+                        query_filters.append(
+                            column_name_map[meta_data_key] == meta_data_map[meta_data_key]
+                        )
+
                 aggregated_results = aggregated_results.join(
                     TallySheetTallySheetModel,
                     TallySheetTallySheetModel.childTallySheetId == TallySheetModel.tallySheetId
@@ -427,8 +440,7 @@ class TallySheetModel(db.Model):
                     ),
                     isouter=True
                 ).filter(
-                    TallySheetTallySheetModel.parentTallySheetId == self.tallySheetId,
-                    TemplateRow_DerivativeTemplateRow_Model.templateRowId == templateRow.templateRowId
+                    *query_filters
                 ).group_by(
                     *group_by_args
                 ).all()
