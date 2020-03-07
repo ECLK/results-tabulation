@@ -550,3 +550,14 @@ class ExtendedTallySheetVersion:
         ).reset_index()
 
         return df
+
+    def get_invalid_vote_category_count(self):
+        df = self.df.copy()
+        df['numValue'] = df['numValue'].astype(int)
+        df = df.loc[df["templateRowType"] == "NUMBER_OF_VOTES_REJECTED_AGAINST_GROUNDS_FOR_REJECTION"]
+
+        df = df.sort_values(
+            by=['invalidVoteCategoryId'], ascending=True
+        ).reset_index()
+
+        return df

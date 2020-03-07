@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="font1 pre-41">
+
+    <table class="table table-borderless">
+        <tbody>
+          <tr>
+              <td>
+                  <div class="all float-right"><h1 class="bold">PE-39</h1></div>
+              </td>
+          </tr>
+          <tr>
+              <td class="bold no-padding-left no-padding-right" style="text-align:center;">{{content.election.electionName}}</td>
+          </tr>
+        </tbody>
+    </table>
+
+    <div style="text-align:center;">Statement of the number and grounds on which ballot papers have been rejected [Section 53(6)]</div>
+
+    <table class="table table-borderless">
+      <tbody>
+        <tr>
+            <td style="width:300px;">No. and Name of Electoral District :</td>
+            <td>{{content.electoralDistrict}}</td>
+        </tr>
+        <tr>
+            <td style="width:300px;">Polling Division :</td>
+            <td>{{content.pollingDivision}}</td>
+        </tr>
+        <tr>
+            <td style="width:300px;">No. and Name of Counting Center :</td>
+            <td>{{content.countingCentre}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="table table-borderless" style="table-layout:fixed;">
+      <thead>
+        <th style="width: 75%;">Grounds for Rejection</th>
+        <th>Number of Ballot Papers Rejected</th>
+      </thead>
+      <tbody>
+
+        {% for row in content.data %}
+        <tr>
+          <td class="bottom {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px;">{{row[0]}}</td>
+          <td class="bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[1]}}</td>
+        </tr>
+        {% endfor %}
+        
+        <tr>
+          <td class="text-right">Total Rejected</td>
+          <td class="text-right">{{content.rejectedVotes}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div>At the request of a Counting Agent he must be allowed to copy this statement.</div>
+
+    <table class="table table-borderless" style="table-layout: fixed;">
+      <tbody>
+        <tr>
+          <td style="width: 50%;"></td>
+          <td>Signature of counting officer: </td>
+          <td>..............................................................</td>
+        </tr>
+        <tr>
+          <td style="width: 50%;"></td>
+          <td>Name: </td>
+          <td>..............................................................</td>
+        </tr>
+        <tr>
+          <td style="width: 50%;">Date : 2020 / ................ / ................</td>
+          <td>Designation: </td>
+          <td>..............................................................</td>
+        </tr>
+      </tbody>
+    </table>
+
+</div>
+{% endblock %}
