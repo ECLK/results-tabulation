@@ -419,7 +419,7 @@ class TallySheetModel(db.Model):
                 ]
 
                 for meta_data_key in ["partyId"]:
-                    if meta_data_key in column_name_map:
+                    if meta_data_key in meta_data_map:
                         query_filters.append(
                             column_name_map[meta_data_key] == meta_data_map[meta_data_key]
                         )
