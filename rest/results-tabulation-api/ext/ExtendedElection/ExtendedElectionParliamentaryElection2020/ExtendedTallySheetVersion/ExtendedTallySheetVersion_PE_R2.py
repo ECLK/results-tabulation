@@ -40,7 +40,7 @@ class ExtendedTallySheetVersion_PE_R2(ExtendedTallySheetVersion):
         number_of_seats_allocated = election.meta.get_meta_data(
             metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED)
         if number_of_seats_allocated is not None:
-            number_of_seats_allocated = float(number_of_seats_allocated)
+            number_of_seats_allocated = int(number_of_seats_allocated)
 
         df = self.populate_seats_per_party(
             minimum_vote_count_percentage_required=minimum_vote_count_percentage_required,
