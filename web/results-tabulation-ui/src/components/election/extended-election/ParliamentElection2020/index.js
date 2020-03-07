@@ -15,7 +15,7 @@ import {
     TALLY_SHEET_CODE_PE_R1,
     TALLY_SHEET_CODE_PE_R2,
     TALLY_SHEET_CODE_PE_39,
-    TALLY_SHEET_CODE_PE_22
+    TALLY_SHEET_CODE_PE_22, TALLY_SHEET_CODE_PE_21
 } from "./TALLY_SHEET_CODE";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
@@ -221,6 +221,23 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
                                     to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_3)}
+                                >
+                                    List
+                                </Link>
+                            </li>
+                        </ul>
+                    </Grid>
+                    
+                    <br/>
+                    <Divider/>
+                    <Grid item xs={12}><small>Votes + Preferences</small></Grid>
+
+                    <Grid item xs={12}>
+                        <ul className="tally-sheet-code-list">
+                            <li>PE-21
+                                <Link
+                                    className="tally-sheet-code-list-item btn-list"
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_21)}
                                 >
                                     List
                                 </Link>
