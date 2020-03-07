@@ -81,7 +81,7 @@ class TallySheetModel(db.Model):
         return area_map
 
     def add_parent(self, parentTallySheet):
-        parentTallySheet.add_child(self.tallySheetId)
+        parentTallySheet.add_child(self)
 
         return self
 
@@ -419,7 +419,7 @@ class TallySheetModel(db.Model):
                 ]
 
                 for meta_data_key in ["partyId"]:
-                    if meta_data_key in column_name_map:
+                    if meta_data_key in meta_data_map:
                         query_filters.append(
                             column_name_map[meta_data_key] == meta_data_map[meta_data_key]
                         )
@@ -587,15 +587,23 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
     return db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by)
 
 
-def create(template, electionId, areaId, metaId):
-    result = Model(
+def create(template, electionId, areaId, metaId, parentTallySheets=None, childTallySheets=None):
+    tally_sheet = Model(
         template=template,
         electionId=electionId,
         areaId=areaId,
         metaId=metaId
     )
 
-    return result
+    if parentTallySheets is not None:
+        for parentTallySheet in parentTallySheets:
+            tally_sheet.add_parent(parentTallySheet)
+
+    if childTallySheets is not None:
+        for childTallySheet in childTallySheets:
+            tally_sheet.add_child(childTallySheet)
+
+    return tally_sheet
 
 
 def create_empty_version(tallySheetId):

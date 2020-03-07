@@ -4,6 +4,8 @@ from sqlalchemy.orm import aliased
 from app import db
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, TALLY_SHEET_COLUMN_SOURCE_CONTENT, \
     TALLY_SHEET_COLUMN_SOURCE_QUERY
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_21 import \
+    ExtendedTallySheetVersion_PE_21
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_R2 import \
     ExtendedTallySheetVersion_PE_R2
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
@@ -11,9 +13,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KE
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
     PE_R1, PE_CE_RO_PR_1, \
-    PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39, PE_22
+    PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39, PE_22, PE_21
 from constants.VOTE_TYPES import Postal, NonPostal, PostalAndNonPostal
-from ext import TallySheetMap
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import RoleBasedAccess
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_V1 import \
@@ -36,7 +37,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
-    TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION
+    TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, \
+    TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_PR_1 import \
     ExtendedTallySheetVersion_PE_CE_RO_PR_1
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_PR_2 import \
@@ -71,7 +73,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             PE_39: ExtendedTallySheetVersion_PE_39,
             PE_22: ExtendedTallySheetVersion_PE_22,
             PE_CE_RO_PR_1: ExtendedTallySheetVersion_PE_CE_RO_PR_1,
-            PE_CE_RO_PR_2: ExtendedTallySheetVersion_PE_CE_RO_PR_2
+            PE_CE_RO_PR_2: ExtendedTallySheetVersion_PE_CE_RO_PR_2,
+            PE_21: ExtendedTallySheetVersion_PE_21
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
@@ -85,8 +88,6 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
                        invalid_vote_categories_dataset_file=None, number_of_seats_dataset_file=None):
         root_election = self.election
-        # postal_election = root_election.add_sub_election(electionName="Postal", voteType=Postal)
-        # ordinary_election = root_election.add_sub_election(electionName="Ordinary", voteType=NonPostal)
 
         if not party_candidate_dataset_file:
             party_candidate_dataset_file = root_election.partyCandidateDataset.fileContent
@@ -393,7 +394,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_party_wise_vote_row)
+        ).add_derivative_template_row(tally_sheet_template_pe_r1_party_wise_vote_row)
         tally_sheet_template_pe_ce_ro_v2_rejected_vote_row = tally_sheet_template_pe_ce_ro_v2.add_row(
             templateRowType="REJECTED_VOTE",
             hasMany=True,
@@ -403,7 +404,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_rejected_vote_row)
+        ).add_derivative_template_row(tally_sheet_template_pe_r1_rejected_vote_row)
 
         tally_sheet_template_pe_r2 = Template.create(
             templateName=PE_R2
@@ -487,7 +488,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
-        tally_sheet_template_pe_r2_seats_allocated_from_round_2_row = tally_sheet_template_pe_r2.add_row(
+        tally_sheet_template_pe_r2_bonus_seats_allocated = tally_sheet_template_pe_r2.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED,
             hasMany=True,
             isDerived=True,
@@ -552,7 +553,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_ce_ro_pr_3 = Template.create(
             templateName=PE_CE_RO_PR_3
         )
-        tally_sheet_template_pe_ce_ro_pr_1_candidate_wise_first_preference_row = tally_sheet_template_pe_ce_ro_pr_3.add_row(
+        tally_sheet_template_pe_ce_ro_pr_3_candidate_wise_first_preference_row = tally_sheet_template_pe_ce_ro_pr_3.add_row(
             templateRowType="CANDIDATE_FIRST_PREFERENCE",
             hasMany=True,
             isDerived=True,
@@ -564,6 +565,52 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_pr_2_candidate_wise_first_preference_row)
+
+        tally_sheet_template_pe_21 = Template.create(
+            templateName=PE_21
+        )
+        tally_sheet_template_pe_21_elected_candidates = tally_sheet_template_pe_21.add_row(
+            templateRowType=TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
+            hasMany=True,
+            isDerived=True,
+            loadOnPostSave=True,
+            columns=[
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "candidateId", "grouped": True, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
+            ]
+        )
+        tally_sheet_template_pe_21_candidate_wise_first_preference_row = tally_sheet_template_pe_21.add_row(
+            templateRowType="CANDIDATE_FIRST_PREFERENCE",
+            hasMany=True,
+            isDerived=True,
+            columns=[
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
+            ]
+        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_pr_3_candidate_wise_first_preference_row)
+        tally_sheet_template_pe_21_party_wise_seat_allocation = tally_sheet_template_pe_21.add_row(
+            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED,
+            hasMany=True,
+            isDerived=True,
+            columns=[
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
+            ]
+        ).add_derivative_template_row(
+            tally_sheet_template_pe_r2_seats_allocated_from_round_1_row
+        ).add_derivative_template_row(
+            tally_sheet_template_pe_r2_seats_allocated_from_round_2_row
+        ).add_derivative_template_row(
+            tally_sheet_template_pe_r2_bonus_seats_allocated
+        )
 
         data_entry_store = {
             AreaTypeEnum.Country: {},
@@ -648,28 +695,20 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             area_type = area_class.Model.__mapper_args__["polymorphic_identity"]
 
             if area_key in data_entry_store[area_type]:
-                data_entry_obj = data_entry_store[area_type][area_key]
+                area = data_entry_store[area_type][area_key]
             else:
                 area = area_class.create(area_name, electionId=election.electionId)
 
-                data_entry_obj = {
-                    "area": area
-                }
-                data_entry_store[area_type][area_key] = data_entry_obj
-
-            if "tallySheets" not in data_entry_obj:
-                data_entry_obj["tallySheets"] = {}
+                data_entry_store[area_type][area_key] = area
 
                 if create_tally_sheets_callback is not None:
-                    tally_sheets = create_tally_sheets_callback(area)
+                    tally_sheet_mappings = create_tally_sheets_callback(area)
 
-                    for tally_sheet in tally_sheets:
-                        if tally_sheet.tallySheetCode not in data_entry_obj["tallySheets"]:
-                            data_entry_obj["tallySheets"][tally_sheet.tallySheetCode] = []
+                    for tally_sheet_mapping_key in tally_sheet_mappings.keys():
+                        tally_sheet_mapping_value = tally_sheet_mappings[tally_sheet_mapping_key]
+                        setattr(area, tally_sheet_mapping_key, tally_sheet_mapping_value)
 
-                        data_entry_obj["tallySheets"][tally_sheet.tallySheetCode].append(tally_sheet)
-
-            return data_entry_obj
+            return area
 
         def _get_country_entry(row):
             area_class = Country
@@ -677,9 +716,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             area_key = area_name
 
             def _create_country_tally_sheets(area):
-                tally_sheets = []
-
-                return tally_sheets
+                return {}
 
             data_entry_obj = _get_area_entry(root_election, area_class, area_name, area_key,
                                              _create_country_tally_sheets)
@@ -694,73 +731,112 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             area_key = area_name
 
             def _create_electoral_district_tally_sheets(area):
-                tally_sheets = [
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_v2, electionId=election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": election.electionId
-                        }).metaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_r2, electionId=election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": election.electionId
-                        }).metaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_v1, electionId=postal_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": postal_election.electionId
-                        }).metaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_r1, electionId=postal_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": postal_election.electionId
-                        }).metaId
-                    )
-                ]
+                pe_21_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_21, electionId=election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": election.electionId
+                    }).metaId
+                )]
 
+                pe_r2_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_r2, electionId=election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": election.electionId
+                    }).metaId,
+                    parentTallySheets=pe_21_tally_sheet_list
+                )]
+
+                pe_ce_ro_v2_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_ce_ro_v2, electionId=election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": election.electionId
+                    }).metaId,
+                    parentTallySheets=pe_r2_tally_sheet_list
+                )]
+
+                pe_r1_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_r1, electionId=postal_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": postal_election.electionId
+                    }).metaId,
+                    parentTallySheets=pe_ce_ro_v2_tally_sheet_list
+                )]
+                pe_ce_ro_v1_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_ce_ro_v1, electionId=postal_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": postal_election.electionId
+                    }).metaId,
+                    parentTallySheets=pe_r1_tally_sheet_list
+                )]
+
+                pe_ce_ro_pr_1_tally_sheet_list = []
+                pe_ce_ro_pr_1_tally_sheet_party_id_wise_map = {}
+                pe_ce_ro_pr_2_tally_sheet_list = []
+                pe_ce_ro_pr_2_tally_sheet_party_id_wise_map = {}
+                pe_ce_ro_pr_3_tally_sheet_list = []
+                pe_ce_ro_pr_3_tally_sheet_party_id_wise_map = {}
                 for party in election.parties:
-                    tally_sheets += [
-                        TallySheet.create(
-                            template=tally_sheet_template_pe_ce_ro_pr_1, electionId=postal_election.electionId,
-                            areaId=area.areaId,
-                            metaId=Meta.create({
-                                "areaId": area.areaId,
-                                "partyId": party.partyId,
-                                "electionId": postal_election.electionId
-                            }).metaId
-                        ),
-                        TallySheet.create(
-                            template=tally_sheet_template_pe_ce_ro_pr_2, electionId=election.electionId,
-                            areaId=area.areaId,
-                            metaId=Meta.create({
-                                "areaId": area.areaId,
-                                "partyId": party.partyId,
-                                "electionId": election.electionId
-                            }).metaId
-                        ),
-                        TallySheet.create(
-                            template=tally_sheet_template_pe_ce_ro_pr_3, electionId=election.electionId,
-                            areaId=area.areaId,
-                            metaId=Meta.create({
-                                "areaId": area.areaId,
-                                "partyId": party.partyId,
-                                "electionId": election.electionId
-                            }).metaId
-                        )
-                    ]
+                    pe_ce_ro_pr_3_tally_sheet = TallySheet.create(
+                        template=tally_sheet_template_pe_ce_ro_pr_3, electionId=election.electionId,
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "partyId": party.partyId,
+                            "electionId": election.electionId
+                        }).metaId,
+                        parentTallySheets=pe_21_tally_sheet_list
+                    )
+                    pe_ce_ro_pr_3_tally_sheet_list.append(pe_ce_ro_pr_3_tally_sheet)
+                    pe_ce_ro_pr_3_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_3_tally_sheet
 
-                return tally_sheets
+                    pe_ce_ro_pr_2_tally_sheet = TallySheet.create(
+                        template=tally_sheet_template_pe_ce_ro_pr_2, electionId=election.electionId,
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "partyId": party.partyId,
+                            "electionId": election.electionId
+                        }).metaId,
+                        parentTallySheets=[pe_ce_ro_pr_3_tally_sheet]
+                    )
+                    pe_ce_ro_pr_2_tally_sheet_list.append(pe_ce_ro_pr_2_tally_sheet)
+                    pe_ce_ro_pr_2_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_2_tally_sheet
+
+                    pe_ce_ro_pr_1_tally_sheet = TallySheet.create(
+                        template=tally_sheet_template_pe_ce_ro_pr_1, electionId=postal_election.electionId,
+                        areaId=area.areaId,
+                        metaId=Meta.create({
+                            "areaId": area.areaId,
+                            "partyId": party.partyId,
+                            "electionId": postal_election.electionId
+                        }).metaId,
+                        parentTallySheets=[pe_ce_ro_pr_2_tally_sheet]
+                    )
+                    pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
+                    pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_1_tally_sheet
+
+                return {
+                    "pe_r1_tally_sheet_list": pe_r1_tally_sheet_list,
+                    "pe_ce_ro_v1_tally_sheet_list": pe_ce_ro_v1_tally_sheet_list,
+                    "pe_r2_tally_sheet_list": pe_r2_tally_sheet_list,
+                    "pe_ce_ro_v2_tally_sheet_list": pe_ce_ro_v2_tally_sheet_list,
+                    "pe_ce_ro_pr_1_tally_sheet_list": pe_ce_ro_pr_1_tally_sheet_list,
+                    "pe_ce_ro_pr_1_tally_sheet_party_id_wise_map": pe_ce_ro_pr_1_tally_sheet_party_id_wise_map,
+                    "pe_ce_ro_pr_2_tally_sheet_list": pe_ce_ro_pr_2_tally_sheet_list,
+                    "pe_ce_ro_pr_2_tally_sheet_party_id_wise_map": pe_ce_ro_pr_2_tally_sheet_party_id_wise_map,
+                    "pe_ce_ro_pr_3_tally_sheet_list": pe_ce_ro_pr_3_tally_sheet_list,
+                    "pe_ce_ro_pr_3_tally_sheet_party_id_wise_map": pe_ce_ro_pr_3_tally_sheet_party_id_wise_map
+                }
 
             data_entry_obj = _get_area_entry(election, area_class, area_name, area_key,
                                              _create_electoral_district_tally_sheets)
@@ -770,42 +846,57 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         def _get_polling_division_entry(row):
             election, postal_election, ordinary_election = _get_electoral_district_election(row)
 
+            electoral_district = _get_electoral_district_entry(row)
+
             area_class = PollingDivision
             area_name = row["Polling Division"]
             area_key = area_name
 
             def _create_polling_division_tally_sheets(area):
-                tally_sheets = [
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_v1, electionId=ordinary_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": ordinary_election.electionId
-                        }).metaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_r1, electionId=ordinary_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": ordinary_election.electionId
-                        }).metaId
-                    )
-                ]
+                pe_ce_ro_pr_2_tally_sheet_party_id_wise_map = electoral_district.pe_ce_ro_pr_2_tally_sheet_party_id_wise_map
+                pe_ce_ro_v2_tally_sheet_list = electoral_district.pe_ce_ro_v2_tally_sheet_list
 
+                pe_r1_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_r1, electionId=ordinary_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": ordinary_election.electionId
+                    }).metaId,
+                    parentTallySheets=pe_ce_ro_v2_tally_sheet_list
+                )]
+                pe_ce_ro_v1_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_ce_ro_v1, electionId=ordinary_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": ordinary_election.electionId
+                    }).metaId,
+                    parentTallySheets=pe_r1_tally_sheet_list
+                )]
+
+                pe_ce_ro_pr_1_tally_sheet_list = []
+                pe_ce_ro_pr_1_tally_sheet_party_id_wise_map = {}
                 for party in election.parties:
-                    tally_sheets.append(TallySheet.create(
+                    pe_ce_ro_pr_1_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pe_ce_ro_pr_1, electionId=ordinary_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
                             "electionId": ordinary_election.electionId
-                        }).metaId
-                    ))
+                        }).metaId,
+                        parentTallySheets=[pe_ce_ro_pr_2_tally_sheet_party_id_wise_map[party.partyId]]
+                    )
+                    pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
+                    pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_1_tally_sheet
 
-                return tally_sheets
+                return {
+                    "pe_r1_tally_sheet_list": pe_r1_tally_sheet_list,
+                    "pe_ce_ro_v1_tally_sheet_list": pe_ce_ro_v1_tally_sheet_list,
+                    "pe_ce_ro_pr_1_tally_sheet_list": pe_ce_ro_pr_1_tally_sheet_list,
+                    "pe_ce_ro_pr_1_tally_sheet_party_id_wise_map": pe_ce_ro_pr_1_tally_sheet_party_id_wise_map
+                }
 
             data_entry_obj = _get_area_entry(election, area_class, area_name, area_key,
                                              _create_polling_division_tally_sheets)
@@ -815,8 +906,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         def _get_polling_district_entry(row):
             election, postal_election, ordinary_election = _get_electoral_district_election(row)
 
-            electoral_district = _get_electoral_district_entry(row)["area"]
-            polling_division = _get_polling_division_entry(row)["area"]
+            electoral_district = _get_electoral_district_entry(row)
+            polling_division = _get_polling_division_entry(row)
 
             area_class = PollingDistrict
             area_name = row["Polling District"]
@@ -829,9 +920,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         def _get_polling_station_entry(row):
             election, postal_election, ordinary_election = _get_electoral_district_election(row)
 
-            electoral_district = _get_electoral_district_entry(row)["area"]
-            polling_division = _get_polling_division_entry(row)["area"]
-            polling_district = _get_polling_district_entry(row)["area"]
+            electoral_district = _get_electoral_district_entry(row)
+            polling_division = _get_polling_division_entry(row)
+            polling_district = _get_polling_district_entry(row)
 
             area_class = PollingStation
             area_name = row["Polling Station"]
@@ -839,71 +930,86 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 electoral_district.areaName, polling_division.areaName, polling_district.areaName, area_name
             )
 
-            data_entry_obj = _get_area_entry(election, area_class, area_name, area_key)
-            area = data_entry_obj["area"]
+            area = _get_area_entry(election, area_class, area_name, area_key)
 
             area._registeredVotersCount = row["Registered Normal Voters"]
             area._registeredPostalVotersCount = row["Registered Postal Voters"]
 
-            return data_entry_obj
+            return area
 
         def _get_counting_centre_entry(row):
             election, postal_election, ordinary_election = _get_electoral_district_election(row)
 
-            electoral_district = _get_electoral_district_entry(row)["area"]
+            electoral_district = _get_electoral_district_entry(row)
+            polling_division = _get_polling_division_entry(row)
 
             area_class = CountingCentre
             area_name = row["Counting Centre"]
             area_key = "%s-%s" % (electoral_district.areaName, area_name)
 
             def _create_counting_centre_tally_sheets(area):
-                tally_sheets = [
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_27, electionId=ordinary_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": ordinary_election.electionId
-                        }).metaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_39, electionId=ordinary_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": ordinary_election.electionId
-                        }).metaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_22, electionId=ordinary_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": ordinary_election.electionId
-                        }).metaId
-                    )
-                ]
+                pe_ce_ro_v1_tally_sheet_list = polling_division.pe_ce_ro_v1_tally_sheet_list
+                pe_ce_ro_pr_1_tally_sheets_list = polling_division.pe_ce_ro_pr_1_tally_sheet_list
 
+                pe_27_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_27, electionId=ordinary_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": ordinary_election.electionId
+                    }).metaId,
+                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list
+                )]
+
+                pe_39_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_39, electionId=ordinary_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": ordinary_election.electionId
+                    }).metaId
+                )]
+                pe_22_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_22, electionId=ordinary_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": ordinary_election.electionId
+                    }).metaId
+                )]
+
+                pe_4_tally_sheet_list = []
+                pe_4_tally_sheet_party_id_wise_map = {}
                 for party in election.parties:
-                    tally_sheets.append(TallySheet.create(
+                    pe_4_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pe_4, electionId=ordinary_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
                             "electionId": ordinary_election.electionId
-                        }).metaId
-                    ))
+                        }).metaId,
+                        parentTallySheets=pe_ce_ro_pr_1_tally_sheets_list
+                    )
+                    pe_4_tally_sheet_list.append(pe_4_tally_sheet)
+                    pe_4_tally_sheet_party_id_wise_map[party.partyId] = pe_4_tally_sheet
 
-                tally_sheets.append(TallySheet.create(
+                pe_ce_201_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_ce_201, electionId=ordinary_election.electionId, areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
                     }).metaId
-                ))
+                )]
 
-                return tally_sheets
+                return {
+                    "pe_27_tally_sheet_list": pe_27_tally_sheet_list,
+                    "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
+                    "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
+                    "pe_4_tally_sheet_list": pe_4_tally_sheet_list,
+                    "pe_4_tally_sheet_party_id_wise_map": pe_4_tally_sheet_party_id_wise_map,
+                    "pe_ce_201_tally_sheet_list": pe_ce_201_tally_sheet_list
+                }
 
             data_entry_obj = _get_area_entry(ordinary_election, area_class, area_name, area_key,
                                              _create_counting_centre_tally_sheets)
@@ -913,60 +1019,76 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         def _get_postal_vote_counting_centre_entry(row):
             election, postal_election, ordinary_election = _get_electoral_district_election(row)
 
-            electoral_district = _get_electoral_district_entry(row)["area"]
+            electoral_district = _get_electoral_district_entry(row=row)
 
             area_class = CountingCentre
             area_name = row["Postal Vote Counting Centre"]
             area_key = "%s-%s" % (electoral_district.areaName, area_name)
 
             def _create_counting_centre_tally_sheets(area):
-                tally_sheets = [
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_27, electionId=postal_election.electionId, areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": postal_election.electionId
-                        }).metaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_39, electionId=postal_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": postal_election.electionId
-                        }).metaId
-                    ),
-                    TallySheet.create(
-                        template=tally_sheet_template_pe_22, electionId=postal_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "electionId": postal_election.electionId
-                        }).metaId
-                    )
-                ]
+                pe_ce_ro_v1_tally_sheet_list = electoral_district.pe_ce_ro_v1_tally_sheet_list
+                pe_ce_ro_pr_1_tally_sheet_list = electoral_district.pe_ce_ro_pr_1_tally_sheet_list
 
+                pe_27_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_27, electionId=postal_election.electionId, areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": postal_election.electionId
+                    }).metaId,
+                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list
+                )]
+
+                pe_39_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_39, electionId=postal_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": postal_election.electionId
+                    }).metaId
+                )]
+
+                pe_22_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pe_22, electionId=postal_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": postal_election.electionId
+                    }).metaId
+                )]
+
+                pe_4_tally_sheet_list = []
+                pe_4_tally_sheet_party_id_wise_map = {}
                 for party in postal_election.parties:
-                    tally_sheets.append(TallySheet.create(
+                    pe_4_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pe_4, electionId=postal_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
                             "electionId": postal_election.electionId
-                        }).metaId
-                    ))
+                        }).metaId,
+                        parentTallySheets=pe_ce_ro_pr_1_tally_sheet_list
+                    )
+                    pe_4_tally_sheet_list.append(pe_4_tally_sheet)
+                    pe_4_tally_sheet_party_id_wise_map[party.partyId] = pe_4_tally_sheet
 
-                tally_sheets.append(TallySheet.create(
+                pe_ce_201_pv_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_ce_201_pv, electionId=postal_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
                     }).metaId
-                ))
+                )]
 
-                return tally_sheets
+                return {
+                    "pe_27_tally_sheet_list": pe_27_tally_sheet_list,
+                    "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
+                    "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
+                    "pe_4_tally_sheet_list": pe_4_tally_sheet_list,
+                    "pe_4_tally_sheet_party_id_wise_map": pe_4_tally_sheet_party_id_wise_map,
+                    "pe_ce_201_pv_tally_sheet_list": pe_ce_201_pv_tally_sheet_list
+                }
 
             data_entry_obj = _get_area_entry(postal_election, area_class, area_name, area_key,
                                              _create_counting_centre_tally_sheets)
@@ -1010,109 +1132,53 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             row["Election Commission"] = "Sri Lanka Election Commission"
             row["Polling Station"] = row["Polling Station (English)"]
 
-            country_entry = _get_country_entry(row=row)
+            country = _get_country_entry(row=row)
 
-            electoral_district_entry = _get_electoral_district_entry(row=row)
-            polling_division_entry = _get_polling_division_entry(row=row)
-            polling_district_entry = _get_polling_district_entry(row=row)
-            election_commission_entry = _get_election_commission_entry(row=row)
-            district_centre_entry = _get_district_centre_entry(row=row)
-            counting_centre_entry = _get_counting_centre_entry(row=row)
-            postal_vote_counting_centre_entry = _get_postal_vote_counting_centre_entry(row=row)
-            polling_station_entry = _get_polling_station_entry(row=row)
+            electoral_district = _get_electoral_district_entry(row=row)
+            polling_division = _get_polling_division_entry(row=row)
+            polling_district = _get_polling_district_entry(row=row)
+            election_commission = _get_election_commission_entry(row=row)
+            district_centre = _get_district_centre_entry(row=row)
+            counting_centre = _get_counting_centre_entry(row=row)
+            postal_vote_counting_centre = _get_postal_vote_counting_centre_entry(row=row)
+            polling_station = _get_polling_station_entry(row=row)
 
-            country_entry["area"].add_child(electoral_district_entry["area"].areaId)
-            electoral_district_entry["area"].add_child(polling_division_entry["area"].areaId)
-            polling_division_entry["area"].add_child(polling_district_entry["area"].areaId)
-            polling_district_entry["area"].add_child(polling_station_entry["area"].areaId)
-            election_commission_entry["area"].add_child(district_centre_entry["area"].areaId)
+            country.add_child(electoral_district.areaId)
+            electoral_district.add_child(polling_division.areaId)
+            polling_division.add_child(polling_district.areaId)
+            polling_district.add_child(polling_station.areaId)
+            election_commission.add_child(district_centre.areaId)
 
-            district_centre_entry["area"].add_child(counting_centre_entry["area"].areaId)
-            counting_centre_entry["area"].add_child(polling_station_entry["area"].areaId)
+            district_centre.add_child(counting_centre.areaId)
+            counting_centre.add_child(polling_station.areaId)
 
-            district_centre_entry["area"].add_child(postal_vote_counting_centre_entry["area"].areaId)
-            postal_vote_counting_centre_entry["area"].add_child(polling_station_entry["area"].areaId)
+            district_centre.add_child(postal_vote_counting_centre.areaId)
+            postal_vote_counting_centre.add_child(polling_station.areaId)
 
             AreaMap.create(
                 electionId=root_election.electionId,
                 voteType=NonPostal,
-                pollingStationId=polling_station_entry["area"].areaId,
-                countingCentreId=counting_centre_entry["area"].areaId,
-                districtCentreId=district_centre_entry["area"].areaId,
-                electionCommissionId=election_commission_entry["area"].areaId,
-                pollingDistrictId=polling_district_entry["area"].areaId,
-                pollingDivisionId=polling_division_entry["area"].areaId,
-                electoralDistrictId=electoral_district_entry["area"].areaId,
-                countryId=country_entry["area"].areaId
+                pollingStationId=polling_station.areaId,
+                countingCentreId=counting_centre.areaId,
+                districtCentreId=district_centre.areaId,
+                electionCommissionId=election_commission.areaId,
+                pollingDistrictId=polling_district.areaId,
+                pollingDivisionId=polling_division.areaId,
+                electoralDistrictId=electoral_district.areaId,
+                countryId=country.areaId
             )
 
             AreaMap.create(
                 electionId=root_election.electionId,
                 voteType=Postal,
-                pollingStationId=polling_station_entry["area"].areaId,
-                countingCentreId=postal_vote_counting_centre_entry["area"].areaId,
-                districtCentreId=district_centre_entry["area"].areaId,
-                electionCommissionId=election_commission_entry["area"].areaId,
-                pollingDistrictId=polling_district_entry["area"].areaId,
-                pollingDivisionId=polling_division_entry["area"].areaId,
-                electoralDistrictId=electoral_district_entry["area"].areaId,
-                countryId=country_entry["area"].areaId
-            )
-
-            pe_27_tally_sheet = counting_centre_entry["tallySheets"][PE_27][0]
-            pe_4_tally_sheet = counting_centre_entry["tallySheets"][PE_4][0]
-            pe_27_pv_tally_sheet = postal_vote_counting_centre_entry["tallySheets"][PE_27][0]
-            pe_4_pv_tally_sheet = postal_vote_counting_centre_entry["tallySheets"][PE_4][0]
-
-            pe_ce_ro_v1_tally_sheet = polling_division_entry["tallySheets"][PE_CE_RO_V1][0]
-            pe_r1_tally_sheet = polling_division_entry["tallySheets"][PE_R1][0]
-            pe_ce_ro_pr_1_tally_sheet = polling_division_entry["tallySheets"][PE_CE_RO_PR_1][0]
-            pe_ce_ro_v1_pv_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_V1][0]
-            pe_r1_pv_tally_sheet = electoral_district_entry["tallySheets"][PE_R1][0]
-            pe_ce_ro_pr_1_pv_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_PR_1][0]
-
-            pe_ce_ro_v2_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_V2][0]
-            pe_r2_tally_sheet = electoral_district_entry["tallySheets"][PE_R2][0]
-            pe_ce_ro_pr_2_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_PR_2][0]
-            pe_ce_ro_pr_3_tally_sheet = electoral_district_entry["tallySheets"][PE_CE_RO_PR_3][0]
-
-            pe_ce_ro_v1_tally_sheet.add_child(pe_27_tally_sheet)
-            pe_r1_tally_sheet.add_child(pe_ce_ro_v1_tally_sheet)
-            pe_ce_ro_v1_pv_tally_sheet.add_child(pe_27_pv_tally_sheet)
-            pe_r1_pv_tally_sheet.add_child(pe_ce_ro_v1_pv_tally_sheet)
-
-            pe_ce_ro_v2_tally_sheet.add_child(pe_ce_ro_v1_tally_sheet)
-            pe_ce_ro_v2_tally_sheet.add_child(pe_ce_ro_v1_pv_tally_sheet)
-            pe_r2_tally_sheet.add_child(pe_ce_ro_v2_tally_sheet)
-
-            pe_ce_ro_pr_1_tally_sheet.add_child(pe_4_tally_sheet)
-            pe_ce_ro_pr_1_pv_tally_sheet.add_child(pe_4_pv_tally_sheet)
-            pe_ce_ro_pr_2_tally_sheet.add_child(pe_ce_ro_pr_1_tally_sheet)
-            pe_ce_ro_pr_2_tally_sheet.add_child(pe_ce_ro_pr_1_pv_tally_sheet)
-            pe_ce_ro_pr_3_tally_sheet.add_child(pe_ce_ro_pr_2_tally_sheet)
-
-            TallySheetMap.create(
-                pe_27_tallySheetId=pe_27_tally_sheet.tallySheetId,
-                pe_4_tallySheetId=pe_4_tally_sheet.tallySheetId,
-                pe_ce_ro_v1_tallySheetId=pe_ce_ro_v1_tally_sheet.tallySheetId,
-                pe_r1_tallySheetId=pe_r1_tally_sheet.tallySheetId,
-                pe_ce_ro_pr_1_tallySheetId=pe_ce_ro_pr_1_tally_sheet.tallySheetId,
-                pe_ce_ro_v2_tallySheetId=pe_ce_ro_v2_tally_sheet.tallySheetId,
-                pe_r2_tallySheetId=pe_r2_tally_sheet.tallySheetId,
-                pe_ce_ro_pr_2_tallySheetId=pe_ce_ro_pr_2_tally_sheet.tallySheetId,
-                pe_ce_ro_pr_3_tallySheetId=pe_ce_ro_pr_3_tally_sheet.tallySheetId
-            )
-
-            TallySheetMap.create(
-                pe_27_tallySheetId=pe_27_pv_tally_sheet.tallySheetId,
-                pe_4_tallySheetId=pe_4_pv_tally_sheet.tallySheetId,
-                pe_ce_ro_v1_tallySheetId=pe_ce_ro_v1_pv_tally_sheet.tallySheetId,
-                pe_r1_tallySheetId=pe_r1_pv_tally_sheet.tallySheetId,
-                pe_ce_ro_pr_1_tallySheetId=pe_ce_ro_pr_1_pv_tally_sheet.tallySheetId,
-                pe_ce_ro_v2_tallySheetId=pe_ce_ro_v2_tally_sheet.tallySheetId,
-                pe_r2_tallySheetId=pe_r2_tally_sheet.tallySheetId,
-                pe_ce_ro_pr_2_tallySheetId=pe_ce_ro_pr_2_tally_sheet.tallySheetId,
-                pe_ce_ro_pr_3_tallySheetId=pe_ce_ro_pr_3_tally_sheet.tallySheetId
+                pollingStationId=polling_station.areaId,
+                countingCentreId=postal_vote_counting_centre.areaId,
+                districtCentreId=district_centre.areaId,
+                electionCommissionId=election_commission.areaId,
+                pollingDistrictId=polling_district.areaId,
+                pollingDivisionId=polling_division.areaId,
+                electoralDistrictId=electoral_district.areaId,
+                countryId=country.areaId
             )
 
         for row in get_rows_from_csv(number_of_seats_dataset_file):
