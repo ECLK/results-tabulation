@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="font1 pre-41">
+
+    <table class="table table-borderless">
+        <tbody>
+          <tr>
+              <td>
+                  <div class="all float-right"><h1 class="bold">PE-22</h1></div>
+              </td>
+          </tr>
+          <tr>
+              <td class="bold no-padding-left no-padding-right" style="text-align:center;">{{content.election.electionName}}</td>
+          </tr>
+        </tbody>
+    </table>
+
+    <div style="text-align:center;">
+      STATEMENT OF INVALID (NOT CONSIDERED) BALLOT PAPERS AT THE COUNT OF PREFERENCES<br/>
+      (ALL PARTIES AND GROUPS)
+    </div>
+
+    <br/>
+    <div>Date of Poll: ....................................</div>
+    <br/>
+
+    <table class="table table-borderless">
+      <tr>
+        <td class="all" style="text-align: center;">
+          No and Name of Electoral District /Zone
+          <br/>
+          <span class="bold">{{content.electoralDistrict}}</span>
+        </td>
+        <td class="all" style="text-align: center;">
+          Polling Division
+          <br/>
+          <span class="bold">{{content.pollingDivision}}</span>
+        </td>
+        <td class="all" style="text-align: center;">
+          No. and Name of Counting Center
+          <br/>
+          <span class="bold">{{content.countingCentre}}</span>
+        </td>
+      </tr>
+    </table>
+
+    <table class="table table-borderless">
+      <thead class="bold">
+          <th class="all" style="width:40%; text-align: center; vertical-align:top;">Name of the Party/Independent Group</th>
+          <th class="all" style="width:15%; text-align: center; vertical-align:top;">No. of Ballot Papers with Preferences Indicated for more than 3 Candidates</th>
+          <th class="all" style="width:15%; text-align: center; vertical-align:top;">No. of Ballot Papers where all Preferences are void uncertainty</th>
+          <th class="all" style="width:15%; text-align: center; vertical-align:top;">No. of Ballot Papers with no Preferences</th>
+          <th class="all" style="width:15%; text-align: center; vertical-align:top;">Total</th>
+      </thead>
+      <tbody>
+
+        {% for row in content.partyWiseData %}
+        <tr>
+          <td class="all {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px;">{{row[0]}}</td>
+          <td class="all text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[1]}}</td>
+          <td class="all text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[2]}}</td>
+          <td class="all text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[3]}}</td>
+          <td class="all text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[4]}}</td>
+        </tr>
+        {% endfor %}
+
+        <tr class="all">
+          <td class="all bold">Total</td>
+          <td class="all">{{content.reasonWiseTotal[0]}}</td>
+          <td class="all">{{content.reasonWiseTotal[1]}}</td>
+          <td class="all">{{content.reasonWiseTotal[2]}}</td>
+          <td class="all bold text-right">{{content.totalRejectedVotes}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br/><br/>
+
+    <table class="table table-borderless" style="table-layout: fixed;">
+      <tbody>
+        <tr>
+          <td style="width: 50%;">Date: ....................................</td>
+          <td style="float:right;">
+            ..............................................................<br/>
+            Signature of Counting Officer:
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+</div>
+{% endblock %}

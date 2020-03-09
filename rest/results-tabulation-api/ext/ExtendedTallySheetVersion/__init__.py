@@ -561,3 +561,14 @@ class ExtendedTallySheetVersion:
         ).reset_index()
 
         return df
+
+    def get_party_wise_invalid_vote_category_count(self):
+        df = self.df.copy()
+        df['numValue'] = df['numValue'].astype(int)
+        df = df.loc[df["templateRowType"] == "PARTY_WISE_INVALID_VOTE_COUNT"]
+
+        df = df.sort_values(
+            by=['invalidVoteCategoryId'], ascending=True
+        ).reset_index()
+
+        return df
