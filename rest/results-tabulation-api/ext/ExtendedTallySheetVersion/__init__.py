@@ -27,6 +27,7 @@ DEFAULT_HTML_TABLE_COLUMNS = [
     "areaName",
     "candidateId",
     "candidateName",
+    "candidateNumber",
     "partyId",
     "partyName",
     "partySymbol",
@@ -173,7 +174,8 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['voteType'] == NonPostal]
 
         df = df.sort_values(
-            by=['partyId', 'candidateId', 'areaId'], ascending=True
+            by=['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+                'candidateNumber', 'areaId', 'areaName'], ascending=True
         ).reset_index()
 
         return df
@@ -185,7 +187,7 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['voteType'] == NonPostal]
 
         df = df.sort_values(
-            by=['partyId', 'areaId'], ascending=True
+            by=['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'areaId', 'areaName'], ascending=True
         ).reset_index()
 
         return df
@@ -198,7 +200,8 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['voteType'] == NonPostal]
 
         df = df.groupby(
-            ['partyId', 'partyName', 'partyAbbreviation', 'candidateId', 'candidateName']
+            ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+             'candidateNumber']
         ).agg(sum).sort_values(
             by=['partyId', 'candidateId'], ascending=True
         ).reset_index()
@@ -213,7 +216,8 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['voteType'] == Postal]
 
         df = df.groupby(
-            ['partyId', 'partyName', 'partyAbbreviation', 'candidateId', 'candidateName']
+            ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+             'candidateNumber']
         ).agg(sum).sort_values(
             by=['partyId', 'candidateId'], ascending=True
         ).reset_index()
@@ -228,7 +232,7 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['voteType'] == Postal]
 
         df = df.groupby(
-            ['partyId', 'partyName', 'partyAbbreviation']
+            ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
         ).agg({'numValue': lambda x: x.sum(skipna=False)}).sort_values(
             by=['partyId'], ascending=True
         ).reset_index()
@@ -242,7 +246,8 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
 
         df = df.groupby(
-            ['partyId', 'partyName', 'partyAbbreviation', 'candidateId', 'candidateName']
+            ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+             'candidateNumber']
         ).agg(sum).sort_values(
             by=['partyId', 'candidateId'], ascending=True
         ).reset_index()
@@ -403,7 +408,8 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
 
         df = df.sort_values(
-            by=['partyId', 'candidateId', 'areaId'], ascending=True
+            by=['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+                'candidateNumber', 'areaId', 'areaName'], ascending=True
         ).reset_index()
 
         return df
@@ -414,7 +420,7 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
 
         df = df.sort_values(
-            by=['partyId', 'areaId'], ascending=True
+            by=['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'areaId', 'areaName'], ascending=True
         ).reset_index()
         return df
 
