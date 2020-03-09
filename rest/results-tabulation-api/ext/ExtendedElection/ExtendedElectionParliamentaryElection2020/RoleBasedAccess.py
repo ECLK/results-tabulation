@@ -148,20 +148,56 @@ role_based_access_config = {
 
     },
     NATIONAL_REPORT_VERIFIER_ROLE: {
-
+        PE_R2: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK]
+        },
+        PE_CE_RO_PR_3: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK]
+        },
+        PE_21: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK]
+        }
     },
     EC_LEADERSHIP_ROLE: {
+        PE_27: {
+            Postal: [READ, UNLOCK],
+            NonPostal: [READ, UNLOCK]
+        },
+        PE_39: {
+            Postal: [READ, UNLOCK],
+            NonPostal: [READ, UNLOCK]
+        },
+        PE_22: {
+            Postal: [READ, UNLOCK],
+            NonPostal: [READ, UNLOCK]
+        },
+        CE_201_PV: {
+            Postal: [READ, UNLOCK]
+        },
+        CE_201: {
+            NonPostal: [READ, UNLOCK]
+        },
+        PE_4: {
+            Postal: [READ, UNLOCK],
+            NonPostal: [READ, UNLOCK]
+        },
         PE_CE_RO_V1: {
-            Postal: [READ, WRITE, UNLOCK]
+            Postal: [READ, WRITE, UNLOCK],
+            NonPostal: [READ, WRITE, UNLOCK]
         },
         PE_R1: {
-            Postal: [READ, WRITE, UNLOCK]
+            Postal: [READ, WRITE, UNLOCK],
+            NonPostal: [READ, WRITE, UNLOCK]
         },
         PE_CE_RO_V2: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK]
         },
         PE_R2: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK]
+        },
+        PE_CE_RO_PR_1: {
+            Postal: [READ, WRITE, UNLOCK],
+            NonPostal: [READ, WRITE, UNLOCK]
         },
         PE_CE_RO_PR_2: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK]

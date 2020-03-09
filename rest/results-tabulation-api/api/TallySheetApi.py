@@ -21,7 +21,7 @@ def getAll(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
         voteType=voteType
     )
 
-    result = get_paginated_query(result).all()
+    # result = get_paginated_query(result).all()
 
     return TallySheetSchema(many=True).dump(result).data
 
