@@ -17,10 +17,10 @@ class ExtendedTallySheetVersion_PE_CE_RO_PR_2(ExtendedTallySheetVersion):
     def html(self, title="", total_registered_voters=None):
         tallySheetVersion = self.tallySheetVersion
 
-        candidate_and_area_wise_valid_vote_count_result = self.get_candidate_and_area_wise_valid_vote_count_result()
+        candidate_and_area_wise_valid_non_postal_vote_count_result = self.get_candidate_and_area_wise_valid_non_postal_vote_count_result()
+        candidate_wise_valid_postal_vote_count_result = self.get_candidate_wise_valid_postal_vote_count_result()
         candidate_wise_valid_vote_count_result = self.get_candidate_wise_valid_vote_count_result()
-        area_wise_valid_vote_count_result = self.get_area_wise_valid_vote_count_result()
-        area_wise_vote_count_result = self.get_area_wise_vote_count_result()
+        area_wise_non_postal_vote_count_result = self.get_area_wise_non_postal_vote_count_result()
 
         stamp = tallySheetVersion.stamp
 
@@ -41,55 +41,57 @@ class ExtendedTallySheetVersion_PE_CE_RO_PR_2(ExtendedTallySheetVersion):
             "electoralDistrict": Area.get_associated_areas(
                 tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
             "pollingDivision": pollingDivision,
-            "partyName": candidate_and_area_wise_valid_vote_count_result["partyName"].values[0],
+            "partyName": candidate_and_area_wise_valid_non_postal_vote_count_result["partyName"].values[0],
             "data": [],
             "pollingDivisions": [],
             "totalVoteCounts": []
         }
 
-        total_vote_count = 0
-
         # Append the area wise column totals
-        for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
-            print(area_wise_valid_vote_count_result.areaName)
-            content["pollingDivisions"].append(area_wise_valid_vote_count_result_item.areaName)
+        for area_wise_non_postal_vote_count_result_item in area_wise_non_postal_vote_count_result.itertuples():
+            print(area_wise_non_postal_vote_count_result_item.areaName)
+            content["pollingDivisions"].append(area_wise_non_postal_vote_count_result_item.areaName)
             content["totalVoteCounts"].append(
-                to_comma_seperated_num(area_wise_valid_vote_count_result_item.numValue))
+                to_comma_seperated_num(area_wise_non_postal_vote_count_result_item.numValue)
+            )
 
-
+        content["pollingDivisions"].append("Postal")
+        content["totalVoteCounts"].append(to_comma_seperated_num(
+            candidate_wise_valid_postal_vote_count_result["numValue"].sum()
+        ))
 
         if tallySheetVersion.submission.election.voteType == Postal:
             content["tallySheetCode"] = "CE/RO/PR/2"
 
-        number_of_polling_divisions = len(area_wise_vote_count_result)
-
-        for candidate_wise_valid_vote_count_result_item_index, candidate_wise_valid_vote_count_result_item in candidate_wise_valid_vote_count_result.iterrows():
+        for index_1 in candidate_wise_valid_vote_count_result.index:
             data_row = []
-            total_votes_for_each_candidate = 0
 
-            data_row_number = candidate_wise_valid_vote_count_result_item_index + 1
-            data_row.append(data_row_number)
+            candidate_id = candidate_wise_valid_vote_count_result.at[index_1, "candidateId"]
+            candidate_number = candidate_wise_valid_vote_count_result.at[index_1, "candidateNumber"]
 
-            for counting_centre_index in range(number_of_polling_divisions):
-                candidate_and_area_wise_valid_vote_count_result_item_index = \
-                    (
-                            number_of_polling_divisions * candidate_wise_valid_vote_count_result_item_index) + counting_centre_index
+            data_row.append(candidate_number)
 
-                candidate_area_vote = candidate_and_area_wise_valid_vote_count_result["numValue"].values[
-                                               candidate_and_area_wise_valid_vote_count_result_item_index]
-                data_row.append(to_comma_seperated_num(candidate_area_vote))
+            for index_2 in candidate_and_area_wise_valid_non_postal_vote_count_result.index:
+                if candidate_and_area_wise_valid_non_postal_vote_count_result.at[
+                    index_2, "candidateId"
+                ] == candidate_id:
+                    data_row.append(to_comma_seperated_num(
+                        candidate_and_area_wise_valid_non_postal_vote_count_result.at[index_2, "numValue"]
+                    ))
 
-                if candidate_area_vote is not None and not math.isnan(candidate_area_vote):
-                    total_votes_for_each_candidate += candidate_area_vote
+            data_row.append(to_comma_seperated_num(
+                candidate_wise_valid_postal_vote_count_result["numValue"].values[0]
+            ))
 
-            data_row.append(to_comma_seperated_num(total_votes_for_each_candidate))
-
-            total_vote_count += total_votes_for_each_candidate
+            data_row.append(to_comma_seperated_num(
+                candidate_wise_valid_vote_count_result.at[index_1, "numValue"]
+            ))
 
             content["data"].append(data_row)
 
-        content["totalVoteCounts"].append(to_comma_seperated_num(total_vote_count))
-
+        content["totalVoteCounts"].append(to_comma_seperated_num(
+            candidate_wise_valid_vote_count_result["numValue"].sum()
+        ))
 
         html = render_template(
             'PE-CE-RO-PR-2.html',
