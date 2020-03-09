@@ -584,7 +584,14 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
     if voteType is not None:
         query_filters.append(Election.Model.voteType == voteType)
 
-    return db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by)
+    tally_sheet_list = db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by)
+
+    authorized_tally_sheet_list = []
+    for tally_sheet in tally_sheet_list:
+        if has_role_based_access(tally_sheet=tally_sheet, access_type=ACCESS_TYPE_READ):
+            authorized_tally_sheet_list.append(tally_sheet)
+
+    return authorized_tally_sheet_list
 
 
 def create(template, electionId, areaId, metaId, parentTallySheets=None, childTallySheets=None):
