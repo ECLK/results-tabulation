@@ -53,12 +53,12 @@ class ExtendedTallySheetVersion_PE_CE_RO_V1(ExtendedTallySheetVersion):
         total_rejected_vote_count = 0
         total_vote_count = 0
 
-
         # Append the area wise column totals
         for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
             content["countingCentres"].append(area_wise_valid_vote_count_result_item.areaName)
-            content["validVoteCounts"].append(to_comma_seperated_num(area_wise_valid_vote_count_result_item.numValue))
-            total_valid_vote_count += area_wise_valid_vote_count_result_item.numValue
+            content["validVoteCounts"].append(
+                to_comma_seperated_num(area_wise_valid_vote_count_result_item.incompleteNumValue))
+            total_valid_vote_count += area_wise_valid_vote_count_result_item.incompleteNumValue
 
         for area_wise_rejected_vote_count_result_item_index, area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.iterrows():
             content["rejectedVoteCounts"].append(
@@ -66,8 +66,9 @@ class ExtendedTallySheetVersion_PE_CE_RO_V1(ExtendedTallySheetVersion):
             total_rejected_vote_count += area_wise_rejected_vote_count_result_item.numValue
 
         for area_wise_vote_count_result_item_index, area_wise_vote_count_result_item in area_wise_vote_count_result.iterrows():
-            content["totalVoteCounts"].append(to_comma_seperated_num(area_wise_vote_count_result_item.numValue))
-            total_vote_count += area_wise_vote_count_result_item.numValue
+            content["totalVoteCounts"].append(
+                to_comma_seperated_num(area_wise_vote_count_result_item.incompleteNumValue))
+            total_vote_count += area_wise_vote_count_result_item.incompleteNumValue
 
         # Append the grand totals
         content["validVoteCounts"].append(to_comma_seperated_num(total_valid_vote_count))
@@ -96,7 +97,7 @@ class ExtendedTallySheetVersion_PE_CE_RO_V1(ExtendedTallySheetVersion):
                     to_comma_seperated_num(party_and_area_wise_valid_vote_count_result["numValue"].values[
                                                party_and_area_wise_valid_vote_count_result_item_index]))
 
-            data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item.numValue))
+            data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item.incompleteNumValue))
 
             content["data"].append(data_row)
 

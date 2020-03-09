@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block container %}
+    <div class="font1">
+        <div style="margin-bottom:5px;text-align:right;">
+            Report: <b>CE-RO-PR/3</b>
+        </div>
+        <table class="table table-borderless">
+
+        </table>
+
+        <table class="table table-borderless" style="table-layout:fixed;">
+            <tbody>
+            <tr style="text-align:center;">
+                <th class="left right top bottom" style="vertical-align:middle;" rowspan="2">
+                    Position According to No. of Preferences Received
+                </th>
+                <th class="left right top bottom" style="vertical-align:middle;" rowspan="2">
+                    Serial No. and Name of Candidate
+                </th>
+                <th class="left right top bottom" style="vertical-align:middle;" colspan="2">
+                    Number of Preferences Received
+                </th>
+                <th class="left right top bottom" style="vertical-align:middle;" rowspan="2">
+
+                </th>
+
+            </tr>
+            <tr style="text-align:center;">
+                <th class="left right top" style="vertical-align:middle;">In Figures</th>
+                <th class="left right top" style="vertical-align:middle;">In Words</th>
+            </tr>
+            {% for row in content.data %}
+                <tr>
+                    {% for cell in row %}
+                        <td class="left right top bottom text-right {% if cell=="" %}missing-value{% endif %}">{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}

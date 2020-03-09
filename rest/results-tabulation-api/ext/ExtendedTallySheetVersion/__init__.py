@@ -46,13 +46,18 @@ class ExtendedTallySheetVersion:
         tallySheetVersionContent = tallySheetVersion.content
 
         index = []
-        columns = DEFAULT_HTML_TABLE_COLUMNS
+        columns = [column for column in DEFAULT_HTML_TABLE_COLUMNS]
         data = []
 
         for content_row_index in range(len(tallySheetVersion.content)):
             content_row = tallySheetVersionContent[content_row_index]
+            data_row = [getattr(content_row, column) for column in columns]
+            data_row.append(getattr(content_row, "numValue"))
+
             index.append(content_row_index)
-            data.append([getattr(content_row, column) for column in columns])
+            data.append(data_row)
+
+        columns.append("incompleteNumValue")
 
         self.df = pd.DataFrame(data=data, index=index, columns=columns)
 
@@ -202,7 +207,10 @@ class ExtendedTallySheetVersion:
         df = df.groupby(
             ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
              'candidateNumber']
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['partyId', 'candidateId'], ascending=True
         ).reset_index()
 
@@ -218,7 +226,10 @@ class ExtendedTallySheetVersion:
         df = df.groupby(
             ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
              'candidateNumber']
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['partyId', 'candidateId'], ascending=True
         ).reset_index()
 
@@ -233,7 +244,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
-        ).agg({'numValue': lambda x: x.sum(skipna=False)}).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['partyId'], ascending=True
         ).reset_index()
 
@@ -248,7 +262,10 @@ class ExtendedTallySheetVersion:
         df = df.groupby(
             ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
              'candidateNumber']
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['partyId', 'candidateId'], ascending=True
         ).reset_index()
 
@@ -264,7 +281,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['areaId', "areaName"]
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['areaId'], ascending=True
         ).reset_index()
 
@@ -279,7 +299,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['areaId', "areaName"]
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['areaId'], ascending=True
         ).reset_index()
 
@@ -293,7 +316,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['areaId', "areaName"]
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['areaId'], ascending=True
         ).reset_index()
 
@@ -306,7 +332,10 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
         df = df.loc[df['voteType'] == NonPostal]
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -317,7 +346,10 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['templateRowType'] == "REJECTED_VOTE"]
         df = df.loc[df['voteType'] == NonPostal]
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -326,7 +358,10 @@ class ExtendedTallySheetVersion:
         df['numValue'] = df['numValue'].astype(float)
         df = df.loc[df['voteType'] == NonPostal]
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -337,7 +372,10 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
         df = df.loc[df['voteType'] == Postal]
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -348,7 +386,10 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
         df = df.loc[df['voteType'] == Postal]
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -359,7 +400,10 @@ class ExtendedTallySheetVersion:
         df = df.loc[df['templateRowType'] == "REJECTED_VOTE"]
         df = df.loc[df['voteType'] == Postal]
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -368,7 +412,10 @@ class ExtendedTallySheetVersion:
         df['numValue'] = df['numValue'].astype(float)
         df = df.loc[df['voteType'] == Postal]
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -379,7 +426,10 @@ class ExtendedTallySheetVersion:
         df = df.loc[
             (df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -389,7 +439,10 @@ class ExtendedTallySheetVersion:
 
         df = df.loc[df['templateRowType'] == "REJECTED_VOTE"]
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -397,7 +450,10 @@ class ExtendedTallySheetVersion:
         df = self.df.copy()
         df['numValue'] = df['numValue'].astype(float)
 
-        df = df.groupby(lambda a: True).agg(sum)
+        df = df.groupby(lambda a: True).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        })
 
         return df
 
@@ -433,7 +489,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['areaId', "areaName"]
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['areaId'], ascending=True
         ).reset_index()
 
@@ -447,7 +506,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['partyId'], ascending=True
         ).reset_index()
 
@@ -461,7 +523,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['areaId', "areaName"]
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['areaId'], ascending=True
         ).reset_index()
 
@@ -473,7 +538,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['areaId', "areaName"]
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['areaId'], ascending=True
         ).reset_index()
 
@@ -486,7 +554,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['areaId', "areaName"]
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['areaId'], ascending=True
         ).reset_index()
 
@@ -499,7 +570,10 @@ class ExtendedTallySheetVersion:
     #
     #     df = df.groupby(
     #         ['areaId', "areaName"]
-    #     ).agg(sum).sort_values(
+    #     ).agg({
+    #         'numValue': lambda x: x.sum(skipna=False),
+    #         'incompleteNumValue': lambda x: x.sum(skipna=True)
+    #     }).sort_values(
     #         by=['areaId'], ascending=True
     #     ).reset_index()
     #
@@ -512,7 +586,10 @@ class ExtendedTallySheetVersion:
     #
     #     df = df.groupby(
     #         ['areaId', "areaName"]
-    #     ).agg(sum).sort_values(
+    #     ).agg({
+    #         'numValue': lambda x: x.sum(skipna=False),
+    #         'incompleteNumValue': lambda x: x.sum(skipna=True)
+    #     }).sort_values(
     #         by=['areaId'], ascending=True
     #     ).reset_index()
     #
@@ -525,7 +602,10 @@ class ExtendedTallySheetVersion:
     #
     #     df = df.groupby(
     #         ['areaId', "areaName"]
-    #     ).agg(sum).sort_values(
+    #     ).agg({
+    #         'numValue': lambda x: x.sum(skipna=False),
+    #         'incompleteNumValue': lambda x: x.sum(skipna=True)
+    #     }).sort_values(
     #         by=['areaId'], ascending=True
     #     ).reset_index()
     #
@@ -538,7 +618,10 @@ class ExtendedTallySheetVersion:
     #
     #     df = df.groupby(
     #         ['areaId', "areaName"]
-    #     ).agg(sum).sort_values(
+    #     ).agg({
+    #         'numValue': lambda x: x.sum(skipna=False),
+    #         'incompleteNumValue': lambda x: x.sum(skipna=True)
+    #     }).sort_values(
     #         by=['areaId'], ascending=True
     #     ).reset_index()
     #
@@ -551,7 +634,10 @@ class ExtendedTallySheetVersion:
 
         df = df.groupby(
             ['areaId', "areaName"]
-        ).agg(sum).sort_values(
+        ).agg({
+            'numValue': lambda x: x.sum(skipna=False),
+            'incompleteNumValue': lambda x: x.sum(skipna=True)
+        }).sort_values(
             by=['areaId'], ascending=True
         ).reset_index()
 
