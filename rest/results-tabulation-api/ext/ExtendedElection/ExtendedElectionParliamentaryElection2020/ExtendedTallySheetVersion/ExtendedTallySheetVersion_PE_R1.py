@@ -10,8 +10,7 @@ class ExtendedTallySheetVersion_PE_R1(ExtendedTallySheetVersion):
 
     def html_letter(self, title="", total_registered_voters=None):
         return super(ExtendedTallySheetVersion_PE_R1, self).html_letter(
-            title="Results of Polling Division %s" % self.tallySheetVersion.submission.area.areaName,
-            total_registered_voters=float(get_polling_division_total_registered_voters(tallySheetVersion=self))
+            title="Results of Polling Division %s" % self.tallySheetVersion.submission.area.areaName
         )
 
     def html(self, title="", total_registered_voters=None):
@@ -55,13 +54,13 @@ class ExtendedTallySheetVersion_PE_R1(ExtendedTallySheetVersion):
 
         # Append the area wise column totals
         for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
-            total_valid_vote_count += area_wise_valid_vote_count_result_item.numValue
+            total_valid_vote_count += area_wise_valid_vote_count_result_item.incompleteNumValue
 
         for area_wise_rejected_vote_count_result_item_index, area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.iterrows():
-            total_rejected_vote_count += area_wise_rejected_vote_count_result_item.numValue
+            total_rejected_vote_count += area_wise_rejected_vote_count_result_item.incompleteNumValue
 
         for area_wise_vote_count_result_item_index, area_wise_vote_count_result_item in area_wise_vote_count_result.iterrows():
-            total_vote_count += area_wise_vote_count_result_item.numValue
+            total_vote_count += area_wise_vote_count_result_item.incompleteNumValue
 
         # Append the grand totals
         content["validVoteCounts"].append(to_comma_seperated_num(total_valid_vote_count))
@@ -70,8 +69,6 @@ class ExtendedTallySheetVersion_PE_R1(ExtendedTallySheetVersion):
 
         if tallySheetVersion.submission.election.voteType == Postal:
             content["tallySheetCode"] = "PE/R1"
-
-        number_of_counting_centres = len(area_wise_vote_count_result)
 
         for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
             data_row = []

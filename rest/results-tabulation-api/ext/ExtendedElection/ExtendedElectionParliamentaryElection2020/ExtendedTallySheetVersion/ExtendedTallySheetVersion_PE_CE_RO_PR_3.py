@@ -2,9 +2,7 @@ from flask import render_template
 from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
 from orm.entities import Area
 from constants.VOTE_TYPES import Postal
-from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
-import math
 
 
 class ExtendedTallySheetVersion_PE_CE_RO_PR_3(ExtendedTallySheetVersion):
@@ -18,7 +16,6 @@ class ExtendedTallySheetVersion_PE_CE_RO_PR_3(ExtendedTallySheetVersion):
         tallySheetVersion = self.tallySheetVersion
 
         candidate_wise_valid_vote_count_result = self.get_candidate_wise_valid_vote_count_result()
-        area_wise_valid_vote_count_result = self.get_area_wise_valid_vote_count_result()
 
         stamp = tallySheetVersion.stamp
 

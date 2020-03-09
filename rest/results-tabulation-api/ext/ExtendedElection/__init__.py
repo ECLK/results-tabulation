@@ -1,9 +1,7 @@
 from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
 from app import db
-from constants.TALLY_SHEET_CODES import CE_201
 from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
-from sqlalchemy import and_, func, or_
 
 
 def get_extended_election(election):

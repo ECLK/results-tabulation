@@ -4,7 +4,6 @@ from orm.entities import Area
 from constants.VOTE_TYPES import Postal
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
-import math
 
 
 class ExtendedTallySheetVersion_PE_CE_RO_PR_1(ExtendedTallySheetVersion):
@@ -50,7 +49,7 @@ class ExtendedTallySheetVersion_PE_CE_RO_PR_1(ExtendedTallySheetVersion):
         for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
             content["countingCentres"].append(area_wise_valid_vote_count_result_item.areaName)
             content["totalVoteCounts"].append(
-                to_comma_seperated_num(area_wise_valid_vote_count_result_item.numValue))
+                to_comma_seperated_num(area_wise_valid_vote_count_result_item.incompleteNumValue))
 
         for index_1 in candidate_wise_valid_vote_count_result.index:
             data_row = []
@@ -66,9 +65,8 @@ class ExtendedTallySheetVersion_PE_CE_RO_PR_1(ExtendedTallySheetVersion):
                         candidate_and_area_wise_valid_vote_count_result.at[index_2, "numValue"]
                     ))
 
-            total_votes_received_by_candidate = candidate_wise_valid_vote_count_result.at[index_1, "numValue"]
             data_row.append(to_comma_seperated_num(
-                total_votes_received_by_candidate
+                candidate_wise_valid_vote_count_result.at[index_1, "incompleteNumValue"]
             ))
 
             content["data"].append(data_row)

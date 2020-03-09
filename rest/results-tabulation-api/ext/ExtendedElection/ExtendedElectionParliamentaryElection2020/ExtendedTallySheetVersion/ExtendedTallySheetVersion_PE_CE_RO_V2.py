@@ -66,8 +66,8 @@ class ExtendedTallySheetVersion_PE_CE_RO_V2(ExtendedTallySheetVersion):
         for area_wise_valid_non_postal_vote_count_result_item in area_wise_valid_non_postal_vote_count_result.itertuples():
             content["pollingDivisions"].append(area_wise_valid_non_postal_vote_count_result_item.areaName)
             content["validVoteCounts"].append(
-                to_comma_seperated_num(area_wise_valid_non_postal_vote_count_result_item.numValue))
-            total_valid_vote_count += area_wise_valid_non_postal_vote_count_result_item.numValue
+                to_comma_seperated_num(area_wise_valid_non_postal_vote_count_result_item.incompleteNumValue))
+            total_valid_vote_count += area_wise_valid_non_postal_vote_count_result_item.incompleteNumValue
 
         for area_wise_rejected_non_postal_vote_count_result_item_index, area_wise_rejected_non_postal_vote_count_result_item in area_wise_rejected_non_postal_vote_count_result.iterrows():
             content["rejectedVoteCounts"].append(
@@ -76,20 +76,24 @@ class ExtendedTallySheetVersion_PE_CE_RO_V2(ExtendedTallySheetVersion):
 
         for area_wise_non_postal_vote_count_result_item_index, area_wise_non_postal_vote_count_result_item in area_wise_non_postal_vote_count_result.iterrows():
             content["totalVoteCounts"].append(
-                to_comma_seperated_num(area_wise_non_postal_vote_count_result_item.numValue))
-            total_vote_count += area_wise_non_postal_vote_count_result_item.numValue
+                to_comma_seperated_num(area_wise_non_postal_vote_count_result_item.incompleteNumValue))
+            total_vote_count += area_wise_non_postal_vote_count_result_item.incompleteNumValue
 
         # Append the postal vote count totals
         content["pollingDivisions"].append("Postal Votes")
-        content["validVoteCounts"].append(to_comma_seperated_num(postal_valid_vote_count_result["numValue"].values[0]))
+        content["validVoteCounts"].append(
+            to_comma_seperated_num(postal_valid_vote_count_result["incompleteNumValue"].values[0]))
         content["rejectedVoteCounts"].append(
             to_comma_seperated_num(postal_rejected_vote_count_result["numValue"].values[0]))
-        content["totalVoteCounts"].append(to_comma_seperated_num(postal_vote_count_result["numValue"].values[0]))
+        content["totalVoteCounts"].append(
+            to_comma_seperated_num(postal_vote_count_result["incompleteNumValue"].values[0]))
 
         # Append the grand totals
-        content["validVoteCounts"].append(to_comma_seperated_num(valid_vote_count_result["numValue"].values[0]))
-        content["rejectedVoteCounts"].append(to_comma_seperated_num(rejected_vote_count_result["numValue"].values[0]))
-        content["totalVoteCounts"].append(to_comma_seperated_num(vote_count_result["numValue"].values[0]))
+        content["validVoteCounts"].append(
+            to_comma_seperated_num(valid_vote_count_result["incompleteNumValue"].values[0]))
+        content["rejectedVoteCounts"].append(
+            to_comma_seperated_num(rejected_vote_count_result["incompleteNumValue"].values[0]))
+        content["totalVoteCounts"].append(to_comma_seperated_num(vote_count_result["incompleteNumValue"].values[0]))
 
         number_of_counting_centres = len(area_wise_non_postal_vote_count_result)
 
@@ -114,7 +118,7 @@ class ExtendedTallySheetVersion_PE_CE_RO_V2(ExtendedTallySheetVersion):
             data_row.append(to_comma_seperated_num(party_wise_valid_postal_vote_count_result["numValue"].values[
                                                        party_wise_valid_vote_count_result_item_index]))
 
-            data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item.numValue))
+            data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item.incompleteNumValue))
 
             content["data"].append(data_row)
 
