@@ -1,9 +1,8 @@
-from sqlalchemy import bindparam
-from sqlalchemy.orm import aliased
-
 from app import db
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, TALLY_SHEET_COLUMN_SOURCE_CONTENT, \
     TALLY_SHEET_COLUMN_SOURCE_QUERY
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_PR_3 import \
+    ExtendedTallySheetVersion_PE_CE_RO_PR_3
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_21 import \
     ExtendedTallySheetVersion_PE_21
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_R2 import \
@@ -74,6 +73,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             PE_22: ExtendedTallySheetVersion_PE_22,
             PE_CE_RO_PR_1: ExtendedTallySheetVersion_PE_CE_RO_PR_1,
             PE_CE_RO_PR_2: ExtendedTallySheetVersion_PE_CE_RO_PR_2,
+            PE_CE_RO_PR_3: ExtendedTallySheetVersion_PE_CE_RO_PR_3,
             PE_21: ExtendedTallySheetVersion_PE_21
         }
 
