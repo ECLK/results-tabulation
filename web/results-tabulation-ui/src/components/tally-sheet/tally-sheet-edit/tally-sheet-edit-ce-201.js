@@ -57,7 +57,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
     });
 
     const [pollingStations, setPollingStations] = useState([]);
-
+    const [totalOrdinaryBallotCountRow, setTotalOrdinaryBallotCountRow] = useState({ "numValue": 0 });
 
     const handleNumValueChange = (areaId, templateRowType) => event => {
         const {value} = event.target;
@@ -68,6 +68,24 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
             return tallySheetRows;
         });
     };
+
+    const handleTotalOrdinaryBallotCountChange = () => event => {
+        const {value} = event.target;
+        setTotalOrdinaryBallotCountRow((totalOrdinaryBallotCountRow) => {
+            return {
+                ...totalOrdinaryBallotCountRow,
+                numValue: processNumericValue(value)
+            }
+        });
+    }
+
+    function calculateTotalOrdinaryBallotCount() {
+        let totalOrdinaryBallotCount = 0;
+        Object.values(tallySheetRows[TALLY_SHEET_ROW_TYPE_NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_BOX].map).forEach(row => {
+            totalOrdinaryBallotCount += row.numValue;
+        });
+        return totalOrdinaryBallotCount;
+    }
 
     const getTallySheetRow = (areaId, templateRowType) => {
         if (tallySheetRows[templateRowType] && tallySheetRows[templateRowType].map && tallySheetRows[templateRowType].map[areaId]) {
@@ -89,6 +107,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
 
     const setTallySheetContent = async (tallySheetVersion) => {
         const _tallySheetRows = {...tallySheetRows};
+        const _totalOrdinaryBallotCountRow = {"numValue": 0};
 
         // Get the `templateRow` assigned to each type of tally sheet rows.
         tallySheet.template.rows.map(((templateRow) => {
@@ -147,17 +166,24 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                     // TODO validate _tallySheetRows
                     Object.assign(_tallySheetRows[contentRow.templateRowType].map[contentRow.areaId], contentRow)
                 }
+                _totalOrdinaryBallotCountRow.numValue += contentRow.numValue;
             }
         }
 
         setPollingStations(pollingStations);
         setTallySheetRows(_tallySheetRows);
+        setTotalOrdinaryBallotCountRow(_totalOrdinaryBallotCountRow);
     };
 
     const validateTallySheetContent = () => {
-        // TODO
+        const rows = Object.values(tallySheetRows[TALLY_SHEET_ROW_TYPE_NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_BOX].map);
+        for (let i = 0; i < rows.length; i++) {
+            if (!isNumeric(rows[i].numValue)) {
+                return false;
+            }
+        }
 
-        return true
+        return (isNumeric(totalOrdinaryBallotCountRow.numValue)) && (totalOrdinaryBallotCountRow.numValue === calculateTotalOrdinaryBallotCount());
     };
 
     const getTallySheetRequestBody = () => {
@@ -223,7 +249,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                 <TableFooter>
                     <TableRow>
                         <TableCell align="right" colSpan={2}>Total ordinary ballot count</TableCell>
-                        <TableCell align="right">-- TODO --</TableCell>
+                        <TableCell align="right">{totalOrdinaryBallotCountRow.numValue}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>
@@ -283,16 +309,14 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                 <TableFooter>
                     <TableRow>
                         <TableCell align="right" colSpan={2}>Total ordinary ballot count</TableCell>
-                        <TableCell align="right">
-                            {/*TODO*/}
-                            {/*<TextField*/}
-                            {/*    required*/}
-                            {/*    error={calculateTotalOrdinaryBallotCountFromBoxCount() !== totalOrdinaryBallotCountFromBoxCount}*/}
-                            {/*    helperText={calculateTotalOrdinaryBallotCountFromBoxCount() !== totalOrdinaryBallotCountFromBoxCount ? 'Total ballot count mismatch!' : ' '}*/}
-                            {/*    value={totalOrdinaryBallotCountFromBoxCount}*/}
-                            {/*    margin="normal"*/}
-                            {/*    onChange={handleTotalOrdinaryBallotCountFromBoxCountChange()}*/}
-                            {/*/>*/}
+                        <TableCell align="right"><TextField
+                            required
+                            error={calculateTotalOrdinaryBallotCount() !== totalOrdinaryBallotCountRow.numValue}
+                            helperText={calculateTotalOrdinaryBallotCount() !== totalOrdinaryBallotCountRow.numValue ? 'Total ordinary ballot count mismatch!' : ' '}
+                            value={totalOrdinaryBallotCountRow.numValue}
+                            margin="normal"
+                            onChange={handleTotalOrdinaryBallotCountChange()}
+                        />
                         </TableCell>
                     </TableRow>
                     <TableRow>
