@@ -298,7 +298,8 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
                 {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "ballotBoxId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
         tally_sheet_template_ce_201_pv_number_of_packets_inserted_to_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
@@ -308,6 +309,8 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             columns=[
                 {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "ballotBoxId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
                 {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
@@ -318,6 +321,8 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             columns=[
                 {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "ballotBoxId", "grouped": False, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
                 {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
