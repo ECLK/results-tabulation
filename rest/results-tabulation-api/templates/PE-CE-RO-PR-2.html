@@ -5,11 +5,11 @@
     <div style="margin-bottom:5px;text-align:right;">
         Report: <b>CE-RO-PR/2</b>
     </div>
-    <table class="table table-borderless">
+    <table class="table table-borderless" style="margin-bottom:0;">
         <tbody>
         <tr>
             <td></td>
-            <td class="bold no-padding-right" colspan="4" style="text-align:center;">
+            <td class="bold no-padding-right" style="text-align:center; width:90%;">
                 <h1>{{content.election.electionName}}</h1>
                 CENTER FOR DECLARATION OF RESULTS<br/>
                 Second Summary of Preferences Counted in All the Counting Centres<br/>
@@ -19,13 +19,17 @@
                 <div class="all float-right"><h1 class="bold">RO</h1></div>
             </td>
         </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-borderless">
+        <tbody>
         <tr>
-            <td></td>
-            <td class="no-padding-left no-padding-right" colspan="3">
+            <td class="no-padding-left no-padding-right" style="width:50%;">
                 Electoral District :
                 <span style="text-decoration: underline; text-decoration-style:dotted;"> {{content.electoralDistrict}}</span>
             </td>
-            <td colspan="3" class="no-padding-left no-padding-right">
+            <td class="no-padding-left no-padding-right" style="text-align:right;width:50%;">
                 Name of Political Party/ Independent Group No :
                 <span style="text-decoration: underline; text-decoration-style:dotted;"> {{content.partyName}}</span>
             </td>
