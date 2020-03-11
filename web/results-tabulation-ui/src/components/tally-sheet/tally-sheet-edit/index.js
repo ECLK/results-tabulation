@@ -4,15 +4,18 @@ import {MESSAGES_EN} from "../../../locale/messages_en";
 import {MESSAGE_TYPES} from "../../../services/messages.provider";
 import {PATH_ELECTION_TALLY_SHEET_LIST} from "../../../App";
 import {
-    TALLY_SHEET_CODE_CE_201
+    TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_CE_201_PV
 } from "../constants/TALLY_SHEET_CODE";
 import TallySheetEdit_CE_201 from "./tally-sheet-edit-ce-201";
+import TallySheetEdit_CE_201_PV from "./tally-sheet-edit-ce-201-pv";
 
 
 export default class TallySheetEdit extends Component {
     getTallySheetEditForm(tallySheetCode) {
         if (tallySheetCode === TALLY_SHEET_CODE_CE_201) {
             return TallySheetEdit_CE_201;
+        } else if (tallySheetCode === TALLY_SHEET_CODE_CE_201_PV) {
+            return TallySheetEdit_CE_201_PV;
         } else {
             return null
         }

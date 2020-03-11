@@ -7,13 +7,14 @@ Create Date: 2020-01-23 17:46:41.554467
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy import literal
+from sqlalchemy import literal, func
 from sqlalchemy.dialects import mysql
 from sqlalchemy.orm import Session, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from tqdm import tqdm
 
 # revision identifiers, used by Alembic.
+from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_CONTENT, TALLY_SHEET_COLUMN_SOURCE_META
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019 import PRE_34_CO, PRE_34_I_RO, PRE_34_II_RO, PRE_34, \
     PRE_34_PD, PRE_34_ED, PRE_34_AI
 
@@ -663,7 +664,7 @@ def upgrade():
         columns=[
             {"columnName": "electionId", "grouped": False, "func": None},
             {"columnName": "areaId", "grouped": False, "func": None},
-            {"columnName": "dateValue", "grouped": False, "func": None}
+            {"columnName": "strValue", "grouped": False, "func": None}
         ]
     )
     tally_sheet_template_ce_201_pv_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
@@ -673,7 +674,9 @@ def upgrade():
         columns=[
             {"columnName": "electionId", "grouped": False, "func": None},
             {"columnName": "areaId", "grouped": False, "func": None},
-            {"columnName": "ballotBoxId", "grouped": False, "func": None}
+            {"columnName": "ballotBoxId", "grouped": False, "func": None,
+             "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+            {"columnName": "strValue", "grouped": False, "func": None}
         ]
     )
     tally_sheet_template_ce_201_pv_number_of_packets_inserted_to_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
@@ -683,6 +686,8 @@ def upgrade():
         columns=[
             {"columnName": "electionId", "grouped": False, "func": None},
             {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "ballotBoxId", "grouped": False, "func": None,
+             "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
             {"columnName": "numValue", "grouped": False, "func": None}
         ]
     )
@@ -693,6 +698,8 @@ def upgrade():
         columns=[
             {"columnName": "electionId", "grouped": False, "func": None},
             {"columnName": "areaId", "grouped": False, "func": None},
+            {"columnName": "ballotBoxId", "grouped": False, "func": None,
+             "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
             {"columnName": "numValue", "grouped": False, "func": None}
         ]
     )
@@ -726,6 +733,26 @@ def upgrade():
     for existing_tally_sheet in existing_tally_sheets:
         existing_tally_sheet.templateId = tally_sheet_template_ce_201_pv.templateId
 
+    class _ROW:
+        pass
+
+    # A util method used to append the auto generated column `ballotBoxId` in CE-201-PV.
+    def _append_ballot_box_id(rows):
+        _ballot_box_id = 0
+        _rows = []
+        for row in rows:
+            _row = _ROW()
+            for _row_key in row.keys():
+                _row_value = getattr(row, _row_key)
+                setattr(_row, _row_key, _row_value)
+
+            setattr(_row, "ballotBoxId", _ballot_box_id)
+            _rows.append(_row)
+
+            _ballot_box_id += 1
+
+        return _rows
+
     existing_tally_sheet_version_rows = session.query(
         _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId,
         _Submission.electionId,
@@ -754,51 +781,60 @@ def upgrade():
         _Submission.submissionId == _SubmissionVersion.submissionId
     ).all()
 
-    existing_tally_sheet_version_rows = existing_tally_sheet_version_rows + session.query(
-        _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
-        _Submission.electionId,
-        _Submission.areaId,
-        _TallySheetVersionRow_CE_201_PV.ballotBoxId.label("ballotBoxId"),
-        literal(tally_sheet_template_ce_201_pv_ballot_box_row.templateRowId).label("templateRowId")
-    ).join(
-        _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
-    ).join(
-        _Submission,
-        _Submission.submissionId == _SubmissionVersion.submissionId
-    ).all()
+    existing_tally_sheet_version_rows += _append_ballot_box_id(
+        rows=session.query(
+            _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
+            _Submission.electionId,
+            _Submission.areaId,
+            literal(0).label("ballotBoxId"),
+            _TallySheetVersionRow_CE_201_PV.ballotBoxId.label("strValue"),
+            literal(tally_sheet_template_ce_201_pv_ballot_box_row.templateRowId).label("templateRowId")
+        ).join(
+            _SubmissionVersion,
+            _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
+        ).join(
+            _Submission,
+            _Submission.submissionId == _SubmissionVersion.submissionId
+        ).all()
+    )
 
-    existing_tally_sheet_version_rows += session.query(
-        _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
-        _Submission.electionId,
-        _Submission.areaId,
-        _TallySheetVersionRow_CE_201_PV.numberOfPacketsInserted.label("numValue"),
-        literal(
-            tally_sheet_template_ce_201_pv_number_of_packets_inserted_to_ballot_box_row.templateRowId
-        ).label("templateRowId")
-    ).join(
-        _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
-    ).join(
-        _Submission,
-        _Submission.submissionId == _SubmissionVersion.submissionId
-    ).all()
+    existing_tally_sheet_version_rows += _append_ballot_box_id(
+        rows=session.query(
+            _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
+            _Submission.electionId,
+            _Submission.areaId,
+            literal(0).label("ballotBoxId"),
+            _TallySheetVersionRow_CE_201_PV.numberOfPacketsInserted.label("numValue"),
+            literal(
+                tally_sheet_template_ce_201_pv_number_of_packets_inserted_to_ballot_box_row.templateRowId
+            ).label("templateRowId")
+        ).join(
+            _SubmissionVersion,
+            _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
+        ).join(
+            _Submission,
+            _Submission.submissionId == _SubmissionVersion.submissionId
+        ).all()
+    )
 
-    existing_tally_sheet_version_rows += session.query(
-        _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
-        _Submission.electionId,
-        _Submission.areaId,
-        _TallySheetVersionRow_CE_201_PV.numberOfAPacketsFound.label("numValue"),
-        literal(
-            tally_sheet_template_ce_201_pv_number_of_packets_found_inside_ballot_box_row.templateRowId
-        ).label("templateRowId")
-    ).join(
-        _SubmissionVersion,
-        _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
-    ).join(
-        _Submission,
-        _Submission.submissionId == _SubmissionVersion.submissionId
-    ).all()
+    existing_tally_sheet_version_rows += _append_ballot_box_id(
+        rows=session.query(
+            _TallySheetVersionRow_CE_201_PV.tallySheetVersionId,
+            _Submission.electionId,
+            _Submission.areaId,
+            literal(0).label("ballotBoxId"),
+            _TallySheetVersionRow_CE_201_PV.numberOfAPacketsFound.label("numValue"),
+            literal(
+                tally_sheet_template_ce_201_pv_number_of_packets_found_inside_ballot_box_row.templateRowId
+            ).label("templateRowId")
+        ).join(
+            _SubmissionVersion,
+            _SubmissionVersion.submissionVersionId == _TallySheetVersionRow_CE_201_PV.tallySheetVersionId
+        ).join(
+            _Submission,
+            _Submission.submissionId == _SubmissionVersion.submissionId
+        ).all()
+    )
 
     existing_tally_sheet_version_rows += session.query(
         _TallySheetVersionRow_CE_201_PV_CC.tallySheetVersionId,

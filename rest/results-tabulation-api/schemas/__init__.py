@@ -142,6 +142,7 @@ class TallySheetVersionRow_Schema(ma.ModelSchema):
             "templateRowType",
             "areaId",
             "areaName",
+            "ballotBoxId",
             "candidateId",
             "candidateName",
             "partyId",

@@ -469,7 +469,7 @@ class TallySheetModel(db.Model):
             for content_row in content_rows:
 
                 # Update the completed flag to False if there are null values in any row.
-                if content_row["numValue"] is None:
+                if "numValue" not in content_row or content_row["numValue"] is None:
                     is_tally_sheet_version_complete = False
 
                 TallySheetVersionRow.create(
