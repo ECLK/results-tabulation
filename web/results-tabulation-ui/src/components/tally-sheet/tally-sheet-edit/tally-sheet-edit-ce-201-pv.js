@@ -177,9 +177,25 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
     };
 
     const validateTallySheetContent = () => {
-        // TODO
+        let numericFieldsAreValid = true;
+        const totalNumberOfPVPackets = getValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS);
+        const numberOfValidBallotPapers = getValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS);
 
-        return true
+        [
+            TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
+            TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX,
+            TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A,
+            TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B
+        ].map((templateRowType) => {
+            for (let key in tallySheetRows[templateRowType].map) {
+                if (!isNumeric(tallySheetRows[templateRowType].map[key]["numValue"])) {
+                    numericFieldsAreValid = false;
+                }
+            }
+        });
+
+        return numericFieldsAreValid && calculateTotalNumberOfPVPackets() === totalNumberOfPVPackets &&
+            calculateTotalNumberOfValidBallotPapers() === numberOfValidBallotPapers
     };
 
     const getTallySheetRequestBody = () => {
