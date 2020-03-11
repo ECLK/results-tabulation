@@ -54,8 +54,6 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
     const handleValueChange = (key, templateRowType, valuePropertyName = "numValue") => event => {
         const {value} = event.target;
 
-        // console.log("####### ", [key, templateRowType, valuePropertyName, value]);
-        // debugger;
         setTallySheetRows((tallySheetRows) => {
             tallySheetRows = {...tallySheetRows};
             Object.assign(tallySheetRows[templateRowType].map[key], {[valuePropertyName]: processNumericValue(value)});
@@ -151,8 +149,6 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                 }
             }
 
-            debugger;
-
             setTallySheetRows(_tallySheetRows);
         } catch (e) {
             debugger;
@@ -208,9 +204,14 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
 
 
     function getTallySheetEditForm() {
+        const situation = getValue(0, TALLY_SHEET_ROW_TYPE_SITUATION, "strValue");
+        const timeOfCommencementOfCount = getValue(0, TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT, "strValue");
+        const numberOfACoversRejected = getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A);
+        const numberOfBCoversRejected = getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B);
 
 
         if (saved) {
+
             return <Table aria-label="simple table" size={saved ? "small" : "medium"}>
                 <TableHead>
                     <TableRow>
@@ -224,15 +225,19 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                     {(() => {
                         const ballotBoxesListJsx = [];
                         for (let i = 0; i < MAXIMUM_BALLOT_BOXES_LENGTH; i++) {
+                            const ballotBoxSerialNumber = getValue(i, TALLY_SHEET_ROW_TYPE_BALLOT_BOX, "strValue");
+                            const numberOfPacketsInserted = getValue(i, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX);
+                            const numberOfAPacketsFound = getValue(i, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX);
+
                             ballotBoxesListJsx.push(<TableRow key={i}>
                                 <TableCell align="center">
-                                    {getValue(i, TALLY_SHEET_ROW_TYPE_BALLOT_BOX, "strValue")}
+                                    {ballotBoxSerialNumber}
                                 </TableCell>
                                 <TableCell align="center">
-                                    {getValue(i, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX)}
+                                    {numberOfPacketsInserted}
                                 </TableCell>
                                 <TableCell align="center">
-                                    {getValue(i, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX)}
+                                    {numberOfAPacketsFound}
                                 </TableCell>
                             </TableRow>);
                         }
@@ -255,7 +260,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                             Number of Packets rejected on various grounds after opening 'A' covers
                         </TableCell>
                         <TableCell align="right">
-                            {getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A)}
+                            {numberOfACoversRejected}
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -264,7 +269,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                             various grounds after opening 'B' covers in accepted ballot papers receptacle
                         </TableCell>
                         <TableCell align="right">
-                            {getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B)}
+                            {numberOfBCoversRejected}
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -284,7 +289,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                             </strong>
                         </TableCell>
                         <TableCell align="right">
-                            {getValue(0, TALLY_SHEET_ROW_TYPE_SITUATION)}
+                            {situation}
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -295,7 +300,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                         </TableCell>
                         <TableCell align="right">
                             {Moment(
-                                getValue(0, TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT)
+                                timeOfCommencementOfCount
                             ).format('DD-MM-YYYY h:mm A')}
                         </TableCell>
                     </TableRow>
@@ -316,10 +321,6 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
 
             </Table>
         } else if (!processing) {
-            const situation = getValue(0, TALLY_SHEET_ROW_TYPE_SITUATION);
-            const timeOfCommencementOfCount = getValue(0, TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT);
-            const numberOfACoversRejected = getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A);
-            const numberOfBCoversRejected = getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B);
 
             return <Table aria-label="simple table" size="medium">
                 <TableHead>
@@ -492,7 +493,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                                 variant="outlined"
                                 value={situation}
                                 margin="normal"
-                                onChange={handleValueChange(0, TALLY_SHEET_ROW_TYPE_SITUATION)}
+                                onChange={handleValueChange(0, TALLY_SHEET_ROW_TYPE_SITUATION, "strValue")}
                                 inputProps={{
                                     style: {
                                         height: '10px'
@@ -513,7 +514,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                                 type='datetime-local'
                                 defaultValue={(timeOfCommencementOfCount == null ? "" : Moment(timeOfCommencementOfCount).format('YYYY-MM-DDTHH:mm'))}
                                 margin="normal"
-                                onChange={handleValueChange(0, TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT)}
+                                onChange={handleValueChange(0, TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT, "strValue")}
                                 inputProps={{
                                     style: {
                                         height: '10px'
