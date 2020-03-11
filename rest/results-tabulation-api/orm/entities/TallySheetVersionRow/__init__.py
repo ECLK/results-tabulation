@@ -65,7 +65,7 @@ def create(templateRow, electionId, tallySheetVersion, numValue=None, strValue=N
         areaId=areaId,
         candidateId=candidateId,
         partyId=partyId,
-        ballotBoxId=None,
+        ballotBoxId=ballotBoxId,
         invalidVoteCategoryId=invalidVoteCategoryId
     )
 

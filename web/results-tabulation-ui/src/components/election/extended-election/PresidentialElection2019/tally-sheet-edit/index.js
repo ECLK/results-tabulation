@@ -10,9 +10,7 @@ import TallySheetEdit from "../../../../tally-sheet/tally-sheet-edit";
 
 export default class PresidentialElection2019TallySheetEdit extends TallySheetEdit {
     getTallySheetEditForm(tallySheetCode) {
-        if (tallySheetCode === TALLY_SHEET_CODE_CE_201_PV) {
-            return TallySheetEdit_CE_201_PV
-        } else if (tallySheetCode === TALLY_SHEET_CODE_PRE_41) {
+        if (tallySheetCode === TALLY_SHEET_CODE_PRE_41) {
             return TallySheetEdit_PRE_41
         } else if (tallySheetCode === TALLY_SHEET_CODE_PRE_34_CO) {
             return TallySheetEdit_PRE_34_CO
