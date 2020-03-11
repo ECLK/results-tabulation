@@ -24,6 +24,9 @@ import Moment from "moment";
 
 export default function TallySheetEdit_CE_201_PV({history, queryString, election, tallySheet, messages}) {
 
+    const DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS = "DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS";
+    const DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS = "DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS";
+
     const MAXIMUM_BALLOT_BOXES_LENGTH = 6;
 
     const [tallySheetRows, setTallySheetRows] = useState({
@@ -47,20 +50,15 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
         },
         [TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B]: {
             templateRow: {}, map: {}
+        },
+        [DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS]: {
+            templateRow: {}, map: {}
+        },
+        [DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS]: {
+            templateRow: {}, map: {}
         }
     });
 
-
-    const handleValueChange = (key, templateRowType, valuePropertyName = "numValue") => event => {
-        const {value} = event.target;
-
-        setTallySheetRows((tallySheetRows) => {
-            tallySheetRows = {...tallySheetRows};
-            Object.assign(tallySheetRows[templateRowType].map[key], {[valuePropertyName]: processNumericValue(value)});
-
-            return tallySheetRows;
-        });
-    };
 
     const getTallySheetRow = (key, templateRowType) => {
         if (tallySheetRows[templateRowType] && tallySheetRows[templateRowType].map && tallySheetRows[templateRowType].map[key]) {
@@ -70,6 +68,16 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
         return null
     };
 
+
+    const setValue = (key, templateRowType, valuePropertyName = "numValue", value) => {
+        setTallySheetRows((tallySheetRows) => {
+            tallySheetRows = {...tallySheetRows};
+            Object.assign(tallySheetRows[templateRowType].map[key], {[valuePropertyName]: processNumericValue(value)});
+
+            return tallySheetRows;
+        });
+    };
+
     const getValue = (key, templateRowType, valuePropertyName = "numValue") => {
         const tallySheetRow = getTallySheetRow(key, templateRowType);
         if (tallySheetRow) {
@@ -77,6 +85,12 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
         }
 
         return 0;
+    };
+
+    const handleValueChange = (key, templateRowType, valuePropertyName = "numValue") => event => {
+        const {value} = event.target;
+
+        setValue(key, templateRowType, valuePropertyName, value);
     };
 
 
@@ -98,7 +112,9 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                 TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A,
                 TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B,
                 TALLY_SHEET_ROW_TYPE_SITUATION,
-                TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT
+                TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT,
+                DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS,
+                DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS
             ].map((templateRowType) => {
                 // TODO validate
 
@@ -150,6 +166,11 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
             }
 
             setTallySheetRows(_tallySheetRows);
+            setValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS, "numValue",
+                calculateTotalNumberOfPVPackets());
+            setValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS, "numValue",
+                calculateTotalNumberOfValidBallotPapers());
+
         } catch (e) {
             debugger;
         }
@@ -192,6 +213,27 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
         }
     };
 
+    function calculateTotalNumberOfPVPackets() {
+        let _numberOfPVPackets = 0;
+        for (let i = 0; i < MAXIMUM_BALLOT_BOXES_LENGTH; i++) {
+            _numberOfPVPackets += parseInt(getValue(i, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX));
+        }
+
+        return _numberOfPVPackets;
+    }
+
+    function calculateTotalNumberOfValidBallotPapers() {
+        let _numberOfValidBallotPapers = 0;
+
+        const _numberOfPVPackets = calculateTotalNumberOfPVPackets();
+        const numberOfACoversRejected = getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A);
+        const numberOfBCoversRejected = getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B);
+
+        _numberOfValidBallotPapers = _numberOfPVPackets - parseInt(numberOfACoversRejected) - parseInt(numberOfBCoversRejected);
+
+        return _numberOfValidBallotPapers;
+    }
+
     const {processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit} = useTallySheetEdit({
         messages,
         history,
@@ -209,6 +251,8 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
         const numberOfACoversRejected = getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A);
         const numberOfBCoversRejected = getValue(0, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B);
 
+        const totalNumberOfPVPackets = getValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS);
+        const numberOfValidBallotPapers = getValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS);
 
         if (saved) {
 
@@ -252,7 +296,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                             Total number of PV-A packets found in the Box/ Boxes
                         </TableCell>
                         <TableCell align="right">
-                            -- TODO --
+                            {totalNumberOfPVPackets}
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -279,7 +323,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                             </strong>
                         </TableCell>
                         <TableCell align="right">
-                            -- TODO --
+                            {numberOfValidBallotPapers}
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -399,20 +443,20 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                             Total number of PV-A packets found in the Box/ Boxes
                         </TableCell>
                         <TableCell align="center">
-                            {/*<TextField*/}
-                            {/*    required*/}
-                            {/*    variant="outlined"*/}
-                            {/*    error={calculateTotalNumberOfPVPackets() !== totalNumberOfPVPackets}*/}
-                            {/*    helperText={(calculateTotalNumberOfPVPackets() !== totalNumberOfPVPackets) ? "Total count mismatch" : ''}*/}
-                            {/*    value={totalNumberOfPVPackets}*/}
-                            {/*    margin="normal"*/}
-                            {/*    onChange={handleTotalNumberOfPVPacketsChange()}*/}
-                            {/*    inputProps={{*/}
-                            {/*        style: {*/}
-                            {/*            height: '10px'*/}
-                            {/*        },*/}
-                            {/*    }}*/}
-                            {/*/>*/}
+                            <TextField
+                                required
+                                variant="outlined"
+                                error={calculateTotalNumberOfPVPackets() !== totalNumberOfPVPackets}
+                                helperText={(calculateTotalNumberOfPVPackets() !== totalNumberOfPVPackets) ? "Total count mismatch" : ''}
+                                value={totalNumberOfPVPackets}
+                                margin="normal"
+                                onChange={handleValueChange(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS)}
+                                inputProps={{
+                                    style: {
+                                        height: '10px'
+                                    },
+                                }}
+                            />
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -465,20 +509,20 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                             </strong>
                         </TableCell>
                         <TableCell align="center">
-                            {/*<TextField*/}
-                            {/*    required*/}
-                            {/*    variant="outlined"*/}
-                            {/*    error={!isNumeric(numberOfValidBallotPapers)}*/}
-                            {/*    helperText={!isNumeric(numberOfValidBallotPapers) ? "Only numeric values are valid" : ''}*/}
-                            {/*    value={numberOfValidBallotPapers}*/}
-                            {/*    margin="normal"*/}
-                            {/*    onChange={handleNumberOfValidBallotPapersChange()}*/}
-                            {/*    inputProps={{*/}
-                            {/*        style: {*/}
-                            {/*            height: '10px'*/}
-                            {/*        },*/}
-                            {/*    }}*/}
-                            {/*/>*/}
+                            <TextField
+                                required
+                                variant="outlined"
+                                error={calculateTotalNumberOfValidBallotPapers() !== numberOfValidBallotPapers}
+                                helperText={(calculateTotalNumberOfValidBallotPapers() !== numberOfValidBallotPapers) ? "Total count mismatch " : ''}
+                                value={numberOfValidBallotPapers}
+                                margin="normal"
+                                onChange={handleValueChange(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS)}
+                                inputProps={{
+                                    style: {
+                                        height: '10px'
+                                    },
+                                }}
+                            />
                         </TableCell>
                     </TableRow>
                     <TableRow>
