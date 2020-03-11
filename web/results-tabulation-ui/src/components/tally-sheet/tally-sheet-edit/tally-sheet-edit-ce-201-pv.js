@@ -24,7 +24,7 @@ import Moment from "moment";
 
 export default function TallySheetEdit_CE_201_PV({history, queryString, election, tallySheet, messages}) {
 
-    const MAXIMUM_BALLOT_BOXES_LENGTH = 4;
+    const MAXIMUM_BALLOT_BOXES_LENGTH = 6;
 
     const [tallySheetRows, setTallySheetRows] = useState({
         [TALLY_SHEET_ROW_TYPE_BALLOT_BOX]: {
