@@ -1,26 +1,26 @@
 from flask import render_template
-from ext.ExtendedTallySheetVersion import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities import Area
 from constants.VOTE_TYPES import Postal
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_PE_4(ExtendedTallySheet):
+class ExtendedTallySheet_PE_39(ExtendedTallySheet):
     class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
 
-        def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_PE_4.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
-            )
+        def __init__(self, tallySheetVersion):
+            super(ExtendedTallySheet_PE_39.ExtendedTallySheetVersion, self).__init__(tallySheetVersion)
 
+        #
+        # def html_letter(self, title="", total_registered_voters=None):
+        #     # TODO: implement
+        #     pass
+        #
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
 
-            candidate_and_area_wise_valid_vote_count = self.get_candidate_and_area_wise_valid_vote_count_result()
-
-            noOfCandidates = candidate_and_area_wise_valid_vote_count.shape[0]
-            noOfRows = round(noOfCandidates / 2)
+            invalid_vote_category_counts = self.get_invalid_vote_category_count()
 
             stamp = tallySheetVersion.stamp
 
@@ -42,38 +42,27 @@ class ExtendedTallySheet_PE_4(ExtendedTallySheet):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
-                "tallySheetCode": "PE-4",
+                "tallySheetCode": "PE-39",
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "countingCentre": tallySheetVersion.submission.area.areaName,
-                "partyName": candidate_and_area_wise_valid_vote_count["partyName"].values[0],
-                "data1": [],
-                "data2": []
+                "data": [],
+                "rejectedVotes": 0
             }
 
-            # Appending canditate wise vote count
-            i = 0
+            total_rejected_count = 0
+            for index, invalid_vote_category_count in invalid_vote_category_counts.iterrows():
+                data_row = []
+                data_row.append(invalid_vote_category_count.invalidVoteCategoryDescription)
+                data_row.append(invalid_vote_category_count.numValue)
+                content["data"].append(data_row)
+                total_rejected_count += invalid_vote_category_count.numValue
 
-            for index, row in candidate_and_area_wise_valid_vote_count.iterrows():
-
-                if i < noOfRows:
-                    data_row1 = []
-                    data_row1.append(row.candidateName)
-                    data_row1.append(row.strValue)
-                    data_row1.append(row.numValue)
-                    content["data1"].append(data_row1)
-                    i += 1
-                else:
-                    data_row2 = []
-                    data_row2.append(row.candidateName)
-                    print(row.candidateName)
-                    data_row2.append(row.strValue)
-                    data_row2.append(row.numValue)
-                    content["data2"].append(data_row2)
+            content["rejectedVotes"] = to_comma_seperated_num(total_rejected_count)
 
             html = render_template(
-                'PE-4.html',
+                'PE-39.html',
                 content=content
             )
 

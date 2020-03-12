@@ -1,19 +1,18 @@
 from flask import render_template
-from ext.ExtendedTallySheetVersion import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities import Area
-from constants.VOTE_TYPES import Postal
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_PE_27(ExtendedTallySheet):
+class ExtendedTallySheet_PRE_41(ExtendedTallySheet):
     class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
 
         def __init__(self, tallySheetVersion):
-            super(ExtendedTallySheet_PE_27.ExtendedTallySheetVersion, self).__init__(tallySheetVersion)
+            super(ExtendedTallySheet_PRE_41.ExtendedTallySheetVersion, self).__init__(tallySheetVersion)
 
         def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_PE_27.ExtendedTallySheetVersion, self).html_letter(
+            return super(ExtendedTallySheet_PRE_41.ExtendedTallySheetVersion, self).html_letter(
                 title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
             )
 
@@ -28,9 +27,6 @@ class ExtendedTallySheet_PE_27(ExtendedTallySheet):
             polling_division_name = ""
             if len(polling_divisions) > 0:
                 polling_division_name = polling_divisions[0].areaName
-
-            if tallySheetVersion.submission.election.voteType == Postal:
-                polling_division_name = 'Postal'
 
             content = {
                 "election": {
@@ -59,10 +55,10 @@ class ExtendedTallySheet_PE_27(ExtendedTallySheet):
 
             for row_index in range(len(tallySheetContent)):
                 row = tallySheetContent[row_index]
-                if row.templateRowType == "PARTY_WISE_VOTE":
+                if row.templateRowType == "CANDIDATE_FIRST_PREFERENCE":
                     content["data"].append([
                         row_index + 1,
-                        row.partyName,
+                        row.candidateName,
                         row.partySymbol,
                         "" if row.strValue is None else row.strValue,
                         "" if row.numValue is None else to_comma_seperated_num(row.numValue),
@@ -79,7 +75,7 @@ class ExtendedTallySheet_PE_27(ExtendedTallySheet):
             content["grandTotal"] = to_comma_seperated_num(content["grandTotal"])
 
             html = render_template(
-                'PE-27.html',
+                'PRE-41.html',
                 content=content
             )
 

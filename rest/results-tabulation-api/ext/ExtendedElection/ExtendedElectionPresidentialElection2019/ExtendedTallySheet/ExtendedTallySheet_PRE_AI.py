@@ -1,4 +1,4 @@
-from ext.ExtendedTallySheetVersion import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheet
 
 
 class ExtendedTallySheet_PRE_AI(ExtendedTallySheet):

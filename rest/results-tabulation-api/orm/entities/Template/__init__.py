@@ -2,7 +2,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from constants import TALLY_SHEET_COLUMN_SOURCE
-from ext import ExtendedTallySheetVersion
+from ext import ExtendedTallySheet
 from app import db
 
 

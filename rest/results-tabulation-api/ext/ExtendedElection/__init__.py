@@ -1,7 +1,7 @@
 from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
 from app import db
-from ext.ExtendedTallySheetVersion import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheet
 
 
 def get_extended_election(election):

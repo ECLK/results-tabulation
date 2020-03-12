@@ -4,15 +4,15 @@ from sqlalchemy.orm import aliased
 from app import db
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, TALLY_SHEET_COLUMN_SOURCE_CONTENT, \
     TALLY_SHEET_COLUMN_SOURCE_QUERY
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_30_ED import \
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_30_ED import \
     ExtendedTallySheet_PRE_30_ED
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_30_PD import \
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_30_PD import \
     ExtendedTallySheet_PRE_30_PD
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_41 import \
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_41 import \
     ExtendedTallySheet_PRE_41
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_AI import \
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_AI import \
     ExtendedTallySheet_PRE_AI
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_AI_ED import \
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_AI_ED import \
     ExtendedTallySheet_PRE_AI_ED
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.TALLY_SHEET_CODES import CE_201, CE_201_PV, PRE_41, \
     PRE_30_PD, PRE_30_ED, \

@@ -1,5 +1,5 @@
 from flask import render_template
-from ext.ExtendedTallySheetVersion import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities import Area
 from constants.VOTE_TYPES import Postal
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.fake_polling_division_voters_map import \
