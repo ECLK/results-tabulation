@@ -1,7 +1,7 @@
 from orm.entities.IO import File, Folder
 from orm.entities.IO.Folder import FolderFile
 from orm.entities.IO.File import Image
-from orm.entities import Election, Candidate
+from orm.entities import Election, Candidate, Workflow
 from orm.entities import Area
 from orm.entities.Area import Electorate
 from orm.entities import Party
