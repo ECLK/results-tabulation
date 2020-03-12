@@ -1,9 +1,10 @@
-from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
+from ext.ExtendedTallySheetVersion import ExtendedTallySheet
 
 
-class ExtendedTallySheetVersion_PRE_AI(ExtendedTallySheetVersion):
+class ExtendedTallySheet_PRE_AI(ExtendedTallySheet):
+    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
 
-    def html_letter(self, title="", total_registered_voters=None):
-        return super(ExtendedTallySheetVersion_PRE_AI, self).html_letter(
-            title="All Island Result"
-        )
+        def html_letter(self, title="", total_registered_voters=None):
+            return super(ExtendedTallySheet_PRE_AI, self).html_letter(
+                title="All Island Result"
+            )
