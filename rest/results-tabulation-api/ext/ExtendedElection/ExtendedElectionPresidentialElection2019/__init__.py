@@ -4,6 +4,16 @@ from sqlalchemy.orm import aliased
 from app import db
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, TALLY_SHEET_COLUMN_SOURCE_CONTENT, \
     TALLY_SHEET_COLUMN_SOURCE_QUERY
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_30_ED import \
+    ExtendedTallySheet_PRE_30_ED
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_30_PD import \
+    ExtendedTallySheet_PRE_30_PD
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_41 import \
+    ExtendedTallySheet_PRE_41
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_AI import \
+    ExtendedTallySheet_PRE_AI
+from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheet.ExtendedTallySheet_PRE_AI_ED import \
+    ExtendedTallySheet_PRE_AI_ED
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.TALLY_SHEET_CODES import CE_201, CE_201_PV, PRE_41, \
     PRE_30_PD, PRE_30_ED, \
     PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, PRE_ALL_ISLAND_RESULTS, PRE_34_CO, PRE_34_I_RO, PRE_34_II_RO, PRE_34, \
@@ -12,16 +22,6 @@ from constants.VOTE_TYPES import Postal, NonPostal
 from ext import TallySheetMap
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019 import RoleBasedAccess
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_30_ED import \
-    ExtendedTallySheetVersion_PRE_30_ED
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_30_PD import \
-    ExtendedTallySheetVersion_PRE_30_PD
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_41 import \
-    ExtendedTallySheetVersion_PRE_41
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_AI import \
-    ExtendedTallySheetVersion_PRE_AI
-from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PRE_AI_ED import \
-    ExtendedTallySheetVersion_PRE_AI_ED
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Election, Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -40,19 +40,19 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             role_based_access_config=role_based_access_config
         )
 
-    def get_extended_tally_sheet_version_class(self, templateName):
+    def get_extended_tally_sheet_class(self, templateName):
         EXTENDED_TEMPLATE_MAP = {
-            PRE_41: ExtendedTallySheetVersion_PRE_41,
-            PRE_30_PD: ExtendedTallySheetVersion_PRE_30_PD,
-            PRE_30_ED: ExtendedTallySheetVersion_PRE_30_ED,
-            PRE_ALL_ISLAND_RESULTS: ExtendedTallySheetVersion_PRE_AI,
-            PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS: ExtendedTallySheetVersion_PRE_AI_ED
+            PRE_41: ExtendedTallySheet_PRE_41,
+            PRE_30_PD: ExtendedTallySheet_PRE_30_PD,
+            PRE_30_ED: ExtendedTallySheet_PRE_30_ED,
+            PRE_ALL_ISLAND_RESULTS: ExtendedTallySheet_PRE_AI,
+            PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS: ExtendedTallySheet_PRE_AI_ED
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
             return EXTENDED_TEMPLATE_MAP[templateName]
         else:
-            return super(ExtendedElectionPresidentialElection2019, self).get_extended_tally_sheet_version_class(
+            return super(ExtendedElectionPresidentialElection2019, self).get_extended_tally_sheet_class(
                 templateName=templateName
             )
 

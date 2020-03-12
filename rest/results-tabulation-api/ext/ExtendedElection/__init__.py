@@ -1,7 +1,7 @@
 from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
 from app import db
-from ext.ExtendedTallySheetVersion import ExtendedTallySheetVersion
+from ext.ExtendedTallySheet import ExtendedTallySheet
 
 
 def get_extended_election(election):
@@ -29,7 +29,7 @@ class ExtendedElection:
         self.election = election
         self.role_based_access_config = role_based_access_config
 
-    def get_extended_tally_sheet_version_class(self, templateName):
+    def get_extended_tally_sheet_class(self, templateName):
 
         EXTENDED_TEMPLATE_MAP = {
             # TODO
@@ -38,7 +38,7 @@ class ExtendedElection:
         if templateName in EXTENDED_TEMPLATE_MAP:
             return EXTENDED_TEMPLATE_MAP[templateName]
         else:
-            return ExtendedTallySheetVersion
+            return ExtendedTallySheet
 
     def build_election(self, party_candidate_dataset_file=None,
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,

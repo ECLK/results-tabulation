@@ -1,12 +1,32 @@
 from app import db
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, TALLY_SHEET_COLUMN_SOURCE_CONTENT, \
     TALLY_SHEET_COLUMN_SOURCE_QUERY
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_PR_3 import \
-    ExtendedTallySheetVersion_PE_CE_RO_PR_3
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_21 import \
-    ExtendedTallySheetVersion_PE_21
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_R2 import \
-    ExtendedTallySheetVersion_PE_R2
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201 import \
+    ExtendedTallySheet_CE_201
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_21 import \
+    ExtendedTallySheet_PE_21
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_22 import \
+    ExtendedTallySheet_PE_22
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_27 import \
+    ExtendedTallySheet_PE_27
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_39 import \
+    ExtendedTallySheet_PE_39
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_4 import \
+    ExtendedTallySheet_PE_4
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_PR_1 import \
+    ExtendedTallySheet_PE_CE_RO_PR_1
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_PR_2 import \
+    ExtendedTallySheet_PE_CE_RO_PR_2
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_PR_3 import \
+    ExtendedTallySheet_PE_CE_RO_PR_3
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_V1 import \
+    ExtendedTallySheet_PE_CE_RO_V1
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_V2 import \
+    ExtendedTallySheet_PE_CE_RO_V2
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_R1 import \
+    ExtendedTallySheet_PE_R1
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_R2 import \
+    ExtendedTallySheet_PE_R2
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
     META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED, \
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION
@@ -16,32 +36,12 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_
 from constants.VOTE_TYPES import Postal, NonPostal, PostalAndNonPostal
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import RoleBasedAccess
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_V1 import \
-    ExtendedTallySheetVersion_PE_CE_RO_V1
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_R1 import \
-    ExtendedTallySheetVersion_PE_R1
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_V2 import \
-    ExtendedTallySheetVersion_PE_CE_RO_V2
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_27 import \
-    ExtendedTallySheetVersion_PE_27
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_4 import \
-    ExtendedTallySheetVersion_PE_4
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_CE_201 import \
-    ExtendedTallySheetVersion_CE_201
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_39 import \
-    ExtendedTallySheetVersion_PE_39
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_22 import \
-    ExtendedTallySheetVersion_PE_22
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
     TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_PR_1 import \
-    ExtendedTallySheetVersion_PE_CE_RO_PR_1
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheetVersion.ExtendedTallySheetVersion_PE_CE_RO_PR_2 import \
-    ExtendedTallySheetVersion_PE_CE_RO_PR_2
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
 from orm.entities import Candidate, Template, Party, Meta
 from orm.entities.Area import AreaMap
@@ -60,27 +60,27 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             role_based_access_config=role_based_access_config
         )
 
-    def get_extended_tally_sheet_version_class(self, templateName):
+    def get_extended_tally_sheet_class(self, templateName):
         EXTENDED_TEMPLATE_MAP = {
-            PE_CE_RO_V1: ExtendedTallySheetVersion_PE_CE_RO_V1,
-            PE_R1: ExtendedTallySheetVersion_PE_R1,
-            PE_R2: ExtendedTallySheetVersion_PE_R2,
-            PE_CE_RO_V2: ExtendedTallySheetVersion_PE_CE_RO_V2,
-            PE_27: ExtendedTallySheetVersion_PE_27,
-            PE_4: ExtendedTallySheetVersion_PE_4,
-            CE_201: ExtendedTallySheetVersion_CE_201,
-            PE_39: ExtendedTallySheetVersion_PE_39,
-            PE_22: ExtendedTallySheetVersion_PE_22,
-            PE_CE_RO_PR_1: ExtendedTallySheetVersion_PE_CE_RO_PR_1,
-            PE_CE_RO_PR_2: ExtendedTallySheetVersion_PE_CE_RO_PR_2,
-            PE_CE_RO_PR_3: ExtendedTallySheetVersion_PE_CE_RO_PR_3,
-            PE_21: ExtendedTallySheetVersion_PE_21
+            PE_CE_RO_V1: ExtendedTallySheet_PE_CE_RO_V1,
+            PE_R1: ExtendedTallySheet_PE_R1,
+            PE_R2: ExtendedTallySheet_PE_R2,
+            PE_CE_RO_V2: ExtendedTallySheet_PE_CE_RO_V2,
+            PE_27: ExtendedTallySheet_PE_27,
+            PE_4: ExtendedTallySheet_PE_4,
+            CE_201: ExtendedTallySheet_CE_201,
+            PE_39: ExtendedTallySheet_PE_39,
+            PE_22: ExtendedTallySheet_PE_22,
+            PE_CE_RO_PR_1: ExtendedTallySheet_PE_CE_RO_PR_1,
+            PE_CE_RO_PR_2: ExtendedTallySheet_PE_CE_RO_PR_2,
+            PE_CE_RO_PR_3: ExtendedTallySheet_PE_CE_RO_PR_3,
+            PE_21: ExtendedTallySheet_PE_21
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
             return EXTENDED_TEMPLATE_MAP[templateName]
         else:
-            return super(ExtendedElectionParliamentaryElection2020, self).get_extended_tally_sheet_version_class(
+            return super(ExtendedElectionParliamentaryElection2020, self).get_extended_tally_sheet_class(
                 templateName=templateName
             )
 
