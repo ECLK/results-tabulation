@@ -4,6 +4,7 @@ from auth import authorize
 from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
+from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetVersionSchema
@@ -103,15 +104,21 @@ def get_by_id(tallySheetId, tallySheetVersionId):
 def create(tallySheetId, body):
     request_body = RequestBody(body)
 
-    tallySheet, tallySheetVersion = TallySheet.create_latest_version(
+    tally_sheet, tally_sheet_version = TallySheet.create_latest_version(
         tallySheetId=tallySheetId,
         content=request_body.get("content")
     )
 
     db.session.commit()
 
-    tallySheet.create_tally_sheet_version_rows(tally_sheet_version=tallySheetVersion, post_save=True)
+    tally_sheet.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, post_save=True)
 
     db.session.commit()
 
-    return TallySheetVersionSchema().dump(tallySheetVersion).data
+    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
+
+    extended_tally_sheet.on_after_tally_sheet_post(tally_sheet=tally_sheet, tally_sheet_version=tally_sheet_version)
+
+    db.session.commit()
+
+    return TallySheetVersionSchema().dump(tally_sheet_version).data

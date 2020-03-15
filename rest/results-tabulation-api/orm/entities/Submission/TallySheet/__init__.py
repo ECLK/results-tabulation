@@ -4,7 +4,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from app import db
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access
-from constants.AUTH_CONSTANTS import ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, ACCESS_TYPE_READ, ACCESS_TYPE_WRITE
+from constants.AUTH_CONSTANTS import ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, ACCESS_TYPE_READ
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META
 from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
@@ -14,13 +14,12 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
     MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
-    META_DATA_KEY_TALLY_SHEET_PARTY_ID
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
 from orm.entities.Dashboard import StatusReport
 from orm.entities.Election import ElectionCandidate, ElectionParty, InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
+from orm.entities.Workflow import WorkflowInstance
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
 from sqlalchemy import and_, func, or_
 
@@ -33,12 +32,15 @@ class TallySheetModel(db.Model):
     tallySheetId = db.Column(db.Integer, db.ForeignKey(Submission.Model.__table__.c.submissionId), primary_key=True)
     templateId = db.Column(db.Integer, db.ForeignKey(Template.Model.__table__.c.templateId), nullable=False)
     statusReportId = db.Column(db.Integer, db.ForeignKey(StatusReport.Model.__table__.c.statusReportId), nullable=True)
-    metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=True)
+    metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=False)
+    workflowInstanceId = db.Column(db.Integer, db.ForeignKey(WorkflowInstance.Model.__table__.c.workflowInstanceId),
+                                   nullable=True)
 
     submission = relationship("SubmissionModel", foreign_keys=[tallySheetId])
     statusReport = relationship(StatusReport.Model, foreign_keys=[statusReportId])
     template = relationship(Template.Model, foreign_keys=[templateId])
     meta = relationship(Meta.Model, foreign_keys=[metaId])
+    workflowInstance = relationship(WorkflowInstance.Model, foreign_keys=[workflowInstanceId])
 
     electionId = association_proxy("submission", "electionId")
     election = association_proxy("submission", "election")
@@ -281,21 +283,35 @@ class TallySheetModel(db.Model):
             TallySheetVersion.Model.tallySheetVersionId == self.latestVersionId
         ).one_or_none()
 
-    def __init__(self, template, electionId, areaId, metaId):
+    @classmethod
+    def create(cls, template, electionId, areaId, metaId, workflowInstanceId, parentTallySheets=None,
+               childTallySheets=None):
+
         submission = Submission.create(
             submissionType=SubmissionTypeEnum.TallySheet,
             electionId=electionId,
             areaId=areaId
         )
 
-        super(TallySheetModel, self).__init__(
+        tally_sheet = TallySheetModel(
             tallySheetId=submission.submissionId,
             templateId=template.templateId,
-            metaId=metaId
+            metaId=metaId,
+            workflowInstanceId=workflowInstanceId
         )
 
-        db.session.add(self)
+        db.session.add(tally_sheet)
         db.session.flush()
+
+        if parentTallySheets is not None:
+            for parentTallySheet in parentTallySheets:
+                tally_sheet.add_parent(parentTallySheet)
+
+        if childTallySheets is not None:
+            for childTallySheet in childTallySheets:
+                tally_sheet.add_child(childTallySheet)
+
+        return tally_sheet
 
     def create_empty_version(self):
         tally_sheet_version = TallySheetVersion.create(tallySheetId=self.tallySheetId)
@@ -494,11 +510,19 @@ class TallySheetModel(db.Model):
         tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=self.tallySheetId,
                                                           tallySheetVersionId=tallySheetVersionId)
         extended_election = self.submission.election.get_extended_election()
-        extended_tally_sheet_version_class = extended_election.get_extended_tally_sheet_class(
+        extended_tally_sheet_class = extended_election.get_extended_tally_sheet_class(
             self.template.templateName)
-        extended_tally_sheet_version = extended_tally_sheet_version_class.ExtendedTallySheetVersion(tally_sheet_version)
+        extended_tally_sheet_version = extended_tally_sheet_class.ExtendedTallySheetVersion(tally_sheet_version)
 
         return extended_tally_sheet_version
+
+    def get_extended_tally_sheet(self):
+        extended_election = self.submission.election.get_extended_election()
+        extended_tally_sheet_class = extended_election.get_extended_tally_sheet_class(
+            self.template.templateName)
+        extended_tally_sheet = extended_tally_sheet_class(self)
+
+        return extended_tally_sheet
 
     def html(self, tallySheetVersionId):
         extended_tally_sheet_version = self.get_extended_tally_sheet_version(tallySheetVersionId=tallySheetVersionId)
@@ -510,6 +534,7 @@ class TallySheetModel(db.Model):
 
 
 Model = TallySheetModel
+create = Model.create
 
 
 class TallySheetTallySheetModel(db.Model):
@@ -592,25 +617,6 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
             authorized_tally_sheet_list.append(tally_sheet)
 
     return authorized_tally_sheet_list
-
-
-def create(template, electionId, areaId, metaId, parentTallySheets=None, childTallySheets=None):
-    tally_sheet = Model(
-        template=template,
-        electionId=electionId,
-        areaId=areaId,
-        metaId=metaId
-    )
-
-    if parentTallySheets is not None:
-        for parentTallySheet in parentTallySheets:
-            tally_sheet.add_parent(parentTallySheet)
-
-    if childTallySheets is not None:
-        for childTallySheet in childTallySheets:
-            tally_sheet.add_child(childTallySheet)
-
-    return tally_sheet
 
 
 def create_empty_version(tallySheetId):
