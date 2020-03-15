@@ -79,9 +79,25 @@ def upgrade():
     op.create_foreign_key('workflowLog_fk_workflowLogActionId', 'workflowLog', 'workflowAction',
                           ['workflowLogActionId'], ['workflowActionId'])
 
+    op.create_foreign_key('workflowStatus_fk_workflowId', 'workflowStatus', 'workflow', ['workflowId'], ['workflowId'])
+
 
 def downgrade():
-    op.drop_table('workflowStatus')
-    op.drop_table('workflowLog')
-    op.drop_table('workflowAction')
+    op.drop_constraint('workflow_fk_workflowLastStatusId', 'workflow', type_='foreignkey')
+    op.drop_constraint('workflow_fk_workflowFirstStatusId', 'workflow', type_='foreignkey')
+
+    op.drop_constraint('workflowAction_fk_workflowActionFromStatusId', 'workflowAction', type_='foreignkey')
+    op.drop_constraint('workflowAction_fk_workflowActionToStatusId', 'workflowAction', type_='foreignkey')
+    op.drop_constraint('workflowAction_fk_workflowId', 'workflowAction', type_='foreignkey')
+
+    op.drop_constraint('workflowLog_fk_workflowId', 'workflowLog', type_='foreignkey')
+    op.drop_constraint('workflowLog_fk_workflowLogStatusId', 'workflowLog', type_='foreignkey')
+    op.drop_constraint('workflowLog_fk_metaId', 'workflowLog', type_='foreignkey')
+    op.drop_constraint('workflowLog_fk_workflowLogActionId', 'workflowLog', type_='foreignkey')
+
+    op.drop_constraint('workflowStatus_fk_workflowId', 'workflowStatus', type_='foreignkey')
+
     op.drop_table('workflow')
+    op.drop_table('workflowStatus')
+    op.drop_table('workflowAction')
+    op.drop_table('workflowLog')

@@ -1,3 +1,7 @@
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
+from sqlalchemy import case
+
 from app import db
 from exception import MethodNotAllowedException
 from orm.entities import Meta
@@ -12,6 +16,33 @@ class WorkflowModel(db.Model):
     workflowFirstStatusId = db.Column(db.Integer, db.ForeignKey("workflowStatus.workflowStatusId"), nullable=False)
     workflowLastStatusId = db.Column(db.Integer, db.ForeignKey("workflowStatus.workflowStatusId"), nullable=False)
     workflowCurrentStatusId = db.Column(db.Integer, db.ForeignKey("workflowStatus.workflowStatusId"), nullable=False)
+
+    @hybrid_property
+    def actions(self):
+        db.session.query(
+            WorkflowAction.Model.workflowActionId,
+            WorkflowAction.Model.workflowActionName,
+            WorkflowAction.Model.workflowActionType,
+            case([
+                (WorkflowAction.Model.workflowActionFromStatusId == self.workflowCurrentStatusId, True),
+                (WorkflowAction.Model.workflowActionFromStatusId != self.workflowCurrentStatusId, False),
+            ]).label("allowed")
+        ).filter(
+            WorkflowAction.Model.workflowId == self.workflowId
+        ).order_by(
+            WorkflowAction.Model.workflowActionId
+        )
+
+    @hybrid_property
+    def statuses(self):
+        db.session.query(
+            WorkflowStatus.Model.workflowStatusId,
+            WorkflowStatus.Model.workflowStatusName
+        ).filter(
+            WorkflowStatus.Model.workflowId == self.workflowId
+        ).order_by(
+            WorkflowStatus.Model.workflowStatusId
+        )
 
     def __init__(self, workflowName, workflowFirstStatusId, workflowLastStatusId, workflowCurrentStatusId):
         super(WorkflowModel, self).__init__(
