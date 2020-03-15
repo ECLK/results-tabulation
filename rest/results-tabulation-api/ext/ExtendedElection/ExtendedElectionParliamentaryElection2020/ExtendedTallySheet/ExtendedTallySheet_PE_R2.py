@@ -188,8 +188,6 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheet):
             return super(ExtendedTallySheet_PE_R2.ExtendedTallySheetVersion, self).html(
                 title="PE-R2 : %s" % self.tallySheetVersion.submission.area.areaName,
                 columns=[
-                    "tallySheetVersionRowId",
-                    "electionId",
                     "partyId",
                     "partyName",
                     "partySymbol",

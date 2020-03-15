@@ -3,18 +3,6 @@ from flask import render_template
 from constants.VOTE_TYPES import Postal, NonPostal
 from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri
 
-
-def get_extended_tally_sheet_version_class(templateName):
-    EXTENDED_TEMPLATE_MAP = {
-        # TODO
-    }
-
-    if templateName in EXTENDED_TEMPLATE_MAP:
-        return EXTENDED_TEMPLATE_MAP[templateName]
-    else:
-        return ExtendedTallySheet
-
-
 DEFAULT_HTML_TABLE_COLUMNS = [
     "tallySheetVersionRowId",
     "electionId",
@@ -130,7 +118,8 @@ class ExtendedTallySheet:
 
             content["validVoteCounts"] = [
                 to_comma_seperated_num(valid_vote_count_result["numValue"].values[0]),
-                to_percentage(valid_vote_count_result["numValue"].values[0] * 100 / vote_count_result["numValue"].values[0])
+                to_percentage(
+                    valid_vote_count_result["numValue"].values[0] * 100 / vote_count_result["numValue"].values[0])
                 if vote_count_result["numValue"].values[0] > 0 else ""
             ]
 
