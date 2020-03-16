@@ -41,29 +41,34 @@ export default function TallySheetListTableBody(
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);
 
+    function appendColumnValuesToTallySheetRow(tallySheet) {
+        // Append the values for columns.
+        for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+            const column = columns[columnIndex];
+            let columnValue = TALLY_SHEET_LIST_COLUMN_VALUE[column](tallySheet);
+            if (!columnValue) {
+                columnValue = "";
+            }
+
+            // If the value is an area object, assign areaName as the value.
+            if (typeof columnValue === "object" && columnValue.areaName) {
+                columnValue = columnValue.areaName;
+            }
+
+            tallySheet[column] = columnValue;
+        }
+
+        return tallySheet;
+    }
+
 
     useEffect(() => {
         getTallySheet({electionId, tallySheetCode, voteType}).then((tallySheets) => {
             setTallySheetListRows(tallySheets.map((tallySheet) => {
-                tallySheet = {...tallySheet};
+                let _tallySheetListRow = {...tallySheet};
+                _tallySheetListRow = appendColumnValuesToTallySheetRow(_tallySheetListRow);
 
-                // Append the values for columns.
-                for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-                    const column = columns[columnIndex];
-                    let columnValue = TALLY_SHEET_LIST_COLUMN_VALUE[column](tallySheet);
-                    if (!columnValue) {
-                        columnValue = "";
-                    }
-
-                    // If the value is an area object, assign areaName as the value.
-                    if (typeof columnValue === "object" && columnValue.areaName) {
-                        columnValue = columnValue.areaName;
-                    }
-
-                    tallySheet[column] = columnValue;
-                }
-
-                return tallySheet;
+                return _tallySheetListRow;
 
             }));
             setProcessing(false);
@@ -80,6 +85,13 @@ export default function TallySheetListTableBody(
             tallySheetListRow={tallySheetListRow} history={history} electionId={electionId}
             actions={actions} columns={columns}
             columnMetaMap={columnMetaMap}
+            onTallySheetUpdate={(_tallySheetListRow) => {
+                _tallySheetListRow = appendColumnValuesToTallySheetRow(_tallySheetListRow);
+                setTallySheetListRows((_tallySheetListRows) => {
+                    Object.assign(_tallySheetListRows[tallySheetListRowIndex], _tallySheetListRow);
+                    return [..._tallySheetListRows];
+                })
+            }}
         />))
     };
 

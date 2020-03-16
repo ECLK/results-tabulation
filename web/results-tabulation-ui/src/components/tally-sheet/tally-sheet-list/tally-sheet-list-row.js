@@ -9,6 +9,7 @@ import {
 import TallySheetListRowAction from "./tally-sheet-list-row-action";
 import {TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_STATUS} from "../constants/TALLY_SHEET_COLUMN";
 import {fieldMatch} from "../../../utils";
+import TallySheetActions from "../tally-sheet-actions";
 
 
 export default function TallySheetListRow(
@@ -25,7 +26,8 @@ export default function TallySheetListRow(
             TALLY_SHEET_LIST_ROW_ACTION_VIEW,
             TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
             TALLY_SHEET_LIST_ROW_ACTION_UNLOCK
-        ]
+        ],
+        onTallySheetUpdate
     }
 ) {
 
@@ -49,12 +51,11 @@ export default function TallySheetListRow(
             {columns.map((column, columnIndex) => {
                 let columnCellContent = null;
                 if (column == TALLY_SHEET_LIST_COLUMN_ACTIONS) {
-                    columnCellContent = actions.map((action, actionIndex) => {
-                        return <TallySheetListRowAction
-                            key={actionIndex} tallySheetListRow={tallySheetListRow}
-                            electionId={electionId} history={history} action={action}
-                        />
-                    });
+                    columnCellContent = <TallySheetActions
+                        tallySheet={tallySheetListRow}
+                        electionId={electionId} history={history}
+                        onTallySheetUpdate={onTallySheetUpdate}
+                    />
                 } else {
                     columnCellContent = tallySheetListRow[column];
                 }

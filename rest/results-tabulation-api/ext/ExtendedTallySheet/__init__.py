@@ -1,6 +1,15 @@
 import pandas as pd
 from flask import render_template
+from sqlalchemy import MetaData
+
+from app import db
 from constants.VOTE_TYPES import Postal, NonPostal
+from exception import MethodNotAllowedException
+
+from orm.entities import Workflow, Meta
+from orm.entities.Meta import MetaData
+from orm.entities.Workflow import WorkflowInstance, WorkflowActionModel
+from orm.entities.Workflow.WorkflowInstance import WorkflowInstanceLog
 from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri
 
 DEFAULT_HTML_TABLE_COLUMNS = [
@@ -36,14 +45,71 @@ class ExtendedTallySheet:
         pass
 
     def on_after_tally_sheet_post(self, tally_sheet, tally_sheet_version):
-        # Decide which workflow actions are required to be performed.
-        pass
+        tally_sheet_post_actions = db.session.query(
+            WorkflowActionModel
+        ).filter(
+            WorkflowActionModel.fromStatus == WorkflowInstance.Model.status,
+            WorkflowInstance.Model.workflowInstanceId == tally_sheet.workflowInstanceId,
+            Workflow.Model.workflowId == WorkflowInstance.Model.workflowId,
+            WorkflowActionModel.workflowId == WorkflowInstance.Model.workflowId,
+            WorkflowActionModel.actionType == "SAVE"
+        ).all()
 
-    def on_workflow_action(self, action, tally_sheet, tally_sheet_version, content=None):
-        if self.on_before_workflow_action(action, tally_sheet):
-            # Add the workflow history entry.
-            # Perform additional hooks belongs to the action.
-            pass
+        for tally_sheet_post_action in tally_sheet_post_actions:
+            tally_sheet.workflowInstance.execute_action(
+                action=tally_sheet_post_action,
+                meta=Meta.create({
+                    "tallySheetVersionId": tally_sheet_version.tallySheetVersionId
+                })
+            )
+
+        return tally_sheet
+
+    def on_workflow_action(self, workflowActionId, tally_sheet, content=None):
+
+        from orm.entities import SubmissionVersion
+        from orm.entities.Submission import TallySheet
+        from orm.entities.SubmissionVersion import TallySheetVersion
+
+        tally_sheet_post_action = db.session.query(
+            WorkflowActionModel
+        ).filter(
+            WorkflowActionModel.fromStatus == WorkflowInstance.Model.status,
+            WorkflowInstance.Model.workflowInstanceId == tally_sheet.workflowInstanceId,
+            WorkflowActionModel.workflowActionId == workflowActionId
+        ).one_or_none()
+
+        tally_sheet_version = db.session.query(
+            TallySheetVersion.Model.tallySheetVersionId,
+            TallySheetVersion.Model.isComplete
+            # MetaData.Model
+        ).filter(
+            SubmissionVersion.Model.submissionId == tally_sheet.tallySheetId,
+            SubmissionVersion.Model.submissionVersionId == TallySheetVersion.Model.tallySheetVersionId,
+            TallySheetVersion.Model.tallySheetVersionId == MetaData.Model.metaDataValue,
+            MetaData.Model.metaDataKey == "tallySheetVersionId",
+            MetaData.Model.metaId == Meta.Model.metaId,
+            Meta.Model.metaId == WorkflowInstanceLog.Model.metaId,
+            WorkflowInstanceLog.Model.workflowInstanceLogId == WorkflowInstance.Model.latestLogId,
+            WorkflowInstance.Model.workflowInstanceId == tally_sheet.workflowInstanceId
+        ).one_or_none()
+
+        # print("####### tally_sheet_version : ", tally_sheet_version)
+        # print("####### tally_sheet_version : ", tally_sheet_version.tallySheetVersionId)
+        # print("####### tally_sheet_version : ", tally_sheet_version.isComplete)
+        # raise Exception("Stop here")
+
+        if tally_sheet_version.isComplete:
+            tally_sheet.workflowInstance.execute_action(
+                action=tally_sheet_post_action,
+                meta=Meta.create({
+                    "tallySheetVersionId": tally_sheet_version.tallySheetVersionId
+                })
+            )
+        else:
+            raise MethodNotAllowedException(message="Incomplete tally sheet.")
+
+        return tally_sheet
 
     class ExtendedTallySheetVersion:
         def __init__(self, tallySheetVersion):

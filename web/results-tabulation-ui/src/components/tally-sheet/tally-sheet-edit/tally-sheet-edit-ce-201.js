@@ -23,8 +23,10 @@ import {isNumeric, processNumericValue} from "../../../utils";
 import {useTallySheetEdit} from "./index";
 import Processing from "../../processing";
 import {getAreas} from "../../../services/tabulation-api";
+import TallySheetActions from "../tally-sheet-actions";
 
 export default function TallySheetEdit_CE_201({history, queryString, election, tallySheet, messages}) {
+    const {electionId} = election;
 
     const [tallySheetRows, setTallySheetRows] = useState({
         [TALLY_SHEET_ROW_TYPE_BALLOT_BOX]: {
@@ -57,7 +59,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
     });
 
     const [pollingStations, setPollingStations] = useState([]);
-    const [totalOrdinaryBallotCountRow, setTotalOrdinaryBallotCountRow] = useState({ "numValue": 0 });
+    const [totalOrdinaryBallotCountRow, setTotalOrdinaryBallotCountRow] = useState({"numValue": 0});
 
     const handleNumValueChange = (areaId, templateRowType) => event => {
         const {value} = event.target;
@@ -254,12 +256,11 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                     <TableRow>
                         <TableCell align="right" colSpan={3}>
                             <div className="page-bottom-fixed-action-bar">
-                                <Button variant="contained" color="default" onClick={handleClickBackToEdit()}>
-                                    Edit
-                                </Button>
-                                <Button variant="contained" color="primary" onClick={handleClickSubmit()}>
-                                    Submit
-                                </Button>
+                                <TallySheetActions
+                                    tallySheet={tallySheet}
+                                    electionId={electionId} history={history}
+                                    // onTallySheetUpdate={setTallySheet}
+                                />
                             </div>
                         </TableCell>
                     </TableRow>

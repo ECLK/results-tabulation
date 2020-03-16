@@ -50,10 +50,10 @@ export function useTallySheetEdit(props) {
 
     const init = async () => {
         setProcessing(true);
-        if (tallySheet.latestVersionId) {
+        if (tallySheet.latestVersion) {
             try {
-                const tallySheetVersion = await tabulationApi.getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheet.latestVersionId);
-                await setTallySheetContent(tallySheetVersion);
+                // const tallySheetVersion = await tabulationApi.getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheet.latestVersionId);
+                await setTallySheetContent(tallySheet.latestVersion);
                 setProcessing(false);
             } catch (error) {
                 messages.push("Error", MESSAGES_EN.error_tallysheet_not_reachable, MESSAGE_TYPES.ERROR);
@@ -81,8 +81,8 @@ export function useTallySheetEdit(props) {
             setProcessing(true);
             setProcessingLabel("Saving");
             try {
-                const tallySheetVersion = await tabulationApi.saveTallySheetVersion(tallySheetId, tallySheetCode, body);
-                setTallySheetVersion(tallySheetVersion);
+                const tallySheet = await tabulationApi.saveTallySheetVersion(tallySheetId, tallySheetCode, body);
+                setTallySheetVersion(tallySheet.latestVersion);
             } catch (e) {
                 messages.push("Error", MESSAGES_EN.error_tallysheet_save, MESSAGE_TYPES.ERROR);
             }

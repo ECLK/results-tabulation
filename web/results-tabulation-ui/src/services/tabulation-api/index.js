@@ -24,6 +24,7 @@ export const ENDPOINT_PATH_TALLY_SHEET_UNLOCK = (tallySheetId) => `/tally-sheet/
 export const ENDPOINT_PATH_TALLY_SHEET_SUBMIT = (tallySheetId) => `/tally-sheet/${tallySheetId}/submit`;
 export const ENDPOINT_PATH_TALLY_SHEET_REQUEST_EDIT = (tallySheetId) => `/tally-sheet/${tallySheetId}/request-edit`;
 export const ENDPOINT_PATH_TALLY_SHEET_NOTIFY = (tallySheetId) => `/tally-sheet/${tallySheetId}/notify`;
+export const ENDPOINT_PATH_TALLY_SHEET_WORKFLOW = (tallySheetId) => `/tally-sheet/${tallySheetId}/workflow`;
 export const ENDPOINT_PATH_TALLY_SHEET_RELEASE = (tallySheetId) => `/tally-sheet/${tallySheetId}/release`;
 export const ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML = (tallySheetId, tallySheetVersionId) => `/tally-sheet/${tallySheetId}/version/${tallySheetVersionId}/html`;
 export const ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML = (tallySheetId, tallySheetVersionId) => `/tally-sheet/${tallySheetId}/version/${tallySheetVersionId}/letter/html`;
@@ -93,31 +94,31 @@ export const TALLY_SHEET_STATUS_ENUM = {
 
 async function refactorTallySheetObject(tallySheet) {
     tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
-    const {lockedVersionId, submittedVersionId, latestVersionId} = tallySheet;
-    let tallySheetStatus = "";
-    let readyToLock = false;
-    if (!tallySheet.template.isDerived) {
-        if (lockedVersionId) {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VERIFIED;
-        } else if (submittedVersionId) {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.SUBMITTED;
-            readyToLock = true;
-        } else if (latestVersionId) {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.ENTERED;
-        } else {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.NOT_ENTERED;
-        }
-    } else {
-        if (lockedVersionId) {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VERIFIED;
-        } else {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VIEWED;
-            readyToLock = true
-        }
-    }
-
-    tallySheet.tallySheetStatus = tallySheetStatus;
-    tallySheet.readyToLock = readyToLock;
+    // const {lockedVersionId, submittedVersionId, latestVersionId} = tallySheet;
+    // let tallySheetStatus = "";
+    // let readyToLock = false;
+    // if (!tallySheet.template.isDerived) {
+    //     if (lockedVersionId) {
+    //         tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VERIFIED;
+    //     } else if (submittedVersionId) {
+    //         tallySheetStatus = TALLY_SHEET_STATUS_ENUM.SUBMITTED;
+    //         readyToLock = true;
+    //     } else if (latestVersionId) {
+    //         tallySheetStatus = TALLY_SHEET_STATUS_ENUM.ENTERED;
+    //     } else {
+    //         tallySheetStatus = TALLY_SHEET_STATUS_ENUM.NOT_ENTERED;
+    //     }
+    // } else {
+    //     if (lockedVersionId) {
+    //         tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VERIFIED;
+    //     } else {
+    //         tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VIEWED;
+    //         readyToLock = true
+    //     }
+    // }
+    //
+    // tallySheet.tallySheetStatus = tallySheetStatus;
+    // tallySheet.readyToLock = readyToLock;
     // tallySheet.area = await areaEntity.getById(tallySheet.areaId);
     tallySheet.election = await electionEntity.getById(tallySheet.electionId);
 
@@ -225,6 +226,16 @@ export function notifyTallySheet(tallySheetId, tallySheetVersionId) {
     return request({
         url: ENDPOINT_PATH_TALLY_SHEET_NOTIFY(tallySheetId),
         method: 'put'
+    }).then((tallySheet) => {
+        return refactorTallySheetObject(tallySheet);
+    })
+}
+
+export function executeTallySheetWorkflow(tallySheetId, workflowActionId) {
+    return request({
+        url: ENDPOINT_PATH_TALLY_SHEET_WORKFLOW(tallySheetId),
+        method: 'put',
+        data: {workflowActionId}
     }).then((tallySheet) => {
         return refactorTallySheetObject(tallySheet);
     })

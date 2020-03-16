@@ -3,7 +3,7 @@ from marshmallow.fields import Integer, String
 from app import db, ma
 from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
     Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook, Candidate, Template, \
-    TallySheetVersionRow, Status, Workflow
+    TallySheetVersionRow, Workflow
 from orm.entities.Area import AreaAreaModel
 from orm.entities.Audit import Stamp
 from orm.entities.Election import InvalidVoteCategory, ElectionCandidate
@@ -13,6 +13,8 @@ from orm.entities.Meta import MetaData
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel
+from orm.entities.Workflow import WorkflowStatusModel, WorkflowActionModel, WorkflowInstance
+from orm.entities.Workflow.WorkflowInstance import WorkflowInstanceLog
 from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, OfficeTypeEnum, SubmissionTypeEnum, ElectorateTypeEnum, \
     AreaTypeEnum, BallotTypeEnum
 from marshmallow_enum import EnumField
@@ -21,11 +23,11 @@ from marshmallow_enum import EnumField
 class StatusSchema(ma.ModelSchema):
     class Meta:
         fields = (
-            "statusId",
-            "statusName"
+            "workflowStatusId",
+            "status"
         )
 
-        model = Status.Model
+        model = WorkflowStatusModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -34,30 +36,48 @@ class StatusSchema(ma.ModelSchema):
 class StatusActionSchema(ma.ModelSchema):
     class Meta:
         fields = (
-            "statusActionId",
-            "statusActionName",
-            "statusActionType",
-            "fromStatusId",
-            "toStatusId",
+            "workflowActionId",
+            "actionName",
+            "actionType",
+            "fromStatus",
+            "toStatus",
             "allowed"
         )
 
-        model = Status.Model
+        model = WorkflowActionModel
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
 
 
-class WorkflowSchema(ma.ModelSchema):
+class WorkflowInstanceLogSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "workflowInstanceLogId",
+            "action",
+            "status"
+        )
+
+        model = WorkflowInstanceLog.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    action = ma.Nested(StatusActionSchema)
+
+
+class WorkflowInstanceSchema(ma.ModelSchema):
     class Meta:
         fields = (
             "workflowId",
             # "workflowName",
             "actions",
-            "statuses"
+            "statuses",
+            "status",
+            "latestLog"
         )
 
-        model = Workflow.Model
+        model = WorkflowInstance.Model
         # optionally attach a Session
         # to use for deserialization
         sqla_session = db.session
@@ -399,6 +419,52 @@ class TallySheetVersionSchema(ma.ModelSchema):
     content = ma.Nested(TallySheetVersionRow_Schema, many=True)
 
 
+class TallySheetSchema_1(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetCode",
+            "templateId",
+            "template",
+            "electionId",
+            "areaId",
+            "area",
+            "areaMapList",
+            # "latestVersionId",
+            # "latestStamp",
+            # "lockedVersionId",
+            # "lockedStamp",
+            # "submittedVersionId",
+            # "submittedStamp",
+            # "locked",
+            # "submitted",
+            # "notified",
+            # "released",
+            "latestVersion",
+            # "submissionProofId",
+            # "versions",
+            "metaDataList",
+            "workflowInstance"
+        )
+
+        model = TallySheet.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    template = ma.Nested("TemplateSchema")
+    area = ma.Nested(AreaSchema, only=["areaId", "areaName"])
+    versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
+    latestVersion = ma.Nested(TallySheetVersionSchema)
+    latestStamp = ma.Nested(StampSchema)
+    lockedStamp = ma.Nested(StampSchema)
+    submittedStamp = ma.Nested(StampSchema)
+    submissionProof = ma.Nested(Proof_Schema)
+    metaDataList = ma.Nested(MetaDataSchema, many=True)
+    areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
+    workflowInstance = ma.Nested(WorkflowInstanceSchema)
+
+
 class TallySheetSchema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -410,19 +476,19 @@ class TallySheetSchema(ma.ModelSchema):
             "areaId",
             "area",
             "areaMapList",
-            "latestVersionId",
-            "latestStamp",
-            "lockedVersionId",
-            "lockedStamp",
-            "submittedVersionId",
-            "submittedStamp",
-            "locked",
-            "submitted",
-            "notified",
-            "released",
+            # "latestVersionId",
+            # "latestStamp",
+            # "lockedVersionId",
+            # "lockedStamp",
+            # "submittedVersionId",
+            # "submittedStamp",
+            # "locked",
+            # "submitted",
+            # "notified",
+            # "released",
             # "latestVersion",
-            "submissionProofId",
-            "versions",
+            # "submissionProofId",
+            # "versions",
             "metaDataList",
             "workflowInstance"
         )
@@ -442,7 +508,7 @@ class TallySheetSchema(ma.ModelSchema):
     submissionProof = ma.Nested(Proof_Schema)
     metaDataList = ma.Nested(MetaDataSchema, many=True)
     areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
-    workflowInstance = ma.Nested(WorkflowSchema)
+    workflowInstance = ma.Nested(WorkflowInstanceSchema)
 
 
 class TemplateRowSchema(ma.ModelSchema):

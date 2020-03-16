@@ -1,5 +1,8 @@
+from sqlalchemy.orm import relationship
+
 from app import db
 from orm.entities.History import HistoryVersion
+from orm.entities.Workflow import WorkflowActionModel
 
 
 class WorkflowInstanceLogModel(db.Model):
@@ -7,17 +10,19 @@ class WorkflowInstanceLogModel(db.Model):
 
     workflowInstanceLogId = db.Column(db.Integer, db.ForeignKey("history_version.historyVersionId"), primary_key=True)
     workflowInstanceId = db.Column(db.Integer, db.ForeignKey("workflowInstance.workflowInstanceId"), nullable=False)
-    statusId = db.Column(db.Integer, db.ForeignKey("status.statusId"), nullable=False)
-    statusActionId = db.Column(db.Integer, db.ForeignKey("statusAction.statusActionId"), nullable=False)
+    status = db.Column(db.String(100), nullable=False)
+    workflowActionId = db.Column(db.Integer, db.ForeignKey("workflowAction.workflowActionId"), nullable=False)
     metaId = db.Column(db.Integer, db.ForeignKey("meta.metaId"), nullable=True)
 
+    action = relationship(WorkflowActionModel, foreign_keys=[workflowActionId])
+
     @classmethod
-    def create(cls, workflowInstanceId, statusId, statusActionId, metaId):
+    def create(cls, workflowInstanceId, status, workflowActionId, metaId):
         workflow_log = cls(
             workflowInstanceLogId=HistoryVersion.create(historyId=workflowInstanceId).historyVersionId,
             workflowInstanceId=workflowInstanceId,
-            statusId=statusId,
-            statusActionId=statusActionId,
+            status=status,
+            workflowActionId=workflowActionId,
             metaId=metaId
         )
         db.session.add(workflow_log)

@@ -14,6 +14,7 @@ import Button from "@material-ui/core/Button";
 import {MESSAGES_EN} from "../locale/messages_en";
 import {getTallySheetCodeStr} from "../utils/tallySheet";
 import TabulationPage from "./index";
+import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 
 export default function ReportView(props) {
     const {history, election, messages} = props;
@@ -28,23 +29,35 @@ export default function ReportView(props) {
 
 
     const fetchTallySheetVersion = async () => {
-        const {tallySheetId, tallySheetCode, latestVersionId, submittedVersionId, lockedVersionId} = tallySheet;
+        const {tallySheetId, tallySheetCode} = tallySheet;
+        let _tallySheet = tallySheet;
+        if (tallySheet.template.isDerived) {
+            _tallySheet = await saveTallySheetVersion(tallySheetId, tallySheetCode);
+            setTallySheet(tallySheet);
+        }
+
+        const {latestVersion} = _tallySheet;
         let tallySheetVersionId = null;
-        if (!tallySheet.template.isDerived) {
-            if (lockedVersionId) {
-                tallySheetVersionId = lockedVersionId;
-            } else if (submittedVersionId) {
-                tallySheetVersionId = submittedVersionId;
-            } else if (latestVersionId) {
-                tallySheetVersionId = latestVersionId;
-            }
-        } else {
-            if (lockedVersionId) {
-                tallySheetVersionId = lockedVersionId;
-            } else {
-                const tallySheetVersion = await saveTallySheetVersion(tallySheetId, tallySheetCode);
-                tallySheetVersionId = tallySheetVersion.tallySheetVersionId;
-            }
+        // if (!tallySheet.template.isDerived) {
+        //     if (lockedVersionId) {
+        //         tallySheetVersionId = lockedVersionId;
+        //     } else if (submittedVersionId) {
+        //         tallySheetVersionId = submittedVersionId;
+        //     } else if (latestVersionId) {
+        //         tallySheetVersionId = latestVersionId;
+        //     }
+        // } else {
+        //     if (lockedVersionId) {
+        //         tallySheetVersionId = lockedVersionId;
+        //     } else {
+        //         const tallySheetVersion = await saveTallySheetVersion(tallySheetId, tallySheetCode);
+        //         tallySheetVersionId = tallySheetVersion.tallySheetVersionId;
+        //     }
+        // }
+
+
+        if (latestVersion) {
+            tallySheetVersionId = latestVersion.tallySheetVersionId;
         }
 
         setTallySheetVersionId(tallySheetVersionId);
@@ -61,7 +74,7 @@ export default function ReportView(props) {
 
     useEffect(() => {
         fetchTallySheetVersion();
-    }, [tallySheet]);
+    }, []);
 
 
     const handleIframeHeight = () => (evt) => {
@@ -158,34 +171,11 @@ export default function ReportView(props) {
 
                 <div className="report-view-status">
                     <div className="report-view-status-actions">
-                        <Button variant="contained" size="small" color="default" onClick={handlePrint()}>
-                            Print
-                        </Button>
-                        <Button
-                            variant="contained" size="small" color="primary"
-                            disabled={processing || !tallySheet.readyToLock}
-                            onClick={handleVerify()}
-                        >
-                            Confirm
-                        </Button>
-                        {(() => {
-                            if (!tallySheet.template.isDerived) {
-                                return <Button
-                                    variant="contained" size="small" color="primary"
-                                    disabled={processing || !tallySheet.readyToLock}
-                                    onClick={handleRequestEdit()}
-                                >
-                                    Edit
-                                </Button>
-                            }
-                        })()}
-                        <Button
-                            variant="contained" size="small" color="primary"
-                            disabled={!(tallySheetStatus === TALLY_SHEET_STATUS_ENUM.VERIFIED)}
-                            onClick={handleUnlock()}
-                        >
-                            Unlock
-                        </Button>
+                        <TallySheetActions
+                            tallySheet={tallySheet}
+                            electionId={electionId} history={history}
+                            onTallySheetUpdate={setTallySheet}
+                        />
                     </div>
                     <div className="report-view-status-text">
                         {(() => {

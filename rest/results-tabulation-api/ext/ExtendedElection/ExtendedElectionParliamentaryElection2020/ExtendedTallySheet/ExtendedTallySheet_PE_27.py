@@ -4,35 +4,13 @@ from app import db
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACTION_TYPE import \
     WORKFLOW_ACTION_TYPE_SAVE
 from ext.ExtendedTallySheet import ExtendedTallySheet
-from orm.entities import Area, Meta, Workflow
+from orm.entities import Area
 from constants.VOTE_TYPES import Postal
-from orm.entities.Status import StatusAction
-from orm.entities.Workflow import WorkflowInstance, WorkflowStatusActionModel
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 
 class ExtendedTallySheet_PE_27(ExtendedTallySheet):
-
-    def on_after_tally_sheet_post(self, tally_sheet, tally_sheet_version):
-        tally_sheet_post_actions = db.session.query(
-            StatusAction.Model
-        ).filter(
-            StatusAction.Model.fromStatusId == WorkflowInstance.Model.statusId,
-            WorkflowInstance.Model.workflowInstanceId == tally_sheet.workflowInstanceId,
-            Workflow.Model.workflowId == WorkflowInstance.Model.workflowId,
-            WorkflowStatusActionModel.workflowId == WorkflowInstance.Model.workflowId,
-            WorkflowStatusActionModel.statusActionId == StatusAction.Model.statusActionId,
-            StatusAction.Model.statusActionType == WORKFLOW_ACTION_TYPE_SAVE
-        ).all()
-
-        for tally_sheet_post_action in tally_sheet_post_actions:
-            tally_sheet.workflowInstance.execute_action(
-                action=tally_sheet_post_action,
-                meta=Meta.create({
-                    "tallySheetVersionId": tally_sheet_version.tallySheetVersionId
-                })
-            )
 
     class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
 

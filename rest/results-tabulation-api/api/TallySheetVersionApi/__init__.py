@@ -7,7 +7,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_
 from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
-from schemas import TallySheetVersionSchema
+from schemas import TallySheetVersionSchema, TallySheetSchema_1
 from util import get_paginated_query, RequestBody
 
 
@@ -121,4 +121,4 @@ def create(tallySheetId, body):
 
     db.session.commit()
 
-    return TallySheetVersionSchema().dump(tally_sheet_version).data
+    return TallySheetSchema_1().dump(tally_sheet).data

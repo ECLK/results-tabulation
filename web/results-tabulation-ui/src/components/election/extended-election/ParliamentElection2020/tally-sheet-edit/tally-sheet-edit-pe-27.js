@@ -11,8 +11,10 @@ import Button from '@material-ui/core/Button';
 import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
+import TallySheetActions from "../../../../tally-sheet/tally-sheet-actions";
 
 export default function TallySheetEdit_PE_27({history, queryString, election, tallySheet, messages}) {
+    const {electionId} = election;
     const [partWiseVoteCountRows, setPartWiseVoteCountRows] = useState([]);
     const [rejectedVoteCountRow, setRejectedVoteCountRow] = useState({"numValue": 0});
     const [validVoteCountRow, setValidVoteCountRow] = useState({"numValue": 0});
@@ -232,18 +234,11 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                     <TableRow>
                         <TableCell align="right" colSpan={4}>
                             <div className="page-bottom-fixed-action-bar">
-                                <Button
-                                    variant="contained" color="default" onClick={handleClickBackToEdit()}
-                                    disabled={processing}
-                                >
-                                    Edit
-                                </Button>
-                                <Button
-                                    variant="contained" color="primary" onClick={handleClickSubmit()}
-                                    disabled={processing}
-                                >
-                                    Submit
-                                </Button>
+                                <TallySheetActions
+                                    tallySheet={tallySheet}
+                                    electionId={electionId} history={history}
+                                    // onTallySheetUpdate={setTallySheet}
+                                />
                             </div>
                         </TableCell>
                     </TableRow>
