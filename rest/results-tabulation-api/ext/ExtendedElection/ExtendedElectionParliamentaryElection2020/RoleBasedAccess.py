@@ -8,11 +8,12 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACTION_TYPE import \
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, \
-    WORKFLOW_ACTION_TYPE_RELEASE
+    WORKFLOW_ACTION_TYPE_RELEASE, WORKFLOW_ACTION_TYPE_EDIT
 
 READ = WORKFLOW_ACTION_TYPE_VIEW
 WRITE = WORKFLOW_ACTION_TYPE_SAVE
 SUBMIT = WORKFLOW_ACTION_TYPE_SUBMIT
+EDIT = WORKFLOW_ACTION_TYPE_EDIT
 LOCK = WORKFLOW_ACTION_TYPE_VERIFY
 UNLOCK = WORKFLOW_ACTION_TYPE_REQUEST_CHANGES
 MOVE_TO_CERTIFY = WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY
@@ -22,26 +23,26 @@ RELEASE = WORKFLOW_ACTION_TYPE_RELEASE
 role_based_access_config = {
     DATA_EDITOR_ROLE: {
         PE_27: {
-            NonPostal: [READ, WRITE, SUBMIT, LOCK],
-            Postal: [READ, WRITE, SUBMIT, LOCK]
+            NonPostal: [READ, WRITE, SUBMIT, EDIT, LOCK],
+            Postal: [READ, WRITE, SUBMIT, EDIT, LOCK]
         },
         PE_39: {
-            NonPostal: [READ, WRITE, SUBMIT, LOCK],
-            Postal: [READ, WRITE, SUBMIT, LOCK]
+            NonPostal: [READ, WRITE, SUBMIT, EDIT, LOCK],
+            Postal: [READ, WRITE, SUBMIT, EDIT, LOCK]
         },
         PE_22: {
-            NonPostal: [READ, WRITE, SUBMIT, LOCK],
-            Postal: [READ, WRITE, SUBMIT, LOCK]
+            NonPostal: [READ, WRITE, SUBMIT, EDIT, LOCK],
+            Postal: [READ, WRITE, SUBMIT, EDIT, LOCK]
         },
         CE_201: {
-            NonPostal: [READ, WRITE, SUBMIT, LOCK]
+            NonPostal: [READ, WRITE, SUBMIT, EDIT, LOCK]
         },
         CE_201_PV: {
-            Postal: [READ, WRITE, SUBMIT, LOCK]
+            Postal: [READ, WRITE, SUBMIT, EDIT, LOCK]
         },
         PE_4: {
-            NonPostal: [READ, WRITE, SUBMIT, LOCK],
-            Postal: [READ, WRITE, SUBMIT, LOCK]
+            NonPostal: [READ, WRITE, SUBMIT, EDIT, LOCK],
+            Postal: [READ, WRITE, SUBMIT, EDIT, LOCK]
         },
     },
     POLLING_DIVISION_REPORT_VIEWER_ROLE: {
