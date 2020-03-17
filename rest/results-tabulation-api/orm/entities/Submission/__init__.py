@@ -43,32 +43,6 @@ class SubmissionModel(db.Model):
     versions = relationship("SubmissionVersionModel", order_by="desc(SubmissionVersionModel.submissionVersionId)",
                             primaryjoin="SubmissionModel.submissionId==SubmissionVersionModel.submissionId")
 
-    @hybrid_property
-    def locked(self):
-        return self.lockedVersionId is not None
-
-    @hybrid_property
-    def submitted(self):
-        return self.submittedVersionId is not None
-
-    @hybrid_property
-    def submitted(self):
-        return self.submittedVersionId is not None
-
-    @hybrid_property
-    def notified(self):
-        if self.lockedVersionId and self.lockedVersionId == self.notifiedVersionId:
-            return True
-        else:
-            return False
-
-    @hybrid_property
-    def released(self):
-        if self.lockedVersionId and self.lockedVersionId == self.releasedVersionId:
-            return True
-        else:
-            return False
-
     def set_latest_version(self, submissionVersion: SubmissionVersion):
         if submissionVersion is None:
             self.latestVersionId = None
@@ -85,86 +59,6 @@ class SubmissionModel(db.Model):
 
             self.latestVersionId = submissionVersion.submissionVersionId
             self.latestStampId = Stamp.create().stampId
-
-        db.session.add(self)
-        db.session.flush()
-
-    def set_locked_version(self, submissionVersion: SubmissionVersion):
-        if submissionVersion is None:
-            self.lockedVersionId = None
-            self.lockedStampId = None
-        else:
-            if submissionVersion.submissionId != self.submissionId:
-                raise MethodNotAllowedException(
-                    message="%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
-                        self.submissionType.name, self.submissionType.name, self.submissionId,
-                        submissionVersion.submissionVersionId, submissionVersion.submissionId
-                    ),
-                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
-                )
-
-            self.lockedVersionId = submissionVersion.submissionVersionId
-            self.lockedStampId = Stamp.create().stampId
-
-        db.session.add(self)
-        db.session.flush()
-
-    def set_submitted_version(self, submissionVersion: SubmissionVersion):
-        if submissionVersion is None:
-            self.submittedVersionId = None
-            self.submittedStampId = None
-        else:
-            if submissionVersion.submissionId != self.submissionId:
-                raise MethodNotAllowedException(
-                    message="%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
-                        self.submissionType.name, self.submissionType.name, self.submissionId,
-                        submissionVersion.submissionVersionId, submissionVersion.submissionId
-                    ),
-                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
-                )
-
-            self.submittedVersionId = submissionVersion.submissionVersionId
-            self.submittedStampId = Stamp.create().stampId
-
-        db.session.add(self)
-        db.session.flush()
-
-    def set_notified_version(self, submissionVersion: SubmissionVersion):
-        if submissionVersion is None:
-            self.notifiedVersionId = None
-            self.notifiedStampId = None
-        else:
-            if submissionVersion.submissionId != self.submissionId:
-                raise MethodNotAllowedException(
-                    message="%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
-                        self.submissionType.name, self.submissionType.name, self.submissionId,
-                        submissionVersion.submissionVersionId, submissionVersion.submissionId
-                    ),
-                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
-                )
-
-            self.notifiedVersionId = submissionVersion.submissionVersionId
-            self.notifiedStampId = Stamp.create().stampId
-
-        db.session.add(self)
-        db.session.flush()
-
-    def set_released_version(self, submissionVersion: SubmissionVersion):
-        if submissionVersion is None:
-            self.releasedVersionId = None
-            self.releasedStampId = None
-        else:
-            if submissionVersion.submissionId != self.submissionId:
-                raise MethodNotAllowedException(
-                    message="%s version is not belongs to the %s (submissionId=%d, submissionVersionId=%d, submissionVersion.submissionId=%d)" % (
-                        self.submissionType.name, self.submissionType.name, self.submissionId,
-                        submissionVersion.submissionVersionId, submissionVersion.submissionId
-                    ),
-                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
-                )
-
-            self.releasedVersionId = submissionVersion.submissionVersionId
-            self.releasedStampId = Stamp.create().stampId
 
         db.session.add(self)
         db.session.flush()

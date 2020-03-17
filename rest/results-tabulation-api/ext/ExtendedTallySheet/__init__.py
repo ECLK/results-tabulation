@@ -4,7 +4,7 @@ from sqlalchemy import MetaData
 
 from app import db
 from constants.VOTE_TYPES import Postal, NonPostal
-from exception import MethodNotAllowedException
+from exception import MethodNotAllowedException, UnauthorizedException
 
 from orm.entities import Workflow, Meta
 from orm.entities.Meta import MetaData
@@ -40,9 +40,11 @@ class ExtendedTallySheet:
     def __init__(self, tallySheet):
         self.tallySheet = tallySheet
 
-    def on_before_workflow_action(self, action, tally_sheet):
-        # Return true if the action is allowed
-        pass
+    def authorize_workflow_action(self, action, tally_sheet):
+        from auth import has_role_based_access
+
+        if not has_role_based_access(tally_sheet, action.actionType):
+            UnauthorizedException(message="Not allowed to %s" % (action.actionName))
 
     def on_after_tally_sheet_post(self, tally_sheet, tally_sheet_version):
         tally_sheet_post_actions = db.session.query(
@@ -68,7 +70,6 @@ class ExtendedTallySheet:
     def on_workflow_action(self, workflowActionId, tally_sheet, content=None):
 
         from orm.entities import SubmissionVersion
-        from orm.entities.Submission import TallySheet
         from orm.entities.SubmissionVersion import TallySheetVersion
 
         tally_sheet_post_action = db.session.query(
@@ -79,10 +80,14 @@ class ExtendedTallySheet:
             WorkflowActionModel.workflowActionId == workflowActionId
         ).one_or_none()
 
+        self.authorize_workflow_action(
+            action=tally_sheet_post_action,
+            tally_sheet=tally_sheet
+        )
+
         tally_sheet_version = db.session.query(
             TallySheetVersion.Model.tallySheetVersionId,
             TallySheetVersion.Model.isComplete
-            # MetaData.Model
         ).filter(
             SubmissionVersion.Model.submissionId == tally_sheet.tallySheetId,
             SubmissionVersion.Model.submissionVersionId == TallySheetVersion.Model.tallySheetVersionId,
@@ -93,11 +98,6 @@ class ExtendedTallySheet:
             WorkflowInstanceLog.Model.workflowInstanceLogId == WorkflowInstance.Model.latestLogId,
             WorkflowInstance.Model.workflowInstanceId == tally_sheet.workflowInstanceId
         ).one_or_none()
-
-        # print("####### tally_sheet_version : ", tally_sheet_version)
-        # print("####### tally_sheet_version : ", tally_sheet_version.tallySheetVersionId)
-        # print("####### tally_sheet_version : ", tally_sheet_version.isComplete)
-        # raise Exception("Stop here")
 
         if tally_sheet_version.isComplete:
             tally_sheet.workflowInstance.execute_action(

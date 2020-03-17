@@ -4,7 +4,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from app import db
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access
-from constants.AUTH_CONSTANTS import ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, ACCESS_TYPE_READ
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META
 from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
@@ -14,6 +13,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
     MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
+from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_VIEW
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
 from orm.entities.Dashboard import StatusReport
 from orm.entities.Election import ElectionCandidate, ElectionParty, InvalidVoteCategory
@@ -143,137 +143,61 @@ class TallySheetModel(db.Model):
         return electoral_district_name, polling_division_name, status_report_type
 
     def get_report_status(self):
-        if self.template.has_data_entry():
-            if self.locked:
-                if self.released:
-                    return "RELEASED"
-                elif self.notified:
-                    return "NOTIFIED"
-                elif self.submissionProof.size() > 0:
-                    return "CERTIFIED"
-                else:
-                    return "VERIFIED"
-            elif self.submitted:
-                return "SUBMITTED"
-            elif self.latestVersionId is not None:
-                return "ENTERED"
-            else:
-                return "NOT ENTERED"
-        else:
-            if self.locked:
-                if self.released:
-                    return "RELEASED"
-                elif self.notified:
-                    return "NOTIFIED"
-                elif self.submissionProof.size() > 0:
-                    return "CERTIFIED"
-                else:
-                    return "VERIFIED"
-            else:
-                return "PENDING"
+        pass
+        # if self.template.has_data_entry():
+        #     if self.locked:
+        #         if self.released:
+        #             return "RELEASED"
+        #         elif self.notified:
+        #             return "NOTIFIED"
+        #         elif self.submissionProof.size() > 0:
+        #             return "CERTIFIED"
+        #         else:
+        #             return "VERIFIED"
+        #     elif self.submitted:
+        #         return "SUBMITTED"
+        #     elif self.latestVersionId is not None:
+        #         return "ENTERED"
+        #     else:
+        #         return "NOT ENTERED"
+        # else:
+        #     if self.locked:
+        #         if self.released:
+        #             return "RELEASED"
+        #         elif self.notified:
+        #             return "NOTIFIED"
+        #         elif self.submissionProof.size() > 0:
+        #             return "CERTIFIED"
+        #         else:
+        #             return "VERIFIED"
+        #     else:
+        #         return "PENDING"
 
     def update_status_report(self):
-        election = self.submission.election.get_root_election()
-
-        if self.statusReportId is None:
-            electoral_district_name, polling_division_name, status_report_type = self.get_status_report_type()
-            status_report = StatusReport.create(
-                electionId=election.electionId,
-                reportType=status_report_type,
-                electoralDistrictName=electoral_district_name,
-                pollingDivisionName=polling_division_name,
-                status=self.get_report_status()
-            )
-
-            self.statusReportId = status_report.statusReportId
-        else:
-            self.statusReport.update_status(
-                status=self.get_report_status()
-            )
+        pass
+        # election = self.submission.election.get_root_election()
+        #
+        # if self.statusReportId is None:
+        #     electoral_district_name, polling_division_name, status_report_type = self.get_status_report_type()
+        #     status_report = StatusReport.create(
+        #         electionId=election.electionId,
+        #         reportType=status_report_type,
+        #         electoralDistrictName=electoral_district_name,
+        #         pollingDivisionName=polling_division_name,
+        #         status=self.get_report_status()
+        #     )
+        #
+        #     self.statusReportId = status_report.statusReportId
+        # else:
+        #     self.statusReport.update_status(
+        #         status=self.get_report_status()
+        #     )
 
     def set_latest_version(self, tallySheetVersion: TallySheetVersion):
         if tallySheetVersion is None:
             self.submission.set_latest_version(submissionVersion=None)
         else:
             self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
-
-        self.update_status_report()
-
-    def set_locked_version(self, tallySheetVersion: TallySheetVersion):
-        if tallySheetVersion is None:
-            if not has_role_based_access(self, ACCESS_TYPE_UNLOCK):
-                raise ForbiddenException(
-                    message="User not authorized to unlock the tally sheet.",
-                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK
-                )
-
-            self.submission.set_locked_version(submissionVersion=None)
-        else:
-            if self.template.is_submit_allowed():
-                if self.submittedVersionId is None:
-                    raise ForbiddenException(
-                        message="Data entry tally sheet cannot be locked before submitting",
-                        code=MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT
-                    )
-                elif self.submittedStamp.createdBy == get_user_name():
-                    raise ForbiddenException(
-                        message="Data entry tally sheet submitted user is not allowed to lock/unlock.",
-                        code=MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT
-                    )
-
-            if not has_role_based_access(self, ACCESS_TYPE_LOCK):
-                raise ForbiddenException(
-                    message="User is not authorized to lock the tally sheet.",
-                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK
-                )
-
-            self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
-
-        self.update_status_report()
-
-    def set_submitted_version(self, tallySheetVersion: TallySheetVersion):
-        if self.locked:
-            raise ForbiddenException(
-                message="Tally sheet is already locked.",
-                code=MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK
-            )
-
-        if tallySheetVersion is None:
-            self.submission.set_submitted_version(submissionVersion=None)
-        else:
-            self.submission.set_submitted_version(submissionVersion=tallySheetVersion.submissionVersion)
-
-        self.update_status_report()
-
-    def set_notified_version(self):
-        if self.lockedVersionId is None:
-            raise ForbiddenException(
-                message="Tally sheet cannot be notified before it's verified.",
-                code=MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK
-            )
-        elif self.notified is True:
-            raise ForbiddenException(
-                message="Tally sheet is already notified.",
-                code=MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED
-            )
-        else:
-            self.submission.set_notified_version(submissionVersion=self.lockedVersion)
-
-        self.update_status_report()
-
-    def set_released_version(self):
-        if self.notified is False:
-            raise ForbiddenException(
-                message="Tally sheet cannot be released before notifying",
-                code=MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING
-            )
-        elif self.released is True:
-            raise ForbiddenException(
-                message="Tally sheet is already released.",
-                code=MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED
-            )
-        else:
-            self.submission.set_released_version(submissionVersion=self.notifiedVersion)
 
         self.update_status_report()
 
@@ -574,7 +498,7 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     tally_sheet = db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by).one_or_none()
 
     # Validate the authorization
-    if not has_role_based_access(tally_sheet=tally_sheet, access_type=ACCESS_TYPE_READ):
+    if not has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
         raise NotFoundException(
             message="Not authorized to view tally sheet. (tallySheetId=%d)" % tallySheetId,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
@@ -613,7 +537,7 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
 
     authorized_tally_sheet_list = []
     for tally_sheet in tally_sheet_list:
-        if has_role_based_access(tally_sheet=tally_sheet, access_type=ACCESS_TYPE_READ):
+        if has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
             authorized_tally_sheet_list.append(tally_sheet)
 
     return authorized_tally_sheet_list
