@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableFooter from "@material-ui/core/TableFooter";
@@ -7,22 +7,21 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
 
-import Button from '@material-ui/core/Button';
-import { isNumeric, processNumericValue } from "../../../../../utils";
+import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
-import { useTallySheetEdit } from "../../../../tally-sheet/tally-sheet-edit";
+import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PE_22({ history, election, tallySheet, messages }) {
+export default function TallySheetEdit_PE_22({history, election, tallySheet, messages}) {
     const [invalidVoteCategoryCountRows, setInvalidVoteCategoryCountRows] = useState([]);
     const [parties, setParties] = useState([]);
     const [partyWiseInvalidVoteCategoryCountRows, setPartyWiseInvalidVoteCategoryCountRows] = useState([]);
     const [partyWiseRejectedVoteCountRows, setPartyWiseRejectedVoteCountRows] = useState([]);
-    const [rejectedVoteCountRow, setRejectedVoteCountRow] = useState({ "numValue": 0 });
+    const [rejectedVoteCountRow, setRejectedVoteCountRow] = useState({"numValue": 0});
 
     const setTallySheetContent = (tallySheetVersion) => {
         let _invalidVoteCategoryCountRowTemplate = {};
         let _partyWiseRejectedVoteCountRows = [];
-        let _rejectedVoteCountRow = { "numValue": 0 };
+        let _rejectedVoteCountRow = {"numValue": 0};
 
         tallySheet.template.rows.forEach(templateRow => {
             if (templateRow.templateRowType === "PARTY_WISE_INVALID_VOTE_COUNT") {
@@ -69,12 +68,12 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
             });
 
         if (tallySheetVersion) {
-            const { content } = tallySheetVersion;
+            const {content} = tallySheetVersion;
             const _partyToRejectedVoteCount = {};
             for (let i = 0; i < content.length; i++) {
                 const contentRow = content[i];
                 if (contentRow.templateRowType === "PARTY_WISE_INVALID_VOTE_COUNT") {
-                    const { partyId, invalidVoteCategoryId } = contentRow;
+                    const {partyId, invalidVoteCategoryId} = contentRow;
                     const matchingInvalidVoteCountRow = _partyWiseInvalidVoteCategoryCountRows.filter(invalidVoteCategoryCountRow => {
                         return invalidVoteCategoryCountRow.partyId === partyId && invalidVoteCategoryCountRow.invalidVoteCategoryId === invalidVoteCategoryId
                     })[0];
@@ -88,7 +87,8 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
             let _totalRejectedVoteCount = 0
 
             _partyWiseRejectedVoteCountRows.forEach(rejectedVoteCountRow => {
-                const rejectedVoteCount = _partyToRejectedVoteCount[rejectedVoteCountRow.partyId];;
+                const rejectedVoteCount = _partyToRejectedVoteCount[rejectedVoteCountRow.partyId];
+                ;
                 rejectedVoteCountRow.numValue = rejectedVoteCount;
                 _totalRejectedVoteCount += rejectedVoteCount;
             });
@@ -159,7 +159,7 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
         }
     };
 
-    const { processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit } = useTallySheetEdit({
+    const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
         messages,
         history,
         election,
@@ -171,7 +171,7 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
 
     const handlePartyWiseInvalidVoteCountChange = key => event => {
         const [partyId, invalidVoteCategoryId] = key.split("-").map(value => Number(value));
-        const { value } = event.target;
+        const {value} = event.target;
 
         setPartyWiseInvalidVoteCategoryCountRows((partyWiseInvalidVoteCategoryCountRows) => {
             const _partyWiseInvalidVoteCategoryCountRows = [...partyWiseInvalidVoteCategoryCountRows];
@@ -184,7 +184,7 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
     }
 
     const handlePartyWiseRejectedVoteCountChange = partyId => event => {
-        const { value } = event.target;
+        const {value} = event.target;
         setPartyWiseRejectedVoteCountRows(partyWiseRejectedVoteCountRows => {
             const _partyWiseRejectedVoteCountRows = [...partyWiseRejectedVoteCountRows];
             _partyWiseRejectedVoteCountRows
@@ -194,7 +194,7 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
     }
 
     const handleRejectedVoteCountChange = () => event => {
-        const { value } = event.target;
+        const {value} = event.target;
         setRejectedVoteCountRow((rejectedVoteCountRow) => {
             return {
                 ...rejectedVoteCountRow,
@@ -212,8 +212,9 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
                         <TableCell align="left">Name of the Party/Independent Group</TableCell>
                         {
                             invalidVoteCategoryCountRows.map((invalidVoteCategoryCountRow, invalidVoteCategoryCountRowIndex) => {
-                                const { categoryDescription } = invalidVoteCategoryCountRow;
-                                return <TableCell align="right" key={invalidVoteCategoryCountRowIndex}>{categoryDescription}</TableCell>
+                                const {categoryDescription} = invalidVoteCategoryCountRow;
+                                return <TableCell align="right"
+                                                  key={invalidVoteCategoryCountRowIndex}>{categoryDescription}</TableCell>
                             })
                         }
                         <TableCell align="right">Total</TableCell>
@@ -223,13 +224,13 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
                 <TableBody>
                     {
                         parties.map((party, partyIndex) => {
-                            const { partyId, partyName } = party;
+                            const {partyId, partyName} = party;
                             const rejectedVoteCountRow = getPartRejectedVoteCountRow(partyId)[0]
                             return <TableRow key={partyIndex}>
                                 <TableCell align="left">{partyName}</TableCell>
                                 {
                                     getPartyInvalidVoteCategoryCountRows(partyId).map(invalidVoteCategoryCountRow => {
-                                        const { invalidVoteCategoryId, numValue } = invalidVoteCategoryCountRow;
+                                        const {invalidVoteCategoryId, numValue} = invalidVoteCategoryCountRow;
                                         const key = partyId + "-" + invalidVoteCategoryId;
                                         return <TableCell align="right" key={key}>{numValue}</TableCell>
                                     })
@@ -247,20 +248,7 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={5}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button
-                                    variant="contained" color="default" onClick={handleClickBackToEdit()}
-                                    disabled={processing}
-                                >
-                                    Edit
-                                </Button>
-                                <Button
-                                    variant="contained" color="primary" onClick={handleClickSubmit()}
-                                    disabled={processing}
-                                >
-                                    Submit
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 
@@ -274,8 +262,9 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
                         <TableCell align="left">Name of the Party/Independent Group</TableCell>
                         {
                             invalidVoteCategoryCountRows.map((invalidVoteCategoryCountRow, invalidVoteCategoryCountRowIndex) => {
-                                const { categoryDescription } = invalidVoteCategoryCountRow;
-                                return <TableCell align="right" key={invalidVoteCategoryCountRowIndex}>{categoryDescription}</TableCell>
+                                const {categoryDescription} = invalidVoteCategoryCountRow;
+                                return <TableCell align="right"
+                                                  key={invalidVoteCategoryCountRowIndex}>{categoryDescription}</TableCell>
                             })
                         }
                         <TableCell align="right">Total</TableCell>
@@ -285,13 +274,13 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
                 <TableBody>
                     {
                         parties.map((party, partyIndex) => {
-                            const { partyId, partyName } = party;
+                            const {partyId, partyName} = party;
                             const rejectedVoteCountRow = getPartRejectedVoteCountRow(partyId)[0]
                             return <TableRow key={partyIndex}>
                                 <TableCell align="left">{partyName}</TableCell>
                                 {
                                     getPartyInvalidVoteCategoryCountRows(partyId).map(invalidVoteCategoryCountRow => {
-                                        const { invalidVoteCategoryId, numValue } = invalidVoteCategoryCountRow;
+                                        const {invalidVoteCategoryId, numValue} = invalidVoteCategoryCountRow;
                                         const key = partyId + "-" + invalidVoteCategoryId;
                                         return <TableCell align="right" key={key}>
                                             <TextField
@@ -346,14 +335,7 @@ export default function TallySheetEdit_PE_22({ history, election, tallySheet, me
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={5}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button
-                                    variant="contained" color="default" onClick={handleClickNext()}
-                                    disabled={processing}
-                                >
-                                    Save & Next
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 

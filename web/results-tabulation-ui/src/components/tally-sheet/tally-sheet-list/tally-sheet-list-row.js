@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import {
@@ -6,17 +6,21 @@ import {
     TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
     TALLY_SHEET_LIST_ROW_ACTION_VIEW
 } from "../constants/TALLY_SHEET_ACTION";
-import TallySheetListRowAction from "./tally-sheet-list-row-action";
-import {TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_STATUS} from "../constants/TALLY_SHEET_COLUMN";
+import {
+    TALLY_SHEET_LIST_COLUMN_ACTIONS,
+    TALLY_SHEET_LIST_COLUMN_STATUS,
+    TALLY_SHEET_LIST_COLUMN_VALUE
+} from "../constants/TALLY_SHEET_COLUMN";
 import {fieldMatch} from "../../../utils";
 import TallySheetActions from "../tally-sheet-actions";
+import {TallySheetContext} from "../../../services/tally-sheet.provider";
 
 
 export default function TallySheetListRow(
     {
         history,
         electionId,
-        tallySheetListRow,
+        tallySheetId,
         columns = [
             TALLY_SHEET_LIST_COLUMN_STATUS,
             TALLY_SHEET_LIST_COLUMN_ACTIONS
@@ -26,17 +30,41 @@ export default function TallySheetListRow(
             TALLY_SHEET_LIST_ROW_ACTION_VIEW,
             TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
             TALLY_SHEET_LIST_ROW_ACTION_UNLOCK
-        ],
-        onTallySheetUpdate
+        ]
     }
 ) {
+    // debugger;
+
+    function appendColumnValuesToTallySheetRow(tallySheet) {
+        // Append the values for columns.
+        for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+            const column = columns[columnIndex];
+            let columnValue = TALLY_SHEET_LIST_COLUMN_VALUE[column](tallySheet);
+            if (!columnValue) {
+                columnValue = "";
+            }
+
+            // If the value is an area object, assign areaName as the value.
+            if (typeof columnValue === "object" && columnValue.areaName) {
+                columnValue = columnValue.areaName;
+            }
+
+            tallySheet[column] = columnValue;
+        }
+
+        return tallySheet;
+    }
+
+    const {getById} = useContext(TallySheetContext);
+    let tallySheet = getById(tallySheetId);
+    tallySheet = appendColumnValuesToTallySheetRow(tallySheet);
 
     const hasFilterMatch = () => {
         let _hasFilterMatch = true;
         for (let i = 0; i < columns.length; i++) {
             const column = columns[i];
             if (columnMetaMap[column] && columnMetaMap[column].filter && columnMetaMap[column].filter !== "") {
-                if (_hasFilterMatch && !fieldMatch(tallySheetListRow[column], columnMetaMap[column].filter)) {
+                if (_hasFilterMatch && !fieldMatch(tallySheet[column], columnMetaMap[column].filter)) {
                     _hasFilterMatch = false;
                     break;
                 }
@@ -47,17 +75,16 @@ export default function TallySheetListRow(
     };
 
     if (hasFilterMatch()) {
-        return <TableRow key={tallySheetListRow.tallySheetId}>
+        return <TableRow key={tallySheet.tallySheetId}>
             {columns.map((column, columnIndex) => {
                 let columnCellContent = null;
                 if (column == TALLY_SHEET_LIST_COLUMN_ACTIONS) {
                     columnCellContent = <TallySheetActions
-                        tallySheet={tallySheetListRow}
+                        tallySheetId={tallySheet.tallySheetId}
                         electionId={electionId} history={history}
-                        onTallySheetUpdate={onTallySheetUpdate}
                     />
                 } else {
-                    columnCellContent = tallySheetListRow[column];
+                    columnCellContent = tallySheet[column];
                 }
 
                 return <TableCell key={columnIndex} align="center">{columnCellContent}</TableCell>

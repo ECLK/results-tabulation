@@ -7,7 +7,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
 
-import Button from '@material-ui/core/Button';
 import {
     TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
     TALLY_SHEET_ROW_TYPE_NUMBER_OF_BALLOTS_ISSUED,
@@ -23,7 +22,6 @@ import {isNumeric, processNumericValue} from "../../../utils";
 import {useTallySheetEdit} from "./index";
 import Processing from "../../processing";
 import {getAreas} from "../../../services/tabulation-api";
-import TallySheetActions from "../tally-sheet-actions";
 
 export default function TallySheetEdit_CE_201({history, queryString, election, tallySheet, messages}) {
     const {electionId} = election;
@@ -213,7 +211,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
         }
     };
 
-    const {processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit} = useTallySheetEdit({
+    const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
         messages,
         history,
         election,
@@ -255,13 +253,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <TallySheetActions
-                                    tallySheet={tallySheet}
-                                    electionId={electionId} history={history}
-                                    // onTallySheetUpdate={setTallySheet}
-                                />
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 
@@ -322,11 +314,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button variant="contained" color="default" onClick={handleClickNext()}>
-                                    Save & Next
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
                 </TableFooter>

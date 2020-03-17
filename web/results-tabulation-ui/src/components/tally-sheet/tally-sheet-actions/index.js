@@ -1,10 +1,14 @@
-import React from "react";
+import React, {useContext} from "react";
 import {PATH_ELECTION_TALLY_SHEET_VIEW} from "../../../App";
-import {executeTallySheetWorkflow} from "../../../services/tabulation-api";
 import Button from "@material-ui/core/Button";
+import {TallySheetContext} from "../../../services/tally-sheet.provider";
 
 
-export default function TallySheetActions({tallySheet, electionId, history, onTallySheetUpdate}) {
+export default function TallySheetActions({tallySheetId, electionId, history}) {
+    const {executeTallySheetWorkflow, getById} = useContext(TallySheetContext);
+
+    const tallySheet = getById(tallySheetId);
+
     return tallySheet.workflowInstance.actions.filter((action) => {
         return action.allowed;
     }).map((action, actionIndex) => {
@@ -16,8 +20,7 @@ export default function TallySheetActions({tallySheet, electionId, history, onTa
                 if (action.actionType === "SAVE") {
                     history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId))
                 } else {
-                    const _tallySheet = await executeTallySheetWorkflow(tallySheet.tallySheetId, action.workflowActionId);
-                    onTallySheetUpdate && onTallySheetUpdate(_tallySheet);
+                    await executeTallySheetWorkflow(tallySheet.tallySheetId, action.workflowActionId);
 
                     if (action.actionType === "EDIT") {
                         history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId))

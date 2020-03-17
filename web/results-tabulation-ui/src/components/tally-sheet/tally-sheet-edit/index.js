@@ -1,16 +1,18 @@
-import React, {useEffect, useState, Component} from "react";
-import * as tabulationApi from "../../../services/tabulation-api";
+import React, {useEffect, useState, Component, useContext} from "react";
 import {MESSAGES_EN} from "../../../locale/messages_en";
 import {MESSAGE_TYPES} from "../../../services/messages.provider";
-import {PATH_ELECTION_TALLY_SHEET_LIST} from "../../../App";
 import {
     TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_CE_201_PV
 } from "../constants/TALLY_SHEET_CODE";
 import TallySheetEdit_CE_201 from "./tally-sheet-edit-ce-201";
 import TallySheetEdit_CE_201_PV from "./tally-sheet-edit-ce-201-pv";
+import {TallySheetContext} from "../../../services/tally-sheet.provider";
+import TallySheetActions from "../tally-sheet-actions";
+import Button from "@material-ui/core/Button";
 
 
 export default class TallySheetEdit extends Component {
+
     getTallySheetEditForm(tallySheetCode) {
         if (tallySheetCode === TALLY_SHEET_CODE_CE_201) {
             return TallySheetEdit_CE_201;
@@ -38,6 +40,8 @@ export default class TallySheetEdit extends Component {
 
 
 export function useTallySheetEdit(props) {
+    const {saveTallySheetVersion} = useContext(TallySheetContext);
+
     const {messages, history, election, setTallySheetContent, validateTallySheetContent, getTallySheetRequestBody} = props;
     const [processing, setProcessing] = useState(true);
     const [tallySheetVersion, setTallySheetVersion] = useState(null);
@@ -81,7 +85,7 @@ export function useTallySheetEdit(props) {
             setProcessing(true);
             setProcessingLabel("Saving");
             try {
-                const tallySheet = await tabulationApi.saveTallySheetVersion(tallySheetId, tallySheetCode, body);
+                const tallySheet = await saveTallySheetVersion(tallySheetId, tallySheetCode, body);
                 setTallySheetVersion(tallySheet.latestVersion);
             } catch (e) {
                 messages.push("Error", MESSAGES_EN.error_tallysheet_save, MESSAGE_TYPES.ERROR);
@@ -90,32 +94,32 @@ export function useTallySheetEdit(props) {
         } else {
             messages.push("Error", MESSAGES_EN.error_input, MESSAGE_TYPES.ERROR)
         }
+        debugger;
     };
 
-    const handleClickSubmit = () => async (event) => {
-        setProcessing(true);
-        setProcessingLabel("Submitting");
-        try {
-            const {tallySheetVersionId} = tallySheetVersion;
-            const tallySheet = await tabulationApi.submitTallySheet(tallySheetId, tallySheetVersionId);
-            setTallySheet(tallySheet);
-
-            messages.push("Success", MESSAGES_EN.success_pre41_submit, MESSAGE_TYPES.SUCCESS);
-            setTimeout(() => {
-                history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType));
-            }, 1000)
-        } catch (e) {
-            messages.push("Error", MESSAGES_EN.error_tallysheet_submit, MESSAGE_TYPES.ERROR);
+    const getActionsBar = () => {
+        if (saved) {
+            return <div className="page-bottom-fixed-action-bar">
+                <TallySheetActions
+                    tallySheetId={tallySheet.tallySheetId}
+                    electionId={electionId} history={history}
+                    // onTallySheetUpdate={setTallySheet}
+                />
+            </div>
+        } else if (!processing) {
+            return <div className="page-bottom-fixed-action-bar">
+                <Button
+                    variant="contained" color="default" onClick={handleClickNext()}
+                    disabled={processing}
+                >
+                    Save & Next
+                </Button>
+            </div>
+        } else {
+            return null;
         }
-
-        setProcessing(false);
     };
 
-    return {
-        tallySheet, tallySheetVersion, processing, processingLabel, saved,
-        handleClickNext,
-        handleClickSubmit,
-        handleClickBackToEdit
-    };
+    return {tallySheet, tallySheetVersion, processing, processingLabel, saved, getActionsBar};
 }
 

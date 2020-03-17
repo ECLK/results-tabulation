@@ -1,19 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
-import {
-    getTallySheet,
-    TALLY_SHEET_STATUS_ENUM,
-    getTallySheetProof
-} from "../../services/tabulation-api";
-import {
-    PATH_ELECTION_BY_ID,
-    PATH_ELECTION_RESULTS_RELEASE_VIEW
-} from "../../App";
+import {TALLY_SHEET_STATUS_ENUM, getTallySheetProof} from "../../services/tabulation-api";
+import {PATH_ELECTION_BY_ID, PATH_ELECTION_RESULTS_RELEASE_VIEW} from "../../App";
 import {
     TALLY_SHEET_CODE_PRE_30_ED,
     TALLY_SHEET_CODE_PRE_30_PD,
@@ -31,9 +24,12 @@ import {fieldMatch} from "../../utils";
 import {getAreaName} from "../../utils/tallySheet";
 import PrintLetterButton from "../../components/tally-sheet/print-letter-button";
 import TabulationPage from "../index";
+import {TallySheetContext} from "../../services/tally-sheet.provider";
 
 
 export default function ReleaseList({history, queryString, election}) {
+    const {getTallySheet} = useContext(TallySheetContext);
+
     const {electionId, electionName} = election;
     const {tallySheetCode, voteType} = queryString;
 

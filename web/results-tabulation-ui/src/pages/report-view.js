@@ -1,25 +1,21 @@
-import React, {useEffect, useState} from "react";
-import {
-    getTallySheetVersionHtml, lockTallySheet, requestEditForTallySheet,
-    saveTallySheetVersion,
-    TALLY_SHEET_STATUS_ENUM, unlockTallySheet
-} from "../services/tabulation-api";
-import {MESSAGE_TYPES} from "../services/messages.provider";
+import React, {useContext, useEffect, useState} from "react";
+import {TALLY_SHEET_STATUS_ENUM} from "../services/tabulation-api";
 import {
     PATH_ELECTION_TALLY_SHEET_LIST,
     PATH_ELECTION_TALLY_SHEET_VIEW
 } from "../App";
 import Processing from "../components/processing";
-import Button from "@material-ui/core/Button";
-import {MESSAGES_EN} from "../locale/messages_en";
 import {getTallySheetCodeStr} from "../utils/tallySheet";
 import TabulationPage from "./index";
 import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
+import {TallySheetContext} from "../services/tally-sheet.provider";
 
 export default function ReportView(props) {
+    const {getTallySheetVersionHtml, saveTallySheetVersion, getById} = useContext(TallySheetContext);
+
     const {history, election, messages} = props;
     const {electionId, rootElection, voteType} = election;
-    const [tallySheet, setTallySheet] = useState(props.tallySheet);
+    const tallySheet = getById(props.tallySheetId);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState(null);
     const [processing, setProcessing] = useState(true);
@@ -32,8 +28,7 @@ export default function ReportView(props) {
         const {tallySheetId, tallySheetCode} = tallySheet;
         let _tallySheet = tallySheet;
         if (tallySheet.template.isDerived) {
-            _tallySheet = await saveTallySheetVersion(tallySheetId, tallySheetCode);
-            setTallySheet(tallySheet);
+            await saveTallySheetVersion(tallySheetId, tallySheetCode);
         }
 
         const {latestVersion} = _tallySheet;
@@ -85,62 +80,6 @@ export default function ReportView(props) {
         iframeRef.current.contentWindow.print();
     }
 
-    const handleRequestEdit = () => async (evt) => {
-        setProcessing(true);
-        const {tallySheetId} = tallySheet;
-        try {
-            const tallySheet = await requestEditForTallySheet(tallySheetId);
-            setTallySheet(tallySheet);
-            messages.push("Success", MESSAGES_EN.success_report_editable, MESSAGE_TYPES.SUCCESS);
-            setTimeout(() => {
-                history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId))
-            }, 500)
-        } catch (e) {
-            messages.push("Error", MESSAGES_EN.error_updating_report, MESSAGE_TYPES.ERROR);
-        }
-        setProcessing(false);
-    };
-
-    const handleVerify = () => async (evt) => {
-        setProcessing(true);
-        const {tallySheetId} = tallySheet;
-        try {
-            const tallySheet = await lockTallySheet(tallySheetId, tallySheetVersionId);
-            setTallySheet(tallySheet);
-            messages.push("Success", MESSAGES_EN.success_report_verify, MESSAGE_TYPES.SUCCESS);
-            setTimeout(() => {
-                history.push(getTallySheetListLink())
-            }, 500)
-        } catch (e) {
-            let errorMessage = MESSAGES_EN.error_verifying_report;
-            if (e && e.response && e.response.data && e.response.data.code) {
-                const code = e.response.data.code;
-                if (code === 20) {
-                    errorMessage = MESSAGES_EN.error_tally_sheet_same_user_cannot_submit_and_lock_tally_sheet
-                }
-            }
-
-            messages.push("Error", errorMessage, MESSAGE_TYPES.ERROR);
-        }
-        setProcessing(false);
-    };
-
-    const handleUnlock = () => async (evt) => {
-        setProcessing(true);
-        const {tallySheetId} = tallySheet;
-        try {
-            const tallySheet = await unlockTallySheet(tallySheetId);
-            await setTallySheet(tallySheet);
-            messages.push("Success", MESSAGES_EN.success_report_unlock, MESSAGE_TYPES.SUCCESS);
-            setTimeout(() => {
-                history.push(getTallySheetListLink())
-            }, 500)
-        } catch (e) {
-            messages.push("Error", MESSAGES_EN.error_unlock_report, MESSAGE_TYPES.ERROR);
-        }
-        setProcessing(false);
-    };
-
     function getTallySheetListLink() {
         const {tallySheetCode} = tallySheet;
 
@@ -172,9 +111,8 @@ export default function ReportView(props) {
                 <div className="report-view-status">
                     <div className="report-view-status-actions">
                         <TallySheetActions
-                            tallySheet={tallySheet}
+                            tallySheetId={tallySheetId}
                             electionId={electionId} history={history}
-                            onTallySheetUpdate={setTallySheet}
                         />
                     </div>
                     <div className="report-view-status-text">

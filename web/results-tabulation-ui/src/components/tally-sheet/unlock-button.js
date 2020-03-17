@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
-import {unlockTallySheet} from "../../services/tabulation-api";
 import {MESSAGES_EN} from "../../locale/messages_en";
 import {MESSAGE_TYPES} from "../../services/messages.provider";
 
 export default function UnlockButton(props) {
+
     const {fetchHtml} = props;
 
     const {children, onProcessing, tallySheet, setTallySheet} = props;

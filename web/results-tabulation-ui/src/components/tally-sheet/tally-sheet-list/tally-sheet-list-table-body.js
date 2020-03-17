@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from "react";
-import {getTallySheet} from "../../../services/tabulation-api";
+import React, {useContext, useEffect, useState} from "react";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Processing from "../../processing";
@@ -15,6 +14,7 @@ import {
     TALLY_SHEET_LIST_COLUMN_STATUS,
     TALLY_SHEET_LIST_COLUMN_VALUE
 } from "../constants/TALLY_SHEET_COLUMN";
+import {TallySheetContext} from "../../../services/tally-sheet.provider";
 
 
 export default function TallySheetListTableBody(
@@ -35,42 +35,18 @@ export default function TallySheetListTableBody(
         ]
     }
 ) {
+    const {getTallySheet} = useContext(TallySheetContext);
+
     const {electionId} = election;
 
     const [tallySheetListRows, setTallySheetListRows] = useState([]);
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);
 
-    function appendColumnValuesToTallySheetRow(tallySheet) {
-        // Append the values for columns.
-        for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-            const column = columns[columnIndex];
-            let columnValue = TALLY_SHEET_LIST_COLUMN_VALUE[column](tallySheet);
-            if (!columnValue) {
-                columnValue = "";
-            }
-
-            // If the value is an area object, assign areaName as the value.
-            if (typeof columnValue === "object" && columnValue.areaName) {
-                columnValue = columnValue.areaName;
-            }
-
-            tallySheet[column] = columnValue;
-        }
-
-        return tallySheet;
-    }
-
 
     useEffect(() => {
         getTallySheet({electionId, tallySheetCode, voteType}).then((tallySheets) => {
-            setTallySheetListRows(tallySheets.map((tallySheet) => {
-                let _tallySheetListRow = {...tallySheet};
-                _tallySheetListRow = appendColumnValuesToTallySheetRow(_tallySheetListRow);
-
-                return _tallySheetListRow;
-
-            }));
+            setTallySheetListRows(tallySheets);
             setProcessing(false);
         }).catch((error) => {
             console.log(error.stack);
@@ -82,16 +58,9 @@ export default function TallySheetListTableBody(
     const getTallySheetListJsx = function () {
         return tallySheetListRows.map((tallySheetListRow, tallySheetListRowIndex) => (<TallySheetListRow
             key={tallySheetListRowIndex}
-            tallySheetListRow={tallySheetListRow} history={history} electionId={electionId}
+            tallySheetId={tallySheetListRow.tallySheetId} history={history} electionId={electionId}
             actions={actions} columns={columns}
             columnMetaMap={columnMetaMap}
-            onTallySheetUpdate={(_tallySheetListRow) => {
-                _tallySheetListRow = appendColumnValuesToTallySheetRow(_tallySheetListRow);
-                setTallySheetListRows((_tallySheetListRows) => {
-                    Object.assign(_tallySheetListRows[tallySheetListRowIndex], _tallySheetListRow);
-                    return [..._tallySheetListRows];
-                })
-            }}
         />))
     };
 
