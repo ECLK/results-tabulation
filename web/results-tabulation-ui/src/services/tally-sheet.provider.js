@@ -138,6 +138,9 @@ export function TallySheetProvider(props) {
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID(tallySheetId, tallySheetCode),
             method: 'post',
             data: body
+        }).then((tallySheet) => {
+            _updateTallySheetState(tallySheet);
+            return refactorTallySheetObject(tallySheet);
         })
     }
 
