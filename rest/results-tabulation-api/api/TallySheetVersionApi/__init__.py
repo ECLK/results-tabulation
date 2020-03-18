@@ -103,21 +103,15 @@ def get_by_id(tallySheetId, tallySheetVersionId):
 @authorize(required_roles=ALL_ROLES)
 def create(tallySheetId, body):
     request_body = RequestBody(body)
-
-    tally_sheet, tally_sheet_version = TallySheet.create_latest_version(
-        tallySheetId=tallySheetId,
-        content=request_body.get("content")
-    )
-
-    db.session.commit()
-
-    tally_sheet.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, post_save=True)
-
-    db.session.commit()
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    if tally_sheet is None:
+        raise NotFoundException(
+            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
 
     extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
-
-    extended_tally_sheet.on_after_tally_sheet_post(tally_sheet=tally_sheet, tally_sheet_version=tally_sheet_version)
+    extended_tally_sheet.execute_tally_sheet_post(content=request_body.get("content"))
 
     db.session.commit()
 

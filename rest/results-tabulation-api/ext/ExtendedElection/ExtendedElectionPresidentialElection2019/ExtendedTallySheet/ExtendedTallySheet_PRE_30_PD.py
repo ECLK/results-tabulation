@@ -1,5 +1,5 @@
 from flask import render_template
-from ext.ExtendedTallySheet import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities import Area
 from constants.VOTE_TYPES import Postal
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019.fake_polling_division_voters_map import \
@@ -8,8 +8,8 @@ from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_PRE_30_PD(ExtendedTallySheet):
-    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+class ExtendedTallySheet_PRE_30_PD(ExtendedTallySheetReport):
+    class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html_letter(self, title="", total_registered_voters=None):
             return super(ExtendedTallySheet_PRE_30_PD.ExtendedTallySheetVersion, self).html_letter(

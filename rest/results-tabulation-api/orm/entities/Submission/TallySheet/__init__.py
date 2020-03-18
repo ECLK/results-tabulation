@@ -14,6 +14,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
     MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_VIEW
+from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
 from orm.entities.Dashboard import StatusReport
 from orm.entities.Election import ElectionCandidate, ElectionParty, InvalidVoteCategory
@@ -248,6 +249,16 @@ class TallySheetModel(db.Model):
 
         return tally_sheet_version
 
+    def create_latest_version(self, content=None):
+        tally_sheet, tally_sheet_version = create_version(self.tallySheetId, content=content)
+        tally_sheet.set_latest_version(tallySheetVersion=tally_sheet_version)
+
+        db.session.commit()
+
+        tally_sheet.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, post_save=True)
+
+        return tally_sheet, tally_sheet_version
+
     def create_tally_sheet_version_rows(self, tally_sheet_version, content=None, post_save=False):
         if content is None:
             content = []
@@ -436,7 +447,10 @@ class TallySheetModel(db.Model):
         extended_election = self.submission.election.get_extended_election()
         extended_tally_sheet_class = extended_election.get_extended_tally_sheet_class(
             self.template.templateName)
-        extended_tally_sheet_version = extended_tally_sheet_class.ExtendedTallySheetVersion(tally_sheet_version)
+        extended_tally_sheet_version = extended_tally_sheet_class.ExtendedTallySheetVersion(
+            tallySheet=self,
+            tallySheetVersion=tally_sheet_version
+        )
 
         return extended_tally_sheet_version
 
@@ -567,10 +581,3 @@ def create_version(tallySheetId, content=None):
     tallySheetVersion = tally_sheet.create_version(content=content)
 
     return tally_sheet, tallySheetVersion
-
-
-def create_latest_version(tallySheetId, content=None):
-    tallySheet, tallySheetVersion = create_version(tallySheetId, content=content)
-    tallySheet.set_latest_version(tallySheetVersion=tallySheetVersion)
-
-    return tallySheet, tallySheetVersion

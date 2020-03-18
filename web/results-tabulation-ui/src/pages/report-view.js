@@ -9,6 +9,7 @@ import {getTallySheetCodeStr} from "../utils/tallySheet";
 import TabulationPage from "./index";
 import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
+import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
 
 export default function ReportView(props) {
     const tallySheetContext = useContext(TallySheetContext);
@@ -27,30 +28,9 @@ export default function ReportView(props) {
     const fetchTallySheetVersion = async () => {
         const {tallySheetId, tallySheetCode} = tallySheet;
         let _tallySheet = tallySheet;
-        if (tallySheet.template.isDerived) {
-            await tallySheetContext.saveTallySheetVersion(tallySheetId, tallySheetCode);
-        }
-
         const {latestVersion} = _tallySheet;
+
         let tallySheetVersionId = null;
-        // if (!tallySheet.template.isDerived) {
-        //     if (lockedVersionId) {
-        //         tallySheetVersionId = lockedVersionId;
-        //     } else if (submittedVersionId) {
-        //         tallySheetVersionId = submittedVersionId;
-        //     } else if (latestVersionId) {
-        //         tallySheetVersionId = latestVersionId;
-        //     }
-        // } else {
-        //     if (lockedVersionId) {
-        //         tallySheetVersionId = lockedVersionId;
-        //     } else {
-        //         const tallySheetVersion = await tallySheetContext.saveTallySheetVersion(tallySheetId, tallySheetCode);
-        //         tallySheetVersionId = tallySheetVersion.tallySheetVersionId;
-        //     }
-        // }
-
-
         if (latestVersion) {
             tallySheetVersionId = latestVersion.tallySheetVersionId;
         }
@@ -113,6 +93,7 @@ export default function ReportView(props) {
                         <TallySheetActions
                             tallySheetId={tallySheetId}
                             electionId={electionId} history={history}
+                            filter={(action) => action.actionType !== WORKFLOW_ACTION_TYPE_VIEW}
                         />
                     </div>
                     <div className="report-view-status-text">

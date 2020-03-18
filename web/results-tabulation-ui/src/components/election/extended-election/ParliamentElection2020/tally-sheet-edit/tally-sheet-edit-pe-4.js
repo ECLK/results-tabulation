@@ -235,7 +235,7 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
 
                     {candidateWiseFirstPreferenceCountRows.map((candidateWiseFirstPreferenceCountRow, candidateWiseFirstPreferenceCountRowIndex) => {
                         const {candidateId, candidateName, strValue, numValue} = candidateWiseFirstPreferenceCountRow;
-                        console.log("==== candidateWiseFirstPreferenceCountRow : ", candidateWiseFirstPreferenceCountRow);
+
                         return <TableRow key={candidateId}>
                             <TableCell align="center">{candidateName}</TableCell>
                             <TableCell align="center"></TableCell>

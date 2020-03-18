@@ -37,6 +37,9 @@ def get_by_id(tallySheetId):
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
+    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
+    extended_tally_sheet.execute_tally_sheet_get()
+
     return TallySheetSchema_1().dump(tally_sheet).data
 
 
@@ -52,10 +55,7 @@ def workflow(tallySheetId, body):
 
     extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
 
-    extended_tally_sheet.on_workflow_action(
-        workflowActionId=workflowActionId,
-        tally_sheet=tally_sheet
-    )
+    extended_tally_sheet.execute_workflow_action(workflowActionId=workflowActionId)
 
     db.session.commit()
 

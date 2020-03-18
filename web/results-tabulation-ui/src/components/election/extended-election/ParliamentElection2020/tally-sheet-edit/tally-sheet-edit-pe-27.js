@@ -251,7 +251,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                 <TableBody>
                     {partWiseVoteCountRows.map((partWiseVoteCountRow, partWiseVoteCountRowIndex) => {
                         const {partyId, partyName, partySymbol, strValue, numValue} = partWiseVoteCountRow;
-                        console.log("==== partWiseVoteCountRow : ", partWiseVoteCountRow);
+
                         return <TableRow key={partyId}>
                             <TableCell align="center">{partyName}</TableCell>
                             <TableCell align="center">{partySymbol}</TableCell>
