@@ -13,6 +13,7 @@ export default function TallySheetActions({tallySheetId, electionId, history}) {
         return action.allowed;
     }).map((action, actionIndex) => {
         return <Button
+            key={actionIndex}
             variant="outlined" color="default"
             size="small"
             onClick={async () => {

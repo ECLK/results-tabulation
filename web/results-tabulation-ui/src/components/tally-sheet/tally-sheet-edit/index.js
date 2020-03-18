@@ -94,7 +94,6 @@ export function useTallySheetEdit(props) {
         } else {
             messages.push("Error", MESSAGES_EN.error_input, MESSAGE_TYPES.ERROR)
         }
-        debugger;
     };
 
     const getActionsBar = () => {
