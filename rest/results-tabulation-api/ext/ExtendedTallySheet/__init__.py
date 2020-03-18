@@ -165,6 +165,8 @@ class ExtendedTallySheet:
                 meta=Meta.create({"tallySheetVersionId": tally_sheet_version.tallySheetVersionId})
             )
 
+        db.session.commit()
+
     def on_after_tally_sheet_post(self, tally_sheet_version, workflow_actions):
         self._execute_workflow_actions_list(tally_sheet_version=tally_sheet_version, workflow_actions=workflow_actions)
 

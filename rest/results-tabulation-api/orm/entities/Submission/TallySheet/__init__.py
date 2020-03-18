@@ -314,9 +314,14 @@ class TallySheetModel(db.Model):
 
             if not post_save and templateRow.isDerived is True and templateRow.loadOnPostSave is False:
 
+                extended_election = self.submission.election.get_extended_election()
+
                 tally_sheet_version_row_join_condition = [
                     TallySheetVersionRow.Model.templateRowId == TemplateRowModel.templateRowId,
-                    TallySheetVersionRow.Model.tallySheetVersionId == Submission.Model.lockedVersionId
+                    TallySheetVersionRow.Model.tallySheetVersionId == Submission.Model.latestVersionId,
+                    WorkflowInstance.Model.status.in_(
+                        extended_election.tally_sheet_verified_statuses_list()
+                    )
                 ]
 
                 aggregated_results = db.session.query(
@@ -324,6 +329,9 @@ class TallySheetModel(db.Model):
                 ).join(
                     Submission.Model,
                     Submission.Model.submissionId == TallySheetModel.tallySheetId
+                ).join(
+                    WorkflowInstance.Model,
+                    WorkflowInstance.Model.workflowInstanceId == TallySheetModel.workflowInstanceId
                 )
 
                 if Area.Model.areaId in query_args:
