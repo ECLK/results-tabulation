@@ -46,7 +46,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACT
     WORKFLOW_ACTION_TYPE_VIEW, \
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, \
     WORKFLOW_ACTION_TYPE_VERIFY, WORKFLOW_ACTION_TYPE_EDIT, \
-    WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, WORKFLOW_ACTION_TYPE_RELEASE
+    WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, WORKFLOW_ACTION_TYPE_RELEASE, \
+    WORKFLOW_ACTION_TYPE_PRINT
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_STATUS_TYPE import \
     WORKFLOW_STATUS_TYPE_EMPTY, \
     WORKFLOW_STATUS_TYPE_SAVED, WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, WORKFLOW_STATUS_TYPE_SUBMITTED, \
@@ -123,9 +124,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
 
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
 
                 {"name": "Enter", "type": WORKFLOW_ACTION_TYPE_SAVE,
@@ -165,22 +166,24 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             ],
             actions=[
                 {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_EMPTY},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
                  "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
                  "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
                 {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
 
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
 
                 {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
                 {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
 
                 {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED}
@@ -202,7 +205,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             ],
             actions=[
                 {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_EMPTY},
                 {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
                  "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
                 {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
@@ -218,20 +221,22 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
 
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
                  "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
 
                 {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
                 {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
 
                 {"name": "Print and Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
