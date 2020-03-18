@@ -9,8 +9,8 @@ import {TallySheetContext} from "../../services/tally-sheet.provider";
 
 
 export default function DataEntryEdit({history, queryString, election, tallySheetId, messages}) {
-    const {getById} = useContext(TallySheetContext);
-    const tallySheet = getById(tallySheetId);
+    const tallySheetContext = useContext(TallySheetContext);
+    const tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
 
     const {tallySheetCode} = tallySheet;
     const {electionId, rootElection, voteType} = election;

@@ -35,24 +35,21 @@ export default function TallySheetListTableBody(
         ]
     }
 ) {
-    const {getTallySheet} = useContext(TallySheetContext);
-
+    const tallySheetContext = useContext(TallySheetContext);
     const {electionId} = election;
-
     const [tallySheetListRows, setTallySheetListRows] = useState([]);
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);
 
-
     useEffect(() => {
-        getTallySheet({electionId, tallySheetCode, voteType}).then((tallySheets) => {
+        tallySheetContext.fetchTallySheet({electionId, tallySheetCode, voteType}).then((tallySheets) => {
             setTallySheetListRows(tallySheets);
             setProcessing(false);
         }).catch((error) => {
             console.log(error.stack);
             setError(true);
             setProcessing(false);
-        })
+        });
     }, []);
 
     const getTallySheetListJsx = function () {

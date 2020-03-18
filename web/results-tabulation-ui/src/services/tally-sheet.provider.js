@@ -37,7 +37,7 @@ export function TallySheetProvider(props) {
         return tallySheet
     }
 
-    async function getTallySheet({electionId, areaId, tallySheetCode, voteType, limit = 10000, offset = 0}) {
+    async function fetchTallySheet({electionId, areaId, tallySheetCode, voteType, limit = 10000, offset = 0}) {
         const tallySheets = await request({
             url: ENDPOINT_PATH_TALLY_SHEETS(),
             method: 'get',
@@ -76,7 +76,7 @@ export function TallySheetProvider(props) {
         });
     }
 
-    function getTallySheetById(tallySheetId) {
+    function fetchTallySheetById(tallySheetId) {
         return request({
             url: ENDPOINT_PATH_TALLY_SHEETS_BY_ID(tallySheetId),
             method: 'get',
@@ -87,11 +87,11 @@ export function TallySheetProvider(props) {
         })
     }
 
-    function getById(tallySheetId) {
+    function getTallySheetById(tallySheetId) {
         return state.tallySheetMap[tallySheetId];
     }
 
-    function getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheetVersionId) {
+    function fetchTallySheetVersionById(tallySheetId, tallySheetCode, tallySheetVersionId) {
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID(tallySheetId, tallySheetCode, tallySheetVersionId),
             method: 'get',
@@ -119,14 +119,14 @@ export function TallySheetProvider(props) {
         })
     }
 
-    function getTallySheetVersionHtml(tallySheetId, tallySheetVersionId) {
+    function fetchTallySheetVersionHtml(tallySheetId, tallySheetVersionId) {
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML(tallySheetId, tallySheetVersionId),
             method: 'get'
         })
     }
 
-    function getTallySheetVersionLetterHtml(tallySheetId, tallySheetVersionId) {
+    function fetchTallySheetVersionLetterHtml(tallySheetId, tallySheetVersionId) {
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML(tallySheetId, tallySheetVersionId),
             method: 'get'
@@ -147,15 +147,15 @@ export function TallySheetProvider(props) {
 
     return <TallySheetContext.Provider
         value={{
-            getTallySheet,
-            getTallySheetById,
-            getTallySheetVersionById,
+            fetchTallySheet,
+            fetchTallySheetById,
+            fetchTallySheetVersionById,
             uploadTallySheetProof,
             executeTallySheetWorkflow,
-            getTallySheetVersionHtml,
-            getTallySheetVersionLetterHtml,
+            fetchTallySheetVersionHtml,
+            fetchTallySheetVersionLetterHtml,
             saveTallySheetVersion,
-            getById
+            getTallySheetById
         }}
     >
         {props.children}

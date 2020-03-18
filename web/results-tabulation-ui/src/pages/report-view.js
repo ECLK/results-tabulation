@@ -11,11 +11,11 @@ import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 
 export default function ReportView(props) {
-    const {getTallySheetVersionHtml, saveTallySheetVersion, getById} = useContext(TallySheetContext);
+    const tallySheetContext = useContext(TallySheetContext);
 
     const {history, election, messages} = props;
     const {electionId, rootElection, voteType} = election;
-    const tallySheet = getById(props.tallySheetId);
+    const tallySheet = tallySheetContext.getTallySheetById(props.tallySheetId);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState(null);
     const [processing, setProcessing] = useState(true);
@@ -28,7 +28,7 @@ export default function ReportView(props) {
         const {tallySheetId, tallySheetCode} = tallySheet;
         let _tallySheet = tallySheet;
         if (tallySheet.template.isDerived) {
-            await saveTallySheetVersion(tallySheetId, tallySheetCode);
+            await tallySheetContext.saveTallySheetVersion(tallySheetId, tallySheetCode);
         }
 
         const {latestVersion} = _tallySheet;
@@ -45,7 +45,7 @@ export default function ReportView(props) {
         //     if (lockedVersionId) {
         //         tallySheetVersionId = lockedVersionId;
         //     } else {
-        //         const tallySheetVersion = await saveTallySheetVersion(tallySheetId, tallySheetCode);
+        //         const tallySheetVersion = await tallySheetContext.saveTallySheetVersion(tallySheetId, tallySheetCode);
         //         tallySheetVersionId = tallySheetVersion.tallySheetVersionId;
         //     }
         // }
@@ -58,7 +58,7 @@ export default function ReportView(props) {
         setTallySheetVersionId(tallySheetVersionId);
 
         if (tallySheetVersionId) {
-            const tallySheetVersionHtml = await getTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
+            const tallySheetVersionHtml = await tallySheetContext.fetchTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
 
             setTallySheetVersionHtml(tallySheetVersionHtml)
         }

@@ -5,9 +5,9 @@ import {TallySheetContext} from "../../../services/tally-sheet.provider";
 
 
 export default function TallySheetActions({tallySheetId, electionId, history}) {
-    const {executeTallySheetWorkflow, getById} = useContext(TallySheetContext);
+    const tallySheetContext = useContext(TallySheetContext);
 
-    const tallySheet = getById(tallySheetId);
+    const tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
 
     return tallySheet.workflowInstance.actions.filter((action) => {
         return action.allowed;
@@ -20,7 +20,7 @@ export default function TallySheetActions({tallySheetId, electionId, history}) {
                 if (action.actionType === "SAVE") {
                     history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId))
                 } else {
-                    await executeTallySheetWorkflow(tallySheet.tallySheetId, action.workflowActionId);
+                    await tallySheetContext.executeTallySheetWorkflow(tallySheet.tallySheetId, action.workflowActionId);
 
                     if (action.actionType === "EDIT") {
                         history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId))

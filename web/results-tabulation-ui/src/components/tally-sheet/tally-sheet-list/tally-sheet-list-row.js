@@ -55,8 +55,8 @@ export default function TallySheetListRow(
         return tallySheet;
     }
 
-    const {getById} = useContext(TallySheetContext);
-    let tallySheet = getById(tallySheetId);
+    const tallySheetContext = useContext(TallySheetContext);
+    let tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
     tallySheet = appendColumnValuesToTallySheetRow(tallySheet);
 
     const hasFilterMatch = () => {

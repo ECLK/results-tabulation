@@ -3,12 +3,12 @@ import FetchHtmlAndPrintButton from "./fetch-html-and-print-button";
 import {TallySheetContext} from "../../services/tally-sheet.provider";
 
 export default function PrintReportButton(props) {
-    const {getTallySheetVersionHtml} = useContext(TallySheetContext);
+    const tallySheetContext = useContext(TallySheetContext);
 
     const fetchHtml = async () => {
         const {tallySheetId, tallySheetVersionId} = props;
 
-        return await getTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
+        return await tallySheetContext.fetchTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
     };
 
     return <FetchHtmlAndPrintButton

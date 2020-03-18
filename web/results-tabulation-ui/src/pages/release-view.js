@@ -12,8 +12,8 @@ import TabulationPage from "./index";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 
 export default function ReleaseView(props) {
-    const {uploadTallySheetProof, getTallySheetVersionHtml, saveTallySheetVersion, getById} = useContext(TallySheetContext);
-    const tallySheet = getById(props.tallySheetId);
+    const tallySheetContext = useContext(TallySheetContext);
+    const tallySheet = tallySheetContext.getTallySheetById(props.tallySheetId);
 
     const PROOF_STATUS_ENUM = {
         PROOF_NOT_LOADED: -4,
@@ -58,7 +58,7 @@ export default function ReleaseView(props) {
             if (lockedVersionId) {
                 tallySheetVersionId = lockedVersionId;
             } else {
-                const tallySheetVersion = await saveTallySheetVersion(tallySheetId, tallySheetCode);
+                const tallySheetVersion = await tallySheetContext.saveTallySheetVersion(tallySheetId, tallySheetCode);
                 tallySheetVersionId = tallySheetVersion.tallySheetVersionId;
             }
         }
@@ -69,7 +69,7 @@ export default function ReleaseView(props) {
     const fetchTallySheetVersionHtml = async () => {
         setTallySheetVersionHtml("Processing ... ");
         const {tallySheetId} = tallySheet;
-        const tallySheetVersionHtml = await getTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
+        const tallySheetVersionHtml = await tallySheetContext.fetchTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
 
         setTallySheetVersionHtml(tallySheetVersionHtml)
     };
@@ -153,7 +153,7 @@ export default function ReleaseView(props) {
             var formData = new FormData();
             formData.append("proofId", submissionProofId);
             formData.append("scannedFile", evt.target.files[0]);
-            const proofStatus = await uploadTallySheetProof(formData, progressEvent => setProgress(100 * progressEvent.loaded / progressEvent.total));
+            const proofStatus = await tallySheetContext.uploadTallySheetProof(formData, progressEvent => setProgress(100 * progressEvent.loaded / progressEvent.total));
             updateProofStatus(proofStatus);
             messages.push("Success", MESSAGES_EN.success_upload, MESSAGE_TYPES.SUCCESS);
             setProgress(-1)

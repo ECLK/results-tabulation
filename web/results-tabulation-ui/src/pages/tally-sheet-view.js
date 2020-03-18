@@ -4,8 +4,8 @@ import ReportView from "./report-view";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 
 export default function TallySheetView(props) {
-    const {getById} = useContext(TallySheetContext);
-    const tallySheet = getById(props.tallySheetId);
+    const tallySheetContext = useContext(TallySheetContext);
+    const tallySheet = tallySheetContext.getTallySheetById(props.tallySheetId);
 
     const saveAllowed = tallySheet.workflowInstance.actions.filter(action => {
         return action.allowed && action.actionType === "SAVE";

@@ -28,7 +28,7 @@ import {TallySheetContext} from "../../services/tally-sheet.provider";
 
 
 export default function ReleaseList({history, queryString, election}) {
-    const {getTallySheet} = useContext(TallySheetContext);
+    const tallySheetContext = useContext(TallySheetContext);
 
     const {electionId, electionName} = election;
     const {tallySheetCode, voteType} = queryString;
@@ -69,7 +69,7 @@ export default function ReleaseList({history, queryString, election}) {
 
 
     useEffect(() => {
-        getTallySheet({electionId, tallySheetCode}).then((tallySheets) => {
+        tallySheetContext.fetchTallySheet({electionId, tallySheetCode}).then((tallySheets) => {
             setTallySheets(tallySheets);
             setProcessing(false);
         }).catch((error) => {

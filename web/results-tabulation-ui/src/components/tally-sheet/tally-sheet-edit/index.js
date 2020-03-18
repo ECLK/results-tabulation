@@ -40,7 +40,7 @@ export default class TallySheetEdit extends Component {
 
 
 export function useTallySheetEdit(props) {
-    const {saveTallySheetVersion} = useContext(TallySheetContext);
+    const tallySheetContext = useContext(TallySheetContext);
 
     const {messages, history, election, setTallySheetContent, validateTallySheetContent, getTallySheetRequestBody} = props;
     const [processing, setProcessing] = useState(true);
@@ -85,7 +85,7 @@ export function useTallySheetEdit(props) {
             setProcessing(true);
             setProcessingLabel("Saving");
             try {
-                const tallySheet = await saveTallySheetVersion(tallySheetId, tallySheetCode, body);
+                const tallySheet = await tallySheetContext.saveTallySheetVersion(tallySheetId, tallySheetCode, body);
                 setTallySheetVersion(tallySheet.latestVersion);
             } catch (e) {
                 messages.push("Error", MESSAGES_EN.error_tallysheet_save, MESSAGE_TYPES.ERROR);

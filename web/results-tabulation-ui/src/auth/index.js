@@ -145,7 +145,7 @@ function LoadElectionAndThen(props) {
 }
 
 function LoadTallySheetAndThen(props) {
-    const {getTallySheetById} = useContext(TallySheetContext);
+    const tallySheetContext = useContext(TallySheetContext);
 
     const {then, electionId, tallySheetId} = props;
     const [processing, setProcessing] = useState(true);
@@ -155,7 +155,7 @@ function LoadTallySheetAndThen(props) {
 
     const fetchData = async () => {
         try {
-            const _tallySheet = await getTallySheetById(tallySheetId);
+            const _tallySheet = await tallySheetContext.fetchTallySheetById(tallySheetId);
             const _election = await getElectionById(_tallySheet.electionId);
             setTallySheet(_tallySheet);
             setElection(_election);
