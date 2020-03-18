@@ -8,10 +8,6 @@ from orm.enums import AreaTypeEnum
 
 class ExtendedTallySheet_PE_39(ExtendedTallySheet):
     class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
-
-        def __init__(self, tallySheetVersion):
-            super(ExtendedTallySheet_PE_39.ExtendedTallySheetVersion, self).__init__(tallySheetVersion)
-
         #
         # def html_letter(self, title="", total_registered_voters=None):
         #     # TODO: implement
