@@ -6,11 +6,46 @@ from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
+from flask import render_template
+from ext.ExtendedTallySheet import ExtendedTallySheet
+from orm.entities import Area
+from constants.VOTE_TYPES import Postal
+from util import to_comma_seperated_num
+from orm.enums import AreaTypeEnum
+
 
 class ExtendedTallySheet_PE_21(ExtendedTallySheet):
     class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
 
-        def get_post_save_request_content(self):
+        def html_letter(self, title="", total_registered_voters=None):
+            return super(ExtendedTallySheet_PE_21.ExtendedTallySheetVersion, self).html_letter(
+                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
+            )
+
+        def html(self, title="", total_registered_voters=None):
+            tallySheetVersion = self.tallySheetVersion
+
+            stamp = tallySheetVersion.stamp
+
+            content = {
+                "election": {
+                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                },
+                "stamp": {
+                    "createdAt": stamp.createdAt,
+                    "createdBy": stamp.createdBy,
+                    "barcodeString": stamp.barcodeString
+                },
+                "tallySheetCode": "PE-21",
+                "electoralDistrictNo": Area.get_associated_areas(
+                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
+                "electoralDistrict": Area.get_associated_areas(
+                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "countingCentre": tallySheetVersion.submission.area.areaName,
+                "data": []
+            }
+
+            # Appending canditate wise vote count
             tally_sheet_id = self.tallySheetVersion.tallySheetId
             template_rows = db.session.query(
                 TemplateRowModel.templateRowId
@@ -22,8 +57,6 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheet):
             ).group_by(
                 TemplateRowModel.templateRowId
             ).all()
-
-            content = []
 
             candidate_wise_valid_vote_count_result = self.get_candidate_wise_valid_vote_count_result().sort_values(
                 by=['numValue'], ascending=False
@@ -39,15 +72,21 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheet):
                     for index_2 in filtered_candidate_wise_valid_vote_count_result.index:
                         if number_of_seats_allocated > 0:
                             for template_row in template_rows:
-                                content.append({
-                                    "templateRowId": template_row.templateRowId,
-                                    "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
+                                content["data"].append({
                                     "partyId": int(party_id),
                                     "candidateId": int(
                                         filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateId"]),
+                                    "candidateName": filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateName"],
+                                    "partyName": filtered_candidate_wise_valid_vote_count_result.at[index_2, "partyName"],
                                     "numValue": int(
                                         filtered_candidate_wise_valid_vote_count_result.at[index_2, "numValue"])
                                 })
+
                             number_of_seats_allocated -= 1
 
-            return content
+            html = render_template(
+                'PE-21.html',
+                content=content
+            )
+
+            return html
