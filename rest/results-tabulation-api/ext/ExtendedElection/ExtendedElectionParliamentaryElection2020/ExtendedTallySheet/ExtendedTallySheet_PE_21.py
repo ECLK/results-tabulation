@@ -73,8 +73,6 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheet):
                         if number_of_seats_allocated > 0:
                             for template_row in template_rows:
                                 content["data"].append({
-                                    "templateRowId": template_row.templateRowId,
-                                    "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
                                     "partyId": int(party_id),
                                     "candidateId": int(
                                         filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateId"]),
