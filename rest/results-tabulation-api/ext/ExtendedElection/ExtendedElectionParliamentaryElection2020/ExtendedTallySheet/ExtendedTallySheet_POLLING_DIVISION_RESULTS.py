@@ -80,8 +80,8 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheet):
                 content["data"][index].append(percentage_value)
 
             for index, area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.iterrows():
-                total_rejected_vote_count += area_wise_rejected_vote_count_result_item.numValue
-            total_rejected_vote_count = total_rejected_vote_count if not math.isnan(total_rejected_vote_count) else 0
+                rejected_vote_count = area_wise_rejected_vote_count_result_item.numValue
+                total_rejected_vote_count += rejected_vote_count if not math.isnan(rejected_vote_count) else 0
             content["rejectedVoteCount"] = to_comma_seperated_num(total_rejected_vote_count)
 
             total_vote_count = total_valid_vote_count + total_rejected_vote_count
