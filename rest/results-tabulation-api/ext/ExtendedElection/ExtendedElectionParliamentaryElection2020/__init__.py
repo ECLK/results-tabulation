@@ -168,9 +168,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 WORKFLOW_STATUS_TYPE_VERIFIED
             ],
             actions=[
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_EMPTY},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_SAVE,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_SAVE,
                  "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
                 {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
                  "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
@@ -207,9 +207,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 WORKFLOW_STATUS_TYPE_RELEASED
             ],
             actions=[
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_EMPTY},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_SAVE,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_SAVE,
                  "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
                 {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
                  "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
