@@ -4,7 +4,7 @@ from constants.AUTH_CONSTANTS import DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_V
 from constants.VOTE_TYPES import NonPostal, Postal, PostalAndNonPostal
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, CE_201, CE_201_PV, \
     PE_4, PE_CE_RO_V1, \
-    PE_R1, PE_CE_RO_PR_1, PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, PE_39, PE_22, PE_21
+    PE_R1, PE_CE_RO_PR_1, PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACTION_TYPE import \
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, \
@@ -49,6 +49,9 @@ role_based_access_config = {
         PE_CE_RO_V1: {
             NonPostal: [READ, WRITE]
         },
+        POLLING_DIVISION_RESULTS: {
+            NonPostal: [READ, WRITE]
+        },
         PE_R1: {
             NonPostal: [READ, WRITE]
         },
@@ -75,6 +78,9 @@ role_based_access_config = {
         PE_CE_RO_V1: {
             NonPostal: [READ, WRITE, LOCK]
         },
+        POLLING_DIVISION_RESULTS: {
+            NonPostal: [READ, WRITE, LOCK]
+        },
         PE_R1: {
             NonPostal: [READ, WRITE, LOCK]
         },
@@ -84,6 +90,9 @@ role_based_access_config = {
     },
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: {
         PE_CE_RO_V1: {
+            Postal: [READ, WRITE]
+        },
+        POLLING_DIVISION_RESULTS: {
             Postal: [READ, WRITE]
         },
         PE_R1: {
@@ -125,6 +134,10 @@ role_based_access_config = {
             Postal: [READ, UNLOCK]
         },
         PE_CE_RO_V1: {
+            Postal: [READ, WRITE, LOCK],
+            NonPostal: [READ, WRITE, UNLOCK]
+        },
+        POLLING_DIVISION_RESULTS: {
             Postal: [READ, WRITE, LOCK],
             NonPostal: [READ, WRITE, UNLOCK]
         },
@@ -190,6 +203,10 @@ role_based_access_config = {
             NonPostal: [READ, UNLOCK]
         },
         PE_CE_RO_V1: {
+            Postal: [READ, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
+            NonPostal: [READ, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+        },
+        POLLING_DIVISION_RESULTS: {
             Postal: [READ, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
             NonPostal: [READ, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
         },

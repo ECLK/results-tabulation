@@ -13,7 +13,7 @@ export default class ParliamentElection2020TallySheetEdit extends TallySheetEdit
             return TallySheetEdit_PE_4
         } else if (tallySheetCode === TALLY_SHEET_CODE_PE_39) {
             return TallySheetEdit_PE_39
-        } else if (tallySheetCode === TALLY_SHEET_CODE_PE_22){
+        } else if (tallySheetCode === TALLY_SHEET_CODE_PE_22) {
             return TallySheetEdit_PE_22
         } else {
             return super.getTallySheetEditForm(tallySheetCode)
