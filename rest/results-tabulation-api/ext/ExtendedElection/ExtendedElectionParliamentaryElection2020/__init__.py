@@ -3,6 +3,8 @@ from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, 
     TALLY_SHEET_COLUMN_SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_POLLING_DIVISION_RESULTS import \
     ExtendedTallySheet_POLLING_DIVISION_RESULTS
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_ALL_ISLAND_RESULT import \
+    ExtendedTallySheet_ALL_ISLAND_RESULT
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201 import \
     ExtendedTallySheet_CE_201
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_21 import \
@@ -34,7 +36,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KE
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
     PE_R1, PE_CE_RO_PR_1, \
-    PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS
+    PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, \
+    ALL_ISLAND_RESULT
 from constants.VOTE_TYPES import Postal, NonPostal, PostalAndNonPostal
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import RoleBasedAccess
@@ -77,7 +80,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             PE_CE_RO_PR_2: ExtendedTallySheet_PE_CE_RO_PR_2,
             PE_CE_RO_PR_3: ExtendedTallySheet_PE_CE_RO_PR_3,
             PE_21: ExtendedTallySheet_PE_21,
-            POLLING_DIVISION_RESULTS: ExtendedTallySheet_POLLING_DIVISION_RESULTS
+            POLLING_DIVISION_RESULTS: ExtendedTallySheet_POLLING_DIVISION_RESULTS,
+            ALL_ISLAND_RESULT: ExtendedTallySheet_ALL_ISLAND_RESULT
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
@@ -439,6 +443,31 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_r1_rejected_vote_row)
 
+        tally_sheet_template_all_island_result = Template.create(
+            templateName=ALL_ISLAND_RESULT
+        )
+        tally_sheet_template_all_island_result_party_wise_vote_row = tally_sheet_template_all_island_result.add_row(
+            templateRowType="PARTY_WISE_VOTE",
+            hasMany=True,
+            isDerived=True,
+            columns=[
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
+            ]
+        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v2_party_wise_vote_row)
+        tally_sheet_template_all_island_result_rejected_vote_row = tally_sheet_template_all_island_result.add_row(
+            templateRowType="REJECTED_VOTE",
+            hasMany=True,
+            isDerived=True,
+            columns=[
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
+            ]
+        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v2_rejected_vote_row)
+
         tally_sheet_template_pe_r2 = Template.create(
             templateName=PE_R2
         )
@@ -749,7 +778,17 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             area_key = area_name
 
             def _create_country_tally_sheets(area):
-                return {}
+                all_island_results_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_all_island_result, electionId=root_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": root_election.electionId
+                    }).metaId
+                )]
+                return {
+                    "all_island_results_tally_sheet_list": all_island_results_tally_sheet_list
+                }
 
             data_entry_obj = _get_area_entry(root_election, area_class, area_name, area_key,
                                              _create_country_tally_sheets)
@@ -759,11 +798,15 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         def _get_electoral_district_entry(row):
             election, postal_election, ordinary_election = _get_electoral_district_election(row)
 
+            country = _get_country_entry(row)
+
             area_class = ElectoralDistrict
             area_name = row["Electoral District"]
             area_key = area_name
 
             def _create_electoral_district_tally_sheets(area):
+                all_island_results_tally_sheet_list = country.all_island_results_tally_sheet_list
+
                 pe_21_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pe_21, electionId=election.electionId,
                     areaId=area.areaId,
@@ -790,7 +833,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": election.electionId
                     }).metaId,
-                    parentTallySheets=pe_r2_tally_sheet_list
+                    parentTallySheets=[*pe_r2_tally_sheet_list, *all_island_results_tally_sheet_list]
                 )]
 
                 pe_r1_tally_sheet_list = [TallySheet.create(

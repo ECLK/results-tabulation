@@ -15,7 +15,10 @@ import {
     TALLY_SHEET_CODE_PE_R1,
     TALLY_SHEET_CODE_PE_R2,
     TALLY_SHEET_CODE_PE_39,
-    TALLY_SHEET_CODE_PE_22, TALLY_SHEET_CODE_PE_21, TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS
+    TALLY_SHEET_CODE_PE_22, 
+    TALLY_SHEET_CODE_PE_21, 
+    TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS,
+    TALLY_SHEET_CODE_ALL_ISLAND_RESULT
 } from "./TALLY_SHEET_CODE";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
@@ -192,6 +195,15 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
                                     to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_R2)}
+                                >
+                                    List
+                                </Link>
+                            </li>
+
+                            <li>All Island Result
+                                <Link
+                                    className="tally-sheet-code-list-item btn-list"
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_ALL_ISLAND_RESULT)}
                                 >
                                     List
                                 </Link>

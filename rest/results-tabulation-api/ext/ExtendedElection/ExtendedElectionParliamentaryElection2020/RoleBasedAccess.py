@@ -4,7 +4,7 @@ from constants.AUTH_CONSTANTS import ACCESS_TYPE_READ, ACCESS_TYPE_LOCK, ACCESS_
     NATIONAL_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
 from constants.VOTE_TYPES import NonPostal, Postal, PostalAndNonPostal
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import PE_27, CE_201, CE_201_PV, PE_4, PE_CE_RO_V1, \
-    PE_R1, PE_CE_RO_PR_1, PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS
+    PE_R1, PE_CE_RO_PR_1, PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, ALL_ISLAND_RESULT
 
 READ = ACCESS_TYPE_READ
 WRITE = ACCESS_TYPE_WRITE
@@ -158,7 +158,9 @@ role_based_access_config = {
         }
     },
     NATIONAL_REPORT_VIEWER_ROLE: {
-
+        ALL_ISLAND_RESULT: {
+            PostalAndNonPostal: [READ, WRITE]
+        }
     },
     NATIONAL_REPORT_VERIFIER_ROLE: {
         PE_R2: {
@@ -168,6 +170,9 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, WRITE, UNLOCK]
         },
         PE_21: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK]
+        },
+        ALL_ISLAND_RESULT: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK]
         }
     },
@@ -223,6 +228,9 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, WRITE, UNLOCK]
         },
         PE_21: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK]
+        },
+        ALL_ISLAND_RESULT: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK]
         }
     }
