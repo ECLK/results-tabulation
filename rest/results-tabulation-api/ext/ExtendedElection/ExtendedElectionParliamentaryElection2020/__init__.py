@@ -982,7 +982,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
                 pe_ce_ro_v1_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pe_ce_ro_v1, electionId=postal_election.electionId,
@@ -1082,7 +1083,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_r1_tally_sheet_list = [TallySheet.create(
