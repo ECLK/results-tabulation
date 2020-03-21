@@ -81,7 +81,6 @@ def upgrade():
     op.create_foreign_key('workflowInstance_fk_latestLogId', 'workflowInstance', 'workflowInstanceLog', ['latestLogId'],
                           ['workflowInstanceLogId'])
 
-    return
     ######################################################################
     # Migrate existing tally sheets
     ######################################################################
@@ -487,9 +486,9 @@ def upgrade():
             WORKFLOW_STATUS_TYPE_RELEASED
         ],
         actions=[
-            {"name": "View", "type": WORKFLOW_ACTION_TYPE_SAVE,
+            {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
              "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-            {"name": "View", "type": WORKFLOW_ACTION_TYPE_SAVE,
+            {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
              "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
             {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
              "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
