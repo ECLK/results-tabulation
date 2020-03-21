@@ -1,14 +1,14 @@
 from app import db
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
-from ext.ExtendedTallySheet import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 
-class ExtendedTallySheet_PE_21(ExtendedTallySheet):
-    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
+    class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def get_post_save_request_content(self):
             tally_sheet_id = self.tallySheetVersion.tallySheetId
@@ -39,15 +39,24 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheet):
                     for index_2 in filtered_candidate_wise_valid_vote_count_result.index:
                         if number_of_seats_allocated > 0:
                             for template_row in template_rows:
-                                content.append({
-                                    "templateRowId": template_row.templateRowId,
-                                    "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
-                                    "partyId": int(party_id),
-                                    "candidateId": int(
-                                        filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateId"]),
-                                    "numValue": int(
-                                        filtered_candidate_wise_valid_vote_count_result.at[index_2, "numValue"])
-                                })
+                                num_value = filtered_candidate_wise_valid_vote_count_result.at[index_2, "numValue"]
+                                if num_value is not None and not math.isnan(num_value):
+                                    content.append({
+                                        "templateRowId": template_row.templateRowId,
+                                        "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
+                                        "partyId": int(party_id),
+                                        "candidateId": int(
+                                            filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateId"]),
+                                        "numValue": num_value
+                                    })
+                                else:
+                                    content.append({
+                                        "templateRowId": template_row.templateRowId,
+                                        "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
+                                        "partyId": int(party_id),
+                                        "candidateId": None,
+                                        "numValue": None
+                                    })
                             number_of_seats_allocated -= 1
 
             return content
