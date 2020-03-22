@@ -725,6 +725,8 @@ def upgrade():
                 )
                 session.commit()
 
+    session.commit()
+
 
 def downgrade():
     op.drop_constraint('tallySheet_fk_workflowInstanceId', 'tallySheet', type_='foreignkey')
