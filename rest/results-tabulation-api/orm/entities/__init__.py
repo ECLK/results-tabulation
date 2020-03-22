@@ -6,8 +6,6 @@ from orm.entities import Area
 from orm.entities.Area import Electorate
 from orm.entities import Party
 from orm.entities.Election import ElectionParty, ElectionCandidate
-from orm.entities import Invoice, StationaryItem, BallotBox, Ballot, BallotBook
-from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities import Proof, History
 from orm.entities.History import HistoryVersion
 from orm.entities.Area import Office
