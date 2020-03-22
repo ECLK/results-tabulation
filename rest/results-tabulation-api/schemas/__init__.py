@@ -4,7 +4,7 @@ from app import db, ma
 from orm.entities import Election, Proof, Submission, SubmissionVersion, Area, Party, Template, TallySheetVersionRow
 from orm.entities.Area import AreaAreaModel
 from orm.entities.Audit import Stamp
-from orm.entities.Election import ElectionCandidate
+from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
 from orm.entities.Meta import MetaData
 from orm.entities.SubmissionVersion import TallySheetVersion
@@ -453,3 +453,17 @@ class TemplateSchema(ma.ModelSchema):
         sqla_session = db.session
 
     rows = ma.Nested(TemplateRowSchema, many=True)
+
+
+class InvalidVoteCategory_Schema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "invalidVoteCategoryId",
+            "categoryDescription",
+            "invalidVoteCategoryType"
+        )
+
+        model = InvalidVoteCategory.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
