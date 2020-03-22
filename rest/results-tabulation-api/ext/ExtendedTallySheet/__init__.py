@@ -3,6 +3,7 @@ from flask import render_template
 from sqlalchemy import MetaData
 
 from app import db
+from auth import get_user_name
 from constants.VOTE_TYPES import Postal, NonPostal
 from exception import MethodNotAllowedException, UnauthorizedException
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY, \
@@ -75,8 +76,7 @@ class ExtendedTallySheet:
         from orm.entities.SubmissionVersion import TallySheetVersion
 
         tally_sheet_version = db.session.query(
-            TallySheetVersion.Model.tallySheetVersionId,
-            TallySheetVersion.Model.isComplete
+            TallySheetVersion.Model
         ).filter(
             SubmissionVersion.Model.submissionId == self.tallySheet.tallySheetId,
             SubmissionVersion.Model.submissionVersionId == TallySheetVersion.Model.tallySheetVersionId,
@@ -802,8 +802,13 @@ class ExtendedTallySheet:
 
 
 class ExtendedTallySheetDataEntry(ExtendedTallySheet):
-    # def on_before_workflow_action(self, workflowActionId, tally_sheet, content=None):
-    #     pass
+    def on_before_workflow_action(self, workflow_action, tally_sheet_version):
+        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_VERIFY]:
+            if tally_sheet_version.createdBy == get_user_name():
+                raise UnauthorizedException("You cannot very the data last edited by yourself.")
+
+        return super(ExtendedTallySheetDataEntry, self).on_before_workflow_action(
+            workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
 
     class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
         pass

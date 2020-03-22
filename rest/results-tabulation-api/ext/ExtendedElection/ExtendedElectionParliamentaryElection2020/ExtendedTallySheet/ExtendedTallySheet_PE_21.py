@@ -7,10 +7,7 @@ from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 from flask import render_template
-from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities import Area
-from constants.VOTE_TYPES import Postal
-from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 

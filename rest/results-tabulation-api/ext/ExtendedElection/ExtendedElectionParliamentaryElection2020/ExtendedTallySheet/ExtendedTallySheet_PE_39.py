@@ -1,13 +1,13 @@
 from flask import render_template
-from ext.ExtendedTallySheet import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheetDataEntry
 from orm.entities import Area
 from constants.VOTE_TYPES import Postal
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_PE_39(ExtendedTallySheet):
-    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+class ExtendedTallySheet_PE_39(ExtendedTallySheetDataEntry):
+    class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
         #
         # def html_letter(self, title="", total_registered_voters=None):
         #     # TODO: implement
