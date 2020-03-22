@@ -1,21 +1,85 @@
 from marshmallow.fields import Integer, String
 
 from app import db, ma
-from orm.entities import StationaryItem, Ballot, Invoice, BallotBox, \
-    Election, Proof, Submission, Electorate, SubmissionVersion, Area, Party, BallotBook, Candidate, Template, \
-    TallySheetVersionRow
+from orm.entities import Election, Proof, Submission, SubmissionVersion, Area, Party, Template, TallySheetVersionRow
 from orm.entities.Area import AreaAreaModel
 from orm.entities.Audit import Stamp
-from orm.entities.Election import InvalidVoteCategory, ElectionCandidate
+from orm.entities.Election import ElectionCandidate
 from orm.entities.IO import File
-from orm.entities.Invoice import InvoiceStationaryItem
 from orm.entities.Meta import MetaData
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel
-from orm.enums import StationaryItemTypeEnum, ProofTypeEnum, OfficeTypeEnum, SubmissionTypeEnum, ElectorateTypeEnum, \
-    AreaTypeEnum, BallotTypeEnum
+from orm.entities.Workflow import WorkflowStatusModel, WorkflowActionModel, WorkflowInstance
+from orm.entities.Workflow.WorkflowInstance import WorkflowInstanceLog
+from orm.enums import ProofTypeEnum, SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum
 from marshmallow_enum import EnumField
+
+
+class StatusSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "workflowStatusId",
+            "status"
+        )
+
+        model = WorkflowStatusModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class StatusActionSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "workflowActionId",
+            "actionName",
+            "actionType",
+            "fromStatus",
+            "toStatus",
+            "allowed"
+        )
+
+        model = WorkflowActionModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
+class WorkflowInstanceLogSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "workflowInstanceLogId",
+            "action",
+            "status"
+        )
+
+        model = WorkflowInstanceLog.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    action = ma.Nested(StatusActionSchema)
+
+
+class WorkflowInstanceSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "workflowId",
+            # "workflowName",
+            "actions",
+            "statuses",
+            "status",
+            "latestLog"
+        )
+
+        model = WorkflowInstance.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    actions = ma.Nested(StatusActionSchema, many=True)
+    statuses = ma.Nested(StatusSchema, many=True)
 
 
 class StampSchema(ma.ModelSchema):
@@ -212,64 +276,6 @@ class AreaAreaSchema(ma.ModelSchema):
         sqla_session = db.session
 
 
-class ElectorateSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "electorateId",
-            "electorateName",
-            "electorateType",
-            "electionId",
-            # "parents",
-            # "children",
-            # "pollingStations",
-            # "countingCentres",
-            # "districtCentres"
-        )
-
-        model = Electorate.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    electorateId = Integer()
-    electorateName = String()
-    electorateType = EnumField(ElectorateTypeEnum)
-    parents = ma.Nested('AreaSchema', many=True)
-    children = ma.Nested('AreaSchema', only="areaId", many=True)
-    pollingStations = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-    countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-    districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-
-
-class OfficeSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "officeId",
-            "officeName",
-            "officeType",
-            "electionId",
-            # "parents",
-            # "children",
-            # "pollingStations",
-            # "countingCentres",
-            # "districtCentres"
-        )
-
-        model = TallySheet.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    electorateId = Integer()
-    electorateName = String()
-    officeType = EnumField(OfficeTypeEnum)
-    parents = ma.Nested('AreaSchema', many=True)
-    children = ma.Nested('AreaSchema', only="areaId", many=True)
-    pollingStations = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-    countingCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-    districtCentres = ma.Nested('AreaSchema', only=["areaId", "areaName", "areaType"], many=True)
-
-
 class Proof_Schema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -307,7 +313,6 @@ class SubmissionSchema(ma.ModelSchema):
         sqla_session = db.session
 
     # latestVersion = ma.Nested(TallySheetVersionSchema)
-    electorate = ma.Nested(ElectorateSchema)
     submissionType = EnumField(SubmissionTypeEnum)
     submissionProof = ma.Nested(Proof_Schema)
 
@@ -351,6 +356,40 @@ class TallySheetVersionSchema(ma.ModelSchema):
     content = ma.Nested(TallySheetVersionRow_Schema, many=True)
 
 
+class TallySheetSchema_1(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "tallySheetId",
+            "tallySheetCode",
+            "templateId",
+            "template",
+            "electionId",
+            "areaId",
+            "area",
+            "areaMapList",
+            "latestVersion",
+            "metaDataList",
+            "workflowInstance"
+        )
+
+        model = TallySheet.Model
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+    template = ma.Nested("TemplateSchema")
+    area = ma.Nested(AreaSchema, only=["areaId", "areaName"])
+    versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
+    latestVersion = ma.Nested(TallySheetVersionSchema)
+    latestStamp = ma.Nested(StampSchema)
+    lockedStamp = ma.Nested(StampSchema)
+    submittedStamp = ma.Nested(StampSchema)
+    submissionProof = ma.Nested(Proof_Schema)
+    metaDataList = ma.Nested(MetaDataSchema, many=True)
+    areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
+    workflowInstance = ma.Nested(WorkflowInstanceSchema)
+
+
 class TallySheetSchema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -362,20 +401,8 @@ class TallySheetSchema(ma.ModelSchema):
             "areaId",
             "area",
             "areaMapList",
-            "latestVersionId",
-            "latestStamp",
-            "lockedVersionId",
-            "lockedStamp",
-            "submittedVersionId",
-            "submittedStamp",
-            "locked",
-            "submitted",
-            "notified",
-            "released",
-            # "latestVersion",
-            "submissionProofId",
-            "versions",
-            "metaDataList"
+            "metaDataList",
+            "workflowInstance"
         )
 
         model = TallySheet.Model
@@ -393,6 +420,7 @@ class TallySheetSchema(ma.ModelSchema):
     submissionProof = ma.Nested(Proof_Schema)
     metaDataList = ma.Nested(MetaDataSchema, many=True)
     areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
+    workflowInstance = ma.Nested(WorkflowInstanceSchema)
 
 
 class TemplateRowSchema(ma.ModelSchema):
@@ -425,136 +453,3 @@ class TemplateSchema(ma.ModelSchema):
         sqla_session = db.session
 
     rows = ma.Nested(TemplateRowSchema, many=True)
-
-
-class StationaryItem_Schema(ma.ModelSchema):
-    stationaryItemType = EnumField(StationaryItemTypeEnum)
-
-    class Meta:
-        fields = (
-            "stationaryItemId",
-            "stationaryItemType",
-            "electionId",
-            "available"
-        )
-
-        model = StationaryItem.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class Invoice_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "invoiceId",
-            "electionId",
-            "issuingOfficeId",
-            "receivingOfficeId",
-            "issuedBy",
-            "issuedTo",
-            "issuedAt",
-            "confirmed",
-            "delete"
-        )
-
-        model = Invoice.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class Invoice_StationaryItem_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "received",
-            "receivedBy",
-            "receivedFrom",
-            "receivedOfficeId",
-            "receivedAt",
-            # "receivedProofId",
-            "invoiceId",
-            "stationaryItemId",
-            "stationaryItem",
-            "delete",
-            "receivedProof"
-        )
-
-        model = InvoiceStationaryItem.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    invoice = ma.Nested(Invoice_Schema)
-    stationaryItem = ma.Nested(StationaryItem_Schema)
-    receivedProof = ma.Nested(Proof_Schema)
-
-
-class InvalidVoteCategory_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "invalidVoteCategoryId",
-            "categoryDescription",
-            "invalidVoteCategoryType"
-        )
-
-        model = InvalidVoteCategory.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-
-class Ballot_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "ballotId",
-            "ballotType",
-            "electionId",
-            "stationaryItemId",
-            "available"
-        )
-
-        model = Ballot.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    ballotType = EnumField(BallotTypeEnum)
-    stationaryItem = ma.Nested(StationaryItem_Schema)
-
-
-class BallotBox_Schema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "ballotBoxId",
-            "electionId",
-            "stationaryItemId",
-            "available"
-        )
-
-        model = BallotBox.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    stationaryItem = ma.Nested(StationaryItem_Schema)
-
-
-class BallotBookSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "stationaryItemId",
-            "electionId",
-            "fromBallotId",
-            "toBallotId",
-            "ballots",
-            "available"
-        )
-
-        model = BallotBook.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    stationaryItem = ma.Nested(StationaryItem_Schema)
-    ballots = ma.Nested(Ballot_Schema, only=["ballotId", "stationaryItemId", "ballotType"], many=True)

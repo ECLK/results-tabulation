@@ -1,6 +1,8 @@
 from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
 from app import db
+from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_VERIFIED, \
+    WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, WORKFLOW_STATUS_TYPE_CERTIFIED, WORKFLOW_STATUS_TYPE_RELEASED
 from ext.ExtendedTallySheet import ExtendedTallySheet
 
 
@@ -28,6 +30,14 @@ class ExtendedElection:
     def __init__(self, election: Election, role_based_access_config=None):
         self.election = election
         self.role_based_access_config = role_based_access_config
+
+    def tally_sheet_verified_statuses_list(self):
+        return [
+            WORKFLOW_STATUS_TYPE_VERIFIED,
+            WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
+            WORKFLOW_STATUS_TYPE_CERTIFIED,
+            WORKFLOW_STATUS_TYPE_RELEASED
+        ]
 
     def get_extended_tally_sheet_class(self, templateName):
 

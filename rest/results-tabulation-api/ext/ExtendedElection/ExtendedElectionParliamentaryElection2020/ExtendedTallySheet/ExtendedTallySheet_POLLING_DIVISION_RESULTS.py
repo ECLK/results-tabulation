@@ -1,8 +1,7 @@
 import math
-from distutils.command.config import config
 
 from flask import render_template
-from ext.ExtendedTallySheet import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities import Area
 from constants.VOTE_TYPES import Postal
 from orm.entities.Area import AreaModel
@@ -10,8 +9,8 @@ from util import to_comma_seperated_num, to_percentage
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheet):
-    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
+    class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html_letter(self, title="", total_registered_voters=None):
             return super(ExtendedTallySheet_POLLING_DIVISION_RESULTS, self).html_letter(

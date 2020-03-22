@@ -44,8 +44,19 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
     TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACTION_TYPE import \
+    WORKFLOW_ACTION_TYPE_VIEW, \
+    WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, \
+    WORKFLOW_ACTION_TYPE_VERIFY, WORKFLOW_ACTION_TYPE_EDIT, \
+    WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, WORKFLOW_ACTION_TYPE_RELEASE, \
+    WORKFLOW_ACTION_TYPE_PRINT
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_STATUS_TYPE import \
+    WORKFLOW_STATUS_TYPE_EMPTY, \
+    WORKFLOW_STATUS_TYPE_SAVED, WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, WORKFLOW_STATUS_TYPE_SUBMITTED, \
+    WORKFLOW_STATUS_TYPE_VERIFIED, WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, \
+    WORKFLOW_STATUS_TYPE_CERTIFIED, WORKFLOW_STATUS_TYPE_RELEASED
 from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
-from orm.entities import Candidate, Template, Party, Meta
+from orm.entities import Candidate, Template, Party, Meta, Workflow
 from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
@@ -91,6 +102,165 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
                        invalid_vote_categories_dataset_file=None, number_of_seats_dataset_file=None):
         root_election = self.election
+
+        workflow_data_entry: Workflow = Workflow.create(
+            workflowName="Data Entry",
+            firstStatus=WORKFLOW_STATUS_TYPE_EMPTY,
+            lastStatus=WORKFLOW_STATUS_TYPE_VERIFIED,
+            statuses=[
+                WORKFLOW_STATUS_TYPE_EMPTY,
+                WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
+                WORKFLOW_STATUS_TYPE_SAVED,
+                WORKFLOW_STATUS_TYPE_SUBMITTED,
+                WORKFLOW_STATUS_TYPE_VERIFIED
+            ],
+            actions=[
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_EMPTY},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
+                 "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+
+                {"name": "Enter", "type": WORKFLOW_ACTION_TYPE_SAVE,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "EDIT", "type": WORKFLOW_ACTION_TYPE_SAVE,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+
+                {"name": "Submit", "type": WORKFLOW_ACTION_TYPE_SUBMIT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
+
+                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+
+                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+
+                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+
+                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+
+                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED}
+            ]
+        )
+
+        workflow_report: Workflow = Workflow.create(
+            workflowName="Data Entry",
+            firstStatus=WORKFLOW_STATUS_TYPE_EMPTY,
+            lastStatus=WORKFLOW_STATUS_TYPE_VERIFIED,
+            statuses=[
+                WORKFLOW_STATUS_TYPE_EMPTY,
+                WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
+                WORKFLOW_STATUS_TYPE_SAVED,
+                WORKFLOW_STATUS_TYPE_VERIFIED
+            ],
+            actions=[
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
+                 "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+
+                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+
+                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED}
+            ]
+        )
+
+        workflow_released_report: Workflow = Workflow.create(
+            workflowName="Data Entry",
+            firstStatus=WORKFLOW_STATUS_TYPE_EMPTY,
+            lastStatus=WORKFLOW_STATUS_TYPE_RELEASED,
+            statuses=[
+                WORKFLOW_STATUS_TYPE_EMPTY,
+                WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
+                WORKFLOW_STATUS_TYPE_SAVED,
+                WORKFLOW_STATUS_TYPE_VERIFIED,
+                WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
+                WORKFLOW_STATUS_TYPE_CERTIFIED,
+                WORKFLOW_STATUS_TYPE_RELEASED
+            ],
+            actions=[
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
+                 "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
+                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
+                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
+
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
+                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
+
+                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+
+                {"name": "Print and Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+
+                {"name": "Upload and Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
+
+                {"name": "Release", "type": WORKFLOW_ACTION_TYPE_RELEASE,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
+
+                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
+                 "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED}
+            ]
+        )
 
         if not party_candidate_dataset_file:
             party_candidate_dataset_file = root_election.partyCandidateDataset.fileContent
@@ -770,7 +940,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_r2_tally_sheet_list = [TallySheet.create(
@@ -780,7 +951,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": election.electionId
                     }).metaId,
-                    parentTallySheets=pe_21_tally_sheet_list
+                    parentTallySheets=pe_21_tally_sheet_list,
+                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_ce_ro_v2_tally_sheet_list = [TallySheet.create(
@@ -790,7 +962,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": election.electionId
                     }).metaId,
-                    parentTallySheets=pe_r2_tally_sheet_list
+                    parentTallySheets=pe_r2_tally_sheet_list,
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_r1_tally_sheet_list = [TallySheet.create(
@@ -800,7 +973,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
                     }).metaId,
-                    parentTallySheets=pe_ce_ro_v2_tally_sheet_list
+                    parentTallySheets=pe_ce_ro_v2_tally_sheet_list,
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
                 polling_division_results_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_polling_division_results, electionId=postal_election.electionId,
@@ -808,7 +982,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
                 pe_ce_ro_v1_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pe_ce_ro_v1, electionId=postal_election.electionId,
@@ -817,7 +992,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_r1_tally_sheet_list, *polling_division_results_tally_sheet_list]
+                    parentTallySheets=[*pe_r1_tally_sheet_list, *polling_division_results_tally_sheet_list],
+                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_ce_ro_pr_1_tally_sheet_list = []
@@ -835,7 +1011,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": election.electionId
                         }).metaId,
-                        parentTallySheets=pe_21_tally_sheet_list
+                        parentTallySheets=pe_21_tally_sheet_list,
+                        workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
                     pe_ce_ro_pr_3_tally_sheet_list.append(pe_ce_ro_pr_3_tally_sheet)
                     pe_ce_ro_pr_3_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_3_tally_sheet
@@ -848,7 +1025,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": election.electionId
                         }).metaId,
-                        parentTallySheets=[pe_ce_ro_pr_3_tally_sheet]
+                        parentTallySheets=[pe_ce_ro_pr_3_tally_sheet],
+                        workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
                     pe_ce_ro_pr_2_tally_sheet_list.append(pe_ce_ro_pr_2_tally_sheet)
                     pe_ce_ro_pr_2_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_2_tally_sheet
@@ -861,7 +1039,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": postal_election.electionId
                         }).metaId,
-                        parentTallySheets=[pe_ce_ro_pr_2_tally_sheet]
+                        parentTallySheets=[pe_ce_ro_pr_2_tally_sheet],
+                        workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
                     pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
                     pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_1_tally_sheet
@@ -904,7 +1083,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_r1_tally_sheet_list = [TallySheet.create(
@@ -914,7 +1094,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=pe_ce_ro_v2_tally_sheet_list
+                    parentTallySheets=pe_ce_ro_v2_tally_sheet_list,
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
                 pe_ce_ro_v1_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pe_ce_ro_v1, electionId=ordinary_election.electionId,
@@ -923,7 +1104,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_r1_tally_sheet_list, *polling_division_results_tally_sheet_list]
+                    parentTallySheets=[*pe_r1_tally_sheet_list, *polling_division_results_tally_sheet_list],
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_ce_ro_pr_1_tally_sheet_list = []
@@ -937,7 +1119,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": ordinary_election.electionId
                         }).metaId,
-                        parentTallySheets=[pe_ce_ro_pr_2_tally_sheet_party_id_wise_map[party.partyId]]
+                        parentTallySheets=[pe_ce_ro_pr_2_tally_sheet_party_id_wise_map[party.partyId]],
+                        workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
                     pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
                     pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_1_tally_sheet
@@ -1010,7 +1193,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list
+                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list,
+                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 pe_39_tally_sheet_list = [TallySheet.create(
@@ -1019,7 +1203,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
                 pe_22_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pe_22, electionId=ordinary_election.electionId,
@@ -1027,7 +1212,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 pe_4_tally_sheet_list = []
@@ -1041,7 +1227,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": ordinary_election.electionId
                         }).metaId,
-                        parentTallySheets=pe_ce_ro_pr_1_tally_sheets_list
+                        parentTallySheets=pe_ce_ro_pr_1_tally_sheets_list,
+                        workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                     )
                     pe_4_tally_sheet_list.append(pe_4_tally_sheet)
                     pe_4_tally_sheet_party_id_wise_map[party.partyId] = pe_4_tally_sheet
@@ -1051,7 +1238,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 return {
@@ -1087,7 +1275,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
                     }).metaId,
-                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list
+                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list,
+                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 pe_39_tally_sheet_list = [TallySheet.create(
@@ -1096,7 +1285,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 pe_22_tally_sheet_list = [TallySheet.create(
@@ -1105,7 +1295,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 pe_4_tally_sheet_list = []
@@ -1119,7 +1310,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": postal_election.electionId
                         }).metaId,
-                        parentTallySheets=pe_ce_ro_pr_1_tally_sheet_list
+                        parentTallySheets=pe_ce_ro_pr_1_tally_sheet_list,
+                        workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                     )
                     pe_4_tally_sheet_list.append(pe_4_tally_sheet)
                     pe_4_tally_sheet_party_id_wise_map[party.partyId] = pe_4_tally_sheet
@@ -1130,7 +1322,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
-                    }).metaId
+                    }).metaId,
+                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 return {

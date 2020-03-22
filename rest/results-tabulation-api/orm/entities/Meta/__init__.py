@@ -13,6 +13,9 @@ class MetaModel(db.Model):
     @classmethod
     def create(cls, metaDataDict=None):
         meta = MetaModel()
+        db.session.add(meta)
+        db.session.flush()
+
         if metaDataDict:
             for meta_key in metaDataDict:
                 meta_value = metaDataDict[meta_key]
@@ -36,11 +39,6 @@ class MetaModel(db.Model):
         else:
             return None
 
-    def __init__(self):
-        db.session.add(self)
-        db.session.flush()
-
 
 Model = MetaModel
-
-create = MetaModel.create
+create = Model.create

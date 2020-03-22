@@ -1,0 +1,3 @@
+export const WORKFLOW_ACTION_TYPE_VIEW = "VIEW";
+export const WORKFLOW_ACTION_TYPE_SAVE = "SAVE";
+export const WORKFLOW_ACTION_TYPE_EDIT = "EDIT";

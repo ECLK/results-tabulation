@@ -15,7 +15,7 @@ export default function TallySheetListTableHead(
             TALLY_SHEET_LIST_COLUMN_ACTIONS
         ],
         onColumnMetaChange = (columnMetaMap) => {
-            console.log("=== onColumnMetaChange ", columnMetaMap)
+            // console.log("=== onColumnMetaChange ", columnMetaMap)
         }
     }
 ) {
@@ -37,7 +37,7 @@ export default function TallySheetListTableHead(
     // }, [columnMetaMap]);
 
     const handleColumnFilterEnter = () => event => {
-        console.log(`Pressed keyCode ${event.key}`);
+        // console.log(`Pressed keyCode ${event.key}`);
         if (event.key === 'Enter') {
             onColumnMetaChange(columnMetaMap);
             event.preventDefault();
