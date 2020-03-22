@@ -1,10 +1,9 @@
-"""empty message
-
-Revision ID: 77de01cbc11d
+"""Adding workflow model
+Revision ID: a07d014866a1
 Revises: 3971c2f9c31f
-Create Date: 2020-03-16 12:43:36.803804
-
+Create Date: 2020-03-12 20:45:36.320151
 """
+
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.orm import Session
@@ -13,7 +12,7 @@ from datetime import datetime
 from tqdm import tqdm
 
 # revision identifiers, used by Alembic.
-revision = '77de01cbc11d'
+revision = 'a07d014866a1'
 down_revision = '3971c2f9c31f'
 branch_labels = None
 depends_on = None
