@@ -4,7 +4,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from app import db
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access
-from constants.AUTH_CONSTANTS import ACCESS_TYPE_LOCK, ACCESS_TYPE_UNLOCK, ACCESS_TYPE_READ, ACCESS_TYPE_WRITE
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META
 from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
@@ -14,13 +13,14 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AN
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, \
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
     MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
-    META_DATA_KEY_TALLY_SHEET_PARTY_ID
+from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_VIEW
+from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
 from orm.entities.Dashboard import StatusReport
 from orm.entities.Election import ElectionCandidate, ElectionParty, InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
+from orm.entities.Workflow import WorkflowInstance
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
 from sqlalchemy import and_, func, or_
 
@@ -33,12 +33,15 @@ class TallySheetModel(db.Model):
     tallySheetId = db.Column(db.Integer, db.ForeignKey(Submission.Model.__table__.c.submissionId), primary_key=True)
     templateId = db.Column(db.Integer, db.ForeignKey(Template.Model.__table__.c.templateId), nullable=False)
     statusReportId = db.Column(db.Integer, db.ForeignKey(StatusReport.Model.__table__.c.statusReportId), nullable=True)
-    metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=True)
+    metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=False)
+    workflowInstanceId = db.Column(db.Integer, db.ForeignKey(WorkflowInstance.Model.__table__.c.workflowInstanceId),
+                                   nullable=True)
 
     submission = relationship("SubmissionModel", foreign_keys=[tallySheetId])
     statusReport = relationship(StatusReport.Model, foreign_keys=[statusReportId])
     template = relationship(Template.Model, foreign_keys=[templateId])
     meta = relationship(Meta.Model, foreign_keys=[metaId])
+    workflowInstance = relationship(WorkflowInstance.Model, foreign_keys=[workflowInstanceId])
 
     electionId = association_proxy("submission", "electionId")
     election = association_proxy("submission", "election")
@@ -141,53 +144,55 @@ class TallySheetModel(db.Model):
         return electoral_district_name, polling_division_name, status_report_type
 
     def get_report_status(self):
-        if self.template.has_data_entry():
-            if self.locked:
-                if self.released:
-                    return "RELEASED"
-                elif self.notified:
-                    return "NOTIFIED"
-                elif self.submissionProof.size() > 0:
-                    return "CERTIFIED"
-                else:
-                    return "VERIFIED"
-            elif self.submitted:
-                return "SUBMITTED"
-            elif self.latestVersionId is not None:
-                return "ENTERED"
-            else:
-                return "NOT ENTERED"
-        else:
-            if self.locked:
-                if self.released:
-                    return "RELEASED"
-                elif self.notified:
-                    return "NOTIFIED"
-                elif self.submissionProof.size() > 0:
-                    return "CERTIFIED"
-                else:
-                    return "VERIFIED"
-            else:
-                return "PENDING"
+        pass
+        # if self.template.has_data_entry():
+        #     if self.locked:
+        #         if self.released:
+        #             return "RELEASED"
+        #         elif self.notified:
+        #             return "NOTIFIED"
+        #         elif self.submissionProof.size() > 0:
+        #             return "CERTIFIED"
+        #         else:
+        #             return "VERIFIED"
+        #     elif self.submitted:
+        #         return "SUBMITTED"
+        #     elif self.latestVersionId is not None:
+        #         return "ENTERED"
+        #     else:
+        #         return "NOT ENTERED"
+        # else:
+        #     if self.locked:
+        #         if self.released:
+        #             return "RELEASED"
+        #         elif self.notified:
+        #             return "NOTIFIED"
+        #         elif self.submissionProof.size() > 0:
+        #             return "CERTIFIED"
+        #         else:
+        #             return "VERIFIED"
+        #     else:
+        #         return "PENDING"
 
     def update_status_report(self):
-        election = self.submission.election.get_root_election()
-
-        if self.statusReportId is None:
-            electoral_district_name, polling_division_name, status_report_type = self.get_status_report_type()
-            status_report = StatusReport.create(
-                electionId=election.electionId,
-                reportType=status_report_type,
-                electoralDistrictName=electoral_district_name,
-                pollingDivisionName=polling_division_name,
-                status=self.get_report_status()
-            )
-
-            self.statusReportId = status_report.statusReportId
-        else:
-            self.statusReport.update_status(
-                status=self.get_report_status()
-            )
+        pass
+        # election = self.submission.election.get_root_election()
+        #
+        # if self.statusReportId is None:
+        #     electoral_district_name, polling_division_name, status_report_type = self.get_status_report_type()
+        #     status_report = StatusReport.create(
+        #         electionId=election.electionId,
+        #         reportType=status_report_type,
+        #         electoralDistrictName=electoral_district_name,
+        #         pollingDivisionName=polling_division_name,
+        #         status=self.get_report_status()
+        #     )
+        #
+        #     self.statusReportId = status_report.statusReportId
+        # else:
+        #     self.statusReport.update_status(
+        #         status=self.get_report_status()
+        #     )
 
     def set_latest_version(self, tallySheetVersion: TallySheetVersion):
         if tallySheetVersion is None:
@@ -197,105 +202,41 @@ class TallySheetModel(db.Model):
 
         self.update_status_report()
 
-    def set_locked_version(self, tallySheetVersion: TallySheetVersion):
-        if tallySheetVersion is None:
-            if not has_role_based_access(self, ACCESS_TYPE_UNLOCK):
-                raise ForbiddenException(
-                    message="User not authorized to unlock the tally sheet.",
-                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK
-                )
-
-            self.submission.set_locked_version(submissionVersion=None)
-        else:
-            if self.template.is_submit_allowed():
-                if self.submittedVersionId is None:
-                    raise ForbiddenException(
-                        message="Data entry tally sheet cannot be locked before submitting",
-                        code=MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT
-                    )
-                elif self.submittedStamp.createdBy == get_user_name():
-                    raise ForbiddenException(
-                        message="Data entry tally sheet submitted user is not allowed to lock/unlock.",
-                        code=MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT
-                    )
-
-            if not has_role_based_access(self, ACCESS_TYPE_LOCK):
-                raise ForbiddenException(
-                    message="User is not authorized to lock the tally sheet.",
-                    code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK
-                )
-
-            self.submission.set_locked_version(submissionVersion=tallySheetVersion.submissionVersion)
-
-        self.update_status_report()
-
-    def set_submitted_version(self, tallySheetVersion: TallySheetVersion):
-        if self.locked:
-            raise ForbiddenException(
-                message="Tally sheet is already locked.",
-                code=MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK
-            )
-
-        if tallySheetVersion is None:
-            self.submission.set_submitted_version(submissionVersion=None)
-        else:
-            self.submission.set_submitted_version(submissionVersion=tallySheetVersion.submissionVersion)
-
-        self.update_status_report()
-
-    def set_notified_version(self):
-        if self.lockedVersionId is None:
-            raise ForbiddenException(
-                message="Tally sheet cannot be notified before it's verified.",
-                code=MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK
-            )
-        elif self.notified is True:
-            raise ForbiddenException(
-                message="Tally sheet is already notified.",
-                code=MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED
-            )
-        else:
-            self.submission.set_notified_version(submissionVersion=self.lockedVersion)
-
-        self.update_status_report()
-
-    def set_released_version(self):
-        if self.notified is False:
-            raise ForbiddenException(
-                message="Tally sheet cannot be released before notifying",
-                code=MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING
-            )
-        elif self.released is True:
-            raise ForbiddenException(
-                message="Tally sheet is already released.",
-                code=MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED
-            )
-        else:
-            self.submission.set_released_version(submissionVersion=self.notifiedVersion)
-
-        self.update_status_report()
-
     @hybrid_property
     def latestVersion(self):
         return TallySheetVersion.Model.query.filter(
             TallySheetVersion.Model.tallySheetVersionId == self.latestVersionId
         ).one_or_none()
 
-    def __init__(self, template, electionId, areaId, metaId):
+    @classmethod
+    def create(cls, template, electionId, areaId, metaId, workflowInstanceId, parentTallySheets=None,
+               childTallySheets=None):
+
         submission = Submission.create(
             submissionType=SubmissionTypeEnum.TallySheet,
             electionId=electionId,
             areaId=areaId
         )
 
-        super(TallySheetModel, self).__init__(
+        tally_sheet = TallySheetModel(
             tallySheetId=submission.submissionId,
             templateId=template.templateId,
-            metaId=metaId
+            metaId=metaId,
+            workflowInstanceId=workflowInstanceId
         )
 
-        db.session.add(self)
+        db.session.add(tally_sheet)
         db.session.flush()
+
+        if parentTallySheets is not None:
+            for parentTallySheet in parentTallySheets:
+                tally_sheet.add_parent(parentTallySheet)
+
+        if childTallySheets is not None:
+            for childTallySheet in childTallySheets:
+                tally_sheet.add_child(childTallySheet)
+
+        return tally_sheet
 
     def create_empty_version(self):
         tally_sheet_version = TallySheetVersion.create(tallySheetId=self.tallySheetId)
@@ -307,6 +248,16 @@ class TallySheetModel(db.Model):
         self.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, content=content, post_save=False)
 
         return tally_sheet_version
+
+    def create_latest_version(self, content=None):
+        tally_sheet, tally_sheet_version = create_version(self.tallySheetId, content=content)
+        tally_sheet.set_latest_version(tallySheetVersion=tally_sheet_version)
+
+        db.session.commit()
+
+        tally_sheet.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, post_save=True)
+
+        return tally_sheet, tally_sheet_version
 
     def create_tally_sheet_version_rows(self, tally_sheet_version, content=None, post_save=False):
         if content is None:
@@ -363,9 +314,14 @@ class TallySheetModel(db.Model):
 
             if not post_save and templateRow.isDerived is True and templateRow.loadOnPostSave is False:
 
+                extended_election = self.submission.election.get_extended_election()
+
                 tally_sheet_version_row_join_condition = [
                     TallySheetVersionRow.Model.templateRowId == TemplateRowModel.templateRowId,
-                    TallySheetVersionRow.Model.tallySheetVersionId == Submission.Model.lockedVersionId
+                    TallySheetVersionRow.Model.tallySheetVersionId == Submission.Model.latestVersionId,
+                    WorkflowInstance.Model.status.in_(
+                        extended_election.tally_sheet_verified_statuses_list()
+                    )
                 ]
 
                 aggregated_results = db.session.query(
@@ -373,6 +329,9 @@ class TallySheetModel(db.Model):
                 ).join(
                     Submission.Model,
                     Submission.Model.submissionId == TallySheetModel.tallySheetId
+                ).join(
+                    WorkflowInstance.Model,
+                    WorkflowInstance.Model.workflowInstanceId == TallySheetModel.workflowInstanceId
                 )
 
                 if Area.Model.areaId in query_args:
@@ -494,11 +453,22 @@ class TallySheetModel(db.Model):
         tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=self.tallySheetId,
                                                           tallySheetVersionId=tallySheetVersionId)
         extended_election = self.submission.election.get_extended_election()
-        extended_tally_sheet_version_class = extended_election.get_extended_tally_sheet_class(
+        extended_tally_sheet_class = extended_election.get_extended_tally_sheet_class(
             self.template.templateName)
-        extended_tally_sheet_version = extended_tally_sheet_version_class.ExtendedTallySheetVersion(tally_sheet_version)
+        extended_tally_sheet_version = extended_tally_sheet_class.ExtendedTallySheetVersion(
+            tallySheet=self,
+            tallySheetVersion=tally_sheet_version
+        )
 
         return extended_tally_sheet_version
+
+    def get_extended_tally_sheet(self):
+        extended_election = self.submission.election.get_extended_election()
+        extended_tally_sheet_class = extended_election.get_extended_tally_sheet_class(
+            self.template.templateName)
+        extended_tally_sheet = extended_tally_sheet_class(self)
+
+        return extended_tally_sheet
 
     def html(self, tallySheetVersionId):
         extended_tally_sheet_version = self.get_extended_tally_sheet_version(tallySheetVersionId=tallySheetVersionId)
@@ -510,6 +480,7 @@ class TallySheetModel(db.Model):
 
 
 Model = TallySheetModel
+create = Model.create
 
 
 class TallySheetTallySheetModel(db.Model):
@@ -549,7 +520,7 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     tally_sheet = db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by).one_or_none()
 
     # Validate the authorization
-    if not has_role_based_access(tally_sheet=tally_sheet, access_type=ACCESS_TYPE_READ):
+    if not has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
         raise NotFoundException(
             message="Not authorized to view tally sheet. (tallySheetId=%d)" % tallySheetId,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
@@ -588,29 +559,10 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
 
     authorized_tally_sheet_list = []
     for tally_sheet in tally_sheet_list:
-        if has_role_based_access(tally_sheet=tally_sheet, access_type=ACCESS_TYPE_READ):
+        if has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
             authorized_tally_sheet_list.append(tally_sheet)
 
     return authorized_tally_sheet_list
-
-
-def create(template, electionId, areaId, metaId, parentTallySheets=None, childTallySheets=None):
-    tally_sheet = Model(
-        template=template,
-        electionId=electionId,
-        areaId=areaId,
-        metaId=metaId
-    )
-
-    if parentTallySheets is not None:
-        for parentTallySheet in parentTallySheets:
-            tally_sheet.add_parent(parentTallySheet)
-
-    if childTallySheets is not None:
-        for childTallySheet in childTallySheets:
-            tally_sheet.add_child(childTallySheet)
-
-    return tally_sheet
 
 
 def create_empty_version(tallySheetId):
@@ -637,10 +589,3 @@ def create_version(tallySheetId, content=None):
     tallySheetVersion = tally_sheet.create_version(content=content)
 
     return tally_sheet, tallySheetVersion
-
-
-def create_latest_version(tallySheetId, content=None):
-    tallySheet, tallySheetVersion = create_version(tallySheetId, content=content)
-    tallySheet.set_latest_version(tallySheetVersion=tallySheetVersion)
-
-    return tallySheet, tallySheetVersion

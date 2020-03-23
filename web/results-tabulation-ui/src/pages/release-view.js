@@ -1,8 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {
-    getTallySheetProof, getProofImage, getTallySheetVersionHtml, saveTallySheetVersion,
-    TALLY_SHEET_STATUS_ENUM, uploadTallySheetProof, notifyTallySheet, releaseTallySheet
-} from "../services/tabulation-api";
+import React, {useContext, useEffect, useState} from "react";
+import {getTallySheetProof, getProofImage, TALLY_SHEET_STATUS_ENUM} from "../services/tabulation-api";
 import {MESSAGE_TYPES} from "../services/messages.provider";
 import {
     PATH_ELECTION_RESULTS_RELEASE
@@ -12,8 +9,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import {MESSAGES_EN} from "../locale/messages_en";
 import PrintLetterButton from "../components/tally-sheet/print-letter-button";
 import TabulationPage from "./index";
+import {TallySheetContext} from "../services/tally-sheet.provider";
 
 export default function ReleaseView(props) {
+    const tallySheetContext = useContext(TallySheetContext);
+    const tallySheet = tallySheetContext.getTallySheetById(props.tallySheetId);
+
     const PROOF_STATUS_ENUM = {
         PROOF_NOT_LOADED: -4,
         PROOF_LOADING: -3,
@@ -29,7 +30,6 @@ export default function ReleaseView(props) {
 
     const {election, messages} = props;
     const {electionName} = election;
-    const [tallySheet, setTallySheet] = useState(props.tallySheet);
     const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState("");
     const [tallySheetProof, setTallySheetProof] = useState("");
@@ -58,7 +58,7 @@ export default function ReleaseView(props) {
             if (lockedVersionId) {
                 tallySheetVersionId = lockedVersionId;
             } else {
-                const tallySheetVersion = await saveTallySheetVersion(tallySheetId, tallySheetCode);
+                const tallySheetVersion = await tallySheetContext.saveTallySheetVersion(tallySheetId, tallySheetCode);
                 tallySheetVersionId = tallySheetVersion.tallySheetVersionId;
             }
         }
@@ -69,7 +69,7 @@ export default function ReleaseView(props) {
     const fetchTallySheetVersionHtml = async () => {
         setTallySheetVersionHtml("Processing ... ");
         const {tallySheetId} = tallySheet;
-        const tallySheetVersionHtml = await getTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
+        const tallySheetVersionHtml = await tallySheetContext.fetchTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
 
         setTallySheetVersionHtml(tallySheetVersionHtml)
     };
@@ -121,29 +121,29 @@ export default function ReleaseView(props) {
 
 
     const handleNotify = () => async (evt) => {
-        setProcessing(true);
-        const {tallySheetId} = tallySheet;
-        try {
-            setTallySheet(await notifyTallySheet(tallySheetId));
-            // await fetchProofStatus();
-            messages.push("Success", MESSAGES_EN.success_notify, MESSAGE_TYPES.SUCCESS);
-        } catch (e) {
-            messages.push("Error", MESSAGES_EN.error_notify, MESSAGE_TYPES.ERROR);
-        }
-        setProcessing(false);
+        // setProcessing(true);
+        // const {tallySheetId} = tallySheet;
+        // try {
+        //     setTallySheet(await notifyTallySheet(tallySheetId));
+        //     // await fetchProofStatus();
+        //     messages.push("Success", MESSAGES_EN.success_notify, MESSAGE_TYPES.SUCCESS);
+        // } catch (e) {
+        //     messages.push("Error", MESSAGES_EN.error_notify, MESSAGE_TYPES.ERROR);
+        // }
+        // setProcessing(false);
     };
 
     const handleRelease = () => async (evt) => {
-        setProcessing(true);
-        const {tallySheetId} = tallySheet;
-        try {
-            setTallySheet(await releaseTallySheet(tallySheetId));
-            // await fetchProofStatus();
-            messages.push("Success", MESSAGES_EN.success_release, MESSAGE_TYPES.SUCCESS);
-        } catch (e) {
-            messages.push("Error", MESSAGES_EN.error_release, MESSAGE_TYPES.ERROR);
-        }
-        setProcessing(false);
+        // setProcessing(true);
+        // const {tallySheetId} = tallySheet;
+        // try {
+        //     setTallySheet(await releaseTallySheet(tallySheetId));
+        //     // await fetchProofStatus();
+        //     messages.push("Success", MESSAGES_EN.success_release, MESSAGE_TYPES.SUCCESS);
+        // } catch (e) {
+        //     messages.push("Error", MESSAGES_EN.error_release, MESSAGE_TYPES.ERROR);
+        // }
+        // setProcessing(false);
     };
 
     const handleUpload = () => async (evt) => {
@@ -153,7 +153,7 @@ export default function ReleaseView(props) {
             var formData = new FormData();
             formData.append("proofId", submissionProofId);
             formData.append("scannedFile", evt.target.files[0]);
-            const proofStatus = await uploadTallySheetProof(formData, progressEvent => setProgress(100 * progressEvent.loaded / progressEvent.total));
+            const proofStatus = await tallySheetContext.uploadTallySheetProof(formData, progressEvent => setProgress(100 * progressEvent.loaded / progressEvent.total));
             updateProofStatus(proofStatus);
             messages.push("Success", MESSAGES_EN.success_upload, MESSAGE_TYPES.SUCCESS);
             setProgress(-1)

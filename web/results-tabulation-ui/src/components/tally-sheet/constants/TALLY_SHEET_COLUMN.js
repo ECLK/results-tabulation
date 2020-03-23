@@ -17,7 +17,7 @@ export const TALLY_SHEET_LIST_COLUMN_LABEL = {
 };
 
 export const TALLY_SHEET_LIST_COLUMN_VALUE = {
-    [TALLY_SHEET_LIST_COLUMN_STATUS]: (tallySheet) => tallySheet["tallySheetStatus"],
+    [TALLY_SHEET_LIST_COLUMN_STATUS]: (tallySheet) => tallySheet.workflowInstance.status,
     [TALLY_SHEET_LIST_COLUMN_ACTIONS]: (tallySheet) => tallySheet["actions"],
     [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: (tallySheet) => tallySheet["electoralDistrictName"],
     [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: (tallySheet) => tallySheet["pollingDivisionName"],

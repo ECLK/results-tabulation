@@ -1,21 +1,18 @@
 from app import db
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
-from ext.ExtendedTallySheet import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 from flask import render_template
-from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities import Area
-from constants.VOTE_TYPES import Postal
-from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_PE_21(ExtendedTallySheet):
-    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
+    class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html_letter(self, title="", total_registered_voters=None):
             return super(ExtendedTallySheet_PE_21.ExtendedTallySheetVersion, self).html_letter(
@@ -72,16 +69,29 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheet):
                     for index_2 in filtered_candidate_wise_valid_vote_count_result.index:
                         if number_of_seats_allocated > 0:
                             for template_row in template_rows:
-                                content["data"].append({
-                                    "partyId": int(party_id),
-                                    "candidateId": int(
-                                        filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateId"]),
-                                    "candidateName": filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateName"],
-                                    "partyName": filtered_candidate_wise_valid_vote_count_result.at[index_2, "partyName"],
-                                    "numValue": int(
-                                        filtered_candidate_wise_valid_vote_count_result.at[index_2, "numValue"])
-                                })
-
+                                num_value = filtered_candidate_wise_valid_vote_count_result.at[index_2, "numValue"]
+                                if num_value is not None and not math.isnan(num_value):
+                                    content["data"].append({
+                                        "partyId": int(party_id),
+                                        "candidateId": int(
+                                            filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateId"]),
+                                        "candidateName": filtered_candidate_wise_valid_vote_count_result.at[
+                                            index_2, "candidateName"],
+                                        "partyName": filtered_candidate_wise_valid_vote_count_result.at[
+                                            index_2, "partyName"],
+                                        "numValue": float(num_value)
+                                    })
+                                else:
+                                    content["data"].append({
+                                        "partyId": int(party_id),
+                                        "candidateId": int(
+                                            filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateId"]),
+                                        "candidateName": filtered_candidate_wise_valid_vote_count_result.at[
+                                            index_2, "candidateName"],
+                                        "partyName": filtered_candidate_wise_valid_vote_count_result.at[
+                                            index_2, "partyName"],
+                                        "numValue": None
+                                    })
                             number_of_seats_allocated -= 1
 
             html = render_template(

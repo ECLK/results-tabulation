@@ -20,17 +20,16 @@ class Stamp(db.Model):
 
     barcodeString = association_proxy("barcode", "barcodeString")
 
+    @classmethod
+    def create(cls):
+        barcode = Barcode.create()
+        stamp = cls(barcodeId=barcode.barcodeId)
+
+        db.session.add(stamp)
+        db.session.flush()
+
+        return stamp
+
 
 Model = Stamp
-
-
-def create():
-    barcode = Barcode.create()
-    result = Stamp(
-        barcodeId=barcode.barcodeId
-    )
-
-    db.session.add(result)
-    db.session.flush()
-
-    return result
+create = Model.create

@@ -1,13 +1,17 @@
-import React from "react";
+import React, {useContext} from "react";
 import {
     PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_TALLY_SHEET_VIEW
 } from "../../App";
 import {getTallySheetCodeStr} from "../../utils/tallySheet";
 import ExtendedElection from "../../components/election/extended-election";
 import TabulationPage from "../index";
+import {TallySheetContext} from "../../services/tally-sheet.provider";
 
 
-export default function DataEntryEdit({history, queryString, election, tallySheet, messages}) {
+export default function DataEntryEdit({history, queryString, election, tallySheetId, messages}) {
+    const tallySheetContext = useContext(TallySheetContext);
+    const tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
+
     const {tallySheetCode} = tallySheet;
     const {electionId, rootElection, voteType} = election;
     const additionalBreadCrumbLinks = [

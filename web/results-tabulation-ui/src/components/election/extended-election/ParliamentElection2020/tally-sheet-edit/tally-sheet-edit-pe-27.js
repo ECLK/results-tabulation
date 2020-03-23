@@ -7,12 +7,12 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
 
-import Button from '@material-ui/core/Button';
 import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
 export default function TallySheetEdit_PE_27({history, queryString, election, tallySheet, messages}) {
+    const {electionId} = election;
     const [partWiseVoteCountRows, setPartWiseVoteCountRows] = useState([]);
     const [rejectedVoteCountRow, setRejectedVoteCountRow] = useState({"numValue": 0});
     const [validVoteCountRow, setValidVoteCountRow] = useState({"numValue": 0});
@@ -109,7 +109,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
         }
     };
 
-    const {processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit} = useTallySheetEdit({
+    const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
         messages,
         history,
         election,
@@ -231,20 +231,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={4}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button
-                                    variant="contained" color="default" onClick={handleClickBackToEdit()}
-                                    disabled={processing}
-                                >
-                                    Edit
-                                </Button>
-                                <Button
-                                    variant="contained" color="primary" onClick={handleClickSubmit()}
-                                    disabled={processing}
-                                >
-                                    Submit
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 
@@ -264,7 +251,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                 <TableBody>
                     {partWiseVoteCountRows.map((partWiseVoteCountRow, partWiseVoteCountRowIndex) => {
                         const {partyId, partyName, partySymbol, strValue, numValue} = partWiseVoteCountRow;
-                        console.log("==== partWiseVoteCountRow : ", partWiseVoteCountRow);
+
                         return <TableRow key={partyId}>
                             <TableCell align="center">{partyName}</TableCell>
                             <TableCell align="center">{partySymbol}</TableCell>
@@ -343,14 +330,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={4}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button
-                                    variant="contained" color="default" onClick={handleClickNext()}
-                                    disabled={processing}
-                                >
-                                    Save & Next
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 

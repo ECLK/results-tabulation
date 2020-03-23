@@ -7,7 +7,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
 
-import Button from '@material-ui/core/Button';
 import {
     TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
     TALLY_SHEET_ROW_TYPE_NUMBER_OF_BALLOTS_ISSUED,
@@ -25,6 +24,7 @@ import Processing from "../../processing";
 import {getAreas} from "../../../services/tabulation-api";
 
 export default function TallySheetEdit_CE_201({history, queryString, election, tallySheet, messages}) {
+    const {electionId} = election;
 
     const [tallySheetRows, setTallySheetRows] = useState({
         [TALLY_SHEET_ROW_TYPE_BALLOT_BOX]: {
@@ -57,7 +57,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
     });
 
     const [pollingStations, setPollingStations] = useState([]);
-    const [totalOrdinaryBallotCountRow, setTotalOrdinaryBallotCountRow] = useState({ "numValue": 0 });
+    const [totalOrdinaryBallotCountRow, setTotalOrdinaryBallotCountRow] = useState({"numValue": 0});
 
     const handleNumValueChange = (areaId, templateRowType) => event => {
         const {value} = event.target;
@@ -211,7 +211,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
         }
     };
 
-    const {processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit} = useTallySheetEdit({
+    const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
         messages,
         history,
         election,
@@ -253,14 +253,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button variant="contained" color="default" onClick={handleClickBackToEdit()}>
-                                    Edit
-                                </Button>
-                                <Button variant="contained" color="primary" onClick={handleClickSubmit()}>
-                                    Submit
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 
@@ -321,11 +314,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button variant="contained" color="default" onClick={handleClickNext()}>
-                                    Save & Next
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
                 </TableFooter>

@@ -7,7 +7,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
 
-import Button from '@material-ui/core/Button';
 import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
@@ -30,7 +29,7 @@ export default function TallySheetEdit_PE_39({history, election, tallySheet, mes
         const _rejectionReasonWiseVoteCountRowsMap = {};
         election.invalidVoteCategories.filter(invalidVoteCategory => {
             return invalidVoteCategory.invalidVoteCategoryType === "ELECTION"
-        }).sort((a,b) => {
+        }).sort((a, b) => {
             return a.invalidVoteCategoryId - b.invalidVoteCategoryId;
         }).map(invalidVoteCategory => {
             const _rejectionReasonWiseVoteCountRow = {
@@ -87,7 +86,7 @@ export default function TallySheetEdit_PE_39({history, election, tallySheet, mes
         }
     };
 
-    const {processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit} = useTallySheetEdit({
+    const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
         messages,
         history,
         election,
@@ -148,20 +147,7 @@ export default function TallySheetEdit_PE_39({history, election, tallySheet, mes
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={2}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button
-                                    variant="contained" color="default" onClick={handleClickBackToEdit()}
-                                    disabled={processing}
-                                >
-                                    Edit
-                                </Button>
-                                <Button
-                                    variant="contained" color="primary" onClick={handleClickSubmit()}
-                                    disabled={processing}
-                                >
-                                    Submit
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 
@@ -215,14 +201,7 @@ export default function TallySheetEdit_PE_39({history, election, tallySheet, mes
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={2}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button
-                                    variant="contained" color="default" onClick={handleClickNext()}
-                                    disabled={processing}
-                                >
-                                    Save & Next
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 

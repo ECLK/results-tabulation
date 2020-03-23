@@ -7,7 +7,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
 
-import Button from '@material-ui/core/Button';
 import {
     TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
     TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
@@ -250,7 +249,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
         return _numberOfValidBallotPapers;
     }
 
-    const {processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit} = useTallySheetEdit({
+    const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
         messages,
         history,
         election,
@@ -366,14 +365,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button variant="contained" color="default" onClick={handleClickBackToEdit()}>
-                                    Edit
-                                </Button>
-                                <Button variant="contained" color="primary" onClick={handleClickSubmit()}>
-                                    Submit
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 
@@ -585,11 +577,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button variant="contained" color="default" onClick={handleClickNext()}>
-                                    Save & Next
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
                 </TableFooter>
