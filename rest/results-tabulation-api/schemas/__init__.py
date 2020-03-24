@@ -259,7 +259,9 @@ class AreaMapSchema(ma.ModelSchema):
             "pollingDivisionId",
             "pollingDivisionName",
             "electoralDistrictId",
-            "electoralDistrictName"
+            "electoralDistrictName",
+            "countryName",
+            "countryId"
         )
 
 

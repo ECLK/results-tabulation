@@ -1,36 +1,31 @@
 import math
 
 from flask import render_template
+
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
-from orm.entities import Area
-from constants.VOTE_TYPES import Postal
 from orm.entities.Area import AreaModel
 from util import to_comma_seperated_num, to_percentage
-from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
+class ExtendedTallySheet_ALL_ISLAND_RESULT(ExtendedTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_POLLING_DIVISION_RESULTS.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Polling Division %s" % self.tallySheetVersion.submission.area.areaName
+            return super(ExtendedTallySheet_ALL_ISLAND_RESULT.ExtendedTallySheetVersion, self).html_letter(
+                title="Results of All Island %s" % self.tallySheetVersion.submission.area.areaName
             )
 
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
 
-            party_wise_valid_vote_count_result = self.get_party_wise_valid_vote_count_result()
+            party_wise_valid_vote_count_result = self.get_party_wise_valid_vote_count_result().sort_values(
+                by=['incompleteNumValue'], ascending=False).reset_index()
             area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
 
             stamp = tallySheetVersion.stamp
 
             area: AreaModel = tallySheetVersion.submission.area
-            pollingDivision = area.areaName
-            number_of_electors = float(area.registeredVotersCount)
-            if tallySheetVersion.submission.election.voteType == Postal:
-                pollingDivision = 'Postal'
-                number_of_electors = float(area.registeredPostalVotersCount)
+            number_of_electors = float(area.registeredVotersCount) + float(area.registeredPostalVotersCount)
 
             content = {
                 "election": {
@@ -41,10 +36,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
-                "tallySheetCode": "POLLING DIVISION RESULTS",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "pollingDivision": pollingDivision,
+                "tallySheetCode": "ALL ISLAND RESULTS",
                 "data": [],
                 "totalValidVoteCount": '',
                 "totalValidVotePercentage": '',
@@ -62,7 +54,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
 
             for index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
                 data_row = [party_wise_valid_vote_count_result_item.partyName]
-                vote_count = party_wise_valid_vote_count_result_item.numValue
+                vote_count = party_wise_valid_vote_count_result_item.incompleteNumValue
                 party_wise_valid_total_votes.append(vote_count if not math.isnan(vote_count) else 0)
                 data_row.append(to_comma_seperated_num(vote_count))
                 total_valid_vote_count += vote_count if not math.isnan(vote_count) else 0
@@ -95,7 +87,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
             content["totalVotePercentage"] = to_percentage(total_vote_percentage)
 
             html = render_template(
-                'POLLING-DIVISION-RESULTS.html',
+                'ALL_ISLAND_RESULT.html',
                 content=content
             )
 
