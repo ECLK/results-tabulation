@@ -13,7 +13,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_POLLING_DIVISION_RESULTS, self).html_letter(
+            return super(ExtendedTallySheet_POLLING_DIVISION_RESULTS.ExtendedTallySheetVersion, self).html_letter(
                 title="Results of Polling Division %s" % self.tallySheetVersion.submission.area.areaName
             )
 

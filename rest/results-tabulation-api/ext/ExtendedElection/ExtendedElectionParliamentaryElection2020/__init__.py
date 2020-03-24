@@ -955,7 +955,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": root_election.electionId
                     }).metaId,
-                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
+                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
                 return {
                     "all_island_results_tally_sheet_list": all_island_results_tally_sheet_list

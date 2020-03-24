@@ -2,16 +2,16 @@ import math
 
 from flask import render_template
 
-from ext.ExtendedTallySheet import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities.Area import AreaModel
 from util import to_comma_seperated_num, to_percentage
 
 
-class ExtendedTallySheet_ALL_ISLAND_RESULT(ExtendedTallySheet):
-    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+class ExtendedTallySheet_ALL_ISLAND_RESULT(ExtendedTallySheetReport):
+    class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_ALL_ISLAND_RESULT, self).html_letter(
+            return super(ExtendedTallySheet_ALL_ISLAND_RESULT.ExtendedTallySheetVersion, self).html_letter(
                 title="Results of All Island %s" % self.tallySheetVersion.submission.area.areaName
             )
 
