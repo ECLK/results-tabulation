@@ -20,7 +20,7 @@ export function getAuthAppSignInUrl() {
 }
 
 export function getAccessToken() {
-    const tabulationAccessToken = "sdfsdf"//Cookies.get(API_ACCESS_TOKEN_KEY);
+    const tabulationAccessToken = Cookies.get(API_ACCESS_TOKEN_KEY);
 
     return tabulationAccessToken;
 }
