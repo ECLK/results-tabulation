@@ -16,12 +16,11 @@ class MetaDataModel(db.Model):
 
     @classmethod
     def create(cls, metaId, metaDataKey, metaDataValue):
-        return MetaDataModel(metaId=metaId, metaDataKey=metaDataKey, metaDataValue=metaDataValue)
-
-    def __init__(self, metaId, metaDataKey, metaDataValue):
-        super(MetaDataModel, self).__init__(metaId=metaId, metaDataKey=metaDataKey, metaDataValue=metaDataValue)
-        db.session.add(self)
+        meta_data = cls(metaId=metaId, metaDataKey=metaDataKey, metaDataValue=metaDataValue)
+        db.session.add(meta_data)
         db.session.flush()
+
+        return meta_data
 
 
 Model = MetaDataModel

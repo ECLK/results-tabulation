@@ -3,7 +3,6 @@ import {TABULATION_API_URL} from "../../config";
 import {getAccessToken} from "../../auth";
 import {AreaEntity} from "./entities/area.entity";
 import {ElectionEntity} from "./entities/election.entity";
-import ExtendedElection from "../../components/election/extended-election";
 
 export const ENDPOINT_PATH_ELECTIONS = () => "/election";
 export const ENDPOINT_PATH_ELECTIONS_BY_ID = (electionId) => `/election/${electionId}`;
@@ -19,12 +18,7 @@ export const ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID = (tallySheetId, tallySheet
 
     return path;
 };
-export const ENDPOINT_PATH_TALLY_SHEET_LOCK = (tallySheetId) => `/tally-sheet/${tallySheetId}/lock`;
-export const ENDPOINT_PATH_TALLY_SHEET_UNLOCK = (tallySheetId) => `/tally-sheet/${tallySheetId}/unlock`;
-export const ENDPOINT_PATH_TALLY_SHEET_SUBMIT = (tallySheetId) => `/tally-sheet/${tallySheetId}/submit`;
-export const ENDPOINT_PATH_TALLY_SHEET_REQUEST_EDIT = (tallySheetId) => `/tally-sheet/${tallySheetId}/request-edit`;
-export const ENDPOINT_PATH_TALLY_SHEET_NOTIFY = (tallySheetId) => `/tally-sheet/${tallySheetId}/notify`;
-export const ENDPOINT_PATH_TALLY_SHEET_RELEASE = (tallySheetId) => `/tally-sheet/${tallySheetId}/release`;
+export const ENDPOINT_PATH_TALLY_SHEET_WORKFLOW = (tallySheetId) => `/tally-sheet/${tallySheetId}/workflow`;
 export const ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML = (tallySheetId, tallySheetVersionId) => `/tally-sheet/${tallySheetId}/version/${tallySheetVersionId}/html`;
 export const ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML = (tallySheetId, tallySheetVersionId) => `/tally-sheet/${tallySheetId}/version/${tallySheetVersionId}/letter/html`;
 
@@ -33,7 +27,6 @@ export const ENDPOINT_PATH_TALLY_SHEET_PROOF_FINISH = (proofId) => `/proof/${pro
 export const ENDPOINT_PATH_FILE = (proofId) => `/file/${proofId}/download`;
 
 
-const areaEntity = new AreaEntity();
 const electionEntity = new ElectionEntity();
 
 const axiosInstance = axios.create({
@@ -91,180 +84,6 @@ export const TALLY_SHEET_STATUS_ENUM = {
 };
 
 
-async function refactorTallySheetObject(tallySheet) {
-    tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
-    const {lockedVersionId, submittedVersionId, latestVersionId} = tallySheet;
-    let tallySheetStatus = "";
-    let readyToLock = false;
-    if (!tallySheet.template.isDerived) {
-        if (lockedVersionId) {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VERIFIED;
-        } else if (submittedVersionId) {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.SUBMITTED;
-            readyToLock = true;
-        } else if (latestVersionId) {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.ENTERED;
-        } else {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.NOT_ENTERED;
-        }
-    } else {
-        if (lockedVersionId) {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VERIFIED;
-        } else {
-            tallySheetStatus = TALLY_SHEET_STATUS_ENUM.VIEWED;
-            readyToLock = true
-        }
-    }
-
-    tallySheet.tallySheetStatus = tallySheetStatus;
-    tallySheet.readyToLock = readyToLock;
-    // tallySheet.area = await areaEntity.getById(tallySheet.areaId);
-    tallySheet.election = await electionEntity.getById(tallySheet.electionId);
-
-    tallySheet.metaDataMap = {};
-    for (let i = 0; i < tallySheet.metaDataList.length; i++) {
-        const {metaDataKey, metaDataValue} = tallySheet.metaDataList[i];
-        tallySheet.metaDataMap[metaDataKey] = metaDataValue;
-    }
-
-    const extendedElection = ExtendedElection(tallySheet.election);
-    tallySheet = await extendedElection.mapRequiredAreasToTallySheet(tallySheet);
-
-    return tallySheet
-}
-
-export async function getTallySheet({electionId, areaId, tallySheetCode, voteType, limit = 10000, offset = 0}) {
-    const tallySheets = await request({
-        url: ENDPOINT_PATH_TALLY_SHEETS(),
-        method: 'get',
-        params: {electionId, areaId, tallySheetCode, voteType, limit, offset}
-    });
-
-    for (let i = 0; i < tallySheets.length; i++) {
-        const tallySheet = tallySheets[i];
-        await refactorTallySheetObject(tallySheet);
-    }
-
-    return tallySheets;
-}
-
-export function getTallySheetById(tallySheetId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEETS_BY_ID(tallySheetId),
-        method: 'get',
-        params: {}
-    }).then((tallySheet) => {
-        return refactorTallySheetObject(tallySheet);
-    })
-}
-
-export function getTallySheetVersionById(tallySheetId, tallySheetCode, tallySheetVersionId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID(tallySheetId, tallySheetCode, tallySheetVersionId),
-        method: 'get',
-        params: {}
-    })
-}
-
-
-export function saveTallySheetVersion(tallySheetId, tallySheetCode, body = {}) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID(tallySheetId, tallySheetCode),
-        method: 'post',
-        data: body
-    })
-}
-
-export function lockTallySheet(tallySheetId, tallySheetVersionId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_LOCK(tallySheetId),
-        method: 'put',
-        data: {
-            lockedVersionId: tallySheetVersionId
-        }
-    }).then((tallySheet) => {
-        return refactorTallySheetObject(tallySheet);
-    })
-}
-
-
-export function uploadTallySheetProof(formData, onUploadProgress) {
-    return request({
-        url: `/proof/upload`,
-        method: 'put',
-        data: formData,
-        onUploadProgress
-    });
-}
-
-export function unlockTallySheet(tallySheetId, tallySheetVersionId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_UNLOCK(tallySheetId),
-        method: 'put',
-        data: {
-            lockedVersionId: tallySheetVersionId
-        }
-    }).then((tallySheet) => {
-        return refactorTallySheetObject(tallySheet);
-    })
-}
-
-export function submitTallySheet(tallySheetId, tallySheetVersionId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_SUBMIT(tallySheetId),
-        method: 'put',
-        data: {
-            submittedVersionId: tallySheetVersionId
-        }
-    }).then((tallySheet) => {
-        return refactorTallySheetObject(tallySheet);
-    })
-}
-
-export function notifyTallySheet(tallySheetId, tallySheetVersionId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_NOTIFY(tallySheetId),
-        method: 'put'
-    }).then((tallySheet) => {
-        return refactorTallySheetObject(tallySheet);
-    })
-}
-
-export function releaseTallySheet(tallySheetId, tallySheetVersionId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_RELEASE(tallySheetId),
-        method: 'put'
-    }).then((tallySheet) => {
-        return refactorTallySheetObject(tallySheet);
-    })
-}
-
-
-export function requestEditForTallySheet(tallySheetId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_REQUEST_EDIT(tallySheetId),
-        method: 'put'
-    }).then((tallySheet) => {
-        return refactorTallySheetObject(tallySheet);
-    })
-}
-
-
-export function getTallySheetVersionHtml(tallySheetId, tallySheetVersionId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML(tallySheetId, tallySheetVersionId),
-        method: 'get'
-    })
-}
-
-export function getTallySheetVersionLetterHtml(tallySheetId, tallySheetVersionId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML(tallySheetId, tallySheetVersionId),
-        method: 'get'
-    })
-}
-
-
 export function getTallySheetProof(proofId) {
     return request({
         url: ENDPOINT_PATH_TALLY_SHEET_PROOF(proofId),
@@ -285,8 +104,4 @@ export function getProofImage(fileId) {
         method: 'get',
         responseType: 'arraybuffer'
     });
-}
-
-export function generateReport(tallySheetId, tallySheetVersionId) {
-    return saveTallySheetVersion(tallySheetId, tallySheetVersionId)
 }

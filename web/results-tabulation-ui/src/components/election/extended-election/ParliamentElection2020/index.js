@@ -15,7 +15,10 @@ import {
     TALLY_SHEET_CODE_PE_R1,
     TALLY_SHEET_CODE_PE_R2,
     TALLY_SHEET_CODE_PE_39,
-    TALLY_SHEET_CODE_PE_22, TALLY_SHEET_CODE_PE_21
+    TALLY_SHEET_CODE_PE_22, 
+    TALLY_SHEET_CODE_PE_21, 
+    TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS,
+    TALLY_SHEET_CODE_ALL_ISLAND_RESULT
 } from "./TALLY_SHEET_CODE";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
@@ -137,6 +140,29 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === "Postal") {
+                                    tallySheetCodes = [TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
+                                    tallySheetCodeLabels = ["Polling Division Results (Postal)"];
+                                } else if (voteType === "NonPostal") {
+                                    tallySheetCodes = [TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
+                                    tallySheetCodeLabels = ["Polling Division Results"];
+                                }
+
+                                return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                    return <li key={voteType}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                        <Link
+                                            className="tally-sheet-code-list-item btn-list"
+                                            to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
+                                        >
+                                            List
+                                        </Link>
+                                    </li>
+                                });
+                            })}
+
+                            {voteTypes.map((voteType) => {
+                                let tallySheetCodes = [];
+                                let tallySheetCodeLabels = [];
+                                if (voteType === "Postal") {
                                     tallySheetCodes = [TALLY_SHEET_CODE_PE_R1];
                                     tallySheetCodeLabels = ["PE-R1 (Postal)"];
                                 } else if (voteType === "NonPostal") {
@@ -174,6 +200,14 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 </Link>
                             </li>
 
+                            <li>All Island Result
+                                <Link
+                                    className="tally-sheet-code-list-item btn-list"
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_ALL_ISLAND_RESULT)}
+                                >
+                                    List
+                                </Link>
+                            </li>
 
                         </ul>
                     </Grid>

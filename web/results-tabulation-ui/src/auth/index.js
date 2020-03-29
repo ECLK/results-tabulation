@@ -1,5 +1,5 @@
 import {Route} from "react-router";
-import React, {Component, useEffect, useState} from "react";
+import React, {Component, useContext, useEffect, useState} from "react";
 import {
     API_ACCESS_TOKEN_KEY,
     API_USER_INFO_KEY,
@@ -8,11 +8,12 @@ import {
 } from "./constants";
 import {AUTH_APP_URL} from "../config";
 import Cookies from 'js-cookie';
-import {getElectionById, getTallySheetById} from "../services/tabulation-api";
+import {getElectionById} from "../services/tabulation-api";
 import Error from "../components/error";
 import Processing from "../components/processing";
 import {MessagesConsumer} from "../services/messages.provider"
 import TabulationPage from "../pages";
+import {TallySheetContext} from "../services/tally-sheet.provider";
 
 export function getAuthAppSignInUrl() {
     return `${AUTH_APP_URL}${AUTH_APP_SIGN_IN_URL_PATH}`;
@@ -144,6 +145,8 @@ function LoadElectionAndThen(props) {
 }
 
 function LoadTallySheetAndThen(props) {
+    const tallySheetContext = useContext(TallySheetContext);
+
     const {then, electionId, tallySheetId} = props;
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);
@@ -152,7 +155,7 @@ function LoadTallySheetAndThen(props) {
 
     const fetchData = async () => {
         try {
-            const _tallySheet = await getTallySheetById(tallySheetId);
+            const _tallySheet = await tallySheetContext.fetchTallySheetById(tallySheetId);
             const _election = await getElectionById(_tallySheet.electionId);
             setTallySheet(_tallySheet);
             setElection(_election);
@@ -184,7 +187,7 @@ function LoadTallySheetAndThen(props) {
         </TabulationPage>
 
     } else {
-        return then(election, tallySheet);
+        return then(election, tallySheet, tallySheetId);
     }
 }
 
@@ -229,11 +232,12 @@ export class TallySheetProtectedRoute extends Component {
                 const {tallySheetId} = props.match.params;
                 return <LoadTallySheetAndThen
                     tallySheetId={tallySheetId}
-                    then={(election, tallySheet) => {
+                    then={(election, tallySheet, tallySheetId) => {
                         return <this.props.component
                             {...props}
                             election={election}
                             tallySheet={tallySheet}
+                            tallySheetId={tallySheetId}
                             queryString={getQueryStringObject(this.props.location.search)}
                         />
                     }}

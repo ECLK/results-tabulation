@@ -162,6 +162,8 @@ def upgrade():
 
         session.commit()
 
+    session.commit()
+
 
 def downgrade():
     pass

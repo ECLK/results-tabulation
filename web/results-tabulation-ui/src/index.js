@@ -7,14 +7,17 @@ import {BrowserRouter} from "react-router-dom";
 import {Router} from "react-router";
 import {history} from "./utils";
 import {MessagesProvider} from "./services/messages.provider";
+import {TallySheetProvider} from "./services/tally-sheet.provider";
 
 ReactDOM.render(
     <MessagesProvider>
-        <BrowserRouter>
-            <Router history={history}>
-                <App/>
-            </Router>
-        </BrowserRouter>
+        <TallySheetProvider>
+            <BrowserRouter>
+                <Router history={history}>
+                    <App/>
+                </Router>
+            </BrowserRouter>
+        </TallySheetProvider>
     </MessagesProvider>
     , document.getElementById('root')
 );

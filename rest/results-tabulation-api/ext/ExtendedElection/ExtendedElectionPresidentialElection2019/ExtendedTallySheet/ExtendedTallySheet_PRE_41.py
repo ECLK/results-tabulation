@@ -1,16 +1,12 @@
 from flask import render_template
-from ext.ExtendedTallySheet import ExtendedTallySheet
+from ext.ExtendedTallySheet import ExtendedTallySheetDataEntry
 from orm.entities import Area
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_PRE_41(ExtendedTallySheet):
-    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
-
-        def __init__(self, tallySheetVersion):
-            super(ExtendedTallySheet_PRE_41.ExtendedTallySheetVersion, self).__init__(tallySheetVersion)
-
+class ExtendedTallySheet_PRE_41(ExtendedTallySheetDataEntry):
+    class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
         def html_letter(self, title="", total_registered_voters=None):
             return super(ExtendedTallySheet_PRE_41.ExtendedTallySheetVersion, self).html_letter(
                 title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName

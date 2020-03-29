@@ -16,22 +16,18 @@ class HistoryVersionModel(db.Model):
     createdBy = association_proxy("historyStamp", "createdBy")
     createdAt = association_proxy("historyStamp", "createdAt")
 
-    def __init__(self, historyId):
-        history_stamp = Stamp.create()
-
-        super(HistoryVersionModel, self).__init__(
+    @classmethod
+    def create(cls, historyId):
+        history_version = cls(
             historyId=historyId,
-            historyStampId=history_stamp.stampId
+            historyStampId=Stamp.create().stampId
         )
 
-        db.session.add(self)
+        db.session.add(history_version)
         db.session.flush()
+
+        return history_version
 
 
 Model = HistoryVersionModel
-
-
-def create(historyId):
-    result = Model(historyId=historyId)
-
-    return result
+create = Model.create

@@ -7,7 +7,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
 
-import Button from '@material-ui/core/Button';
 import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
@@ -93,7 +92,7 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
         }
     };
 
-    const {processing, processingLabel, saved, handleClickNext, handleClickSubmit, handleClickBackToEdit} = useTallySheetEdit({
+    const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
         messages,
         history,
         election,
@@ -215,20 +214,7 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={4}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button
-                                    variant="contained" color="default" onClick={handleClickBackToEdit()}
-                                    disabled={processing}
-                                >
-                                    Edit
-                                </Button>
-                                <Button
-                                    variant="contained" color="primary" onClick={handleClickSubmit()}
-                                    disabled={processing}
-                                >
-                                    Submit
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 
@@ -249,7 +235,7 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
 
                     {candidateWiseFirstPreferenceCountRows.map((candidateWiseFirstPreferenceCountRow, candidateWiseFirstPreferenceCountRowIndex) => {
                         const {candidateId, candidateName, strValue, numValue} = candidateWiseFirstPreferenceCountRow;
-                        console.log("==== candidateWiseFirstPreferenceCountRow : ", candidateWiseFirstPreferenceCountRow);
+
                         return <TableRow key={candidateId}>
                             <TableCell align="center">{candidateName}</TableCell>
                             <TableCell align="center"></TableCell>
@@ -328,14 +314,7 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={4}>
-                            <div className="page-bottom-fixed-action-bar">
-                                <Button
-                                    variant="contained" color="default" onClick={handleClickNext()}
-                                    disabled={processing}
-                                >
-                                    Save & Next
-                                </Button>
-                            </div>
+                            {getActionsBar()}
                         </TableCell>
                     </TableRow>
 
