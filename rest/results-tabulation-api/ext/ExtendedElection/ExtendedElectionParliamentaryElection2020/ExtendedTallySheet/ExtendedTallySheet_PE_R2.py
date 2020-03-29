@@ -12,6 +12,11 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
 from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
+from flask import render_template
+from orm.entities import Area
+from constants.VOTE_TYPES import Postal
+from util import to_comma_seperated_num
+from orm.enums import AreaTypeEnum
 import math
 import pandas as pd
 import numpy as np
@@ -185,21 +190,86 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheet):
             valid_vote_count_ceil_per_seat = 0
             valid_vote_count_qualified_for_seat_allocation = 0
 
-            return super(ExtendedTallySheet_PE_R2.ExtendedTallySheetVersion, self).html(
-                title="PE-R2 : %s" % self.tallySheetVersion.submission.area.areaName,
-                columns=[
-                    "partyId",
-                    "partyName",
-                    "partySymbol",
-                    "partyAbbreviation",
-                    "numValue",
-                    "voteCountCeilPerSeat",
-                    "minimumVoteCountRequiredForSeatAllocation",
-                    "bonusSeatsAllocated",
-                    "seatsAllocatedFromRound1",
-                    "validVotesRemainFromRound1",
-                    "seatsAllocatedFromRound2",
-                    "seatsAllocated"
-                ],
-                df=party_wise_seat_calculations
+            totalVoteCounts = to_comma_seperated_num(party_wise_seat_calculations['numValue'].sum())
+            twentiethOfTotalVoteCounts = to_comma_seperated_num(party_wise_seat_calculations['numValue'].sum()/20)
+            total_less_than_twentiethOfTotalVoteCounts = 0
+
+            for party_wise_seat_calculation_item in party_wise_seat_calculations.itertuples():
+                if (to_comma_seperated_num(party_wise_seat_calculation_item.numValue) < twentiethOfTotalVoteCounts):
+                    total_less_than_twentiethOfTotalVoteCounts += party_wise_seat_calculation_item.numValue
+
+            total_votes_after_deduction = party_wise_seat_calculations['numValue'].sum() - total_less_than_twentiethOfTotalVoteCounts
+            number_of_members_to_be_elected_minus_1 = party_wise_seat_calculations['seatsAllocated'].sum() - 1
+            relevant_no_of_votes_div_by_no_of_members = total_votes_after_deduction / number_of_members_to_be_elected_minus_1
+            rounded_relevant_no_of_votes_div_by_no_of_members = math.ceil(relevant_no_of_votes_div_by_no_of_members)
+
+
+            tallySheetVersion = self.tallySheetVersion
+
+            stamp = tallySheetVersion.stamp
+
+            pollingDivision = tallySheetVersion.submission.area.areaName
+            if tallySheetVersion.submission.election.voteType == Postal:
+                pollingDivision = 'Postal'
+
+            content = {
+                "election": {
+                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                },
+                "stamp": {
+                    "createdAt": stamp.createdAt,
+                    "createdBy": stamp.createdBy,
+                    "barcodeString": stamp.barcodeString
+                },
+                "tallySheetCode": "PE/R2",
+                "electoralDistrict": Area.get_associated_areas(
+                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "electoralDistrictId": Area.get_associated_areas(
+                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
+                "data": [],
+                "rejectedVoteCounts": [],
+                "totalVoteCounts": totalVoteCounts,
+                "twentiethOfTotalVoteCounts": twentiethOfTotalVoteCounts,
+                "total_less_than_twentiethOfTotalVoteCounts": to_comma_seperated_num(total_less_than_twentiethOfTotalVoteCounts),
+                "total_votes_after_deduction": to_comma_seperated_num(total_votes_after_deduction),
+                "number_of_members_to_be_elected_minus_1": to_comma_seperated_num(number_of_members_to_be_elected_minus_1),
+                "relevant_no_of_votes_div_by_no_of_members": relevant_no_of_votes_div_by_no_of_members,
+                "rounded_relevant_no_of_votes_div_by_no_of_members": rounded_relevant_no_of_votes_div_by_no_of_members,
+                "total": []
+            }
+
+            total_seatsAllocatedFromRound1 = 0
+            total_seatsAllocatedFromRound2 = 0
+            total_bonusSeatsAllocated = 0
+
+            for party_wise_seat_calculation_item in party_wise_seat_calculations.itertuples():
+                data_row = []
+
+                data_row.append(party_wise_seat_calculation_item.partyName)
+                data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.numValue))
+                data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.seatsAllocatedFromRound1))
+                data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.validVotesRemainFromRound1))
+                data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.seatsAllocatedFromRound2))
+                data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.bonusSeatsAllocated))
+                data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.seatsAllocated))
+
+                content["data"].append(data_row)
+
+                total_seatsAllocatedFromRound1 += int(party_wise_seat_calculation_item.seatsAllocatedFromRound1)
+                total_seatsAllocatedFromRound2 += int(party_wise_seat_calculation_item.seatsAllocatedFromRound2)
+                total_bonusSeatsAllocated += int(party_wise_seat_calculation_item.bonusSeatsAllocated)
+
+            # get the totals
+            content["total"].append(to_comma_seperated_num(total_votes_after_deduction))
+            content["total"].append(to_comma_seperated_num(total_seatsAllocatedFromRound1))
+            content["total"].append(to_comma_seperated_num(total_seatsAllocatedFromRound2))
+            content["total"].append(to_comma_seperated_num(total_bonusSeatsAllocated))
+            content["total"].append(to_comma_seperated_num(party_wise_seat_calculations['seatsAllocated'].sum()))
+
+
+            html = render_template(
+                'PE-R2.html',
+                content=content
             )
+
+            return html
