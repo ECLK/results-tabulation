@@ -173,6 +173,9 @@ role_based_access_config = {
         }
     },
     NATIONAL_REPORT_VERIFIER_ROLE: {
+        POLLING_DIVISION_RESULTS: {
+            Postal: [READ, PRINT, WRITE, UNLOCK]
+        },
         PE_R2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
@@ -183,7 +186,7 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
         ALL_ISLAND_RESULT: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
+            PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         }
     },
     EC_LEADERSHIP_ROLE: {
