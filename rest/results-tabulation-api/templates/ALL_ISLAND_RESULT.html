@@ -1,0 +1,84 @@
+
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="font1 pre-41">
+
+    <table class="table table-borderless">
+        <tbody>
+          <tr>
+              <td class="bold no-padding-left no-padding-right" style="text-align:center;">{{content.election.electionName}}</td>
+          </tr>
+          <tr>
+              <td class="bold no-padding-left no-padding-right" style="text-align:center;">ALL ISLAND RESULT</td>
+          </tr>
+          <tr>
+              <td class="bold no-padding-left no-padding-right" style="text-align:center;">VOTES OBTAINED BY EACH POLITICAL PARTY / INDEPENDENT GROUP</td>
+          </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-borderless" style="table-layout:fixed;">
+      <thead>
+        <th style="width: 70%;"><u>Political Party / Independent Group</u></th>
+        <th style="width: 15%;" class="text-right"><u>Votes Obtained</u></th>
+        <th style="width: 15%;" class="text-right"><u>Percentage</u></th>
+      </thead>
+      <tbody>
+
+        {% for row in content.data %}
+        <tr>
+          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px;">{{row[0]}}</td>
+          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[1]}}</td>
+          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[2]}}</td>
+
+        </tr>
+        {% endfor %}
+        
+      </tbody>
+    </table>
+
+    <br/>
+
+    <table class="table table-borderless" style="table-layout:fixed;">
+        <tbody>
+            <tr>
+          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px; width: 70%;">Total Valid Votes</td>
+          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.totalValidVoteCount}}</td>
+          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.totalValidVotePercentage}}</td>
+        </tr>
+            <tr>
+          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px; width: 70%;">Rejected Votes</td>
+          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.rejectedVoteCount}}</td>
+          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.rejectedVotePercentage}}</td>
+        </tr>
+            <tr>
+          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px; width: 70%;">Total Polled</td>
+          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.totalVoteCount}}</td>
+          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.totalVotePercentage}}</td>
+        </tr>
+            <tr>
+          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px; width: 70%;">Registered No. of Electors</td>
+          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.numberOfElectors}}</td>
+          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div>The release of result is approved.</div>
+
+    <table class="table table-borderless" style="table-layout: fixed;">
+      <tbody>
+        <tr>
+          <td style="width: 75%;"></td>
+          <td>....................................................</td>
+        </tr>
+        <tr>
+          <td style="width: 75%;"></td>
+          <td>Commissioner of Elections</td>
+        </tr>
+      </tbody>
+    </table>
+
+</div>
+{% endblock %}
