@@ -37,7 +37,8 @@ class StatusActionSchema(ma.ModelSchema):
             "actionType",
             "fromStatus",
             "toStatus",
-            "allowed"
+            "allowed",
+            "authorized"
         )
 
         model = WorkflowActionModel
@@ -371,7 +372,8 @@ class TallySheetSchema_1(ma.ModelSchema):
             "areaMapList",
             "latestVersion",
             "metaDataList",
-            "workflowInstance"
+            "workflowInstance",
+            "latestVersionId"
         )
 
         model = TallySheet.Model
@@ -404,7 +406,8 @@ class TallySheetSchema(ma.ModelSchema):
             "area",
             "areaMapList",
             "metaDataList",
-            "workflowInstance"
+            "workflowInstance",
+            "latestVersionId"
         )
 
         model = TallySheet.Model
