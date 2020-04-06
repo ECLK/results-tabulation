@@ -20,9 +20,9 @@ from orm.entities.Dashboard import StatusReport
 from orm.entities.Election import ElectionCandidate, ElectionParty, InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
-from orm.entities.Workflow import WorkflowInstance
+from orm.entities.Workflow import WorkflowInstance, WorkflowActionModel
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
-from sqlalchemy import and_, func, or_
+from sqlalchemy import and_, func, or_, case
 
 from util import get_dict_key_value_or_none
 
@@ -41,7 +41,7 @@ class TallySheetModel(db.Model):
     statusReport = relationship(StatusReport.Model, foreign_keys=[statusReportId])
     template = relationship(Template.Model, foreign_keys=[templateId])
     meta = relationship(Meta.Model, foreign_keys=[metaId])
-    workflowInstance = relationship(WorkflowInstance.Model, foreign_keys=[workflowInstanceId])
+    _workflowInstance = relationship(WorkflowInstance.Model, foreign_keys=[workflowInstanceId])
 
     electionId = association_proxy("submission", "electionId")
     election = association_proxy("submission", "election")
@@ -75,6 +75,42 @@ class TallySheetModel(db.Model):
                            primaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.childTallySheetId",
                            secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId"
                            )
+
+    def get_tally_sheet_workflow_instance_actions(self, workflow_instance):
+        tally_sheet_workflow_instance_actions = db.session.query(
+            WorkflowActionModel.workflowActionId,
+            WorkflowActionModel.actionName,
+            WorkflowActionModel.actionType,
+            WorkflowActionModel.fromStatus,
+            WorkflowActionModel.toStatus
+        ).filter(
+            WorkflowActionModel.workflowId == workflow_instance.workflowId
+        ).order_by(
+            WorkflowActionModel.workflowActionId
+        ).all()
+
+        processed_tally_sheet_workflow_instance_actions = []
+        for tally_sheet_workflow_instance_action in tally_sheet_workflow_instance_actions:
+            processed_tally_sheet_workflow_instance_actions.append({
+                "workflowActionId": tally_sheet_workflow_instance_action.workflowActionId,
+                "actionName": tally_sheet_workflow_instance_action.actionName,
+                "actionType": tally_sheet_workflow_instance_action.actionType,
+                "fromStatus": tally_sheet_workflow_instance_action.fromStatus,
+                "toStatus": tally_sheet_workflow_instance_action.toStatus,
+                "allowed": tally_sheet_workflow_instance_action.fromStatus == workflow_instance.status,
+                "authorized": has_role_based_access(tally_sheet=self,
+                                                    access_type=tally_sheet_workflow_instance_action.actionType)
+            })
+
+        return processed_tally_sheet_workflow_instance_actions
+
+    @hybrid_property
+    def workflowInstance(self):
+        tally_sheet_workflow_instance = self._workflowInstance
+        setattr(tally_sheet_workflow_instance, "actions",
+                self.get_tally_sheet_workflow_instance_actions(tally_sheet_workflow_instance))
+
+        return tally_sheet_workflow_instance
 
     @hybrid_property
     def areaMapList(self):

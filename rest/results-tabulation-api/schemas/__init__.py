@@ -37,7 +37,8 @@ class StatusActionSchema(ma.ModelSchema):
             "actionType",
             "fromStatus",
             "toStatus",
-            "allowed"
+            "allowed",
+            "authorized"
         )
 
         model = WorkflowActionModel

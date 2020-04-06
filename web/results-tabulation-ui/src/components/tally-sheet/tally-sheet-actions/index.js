@@ -29,6 +29,7 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
             key={actionIndex}
             variant="outlined" color="default"
             size="small"
+            disabled={!action.authorized}
             onClick={async () => {
                 if (action.actionType !== WORKFLOW_ACTION_TYPE_VIEW) {
                     if (tallySheet.template.isDerived || action.actionType !== WORKFLOW_ACTION_TYPE_SAVE) {

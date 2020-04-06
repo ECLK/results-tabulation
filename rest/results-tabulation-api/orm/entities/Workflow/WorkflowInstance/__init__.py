@@ -19,23 +19,23 @@ class WorkflowInstanceModel(db.Model):
 
     latestLog = relationship(WorkflowInstanceLog.Model, foreign_keys=[latestLogId])
 
-    @hybrid_property
-    def actions(self):
-        return db.session.query(
-            WorkflowActionModel.workflowActionId,
-            WorkflowActionModel.actionName,
-            WorkflowActionModel.actionType,
-            WorkflowActionModel.fromStatus,
-            WorkflowActionModel.toStatus,
-            case([
-                (WorkflowActionModel.fromStatus == self.status, True),
-                (WorkflowActionModel.fromStatus != self.status, False),
-            ]).label("allowed")
-        ).filter(
-            WorkflowActionModel.workflowId == self.workflowId
-        ).order_by(
-            WorkflowActionModel.workflowActionId
-        )
+    # @hybrid_property
+    # def actions(self):
+    #     return db.session.query(
+    #         WorkflowActionModel.workflowActionId,
+    #         WorkflowActionModel.actionName,
+    #         WorkflowActionModel.actionType,
+    #         WorkflowActionModel.fromStatus,
+    #         WorkflowActionModel.toStatus,
+    #         case([
+    #             (WorkflowActionModel.fromStatus == self.status, True),
+    #             (WorkflowActionModel.fromStatus != self.status, False),
+    #         ]).label("allowed")
+    #     ).filter(
+    #         WorkflowActionModel.workflowId == self.workflowId
+    #     ).order_by(
+    #         WorkflowActionModel.workflowActionId
+    #     ).all()
 
     @hybrid_property
     def statuses(self):
@@ -46,7 +46,7 @@ class WorkflowInstanceModel(db.Model):
             WorkflowStatusModel.workflowId == self.workflowId
         ).order_by(
             WorkflowStatusModel.workflowStatusId
-        )
+        ).all()
 
     @classmethod
     def create(cls, workflowId, status):
