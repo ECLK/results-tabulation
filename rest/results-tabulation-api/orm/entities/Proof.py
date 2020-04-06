@@ -26,20 +26,29 @@ class ProofModel(db.Model):
     createdBy = association_proxy("proofStamp", "createdBy")
     createdAt = association_proxy("proofStamp", "createdAt")
 
-    def close(self):
-        if self.size() is 0:
-            raise ForbiddenException(
-                message="A proof required at least one evidence. Please upload at least one evidence (proofId=%d)" % self.proofId,
-                code=MESSAGE_CODE_PROOF_CANNOT_BE_CONFIRMED_WITHOUT_EVIDENCE
-            )
+    @classmethod
+    def create(cls, proofType=ProofTypeEnum.ManuallyFilledTallySheets):
+        proof = cls(
+            proofType=proofType,
+            scannedFilesFolderId=Folder.create().folderId,
+            proofStampId=Stamp.create().stampId
+        )
 
+        db.session.add(proof)
+        db.session.flush()
+
+        return proof
+
+    def close(self):
         self.finished = True
 
+        db.session.add(self)
         db.session.flush()
 
     def open(self):
         self.finished = False
 
+        db.session.add(self)
         db.session.flush()
 
     def size(self):
@@ -47,6 +56,7 @@ class ProofModel(db.Model):
 
 
 Model = ProofModel
+create = Model.create
 
 
 def get_all():
@@ -55,7 +65,7 @@ def get_all():
     return query
 
 
-def create(proofType):
+def create(proofType=ProofTypeEnum.ManuallyFilledTallySheets):
     scanned_files_folder = Folder.create()
     proof_stamp = Stamp.create()
 

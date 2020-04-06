@@ -11,21 +11,22 @@ class FolderModel(db.Model):
 
     files = association_proxy("folderFiles", "file")
 
+    @classmethod
+    def create(cls):
+        folder = cls()
+        db.session.add(folder)
+        db.session.flush()
+
+        return folder
+
 
 Model = FolderModel
+create = Model.create
 
 
 def get_by_id(folderId):
     result = Model.query.filter(
         Model.folderId == folderId
     ).one_or_none()
-
-    return result
-
-
-def create():
-    result = Model()
-    db.session.add(result)
-    db.session.flush()
 
     return result
