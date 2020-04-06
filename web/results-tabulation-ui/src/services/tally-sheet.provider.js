@@ -119,7 +119,11 @@ export function TallySheetProvider(props) {
         })
     }
 
-    function fetchTallySheetVersionHtml(tallySheetId, tallySheetVersionId) {
+    function fetchTallySheetVersionHtml(tallySheetId, tallySheetVersionId = null) {
+        if (!tallySheetVersionId) {
+            tallySheetVersionId = state.tallySheetMap[tallySheetId].latestVersionId
+        }
+
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML(tallySheetId, tallySheetVersionId),
             method: 'get'

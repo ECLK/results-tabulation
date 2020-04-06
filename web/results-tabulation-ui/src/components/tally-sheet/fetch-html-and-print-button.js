@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import Button from "@material-ui/core/Button";
 
 export default function FetchHtmlAndPrintButton(props) {
-    const {fetchHtml} = props;
+    const {fetchHtml, onClick} = props;
 
     const {tallySheetId, tallySheetVersionId, children} = props;
     const [printJobsList, setPrintJobsList] = useState([]);
@@ -13,6 +13,8 @@ export default function FetchHtmlAndPrintButton(props) {
     };
 
     const onPrintClick = () => async (event) => {
+        onClick && onClick();
+
         const printJob = {
             id: null,
             processing: true,
