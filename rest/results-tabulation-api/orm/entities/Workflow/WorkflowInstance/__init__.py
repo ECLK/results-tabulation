@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 
 from app import db
 from exception import MethodNotAllowedException
-from orm.entities import History, Meta
+from orm.entities import History, Meta, Proof
 from orm.entities.Workflow import WorkflowStatusModel, WorkflowActionModel
 from orm.entities.Workflow.WorkflowInstance import WorkflowInstanceLog
 
@@ -16,8 +16,10 @@ class WorkflowInstanceModel(db.Model):
     workflowId = db.Column(db.Integer, db.ForeignKey("workflow.workflowId"), nullable=False)
     status = db.Column(db.String(100), nullable=False)
     latestLogId = db.Column(db.Integer, db.ForeignKey("workflowInstanceLog.workflowInstanceLogId"), nullable=True)
+    proofId = db.Column(db.Integer, db.ForeignKey("proof.proofId"), nullable=True)
 
     latestLog = relationship(WorkflowInstanceLog.Model, foreign_keys=[latestLogId])
+    proof = relationship(Proof.Model, foreign_keys=[proofId])
 
     @hybrid_property
     def statuses(self):
@@ -34,6 +36,7 @@ class WorkflowInstanceModel(db.Model):
     def create(cls, workflowId, status):
         workflow_action = cls(
             workflowInstanceId=History.create().historyId,
+            proofId=Proof.create().proofId,
             workflowId=workflowId,
             status=status
         )
@@ -46,13 +49,16 @@ class WorkflowInstanceModel(db.Model):
         if self.status != action.fromStatus:
             raise MethodNotAllowedException(message="Workflow action is not allowed.")
         else:
+            self.proof.close()
             self.status = action.toStatus
             self.latestLogId = WorkflowInstanceLog.create(
                 workflowInstanceId=self.workflowInstanceId,
                 status=action.toStatus,
                 workflowActionId=action.workflowActionId,
-                metaId=meta.metaId
+                metaId=meta.metaId,
+                proofId=self.proofId
             ).workflowInstanceLogId
+            self.proofId = Proof.create().proofId
 
             db.session.add(self)
             db.session.flush()

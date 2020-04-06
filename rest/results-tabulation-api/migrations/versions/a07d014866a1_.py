@@ -44,7 +44,9 @@ def upgrade():
         sa.Column('workflowId', sa.Integer(), nullable=False),
         sa.Column('status', sa.String(length=100), nullable=False),
         sa.Column('latestLogId', sa.Integer(), nullable=True),
+        sa.Column('proofId', sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(['workflowId'], ['workflow.workflowId'], 'workflowInstance_fk_workflowId'),
+        sa.ForeignKeyConstraint(['proofId'], ['proof.proofId'], 'workflowInstance_fk_proofId'),
         sa.ForeignKeyConstraint(['workflowInstanceId'], ['history.historyId'],
                                 'workflowInstance_fk_workflowInstanceId'),
         sa.PrimaryKeyConstraint('workflowInstanceId')
@@ -56,6 +58,7 @@ def upgrade():
         sa.Column('status', sa.String(length=100), nullable=False),
         sa.Column('workflowActionId', sa.Integer(), nullable=False),
         sa.Column('metaId', sa.Integer(), nullable=True),
+        sa.Column('proofId', sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(['metaId'], ['meta.metaId'], 'workflowInstanceLog_fk_metaId'),
         sa.ForeignKeyConstraint(['workflowActionId'], ['workflowAction.workflowActionId'],
                                 'workflowInstanceLog_fk_workflowActionId'),
@@ -63,6 +66,7 @@ def upgrade():
                                 'workflowInstanceLog_fk_workflowInstanceId'),
         sa.ForeignKeyConstraint(['workflowInstanceLogId'], ['history_version.historyVersionId'],
                                 'workflowInstanceLog_fk_workflowInstanceLogId'),
+        sa.ForeignKeyConstraint(['proofId'], ['proof.proofId'], 'workflowInstanceLog_fk_proofId'),
         sa.PrimaryKeyConstraint('workflowInstanceLogId')
     )
     op.create_table(
@@ -162,7 +166,7 @@ def upgrade():
         @classmethod
         def create(cls):
             barcode = Barcode.create()
-            stamp = cls(barcodeId=barcode.barcodeId)
+            stamp = cls(barcodeId=barcode.barcodeId, ip="", createdBy="")
 
             session.add(stamp)
             session.flush()
@@ -206,18 +210,44 @@ def upgrade():
         def add_meta_data(self, metaDataKey, metaDataValue):
             return MetaData.create(metaId=self.metaId, metaDataKey=metaDataKey, metaDataValue=metaDataValue)
 
-        def get_meta_data(self, metaDataKey):
-            meta_data = session.query(
-                MetaData.Model.metaDataValue
-            ).filter(
-                MetaData.Model.metaId == self.metaId,
-                MetaData.Model.metaDataKey == metaDataKey
-            ).one_or_none()
+    class Folder(Base):
+        __tablename__ = 'folder'
+        folderId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
 
-            if meta_data:
-                return meta_data.metaDataValue
-            else:
-                return None
+        @classmethod
+        def create(cls):
+            folder = cls()
+            session.add(folder)
+            session.flush()
+
+            return folder
+
+    class Proof(Base):
+        __tablename__ = 'proof'
+        proofId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+        proofType = sa.Column(sa.String(50), nullable=False)
+        proofStampId = sa.Column(sa.Integer, nullable=False)
+        scannedFilesFolderId = sa.Column(sa.Integer, nullable=False)
+        finished = sa.Column(sa.Boolean, default=False)
+
+        @classmethod
+        def create(cls, proofType="ManuallyFilledTallySheets"):
+            proof = cls(
+                proofType=proofType,
+                scannedFilesFolderId=Folder.create().folderId,
+                proofStampId=Stamp.create().stampId
+            )
+
+            session.add(proof)
+            session.flush()
+
+            return proof
+
+        def close(self):
+            self.finished = True
+
+            session.add(self)
+            session.flush()
 
     class History(Base):
         __tablename__ = 'history'
@@ -335,16 +365,18 @@ def upgrade():
         status = sa.Column(sa.String(100), nullable=False)
         workflowActionId = sa.Column(sa.Integer, nullable=False)
         metaId = sa.Column(sa.Integer, nullable=True)
+        proofId = sa.Column(sa.Integer, nullable=True)
 
         @classmethod
-        def create(cls, workflowInstanceId, status, workflowActionId, metaId, stampId):
+        def create(cls, workflowInstanceId, status, workflowActionId, metaId, proofId, stampId):
             workflow_log = cls(
                 workflowInstanceLogId=HistoryVersion.create(historyId=workflowInstanceId,
                                                             stampId=stampId).historyVersionId,
                 workflowInstanceId=workflowInstanceId,
                 status=status,
                 workflowActionId=workflowActionId,
-                metaId=metaId
+                metaId=metaId,
+                proofId=proofId
             )
             session.add(workflow_log)
             session.flush()
@@ -358,11 +390,13 @@ def upgrade():
         workflowId = sa.Column(sa.Integer, nullable=False)
         status = sa.Column(sa.String(100), nullable=False)
         latestLogId = sa.Column(sa.Integer, nullable=True)
+        proofId = sa.Column(sa.Integer, nullable=True)
 
         @classmethod
         def create(cls, workflowId, status):
             workflow_action = cls(
                 workflowInstanceId=History.create().historyId,
+                proofId=Proof.create().proofId,
                 workflowId=workflowId,
                 status=status
             )
@@ -371,18 +405,29 @@ def upgrade():
 
             return workflow_action
 
-        def execute_action(self, action: WorkflowAction, meta: Meta, stampId):
+        def execute_action(self, action: WorkflowAction, meta: Meta, stampId, proofId=None):
             if self.status != action.fromStatus:
                 pass
             else:
+
+                # handle existing proofs
+                if proofId is not None:
+                    self.proofId = proofId
+
+                proof = session.query(Proof).filter(Proof.proofId == self.proofId).one_or_none()
+                proof.close()
+
                 self.status = action.toStatus
                 self.latestLogId = WorkflowInstanceLog.create(
                     workflowInstanceId=self.workflowInstanceId,
                     status=action.toStatus,
                     workflowActionId=action.workflowActionId,
                     metaId=meta.metaId,
-                    stampId=stampId
+                    stampId=stampId,
+                    proofId=self.proofId
                 ).workflowInstanceLogId
+
+                self.proofId = Proof.create().proofId
 
                 session.add(self)
                 session.flush()
@@ -402,6 +447,7 @@ def upgrade():
         notifiedStampId = sa.Column(sa.Integer, nullable=True)
         releasedVersionId = sa.Column(sa.Integer, nullable=True)
         releasedStampId = sa.Column(sa.Integer, nullable=True)
+        submissionProofId = sa.Column(sa.Integer, nullable=True)
 
     class TallySheet(Base):
         __tablename__ = 'tallySheet'
@@ -639,7 +685,8 @@ def upgrade():
                 workflow_instance.execute_action(
                     action=action,
                     meta=Meta.create({"tallySheetVersionId": submission.releasedVersionId}),
-                    stampId=submission.releasedStampId
+                    stampId=submission.releasedStampId,
+                    proofId=submission.submissionProofId
                 )
                 session.commit()
 

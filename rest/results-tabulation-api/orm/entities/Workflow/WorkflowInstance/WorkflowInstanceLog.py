@@ -13,17 +13,19 @@ class WorkflowInstanceLogModel(db.Model):
     status = db.Column(db.String(100), nullable=False)
     workflowActionId = db.Column(db.Integer, db.ForeignKey("workflowAction.workflowActionId"), nullable=False)
     metaId = db.Column(db.Integer, db.ForeignKey("meta.metaId"), nullable=True)
+    proofId = db.Column(db.Integer, db.ForeignKey("proof.proofId"), nullable=True)
 
     action = relationship(WorkflowActionModel, foreign_keys=[workflowActionId])
 
     @classmethod
-    def create(cls, workflowInstanceId, status, workflowActionId, metaId):
+    def create(cls, workflowInstanceId, status, workflowActionId, metaId, proofId):
         workflow_log = cls(
             workflowInstanceLogId=HistoryVersion.create(historyId=workflowInstanceId).historyVersionId,
             workflowInstanceId=workflowInstanceId,
             status=status,
             workflowActionId=workflowActionId,
-            metaId=metaId
+            metaId=metaId,
+            proofId=proofId
         )
         db.session.add(workflow_log)
         db.session.flush()
