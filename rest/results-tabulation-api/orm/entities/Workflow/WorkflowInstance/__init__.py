@@ -49,7 +49,6 @@ class WorkflowInstanceModel(db.Model):
         if self.status != action.fromStatus:
             raise MethodNotAllowedException(message="Workflow action is not allowed.")
         else:
-            self.proof.close()
             self.status = action.toStatus
             self.latestLogId = WorkflowInstanceLog.create(
                 workflowInstanceId=self.workflowInstanceId,
@@ -58,7 +57,11 @@ class WorkflowInstanceModel(db.Model):
                 metaId=meta.metaId,
                 proofId=self.proofId
             ).workflowInstanceLogId
-            self.proofId = Proof.create().proofId
+
+            # To avoid non state changing actions to shift proofs.
+            if action.fromStatus != action.toStatus:
+                self.proof.close()
+                self.proofId = Proof.create().proofId
 
             db.session.add(self)
             db.session.flush()
