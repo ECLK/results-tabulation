@@ -107,7 +107,7 @@ class ExtendedTallySheet:
     def execute_tally_sheet_proof_upload(self):
         workflow_actions = self.on_before_tally_sheet_proof_upload()
         self.on_tally_sheet_proof_upload()
-        self.on_tally_sheet_proof_upload(workflow_actions=workflow_actions)
+        self.on_after_tally_sheet_proof_upload(workflow_actions=workflow_actions)
 
         return self.tallySheet
 
@@ -123,7 +123,7 @@ class ExtendedTallySheet:
     def on_tally_sheet_proof_upload(self):
         pass
 
-    def on_tally_sheet_proof_upload(self, workflow_actions):
+    def on_after_tally_sheet_proof_upload(self, workflow_actions):
         tally_sheet_version = self.tallySheet.latestVersion
         if tally_sheet_version is not None:
             self._execute_workflow_actions_list(tally_sheet_version=tally_sheet_version,
