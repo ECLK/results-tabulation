@@ -9,7 +9,7 @@ import {
     WORKFLOW_ACTION_TYPE_PRINT,
     WORKFLOW_ACTION_TYPE_RELEASE, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
     WORKFLOW_ACTION_TYPE_SAVE,
-    WORKFLOW_ACTION_TYPE_SUBMIT,
+    WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT,
     WORKFLOW_ACTION_TYPE_VERIFY,
     WORKFLOW_ACTION_TYPE_VIEW
 } from "../constants/WORKFLOW_ACTION_TYPE";
@@ -50,10 +50,10 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
 
         const onClick = async () => {
             try {
-                if (action.actionType !== WORKFLOW_ACTION_TYPE_VIEW) {
-                    if (tallySheet.template.isDerived || action.actionType !== WORKFLOW_ACTION_TYPE_SAVE) {
-                        await tallySheetContext.executeTallySheetWorkflow(tallySheet.tallySheetId, action.workflowActionId);
-                    }
+                if ([
+                    WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT
+                ].indexOf(action.actionType) < 0) {
+                    await tallySheetContext.executeTallySheetWorkflow(tallySheet.tallySheetId, action.workflowActionId);
                 }
 
                 if ([
@@ -85,11 +85,11 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
             size: "small",
             disabled: !action.authorized,
             onClick() {
-                if (action.actionType === WORKFLOW_ACTION_TYPE_CERTIFY) {
+                if (action.actionType === WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT) {
                     dialogContext.push({
                         render({open, handleClose, handleOk}) {
-                            return <UploadTallySheetProofsDialog open={open} handleClose={handleClose}
-                                                                 handleOk={handleOk}/>
+                            return <UploadTallySheetProofsDialog tallySheetId={tallySheetId} open={open}
+                                                                 handleClose={handleClose} handleOk={handleOk}/>
                         }
                     }).then(() => {
                         onClick()

@@ -11,17 +11,17 @@ import {TallySheetProvider} from "./services/tally-sheet.provider";
 import {DialogProvider} from "./services/dialog.provider";
 
 ReactDOM.render(
-    <DialogProvider>
-        <MessagesProvider>
-            <TallySheetProvider>
+    <TallySheetProvider>
+        <DialogProvider>
+            <MessagesProvider>
                 <BrowserRouter>
                     <Router history={history}>
                         <App/>
                     </Router>
                 </BrowserRouter>
-            </TallySheetProvider>
-        </MessagesProvider>
-    </DialogProvider>
+            </MessagesProvider>
+        </DialogProvider>
+    </TallySheetProvider>
     , document.getElementById('root')
 );
 

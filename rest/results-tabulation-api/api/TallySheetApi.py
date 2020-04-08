@@ -1,3 +1,6 @@
+import connexion
+
+from api import ProofApi, FileApi
 from app import db
 from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE
@@ -9,6 +12,7 @@ from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities.Submission import TallySheet
 from orm.entities.Submission.TallySheet import TallySheetModel
 from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.enums import FileTypeEnum
 from schemas import TallySheetSchema, TallySheetSchema_1
 from util import RequestBody, get_paginated_query, result_push_service
 
@@ -60,3 +64,67 @@ def workflow(tallySheetId, body):
     db.session.commit()
 
     return TallySheetSchema_1().dump(tally_sheet).data
+
+
+@authorize(required_roles=ALL_ROLES)
+def upload_workflow_proof_file(body):
+    request_body = RequestBody(body)
+    tallySheetId = request_body.get("tallySheetId")
+
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
+    extended_tally_sheet.execute_tally_sheet_proof_upload()
+
+    body["proofId"] = tally_sheet.workflowInstance.proofId
+    ProofApi.upload_file(body=body)
+
+    return TallySheetSchema_1().dump(tally_sheet).data
+
+
+@authorize(required_roles=ALL_ROLES)
+def get_workflow_proof_file(tallySheetId, fileId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    # TODO validate fileId
+
+    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
+    extended_tally_sheet.execute_tally_sheet_get()
+
+    return FileApi.get_by_id(fileId=fileId)
+
+
+@authorize(required_roles=ALL_ROLES)
+def get_workflow_proof_inline_file(tallySheetId, fileId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    # TODO validate fileId
+
+    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
+    extended_tally_sheet.execute_tally_sheet_get()
+
+    return FileApi.get_inline_file(fileId=fileId)
+
+
+@authorize(required_roles=ALL_ROLES)
+def get_workflow_proof_download_file(tallySheetId, fileId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    # TODO validate fileId
+
+    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
+    extended_tally_sheet.execute_tally_sheet_get()
+
+    return FileApi.get_download_file(fileId=fileId)

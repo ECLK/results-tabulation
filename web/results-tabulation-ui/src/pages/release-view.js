@@ -97,7 +97,7 @@ export default function ReleaseView(props) {
 
     const fetchProofImage = async () => {
         setTallySheetProof("Loading proof image ...");
-        const proofImgArray = await getProofImage(latestProofId);
+        const proofImgArray = await getProofImage(tallySheet.tallySheetId, latestProofId);
         var proofImgBlob = new Blob([proofImgArray], {type: latestProof.fileMimeType});
         const proofImgDataUrl = URL.createObjectURL(proofImgBlob);
         setTallySheetProof(proofImgDataUrl)

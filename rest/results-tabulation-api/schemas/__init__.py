@@ -71,7 +71,8 @@ class WorkflowInstanceSchema(ma.ModelSchema):
             "actions",
             "statuses",
             "status",
-            "latestLog"
+            "latestLog",
+            "proof"
         )
 
         model = WorkflowInstance.Model
@@ -81,6 +82,8 @@ class WorkflowInstanceSchema(ma.ModelSchema):
 
     actions = ma.Nested(StatusActionSchema, many=True)
     statuses = ma.Nested(StatusSchema, many=True)
+    proof = ma.Nested("Proof_Schema")
+
 
 
 class StampSchema(ma.ModelSchema):

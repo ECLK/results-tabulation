@@ -3,11 +3,11 @@ from flask import render_template
 from sqlalchemy import MetaData
 
 from app import db
-from auth import get_user_name
+from auth import get_user_name, has_role_based_access
 from constants.VOTE_TYPES import Postal, NonPostal
 from exception import MethodNotAllowedException, UnauthorizedException
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY, \
-    WORKFLOW_ACTION_TYPE_VIEW
+    WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED, \
     WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED
 
@@ -104,6 +104,31 @@ class ExtendedTallySheet:
 
         return self.tallySheet
 
+    def execute_tally_sheet_proof_upload(self):
+        workflow_actions = self.on_before_tally_sheet_proof_upload()
+        self.on_tally_sheet_proof_upload()
+        self.on_tally_sheet_proof_upload(workflow_actions=workflow_actions)
+
+        return self.tallySheet
+
+    def on_before_tally_sheet_proof_upload(self):
+        workflow_actions = self._get_allowed_workflow_actions(
+            workflow_action_type=WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT)
+
+        if len(workflow_actions) == 0:
+            raise MethodNotAllowedException(message="Tally sheet is longer accepting proof documents.")
+
+        return workflow_actions
+
+    def on_tally_sheet_proof_upload(self):
+        pass
+
+    def on_tally_sheet_proof_upload(self, workflow_actions):
+        tally_sheet_version = self.tallySheet.latestVersion
+        if tally_sheet_version is not None:
+            self._execute_workflow_actions_list(tally_sheet_version=tally_sheet_version,
+                                                workflow_actions=workflow_actions)
+
     def execute_tally_sheet_get(self):
         workflow_actions = self.on_before_tally_sheet_get()
         self.on_tally_sheet_get()
@@ -144,7 +169,12 @@ class ExtendedTallySheet:
             WorkflowActionModel.actionType == workflow_action_type
         ).all()
 
-        return workflow_actions
+        authorized_workflow_actions = []
+        for workflow_action in workflow_actions:
+            if has_role_based_access(tally_sheet=self.tallySheet, access_type=workflow_action.actionType):
+                authorized_workflow_actions.append(workflow_action)
+
+        return authorized_workflow_actions
 
     def on_before_tally_sheet_post(self):
         workflow_actions = self._get_allowed_workflow_actions(workflow_action_type=WORKFLOW_ACTION_TYPE_SAVE)
