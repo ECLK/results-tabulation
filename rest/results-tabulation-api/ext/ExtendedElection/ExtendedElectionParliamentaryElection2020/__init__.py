@@ -7,6 +7,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
     ExtendedTallySheet_ALL_ISLAND_RESULT
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201 import \
     ExtendedTallySheet_CE_201
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201_PV import \
+    ExtendedTallySheet_CE_201_PV
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_21 import \
     ExtendedTallySheet_PE_21
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_22 import \
@@ -85,6 +87,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             PE_27: ExtendedTallySheet_PE_27,
             PE_4: ExtendedTallySheet_PE_4,
             CE_201: ExtendedTallySheet_CE_201,
+            CE_201_PV: ExtendedTallySheet_CE_201_PV,
             PE_39: ExtendedTallySheet_PE_39,
             PE_22: ExtendedTallySheet_PE_22,
             PE_CE_RO_PR_1: ExtendedTallySheet_PE_CE_RO_PR_1,
