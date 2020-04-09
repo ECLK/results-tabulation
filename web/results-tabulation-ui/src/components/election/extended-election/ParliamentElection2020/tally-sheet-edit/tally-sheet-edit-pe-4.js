@@ -13,26 +13,20 @@ import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
 export default function TallySheetEdit_PE_4({history, queryString, election, tallySheet, messages}) {
     const [candidateWiseFirstPreferenceCountRows, setCandidateWiseFirstPreferenceCountRows] = useState([]);
-    const [rejectedFirstPreferenceCountRow, setRejectedFirstPreferenceCountRow] = useState({"numValue": 0});
-    const [validFirstPreferenceCountRow, setValidFirstPreferenceCountRow] = useState({"numValue": 0});
     const [firstPreferenceCountRow, setFirstPreferenceCountRow] = useState({"numValue": 0});
 
 
     const setTallySheetContent = (tallySheetVersion) => {
         let _candidateWiseFirstPreferenceCountTemplateRow = {};
-        let _rejectedFirstPreferenceCountTemplateRow = {};
 
         tallySheet.template.rows.map(((templateRow) => {
             if (templateRow.templateRowType === "CANDIDATE_FIRST_PREFERENCE") {
                 _candidateWiseFirstPreferenceCountTemplateRow = templateRow;
-            } else if (templateRow.templateRowType === "REJECTED_VOTE") {
-                _rejectedFirstPreferenceCountTemplateRow = templateRow;
             }
         }));
 
         let _candidateWiseFirstPreferenceCountRowsMap = {};
         let _candidateWiseFirstPreferenceCountRows = [];
-        let _rejectedFirstPreferenceCountRow = {..._rejectedFirstPreferenceCountTemplateRow, numValue: 0};
         let _validFirstPreferenceCountRow = {numValue: 0};
         let _firstPreferenceCountRow = {numValue: 0};
 
@@ -55,17 +49,13 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
                 if (contentRow.templateRowType === "CANDIDATE_FIRST_PREFERENCE") {
                     Object.assign(_candidateWiseFirstPreferenceCountRowsMap[contentRow.candidateId], contentRow);
                     _validFirstPreferenceCountRow.numValue += contentRow.numValue;
-                } else if (contentRow.templateRowType === "REJECTED_VOTE") {
-                    Object.assign(_rejectedFirstPreferenceCountRow, contentRow);
                 }
             }
 
-            _firstPreferenceCountRow.numValue = _validFirstPreferenceCountRow.numValue + _rejectedFirstPreferenceCountRow.numValue;
+            _firstPreferenceCountRow.numValue = _validFirstPreferenceCountRow.numValue;
         }
 
         setCandidateWiseFirstPreferenceCountRows(_candidateWiseFirstPreferenceCountRows);
-        setRejectedFirstPreferenceCountRow(_rejectedFirstPreferenceCountRow);
-        setValidFirstPreferenceCountRow(_validFirstPreferenceCountRow);
         setFirstPreferenceCountRow(_firstPreferenceCountRow);
     };
 
@@ -76,10 +66,7 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
             }
         }
 
-        return (isNumeric(rejectedFirstPreferenceCountRow.numValue) &&
-            calculateTotalFirstPreferenceCount() === firstPreferenceCountRow.numValue &&
-            calculateTotalValidFirstPreferenceCount() === validFirstPreferenceCountRow.numValue
-        )
+        return calculateTotalFirstPreferenceCount() === firstPreferenceCountRow.numValue
     };
 
     const getTallySheetRequestBody = () => {
@@ -87,7 +74,6 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
         return {
             content: [
                 ...candidateWiseFirstPreferenceCountRows,
-                // rejectedFirstPreferenceCountRow TODO
             ]
         }
     };
@@ -142,29 +128,9 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
     }
 
     function calculateTotalFirstPreferenceCount() {
-        return calculateTotalValidFirstPreferenceCount() + parseInt(rejectedFirstPreferenceCountRow.numValue);
+        return calculateTotalValidFirstPreferenceCount();
     }
 
-
-    const handleTotalValidFirstPreferenceCountChange = () => event => {
-        const {value} = event.target;
-        setValidFirstPreferenceCountRow((validFirstPreferenceCountRow) => {
-            return {
-                ...validFirstPreferenceCountRow,
-                numValue: processNumericValue(value)
-            }
-        });
-    };
-
-    const handleRejectedFirstPreferenceCountChange = () => event => {
-        const {value} = event.target;
-        setRejectedFirstPreferenceCountRow((rejectedFirstPreferenceCountRow) => {
-            return {
-                ...rejectedFirstPreferenceCountRow,
-                numValue: processNumericValue(value)
-            }
-        });
-    };
 
     const handleTotalFirstPreferenceCountChange = () => event => {
         const {value} = event.target;
@@ -200,14 +166,6 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
                 </TableBody>
 
                 <TableFooter>
-                    <TableRow>
-                        <TableCell align="right" colSpan={3}>Total valid vote count</TableCell>
-                        <TableCell align="right">{calculateTotalValidFirstPreferenceCount()}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell align="right" colSpan={3}>Total rejected vote count</TableCell>
-                        <TableCell align="right">{rejectedFirstPreferenceCountRow.numValue}</TableCell>
-                    </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>Total vote count</TableCell>
                         <TableCell align="right">{calculateTotalFirstPreferenceCount()}</TableCell>
@@ -275,30 +233,6 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
                 </TableBody>
 
                 <TableFooter>
-                    <TableRow>
-                        <TableCell align="right" colSpan={3}>Total valid vote count</TableCell>
-                        <TableCell align="right">
-                            <TextField
-                                required
-                                error={calculateTotalValidFirstPreferenceCount() !== validFirstPreferenceCountRow.numValue}
-                                helperText={calculateTotalValidFirstPreferenceCount() !== validFirstPreferenceCountRow.numValue ? 'Total valid vote count mismatch!' : ' '}
-                                value={validFirstPreferenceCountRow.numValue}
-                                margin="normal"
-                                onChange={handleTotalValidFirstPreferenceCountChange()}
-                            />
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell align="right" colSpan={3}>Total rejected vote count</TableCell>
-                        <TableCell align="right"><TextField
-                            required
-                            error={!isNumeric(rejectedFirstPreferenceCountRow.numValue)}
-                            helperText={!isNumeric(rejectedFirstPreferenceCountRow.numValue) ? "Only numeric values are valid" : ''}
-                            value={rejectedFirstPreferenceCountRow.numValue}
-                            margin="normal"
-                            onChange={handleRejectedFirstPreferenceCountChange()}
-                        /></TableCell>
-                    </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>Total vote count</TableCell>
                         <TableCell align="right">
