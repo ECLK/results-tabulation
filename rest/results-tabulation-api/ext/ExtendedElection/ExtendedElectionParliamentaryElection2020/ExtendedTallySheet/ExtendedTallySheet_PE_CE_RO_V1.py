@@ -11,25 +11,36 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_PE_CE_RO_V1, self).html_letter(
-                title="Results of Polling Division %s" % self.tallySheetVersion.submission.area.areaName
+            content = self.get_content()
+
+            html = render_template(
+                'PE-R1.html',
+                content=content
             )
 
-        def html(self, title="", total_registered_voters=None):
-            tallySheetVersion = self.tallySheetVersion
+            return html
 
+        def html(self, title="", total_registered_voters=None):
+            content = self.get_content()
+
+            html = render_template(
+                'PE-CE-RO-V1.html',
+                content=content
+            )
+
+            return html
+
+        def get_content(self):
+            tallySheetVersion = self.tallySheetVersion
             party_and_area_wise_valid_vote_count_result = self.get_party_and_area_wise_valid_vote_count_result()
             party_wise_valid_vote_count_result = self.get_party_wise_valid_vote_count_result()
             area_wise_valid_vote_count_result = self.get_area_wise_valid_vote_count_result()
             area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
-
             stamp = tallySheetVersion.stamp
-
             pollingDivision = tallySheetVersion.submission.area.areaName
             if tallySheetVersion.submission.election.voteType == Postal:
                 pollingDivision = 'Postal'
-
             content = {
                 "election": {
                     "electionName": tallySheetVersion.submission.election.get_official_name()
@@ -49,38 +60,30 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 "rejectedVoteCounts": [],
                 "totalVoteCounts": []
             }
-
             total_valid_vote_count = 0
             total_rejected_vote_count = 0
             total_vote_count = 0
-
             # Append the area wise column totals
             for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
                 content["countingCentres"].append(area_wise_valid_vote_count_result_item.areaName)
                 content["validVoteCounts"].append(
                     to_comma_seperated_num(area_wise_valid_vote_count_result_item.incompleteNumValue))
                 total_valid_vote_count += area_wise_valid_vote_count_result_item.incompleteNumValue
-
             for area_wise_rejected_vote_count_result_item_index, area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.iterrows():
                 content["rejectedVoteCounts"].append(
                     to_comma_seperated_num(area_wise_rejected_vote_count_result_item.numValue))
                 total_rejected_vote_count += area_wise_rejected_vote_count_result_item.numValue
-
             for area_wise_vote_count_result_item_index, area_wise_vote_count_result_item in area_wise_vote_count_result.iterrows():
                 content["totalVoteCounts"].append(
                     to_comma_seperated_num(area_wise_vote_count_result_item.incompleteNumValue))
                 total_vote_count += area_wise_vote_count_result_item.incompleteNumValue
-
             # Append the grand totals
             content["validVoteCounts"].append(to_comma_seperated_num(total_valid_vote_count))
             content["rejectedVoteCounts"].append(to_comma_seperated_num(total_rejected_vote_count))
             content["totalVoteCounts"].append(to_comma_seperated_num(total_vote_count))
-
             if tallySheetVersion.submission.election.voteType == Postal:
                 content["tallySheetCode"] = "CE/RO/V1"
-
             number_of_counting_centres = len(area_wise_vote_count_result)
-
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
                 data_row = []
 
@@ -101,10 +104,4 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item.incompleteNumValue))
 
                 content["data"].append(data_row)
-
-            html = render_template(
-                'PE-CE-RO-V1.html',
-                content=content
-            )
-
-            return html
+            return content

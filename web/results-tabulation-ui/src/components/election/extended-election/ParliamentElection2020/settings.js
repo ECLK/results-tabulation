@@ -14,7 +14,6 @@ import {
     TALLY_SHEET_CODE_PE_CE_RO_PR_3,
     TALLY_SHEET_CODE_PE_CE_RO_V1,
     TALLY_SHEET_CODE_PE_CE_RO_V2,
-    TALLY_SHEET_CODE_PE_R1,
     TALLY_SHEET_CODE_PE_R2,
     TALLY_SHEET_CODE_PE_39,
     TALLY_SHEET_CODE_PE_22,
@@ -80,10 +79,6 @@ export const TALLY_SHEET_LIST_COLUMNS = {
         [VOTE_TYPE_NON_POSTAL]: columns_ed_pd_status_actions,
         [VOTE_TYPE_POSTAL]: columns_ed_status_actions
     },
-    [TALLY_SHEET_CODE_PE_R1]: {
-        [VOTE_TYPE_NON_POSTAL]: columns_ed_pd_status_actions,
-        [VOTE_TYPE_POSTAL]: columns_ed_status_actions
-    },
     [TALLY_SHEET_CODE_PE_CE_RO_PR_1]: {
         [VOTE_TYPE_NON_POSTAL]: columns_ed_pd_party_status_actions,
         [VOTE_TYPE_POSTAL]: columns_ed_party_status_actions
@@ -142,10 +137,6 @@ export const TALLY_SHEET_LIST_ACTIONS = {
         [VOTE_TYPE_POSTAL]: actions_view_verify_unlock
     },
     [TALLY_SHEET_CODE_PE_CE_RO_PR_1]: {
-        [VOTE_TYPE_NON_POSTAL]: actions_view_verify_unlock,
-        [VOTE_TYPE_POSTAL]: actions_view_verify_unlock
-    },
-    [TALLY_SHEET_CODE_PE_R1]: {
         [VOTE_TYPE_NON_POSTAL]: actions_view_verify_unlock,
         [VOTE_TYPE_POSTAL]: actions_view_verify_unlock
     },

@@ -1,6 +1,5 @@
 PE_27 = "PE-27"
 PE_CE_RO_V1 = "PE-CE-RO-V1"
-PE_R1 = "PE-R1"
 PE_CE_RO_V2 = "PE-CE-RO-V2"
 PE_R2 = "PE-R2"
 PE_4 = "PE-4"
