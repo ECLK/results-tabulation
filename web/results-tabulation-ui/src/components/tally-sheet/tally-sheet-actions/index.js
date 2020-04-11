@@ -6,7 +6,7 @@ import {
     WORKFLOW_ACTION_TYPE_CERTIFY,
     WORKFLOW_ACTION_TYPE_EDIT,
     WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
-    WORKFLOW_ACTION_TYPE_PRINT,
+    WORKFLOW_ACTION_TYPE_PRINT, WORKFLOW_ACTION_TYPE_PRINT_LETTER,
     WORKFLOW_ACTION_TYPE_RELEASE, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
     WORKFLOW_ACTION_TYPE_SAVE,
     WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT,
@@ -17,6 +17,8 @@ import FetchHtmlAndPrintButton from "../fetch-html-and-print-button";
 import {DialogContext} from "../../../services/dialog.provider";
 import {UploadTallySheetProofsDialog} from "./upload-tally-sheet-proofs-dialog";
 import {MESSAGE_TYPES, MessagesConsumer, MessagesContext} from "../../../services/messages.provider";
+import PrintLetterButton from "../print-letter-button";
+import PrintReportButton from "../print-report-button";
 
 const TALLY_SHEET_ACTION_SUCCESS_MESSAGE = {
     [WORKFLOW_ACTION_TYPE_SUBMIT]: "Submitted tally sheet successfully.",
@@ -27,6 +29,11 @@ const TALLY_SHEET_ACTION_SUCCESS_MESSAGE = {
     [WORKFLOW_ACTION_TYPE_RELEASE]: "Released tally sheet results successfully.",
     [WORKFLOW_ACTION_TYPE_REQUEST_CHANGES]: "Submitted change request.",
 };
+
+const WORKFLOW_ACTION_CUSTOM_ACTION_BUTTON_MAP = {
+    [WORKFLOW_ACTION_TYPE_PRINT_LETTER]: PrintLetterButton,
+    [WORKFLOW_ACTION_TYPE_PRINT]: PrintReportButton
+}
 
 export default function TallySheetActions({tallySheetId, electionId, history, filter}) {
     const tallySheetContext = useContext(TallySheetContext);
@@ -99,13 +106,10 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
                 }
             }
         };
-        if (action.actionType === WORKFLOW_ACTION_TYPE_PRINT) {
-            ActionButtonElement = FetchHtmlAndPrintButton;
-            Object.assign(actionButtonProps, {
-                fetchHtml: async () => {
-                    return await tallySheetContext.fetchTallySheetVersionHtml(tallySheet.tallySheetId)
-                }
-            });
+
+        if (WORKFLOW_ACTION_CUSTOM_ACTION_BUTTON_MAP[action.actionType]) {
+            ActionButtonElement = WORKFLOW_ACTION_CUSTOM_ACTION_BUTTON_MAP[action.actionType];
+            Object.assign(actionButtonProps, {tallySheetId: tallySheet.tallySheetId});
         }
 
         return <ActionButtonElement {...actionButtonProps}>

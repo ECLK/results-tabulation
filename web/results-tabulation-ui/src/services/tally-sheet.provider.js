@@ -143,7 +143,11 @@ export function TallySheetProvider(props) {
         })
     }
 
-    function fetchTallySheetVersionLetterHtml(tallySheetId, tallySheetVersionId) {
+    function fetchTallySheetVersionLetterHtml(tallySheetId, tallySheetVersionId = null) {
+        if (!tallySheetVersionId) {
+            tallySheetVersionId = state.tallySheetMap[tallySheetId].latestVersionId
+        }
+
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML(tallySheetId, tallySheetVersionId),
             method: 'get'
