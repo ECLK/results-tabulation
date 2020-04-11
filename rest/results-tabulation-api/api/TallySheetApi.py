@@ -106,9 +106,6 @@ def get_workflow_proof_file(tallySheetId, fileId):
 
     # TODO validate fileId
 
-    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
-    extended_tally_sheet.execute_tally_sheet_get()
-
     return FileApi.get_by_id(fileId=fileId)
 
 
@@ -121,9 +118,6 @@ def get_workflow_proof_inline_file(tallySheetId, fileId):
 
     # TODO validate fileId
 
-    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
-    extended_tally_sheet.execute_tally_sheet_get()
-
     return FileApi.get_inline_file(fileId=fileId)
 
 
@@ -135,8 +129,5 @@ def get_workflow_proof_download_file(tallySheetId, fileId):
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
 
     # TODO validate fileId
-
-    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
-    extended_tally_sheet.execute_tally_sheet_get()
 
     return FileApi.get_download_file(fileId=fileId)
