@@ -229,7 +229,7 @@ export class TallySheetProtectedRoute extends Component {
         return <ProtectedRoute
             {...this.props}
             component={(props) => {
-                const {tallySheetId} = props.match.params;
+                const {tallySheetId = null, tallySheetVersionId = null} = props.match.params;
                 return <LoadTallySheetAndThen
                     tallySheetId={tallySheetId}
                     then={(election, tallySheet, tallySheetId) => {
@@ -238,6 +238,7 @@ export class TallySheetProtectedRoute extends Component {
                             election={election}
                             tallySheet={tallySheet}
                             tallySheetId={tallySheetId}
+                            tallySheetVersionId={tallySheetVersionId}
                             queryString={getQueryStringObject(this.props.location.search)}
                         />
                     }}
