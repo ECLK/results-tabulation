@@ -1111,7 +1111,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "electionId": ordinary_election.electionId
                     }).metaId,
                     parentTallySheets=[*polling_division_results_tally_sheet_list],
-                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
+                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_ce_ro_pr_1_tally_sheet_list = []
