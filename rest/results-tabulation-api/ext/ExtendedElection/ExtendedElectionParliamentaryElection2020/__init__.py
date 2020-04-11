@@ -239,8 +239,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
 
                 {"name": "Print Letter", "type": WORKFLOW_ACTION_TYPE_PRINT_LETTER,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
-                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED,
+                 "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
 
                 {"name": "Upload Certified Documents", "type": WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
