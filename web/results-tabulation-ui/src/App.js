@@ -11,6 +11,7 @@ import ReleaseView from "./pages/release-view";
 import ReleaseList from "./pages/release-list";
 import TallySheetListView from "./pages/tally-sheet-list-view";
 import TallySheetView from "./pages/tally-sheet-view";
+import ActivityView from "./pages/activity";
 
 export const ROUTER_PREFIX = "";
 export const PATH_ELECTION = () => `${ROUTER_PREFIX}/election`;
@@ -52,6 +53,9 @@ export const PATH_ELECTION_TALLY_SHEET_VIEW = (tallySheetId, tallySheetVersionId
     return path
 };
 
+export const PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW = (tallySheetId) => {
+    return `${ROUTER_PREFIX}/tally-sheet-activity/${tallySheetId}`;
+};
 
 function App() {
 
@@ -89,6 +93,11 @@ function App() {
                     exact
                     path={PATH_ELECTION_TALLY_SHEET_VIEW(":tallySheetId", ":tallySheetVersionId?")}
                     component={TallySheetView}
+                />
+                <TallySheetProtectedRoute
+                    exact
+                    path={PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW(":tallySheetId")}
+                    component={ActivityView}
                 />
                 <ElectionProtectedRoute
                     exact

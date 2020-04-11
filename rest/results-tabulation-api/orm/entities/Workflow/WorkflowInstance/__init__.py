@@ -21,6 +21,10 @@ class WorkflowInstanceModel(db.Model):
     latestLog = relationship(WorkflowInstanceLog.Model, foreign_keys=[latestLogId])
     proof = relationship(Proof.Model, foreign_keys=[proofId])
 
+    logs = relationship(
+        "WorkflowInstanceLogModel", order_by="desc(WorkflowInstanceLogModel.workflowInstanceLogId)",
+        primaryjoin="WorkflowInstanceModel.workflowInstanceId==WorkflowInstanceLogModel.workflowInstanceId")
+
     @hybrid_property
     def statuses(self):
         return db.session.query(

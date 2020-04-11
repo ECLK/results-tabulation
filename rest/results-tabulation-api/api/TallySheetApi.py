@@ -13,7 +13,7 @@ from orm.entities.Submission import TallySheet
 from orm.entities.Submission.TallySheet import TallySheetModel
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.enums import FileTypeEnum
-from schemas import TallySheetSchema, TallySheetSchema_1
+from schemas import TallySheetSchema, TallySheetSchema_1, WorkflowInstanceLogSchema
 from util import RequestBody, get_paginated_query, result_push_service
 
 
@@ -83,6 +83,18 @@ def upload_workflow_proof_file(body):
     ProofApi.upload_file(body=body)
 
     return TallySheetSchema_1().dump(tally_sheet).data
+
+
+@authorize(required_roles=ALL_ROLES)
+def get_workflow_logs(tallySheetId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+
+    workflow_logs = tally_sheet.workflowInstance.logs
+
+    return WorkflowInstanceLogSchema(many=True).dump(workflow_logs).data
 
 
 @authorize(required_roles=ALL_ROLES)

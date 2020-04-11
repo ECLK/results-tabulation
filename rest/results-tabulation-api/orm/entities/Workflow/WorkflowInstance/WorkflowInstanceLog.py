@@ -1,6 +1,8 @@
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
 from app import db
+from orm.entities import Proof, Meta
 from orm.entities.History import HistoryVersion
 from orm.entities.Workflow import WorkflowActionModel
 
@@ -16,6 +18,10 @@ class WorkflowInstanceLogModel(db.Model):
     proofId = db.Column(db.Integer, db.ForeignKey("proof.proofId"), nullable=True)
 
     action = relationship(WorkflowActionModel, foreign_keys=[workflowActionId])
+    proof = relationship(Proof.Model, foreign_keys=[proofId])
+    meta = relationship(Meta.Model, foreign_keys=[metaId])
+
+    metaDataList = association_proxy("meta", "metaDataList")
 
     @classmethod
     def create(cls, workflowInstanceId, status, workflowActionId, metaId, proofId):

@@ -23,6 +23,7 @@ export const ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML = (tallySheetId, tallySheetV
 export const ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML = (tallySheetId, tallySheetVersionId) => `/tally-sheet/${tallySheetId}/version/${tallySheetVersionId}/letter/html`;
 
 export const ENDPOINT_PATH_TALLY_SHEET_PROOF = (tallySheetId, proofId) => `/tally-sheet/${tallySheetId}/workflow/proof/${proofId}`;
+export const ENDPOINT_PATH_TALLY_SHEET_WORKFLOW_LOGS = (tallySheetId) => `/tally-sheet/${tallySheetId}/workflow/logs`;
 export const ENDPOINT_PATH_TALLY_SHEET_PROOF_FINISH = (proofId) => `/proof/${proofId}/finish`;
 export const ENDPOINT_PATH_FILE = (tallySheetId, fileId) => `/tally-sheet/${tallySheetId}/workflow/proof/file/${fileId}`;
 export const ENDPOINT_PATH_FILE_DOWNLOAD = (tallySheetId, fileId) => `/tally-sheet/${tallySheetId}/workflow/proof/file/${fileId}/download`;

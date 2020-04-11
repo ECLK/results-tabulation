@@ -6,7 +6,7 @@ import {
     ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID,
     ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML,
     ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML,
-    ENDPOINT_PATH_TALLY_SHEET_WORKFLOW,
+    ENDPOINT_PATH_TALLY_SHEET_WORKFLOW, ENDPOINT_PATH_TALLY_SHEET_WORKFLOW_LOGS,
     ENDPOINT_PATH_TALLY_SHEETS,
     ENDPOINT_PATH_TALLY_SHEETS_BY_ID, getProofImage, getTallySheetProof,
     request
@@ -209,6 +209,12 @@ export function TallySheetProvider(props) {
         return file;
     }
 
+    async function getTallySheetWorkflowLogList(tallySheetId) {
+        return request({
+            url: ENDPOINT_PATH_TALLY_SHEET_WORKFLOW_LOGS(tallySheetId),
+            method: 'get'
+        });
+    }
 
     return <TallySheetContext.Provider
         value={{
@@ -222,7 +228,8 @@ export function TallySheetProvider(props) {
             saveTallySheetVersion,
             getTallySheetById,
             getTallySheetProofFile,
-            getTallySheetProofFileDataUrl
+            getTallySheetProofFileDataUrl,
+            getTallySheetWorkflowLogList
         }}
     >
         {props.children}

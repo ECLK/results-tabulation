@@ -1389,6 +1389,47 @@ paths:
         description: Proof file
         required: True
 
+  /tally-sheet/{tallySheetId}/workflow/logs:
+    get:
+      tags:
+        - Files
+      summary: Get by ID
+      operationId: api.TallySheetApi.get_workflow_logs
+      parameters:
+        - name: tallySheetId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /tally-sheet/{tallySheetId}/workflow/proof/file/{fileId}:
     get:
       tags:
@@ -1435,7 +1476,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-
 
   /tally-sheet/{tallySheetId}/workflow/proof/file/{fileId}/inline:
     get:
