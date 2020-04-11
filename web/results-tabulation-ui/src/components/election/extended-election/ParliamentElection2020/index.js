@@ -12,7 +12,6 @@ import {
     TALLY_SHEET_CODE_PE_CE_RO_PR_3,
     TALLY_SHEET_CODE_PE_CE_RO_V1,
     TALLY_SHEET_CODE_PE_CE_RO_V2,
-    TALLY_SHEET_CODE_PE_R1,
     TALLY_SHEET_CODE_PE_R2,
     TALLY_SHEET_CODE_PE_39,
     TALLY_SHEET_CODE_PE_22, 
@@ -145,29 +144,6 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 } else if (voteType === "NonPostal") {
                                     tallySheetCodes = [TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
                                     tallySheetCodeLabels = ["Polling Division Results"];
-                                }
-
-                                return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
-                                    return <li key={voteType}>{tallySheetCodeLabels[tallySheetCodeIndex]}
-                                        <Link
-                                            className="tally-sheet-code-list-item btn-list"
-                                            to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
-                                        >
-                                            List
-                                        </Link>
-                                    </li>
-                                });
-                            })}
-
-                            {voteTypes.map((voteType) => {
-                                let tallySheetCodes = [];
-                                let tallySheetCodeLabels = [];
-                                if (voteType === "Postal") {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_R1];
-                                    tallySheetCodeLabels = ["PE-R1 (Postal)"];
-                                } else if (voteType === "NonPostal") {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_R1];
-                                    tallySheetCodeLabels = ["PE-R1"];
                                 }
 
                                 return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {

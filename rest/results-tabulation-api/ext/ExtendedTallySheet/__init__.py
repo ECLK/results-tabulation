@@ -830,6 +830,60 @@ class ExtendedTallySheet:
 
             return df
 
+        def get_time_of_commencement(self):
+            df = self.df.copy()
+            df['numValue'] = df['numValue'].astype(int)
+            df = df.loc[df["templateRowType"] == "TIME_OF_COMMENCEMENT"]
+
+            return df
+
+        def get_number_of_a_packets_found(self):
+            df = self.df.copy()
+            df['numValue'] = df['numValue'].astype(int)
+            df = df.loc[df["templateRowType"] == "NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX"]
+
+            df = df.sort_values(
+                by=['tallySheetVersionRowId'], ascending=True
+            ).reset_index()
+
+            return df
+
+        def get_ballot_box_serial_number(self):
+            df = self.df.copy()
+            df['numValue'] = df['numValue'].astype(int)
+            df = df.loc[df["templateRowType"] == "BALLOT_BOX"]
+
+            df = df.sort_values(
+                by=['tallySheetVersionRowId'], ascending=True
+            ).reset_index()
+
+            return df
+
+        def get_no_of_packets_inserted_to_ballot_box(self):
+            df = self.df.copy()
+            df['numValue'] = df['numValue'].astype(int)
+            df = df.loc[df["templateRowType"] == "NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX"]
+
+            df = df.sort_values(
+                by=['tallySheetVersionRowId'], ascending=True
+            ).reset_index()
+
+            return df
+
+        def get_number_of_a_covers_rejected(self):
+            df = self.df.copy()
+            df['numValue'] = df['numValue'].astype(int)
+            df = df.loc[df["templateRowType"] == "NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A"]
+
+            return df
+
+        def get_number_of_b_covers_rejected(self):
+            df = self.df.copy()
+            df['numValue'] = df['numValue'].astype(int)
+            df = df.loc[df["templateRowType"] == "NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B"]
+
+            return df
+
 
 class ExtendedTallySheetDataEntry(ExtendedTallySheet):
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):

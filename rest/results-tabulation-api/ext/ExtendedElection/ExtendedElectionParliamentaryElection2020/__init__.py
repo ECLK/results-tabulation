@@ -7,6 +7,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
     ExtendedTallySheet_ALL_ISLAND_RESULT
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201 import \
     ExtendedTallySheet_CE_201
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201_PV import \
+    ExtendedTallySheet_CE_201_PV
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_21 import \
     ExtendedTallySheet_PE_21
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_22 import \
@@ -27,15 +29,13 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTall
     ExtendedTallySheet_PE_CE_RO_V1
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_V2 import \
     ExtendedTallySheet_PE_CE_RO_V2
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_R1 import \
-    ExtendedTallySheet_PE_R1
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_R2 import \
     ExtendedTallySheet_PE_R2
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
     META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED, \
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
-    PE_R1, PE_CE_RO_PR_1, \
+    PE_CE_RO_PR_1, \
     PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, \
     ALL_ISLAND_RESULT
 from constants.VOTE_TYPES import Postal, NonPostal, PostalAndNonPostal
@@ -79,12 +79,12 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
     def get_extended_tally_sheet_class(self, templateName):
         EXTENDED_TEMPLATE_MAP = {
             PE_CE_RO_V1: ExtendedTallySheet_PE_CE_RO_V1,
-            PE_R1: ExtendedTallySheet_PE_R1,
             PE_R2: ExtendedTallySheet_PE_R2,
             PE_CE_RO_V2: ExtendedTallySheet_PE_CE_RO_V2,
             PE_27: ExtendedTallySheet_PE_27,
             PE_4: ExtendedTallySheet_PE_4,
             CE_201: ExtendedTallySheet_CE_201,
+            CE_201_PV: ExtendedTallySheet_CE_201_PV,
             PE_39: ExtendedTallySheet_PE_39,
             PE_22: ExtendedTallySheet_PE_22,
             PE_CE_RO_PR_1: ExtendedTallySheet_PE_CE_RO_PR_1,
@@ -571,31 +571,6 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_rejected_vote_row)
 
-        tally_sheet_template_pe_r1 = Template.create(
-            templateName=PE_R1
-        )
-        tally_sheet_template_pe_r1_party_wise_vote_row = tally_sheet_template_pe_r1.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_party_wise_vote_row)
-        tally_sheet_template_pe_r1_rejected_vote_row = tally_sheet_template_pe_r1.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_rejected_vote_row)
-
         tally_sheet_template_pe_ce_ro_v2 = Template.create(
             templateName=PE_CE_RO_V2
         )
@@ -609,7 +584,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
-        ).add_derivative_template_row(tally_sheet_template_pe_r1_party_wise_vote_row)
+        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_party_wise_vote_row)
         tally_sheet_template_pe_ce_ro_v2_rejected_vote_row = tally_sheet_template_pe_ce_ro_v2.add_row(
             templateRowType="REJECTED_VOTE",
             hasMany=True,
@@ -619,7 +594,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
-        ).add_derivative_template_row(tally_sheet_template_pe_r1_rejected_vote_row)
+        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_rejected_vote_row)
 
         tally_sheet_template_all_island_result = Template.create(
             templateName=ALL_ISLAND_RESULT
@@ -1018,16 +993,6 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
-                pe_r1_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_r1, electionId=postal_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": postal_election.electionId
-                    }).metaId,
-                    parentTallySheets=pe_ce_ro_v2_tally_sheet_list,
-                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
-                )]
                 polling_division_results_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_polling_division_results, electionId=postal_election.electionId,
                     areaId=area.areaId,
@@ -1044,7 +1009,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_r1_tally_sheet_list, *polling_division_results_tally_sheet_list],
+                    parentTallySheets=[*polling_division_results_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -1098,7 +1063,6 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_1_tally_sheet
 
                 return {
-                    "pe_r1_tally_sheet_list": pe_r1_tally_sheet_list,
                     "pe_ce_ro_v1_tally_sheet_list": pe_ce_ro_v1_tally_sheet_list,
                     "polling_division_results_tally_sheet_list": polling_division_results_tally_sheet_list,
                     "pe_r2_tally_sheet_list": pe_r2_tally_sheet_list,
@@ -1139,16 +1103,6 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
-                pe_r1_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_r1, electionId=ordinary_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": ordinary_election.electionId
-                    }).metaId,
-                    parentTallySheets=pe_ce_ro_v2_tally_sheet_list,
-                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
-                )]
                 pe_ce_ro_v1_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pe_ce_ro_v1, electionId=ordinary_election.electionId,
                     areaId=area.areaId,
@@ -1156,7 +1110,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_r1_tally_sheet_list, *polling_division_results_tally_sheet_list],
+                    parentTallySheets=[*polling_division_results_tally_sheet_list],
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -1178,7 +1132,6 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_1_tally_sheet
 
                 return {
-                    "pe_r1_tally_sheet_list": pe_r1_tally_sheet_list,
                     "pe_ce_ro_v1_tally_sheet_list": pe_ce_ro_v1_tally_sheet_list,
                     "pe_ce_ro_pr_1_tally_sheet_list": pe_ce_ro_pr_1_tally_sheet_list,
                     "pe_ce_ro_pr_1_tally_sheet_party_id_wise_map": pe_ce_ro_pr_1_tally_sheet_party_id_wise_map,
