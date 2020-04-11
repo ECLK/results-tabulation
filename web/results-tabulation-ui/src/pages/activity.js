@@ -107,12 +107,22 @@ export default function ActivityView({tallySheetId, history, election, messages}
                     <div>
                         <ul>
                             {tallySheetWorkflowLogList.map(tallySheetWorkflowLog => {
-                                const {workflowInstanceLogId, proof, action} = tallySheetWorkflowLog;
+                                const {workflowInstanceLogId, proof, action, createdBy, createdAt, metaDataMap} = tallySheetWorkflowLog;
+                                const {actionName, actionType} = action;
+                                const {tallySheetVersionId} = metaDataMap;
                                 return <li key={workflowInstanceLogId}>
-                                    {action.actionName} [{action.actionType}]
+                                    [{actionType}] <strong>{actionName}</strong> ({createdBy} @ {createdAt})
+                                    <a onClick={() => {
+                                        history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId))
+                                    }}>
+                                        {tallySheetVersionId}
+                                    </a>
                                     <ul>
-                                        {proof.scannedFiles.map(({fileId, dataUrl, fileName}) => {
-                                            return <a key={fileId} href={dataUrl}>{fileName}</a>
+                                        {proof.scannedFiles.map(({fileId, fileName}) => {
+                                            return <li>
+                                                <a key={fileId}
+                                                   href={"asdasd"}>{fileName}</a> ({createdBy} @ {createdAt})
+                                            </li>
                                         })}
                                     </ul>
                                 </li>

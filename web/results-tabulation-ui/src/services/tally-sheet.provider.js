@@ -24,15 +24,22 @@ export function TallySheetProvider(props) {
         tallySheetProofFileMap: {}
     });
 
+    function getMetaDataMap(metaDataList) {
+        const metaDataMap = {};
+        for (let i = 0; i < metaDataList.length; i++) {
+            const {metaDataKey, metaDataValue} = metaDataList[i];
+            metaDataMap[metaDataKey] = metaDataValue;
+        }
+
+        return metaDataMap;
+    }
+
     async function refactorTallySheetObject(tallySheet) {
         tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
         tallySheet.election = await electionEntity.getById(tallySheet.electionId);
 
-        tallySheet.metaDataMap = {};
-        for (let i = 0; i < tallySheet.metaDataList.length; i++) {
-            const {metaDataKey, metaDataValue} = tallySheet.metaDataList[i];
-            tallySheet.metaDataMap[metaDataKey] = metaDataValue;
-        }
+        const {metaDataList = []} = tallySheet;
+        tallySheet.metaDataMap = getMetaDataMap(metaDataList);
 
         const extendedElection = ExtendedElection(tallySheet.election);
         tallySheet = await extendedElection.mapRequiredAreasToTallySheet(tallySheet);
@@ -213,7 +220,15 @@ export function TallySheetProvider(props) {
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_WORKFLOW_LOGS(tallySheetId),
             method: 'get'
-        });
+        }).then(logs => {
+            for (let i = 0; i < logs.length; i++) {
+                const log = logs[i];
+                const {metaDataList = []} = log;
+                log.metaDataMap = getMetaDataMap(metaDataList);
+            }
+
+            return logs;
+        })
     }
 
     return <TallySheetContext.Provider

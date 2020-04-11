@@ -71,7 +71,9 @@ class WorkflowInstanceLogSchema(ma.ModelSchema):
             "action",
             "status",
             "metaDataList",
-            "proof"
+            "proof",
+            "createdBy",
+            "createdAt"
         )
 
         model = WorkflowInstanceLog.Model
@@ -80,7 +82,7 @@ class WorkflowInstanceLogSchema(ma.ModelSchema):
         sqla_session = db.session
 
     action = ma.Nested(StatusActionSchema_1)
-    metaDataList = ma.Nested("MetaDataSchema")
+    metaDataList = ma.Nested("MetaDataSchema", many=True)
     proof = ma.Nested("Proof_Schema")
 
 

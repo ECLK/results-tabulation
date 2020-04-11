@@ -20,8 +20,11 @@ class WorkflowInstanceLogModel(db.Model):
     action = relationship(WorkflowActionModel, foreign_keys=[workflowActionId])
     proof = relationship(Proof.Model, foreign_keys=[proofId])
     meta = relationship(Meta.Model, foreign_keys=[metaId])
+    historyVersion = relationship(HistoryVersion.Model, foreign_keys=[workflowInstanceLogId])
 
     metaDataList = association_proxy("meta", "metaDataList")
+    createdBy = association_proxy("historyVersion", "createdBy")
+    createdAt = association_proxy("historyVersion", "createdAt")
 
     @classmethod
     def create(cls, workflowInstanceId, status, workflowActionId, metaId, proofId):
