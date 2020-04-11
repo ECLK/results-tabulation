@@ -3,7 +3,6 @@ export const TALLY_SHEET_CODE_CE_201_PV = "CE-201-PV";
 export const TALLY_SHEET_CODE_PE_27 = "PE-27";
 export const TALLY_SHEET_CODE_PE_4 = "PE-4";
 export const TALLY_SHEET_CODE_PE_CE_RO_V1 = "PE-CE-RO-V1";
-export const TALLY_SHEET_CODE_PE_R1 = "PE-R1";
 export const TALLY_SHEET_CODE_PE_CE_RO_V2 = "PE-CE-RO-V2";
 export const TALLY_SHEET_CODE_PE_R2 = "PE-R2";
 export const TALLY_SHEET_CODE_PE_CE_RO_PR_1 = "PE-CE-RO-PR-1";
