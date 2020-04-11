@@ -130,8 +130,8 @@ role_based_access_config = {
             Postal: [READ, PRINT, UNLOCK]
         },
         PE_CE_RO_V1: {
-            Postal: [READ, PRINT, WRITE, LOCK],
-            NonPostal: [READ, PRINT, WRITE, UNLOCK]
+            Postal: [READ, PRINT, WRITE, LOCK, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT],
+            NonPostal: [READ, PRINT, WRITE, UNLOCK, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT]
         },
         POLLING_DIVISION_RESULTS: {
             Postal: [READ, PRINT, WRITE, LOCK],
