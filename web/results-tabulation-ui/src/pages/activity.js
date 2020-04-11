@@ -18,7 +18,6 @@ export default function ActivityView({tallySheetId, history, election, messages}
     const tallySheetContext = useContext(TallySheetContext);
 
     const tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
-    const [fileMap, setFileMap] = useState({});
     const [tallySheetWorkflowLogList, setTallySheetWorkflowLogList] = useState([]);
     const [processing, setProcessing] = useState(true);
 
@@ -26,18 +25,6 @@ export default function ActivityView({tallySheetId, history, election, messages}
     useEffect(() => {
         fetchTallySheetWorkflowLog();
     }, [tallySheetId]);
-
-    // async function fetchFiles(proof) {
-    //     const {scannedFiles} = proof;
-    //     for (let i = 0; i < scannedFiles.length; i++) {
-    //         const {fileId} = scannedFiles[i];
-    //         console.log(`======= ${proof.proofId} - ${fileId}`);
-    //         const file = await tallySheetContext.getTallySheetProofFileDataUrl(tallySheetId, fileId);
-    //         setFileMap(prevState => {
-    //             return {...prevState, [fileId]: file};
-    //         });
-    //     }
-    // }
 
     async function fetchTallySheetWorkflowLog() {
         setProcessing(true);
@@ -121,7 +108,7 @@ export default function ActivityView({tallySheetId, history, election, messages}
                                         {proof.scannedFiles.map(({fileId, fileName}) => {
                                             return <li>
                                                 <a key={fileId}
-                                                   href={"asdasd"}>{fileName}</a> ({createdBy} @ {createdAt})
+                                                   href={"#"}>{fileName}</a> ({createdBy} @ {createdAt})
                                             </li>
                                         })}
                                     </ul>
@@ -134,7 +121,5 @@ export default function ActivityView({tallySheetId, history, election, messages}
         </TabulationPage>
     };
 
-    return getReportViewJsx()
-
-
+    return getReportViewJsx();
 }

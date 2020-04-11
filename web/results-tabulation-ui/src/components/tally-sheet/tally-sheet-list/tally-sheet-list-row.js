@@ -14,6 +14,7 @@ import {
 import {fieldMatch} from "../../../utils";
 import TallySheetActions from "../tally-sheet-actions";
 import {TallySheetContext} from "../../../services/tally-sheet.provider";
+import {WORKFLOW_ACTION_TYPE_VIEW} from "../constants/WORKFLOW_ACTION_TYPE";
 
 
 export default function TallySheetListRow(
@@ -79,10 +80,12 @@ export default function TallySheetListRow(
             {columns.map((column, columnIndex) => {
                 let columnCellContent = null;
                 if (column == TALLY_SHEET_LIST_COLUMN_ACTIONS) {
-                    columnCellContent = <TallySheetActions
-                        tallySheetId={tallySheet.tallySheetId}
-                        electionId={electionId} history={history}
-                    />
+                    columnCellContent = <div className="tally-sheet-list-row-actions">
+                        <TallySheetActions
+                            tallySheetId={tallySheet.tallySheetId}
+                            electionId={electionId} history={history}
+                        />
+                    </div>
                 } else {
                     columnCellContent = tallySheet[column];
                 }

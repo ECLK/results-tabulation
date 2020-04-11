@@ -6,7 +6,7 @@ import {
 } from "../App";
 import Processing from "../components/processing";
 import {getTallySheetCodeStr} from "../utils/tallySheet";
-import TabulationPage from "./index";
+import {TabulationTallySheetPage} from "./index";
 import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
@@ -82,12 +82,9 @@ export default function ReportView(props) {
             }
         ];
 
-        return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
+        return <TabulationTallySheetPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}
+                                         tallySheet={tallySheet} history={history}>
             <div className="page-content">
-                <div>{rootElection.electionName}</div>
-                <div>{getTallySheetCodeStr({tallySheetCode, voteType})}</div>
-
-
                 <div className="report-view-status">
                     <div className="report-view-status-actions">
                         <TallySheetActions
@@ -125,7 +122,7 @@ export default function ReportView(props) {
                     </iframe>
                 </Processing>
             </div>
-        </TabulationPage>
+        </TabulationTallySheetPage>
     };
 
     return getReportViewJsx()

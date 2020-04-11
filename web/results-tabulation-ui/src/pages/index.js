@@ -1,6 +1,10 @@
-import {PATH_ELECTION, PATH_ELECTION_BY_ID} from "../App";
+import {PATH_ELECTION, PATH_ELECTION_BY_ID, PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW} from "../App";
 import React, {Component} from "react";
 import BreadCrumb from "../components/bread-crumb";
+import {getTallySheetCodeStr} from "../utils/tallySheet";
+import IconButton from "@material-ui/core/IconButton";
+import InfoIcon from "@material-ui/icons/Info";
+
 
 function getBreadCrumbLinks(election, additionalLinks) {
     let _election = election;
@@ -35,4 +39,35 @@ export default class TabulationPage extends Component {
             {children}
         </div>
     }
+}
+
+
+export function TabulationTallySheetPage(props) {
+    const {election, additionalBreadCrumbLinks = [], tallySheet, history, children} = props;
+
+    const {tallySheetId, tallySheetCode} = tallySheet;
+    const {rootElection, voteType} = election;
+
+    return <div className="page">
+        <BreadCrumb
+            links={getBreadCrumbLinks(election, additionalBreadCrumbLinks)}
+        />
+        <div className="tally-sheet-page-header">
+            <h4 className="tally-sheet-page-header-election">{rootElection.electionName}</h4>
+            <strong className="tally-sheet-page-header-tally-sheet-code">
+                {getTallySheetCodeStr({tallySheetCode, voteType})}
+            </strong>
+            <h5 className="tally-sheet-page-header-area">{tallySheet.area.areaName}</h5>
+            <IconButton
+                aria-label="delete" style={{float: "right"}}
+                className="tally-sheet-page-header-info-link"
+                onClick={() => {
+                    history.push(PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW(tallySheetId))
+                }}
+            >
+                <InfoIcon/>
+            </IconButton>
+        </div>
+        {children}
+    </div>
 }

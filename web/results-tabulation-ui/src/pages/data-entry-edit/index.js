@@ -4,7 +4,7 @@ import {
 } from "../../App";
 import {getTallySheetCodeStr} from "../../utils/tallySheet";
 import ExtendedElection from "../../components/election/extended-election";
-import TabulationPage from "../index";
+import {TabulationTallySheetPage} from "../index";
 import {TallySheetContext} from "../../services/tally-sheet.provider";
 
 
@@ -32,18 +32,13 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
         return <extendedElection.TallySheetEditComponent {...props}/>
     }
 
-    return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
+    return <TabulationTallySheetPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}
+                                     tallySheet={tallySheet} history={history}>
         <div className="page-content">
-            <div className="data-entry-edit-header">
-                <div className="data-entry-edit-header-election-name">{rootElection.electionName}</div>
-                <div className="data-entry-edit-header-tally-sheet-code">
-                    {getTallySheetCodeStr({tallySheetCode, voteType})}
-                </div>
-            </div>
             <div>{tallySheet.electoralDistrict ? 'Electoral District: ' + tallySheet.electoralDistrict.areaName : null}
                 {tallySheet.pollingDivision ? ' > Polling Division: ' + tallySheet.pollingDivision.areaName : null}
                 {tallySheet.countingCentre ? ' > Counting Centre: ' + tallySheet.countingCentre.areaName : null}</div>
             {getEditorJsx()}
         </div>
-    </TabulationPage>
+    </TabulationTallySheetPage>
 }

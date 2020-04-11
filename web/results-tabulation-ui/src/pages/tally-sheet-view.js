@@ -6,13 +6,14 @@ import {WORKFLOW_ACTION_TYPE_SAVE} from "../components/tally-sheet/constants/WOR
 
 export default function TallySheetView(props) {
     const tallySheetContext = useContext(TallySheetContext);
-    const tallySheet = tallySheetContext.getTallySheetById(props.tallySheetId);
+    const {tallySheetId, tallySheetVersionId} = props;
+    const tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
 
     const saveAllowed = tallySheet.workflowInstance.actions.filter(action => {
         return action.allowed && action.actionType === WORKFLOW_ACTION_TYPE_SAVE;
     }).length > 0;
 
-    if (!tallySheet.template.isDerived && saveAllowed) {
+    if (!tallySheet.template.isDerived && saveAllowed && tallySheetVersionId === null) {
         return <DataEntryEdit {...props}/>
     } else {
         return <ReportView {...props}/>

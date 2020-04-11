@@ -88,7 +88,7 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
         const actionButtonProps = {
             key: actionIndex,
             variant: "outlined",
-            color: "default",
+            color: "primary",
             size: "small",
             disabled: !action.authorized,
             onClick() {

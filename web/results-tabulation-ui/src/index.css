@@ -44,7 +44,6 @@ ul.bread-crumb {
     padding-top: 2px;
     color: white;
     margin: 0px;
-    margin-bottom: 10px;
 }
 
 ul.bread-crumb li.bread-crumb-list-item {
@@ -121,36 +120,39 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
     padding-top: 0 !important;
 }
 
-.data-entry-edit-count-input {
-    text-align: right;
-    width: 100px;
-}
-
-.data-entry-edit-count-in-words-input {
-    width: 500px;
-}
-
-
-.data-entry-edit-header {
+.tally-sheet-page-header {
     display: flex;
-    flex-direction: row;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-bottom: 11px;
+    background-color: #edf2f9;
 }
 
-.data-entry-edit-header .data-entry-edit-header-tally-sheet-code {
-    background-color: black;
-    border-radius: 3px;
-    padding: 11px;
-    color: white;
-    font-size: 20px;
+.tally-sheet-page-header-election {
+    flex: 1;
+    margin: 0px;
+    line-height: 30px;
 }
 
-.data-entry-edit-header .data-entry-edit-header-election-name {
-    flex: 1
+.tally-sheet-page-header-area {
+    margin: 0px;
+    line-height: 30px;
+    margin-right: 15px;
+    color: #636667;
 }
 
-.page-content .MuiButton-contained,
-.page-content .MuiButton-outlined {
+.tally-sheet-page-header-tally-sheet-code {
     margin-right: 10px;
+    line-height: 30px;
+    color: #9E9E9E;
+    font-size: 25px;
+}
+
+.tally-sheet-page-header-info-link.MuiIconButton-root {
+    padding: 0px 10px;
+    color: #03A9F4;
 }
 
 .report-view-status .report-view-status-text {
@@ -164,6 +166,22 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 
 .report-view-status .report-view-status-actions {
     text-align: right;
+}
+
+.tally-sheet-list-row-actions .MuiButton-contained,
+.tally-sheet-list-row-actions .MuiButton-outlined {
+    margin-right: 10px;
+    font-size: 11px;
+    padding: 1px 7px;
+    min-width: 0px;
+    margin-bottom: 3px;
+}
+
+.report-view-status-actions .MuiButton-contained,
+.report-view-status-actions .MuiButton-outlined {
+    margin-right: 10px;
+    min-width: 0px;
+    margin-bottom: 3px;
 }
 
 .tabulation-linear-progress-bar {
