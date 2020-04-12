@@ -39,6 +39,18 @@ class ProofModel(db.Model):
 
         return proof
 
+    def clone(self):
+        proof = ProofModel(
+            proofType=self.proofType,
+            scannedFilesFolderId=self.scannedFilesFolder.copy().folderId,
+            proofStampId=Stamp.create().stampId
+        )
+
+        db.session.add(proof)
+        db.session.flush()
+
+        return proof
+
     def close(self):
         self.finished = True
 

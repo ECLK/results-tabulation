@@ -58,7 +58,6 @@ def workflow(tallySheetId, body):
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
 
     extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
-
     extended_tally_sheet.execute_workflow_action(workflowActionId=workflowActionId)
 
     db.session.commit()
@@ -76,11 +75,11 @@ def upload_workflow_proof_file(body):
     if tally_sheet is None:
         raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
 
-    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
-    extended_tally_sheet.execute_tally_sheet_proof_upload()
-
     body["proofId"] = tally_sheet.workflowInstance.proofId
     ProofApi.upload_file(body=body)
+
+    extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
+    extended_tally_sheet.execute_tally_sheet_proof_upload()
 
     return TallySheetSchema_1().dump(tally_sheet).data
 

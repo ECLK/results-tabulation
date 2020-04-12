@@ -1,9 +1,8 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import case
 from sqlalchemy.orm import relationship
-
 from app import db
 from exception import MethodNotAllowedException
+from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_REQUEST_CHANGES
 from orm.entities import History, Meta, Proof
 from orm.entities.Workflow import WorkflowStatusModel, WorkflowActionModel
 from orm.entities.Workflow.WorkflowInstance import WorkflowInstanceLog
@@ -62,10 +61,14 @@ class WorkflowInstanceModel(db.Model):
                 proofId=self.proofId
             ).workflowInstanceLogId
 
-            # To avoid non state changing actions to shift proofs.
-            if action.fromStatus != action.toStatus:
-                self.proof.close()
+            self.proof.close()
+
+            # proof is replaced only for WORKFLOW_ACTION_TYPE_REQUEST_CHANGES
+            if action.actionType == WORKFLOW_ACTION_TYPE_REQUEST_CHANGES:
                 self.proofId = Proof.create().proofId
+            # For all the other actions, the proof is cloned.
+            else:
+                self.proofId = self.proof.clone().proofId
 
             db.session.add(self)
             db.session.flush()

@@ -19,6 +19,18 @@ class FolderModel(db.Model):
 
         return folder
 
+    def copy(self):
+        from orm.entities.IO.Folder import FolderFile
+
+        folder = FolderModel.create()
+        for file in self.folderFiles:
+            FolderFile.create(
+                folderId=folder.folderId,
+                fileId=file.fileId
+            )
+
+        return folder
+
 
 Model = FolderModel
 create = Model.create
