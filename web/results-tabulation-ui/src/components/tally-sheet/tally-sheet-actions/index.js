@@ -92,11 +92,26 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
             size: "small",
             disabled: !action.authorized,
             onClick() {
+
                 if (action.actionType === WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT) {
                     dialogContext.push({
                         render({open, handleClose, handleOk}) {
-                            return <UploadTallySheetProofsDialog tallySheetId={tallySheetId} open={open}
-                                                                 handleClose={handleClose} handleOk={handleOk}/>
+                            return <UploadTallySheetProofsDialog
+                                allowUpload={true} title="Upload certified documents"
+                                tallySheetId={tallySheetId} open={open} handleClose={handleClose} handleOk={handleOk}/>
+                        }
+                    })
+                } else if (action.actionType === WORKFLOW_ACTION_TYPE_RELEASE) {
+                    dialogContext.push({
+                        render({open, handleClose, handleOk}) {
+                            return <UploadTallySheetProofsDialog
+                                allowUpload={false} title="Release confirmation"
+                                tallySheetId={tallySheetId} open={open} handleClose={handleClose} handleOk={handleOk}
+                                actions={[
+                                    {value: "Confirm and Release", onClick: handleOk},
+                                    {value: "Cancel", onClick: handleClose}
+                                ]}
+                            />
                         }
                     }).then(() => {
                         onClick()
