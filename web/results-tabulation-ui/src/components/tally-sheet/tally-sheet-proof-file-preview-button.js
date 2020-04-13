@@ -25,10 +25,7 @@ export default function PreviewTallySheetProofFileButton(props) {
     };
 
     return <Button
-        variant={props.variant}
-        color={props.color}
-        size={props.size}
-        disabled={props.disabled}
+        {...props}
         onClick={onClick(true)}
     >
         {/*{(() => {*/}

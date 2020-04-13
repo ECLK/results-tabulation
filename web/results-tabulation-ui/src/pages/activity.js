@@ -11,6 +11,9 @@ import TabulationPage from "./index";
 import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
+import PreviewTallySheetProofFileButton from "../components/tally-sheet/tally-sheet-proof-file-preview-button";
+import {Link} from "@material-ui/core";
+import Button from "@material-ui/core/Button";
 
 export default function ActivityView({tallySheetId, history, election, messages}) {
     const {electionId, rootElection, voteType} = election;
@@ -99,16 +102,29 @@ export default function ActivityView({tallySheetId, history, election, messages}
                                 const {tallySheetVersionId} = metaDataMap;
                                 return <li key={workflowInstanceLogId}>
                                     [{actionType}] <strong>{actionName}</strong> ({createdBy} @ {createdAt})
-                                    <a onClick={() => {
-                                        history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId))
-                                    }}>
+                                    <Button
+                                        onClick={() => {
+                                            history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId))
+                                        }}
+                                        style={{
+                                            color: "#5079c8",
+                                            textDecoration: "underline"
+                                        }}
+                                    >
                                         {tallySheetVersionId}
-                                    </a>
+                                    </Button>
                                     <ul>
                                         {proof.scannedFiles.map(({fileId, fileName}) => {
                                             return <li>
-                                                <a key={fileId}
-                                                   href={"#"}>{fileName}</a> ({createdBy} @ {createdAt})
+                                                <PreviewTallySheetProofFileButton
+                                                    tallySheetId={tallySheetId} fileId={fileId}
+                                                    style={{
+                                                        color: "#5079c8",
+                                                        textDecoration: "underline"
+                                                    }}
+                                                >
+                                                    {fileName}
+                                                </PreviewTallySheetProofFileButton> ({createdBy} @ {createdAt})
                                             </li>
                                         })}
                                     </ul>
