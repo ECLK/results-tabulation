@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import CustomizedSnackbars from "../components/snack-bar"
 
-const MessagesContext = React.createContext([]);
+export const MessagesContext = React.createContext([]);
 
 export const MESSAGE_TYPES = {
     SUCCESS: "success",
@@ -16,7 +16,7 @@ export function MessagesProvider(props) {
         messagesMap: {}
     });
 
-    const push = function (messageTitle, messageBody, messageType = MESSAGE_TYPES.INFO) {
+    const push = function ({messageTitle, messageBody, messageType = MESSAGE_TYPES.INFO}) {
         const message = {messageId: state.messagesList.length, messageTitle, messageBody, messageType, open: true};
         setState({
             ...state,

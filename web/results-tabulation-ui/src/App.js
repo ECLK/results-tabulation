@@ -7,10 +7,9 @@ import {ElectionProtectedRoute, ProtectedRoute, TallySheetProtectedRoute} from "
 
 import Home from "./pages/home"
 import Election from "./pages/election";
-import ReleaseView from "./pages/release-view";
-import ReleaseList from "./pages/release-list";
 import TallySheetListView from "./pages/tally-sheet-list-view";
 import TallySheetView from "./pages/tally-sheet-view";
+import TallySheetActivityView from "./pages/tally-sheet-activity";
 
 export const ROUTER_PREFIX = "";
 export const PATH_ELECTION = () => `${ROUTER_PREFIX}/election`;
@@ -29,19 +28,6 @@ export const PATH_ELECTION_TALLY_SHEET_LIST = (electionId = null, tallySheetCode
 
     return path;
 };
-export const PATH_ELECTION_RESULTS_RELEASE = (electionId, tallySheetCode) => {
-    let path = `${ROUTER_PREFIX}/election/${electionId}/release`;
-
-    if (tallySheetCode) {
-        path += `?tallySheetCode=${tallySheetCode}`;
-    }
-
-    return path;
-};
-
-export const PATH_ELECTION_RESULTS_RELEASE_VIEW = (electionId, tallySheetId) => {
-    return `${ROUTER_PREFIX}/election/${electionId}/release/${tallySheetId}`;
-};
 
 export const PATH_ELECTION_TALLY_SHEET_VIEW = (tallySheetId, tallySheetVersionId) => {
     let path = `${ROUTER_PREFIX}/tally-sheet/${tallySheetId}`;
@@ -52,6 +38,9 @@ export const PATH_ELECTION_TALLY_SHEET_VIEW = (tallySheetId, tallySheetVersionId
     return path
 };
 
+export const PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW = (tallySheetId) => {
+    return `${ROUTER_PREFIX}/tally-sheet-activity/${tallySheetId}`;
+};
 
 function App() {
 
@@ -90,17 +79,11 @@ function App() {
                     path={PATH_ELECTION_TALLY_SHEET_VIEW(":tallySheetId", ":tallySheetVersionId?")}
                     component={TallySheetView}
                 />
-                <ElectionProtectedRoute
-                    exact
-                    path={PATH_ELECTION_RESULTS_RELEASE(":electionId")}
-                    component={ReleaseList}
-                />
                 <TallySheetProtectedRoute
                     exact
-                    path={PATH_ELECTION_RESULTS_RELEASE_VIEW(":electionId", ":tallySheetId")}
-                    component={ReleaseView}
+                    path={PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW(":tallySheetId")}
+                    component={TallySheetActivityView}
                 />
-
             </Switch>
         </div>
     );

@@ -1,10 +1,12 @@
 import React, {useState} from "react";
 import ExtendedElection from "../components/election/extended-election";
 import {
+    ENDPOINT_PATH_FILE, ENDPOINT_PATH_FILE_DOWNLOAD,
+    ENDPOINT_PATH_TALLY_SHEET_PROOF,
     ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID,
     ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML,
     ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML,
-    ENDPOINT_PATH_TALLY_SHEET_WORKFLOW,
+    ENDPOINT_PATH_TALLY_SHEET_WORKFLOW, ENDPOINT_PATH_TALLY_SHEET_WORKFLOW_LOGS,
     ENDPOINT_PATH_TALLY_SHEETS,
     ENDPOINT_PATH_TALLY_SHEETS_BY_ID,
     request
@@ -18,18 +20,26 @@ const electionEntity = new ElectionEntity();
 
 export function TallySheetProvider(props) {
     const [state, setState] = useState({
-        tallySheetMap: {}
+        tallySheetMap: {},
+        tallySheetProofFileMap: {}
     });
+
+    function getMetaDataMap(metaDataList) {
+        const metaDataMap = {};
+        for (let i = 0; i < metaDataList.length; i++) {
+            const {metaDataKey, metaDataValue} = metaDataList[i];
+            metaDataMap[metaDataKey] = metaDataValue;
+        }
+
+        return metaDataMap;
+    }
 
     async function refactorTallySheetObject(tallySheet) {
         tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
         tallySheet.election = await electionEntity.getById(tallySheet.electionId);
 
-        tallySheet.metaDataMap = {};
-        for (let i = 0; i < tallySheet.metaDataList.length; i++) {
-            const {metaDataKey, metaDataValue} = tallySheet.metaDataList[i];
-            tallySheet.metaDataMap[metaDataKey] = metaDataValue;
-        }
+        const {metaDataList = []} = tallySheet;
+        tallySheet.metaDataMap = getMetaDataMap(metaDataList);
 
         const extendedElection = ExtendedElection(tallySheet.election);
         tallySheet = await extendedElection.mapRequiredAreasToTallySheet(tallySheet);
@@ -101,10 +111,13 @@ export function TallySheetProvider(props) {
 
     function uploadTallySheetProof(formData, onUploadProgress) {
         return request({
-            url: `/proof/upload`,
+            url: `/tally-sheet/workflow/proof/upload`,
             method: 'put',
             data: formData,
             onUploadProgress
+        }).then((tallySheet) => {
+            _updateTallySheetState(tallySheet);
+            return refactorTallySheetObject(tallySheet);
         });
     }
 
@@ -130,7 +143,11 @@ export function TallySheetProvider(props) {
         })
     }
 
-    function fetchTallySheetVersionLetterHtml(tallySheetId, tallySheetVersionId) {
+    function fetchTallySheetVersionLetterHtml(tallySheetId, tallySheetVersionId = null) {
+        if (!tallySheetVersionId) {
+            tallySheetVersionId = state.tallySheetMap[tallySheetId].latestVersionId
+        }
+
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML(tallySheetId, tallySheetVersionId),
             method: 'get'
@@ -152,6 +169,72 @@ export function TallySheetProvider(props) {
         return saveTallySheetVersion(tallySheetId, tallySheetVersionId)
     }
 
+    function getTallySheetProof(tallySheetId, fileId) {
+        return request({
+            url: ENDPOINT_PATH_TALLY_SHEET_PROOF(tallySheetId, fileId),
+            method: 'get'
+        });
+    }
+
+    async function getTallySheetProofFile(tallySheetId, fileId) {
+        let file = state.tallySheetProofFileMap[fileId];
+        if (!file) {
+            file = await request({
+                url: ENDPOINT_PATH_FILE(tallySheetId, fileId),
+                method: 'get'
+            }).then(_file => {
+                setState(prevState => {
+                    return {
+                        ...prevState,
+                        tallySheetProofFileMap: {...prevState.tallySheetProofFileMap, [fileId]: _file}
+                    };
+                });
+                return _file;
+            });
+        }
+
+        return file;
+    }
+
+    async function getTallySheetProofFileDataUrl(tallySheetId, fileId) {
+        let file = await getTallySheetProofFile(tallySheetId, fileId);
+        if (!file.dataUrl) {
+            const fileArrayBuffer = await request({
+                url: ENDPOINT_PATH_FILE_DOWNLOAD(tallySheetId, fileId),
+                method: 'get',
+                responseType: 'arraybuffer'
+            });
+            const fileBlob = new Blob([fileArrayBuffer], {type: file.fileMimeType});
+            const dataUrl = URL.createObjectURL(fileBlob);
+            file.dataUrl = dataUrl;
+            setState(prevState => {
+                return {
+                    ...prevState, tallySheetProofFileMap: {
+                        ...prevState.tallySheetProofFileMap,
+                        [fileId]: {...prevState.tallySheetProofFileMap[fileId], dataUrl}
+                    }
+                };
+            });
+        }
+
+        return file;
+    }
+
+    async function getTallySheetWorkflowLogList(tallySheetId) {
+        return request({
+            url: ENDPOINT_PATH_TALLY_SHEET_WORKFLOW_LOGS(tallySheetId),
+            method: 'get'
+        }).then(logs => {
+            for (let i = 0; i < logs.length; i++) {
+                const log = logs[i];
+                const {metaDataList = []} = log;
+                log.metaDataMap = getMetaDataMap(metaDataList);
+            }
+
+            return logs;
+        })
+    }
+
     return <TallySheetContext.Provider
         value={{
             fetchTallySheet,
@@ -162,7 +245,10 @@ export function TallySheetProvider(props) {
             fetchTallySheetVersionHtml,
             fetchTallySheetVersionLetterHtml,
             saveTallySheetVersion,
-            getTallySheetById
+            getTallySheetById,
+            getTallySheetProofFile,
+            getTallySheetProofFileDataUrl,
+            getTallySheetWorkflowLogList
         }}
     >
         {props.children}

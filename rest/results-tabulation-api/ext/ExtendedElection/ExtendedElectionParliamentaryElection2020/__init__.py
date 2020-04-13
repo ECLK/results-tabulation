@@ -52,7 +52,7 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACT
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, \
     WORKFLOW_ACTION_TYPE_VERIFY, WORKFLOW_ACTION_TYPE_EDIT, \
     WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, WORKFLOW_ACTION_TYPE_RELEASE, \
-    WORKFLOW_ACTION_TYPE_PRINT
+    WORKFLOW_ACTION_TYPE_PRINT, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_PRINT_LETTER
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_STATUS_TYPE import \
     WORKFLOW_STATUS_TYPE_EMPTY, \
     WORKFLOW_STATUS_TYPE_SAVED, WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, WORKFLOW_STATUS_TYPE_SUBMITTED, \
@@ -238,6 +238,14 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
 
+                {"name": "Print Letter", "type": WORKFLOW_ACTION_TYPE_PRINT_LETTER,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED,
+                 "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+
+                {"name": "Upload Certified Documents", "type": WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
+                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+
                 {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
                 {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
@@ -245,7 +253,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
 
-                {"name": "Print and Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
+                {"name": "Move to Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
 
                 {"name": "Upload and Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
@@ -1103,7 +1111,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "electionId": ordinary_election.electionId
                     }).metaId,
                     parentTallySheets=[*polling_division_results_tally_sheet_list],
-                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
+                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_ce_ro_pr_1_tally_sheet_list = []

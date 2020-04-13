@@ -6,7 +6,7 @@ import {
 } from "../App";
 import Processing from "../components/processing";
 import {getTallySheetCodeStr} from "../utils/tallySheet";
-import TabulationPage from "./index";
+import {TabulationTallySheetPage} from "./index";
 import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
@@ -17,25 +17,21 @@ export default function ReportView(props) {
     const {history, election, messages} = props;
     const {electionId, rootElection, voteType} = election;
     const tallySheet = tallySheetContext.getTallySheetById(props.tallySheetId);
-    const [tallySheetVersionId, setTallySheetVersionId] = useState(null);
+
     const [tallySheetVersionHtml, setTallySheetVersionHtml] = useState(null);
     const [processing, setProcessing] = useState(true);
     const [iframeHeight, setIframeHeight] = useState(600);
     const [iframeWidth] = useState("100%");
     const iframeRef = React.createRef();
 
+    let tallySheetVersionId = props.tallySheetVersionId;
+    const {latestVersion} = tallySheet;
+    if (!tallySheetVersionId && latestVersion) {
+        tallySheetVersionId = latestVersion.tallySheetVersionId;
+    }
 
     const fetchTallySheetVersion = async () => {
-        const {tallySheetId, tallySheetCode} = tallySheet;
-        let _tallySheet = tallySheet;
-        const {latestVersion} = _tallySheet;
-
-        let tallySheetVersionId = null;
-        if (latestVersion) {
-            tallySheetVersionId = latestVersion.tallySheetVersionId;
-        }
-
-        setTallySheetVersionId(tallySheetVersionId);
+        const {tallySheetId} = tallySheet;
 
         if (tallySheetVersionId) {
             const tallySheetVersionHtml = await tallySheetContext.fetchTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
@@ -79,15 +75,16 @@ export default function ReportView(props) {
             {
                 label: areaName.toLowerCase(),
                 to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId)
+            },
+            {
+                label: tallySheetVersionId,
+                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
             }
         ];
 
-        return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
+        return <TabulationTallySheetPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}
+                                         tallySheet={tallySheet} history={history}>
             <div className="page-content">
-                <div>{rootElection.electionName}</div>
-                <div>{getTallySheetCodeStr({tallySheetCode, voteType})}</div>
-
-
                 <div className="report-view-status">
                     <div className="report-view-status-actions">
                         <TallySheetActions
@@ -125,7 +122,7 @@ export default function ReportView(props) {
                     </iframe>
                 </Processing>
             </div>
-        </TabulationPage>
+        </TabulationTallySheetPage>
     };
 
     return getReportViewJsx()

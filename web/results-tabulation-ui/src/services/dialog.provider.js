@@ -1,13 +1,6 @@
 import React, {useState} from "react";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import Slide from "@material-ui/core/Slide";
 
-const DialogContext = React.createContext([]);
+export const DialogContext = React.createContext([]);
 
 export const DIALOG_TYPES = {
     SUCCESS: "success",
@@ -22,16 +15,18 @@ export function DialogProvider(props) {
         dialogsMap: {}
     });
 
-    const push = function (dialogTitle, dialogBody, dialogType = DIALOG_TYPES.INFO) {
+    function push({dialogTitle, dialogBody, dialogType = DIALOG_TYPES.INFO, render}) {
         const dialog = {
             dialogId: state.dialogsList.length,
             dialogTitle, dialogBody, dialogType,
             open: true,
-            actionPromise: new Promise((resolve, reject) => {
-                dialog.actionPromiseResolve = resolve;
-                dialog.actionPromiseReject = reject;
-            })
+            render
         };
+
+        dialog.actionPromise = new Promise((resolve, reject) => {
+            dialog.actionPromiseResolve = resolve;
+            dialog.actionPromiseReject = reject;
+        });
 
         setState({
             ...state,
@@ -71,46 +66,21 @@ export function DialogProvider(props) {
     >
         {state.dialogsList.map((dialogId) => {
             const dialog = state.dialogsMap[dialogId];
-            if (dialog.open && dialogId === (state.dialogsList.length - 1)) {
-                const Transition = React.forwardRef(function Transition(props, ref) {
-                    return <Slide direction="up" ref={ref} {...props} />;
-                });
-
+            if (dialog.open) {
                 const handleClose = () => (event) => {
-                    dialog.actionPromiseResolve(0);
-                };
+                    setState((prevState) => {
+                        Object.assign(prevState.dialogsMap[dialogId], {open: false});
 
+                        return {...prevState};
+                    });
+                };
                 const handleOk = () => (event) => {
-                    dialog.actionPromiseResolve(1);
+                    dialog.actionPromiseResolve();
+                    handleClose()(event);
                 };
+                const dialogProps = {open: dialog.open, handleClose, handleOk};
 
-
-                return <Dialog
-                    key={dialogId}
-                    open={true}
-                    TransitionComponent={Transition}
-                    keepMounted
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-slide-title"
-                    aria-describedby="alert-dialog-slide-description"
-                >
-                    <DialogTitle id="alert-dialog-slide-title">{"Use Google's location service?"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-slide-description">
-                            <strong>{dialog.dialogTitle}</strong>
-                            <div>{dialog.dialogBody}</div>
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={handleClose} color="primary">
-                            Ok
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-
+                return dialog.render(dialogProps);
             }
         })}
         {props.children}

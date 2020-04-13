@@ -47,12 +47,33 @@ class StatusActionSchema(ma.ModelSchema):
         sqla_session = db.session
 
 
+
+class StatusActionSchema_1(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "workflowActionId",
+            "actionName",
+            "actionType",
+            "fromStatus",
+            "toStatus"
+        )
+
+        model = WorkflowActionModel
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = db.session
+
+
 class WorkflowInstanceLogSchema(ma.ModelSchema):
     class Meta:
         fields = (
             "workflowInstanceLogId",
             "action",
-            "status"
+            "status",
+            "metaDataList",
+            "proof",
+            "createdBy",
+            "createdAt"
         )
 
         model = WorkflowInstanceLog.Model
@@ -60,7 +81,9 @@ class WorkflowInstanceLogSchema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    action = ma.Nested(StatusActionSchema)
+    action = ma.Nested(StatusActionSchema_1)
+    metaDataList = ma.Nested("MetaDataSchema", many=True)
+    proof = ma.Nested("Proof_Schema")
 
 
 class WorkflowInstanceSchema(ma.ModelSchema):
@@ -71,7 +94,8 @@ class WorkflowInstanceSchema(ma.ModelSchema):
             "actions",
             "statuses",
             "status",
-            "latestLog"
+            "latestLog",
+            "proof"
         )
 
         model = WorkflowInstance.Model
@@ -81,6 +105,8 @@ class WorkflowInstanceSchema(ma.ModelSchema):
 
     actions = ma.Nested(StatusActionSchema, many=True)
     statuses = ma.Nested(StatusSchema, many=True)
+    proof = ma.Nested("Proof_Schema")
+
 
 
 class StampSchema(ma.ModelSchema):

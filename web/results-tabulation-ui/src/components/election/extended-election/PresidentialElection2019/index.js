@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import {
-    PATH_ELECTION_TALLY_SHEET_LIST, PATH_ELECTION_RESULTS_RELEASE
+    PATH_ELECTION_TALLY_SHEET_LIST
 } from "../../../../App";
 import {
     TALLY_SHEET_CODE_CE_201,
@@ -31,9 +31,8 @@ export default class ExtendedElectionPresidentialElection2019 extends ExtendedEl
 
         return <div className="page-content">
             <h1>{electionName}</h1>
-
             <Grid container spacing={3}>
-                <Grid item xs={4} className="election-grid">
+                <Grid item xs={6} className="election-grid">
 
                     <Grid item xs={12}><h2>Data Entry</h2></Grid>
 
@@ -95,7 +94,7 @@ export default class ExtendedElectionPresidentialElection2019 extends ExtendedEl
                         </Grid>
                     })}
                 </Grid>
-                <Grid item xs={4} className="election-grid">
+                <Grid item xs={6} className="election-grid">
                     <Grid item xs={12}><h2>Reports</h2></Grid>
 
                     <Grid item xs={12}>
@@ -213,100 +212,7 @@ export default class ExtendedElectionPresidentialElection2019 extends ExtendedEl
                         </ul>
                     </Grid>
                 </Grid>
-
-                <Grid item xs={4} className="election-grid">
-                    <Grid item xs={12}><h4>Release</h4></Grid>
-                    <Grid item xs={12}>
-                        <ul className="tally-sheet-code-list">
-                            {voteTypes.map((voteType) => {
-                                let tallySheetCode = TALLY_SHEET_CODE_PRE_30_PD;
-                                let tallySheetCodeLabel = "PRE 30 PD";
-                                if (voteType === "Postal") {
-                                    tallySheetCodeLabel = "PRE 30 PV (Postal)";
-                                }
-
-                                return <li key={voteType}>{tallySheetCodeLabel}
-                                    <Link
-                                        className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode)}
-                                    >
-                                        List
-                                    </Link>
-                                </li>
-                            })}
-                            <li>PRE 30 ED
-                                <Link
-                                    className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_RESULTS_RELEASE(electionId, TALLY_SHEET_CODE_PRE_30_ED)}
-                                >
-                                    List
-                                </Link>
-                            </li>
-                            <li>All Island ED
-                                <Link
-                                    className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_RESULTS_RELEASE(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS)}
-                                >
-                                    List
-                                </Link>
-                            </li>
-                            <li>All Island
-                                <Link
-                                    className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_RESULTS_RELEASE(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS)}
-                                >
-                                    List
-                                </Link>
-                            </li>
-                        </ul>
-                    </Grid>
-                    <br/>
-                    <Divider/>
-
-                    <Grid item xs={12}><small>With Preferences</small></Grid>
-
-                    <Grid item xs={12}>
-                        <ul className="tally-sheet-code-list">
-                            {voteTypes.map((voteType) => {
-                                let tallySheetCode = TALLY_SHEET_CODE_PRE_34_PD;
-                                let tallySheetCodeLabel = "Revised 30 PD";
-                                if (voteType === "Postal") {
-                                    tallySheetCodeLabel = "Revised 30 PV (Postal)";
-                                }
-
-                                return <li key={voteType}>{tallySheetCodeLabel}
-                                    <Link
-                                        className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_RESULTS_RELEASE(electionId, tallySheetCode)}
-                                    >
-                                        List
-                                    </Link>
-                                </li>
-                            })}
-                            <li>Revised 30 ED
-                                <Link
-                                    className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_RESULTS_RELEASE(electionId, TALLY_SHEET_CODE_PRE_34_ED)}
-                                >
-                                    List
-                                </Link>
-                            </li>
-
-                            <li>Revised All Island
-                                <Link
-                                    className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_RESULTS_RELEASE(electionId, TALLY_SHEET_CODE_PRE_34_AI)}
-                                >
-                                    List
-                                </Link>
-                            </li>
-
-                        </ul>
-                    </Grid>
-                </Grid>
-
             </Grid>
-
         </div>
     }
 }
