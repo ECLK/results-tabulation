@@ -10,7 +10,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import {MESSAGES_EN} from "../../../locale/messages_en";
 import {MESSAGE_TYPES, MessagesContext} from "../../../services/messages.provider";
 import {TallySheetContext} from "../../../services/tally-sheet.provider";
-import {DialogContext} from "../../../services/dialog.provider";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';

@@ -12,10 +12,9 @@ import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
 import PreviewTallySheetProofFileButton from "../components/tally-sheet/tally-sheet-proof-file-preview-button";
-import {Link} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 
-export default function ActivityView({tallySheetId, history, election, messages}) {
+export default function TallySheetActivityView({tallySheetId, history, election, messages}) {
     const {electionId, rootElection, voteType} = election;
 
     const tallySheetContext = useContext(TallySheetContext);

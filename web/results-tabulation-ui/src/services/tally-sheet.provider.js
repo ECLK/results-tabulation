@@ -8,7 +8,7 @@ import {
     ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML,
     ENDPOINT_PATH_TALLY_SHEET_WORKFLOW, ENDPOINT_PATH_TALLY_SHEET_WORKFLOW_LOGS,
     ENDPOINT_PATH_TALLY_SHEETS,
-    ENDPOINT_PATH_TALLY_SHEETS_BY_ID, getProofImage, getTallySheetProof,
+    ENDPOINT_PATH_TALLY_SHEETS_BY_ID,
     request
 } from "./tabulation-api";
 import {ElectionEntity} from "./tabulation-api/entities/election.entity";

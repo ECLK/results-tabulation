@@ -13,10 +13,9 @@ import {
     WORKFLOW_ACTION_TYPE_VERIFY,
     WORKFLOW_ACTION_TYPE_VIEW
 } from "../constants/WORKFLOW_ACTION_TYPE";
-import FetchHtmlAndPrintButton from "../fetch-html-and-print-button";
 import {DialogContext} from "../../../services/dialog.provider";
 import {UploadTallySheetProofsDialog} from "./upload-tally-sheet-proofs-dialog";
-import {MESSAGE_TYPES, MessagesConsumer, MessagesContext} from "../../../services/messages.provider";
+import {MESSAGE_TYPES, MessagesContext} from "../../../services/messages.provider";
 import PrintLetterButton from "../print-letter-button";
 import PrintReportButton from "../print-report-button";
 
