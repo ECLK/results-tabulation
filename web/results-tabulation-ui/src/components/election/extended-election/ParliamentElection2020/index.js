@@ -14,8 +14,8 @@ import {
     TALLY_SHEET_CODE_PE_CE_RO_V2,
     TALLY_SHEET_CODE_PE_R2,
     TALLY_SHEET_CODE_PE_39,
-    TALLY_SHEET_CODE_PE_22, 
-    TALLY_SHEET_CODE_PE_21, 
+    TALLY_SHEET_CODE_PE_22,
+    TALLY_SHEET_CODE_PE_21,
     TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS,
     TALLY_SHEET_CODE_ALL_ISLAND_RESULT
 } from "./TALLY_SHEET_CODE";
@@ -38,9 +38,8 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
 
         return <div className="page-content">
             <h1>{electionName}</h1>
-
             <Grid container spacing={3}>
-                <Grid item xs={4} className="election-grid">
+                <Grid item xs={6} className="election-grid">
 
                     <Grid item xs={12}><h2>Data Entry</h2></Grid>
 
@@ -107,7 +106,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         </Grid>
                     })}
                 </Grid>
-                <Grid item xs={4} className="election-grid">
+                <Grid item xs={6} className="election-grid">
                     <Grid item xs={12}><h2>Reports</h2></Grid>
 
                     <Grid item xs={12}>
@@ -237,7 +236,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                             </li>
                         </ul>
                     </Grid>
-                    
+
                     <br/>
                     <Divider/>
                     <Grid item xs={12}><small>Votes + Preferences</small></Grid>
@@ -256,13 +255,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                     </Grid>
 
                 </Grid>
-
-                <Grid item xs={4} className="election-grid">
-                    <Grid item xs={12}><h4>Release</h4></Grid>
-                </Grid>
-
             </Grid>
-
         </div>
     }
 }
