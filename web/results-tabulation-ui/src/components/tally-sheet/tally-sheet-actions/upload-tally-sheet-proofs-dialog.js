@@ -28,6 +28,8 @@ import ImageIcon from '@material-ui/icons/Image';
 import DescriptionIcon from '@material-ui/icons/Description';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {DialogTitle} from "@material-ui/core";
+import PreviewTallySheetProofFileButton from "../tally-sheet-proof-file-preview-button";
+import {TallySheetProofFilePreviewDialog} from "../tally-sheet-proof-file-preview-dialog";
 
 export function UploadTallySheetProofsDialog({tallySheetId, open, handleClose, handleOk}) {
     const tallySheetContext = useContext(TallySheetContext);
@@ -108,6 +110,9 @@ export function UploadTallySheetProofsDialog({tallySheetId, open, handleClose, h
                                     primary={fileName}
                                     secondary={`${fileCreatedAt} by ${fileCreatedBy}`}
                                 />
+                                <PreviewTallySheetProofFileButton tallySheetId={tallySheetId} fileId={fileId}>
+                                    View
+                                </PreviewTallySheetProofFileButton>
                             </ListItem>
                         })}
                     </List>
