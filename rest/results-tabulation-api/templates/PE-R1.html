@@ -42,11 +42,20 @@
 
     <table class="table table-borderless" style="table-layout:fixed;">
         <tr style="text-align:center;">
-            <td class="right" style="border-right: 1px solid #000 !important; width:20px;"></td>
-            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" style="width:200px; vertical-align: middle;">
-                Political Party/ Independent Group*
+            <td rowspan="2" class="right" style="border-right: 1px solid #000 !important; width:20px;"></td>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2" style="width:200px; vertical-align: middle;">
+                Political Party/ Independent Group
             </th>
-            <th class="left right top bottom" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Total</th>
+            <th class="left right top bottom" colspan="{{content.countingCentres|length}}" style="vertical-align: middle; width:{{content.countingCentres|length * 80}}px;">
+                Counting Centre Nos.
+            </th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Total</th>
+        </tr>
+        <tr style="text-align:center;">
+
+            {% for countingCentre in content.countingCentres %}
+            <th class="left right top bottom"><div>{{countingCentre}}</div></th>
+            {% endfor %}
         </tr>
 
         {% for row in content.data %}
@@ -80,25 +89,27 @@
         </tr>
     </tbody>
 </table>
-
+<br/>
 <table class="table table-borderless" style="table-layout:fixed;">
     <tbody>
       <tr>
           <td></td>
+          <td></td>
+          <td></td>
           <td>
-              <span style="text-align:left;">............................................<span><br/>
+              <span style="text-align:left;">............................................</span><br/>
               <span class="bold" style="text-align:left;">Returning Officer</span><br/>
               <span class="bold" style="text-transform:uppercase; text-align:left;">{{content.electoralDistrict}}</span> <b>Electoral District</b><br/>
               <span style="text-align:left;">Official Form</span><br/>
           </td>
-          <td></td>
       </tr>
       <tr>
           <td class="no-padding-left no-padding-right">
-            <span>Date:- ........................<span><br/>
-            <span>Time:- ........................<span><br/>
+            <span>Date:- ........................</span><br/>
+            <span>Time:- ........................</span><br/>
             <span class="bold" style="font-size: 14px;"><i>* Number of votes obtained according to the Descending Order</i></span>
           </td>
+          <td></td>
           <td></td>
           <td></td>
       </tr>
