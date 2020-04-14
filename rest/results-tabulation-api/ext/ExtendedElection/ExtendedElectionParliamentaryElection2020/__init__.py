@@ -1009,7 +1009,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": postal_election.electionId
                     }).metaId,
-                    parentTallySheets=[*polling_division_results_tally_sheet_list],
+                    parentTallySheets=[*polling_division_results_tally_sheet_list, *pe_ce_ro_v2_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -1110,7 +1110,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=[*polling_division_results_tally_sheet_list],
+                    parentTallySheets=[*polling_division_results_tally_sheet_list, *pe_ce_ro_v2_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
