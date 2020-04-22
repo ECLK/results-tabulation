@@ -184,6 +184,11 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
     margin-bottom: 3px;
 }
 
+.page-bottom-fixed-action-bar .MuiButton-contained,
+.page-bottom-fixed-action-bar .MuiButton-outlined {
+    margin-right: 10px;
+}
+
 .tabulation-linear-progress-bar {
     padding-top: 30px;
     padding-bottom: 30px;
