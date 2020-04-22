@@ -222,15 +222,17 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
                 "data": [],
                 "rejectedVoteCounts": [],
-                "totalVoteCounts": totalVoteCounts,
-                "twentiethOfTotalVoteCounts": twentiethOfTotalVoteCounts,
+                "totalVoteCounts": to_comma_seperated_num(totalVoteCounts),
+                "twentiethOfTotalVoteCounts": to_comma_seperated_num(twentiethOfTotalVoteCounts, num_type=float),
                 "total_less_than_twentiethOfTotalVoteCounts": to_comma_seperated_num(
                     total_less_than_twentiethOfTotalVoteCounts),
                 "total_votes_after_deduction": to_comma_seperated_num(total_votes_after_deduction),
                 "number_of_members_to_be_elected_minus_1": to_comma_seperated_num(
                     number_of_members_to_be_elected_minus_1),
-                "relevant_no_of_votes_div_by_no_of_members": relevant_no_of_votes_div_by_no_of_members,
-                "rounded_relevant_no_of_votes_div_by_no_of_members": rounded_relevant_no_of_votes_div_by_no_of_members,
+                "relevant_no_of_votes_div_by_no_of_members": to_comma_seperated_num(
+                    relevant_no_of_votes_div_by_no_of_members),
+                "rounded_relevant_no_of_votes_div_by_no_of_members": to_comma_seperated_num(
+                    rounded_relevant_no_of_votes_div_by_no_of_members),
                 "total": []
             }
 

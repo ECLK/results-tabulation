@@ -92,7 +92,7 @@ def to_percentage(value, round_to=2):
         return f'{round(value, round_to)}%'
 
 
-def to_comma_seperated_num(value):
+def to_comma_seperated_num(value, num_type=int, round_to=2):
     if value is None:
         return ""
     else:
@@ -102,7 +102,7 @@ def to_comma_seperated_num(value):
         except Exception as e:
             pass
 
-        return f'{int(value):,}'
+        return f'{round(num_type(value), round_to):,}'
 
 
 def convert_image_to_data_uri(value):
