@@ -99,8 +99,7 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
                     code=MESSAGE_CODE_CANNOT_DIVIDE_BY_ZERO
                 )
 
-            _minimum_valid_vote_count_required_per_party_to_be_qualified = math.ceil(
-                total_valid_vote_count * minimum_vote_count_percentage_required)
+            _minimum_valid_vote_count_required_per_party_to_be_qualified = total_valid_vote_count * minimum_vote_count_percentage_required
 
             total_valid_vote_count_of_qualified_parties = 0
 
@@ -187,12 +186,8 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
         def html(self, title="", total_registered_voters=None):
             party_wise_seat_calculations = self.get_party_wise_seat_calculations()
 
-            valid_vote_count_ceil_per_seat = 0
-            valid_vote_count_qualified_for_seat_allocation = 0
-
             totalVoteCounts = to_comma_seperated_num(party_wise_seat_calculations['numValue'].sum())
-            twentiethOfTotalVoteCounts = int(
-                party_wise_seat_calculations.at[0, 'minimumVoteCountRequiredForSeatAllocation'])
+            twentiethOfTotalVoteCounts = party_wise_seat_calculations.at[0, 'minimumVoteCountRequiredForSeatAllocation']
             total_less_than_twentiethOfTotalVoteCounts = party_wise_seat_calculations[
                 party_wise_seat_calculations["numValue"] < twentiethOfTotalVoteCounts
                 ]["numValue"].sum()
