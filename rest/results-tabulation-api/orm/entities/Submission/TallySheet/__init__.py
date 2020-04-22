@@ -22,7 +22,7 @@ from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
 from orm.entities.Workflow import WorkflowInstance, WorkflowActionModel
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
-from sqlalchemy import and_, func, or_, case
+from sqlalchemy import and_, func, or_, case, bindparam
 
 from util import get_dict_key_value_or_none
 
@@ -295,6 +295,109 @@ class TallySheetModel(db.Model):
 
         return tally_sheet, tally_sheet_version
 
+    def get_template_column_to_query_column_map(self):
+        return {
+            "electionId": Election.Model.electionId,
+            "areaId": Area.Model.areaId,
+            "candidateId": Candidate.Model.candidateId,
+            "partyId": Party.Model.partyId,
+            "numValue": TallySheetVersionRow.Model.numValue,
+            "strValue": TallySheetVersionRow.Model.strValue,
+            "ballotBoxId": TallySheetVersionRow.Model.ballotBoxId,
+            "invalidVoteCategoryId": InvalidVoteCategory.Model.invalidVoteCategoryId
+        }
+
+    def get_template_column_to_query_filter_map(self, only_group_by_columns=False):
+        if only_group_by_columns:
+            return {
+                "electionId": [
+                    Election.Model.electionId == Submission.Model.electionId
+                ],
+                "areaId": [
+                    Area.Model.areaId == Submission.Model.areaId
+                ],
+                "candidateId": [
+                    ElectionCandidate.Model.electionId == Election.Model.electionId,
+                    Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
+                    Party.Model.partyId == ElectionCandidate.Model.partyId
+                ],
+                "partyId": [
+                    ElectionParty.Model.electionId == Election.Model.electionId,
+                    Party.Model.partyId == ElectionParty.Model.partyId
+                ],
+                "invalidVoteCategoryId": []
+            }
+        else:
+            return {
+                "electionId": [
+                    Election.Model.electionId == Submission.Model.electionId
+                ],
+                "areaId": [
+                    Area.Model.areaId == Submission.Model.areaId
+                ],
+                "candidateId": [
+                    Candidate.Model.candidateId == TallySheetVersionRow.Model.candidateId,
+                    Party.Model.partyId == TallySheetVersionRow.Model.partyId,
+                    ElectionCandidate.Model.electionId == Election.Model.electionId,
+                    Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
+                    Party.Model.partyId == ElectionCandidate.Model.partyId
+                ],
+                "partyId": [
+                    Party.Model.partyId == TallySheetVersionRow.Model.partyId,
+                    ElectionParty.Model.electionId == Election.Model.electionId,
+                    Party.Model.partyId == ElectionParty.Model.partyId
+                ],
+                "invalidVoteCategoryId": [
+                    InvalidVoteCategory.Model.invalidVoteCategoryId == TallySheetVersionRow.Model.invalidVoteCategoryId]
+            }
+
+    def get_template_row_query_parameters(self, templateRow, only_group_by_columns=False):
+        meta_data_map = {}
+        for metaData in self.meta.metaDataList:
+            meta_data_map[metaData.metaDataKey] = metaData.metaDataValue
+
+        column_name_map = self.get_template_column_to_query_column_map()
+        template_column_to_query_filter_map = self.get_template_column_to_query_filter_map(
+            only_group_by_columns=only_group_by_columns)
+        column_function_map = {
+            "sum": func.sum,
+            "count": func.count,
+            "group_concat": func.group_concat
+        }
+
+        query_args = [
+            TallySheetModel.tallySheetId
+        ]
+        group_by_args = []
+        filter_by_args = []
+
+        for templateRowColumn in templateRow.columns:
+
+            column_name = templateRowColumn.templateRowColumnName
+            column = column_name_map[column_name]
+
+            if only_group_by_columns and not templateRowColumn.grouped:
+                column = bindparam(column_name, None)
+            else:
+                if templateRowColumn.func is not None:
+                    column_func = column_function_map[templateRowColumn.func]
+                    column = column_func(column).label(column_name)
+
+                if templateRowColumn.grouped:
+                    group_by_args.append(column)
+
+                if column_name in template_column_to_query_filter_map:
+                    filter_by_args += template_column_to_query_filter_map[column_name]
+
+                if column_name in meta_data_map:
+                    # TODO
+                    if column_name == "partyId":
+                        filter_by_args.append(column_name_map[column_name] == meta_data_map[column_name])
+
+            query_args.append(column)
+
+        return query_args, group_by_args, filter_by_args
+
     def create_tally_sheet_version_rows(self, tally_sheet_version, content=None, post_save=False):
         if content is None:
             content = []
@@ -305,140 +408,74 @@ class TallySheetModel(db.Model):
             )
             content += extended_tally_sheet_version.get_post_save_request_content()
 
-        column_name_map = {
-            "electionId": Election.Model.electionId,
-            "areaId": Area.Model.areaId,
-            "candidateId": Candidate.Model.candidateId,
-            "partyId": Party.Model.partyId,
-            "numValue": TallySheetVersionRow.Model.numValue,
-            "strValue": TallySheetVersionRow.Model.strValue,
-            "ballotBoxId": TallySheetVersionRow.Model.ballotBoxId,
-            "invalidVoteCategoryId": InvalidVoteCategory.Model.invalidVoteCategoryId
-        }
-        column_function_map = {
-            "sum": func.sum,
-            "count": func.count,
-            "group_concat": func.group_concat
-        }
-
         meta_data_map = {}
         for metaData in self.meta.metaDataList:
             meta_data_map[metaData.metaDataKey] = metaData.metaDataValue
 
+        extended_election = self.submission.election.get_extended_election()
         is_tally_sheet_version_complete = tally_sheet_version.isComplete
 
         for templateRow in self.template.rows:
-            query_args = [
-                TallySheetModel.tallySheetId
-            ]
-            group_by_args = []
-
-            for templateRowColumn in templateRow.columns:
-                column_name = templateRowColumn.templateRowColumnName
-                column = column_name_map[column_name]
-
-                if templateRowColumn.func is not None:
-                    column_func = column_function_map[templateRowColumn.func]
-                    column = column_func(column).label(column_name)
-
-                query_args.append(column)
-
-                if templateRowColumn.grouped:
-                    group_by_args.append(column)
 
             content_rows = []
 
             if not post_save and templateRow.isDerived is True and templateRow.loadOnPostSave is False:
 
-                extended_election = self.submission.election.get_extended_election()
+                # Retrieve completed tally sheet results.
+                query_args, group_by_args, filter_by_args = self.get_template_row_query_parameters(
+                    templateRow=templateRow)
 
-                tally_sheet_version_row_join_condition = [
+                filter_by_args += [
+                    # Child tally sheets
+                    TallySheetTallySheetModel.parentTallySheetId == self.tallySheetId,
+                    TallySheetTallySheetModel.childTallySheetId == TallySheetModel.tallySheetId,
+                    Submission.Model.submissionId == TallySheetModel.tallySheetId,
+
+                    # Tally sheet templates
+                    TemplateRow_DerivativeTemplateRow_Model.templateRowId == templateRow.templateRowId,
+                    TemplateRowModel.templateId == TallySheetModel.templateId,
+                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowId == TemplateRowModel.templateRowId,
+
+                    # Workflow
+                    WorkflowInstance.Model.workflowInstanceId == TallySheetModel.workflowInstanceId,
+                    WorkflowInstance.Model.status.in_(
+                        extended_election.tally_sheet_verified_statuses_list()
+                    ),
+
+                    # Tally sheet rows
                     TallySheetVersionRow.Model.templateRowId == TemplateRowModel.templateRowId,
                     TallySheetVersionRow.Model.tallySheetVersionId == Submission.Model.latestVersionId,
-                    WorkflowInstance.Model.status.in_(
+                ]
+
+                complete_tally_sheet_results = db.session.query(*query_args).filter(*filter_by_args).group_by(
+                    *group_by_args).all()
+
+                # Retrieve incomplete tally sheet results.
+                query_args, group_by_args, filter_by_args = self.get_template_row_query_parameters(
+                    templateRow=templateRow, only_group_by_columns=True)
+
+                filter_by_args += [
+                    # Child tally sheets
+                    TallySheetTallySheetModel.parentTallySheetId == self.tallySheetId,
+                    TallySheetTallySheetModel.childTallySheetId == TallySheetModel.tallySheetId,
+                    Submission.Model.submissionId == TallySheetModel.tallySheetId,
+
+                    # Tally sheet templates
+                    TemplateRow_DerivativeTemplateRow_Model.templateRowId == templateRow.templateRowId,
+                    TemplateRowModel.templateId == TallySheetModel.templateId,
+                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowId == TemplateRowModel.templateRowId,
+
+                    # Workflow
+                    WorkflowInstance.Model.workflowInstanceId == TallySheetModel.workflowInstanceId,
+                    WorkflowInstance.Model.status.notin_(
                         extended_election.tally_sheet_verified_statuses_list()
                     )
                 ]
 
-                aggregated_results = db.session.query(
-                    *query_args
-                ).join(
-                    Submission.Model,
-                    Submission.Model.submissionId == TallySheetModel.tallySheetId
-                ).join(
-                    WorkflowInstance.Model,
-                    WorkflowInstance.Model.workflowInstanceId == TallySheetModel.workflowInstanceId
-                )
+                incomplete_tally_sheet_results = db.session.query(*query_args).filter(*filter_by_args).group_by(
+                    *group_by_args).all()
 
-                if Area.Model.areaId in query_args:
-                    aggregated_results = aggregated_results.join(
-                        Area.Model,
-                        Area.Model.areaId == Submission.Model.areaId
-                    )
-
-                if Election.Model.electionId in query_args or Candidate.Model.candidateId in query_args or Party.Model.partyId in query_args:
-                    aggregated_results = aggregated_results.join(
-                        Election.Model,
-                        Election.Model.electionId == Submission.Model.electionId
-                    )
-
-                if Candidate.Model.candidateId in query_args:
-                    aggregated_results = aggregated_results.join(
-                        ElectionCandidate.Model,
-                        ElectionCandidate.Model.electionId == Election.Model.electionId
-                    ).join(
-                        Candidate.Model,
-                        Candidate.Model.candidateId == ElectionCandidate.Model.candidateId
-                    ).join(
-                        Party.Model,
-                        Party.Model.partyId == ElectionCandidate.Model.partyId
-                    )
-                    tally_sheet_version_row_join_condition += [
-                        TallySheetVersionRow.Model.candidateId == Candidate.Model.candidateId,
-                        TallySheetVersionRow.Model.partyId == Party.Model.partyId
-                    ]
-                elif Party.Model.partyId in query_args:
-                    aggregated_results = aggregated_results.join(
-                        ElectionParty.Model,
-                        ElectionParty.Model.electionId == Election.Model.electionId
-                    ).join(
-                        Party.Model,
-                        Party.Model.partyId == ElectionParty.Model.partyId
-                    )
-                    tally_sheet_version_row_join_condition.append(
-                        TallySheetVersionRow.Model.partyId == Party.Model.partyId)
-
-                query_filters = [
-                    TallySheetTallySheetModel.parentTallySheetId == self.tallySheetId,
-                    TemplateRow_DerivativeTemplateRow_Model.templateRowId == templateRow.templateRowId
-                ]
-
-                for meta_data_key in ["partyId"]:
-                    if meta_data_key in meta_data_map:
-                        query_filters.append(
-                            column_name_map[meta_data_key] == meta_data_map[meta_data_key]
-                        )
-
-                aggregated_results = aggregated_results.join(
-                    TallySheetTallySheetModel,
-                    TallySheetTallySheetModel.childTallySheetId == TallySheetModel.tallySheetId
-                ).join(
-                    TemplateRowModel,
-                    TemplateRowModel.templateId == TallySheetModel.templateId
-                ).join(
-                    TemplateRow_DerivativeTemplateRow_Model,
-                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowId == TemplateRowModel.templateRowId
-                ).join(
-                    TallySheetVersionRow.Model,
-                    and_(
-                        *tally_sheet_version_row_join_condition
-                    ),
-                    isouter=True
-                ).filter(
-                    *query_filters
-                ).group_by(
-                    *group_by_args
-                ).all()
+                aggregated_results = complete_tally_sheet_results + incomplete_tally_sheet_results
 
                 for aggregated_result in aggregated_results:
                     content_row = {}
@@ -448,6 +485,7 @@ class TallySheetModel(db.Model):
                         content_row[column_name] = getattr(aggregated_result, column_name)
 
                     content_rows.append(content_row)
+
             elif not templateRow.isDerived or (templateRow.isDerived and templateRow.loadOnPostSave and post_save):
                 for content_row in content:
                     if content_row["templateRowId"] == templateRow.templateRowId:
