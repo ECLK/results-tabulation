@@ -1,17 +1,67 @@
 from app import db
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import TALLY_SHEET_CODES
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
+from orm.entities.Meta import MetaData
 from orm.entities.Submission import TallySheet
+from orm.entities.Submission.TallySheet import TallySheetTallySheetModel
 from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 from flask import render_template
-from orm.entities import Area
+from orm.entities import Area, Template, Meta
 from orm.enums import AreaTypeEnum
 
 
 class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
+    def get_template_column_to_query_filter_map(self, only_group_by_columns=False):
+        template_column_to_query_filter_map = super(
+            ExtendedTallySheet_PE_21, self).get_template_column_to_query_filter_map(
+            only_group_by_columns=only_group_by_columns)
+        template_column_to_query_column_map = self.get_template_column_to_query_column_map()
+
+        party_ids_to_be_filtered = []
+        pe_r2_tally_sheets = db.session.query(TallySheet.Model).filter(
+            TallySheet.Model.tallySheetId == TallySheetTallySheetModel.childTallySheetId,
+            TallySheetTallySheetModel.parentTallySheetId == self.tallySheet.tallySheetId,
+            TallySheet.Model.templateId == Template.Model.templateId,
+            Template.Model.templateName == TALLY_SHEET_CODES.PE_R2
+        )
+        pe_r2_tally_sheet_ids = [tallySheet.tallySheetId for tallySheet in pe_r2_tally_sheets]
+
+        for pe_r2_tally_sheet in pe_r2_tally_sheets:
+            pe_r2_extended_tally_sheet_version = pe_r2_tally_sheet.get_extended_tally_sheet_version(
+                tallySheetVersionId=pe_r2_tally_sheet.latestVersionId)
+            party_wise_seat_calculation_df = pe_r2_extended_tally_sheet_version.get_party_wise_seat_calculations()
+            for party_wise_seat_calculation_df_index in party_wise_seat_calculation_df.index:
+                seats_allocated = party_wise_seat_calculation_df.at[
+                    party_wise_seat_calculation_df_index, 'seatsAllocated']
+
+                if seats_allocated > 0:
+                    party_id = party_wise_seat_calculation_df.at[party_wise_seat_calculation_df_index, 'partyId']
+                    party_ids_to_be_filtered.append(int(party_id))
+
+        pe_ce_ro_pr_3_tally_sheets = db.session.query(
+            TallySheet.Model.tallySheetId
+        ).filter(
+            TallySheet.Model.tallySheetId == TallySheetTallySheetModel.childTallySheetId,
+            TallySheetTallySheetModel.parentTallySheetId == self.tallySheet.tallySheetId,
+            TallySheet.Model.templateId == Template.Model.templateId,
+            Template.Model.templateName == TALLY_SHEET_CODES.PE_CE_RO_PR_3,
+            MetaData.Model.metaId == TallySheet.Model.metaId,
+            MetaData.Model.metaDataKey == "partyId",
+            MetaData.Model.metaDataValue.in_(party_ids_to_be_filtered)
+        ).all()
+        pe_ce_ro_pr_3_tally_sheet_ids = [tallySheet.tallySheetId for tallySheet in pe_ce_ro_pr_3_tally_sheets]
+
+        template_column_to_query_filter_map["partyId"] += [
+            template_column_to_query_column_map["partyId"].in_(party_ids_to_be_filtered),
+            TallySheet.Model.tallySheetId.in_(pe_ce_ro_pr_3_tally_sheet_ids + pe_r2_tally_sheet_ids)
+        ]
+
+        return template_column_to_query_filter_map
+
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html_letter(self, title="", total_registered_voters=None):
@@ -69,28 +119,20 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
                     for index_2 in filtered_candidate_wise_valid_vote_count_result.index:
                         if number_of_seats_allocated > 0:
                             for template_row in template_rows:
-                                num_value = filtered_candidate_wise_valid_vote_count_result.at[index_2, "numValue"]
+                                num_value = filtered_candidate_wise_valid_vote_count_result.at[
+                                    index_2, "incompleteNumValue"]
                                 if num_value is not None and not math.isnan(num_value):
                                     content["data"].append({
-                                        "partyId": int(party_id),
-                                        "candidateId": int(
-                                            filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateId"]),
                                         "candidateName": filtered_candidate_wise_valid_vote_count_result.at[
                                             index_2, "candidateName"],
                                         "partyName": filtered_candidate_wise_valid_vote_count_result.at[
-                                            index_2, "partyName"],
-                                        "numValue": float(num_value)
+                                            index_2, "partyName"]
                                     })
                                 else:
                                     content["data"].append({
-                                        "partyId": int(party_id),
-                                        "candidateId": int(
-                                            filtered_candidate_wise_valid_vote_count_result.at[index_2, "candidateId"]),
-                                        "candidateName": filtered_candidate_wise_valid_vote_count_result.at[
-                                            index_2, "candidateName"],
+                                        "candidateName": "",
                                         "partyName": filtered_candidate_wise_valid_vote_count_result.at[
-                                            index_2, "partyName"],
-                                        "numValue": None
+                                            index_2, "partyName"]
                                     })
                             number_of_seats_allocated -= 1
 
