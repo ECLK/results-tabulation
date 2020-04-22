@@ -295,69 +295,14 @@ class TallySheetModel(db.Model):
 
         return tally_sheet, tally_sheet_version
 
-    def get_template_column_to_query_column_map(self):
-        return {
-            "electionId": Election.Model.electionId,
-            "areaId": Area.Model.areaId,
-            "candidateId": Candidate.Model.candidateId,
-            "partyId": Party.Model.partyId,
-            "numValue": TallySheetVersionRow.Model.numValue,
-            "strValue": TallySheetVersionRow.Model.strValue,
-            "ballotBoxId": TallySheetVersionRow.Model.ballotBoxId,
-            "invalidVoteCategoryId": InvalidVoteCategory.Model.invalidVoteCategoryId
-        }
-
-    def get_template_column_to_query_filter_map(self, only_group_by_columns=False):
-        if only_group_by_columns:
-            return {
-                "electionId": [
-                    Election.Model.electionId == Submission.Model.electionId
-                ],
-                "areaId": [
-                    Area.Model.areaId == Submission.Model.areaId
-                ],
-                "candidateId": [
-                    ElectionCandidate.Model.electionId == Election.Model.electionId,
-                    Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
-                    Party.Model.partyId == ElectionCandidate.Model.partyId
-                ],
-                "partyId": [
-                    ElectionParty.Model.electionId == Election.Model.electionId,
-                    Party.Model.partyId == ElectionParty.Model.partyId
-                ],
-                "invalidVoteCategoryId": []
-            }
-        else:
-            return {
-                "electionId": [
-                    Election.Model.electionId == Submission.Model.electionId
-                ],
-                "areaId": [
-                    Area.Model.areaId == Submission.Model.areaId
-                ],
-                "candidateId": [
-                    Candidate.Model.candidateId == TallySheetVersionRow.Model.candidateId,
-                    Party.Model.partyId == TallySheetVersionRow.Model.partyId,
-                    ElectionCandidate.Model.electionId == Election.Model.electionId,
-                    Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
-                    Party.Model.partyId == ElectionCandidate.Model.partyId
-                ],
-                "partyId": [
-                    Party.Model.partyId == TallySheetVersionRow.Model.partyId,
-                    ElectionParty.Model.electionId == Election.Model.electionId,
-                    Party.Model.partyId == ElectionParty.Model.partyId
-                ],
-                "invalidVoteCategoryId": [
-                    InvalidVoteCategory.Model.invalidVoteCategoryId == TallySheetVersionRow.Model.invalidVoteCategoryId]
-            }
-
     def get_template_row_query_parameters(self, templateRow, only_group_by_columns=False):
+        extended_tally_sheet = self.get_extended_tally_sheet()
         meta_data_map = {}
         for metaData in self.meta.metaDataList:
             meta_data_map[metaData.metaDataKey] = metaData.metaDataValue
 
-        column_name_map = self.get_template_column_to_query_column_map()
-        template_column_to_query_filter_map = self.get_template_column_to_query_filter_map(
+        column_name_map = extended_tally_sheet.get_template_column_to_query_column_map()
+        template_column_to_query_filter_map = extended_tally_sheet.get_template_column_to_query_filter_map(
             only_group_by_columns=only_group_by_columns)
         column_function_map = {
             "sum": func.sum,

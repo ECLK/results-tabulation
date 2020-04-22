@@ -45,6 +45,68 @@ class ExtendedTallySheet:
     def __init__(self, tallySheet):
         self.tallySheet = tallySheet
 
+    def get_template_column_to_query_column_map(self):
+        from orm.entities import Election, Area, Candidate, Party, TallySheetVersionRow
+        from orm.entities.Election import InvalidVoteCategory
+
+        return {
+            "electionId": Election.Model.electionId,
+            "areaId": Area.Model.areaId,
+            "candidateId": Candidate.Model.candidateId,
+            "partyId": Party.Model.partyId,
+            "numValue": TallySheetVersionRow.Model.numValue,
+            "strValue": TallySheetVersionRow.Model.strValue,
+            "ballotBoxId": TallySheetVersionRow.Model.ballotBoxId,
+            "invalidVoteCategoryId": InvalidVoteCategory.Model.invalidVoteCategoryId
+        }
+
+    def get_template_column_to_query_filter_map(self, only_group_by_columns=False):
+        from orm.entities import Election, Area, Candidate, Party, TallySheetVersionRow, Submission
+        from orm.entities.Election import InvalidVoteCategory, ElectionCandidate, ElectionParty
+
+        if only_group_by_columns:
+            return {
+                "electionId": [
+                    Election.Model.electionId == Submission.Model.electionId
+                ],
+                "areaId": [
+                    Area.Model.areaId == Submission.Model.areaId
+                ],
+                "candidateId": [
+                    ElectionCandidate.Model.electionId == Election.Model.electionId,
+                    Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
+                    Party.Model.partyId == ElectionCandidate.Model.partyId
+                ],
+                "partyId": [
+                    ElectionParty.Model.electionId == Election.Model.electionId,
+                    Party.Model.partyId == ElectionParty.Model.partyId
+                ],
+                "invalidVoteCategoryId": []
+            }
+        else:
+            return {
+                "electionId": [
+                    Election.Model.electionId == Submission.Model.electionId
+                ],
+                "areaId": [
+                    Area.Model.areaId == Submission.Model.areaId
+                ],
+                "candidateId": [
+                    Candidate.Model.candidateId == TallySheetVersionRow.Model.candidateId,
+                    Party.Model.partyId == TallySheetVersionRow.Model.partyId,
+                    ElectionCandidate.Model.electionId == Election.Model.electionId,
+                    Candidate.Model.candidateId == ElectionCandidate.Model.candidateId,
+                    Party.Model.partyId == ElectionCandidate.Model.partyId
+                ],
+                "partyId": [
+                    Party.Model.partyId == TallySheetVersionRow.Model.partyId,
+                    ElectionParty.Model.electionId == Election.Model.electionId,
+                    Party.Model.partyId == ElectionParty.Model.partyId
+                ],
+                "invalidVoteCategoryId": [
+                    InvalidVoteCategory.Model.invalidVoteCategoryId == TallySheetVersionRow.Model.invalidVoteCategoryId]
+            }
+
     def execute_workflow_action(self, workflowActionId, content=None):
         workflow_action = db.session.query(
             WorkflowActionModel
