@@ -238,6 +238,10 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
             total_seatsAllocatedFromRound2 = 0
             total_bonusSeatsAllocated = 0
 
+            party_wise_seat_calculations = party_wise_seat_calculations[
+                party_wise_seat_calculations["numValue"] >= twentiethOfTotalVoteCounts
+                ]
+
             for party_wise_seat_calculation_item in party_wise_seat_calculations.itertuples():
                 data_row = []
 
