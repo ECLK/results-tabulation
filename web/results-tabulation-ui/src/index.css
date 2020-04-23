@@ -255,3 +255,51 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
     background-color: rgb(245, 247, 252);
     color: rgb(99, 102, 103);
 }
+
+.activity-wrapper {
+    border-bottom: 1px solid #ccc;
+}
+
+.activity-list {
+    margin-bottom: 0;
+}
+
+.activity-row {
+    list-style: none;
+    border-left: 1px solid #ccc;
+    padding-bottom: 25px;
+}
+
+.activity-block {
+    display: inline-table;
+    vertical-align: top;
+}
+
+.activity-icon {
+    background: #ccc;
+    border-radius: 50%;
+    color: #444d56;
+    margin-left: -15px;
+    padding: 2px;
+}
+
+.activity-details {
+    margin-left: 10px;
+}
+
+.activity-row li {
+    list-style: none;
+}
+
+.activity-proof, .activity-proof-link {
+    font-size: 14px;
+}
+
+.activity-proof-link, .activity-tallysheet-link {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.activity-tallysheet-link .MuiButton-label {
+    font-size: 16px;
+}

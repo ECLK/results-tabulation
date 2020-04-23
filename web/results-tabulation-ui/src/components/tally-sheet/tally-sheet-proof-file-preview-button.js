@@ -24,7 +24,7 @@ export default function PreviewTallySheetProofFileButton(props) {
     return <Button
         {...props}
         onClick={onClick(true)}
-    >=
+    >
         {children}
     </Button>
 }
