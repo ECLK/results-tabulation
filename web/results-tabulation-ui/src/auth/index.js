@@ -6,7 +6,7 @@ import {
     API_USER_INFO_USERNAME_KEY,
     AUTH_APP_SIGN_IN_URL_PATH
 } from "./constants";
-import {AUTH_APP_URL} from "../config";
+import {AUTH_APP_URL, DEBUG} from "../config";
 import Cookies from 'js-cookie';
 import {getElectionById} from "../services/tabulation-api";
 import Error from "../components/error";
@@ -20,10 +20,6 @@ export function getAuthAppSignInUrl() {
 }
 
 export function getAccessToken() {
-
-    // This is for redirection troubleshooting. Don't remove.
-    debugger;
-
     const tabulationAccessToken = Cookies.get(API_ACCESS_TOKEN_KEY);
 
     return tabulationAccessToken;
@@ -60,6 +56,12 @@ export function hasValidToken() {
 }
 
 export function redirectToLogin() {
+    // This is for redirection troubleshooting. Don't remove.
+    if (DEBUG && !window.confirm("Redirecting to the login. Do you want to continue?")) {
+        return;
+    }
+    debugger;
+
     window.location.href = getAuthAppSignInUrl();
 }
 
