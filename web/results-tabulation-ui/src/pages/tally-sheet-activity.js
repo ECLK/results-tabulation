@@ -13,6 +13,7 @@ import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
 import PreviewTallySheetProofFileButton from "../components/tally-sheet/tally-sheet-proof-file-preview-button";
 import Button from "@material-ui/core/Button";
+import {Check, MoveToInbox, Publish, Save, TurnedIn, VerifiedUser, Visibility} from '@material-ui/icons';
 
 export default function TallySheetActivityView({tallySheetId, history, election, messages}) {
     const {electionId, rootElection, voteType} = election;
@@ -39,6 +40,24 @@ export default function TallySheetActivityView({tallySheetId, history, election,
         const {tallySheetCode} = tallySheet;
 
         return PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)
+    }
+
+    function ActionIcon(props) {
+        if (props.actionType === 'VIEW') {
+            return <Visibility className="activity-icon"/>;
+        } else if (props.actionType === 'VERIFY') {
+            return <Check className="activity-icon"/>;
+        } else if (props.actionType === 'SUBMIT') {
+            return <TurnedIn className="activity-icon"/>;
+        } else if (props.actionType === 'MOVE_TO_CERTIFY') {
+            return <MoveToInbox className="activity-icon"/>;
+        } else if (props.actionType === 'UPLOAD_PROOF_DOCUMENT') {
+            return <Publish className="activity-icon"/>;
+        } else if (props.actionType === 'CERTIFY') {
+            return <VerifiedUser className="activity-icon"/>;
+        } else {
+            return <Save className="activity-icon"/>;
+        }
     }
 
 
@@ -93,40 +112,44 @@ export default function TallySheetActivityView({tallySheetId, history, election,
                 </div>
 
                 <Processing showProgress={processing}>
-                    <div>
-                        <ul>
+                    <div className="activity-wrapper">
+                        <ul className="activity-list">
                             {tallySheetWorkflowLogList.map(tallySheetWorkflowLog => {
                                 const {workflowInstanceLogId, proof, action, createdBy, createdAt, metaDataMap} = tallySheetWorkflowLog;
                                 const {actionName, actionType} = action;
                                 const {tallySheetVersionId} = metaDataMap;
-                                return <li key={workflowInstanceLogId}>
-                                    [{actionType}] <strong>{actionName}</strong> ({createdBy} @ {createdAt})
-                                    <Button
-                                        onClick={() => {
-                                            history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId))
-                                        }}
-                                        style={{
-                                            color: "#5079c8",
-                                            textDecoration: "underline"
-                                        }}
-                                    >
-                                        {tallySheetVersionId}
-                                    </Button>
-                                    <ul>
-                                        {proof.scannedFiles.map(({fileId, fileName}) => {
-                                            return <li>
-                                                <PreviewTallySheetProofFileButton
-                                                    tallySheetId={tallySheetId} fileId={fileId}
-                                                    style={{
-                                                        color: "#5079c8",
-                                                        textDecoration: "underline"
-                                                    }}
-                                                >
-                                                    {fileName}
-                                                </PreviewTallySheetProofFileButton> ({createdBy} @ {createdAt})
-                                            </li>
-                                        })}
-                                    </ul>
+                                return <li key={workflowInstanceLogId} className="activity-row">
+                                    <div className="activity-block"><ActionIcon actionType={actionType}/></div>
+                                    <div className="activity-block activity-details">
+                                        <strong>{actionName}</strong> by {createdBy} @ {createdAt}
+                                        <Button className="activity-tallysheet-link"
+                                            onClick={() => {
+                                                history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId))
+                                            }}
+                                            style={{
+                                                color: "#5079c8",
+                                                textDecoration: "underline"
+                                            }}
+                                        >
+                                            {tallySheetVersionId}
+                                        </Button>
+                                        <ul>
+                                            {proof.scannedFiles.map(({fileId, fileName}) => {
+                                                return <li className="activity-proof">
+                                                    <PreviewTallySheetProofFileButton
+                                                        tallySheetId={tallySheetId} fileId={fileId}
+                                                        className="activity-proof-link"
+                                                        style={{
+                                                            color: "#5079c8",
+                                                            textDecoration: "underline"
+                                                        }}
+                                                    >
+                                                        {fileName}
+                                                    </PreviewTallySheetProofFileButton> ({createdBy} @ {createdAt})
+                                                </li>
+                                            })}
+                                        </ul>
+                                    </div>
                                 </li>
                             })}
                         </ul>
