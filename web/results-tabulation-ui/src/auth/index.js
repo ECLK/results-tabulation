@@ -20,6 +20,10 @@ export function getAuthAppSignInUrl() {
 }
 
 export function getAccessToken() {
+
+    // This is for redirection troubleshooting. Don't remove.
+    debugger;
+
     const tabulationAccessToken = Cookies.get(API_ACCESS_TOKEN_KEY);
 
     return tabulationAccessToken;
