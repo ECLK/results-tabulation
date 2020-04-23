@@ -108,7 +108,7 @@ export function useTallySheetEdit(props) {
         } else if (!processing) {
             return <div className="page-bottom-fixed-action-bar">
                 <Button
-                    variant="contained" color="default" onClick={handleClickNext()}
+                    variant="outlined" color="primary" onClick={handleClickNext()}
                     disabled={processing}
                 >
                     Save & Next

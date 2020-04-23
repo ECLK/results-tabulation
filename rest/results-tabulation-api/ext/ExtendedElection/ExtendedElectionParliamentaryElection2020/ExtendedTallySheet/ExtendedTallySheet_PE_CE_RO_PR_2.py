@@ -80,7 +80,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
                         ))
 
                 data_row.append(to_comma_seperated_num(
-                    candidate_wise_valid_postal_vote_count_result["numValue"].values[0]
+                    candidate_wise_valid_postal_vote_count_result.at[index_1, "numValue"]
                 ))
 
                 data_row.append(to_comma_seperated_num(

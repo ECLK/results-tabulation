@@ -45,9 +45,9 @@
 
         {% for row in content.data %}
         <tr>
-          <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}">{{loop.index}}</td>
-          <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}">{{row.candidateName}}</td>
-          <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}">{{row.partyName}}</td>
+          <td class="left right top bottom text-right">{{loop.index}}</td>
+          <td class="left right top bottom text-right {%if row.candidateName=="" %}missing-value{% endif %}">{{row.candidateName}}</td>
+          <td class="left right top bottom text-right {%if row.partyName=="" %}missing-value{% endif %}">{{row.partyName}}</td>
         </tr>
         {% endfor %}
 

@@ -99,8 +99,7 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
                     code=MESSAGE_CODE_CANNOT_DIVIDE_BY_ZERO
                 )
 
-            _minimum_valid_vote_count_required_per_party_to_be_qualified = (
-                    total_valid_vote_count * minimum_vote_count_percentage_required)
+            _minimum_valid_vote_count_required_per_party_to_be_qualified = total_valid_vote_count * minimum_vote_count_percentage_required
 
             total_valid_vote_count_of_qualified_parties = 0
 
@@ -187,22 +186,17 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
         def html(self, title="", total_registered_voters=None):
             party_wise_seat_calculations = self.get_party_wise_seat_calculations()
 
-            valid_vote_count_ceil_per_seat = 0
-            valid_vote_count_qualified_for_seat_allocation = 0
-
             totalVoteCounts = to_comma_seperated_num(party_wise_seat_calculations['numValue'].sum())
-            twentiethOfTotalVoteCounts = to_comma_seperated_num(party_wise_seat_calculations['numValue'].sum()/20)
-            total_less_than_twentiethOfTotalVoteCounts = 0
+            twentiethOfTotalVoteCounts = party_wise_seat_calculations.at[0, 'minimumVoteCountRequiredForSeatAllocation']
+            total_less_than_twentiethOfTotalVoteCounts = party_wise_seat_calculations[
+                party_wise_seat_calculations["numValue"] < twentiethOfTotalVoteCounts
+                ]["numValue"].sum()
 
-            for party_wise_seat_calculation_item in party_wise_seat_calculations.itertuples():
-                if (to_comma_seperated_num(party_wise_seat_calculation_item.numValue) < twentiethOfTotalVoteCounts):
-                    total_less_than_twentiethOfTotalVoteCounts += party_wise_seat_calculation_item.numValue
-
-            total_votes_after_deduction = party_wise_seat_calculations['numValue'].sum() - total_less_than_twentiethOfTotalVoteCounts
+            total_votes_after_deduction = party_wise_seat_calculations[
+                                              'numValue'].sum() - total_less_than_twentiethOfTotalVoteCounts
             number_of_members_to_be_elected_minus_1 = party_wise_seat_calculations['seatsAllocated'].sum() - 1
             relevant_no_of_votes_div_by_no_of_members = total_votes_after_deduction / number_of_members_to_be_elected_minus_1
             rounded_relevant_no_of_votes_div_by_no_of_members = math.ceil(relevant_no_of_votes_div_by_no_of_members)
-
 
             tallySheetVersion = self.tallySheetVersion
 
@@ -228,19 +222,27 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
                 "data": [],
                 "rejectedVoteCounts": [],
-                "totalVoteCounts": totalVoteCounts,
-                "twentiethOfTotalVoteCounts": twentiethOfTotalVoteCounts,
-                "total_less_than_twentiethOfTotalVoteCounts": to_comma_seperated_num(total_less_than_twentiethOfTotalVoteCounts),
+                "totalVoteCounts": to_comma_seperated_num(totalVoteCounts),
+                "twentiethOfTotalVoteCounts": to_comma_seperated_num(twentiethOfTotalVoteCounts, num_type=float),
+                "total_less_than_twentiethOfTotalVoteCounts": to_comma_seperated_num(
+                    total_less_than_twentiethOfTotalVoteCounts),
                 "total_votes_after_deduction": to_comma_seperated_num(total_votes_after_deduction),
-                "number_of_members_to_be_elected_minus_1": to_comma_seperated_num(number_of_members_to_be_elected_minus_1),
-                "relevant_no_of_votes_div_by_no_of_members": relevant_no_of_votes_div_by_no_of_members,
-                "rounded_relevant_no_of_votes_div_by_no_of_members": rounded_relevant_no_of_votes_div_by_no_of_members,
+                "number_of_members_to_be_elected_minus_1": to_comma_seperated_num(
+                    number_of_members_to_be_elected_minus_1),
+                "relevant_no_of_votes_div_by_no_of_members": to_comma_seperated_num(
+                    relevant_no_of_votes_div_by_no_of_members),
+                "rounded_relevant_no_of_votes_div_by_no_of_members": to_comma_seperated_num(
+                    rounded_relevant_no_of_votes_div_by_no_of_members),
                 "total": []
             }
 
             total_seatsAllocatedFromRound1 = 0
             total_seatsAllocatedFromRound2 = 0
             total_bonusSeatsAllocated = 0
+
+            party_wise_seat_calculations = party_wise_seat_calculations[
+                party_wise_seat_calculations["numValue"] >= twentiethOfTotalVoteCounts
+                ]
 
             for party_wise_seat_calculation_item in party_wise_seat_calculations.itertuples():
                 data_row = []
@@ -265,7 +267,6 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
             content["total"].append(to_comma_seperated_num(total_seatsAllocatedFromRound2))
             content["total"].append(to_comma_seperated_num(total_bonusSeatsAllocated))
             content["total"].append(to_comma_seperated_num(party_wise_seat_calculations['seatsAllocated'].sum()))
-
 
             html = render_template(
                 'PE-R2.html',
