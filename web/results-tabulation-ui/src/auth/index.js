@@ -56,12 +56,6 @@ export function hasValidToken() {
 }
 
 export function redirectToLogin() {
-    // This is for redirection troubleshooting. Don't remove.
-    if (DEBUG && !window.confirm("Redirecting to the login. Do you want to continue?")) {
-        return;
-    }
-    debugger;
-
     window.location.href = getAuthAppSignInUrl();
 }
 
