@@ -90,6 +90,7 @@ function App() {
                     path={PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW(":tallySheetId")}
                     component={TallySheetActivityView}
                 />
+                <Redirect to={PATH_ELECTION()}/>
             </Switch>
         </div>
     );
