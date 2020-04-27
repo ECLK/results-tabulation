@@ -1,3 +1,5 @@
+import { API_MESSAGES_EN } from "../locale/messages_en";
+
 export * from "../auth";
 export * from "./history";
 
@@ -44,4 +46,16 @@ export function fieldMatch(key, value) {
         return true
     }
     return key.toLowerCase().includes(value.toLowerCase());
+}
+
+export function getDeepObjectValue(path, object) {
+    return path.reduce((x, value) => (x && x[value]) ? x[value] : null, object);
+}
+
+export function getErrorCode(e) {
+    return getDeepObjectValue(['response', 'data', 'code'], e);
+}
+
+export function getErrorMessage(errorCode) {
+    return API_MESSAGES_EN[errorCode] ? API_MESSAGES_EN[errorCode] : "Unknown Error";
 }

@@ -9,6 +9,7 @@ import TallySheetEdit_CE_201_PV from "./tally-sheet-edit-ce-201-pv";
 import {TallySheetContext} from "../../../services/tally-sheet.provider";
 import TallySheetActions from "../tally-sheet-actions";
 import Button from "@material-ui/core/Button";
+import { getErrorCode, getErrorMessage } from "../../../utils";
 
 
 export default class TallySheetEdit extends Component {
@@ -88,7 +89,10 @@ export function useTallySheetEdit(props) {
                 const tallySheet = await tallySheetContext.saveTallySheetVersion(tallySheetId, tallySheetCode, body);
                 setTallySheetVersion(tallySheet.latestVersion);
             } catch (e) {
-                messages.push("Error", MESSAGES_EN.error_tallysheet_save, MESSAGE_TYPES.ERROR);
+                const errorCode = getErrorCode(e);
+                if (errorCode) {
+                    messages.push("Error", getErrorMessage(errorCode), MESSAGE_TYPES.ERROR);
+                }
             }
             setProcessing(false);
         } else {
