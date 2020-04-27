@@ -6,8 +6,7 @@ from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_R
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE
 from constants.AUTH_CONSTANTS import ALL_ROLES, EC_LEADERSHIP_WRITE_ROLE
 from exception import NotFoundException
-from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, \
-    MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_INCOMPLETE_TALLY_SHEET_CANNOT_BE_LOCKED
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
 from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities.Submission import TallySheet
 from orm.entities.Submission.TallySheet import TallySheetModel
@@ -55,7 +54,8 @@ def workflow(tallySheetId, body):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+                                code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND)
 
     extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
     extended_tally_sheet.execute_workflow_action(workflowActionId=workflowActionId)
@@ -73,7 +73,8 @@ def upload_workflow_proof_file(body):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+                                code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND)
 
     body["proofId"] = tally_sheet.workflowInstance.proofId
     ProofApi.upload_file(body=body)
@@ -89,7 +90,8 @@ def get_workflow_logs(tallySheetId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+                                code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND)
 
     workflow_logs = tally_sheet.workflowInstance.logs
 
@@ -101,7 +103,8 @@ def get_workflow_proof_file(tallySheetId, fileId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+                                code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND)
 
     # TODO validate fileId
 
@@ -113,7 +116,8 @@ def get_workflow_proof_inline_file(tallySheetId, fileId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+                                code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND)
 
     # TODO validate fileId
 
@@ -125,7 +129,8 @@ def get_workflow_proof_download_file(tallySheetId, fileId):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     if tally_sheet is None:
-        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId)
+        raise NotFoundException("Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+                                code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND)
 
     # TODO validate fileId
 
