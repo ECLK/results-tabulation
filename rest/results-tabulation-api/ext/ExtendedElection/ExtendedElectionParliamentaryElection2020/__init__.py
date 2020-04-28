@@ -648,8 +648,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_r2_valid_vote_count_ceil_per_seat = tally_sheet_template_pe_r2.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT,
             hasMany=True,
-            isDerived=True,
-            loadOnPostSave=True,
+            isDerived=False,
             columns=[
                 {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
@@ -659,8 +658,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_r2_valid_vote_count_qualified_for_seat_allocation = tally_sheet_template_pe_r2.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION,
             hasMany=True,
-            isDerived=True,
-            loadOnPostSave=True,
+            isDerived=False,
             columns=[
                 {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
@@ -670,8 +668,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_r2_seats_allocated_from_round_1_row = tally_sheet_template_pe_r2.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1,
             hasMany=True,
-            isDerived=True,
-            loadOnPostSave=True,
+            isDerived=False,
             columns=[
                 {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
@@ -682,8 +679,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_r2_valid_votes_remain_from_round_1_row = tally_sheet_template_pe_r2.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1,
             hasMany=True,
-            isDerived=True,
-            loadOnPostSave=True,
+            isDerived=False,
             columns=[
                 {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
@@ -694,8 +690,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_r2_seats_allocated_from_round_2_row = tally_sheet_template_pe_r2.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2,
             hasMany=True,
-            isDerived=True,
-            loadOnPostSave=True,
+            isDerived=False,
             columns=[
                 {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
@@ -706,8 +701,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_r2_bonus_seats_allocated = tally_sheet_template_pe_r2.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED,
             hasMany=True,
-            isDerived=True,
-            loadOnPostSave=True,
+            isDerived=False,
             columns=[
                 {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
@@ -787,8 +781,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_21_elected_candidates = tally_sheet_template_pe_21.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
             hasMany=True,
-            isDerived=True,
-            loadOnPostSave=True,
+            isDerived=False,
             columns=[
                 {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
