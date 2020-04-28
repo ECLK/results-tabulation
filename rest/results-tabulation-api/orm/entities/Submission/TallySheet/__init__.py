@@ -283,15 +283,19 @@ class TallySheetModel(db.Model):
         tally_sheet_version = self.create_empty_version()
         self.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, content=content, post_save=False)
 
+        db.session.commit()
+
+        extended_tally_sheet_version = self.get_extended_tally_sheet_version(
+            tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
+        tally_sheet_version_post_save_content = extended_tally_sheet_version.get_post_save_request_content()
+        self.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version,
+                                             content=tally_sheet_version_post_save_content, post_save=True)
+
         return tally_sheet_version
 
     def create_latest_version(self, content=None):
         tally_sheet, tally_sheet_version = create_version(self.tallySheetId, content=content)
         tally_sheet.set_latest_version(tallySheetVersion=tally_sheet_version)
-
-        db.session.commit()
-
-        tally_sheet.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, post_save=True)
 
         return tally_sheet, tally_sheet_version
 
@@ -344,15 +348,6 @@ class TallySheetModel(db.Model):
         return query_args, group_by_args, filter_by_args
 
     def create_tally_sheet_version_rows(self, tally_sheet_version, content=None, post_save=False):
-        if content is None:
-            content = []
-
-        if post_save:
-            extended_tally_sheet_version = self.get_extended_tally_sheet_version(
-                tallySheetVersionId=tally_sheet_version.tallySheetVersionId
-            )
-            content += extended_tally_sheet_version.get_post_save_request_content()
-
         meta_data_map = {}
         for metaData in self.meta.metaDataList:
             meta_data_map[metaData.metaDataKey] = metaData.metaDataValue
@@ -364,7 +359,7 @@ class TallySheetModel(db.Model):
 
             content_rows = []
 
-            if not post_save and templateRow.isDerived is True and templateRow.loadOnPostSave is False:
+            if content is None and not post_save and templateRow.isDerived is True and templateRow.loadOnPostSave is False:
 
                 # Retrieve completed tally sheet results.
                 query_args, group_by_args, filter_by_args = self.get_template_row_query_parameters(
@@ -431,7 +426,9 @@ class TallySheetModel(db.Model):
 
                     content_rows.append(content_row)
 
-            elif not templateRow.isDerived or (templateRow.isDerived and templateRow.loadOnPostSave and post_save):
+            elif not templateRow.isDerived or (templateRow.isDerived and content is not None) or (
+                    templateRow.isDerived and templateRow.loadOnPostSave and post_save):
+
                 for content_row in content:
                     if content_row["templateRowId"] == templateRow.templateRowId:
                         for template_row_column in templateRow.columns:
