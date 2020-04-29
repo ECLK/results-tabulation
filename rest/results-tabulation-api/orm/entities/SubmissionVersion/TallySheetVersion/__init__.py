@@ -6,13 +6,13 @@ from app import db
 from sqlalchemy.orm import relationship
 
 from auth import has_role_based_access
-from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_SAVE
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE
 from orm.entities.Election import InvalidVoteCategory
 from orm.entities.Template import TemplateRowModel
 from orm.entities import SubmissionVersion, TallySheetVersionRow, Area, Candidate, Party, Election
 from orm.entities.Submission import TallySheet
-from exception import NotFoundException
+from exception import NotFoundException, UnauthorizedException
 from flask import request
 
 
@@ -145,9 +145,9 @@ class TallySheetVersionModel(db.Model):
 
         # Validate the authorization
         if not has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_SAVE):
-            raise NotFoundException(
+            raise UnauthorizedException(
                 message="Not authorized to edit tally sheet. (tallySheetId=%d)" % tallySheetId,
-                code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_SAVE
+                code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT
             )
 
         return TallySheetVersionModel(tallySheetId=tallySheetId)

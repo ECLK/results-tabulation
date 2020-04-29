@@ -19,6 +19,7 @@ import ImageIcon from '@material-ui/icons/Image';
 import DescriptionIcon from '@material-ui/icons/Description';
 import PreviewTallySheetProofFileButton from "../tally-sheet-proof-file-preview-button";
 import Processing from "../../processing";
+import { getErrorCode, getErrorMessage } from "../../../utils";
 
 export function UploadTallySheetProofsDialog(
     {
@@ -55,7 +56,10 @@ export function UploadTallySheetProofsDialog(
 
             setFiles(_files);
         } catch (e) {
-            messageContext.push("Error", "Unknown error", MESSAGE_TYPES.ERROR);
+            const errorCode = getErrorCode(e);
+            if (errorCode) {
+                messageContext.push("Error", getErrorMessage(errorCode), MESSAGE_TYPES.ERROR);
+            }
         }
 
         setProcessing(false);
@@ -70,7 +74,10 @@ export function UploadTallySheetProofsDialog(
             const proofStatus = await tallySheetContext.uploadTallySheetProof(formData);
             messageContext.push("Success", MESSAGES_EN.success_upload, MESSAGE_TYPES.SUCCESS);
         } catch (e) {
-            messageContext.push("Error", MESSAGES_EN.error_upload, MESSAGE_TYPES.ERROR);
+            const errorCode = getErrorCode(e);
+            if (errorCode) {
+                messageContext.push("Error", getErrorMessage(errorCode), MESSAGE_TYPES.ERROR);
+            }
         }
         setProcessing(false);
     };

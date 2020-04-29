@@ -2,6 +2,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from app import db
 from exception import MethodNotAllowedException
+from exception.messages import MESSAGE_CODE_WORKFLOW_ACTION_NOT_ALLOWED
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_REQUEST_CHANGES
 from orm.entities import History, Meta, Proof
 from orm.entities.Workflow import WorkflowStatusModel, WorkflowActionModel
@@ -50,7 +51,8 @@ class WorkflowInstanceModel(db.Model):
 
     def execute_action(self, action: WorkflowActionModel, meta: Meta):
         if self.status != action.fromStatus:
-            raise MethodNotAllowedException(message="Workflow action is not allowed.")
+            raise MethodNotAllowedException(message="Workflow action is not allowed.",
+                                            code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_ALLOWED)
         else:
             self.status = action.toStatus
             self.latestLogId = WorkflowInstanceLog.create(

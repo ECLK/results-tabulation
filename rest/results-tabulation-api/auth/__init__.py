@@ -16,8 +16,10 @@ from exception import UnauthorizedException
 
 import json
 
-from exception.messages import MESSAGE_CODE_USER_NOT_FOUND, MESSAGE_CODE_USER_NOT_AUTHENTICATED, \
-    MESSAGE_CODE_USER_NOT_AUTHORIZED
+from exception.messages import MESSAGE_CODE_NO_VALID_USER_FOUND, \
+    MESSAGE_CODE_NO_VALID_USER_ROLE_FOUND, \
+    MESSAGE_CODE_INVALID_AUTHORIZATION_TOKEN, \
+    MESSAGE_CODE_NO_AUTHORIZATION_HEADER_FOUND, MESSAGE_CODE_NO_MATCHING_CLAIM_FOUND
 
 JWT_SECRET = "jwt_secret"
 AREA_ID = "areaId"
@@ -44,7 +46,7 @@ def decode_token(token):
     except Exception as e:
         raise UnauthorizedException(
             message="Invalid authorization token.",
-            code=MESSAGE_CODE_USER_NOT_AUTHENTICATED
+            code=MESSAGE_CODE_INVALID_AUTHORIZATION_TOKEN
         )
 
 
@@ -52,7 +54,7 @@ def get_jwt_token():
     if JWT_TOKEN_HEADER_KEY not in request.headers:
         raise UnauthorizedException(
             message="No authorization header found.",
-            code=MESSAGE_CODE_USER_NOT_AUTHENTICATED
+            code=MESSAGE_CODE_NO_AUTHORIZATION_HEADER_FOUND
         )
 
     print("######### request.headers.get(JWT_TOKEN_HEADER_KEY) ###### ", request.headers.get(JWT_TOKEN_HEADER_KEY))
@@ -163,13 +165,13 @@ def authenticate(func, *args, **kwargs):
     if SUB not in claims:
         UnauthorizedException(
             message="No valid user found.",
-            code=MESSAGE_CODE_USER_NOT_FOUND
+            code=MESSAGE_CODE_NO_VALID_USER_FOUND
         )
 
     if ROLE_CLAIM not in claims or claims.get(ROLE_CLAIM) == []:
         UnauthorizedException(
             message="No valid user role found.",
-            code=MESSAGE_CODE_USER_NOT_AUTHORIZED
+            code=MESSAGE_CODE_NO_VALID_USER_ROLE_FOUND
         )
 
     user_name = claims.get(SUB)
@@ -347,7 +349,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
     if not claim_found:
         UnauthorizedException(
             message="No matching claim found.",
-            code=MESSAGE_CODE_USER_NOT_AUTHORIZED
+            code=MESSAGE_CODE_NO_MATCHING_CLAIM_FOUND
         )
     else:
         connexion.context[USER_ACCESS_AREA_IDS] = set(user_access_area_ids)
