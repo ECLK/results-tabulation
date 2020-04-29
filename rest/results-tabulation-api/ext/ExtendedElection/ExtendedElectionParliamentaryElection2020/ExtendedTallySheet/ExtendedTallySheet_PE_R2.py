@@ -1,6 +1,6 @@
 from app import db
 from exception import ForbiddenException
-from exception.messages import MESSAGE_CODE_CANNOT_DIVIDE_BY_ZERO
+from exception.messages import MESSAGE_CODE_SEAT_CALCULATION_CANNOT_BE_DONE_ON_ZERO_VOTES
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION, \
     META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED
@@ -101,7 +101,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             if total_valid_vote_count == 0:
                 raise ForbiddenException(
                     message="Seat calculation cannot be done on zero votes.",
-                    code=MESSAGE_CODE_CANNOT_DIVIDE_BY_ZERO
+                    code=MESSAGE_CODE_SEAT_CALCULATION_CANNOT_BE_DONE_ON_ZERO_VOTES
                 )
 
             _minimum_valid_vote_count_required_per_party_to_be_qualified = total_valid_vote_count * minimum_vote_count_percentage_required

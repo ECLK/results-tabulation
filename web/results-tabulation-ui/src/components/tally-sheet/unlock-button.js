@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import Button from "@material-ui/core/Button";
 import {MESSAGES_EN} from "../../locale/messages_en";
 import {MESSAGE_TYPES} from "../../services/messages.provider";
+import {getErrorCode} from "../../utils/index";
 
 export default function UnlockButton(props) {
 
@@ -26,7 +27,10 @@ export default function UnlockButton(props) {
                 history.push(getTallySheetListLink())
             }, 500)
         } catch (e) {
-            messages.push("Error", MESSAGES_EN.error_unlock_report, MESSAGE_TYPES.ERROR);
+            const errorCode = getErrorCode(e);
+            if (errorCode) {
+                messages.push("Error", getErrorMessage(errorCode), MESSAGE_TYPES.ERROR);
+            }
         }
         setProcessing(false);
     };

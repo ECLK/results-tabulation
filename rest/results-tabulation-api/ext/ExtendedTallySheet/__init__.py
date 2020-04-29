@@ -6,6 +6,10 @@ from app import db
 from auth import get_user_name, has_role_based_access
 from constants.VOTE_TYPES import Postal, NonPostal
 from exception import MethodNotAllowedException, UnauthorizedException
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY, \
+    MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED, MESSAGE_CODE_TALLY_SHEET_NO_LONGER_READABLE, \
+    MESSAGE_CODE_TALLY_SHEET_NO_LONGER_EDITABLE, MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS, \
+    MESSAGE_CODE_TALLY_SHEET_INCOMPLETE
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED, \
@@ -131,7 +135,8 @@ class ExtendedTallySheet:
         from auth import has_role_based_access
 
         if not has_role_based_access(self.tallySheet, workflow_action.actionType):
-            UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName))
+            UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName),
+                                  code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED)
 
     def on_workflow_tally_sheet_version(self, workflow_action, content=None):
         from orm.entities import SubmissionVersion
@@ -154,7 +159,7 @@ class ExtendedTallySheet:
 
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
         if not tally_sheet_version.isComplete:
-            raise MethodNotAllowedException(message="Incomplete tally sheet.")
+            raise MethodNotAllowedException(message="Incomplete tally sheet.", code=MESSAGE_CODE_TALLY_SHEET_INCOMPLETE)
 
     def on_workflow_action(self, workflow_action, tally_sheet_version, content=None):
         self.tallySheet.workflowInstance.execute_action(
@@ -178,7 +183,8 @@ class ExtendedTallySheet:
             workflow_action_type=WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT)
 
         if len(workflow_actions) == 0:
-            raise MethodNotAllowedException(message="Tally sheet is longer accepting proof documents.")
+            raise MethodNotAllowedException(message="Tally sheet is longer accepting proof documents.",
+                                            coded=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS)
 
         return workflow_actions
 
@@ -202,7 +208,8 @@ class ExtendedTallySheet:
         workflow_actions = self._get_allowed_workflow_actions(workflow_action_type=WORKFLOW_ACTION_TYPE_VIEW)
 
         if len(workflow_actions) == 0:
-            raise MethodNotAllowedException(message="Tally sheet is longer readable.")
+            raise MethodNotAllowedException(message="Tally sheet is no longer readable.",
+                                            code=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_READABLE)
 
         return workflow_actions
 
@@ -242,7 +249,8 @@ class ExtendedTallySheet:
         workflow_actions = self._get_allowed_workflow_actions(workflow_action_type=WORKFLOW_ACTION_TYPE_SAVE)
 
         if len(workflow_actions) == 0:
-            raise MethodNotAllowedException(message="Tally sheet is longer editable.")
+            raise MethodNotAllowedException(message="Tally sheet is no longer editable.",
+                                            code=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_EDITABLE)
 
         return workflow_actions
 
@@ -951,7 +959,8 @@ class ExtendedTallySheetDataEntry(ExtendedTallySheet):
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
         if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_VERIFY]:
             if tally_sheet_version.createdBy == get_user_name():
-                raise UnauthorizedException("You cannot very the data last edited by yourself.")
+                raise UnauthorizedException("You cannot verify the data last edited by yourself.",
+                                            code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY)
 
         return super(ExtendedTallySheetDataEntry, self).on_before_workflow_action(
             workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)

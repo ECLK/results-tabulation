@@ -18,6 +18,7 @@ import {UploadTallySheetProofsDialog} from "./upload-tally-sheet-proofs-dialog";
 import {MESSAGE_TYPES, MessagesContext} from "../../../services/messages.provider";
 import PrintLetterButton from "../print-letter-button";
 import PrintReportButton from "../print-report-button";
+import { getErrorCode, getErrorMessage } from "../../../utils";
 
 const TALLY_SHEET_ACTION_SUCCESS_MESSAGE = {
     [WORKFLOW_ACTION_TYPE_SUBMIT]: "Submitted tally sheet successfully.",
@@ -77,10 +78,13 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
                     }
                 }
             } catch (e) {
-                let messageTitle = "Unknown Error";
-                let messageBody = "Unknown Error";
-                let messageType = MESSAGE_TYPES.ERROR;
-                messageContext.push({messageTitle, messageBody, messageType})
+                const errorCode = getErrorCode(e);
+                if (errorCode) {
+                    const messageTitle = "Unknown Error";
+                    const messageBody = getErrorMessage(errorCode);
+                    const messageType = MESSAGE_TYPES.ERROR;
+                    messageContext.push({messageTitle, messageBody, messageType})
+                }
             }
         };
 
