@@ -988,3 +988,23 @@ class ExtendedTallySheetReport(ExtendedTallySheet):
 
     class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
         pass
+
+
+class ExtendedEditableTallySheetReport(ExtendedTallySheet):
+    def on_before_workflow_action(self, workflow_action, tally_sheet_version):
+        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SAVE]:
+            # To ignore the completion check
+            pass
+        else:
+            return super(ExtendedEditableTallySheetReport, self).on_before_workflow_action(
+                workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
+
+    def on_tally_sheet_get(self):
+        if self.tallySheet.workflowInstance.status in [WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED,
+                                                       WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED]:
+            # Create a version before it's fetched.
+            self.on_tally_sheet_post()
+            db.session.commit()
+
+    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+        pass

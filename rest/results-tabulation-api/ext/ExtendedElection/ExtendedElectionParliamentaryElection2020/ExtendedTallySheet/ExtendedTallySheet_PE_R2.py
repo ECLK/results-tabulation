@@ -10,7 +10,7 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
     TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION, \
     TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED
-from ext.ExtendedTallySheet import ExtendedTallySheetReport
+from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 from flask import render_template
@@ -34,8 +34,8 @@ template_row_to_df_num_value_column_map = {
 }
 
 
-class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
-    class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
+class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
+    class ExtendedTallySheetVersion(ExtendedEditableTallySheetReport.ExtendedTallySheetVersion):
 
         def get_post_save_request_content(self):
             election = self.tallySheetVersion.submission.election
