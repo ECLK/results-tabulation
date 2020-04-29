@@ -1,4 +1,7 @@
+import math
+
 import pandas as pd
+import numpy as np
 from flask import render_template
 from sqlalchemy import MetaData
 
@@ -494,12 +497,37 @@ class ExtendedTallySheet:
 
             df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
 
+            def get_sum_of_numbers_only_and_nan_otherwise(array):
+                result = np.nan
+                for val in array:
+                    if val is not None and not math.isnan(val):
+                        if math.isnan(result):
+                            result = val
+                        else:
+                            result += val
+
+                return result
+
+            def get_sum_of_all_and_nan_otherwise(array):
+                result = np.nan
+                for val in array:
+                    if val is not None and not math.isnan(val):
+                        result = np.nan
+                        break
+
+                    if math.isnan(result):
+                        result = val
+                    else:
+                        result += val
+
+                return result
+
             df = df.groupby(
                 ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
                  'candidateNumber']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['partyId', 'candidateId'], ascending=True
             ).reset_index()
