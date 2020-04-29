@@ -19,6 +19,16 @@ import {
     TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TALLY_SHEET_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT,
     TALLY_SHEET_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1
 } from "../TALLY_SHEET_ROW_TYPE";
+import {
+    TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
+    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
+    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX,
+    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A,
+    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B,
+    TALLY_SHEET_ROW_TYPE_SITUATION,
+    TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT
+} from "../../../../tally-sheet/constants/TALLY_SHEET_ROW_TYPE";
+import Moment from "moment";
 
 export default function TallySheetEdit_PE_R2({history, queryString, election, tallySheet, messages}) {
 
@@ -173,10 +183,109 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
 
 
     function getTallySheetEditForm() {
-        return <div>
-            TODO
-            {getActionsBar()}
-        </div>
+        const {parties} = election;
+
+        if (saved) {
+
+            return <Table aria-label="simple table" size={saved ? "small" : "medium"}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell align="center">Party</TableCell>
+                        <TableCell align="center">Bonus Seats Allocated</TableCell>
+                        <TableCell align="center">Seats Allocated From Round 2</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {parties.map((party) => {
+                        const {partyName, partyId} = party;
+                        const seatsAllocatedFromRound2 = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, "numValue");
+                        const bonusSeatsAllocated = getValue(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED, "numValue");
+
+                        return <TableRow key={partyId}>
+                            <TableCell align="center">
+                                {partyName}
+                            </TableCell>
+                            <TableCell align="center">
+                                {bonusSeatsAllocated}
+                            </TableCell>
+                            <TableCell align="center">
+                                {seatsAllocatedFromRound2}
+                            </TableCell>
+                        </TableRow>
+                    })}
+                </TableBody>
+
+                <TableFooter>
+                    <TableRow>
+                        <TableCell align="right" colSpan={3}>
+                            {getActionsBar()}
+                        </TableCell>
+                    </TableRow>
+                </TableFooter>
+            </Table>
+        } else if (!processing) {
+
+            return <Table aria-label="simple table" size="medium">
+                <TableHead>
+                    <TableRow>
+                        <TableCell align="center">Party</TableCell>
+                        <TableCell align="center">Bonus Seats Allocated</TableCell>
+                        <TableCell align="center">Seats Allocated From Round 2</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+
+                    {parties.map((party) => {
+                        const {partyName, partyId} = party;
+                        const seatsAllocatedFromRound2 = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, "numValue");
+                        const bonusSeatsAllocated = getValue(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED, "numValue");
+
+                        return <TableRow key={partyId}>
+
+                            <TableCell align="center">
+                                {partyName}
+                            </TableCell>
+                            <TableCell align="center">
+                                <TextField
+                                    variant="outlined"
+                                    value={bonusSeatsAllocated}
+                                    margin="normal"
+                                    onChange={handleValueChange(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED, "numValue")}
+                                    inputProps={{
+                                        style: {
+                                            height: '10px'
+                                        },
+                                    }}
+                                />
+                            </TableCell>
+                            <TableCell align="center">
+                                <TextField
+                                    variant="outlined"
+                                    value={seatsAllocatedFromRound2}
+                                    margin="normal"
+                                    onChange={handleValueChange(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, "numValue")}
+                                    inputProps={{
+                                        style: {
+                                            height: '10px'
+                                        },
+                                    }}
+                                />
+                            </TableCell>
+                        </TableRow>
+                    })}
+                </TableBody>
+
+                <TableFooter>
+                    <TableRow>
+                        <TableCell align="right" colSpan={3}>
+                            {getActionsBar()}
+                        </TableCell>
+                    </TableRow>
+                </TableFooter>
+            </Table>
+        } else {
+            return null;
+        }
     }
 
     return <Processing showProgress={processing} label={processingLabel}>
