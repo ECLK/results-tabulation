@@ -1,3 +1,5 @@
+import math
+
 from flask import render_template
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities import Area
@@ -56,7 +58,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_3(ExtendedTallySheetReport):
 
                 data_row.append(position_of_candidate)
                 data_row.append("%s - %s" % (candidate_number, candidate_name))
-                data_row.append(num_value)
+                data_row.append("" if math.isnan(num_value) else num_value)
                 data_row.append("")
                 data_row.append(position_of_candidate)
 
