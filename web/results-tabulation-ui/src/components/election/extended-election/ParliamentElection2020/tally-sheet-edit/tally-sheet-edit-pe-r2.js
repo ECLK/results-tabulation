@@ -19,16 +19,6 @@ import {
     TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TALLY_SHEET_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT,
     TALLY_SHEET_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1
 } from "../TALLY_SHEET_ROW_TYPE";
-import {
-    TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
-    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
-    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX,
-    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A,
-    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B,
-    TALLY_SHEET_ROW_TYPE_SITUATION,
-    TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT
-} from "../../../../tally-sheet/constants/TALLY_SHEET_ROW_TYPE";
-import Moment from "moment";
 
 export default function TallySheetEdit_PE_R2({history, queryString, election, tallySheet, messages}) {
 
@@ -61,6 +51,36 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
             templateRow: {}, map: {}
         }
     });
+
+    function getNumericValueDiffHelperText(numFrom, numTo) {
+        debugger;
+        if (!isNumeric(numTo)) {
+            return "Only numeric values are valid";
+        } else if (numFrom !== numTo) {
+            return `Changed ${numFrom} to ${numTo}`;
+        }
+
+        return "";
+    }
+
+    const helperTextMap = {
+        [TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED]: (partyId) => {
+            const bonusSeatsAllocated = getValue(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED, "numValue");
+            const bonusSeatsAllocatedDraft = getValue(partyId, TALLY_SHEET_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED, "numValue");
+
+            return getNumericValueDiffHelperText(bonusSeatsAllocatedDraft, bonusSeatsAllocated);
+        },
+        [TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2]: (partyId) => {
+            const seatsAllocatedFromSecondRound = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, "numValue");
+            const seatsAllocatedFromSecondRoundDraft = getValue(partyId, TALLY_SHEET_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, "numValue");
+
+            return getNumericValueDiffHelperText(seatsAllocatedFromSecondRoundDraft, seatsAllocatedFromSecondRound);
+        }
+    };
+
+    const getHelperText = (partyId, templateRowType) => {
+        return helperTextMap[templateRowType](partyId);
+    };
 
     const _forEachParty = (callback) => {
         const {parties} = election;
@@ -247,7 +267,10 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
                             </TableCell>
                             <TableCell align="center">
                                 <TextField
+                                    required
                                     variant="outlined"
+                                    error={!isNumeric(bonusSeatsAllocated)}
+                                    helperText={getHelperText(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED)}
                                     value={bonusSeatsAllocated}
                                     margin="normal"
                                     onChange={handleValueChange(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED, "numValue")}
@@ -260,7 +283,10 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
                             </TableCell>
                             <TableCell align="center">
                                 <TextField
+                                    required
                                     variant="outlined"
+                                    error={!isNumeric(bonusSeatsAllocated)}
+                                    helperText={getHelperText(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2)}
                                     value={seatsAllocatedFromRound2}
                                     margin="normal"
                                     onChange={handleValueChange(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, "numValue")}
