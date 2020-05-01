@@ -1,3 +1,5 @@
+import math
+
 import connexion
 
 from orm.enums import BallotTypeEnum, AreaTypeEnum
@@ -127,3 +129,30 @@ def split_area_name(name):
         return split_array[0].strip(), split_array[1].strip()
     print("Error: invalid are name", name)
     return "None", name
+
+
+def get_sum_of_numbers_only_and_nan_otherwise(array):
+    result = np.nan
+    for val in array:
+        if val is not None and not math.isnan(val):
+            if math.isnan(result):
+                result = val
+            else:
+                result += val
+
+    return result
+
+
+def get_sum_of_all_and_nan_otherwise(array):
+    result = np.nan
+    for val in array:
+        if val is not None and not math.isnan(val):
+            result = np.nan
+            break
+
+        if math.isnan(result):
+            result = val
+        else:
+            result += val
+
+    return result
