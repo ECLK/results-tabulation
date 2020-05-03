@@ -2,7 +2,7 @@ from app import db
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import TALLY_SHEET_CODES
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
-from ext.ExtendedTallySheet import ExtendedTallySheetReport
+from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Meta import MetaData
 from orm.entities.Submission import TallySheet
 from orm.entities.Submission.TallySheet import TallySheetTallySheetModel
@@ -10,11 +10,11 @@ from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 from flask import render_template
-from orm.entities import Area, Template
+from orm.entities import Area, Template, Submission
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
+class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
 
     def get_template_column_to_query_filter_map(self, only_group_by_columns=False):
         template_column_to_query_filter_map = super(
@@ -25,6 +25,8 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
         party_ids_to_be_filtered = []
         pe_r2_tally_sheets = db.session.query(TallySheet.Model).filter(
             TallySheet.Model.tallySheetId == TallySheetTallySheetModel.childTallySheetId,
+            TallySheet.Model.tallySheetId == Submission.Model.submissionId,
+            Submission.Model.latestVersionId != None,
             TallySheetTallySheetModel.parentTallySheetId == self.tallySheet.tallySheetId,
             TallySheet.Model.templateId == Template.Model.templateId,
             Template.Model.templateName == TALLY_SHEET_CODES.PE_R2
@@ -63,7 +65,7 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
 
         return template_column_to_query_filter_map
 
-    class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
+    class ExtendedTallySheetVersion(ExtendedEditableTallySheetReport.ExtendedTallySheetVersion):
 
         def get_post_save_request_content(self):
             tally_sheet_id = self.tallySheetVersion.tallySheetId
@@ -84,46 +86,49 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
 
             content = []
 
-            candidate_wise_valid_vote_count_result = self.get_candidate_wise_valid_vote_count_result().sort_values(
-                by=['numValue'], ascending=False
-            )
             seats_allocated_per_party_df = self.df.loc[self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED]
-            for index_1 in seats_allocated_per_party_df.index:
-                party_id = seats_allocated_per_party_df.at[index_1, "partyId"]
-                number_of_seats_allocated = seats_allocated_per_party_df.at[index_1, "numValue"]
 
-                if number_of_seats_allocated is not None and not math.isnan(number_of_seats_allocated):
-                    filtered_candidate_wise_valid_vote_count_result = candidate_wise_valid_vote_count_result.loc[
-                        candidate_wise_valid_vote_count_result["partyId"] == party_id]
-                    for index_2 in filtered_candidate_wise_valid_vote_count_result.index:
-                        if number_of_seats_allocated > 0:
-                            for template_row in template_rows:
-                                num_value = filtered_candidate_wise_valid_vote_count_result.at[
-                                    index_2, "incompleteNumValue"]
-                                candidate_id = filtered_candidate_wise_valid_vote_count_result.at[
-                                    index_2, "candidateId"]
-                                if not math.isnan(num_value):
-                                    content.append({
-                                        "templateRowId": template_row.templateRowId,
-                                        "templateRowType": template_row.templateRowType,
-                                        "partyId": int(party_id),
-                                        "candidateId": int(candidate_id),
+            # The derived rows are calculated only if the PE-R2 is available and verified.
+            if len(seats_allocated_per_party_df) > 0:
+                candidate_wise_valid_vote_count_result = self.get_candidate_wise_valid_vote_count_result().sort_values(
+                    by=['numValue'], ascending=False
+                )
+                for index_1 in seats_allocated_per_party_df.index:
+                    party_id = seats_allocated_per_party_df.at[index_1, "partyId"]
+                    number_of_seats_allocated = seats_allocated_per_party_df.at[index_1, "numValue"]
 
-                                        # TODO remove once the complete validation has been fixed.
-                                        "numValue": 0
-                                    })
-                                else:
-                                    content.append({
-                                        "templateRowId": template_row.templateRowId,
-                                        "templateRowType": template_row.templateRowType,
-                                        "partyId": int(party_id),
-                                        "candidateId": None,
+                    if number_of_seats_allocated is not None and not math.isnan(number_of_seats_allocated):
+                        filtered_candidate_wise_valid_vote_count_result = candidate_wise_valid_vote_count_result.loc[
+                            candidate_wise_valid_vote_count_result["partyId"] == party_id]
+                        for index_2 in filtered_candidate_wise_valid_vote_count_result.index:
+                            if number_of_seats_allocated > 0:
+                                for template_row in template_rows:
+                                    num_value = filtered_candidate_wise_valid_vote_count_result.at[
+                                        index_2, "incompleteNumValue"]
+                                    candidate_id = filtered_candidate_wise_valid_vote_count_result.at[
+                                        index_2, "candidateId"]
+                                    if not math.isnan(num_value):
+                                        content.append({
+                                            "templateRowId": template_row.templateRowId,
+                                            "templateRowType": template_row.templateRowType,
+                                            "partyId": int(party_id),
+                                            "candidateId": int(candidate_id),
 
-                                        # TODO remove once the complete validation has been fixed.
-                                        "numValue": 0
-                                    })
+                                            # TODO remove once the complete validation has been fixed.
+                                            "numValue": 0
+                                        })
+                                    else:
+                                        content.append({
+                                            "templateRowId": template_row.templateRowId,
+                                            "templateRowType": template_row.templateRowType,
+                                            "partyId": int(party_id),
+                                            "candidateId": None,
 
-                            number_of_seats_allocated -= 1
+                                            # TODO remove once the complete validation has been fixed.
+                                            "numValue": 0
+                                        })
+
+                                number_of_seats_allocated -= 1
 
             return content
 
