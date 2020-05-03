@@ -128,9 +128,7 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
             return content
 
         def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_PE_21.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
-            )
+            return self.html(title=title, total_registered_voters=total_registered_voters)
 
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion

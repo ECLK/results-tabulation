@@ -1085,7 +1085,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": election.electionId
                     }).metaId,
-                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
+                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_r2_tally_sheet_list = [TallySheet.create(
