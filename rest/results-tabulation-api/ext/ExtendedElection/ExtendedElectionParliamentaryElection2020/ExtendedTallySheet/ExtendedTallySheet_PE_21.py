@@ -1,7 +1,7 @@
 from app import db
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import TALLY_SHEET_CODES
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
-    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
+    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities.Meta import MetaData
 from orm.entities.Submission import TallySheet
@@ -10,11 +10,12 @@ from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 from flask import render_template
-from orm.entities import Area, Template, Meta
+from orm.entities import Area, Template
 from orm.enums import AreaTypeEnum
 
 
 class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
+
     def get_template_column_to_query_filter_map(self, only_group_by_columns=False):
         template_column_to_query_filter_map = super(
             ExtendedTallySheet_PE_21, self).get_template_column_to_query_filter_map(
@@ -64,6 +65,68 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
 
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
+        def get_post_save_request_content(self):
+            tally_sheet_id = self.tallySheetVersion.tallySheetId
+
+            template_rows = db.session.query(
+                TemplateRowModel.templateRowId,
+                TemplateRowModel.templateRowType
+            ).filter(
+                TemplateModel.templateId == TallySheet.Model.templateId,
+                TemplateRowModel.templateId == TemplateModel.templateId,
+                TemplateRowModel.templateRowType.in_([
+                    TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
+                ]),
+                TallySheet.Model.tallySheetId == tally_sheet_id
+            ).group_by(
+                TemplateRowModel.templateRowId
+            ).all()
+
+            content = []
+
+            candidate_wise_valid_vote_count_result = self.get_candidate_wise_valid_vote_count_result().sort_values(
+                by=['numValue'], ascending=False
+            )
+            seats_allocated_per_party_df = self.df.loc[self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED]
+            for index_1 in seats_allocated_per_party_df.index:
+                party_id = seats_allocated_per_party_df.at[index_1, "partyId"]
+                number_of_seats_allocated = seats_allocated_per_party_df.at[index_1, "numValue"]
+
+                if number_of_seats_allocated is not None and not math.isnan(number_of_seats_allocated):
+                    filtered_candidate_wise_valid_vote_count_result = candidate_wise_valid_vote_count_result.loc[
+                        candidate_wise_valid_vote_count_result["partyId"] == party_id]
+                    for index_2 in filtered_candidate_wise_valid_vote_count_result.index:
+                        if number_of_seats_allocated > 0:
+                            for template_row in template_rows:
+                                num_value = filtered_candidate_wise_valid_vote_count_result.at[
+                                    index_2, "incompleteNumValue"]
+                                candidate_id = filtered_candidate_wise_valid_vote_count_result.at[
+                                    index_2, "candidateId"]
+                                if not math.isnan(num_value):
+                                    content.append({
+                                        "templateRowId": template_row.templateRowId,
+                                        "templateRowType": template_row.templateRowType,
+                                        "partyId": int(party_id),
+                                        "candidateId": int(candidate_id),
+
+                                        # TODO remove once the complete validation has been fixed.
+                                        "numValue": 0
+                                    })
+                                else:
+                                    content.append({
+                                        "templateRowId": template_row.templateRowId,
+                                        "templateRowType": template_row.templateRowType,
+                                        "partyId": int(party_id),
+                                        "candidateId": None,
+
+                                        # TODO remove once the complete validation has been fixed.
+                                        "numValue": 0
+                                    })
+
+                            number_of_seats_allocated -= 1
+
+            return content
+
         def html_letter(self, title="", total_registered_voters=None):
             return super(ExtendedTallySheet_PE_21.ExtendedTallySheetVersion, self).html_letter(
                 title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
@@ -92,49 +155,15 @@ class ExtendedTallySheet_PE_21(ExtendedTallySheetReport):
                 "data": []
             }
 
-            # Appending canditate wise vote count
-            tally_sheet_id = self.tallySheetVersion.tallySheetId
-            template_rows = db.session.query(
-                TemplateRowModel.templateRowId
-            ).filter(
-                TemplateModel.templateId == TallySheet.Model.templateId,
-                TemplateRowModel.templateId == TemplateModel.templateId,
-                TemplateRowModel.templateRowType == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
-                TallySheet.Model.tallySheetId == tally_sheet_id
-            ).group_by(
-                TemplateRowModel.templateRowId
-            ).all()
+            elected_candidates_df = self.df.loc[self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE]
 
-            candidate_wise_valid_vote_count_result = self.get_candidate_wise_valid_vote_count_result().sort_values(
-                by=['numValue'], ascending=False
-            )
-            seats_allocated_per_party_df = self.df.loc[self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED]
-            for index_1 in seats_allocated_per_party_df.index:
-                party_id = seats_allocated_per_party_df.at[index_1, "partyId"]
-                number_of_seats_allocated = seats_allocated_per_party_df.at[index_1, "numValue"]
-
-                if number_of_seats_allocated is not None and not math.isnan(number_of_seats_allocated):
-                    filtered_candidate_wise_valid_vote_count_result = candidate_wise_valid_vote_count_result.loc[
-                        candidate_wise_valid_vote_count_result["partyId"] == party_id]
-                    for index_2 in filtered_candidate_wise_valid_vote_count_result.index:
-                        if number_of_seats_allocated > 0:
-                            for template_row in template_rows:
-                                num_value = filtered_candidate_wise_valid_vote_count_result.at[
-                                    index_2, "incompleteNumValue"]
-                                if num_value is not None and not math.isnan(num_value):
-                                    content["data"].append({
-                                        "candidateName": filtered_candidate_wise_valid_vote_count_result.at[
-                                            index_2, "candidateName"],
-                                        "partyName": filtered_candidate_wise_valid_vote_count_result.at[
-                                            index_2, "partyName"]
-                                    })
-                                else:
-                                    content["data"].append({
-                                        "candidateName": "",
-                                        "partyName": filtered_candidate_wise_valid_vote_count_result.at[
-                                            index_2, "partyName"]
-                                    })
-                            number_of_seats_allocated -= 1
+            for index in elected_candidates_df.index:
+                candidate_name = elected_candidates_df.at[index, "candidateName"]
+                party_name = elected_candidates_df.at[index, "partyName"]
+                content["data"].append({
+                    "candidateName": "" if candidate_name is None else candidate_name,
+                    "partyName": party_name
+                })
 
             html = render_template(
                 'PE-21.html',
