@@ -201,19 +201,54 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 }
 
 .election-list {
-    text-align: center;
+    text-align: left;
+    padding-top: 20px;
 }
 
 .election-list a.election-list-item {
     padding: 10px;
     background-color: #e7e7e7;
-    margin: 26px;
+    margin: 10px 26px;
     /* margin-top: 50px; */
     display: inline-block;
-    width: 400px;
+    width: 300px;
+    text-align: center;
     color: #5178c8;
     text-decoration: none;
     border-radius: 7px;
+}
+
+.election-list-item-parent, .election-list-item-children {
+    display: block;
+}
+
+.election-list-item-children a.election-list-item {
+    margin-top: 10px;
+}
+
+.sub-elections {
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.root-election {
+    background: lightgrey;
+}
+
+.root-election a.election-list-item {
+    background-color: #5178c8;
+    color: #e7e7e7 !important;
+}
+
+.show-subElections {
+    width: 100%;
+    text-align: right;
+    padding-top: 8px;
+}
+
+.election-panel {
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 #wraphalf {
