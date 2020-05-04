@@ -5,14 +5,8 @@ from sqlalchemy.orm import relationship
 from app import db
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META
-from exception import NotFoundException, ForbiddenException
-from exception.messages import MESSAGE_CODE_TALLY_SHEET_SAME_USER_CANNOT_SAVE_AND_SUBMIT, \
-    MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_UNLOCK, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_LOCK, \
-    MESSAGE_CODE_TALLY_SHEET_CANNOT_SUBMIT_AFTER_LOCK, MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, \
-    MESSAGE_CODE_TALLY_SHEET_CANNOT_LOCK_BEFORE_SUBMIT, \
-    MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_NOTIFIED_BEFORE_LOCK, \
-    MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_RELEASED_BEFORE_NOTIFYING, MESSAGE_CODE_TALLY_SHEET_ALREADY_RELEASED, \
-    MESSAGE_CODE_TALLY_SHEET_ALREADY_NOTIFIED, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
+from exception import NotFoundException, UnauthorizedException
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_VIEW
 from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
@@ -281,17 +275,26 @@ class TallySheetModel(db.Model):
 
     def create_version(self, content=None):
         tally_sheet_version = self.create_empty_version()
-        self.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, content=content, post_save=False)
+
+        # Create derived rows first. (Passing None as Content)
+        self.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, content=None)
+
+        db.session.commit()
+
+        # Generate a post save content only if the content input is not defined.
+        if content is None:
+            extended_tally_sheet_version = self.get_extended_tally_sheet_version(
+                tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
+            content = extended_tally_sheet_version.get_post_save_request_content()
+
+        # Create data entry rows.
+        self.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, content=content)
 
         return tally_sheet_version
 
     def create_latest_version(self, content=None):
         tally_sheet, tally_sheet_version = create_version(self.tallySheetId, content=content)
         tally_sheet.set_latest_version(tallySheetVersion=tally_sheet_version)
-
-        db.session.commit()
-
-        tally_sheet.create_tally_sheet_version_rows(tally_sheet_version=tally_sheet_version, post_save=True)
 
         return tally_sheet, tally_sheet_version
 
@@ -343,16 +346,7 @@ class TallySheetModel(db.Model):
 
         return query_args, group_by_args, filter_by_args
 
-    def create_tally_sheet_version_rows(self, tally_sheet_version, content=None, post_save=False):
-        if content is None:
-            content = []
-
-        if post_save:
-            extended_tally_sheet_version = self.get_extended_tally_sheet_version(
-                tallySheetVersionId=tally_sheet_version.tallySheetVersionId
-            )
-            content += extended_tally_sheet_version.get_post_save_request_content()
-
+    def create_tally_sheet_version_rows(self, tally_sheet_version, content=None):
         meta_data_map = {}
         for metaData in self.meta.metaDataList:
             meta_data_map[metaData.metaDataKey] = metaData.metaDataValue
@@ -364,7 +358,7 @@ class TallySheetModel(db.Model):
 
             content_rows = []
 
-            if not post_save and templateRow.isDerived is True and templateRow.loadOnPostSave is False:
+            if content is None and templateRow.isDerived is True:
 
                 # Retrieve completed tally sheet results.
                 query_args, group_by_args, filter_by_args = self.get_template_row_query_parameters(
@@ -431,7 +425,8 @@ class TallySheetModel(db.Model):
 
                     content_rows.append(content_row)
 
-            elif not templateRow.isDerived or (templateRow.isDerived and templateRow.loadOnPostSave and post_save):
+            elif content is not None:
+
                 for content_row in content:
                     if content_row["templateRowId"] == templateRow.templateRowId:
                         for template_row_column in templateRow.columns:
@@ -540,7 +535,7 @@ def get_by_id(tallySheetId, tallySheetCode=None):
 
     # Validate the authorization
     if not has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
-        raise NotFoundException(
+        raise UnauthorizedException(
             message="Not authorized to view tally sheet. (tallySheetId=%d)" % tallySheetId,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
         )

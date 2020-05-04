@@ -10,6 +10,7 @@ import Election from "./pages/election";
 import TallySheetListView from "./pages/tally-sheet-list-view";
 import TallySheetView from "./pages/tally-sheet-view";
 import TallySheetActivityView from "./pages/tally-sheet-activity";
+import * as serviceWorker from "./serviceWorker";
 
 export const ROUTER_PREFIX = "";
 export const PATH_ELECTION = () => `${ROUTER_PREFIX}/election`;
@@ -48,6 +49,11 @@ function App() {
         if (ProtectedRoute.isAuthenticated()) {
             return <NavBar/>
         } else {
+
+            // As a fix for https://github.com/ECLK/results-tabulation-api/issues/519
+            // Unregistering the service worker enable the app redirecting to external urls.
+            serviceWorker.unregister();
+
             return <div className="fixed-loading-page">
                 Loading ...
             </div>
@@ -84,6 +90,7 @@ function App() {
                     path={PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW(":tallySheetId")}
                     component={TallySheetActivityView}
                 />
+                <Redirect to={PATH_ELECTION()}/>
             </Switch>
         </div>
     );

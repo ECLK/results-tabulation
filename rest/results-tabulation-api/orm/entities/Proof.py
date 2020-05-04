@@ -2,8 +2,8 @@ from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from exception.messages import MESSAGE_CODE_PROOF_CANNOT_BE_CONFIRMED_WITHOUT_EVIDENCE, \
-    MESSAGE_CODE_PROOF_NOT_MORE_EVIDENCE_ACCEPTED, MESSAGE_CODE_PROOF_NOT_FOUND
+from exception.messages import MESSAGE_CODE_PROOF_NOT_FOUND, MESSAGE_CODE_NEED_AT_LEAST_ONE_EVIDENCE, \
+    MESSAGE_CODE_NO_MORE_EVIDENCE_IS_ACCEPTED_FOR_PROOF
 from orm.entities.Audit import Stamp
 from orm.entities.IO import File, Folder
 from orm.entities.IO.Folder import FolderFile
@@ -106,7 +106,7 @@ def update(proofId, finished=None):
             if len(instance.scannedFiles) is 0:
                 raise ForbiddenException(
                     message="A proof required at least one evidence. Please upload an evidence (proofId=%d)" % proofId,
-                    code=MESSAGE_CODE_PROOF_CANNOT_BE_CONFIRMED_WITHOUT_EVIDENCE
+                    code=MESSAGE_CODE_NEED_AT_LEAST_ONE_EVIDENCE
                 )
 
             instance.finished = finished
@@ -127,7 +127,7 @@ def upload_file(proofId, fileSource, fileType):
     elif proof.finished is True:
         raise ForbiddenException(
             message="No more evidence is accepted for this proof (proofId=%d)" % proofId,
-            code=MESSAGE_CODE_PROOF_NOT_MORE_EVIDENCE_ACCEPTED
+            code=MESSAGE_CODE_NO_MORE_EVIDENCE_IS_ACCEPTED_FOR_PROOF
         )
     else:
         file = File.createFromFileSource(

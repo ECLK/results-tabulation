@@ -13,9 +13,45 @@ export const MESSAGES_EN = {
     success_report_editable: "Report was made editable successfully.",
     success_report_verify: "Report was verified successfully.",
     success_report_unlock: "Report was unlocked successfully.",
-    success_pre41_submit:"Tally sheet was submitted successfully",
-    success_upload:"Proof sheet was submitted successfully",
+    success_pre41_submit: "Tally sheet was submitted successfully",
+    success_upload: "Proof sheet was submitted successfully",
     success_release: "Report released successfully.",
     success_notify: "Report notified successfully.",
     error_preferences_not_enabled_yet: "Preferences have not been enabled yet.",
 };
+
+export const API_MESSAGES_EN = {
+    // Authorization
+    1000: "No valid user found.",
+    1001: "No valid user role found.",
+    1002: "No matching claim found.",
+    1003: "Invalid authorization token.",
+    1004: "No authorization header found.",
+    1005: "Your are not authorized to view tally sheet.",
+    1006: "Your are not authorized to edit tally sheet.",
+    1007: "You cannot verify the data last edited by yourself.",
+    1008: "Workflow action is not authorized",
+
+    // Forbidden
+    2000: "Seat calculation cannot be performed on zero votes",
+    2001: "Proof requires at least one evidene, please upload.",
+    2002: "No more evidence is accepted to this proof",
+
+    // Not found
+    3000: "Election is not found.",
+    3001: "Proof is not found.",
+    3002: "Tally sheet is not found.",
+    3003: "Tally sheet version is not found.",
+    3004: "Submission is not found.",
+
+    // Method not allowed
+    4000: "Tally sheey is no longer readable.",
+    4001: "Tally sheey is no longer editable.",
+    4002: "Tally sheet is no longer accepting proof documents.",
+    4003: "Tally sheet is incomplete.",
+    4004: "Submission irrelevant version cannot be mapped",
+    4005: "Workflow action is now allowed.",
+    4006: "Tally sheet is not allowed to be notified.",
+    4007: "Tally sheet is not allowed to be release."
+
+}

@@ -1,6 +1,6 @@
 from app import db
 from exception import ForbiddenException
-from exception.messages import MESSAGE_CODE_CANNOT_DIVIDE_BY_ZERO
+from exception.messages import MESSAGE_CODE_SEAT_CALCULATION_CANNOT_BE_DONE_ON_ZERO_VOTES
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION, \
     META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED
@@ -8,8 +8,9 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
-    TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION
-from ext.ExtendedTallySheet import ExtendedTallySheetReport
+    TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION, \
+    TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED
+from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 from flask import render_template
@@ -24,6 +25,8 @@ import numpy as np
 template_row_to_df_num_value_column_map = {
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: "seatsAllocatedFromRound1",
     TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: "validVotesRemainFromRound1",
+    TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: "seatsAllocatedFromRound2",
+    TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: "bonusSeatsAllocated",
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: "seatsAllocatedFromRound2",
     TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: "bonusSeatsAllocated",
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: "voteCountCeilPerSeat",
@@ -31,8 +34,8 @@ template_row_to_df_num_value_column_map = {
 }
 
 
-class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
-    class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
+class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
+    class ExtendedTallySheetVersion(ExtendedEditableTallySheetReport.ExtendedTallySheetVersion):
 
         def get_post_save_request_content(self):
             election = self.tallySheetVersion.submission.election
@@ -56,6 +59,8 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
             template_row_map = {
                 TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: [],
                 TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: [],
+                TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: [],
+                TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: [],
                 TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: [],
                 TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: [],
                 TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: [],
@@ -96,7 +101,7 @@ class ExtendedTallySheet_PE_R2(ExtendedTallySheetReport):
             if total_valid_vote_count == 0:
                 raise ForbiddenException(
                     message="Seat calculation cannot be done on zero votes.",
-                    code=MESSAGE_CODE_CANNOT_DIVIDE_BY_ZERO
+                    code=MESSAGE_CODE_SEAT_CALCULATION_CANNOT_BE_DONE_ON_ZERO_VOTES
                 )
 
             _minimum_valid_vote_count_required_per_party_to_be_qualified = total_valid_vote_count * minimum_vote_count_percentage_required

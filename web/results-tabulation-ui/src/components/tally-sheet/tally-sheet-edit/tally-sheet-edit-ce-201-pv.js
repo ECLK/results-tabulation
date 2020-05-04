@@ -199,6 +199,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
 
     const getTallySheetRequestBody = () => {
         const content = [];
+
         [
             TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
             TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,

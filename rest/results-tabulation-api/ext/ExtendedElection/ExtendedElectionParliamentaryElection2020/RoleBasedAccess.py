@@ -145,7 +145,7 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         },
         PE_R2: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, LOCK, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT]
+            PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT]
         },
         PE_CE_RO_PR_2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]

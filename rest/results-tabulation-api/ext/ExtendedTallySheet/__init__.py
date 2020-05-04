@@ -1,4 +1,5 @@
 import pandas as pd
+
 from flask import render_template
 from sqlalchemy import MetaData
 
@@ -6,6 +7,10 @@ from app import db
 from auth import get_user_name, has_role_based_access
 from constants.VOTE_TYPES import Postal, NonPostal
 from exception import MethodNotAllowedException, UnauthorizedException
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY, \
+    MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED, MESSAGE_CODE_TALLY_SHEET_NO_LONGER_READABLE, \
+    MESSAGE_CODE_TALLY_SHEET_NO_LONGER_EDITABLE, MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS, \
+    MESSAGE_CODE_TALLY_SHEET_INCOMPLETE
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED, \
@@ -15,7 +20,8 @@ from orm.entities import Workflow, Meta
 from orm.entities.Meta import MetaData
 from orm.entities.Workflow import WorkflowInstance, WorkflowActionModel
 from orm.entities.Workflow.WorkflowInstance import WorkflowInstanceLog
-from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri
+from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri, \
+    get_sum_of_numbers_only_and_nan_otherwise
 
 DEFAULT_HTML_TABLE_COLUMNS = [
     "tallySheetVersionRowId",
@@ -131,7 +137,8 @@ class ExtendedTallySheet:
         from auth import has_role_based_access
 
         if not has_role_based_access(self.tallySheet, workflow_action.actionType):
-            UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName))
+            UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName),
+                                  code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED)
 
     def on_workflow_tally_sheet_version(self, workflow_action, content=None):
         from orm.entities import SubmissionVersion
@@ -154,7 +161,7 @@ class ExtendedTallySheet:
 
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
         if not tally_sheet_version.isComplete:
-            raise MethodNotAllowedException(message="Incomplete tally sheet.")
+            raise MethodNotAllowedException(message="Incomplete tally sheet.", code=MESSAGE_CODE_TALLY_SHEET_INCOMPLETE)
 
     def on_workflow_action(self, workflow_action, tally_sheet_version, content=None):
         self.tallySheet.workflowInstance.execute_action(
@@ -178,7 +185,8 @@ class ExtendedTallySheet:
             workflow_action_type=WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT)
 
         if len(workflow_actions) == 0:
-            raise MethodNotAllowedException(message="Tally sheet is longer accepting proof documents.")
+            raise MethodNotAllowedException(message="Tally sheet is longer accepting proof documents.",
+                                            coded=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS)
 
         return workflow_actions
 
@@ -202,7 +210,8 @@ class ExtendedTallySheet:
         workflow_actions = self._get_allowed_workflow_actions(workflow_action_type=WORKFLOW_ACTION_TYPE_VIEW)
 
         if len(workflow_actions) == 0:
-            raise MethodNotAllowedException(message="Tally sheet is longer readable.")
+            raise MethodNotAllowedException(message="Tally sheet is no longer readable.",
+                                            code=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_READABLE)
 
         return workflow_actions
 
@@ -242,7 +251,8 @@ class ExtendedTallySheet:
         workflow_actions = self._get_allowed_workflow_actions(workflow_action_type=WORKFLOW_ACTION_TYPE_SAVE)
 
         if len(workflow_actions) == 0:
-            raise MethodNotAllowedException(message="Tally sheet is longer editable.")
+            raise MethodNotAllowedException(message="Tally sheet is no longer editable.",
+                                            code=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_EDITABLE)
 
         return workflow_actions
 
@@ -436,7 +446,7 @@ class ExtendedTallySheet:
                  'candidateNumber']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['partyId', 'candidateId'], ascending=True
             ).reset_index()
@@ -455,7 +465,7 @@ class ExtendedTallySheet:
                  'candidateNumber']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['partyId', 'candidateId'], ascending=True
             ).reset_index()
@@ -473,7 +483,7 @@ class ExtendedTallySheet:
                 ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['partyId'], ascending=True
             ).reset_index()
@@ -491,7 +501,7 @@ class ExtendedTallySheet:
                  'candidateNumber']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['partyId', 'candidateId'], ascending=True
             ).reset_index()
@@ -510,7 +520,7 @@ class ExtendedTallySheet:
                 ['areaId', "areaName"]
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['areaId'], ascending=True
             ).reset_index()
@@ -528,7 +538,7 @@ class ExtendedTallySheet:
                 ['areaId', "areaName"]
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['areaId'], ascending=True
             ).reset_index()
@@ -545,7 +555,7 @@ class ExtendedTallySheet:
                 ['areaId', "areaName"]
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['areaId'], ascending=True
             ).reset_index()
@@ -561,7 +571,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -575,7 +585,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -587,7 +597,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -601,7 +611,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -615,7 +625,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -629,7 +639,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -641,7 +651,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -655,7 +665,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -668,7 +678,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -679,7 +689,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             })
 
             return df
@@ -718,7 +728,7 @@ class ExtendedTallySheet:
                 ['areaId', "areaName"]
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['areaId'], ascending=True
             ).reset_index()
@@ -735,7 +745,7 @@ class ExtendedTallySheet:
                 ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['partyId'], ascending=True
             ).reset_index()
@@ -752,7 +762,7 @@ class ExtendedTallySheet:
                 ['areaId', "areaName"]
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['areaId'], ascending=True
             ).reset_index()
@@ -767,7 +777,7 @@ class ExtendedTallySheet:
                 ['areaId', "areaName"]
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['areaId'], ascending=True
             ).reset_index()
@@ -783,7 +793,7 @@ class ExtendedTallySheet:
                 ['areaId', "areaName"]
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['areaId'], ascending=True
             ).reset_index()
@@ -799,7 +809,7 @@ class ExtendedTallySheet:
         #         ['areaId', "areaName"]
         #     ).agg({
         #         'numValue': lambda x: x.sum(skipna=False),
-        #         'incompleteNumValue': lambda x: x.sum(skipna=True)
+        #         'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
         #     }).sort_values(
         #         by=['areaId'], ascending=True
         #     ).reset_index()
@@ -815,7 +825,7 @@ class ExtendedTallySheet:
         #         ['areaId', "areaName"]
         #     ).agg({
         #         'numValue': lambda x: x.sum(skipna=False),
-        #         'incompleteNumValue': lambda x: x.sum(skipna=True)
+        #         'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
         #     }).sort_values(
         #         by=['areaId'], ascending=True
         #     ).reset_index()
@@ -831,7 +841,7 @@ class ExtendedTallySheet:
         #         ['areaId', "areaName"]
         #     ).agg({
         #         'numValue': lambda x: x.sum(skipna=False),
-        #         'incompleteNumValue': lambda x: x.sum(skipna=True)
+        #         'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
         #     }).sort_values(
         #         by=['areaId'], ascending=True
         #     ).reset_index()
@@ -847,7 +857,7 @@ class ExtendedTallySheet:
         #         ['areaId', "areaName"]
         #     ).agg({
         #         'numValue': lambda x: x.sum(skipna=False),
-        #         'incompleteNumValue': lambda x: x.sum(skipna=True)
+        #         'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
         #     }).sort_values(
         #         by=['areaId'], ascending=True
         #     ).reset_index()
@@ -863,7 +873,7 @@ class ExtendedTallySheet:
                 ['areaId', "areaName"]
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
-                'incompleteNumValue': lambda x: x.sum(skipna=True)
+                'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
                 by=['areaId'], ascending=True
             ).reset_index()
@@ -951,7 +961,8 @@ class ExtendedTallySheetDataEntry(ExtendedTallySheet):
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
         if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_VERIFY]:
             if tally_sheet_version.createdBy == get_user_name():
-                raise UnauthorizedException("You cannot very the data last edited by yourself.")
+                raise UnauthorizedException("You cannot verify the data last edited by yourself.",
+                                            code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY)
 
         return super(ExtendedTallySheetDataEntry, self).on_before_workflow_action(
             workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
@@ -977,6 +988,26 @@ class ExtendedTallySheetReport(ExtendedTallySheet):
             pass
         else:
             return super(ExtendedTallySheetReport, self).on_before_workflow_action(
+                workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
+
+    def on_tally_sheet_get(self):
+        if self.tallySheet.workflowInstance.status in [WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED,
+                                                       WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED]:
+            # Create a version before it's fetched.
+            self.on_tally_sheet_post()
+            db.session.commit()
+
+    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+        pass
+
+
+class ExtendedEditableTallySheetReport(ExtendedTallySheet):
+    def on_before_workflow_action(self, workflow_action, tally_sheet_version):
+        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SAVE]:
+            # To ignore the completion check
+            pass
+        else:
+            return super(ExtendedEditableTallySheetReport, self).on_before_workflow_action(
                 workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
 
     def on_tally_sheet_get(self):
