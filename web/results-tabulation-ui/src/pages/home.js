@@ -11,6 +11,7 @@ export default function Home() {
     const [electionsList, setElectionsList] = useState([]);
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);
+    const groups = [];
 
 
     // Similar to componentDidMount and componentDidUpdate:
@@ -36,17 +37,53 @@ export default function Home() {
                 title="No elections available or authorized to access."
             />
         } else {
-            return <div className="election-list">
-                {electionsList.map((election) => {
-                    const {electionId, electionName} = election;
 
-                    return <Link
-                        key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
-                        className="election-list-item"
-                    >
-                        {electionName}
-                    </Link>
-                })}
+          // get the root elections
+          {electionsList.map(election => {
+            if (election.electionId === election.rootElectionId) {
+                var root = {
+                  "rootElectionId" : election.electionId,
+                  "rootElectionName" : election.electionName
+                }
+                groups.push(root);
+            }
+          })}
+
+            return <div className="election-list">
+              {groups.map((group,index) => {
+                return(
+                  <div className="election-panel" key={index}>
+                    <div className="root-election">
+                      <Link to={PATH_ELECTION_BY_ID(group.rootElectionId)}
+                        className="election-list-item">
+                        {group.rootElectionName}
+                      </Link>
+                    </div>
+                    <div className="sub-elections">
+                      <div className="election-list-item-children">
+                          {electionsList
+                            .filter(election => election.electionId !== group.rootElectionId)
+                            .map(election => {
+                              const {electionId, electionName} = election;
+                              return(
+                                <React.Fragment>
+                                <Link key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
+                                  className="election-list-item">
+                                  {electionName}
+                                </Link>
+                                <Link key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
+                                  className="election-list-item">
+                                  {electionName}
+                                </Link>
+                                </React.Fragment>
+                              )
+                            })
+                          }
+                      </div>
+                    </div>
+                  </div>
+              )
+            })}
             </div>
         }
     }
