@@ -66,16 +66,10 @@ export default function Home() {
                             .map(election => {
                               const {electionId, electionName} = election;
                               return(
-                                <React.Fragment>
                                 <Link key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
                                   className="election-list-item">
                                   {electionName}
                                 </Link>
-                                <Link key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
-                                  className="election-list-item">
-                                  {electionName}
-                                </Link>
-                                </React.Fragment>
                               )
                             })
                           }
