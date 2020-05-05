@@ -12,7 +12,8 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY
     MESSAGE_CODE_TALLY_SHEET_NO_LONGER_EDITABLE, MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS, \
     MESSAGE_CODE_TALLY_SHEET_INCOMPLETE
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY, \
-    WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT
+    WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_EDIT, \
+    WORKFLOW_ACTION_TYPE_SUBMIT
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED, \
     WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED
 
@@ -958,14 +959,19 @@ class ExtendedTallySheet:
 
 
 class ExtendedTallySheetDataEntry(ExtendedTallySheet):
+
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
         if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_VERIFY]:
             if tally_sheet_version.createdBy == get_user_name():
                 raise UnauthorizedException("You cannot verify the data last edited by yourself.",
                                             code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY)
 
-        return super(ExtendedTallySheetDataEntry, self).on_before_workflow_action(
-            workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
+        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_EDIT]:
+            # To ignore the completion check
+            pass
+        else:
+            return super(ExtendedTallySheetDataEntry, self).on_before_workflow_action(
+                workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
 
     class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
         pass
@@ -1003,7 +1009,7 @@ class ExtendedTallySheetReport(ExtendedTallySheet):
 
 class ExtendedEditableTallySheetReport(ExtendedTallySheet):
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
-        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SAVE]:
+        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_EDIT]:
             # To ignore the completion check
             pass
         else:

@@ -154,7 +154,7 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         },
         PE_21: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
+            PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT]
         }
     },
     NATIONAL_REPORT_VIEWER_ROLE: {

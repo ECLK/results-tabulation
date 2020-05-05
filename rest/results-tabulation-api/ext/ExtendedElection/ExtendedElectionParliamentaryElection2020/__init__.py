@@ -47,7 +47,7 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
     TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, \
-    TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED
+    TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACTION_TYPE import \
     WORKFLOW_ACTION_TYPE_VIEW, \
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, \
@@ -902,6 +902,18 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                  "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
+        tally_sheet_template_pe_21_draft_elected_candidates = tally_sheet_template_pe_21.add_row(
+            templateRowType=TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE,
+            hasMany=True,
+            isDerived=False,
+            columns=[
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "candidateId", "grouped": True, "func": None,
+                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
+            ]
+        )
         tally_sheet_template_pe_21_candidate_wise_first_preference_row = tally_sheet_template_pe_21.add_row(
             templateRowType="CANDIDATE_FIRST_PREFERENCE",
             hasMany=True,
@@ -1073,7 +1085,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": election.electionId
                     }).metaId,
-                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
+                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_r2_tally_sheet_list = [TallySheet.create(

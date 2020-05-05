@@ -25,8 +25,8 @@ import numpy as np
 template_row_to_df_num_value_column_map = {
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: "seatsAllocatedFromRound1",
     TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: "validVotesRemainFromRound1",
-    TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: "seatsAllocatedFromRound2",
-    TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: "bonusSeatsAllocated",
+    TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: "draftSeatsAllocatedFromRound2",
+    TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: "draftBonusSeatsAllocated",
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: "seatsAllocatedFromRound2",
     TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: "bonusSeatsAllocated",
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: "voteCountCeilPerSeat",
@@ -149,6 +149,9 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             df['seatsAllocated'] = df.seatsAllocatedFromRound1 + df.seatsAllocatedFromRound2 + df.bonusSeatsAllocated
 
+            df['draftSeatsAllocatedFromRound2'] = df.seatsAllocatedFromRound2
+            df['draftBonusSeatsAllocated'] = df.bonusSeatsAllocated
+
             df = df.sort_values(by=['numValue'], ascending=False)
 
             df["voteCountCeilPerSeat"] = pd.Series(
@@ -179,7 +182,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                     num_value = filtered_df.at[index_2, "numValue"]
                     if template_row_type in template_row_to_df_num_value_column_map:
                         df_column_name = template_row_to_df_num_value_column_map[template_row_type]
-                        party_wise_calculations_df.at[index_1, df_column_name] = num_value
+                        party_wise_calculations_df.at[index_1, df_column_name] += num_value
 
             party_wise_calculations_df[
                 'seatsAllocated'] = party_wise_calculations_df.seatsAllocatedFromRound1 + party_wise_calculations_df.seatsAllocatedFromRound2 + party_wise_calculations_df.bonusSeatsAllocated
@@ -277,5 +280,26 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                 'PE-R2.html',
                 content=content
             )
+
+            # return super(ExtendedTallySheet_PE_R2.ExtendedTallySheetVersion, self).html(
+            #     title="PE-R2 : %s" % self.tallySheetVersion.submission.area.areaName,
+            #     columns=[
+            #         "partyId",
+            #         "partyName",
+            #         "partySymbol",
+            #         "partyAbbreviation",
+            #         "numValue",
+            #         "voteCountCeilPerSeat",
+            #         "minimumVoteCountRequiredForSeatAllocation",
+            #         "draftBonusSeatsAllocated",
+            #         "draftSeatsAllocatedFromRound2",
+            #         "bonusSeatsAllocated",
+            #         "seatsAllocatedFromRound1",
+            #         "validVotesRemainFromRound1",
+            #         "seatsAllocatedFromRound2",
+            #         "seatsAllocated"
+            #     ],
+            #     df=party_wise_seat_calculations
+            # )
 
             return html
