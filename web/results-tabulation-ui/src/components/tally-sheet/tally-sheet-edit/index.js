@@ -9,7 +9,7 @@ import TallySheetEdit_CE_201_PV from "./tally-sheet-edit-ce-201-pv";
 import {TallySheetContext} from "../../../services/tally-sheet.provider";
 import TallySheetActions from "../tally-sheet-actions";
 import Button from "@material-ui/core/Button";
-import { getErrorCode, getErrorMessage } from "../../../utils";
+import {getErrorCode, getErrorMessage} from "../../../utils";
 
 
 export default class TallySheetEdit extends Component {
@@ -61,7 +61,11 @@ export function useTallySheetEdit(props) {
                 await setTallySheetContent(tallySheet.latestVersion);
                 setProcessing(false);
             } catch (error) {
-                messages.push("Error", MESSAGES_EN.error_tallysheet_not_reachable, MESSAGE_TYPES.ERROR);
+                messages.push({
+                    messageTitle: "Error",
+                    messageBody: MESSAGES_EN.error_tallysheet_not_reachable,
+                    messageType: MESSAGE_TYPES.ERROR
+                });
                 setProcessing(false);
             }
         } else {
@@ -91,12 +95,20 @@ export function useTallySheetEdit(props) {
             } catch (e) {
                 const errorCode = getErrorCode(e);
                 if (errorCode) {
-                    messages.push("Error", getErrorMessage(errorCode), MESSAGE_TYPES.ERROR);
+                    messages.push({
+                        messageTitle: "Error",
+                        messageBody: getErrorMessage(errorCode),
+                        messageType: MESSAGE_TYPES.ERROR
+                    });
                 }
             }
             setProcessing(false);
         } else {
-            messages.push("Error", MESSAGES_EN.error_input, MESSAGE_TYPES.ERROR)
+            messages.push({
+                messageTitle: "Error",
+                messageBody: MESSAGES_EN.error_input,
+                messageType: MESSAGE_TYPES.ERROR
+            });
         }
     };
 
