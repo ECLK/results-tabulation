@@ -149,6 +149,9 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             df['seatsAllocated'] = df.seatsAllocatedFromRound1 + df.seatsAllocatedFromRound2 + df.bonusSeatsAllocated
 
+            df['draftSeatsAllocatedFromRound2'] = df.seatsAllocatedFromRound2
+            df['draftBonusSeatsAllocated'] = df.bonusSeatsAllocated
+
             df = df.sort_values(by=['numValue'], ascending=False)
 
             df["voteCountCeilPerSeat"] = pd.Series(
