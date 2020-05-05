@@ -4,13 +4,14 @@ import {
     TALLY_SHEET_CODE_PE_4,
     TALLY_SHEET_CODE_PE_39,
     TALLY_SHEET_CODE_PE_22,
-    TALLY_SHEET_CODE_PE_R2
+    TALLY_SHEET_CODE_PE_R2, TALLY_SHEET_CODE_PE_21
 } from "../TALLY_SHEET_CODE";
 import TallySheetEdit_PE_27 from "./tally-sheet-edit-pe-27";
 import TallySheetEdit_PE_4 from "./tally-sheet-edit-pe-4";
 import TallySheetEdit_PE_39 from "./tally-sheet-edit-pe-39";
 import TallySheetEdit_PE_22 from "./tally-sheet-edit-pe-22";
 import TallySheetEdit_PE_R2 from "./tally-sheet-edit-pe-r2";
+import TallySheetEdit_PE_21 from "./tally-sheet-edit-pe-21";
 
 export default class ParliamentElection2020TallySheetEdit extends TallySheetEdit {
     getTallySheetEditForm(tallySheetCode) {
@@ -24,6 +25,8 @@ export default class ParliamentElection2020TallySheetEdit extends TallySheetEdit
             return TallySheetEdit_PE_22
         } else if (tallySheetCode === TALLY_SHEET_CODE_PE_R2) {
             return TallySheetEdit_PE_R2
+        } else if (tallySheetCode === TALLY_SHEET_CODE_PE_21) {
+            return TallySheetEdit_PE_21
         } else {
             return super.getTallySheetEditForm(tallySheetCode)
         }
