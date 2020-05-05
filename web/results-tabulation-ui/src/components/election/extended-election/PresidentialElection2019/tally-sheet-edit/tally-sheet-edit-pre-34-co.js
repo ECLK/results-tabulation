@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {MESSAGES_EN} from "../../../../../locale/messages_en";
 import {MESSAGE_TYPES} from "../../../../../services/messages.provider";
 import {PATH_ELECTION_TALLY_SHEET_LIST} from "../../../../../App";
-import {getErrorMessage, isNumeric, processNumericValue} from "../../../../../utils";
+import {isNumeric, processNumericValue} from "../../../../../utils";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
