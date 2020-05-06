@@ -73,7 +73,7 @@ export default function ReleaseList({history, queryString, election}) {
             setTallySheets(tallySheets);
             setProcessing(false);
         }).catch((error) => {
-            setError(true);
+            setError(error);
             setProcessing(false);
         })
     }, [])
@@ -88,7 +88,7 @@ export default function ReleaseList({history, queryString, election}) {
             return <Processing/>
         } else if (error) {
             return <Error
-                title="Tally sheet list cannot be accessed"
+                error={error}
             />
         } else {
             if (tallySheetCode === TALLY_SHEET_CODE_PRE_30_PD || tallySheetCode === TALLY_SHEET_CODE_PRE_34_PD) {

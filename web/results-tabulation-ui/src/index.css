@@ -290,10 +290,15 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 }
 
 .tabulation-page-message {
-    padding: 20px;
-    text-align: center;
+    padding: 60px 20px 100px 20px;
+    text-align: left;
     background-color: rgb(245, 247, 252);
     color: rgb(99, 102, 103);
+    display: flex;
+}
+
+.tabulation-page-message .tabulation-page-message-content {
+    flex: 1;
 }
 
 .activity-wrapper {
