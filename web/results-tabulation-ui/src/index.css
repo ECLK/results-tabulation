@@ -343,3 +343,7 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 .activity-tallysheet-link .MuiButton-label {
     font-size: 16px;
 }
+
+.MuiTableCell-head {
+    font-weight: 600 !important;
+}
