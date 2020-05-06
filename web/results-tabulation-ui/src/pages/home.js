@@ -19,8 +19,8 @@ export default function Home() {
         getElections({}).then((electionsList) => {
             setElectionsList(electionsList);
             setProcessing(false);
-        }).catch(() => {
-            setError(true);
+        }).catch((error) => {
+            setError(error);
             setProcessing(false);
         })
     }, []);
@@ -30,54 +30,57 @@ export default function Home() {
             return <Processing/>
         } else if (error) {
             return <Error
-                title="Tally sheet list cannot be accessed."
+                error={error}
             />
         } else if (electionsList.length === 0) {
             return <Error
-                title="No elections available or authorized to access."
+                title={"Oops.."}
+                body="No elections available or authorized to access."
             />
         } else {
 
-          // get the root elections
-          {electionsList.map(election => {
-            if (election.electionId === election.rootElectionId) {
-                var root = {
-                  "rootElectionId" : election.electionId,
-                  "rootElectionName" : election.electionName
-                }
-                groups.push(root);
+            // get the root elections
+            {
+                electionsList.map(election => {
+                    if (election.electionId === election.rootElectionId) {
+                        var root = {
+                            "rootElectionId": election.electionId,
+                            "rootElectionName": election.electionName
+                        }
+                        groups.push(root);
+                    }
+                })
             }
-          })}
 
             return <div className="election-list">
-              {groups.map((group,index) => {
-                return(
-                  <div className="election-panel" key={index}>
-                    <div className="root-election">
-                      <Link to={PATH_ELECTION_BY_ID(group.rootElectionId)}
-                        className="election-list-item">
-                        {group.rootElectionName}
-                      </Link>
-                    </div>
-                    <div className="sub-elections">
-                      <div className="election-list-item-children">
-                          {electionsList
-                            .filter(election => election.electionId !== group.rootElectionId)
-                            .map(election => {
-                              const {electionId, electionName} = election;
-                              return(
-                                <Link key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
-                                  className="election-list-item">
-                                  {electionName}
+                {groups.map((group, index) => {
+                    return (
+                        <div className="election-panel" key={index}>
+                            <div className="root-election">
+                                <Link to={PATH_ELECTION_BY_ID(group.rootElectionId)}
+                                      className="election-list-item">
+                                    {group.rootElectionName}
                                 </Link>
-                              )
-                            })
-                          }
-                      </div>
-                    </div>
-                  </div>
-              )
-            })}
+                            </div>
+                            <div className="sub-elections">
+                                <div className="election-list-item-children">
+                                    {electionsList
+                                        .filter(election => election.electionId !== group.rootElectionId)
+                                        .map(election => {
+                                            const {electionId, electionName} = election;
+                                            return (
+                                                <Link key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
+                                                      className="election-list-item">
+                                                    {electionName}
+                                                </Link>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })}
             </div>
         }
     }

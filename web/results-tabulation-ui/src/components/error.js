@@ -1,22 +1,37 @@
 import React from "react";
 import WarningIcon from '@material-ui/icons/Warning';
+import {getErrorCode, getErrorMessage} from "../utils";
 
 
 export default function Error(
     {
         title,
-        body
+        body,
+        error
     }
 ) {
+    debugger;
     if (!body) {
         body = <>
             This could be because you are trying to access a resource you aren't authorized.
-            <br/><small>Check your internet connection.</small>
+            <br/><br/>
+            <small>Check your internet connection.</small>
         </>
     }
 
     if (!title) {
         title = "[Error] Unknown error."
+    }
+
+    if (error) {
+        const errorCode = getErrorCode(error);
+        if (errorCode) {
+            let _body = getErrorMessage(errorCode);
+            if (_body) {
+                title = `[Error] ${errorCode}`;
+                body = _body
+            }
+        }
     }
 
     return <div className="tabulation-page-message">

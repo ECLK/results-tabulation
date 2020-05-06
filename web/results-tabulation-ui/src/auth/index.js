@@ -108,28 +108,12 @@ function handleErrorsAndThen({processing, error, then}) {
                 <Processing/>
             </div>
         </TabulationPage>
-
     } else if (error) {
-        const errorCode = getErrorCode(error);
-        let errorMessageTitle = null;
-        let errorMessageBody = null;
-        if (errorCode) {
-            let _errorMessageBody = getErrorMessage(errorCode);
-            if (_errorMessageBody) {
-                errorMessageTitle = `[Error] ${errorCode}`;
-                errorMessageBody = _errorMessageBody
-            }
-        }
-
         return <TabulationPage>
             <div className="page-content">
-                <Error
-                    title={errorMessageTitle}
-                    body={errorMessageBody}
-                />
+                <Error error={error}/>
             </div>
         </TabulationPage>
-
     } else {
         return then();
     }
