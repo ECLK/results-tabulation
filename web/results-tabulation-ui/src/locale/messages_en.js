@@ -36,6 +36,7 @@ export const API_MESSAGES_EN = {
     2000: "Seat calculation cannot be performed on zero votes",
     2001: "Proof requires at least one evidence, please upload.",
     2002: "No more evidence is accepted to this proof",
+    2003: "PE-21 cannot be processed before PE-R2 is completed and verified.",
 
     // Not found
     3000: "Election is not found.",
