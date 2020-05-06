@@ -147,11 +147,7 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
                 let contentRow = content[i];
 
                 if (_tallySheetRows[contentRow.templateRowType]) {
-                    try {
-                        _tallySheetRows[contentRow.templateRowType].map[contentRow.partyId] = contentRow;
-                    } catch (e) {
-                        debugger;
-                    }
+                    _tallySheetRows[contentRow.templateRowType].map[contentRow.partyId] = contentRow;
                 }
             }
         }
@@ -167,7 +163,7 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
 
         for (let i = 0; i < tallySheetRowTypesToBeValidated.length; i++) {
             const tallySheetRowType = tallySheetRowTypesToBeValidated[i];
-            for (let j = 0; j < parties.length; j++) {//debugger;
+            for (let j = 0; j < parties.length; j++) {
                 const party = parties[j];
                 const {partyId} = party;
                 const [error] = getHelperTextMethod(tallySheetRowType)(partyId);

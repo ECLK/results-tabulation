@@ -94,85 +94,80 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
 
 
     const setTallySheetContent = async (tallySheetVersion) => {
-        try {
-            const _tallySheetRows = {...tallySheetRows};
+        const _tallySheetRows = {...tallySheetRows};
 
-            // Get the `templateRow` assigned to each type of tally sheet rows.
-            tallySheet.template.rows.map(((templateRow) => {
-                if (_tallySheetRows[templateRow.templateRowType]) {
-                    Object.assign(_tallySheetRows[templateRow.templateRowType].templateRow, templateRow)
-                }
-            }));
+        // Get the `templateRow` assigned to each type of tally sheet rows.
+        tallySheet.template.rows.map(((templateRow) => {
+            if (_tallySheetRows[templateRow.templateRowType]) {
+                Object.assign(_tallySheetRows[templateRow.templateRowType].templateRow, templateRow)
+            }
+        }));
 
-            [
-                TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
-                TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
-                TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX,
-                TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A,
-                TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B,
-                TALLY_SHEET_ROW_TYPE_SITUATION,
-                TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT,
-                DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS,
-                DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS
-            ].map((templateRowType) => {
-                // TODO validate
+        [
+            TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
+            TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
+            TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX,
+            TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A,
+            TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B,
+            TALLY_SHEET_ROW_TYPE_SITUATION,
+            TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT,
+            DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS,
+            DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS
+        ].map((templateRowType) => {
+            // TODO validate
 
-                let _length = 1;
-                if ([
-                    TALLY_SHEET_ROW_TYPE_BALLOT_BOX, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
-                    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX
-                ].indexOf(templateRowType) >= 0) {
-                    _length = MAXIMUM_BALLOT_BOXES_LENGTH;
-                }
-
-                for (let i = 0; i < _length; i++) {
-                    _tallySheetRows[templateRowType].map[i] = {
-                        ..._tallySheetRows[templateRowType].templateRow,
-                        ballotBoxId: i,
-                        numValue: 0,
-                        strValue: ""
-                    };
-                }
-
-            });
-
-
-            if (tallySheetVersion) {
-                const {content} = tallySheetVersion;
-
-                for (let i = 0; i < content.length; i++) {
-                    let contentRow = content[i];
-
-                    if ([
-                        TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
-                        TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
-                        TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX,
-                    ].indexOf(contentRow.templateRowType) >= 0 && contentRow.ballotBoxId) {
-                        // TODO validate _tallySheetRows
-                        Object.assign(_tallySheetRows[contentRow.templateRowType].map[contentRow.ballotBoxId], contentRow)
-                    }
-
-                    if ([
-                        TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A,
-                        TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B,
-                        TALLY_SHEET_ROW_TYPE_SITUATION,
-                        TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT
-                    ].indexOf(contentRow.templateRowType) >= 0) {
-                        // TODO validate _tallySheetRows
-                        Object.assign(_tallySheetRows[contentRow.templateRowType].map[0], contentRow)
-                    }
-                }
+            let _length = 1;
+            if ([
+                TALLY_SHEET_ROW_TYPE_BALLOT_BOX, TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
+                TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX
+            ].indexOf(templateRowType) >= 0) {
+                _length = MAXIMUM_BALLOT_BOXES_LENGTH;
             }
 
-            setTallySheetRows(_tallySheetRows);
-            setValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS, "numValue",
-                calculateTotalNumberOfPVPackets());
-            setValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS, "numValue",
-                calculateTotalNumberOfValidBallotPapers());
+            for (let i = 0; i < _length; i++) {
+                _tallySheetRows[templateRowType].map[i] = {
+                    ..._tallySheetRows[templateRowType].templateRow,
+                    ballotBoxId: i,
+                    numValue: 0,
+                    strValue: ""
+                };
+            }
 
-        } catch (e) {
-            debugger;
+        });
+
+
+        if (tallySheetVersion) {
+            const {content} = tallySheetVersion;
+
+            for (let i = 0; i < content.length; i++) {
+                let contentRow = content[i];
+
+                if ([
+                    TALLY_SHEET_ROW_TYPE_BALLOT_BOX,
+                    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX,
+                    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX,
+                ].indexOf(contentRow.templateRowType) >= 0 && contentRow.ballotBoxId) {
+                    // TODO validate _tallySheetRows
+                    Object.assign(_tallySheetRows[contentRow.templateRowType].map[contentRow.ballotBoxId], contentRow)
+                }
+
+                if ([
+                    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A,
+                    TALLY_SHEET_ROW_TYPE_NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B,
+                    TALLY_SHEET_ROW_TYPE_SITUATION,
+                    TALLY_SHEET_ROW_TYPE_TIME_OF_COMMENCEMENT
+                ].indexOf(contentRow.templateRowType) >= 0) {
+                    // TODO validate _tallySheetRows
+                    Object.assign(_tallySheetRows[contentRow.templateRowType].map[0], contentRow)
+                }
+            }
         }
+
+        setTallySheetRows(_tallySheetRows);
+        setValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS, "numValue",
+            calculateTotalNumberOfPVPackets());
+        setValue(0, DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS, "numValue",
+            calculateTotalNumberOfValidBallotPapers());
     };
 
     const validateTallySheetContent = () => {

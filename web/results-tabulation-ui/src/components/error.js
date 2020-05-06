@@ -10,7 +10,7 @@ export default function Error(
         error
     }
 ) {
-    debugger;
+
     if (!body) {
         body = <>
             This could be because you are trying to access a resource you aren't authorized.
