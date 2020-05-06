@@ -65,7 +65,6 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
     const setValue = (key, templateRowType, valuePropertyName = "numValue", value) => {
         setTallySheetRows((tallySheetRows) => {
             tallySheetRows = {...tallySheetRows};
-            debugger;
             Object.assign(tallySheetRows[templateRowType].map[key], {[valuePropertyName]: processNumericValue(value)});
 
             return tallySheetRows;
@@ -83,7 +82,6 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
 
     const handleValueChange = (key, templateRowType, valuePropertyName = "numValue") => event => {
         const {value} = event.target;
-        debugger;
         setValue(key, templateRowType, valuePropertyName, value);
     };
 
@@ -122,7 +120,6 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
                     return a.numValue > b.numValue ? 1 : a.numValue < b.numValue ? -1 : 0
                 });
 
-                debugger;
                 for (let j = 0; j < numberOfSeatsAllocated; j++) {
                     let candidateId = null;
                     if (draftedElectedCandidateRows.length > j) {
@@ -232,13 +229,21 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
                             const candidateId = getValue(seatIndex, TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE, "candidateId");
 
                             const party = election.partyMap[partyId];
+                            const candidate = party.candidateMap[candidateId];
+
+                            let candidateName = null;
+                            let candidateNumber = null;
+                            if (candidate) {
+                                candidateName = candidate.candidateName;
+                                candidateNumber = candidate.candidateNumber;
+                            }
 
                             rows.push(<TableRow key={partyId}>
                                 <TableCell align="center">
                                     {party.partyName}
                                 </TableCell>
                                 <TableCell align="center">
-                                    {candidateId}
+                                    {candidateNumber}. {candidateName}
                                 </TableCell>
                             </TableRow>);
                         }
@@ -282,8 +287,8 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
                                 <TableCell align="center">
                                     {(() => {
                                         if (!candidateId) {
-                                            return <small>Not available yet. Please check preference tally
-                                                sheets.</small>
+                                            return <small>Not available yet since dependant preference tally sheets are
+                                                incomplete.</small>
                                         } else {
                                             return <TextField
                                                 required
@@ -292,14 +297,15 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
                                                 helperText={""}
                                                 value={candidateId}
                                                 margin="normal"
+                                                size="small"
                                                 onChange={handleValueChange(seatIndex, TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE, "candidateId")}
                                                 style={{
                                                     width: '200px'
                                                 }}
                                             >
-                                                {party.candidates.map(({candidateId, candidateName}) => (
+                                                {party.candidates.map(({candidateId, candidateName, candidateNumber}) => (
                                                     <MenuItem key={candidateId} value={candidateId}>
-                                                        {candidateName}
+                                                        {candidateNumber}. {candidateName}
                                                     </MenuItem>
                                                 ))}
                                             </TextField>
