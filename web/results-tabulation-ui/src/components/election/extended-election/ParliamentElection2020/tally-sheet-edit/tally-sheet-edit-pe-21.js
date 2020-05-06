@@ -12,13 +12,9 @@ import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 import {
-    TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED,
-    TALLY_SHEET_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED,
-    TALLY_SHEET_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE,
-    TALLY_SHEET_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED,
-    TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1,
-    TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TALLY_SHEET_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT,
-    TALLY_SHEET_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
+    TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE,
+    TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED,
+    TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 } from "../TALLY_SHEET_ROW_TYPE";
 
 export default function TallySheetEdit_PE_21({history, queryString, election, tallySheet, messages}) {
@@ -36,21 +32,31 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
     });
     const [allocatedSeatCountTotal, setAllocatedSeatCountTotal] = useState(0);
 
+    /**
+     * Each function returns an array of two values.
+     * [error: boolean, helperText: string]
+     */
     const helperTextMap = {
-        [TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED]: (partyId) => {
-            const bonusSeatsAllocated = getValue(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED, "numValue");
-            const bonusSeatsAllocatedDraft = getValue(partyId, TALLY_SHEET_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED, "numValue");
+        [TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE]: (seatIndex) => {
+            // Since dictionary keys are string and type comparision could occur while validations.
+            seatIndex += "";
 
-        },
-        [TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2]: (partyId) => {
-            const seatsAllocatedFromSecondRound = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, "numValue");
-            const seatsAllocatedFromSecondRoundDraft = getValue(partyId, TALLY_SHEET_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, "numValue");
+            const candidateId = getValue(seatIndex, TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE, "candidateId");
+            for (let _seatIndex in tallySheetRows[TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE].map) {
+                if (_seatIndex !== seatIndex) {
+                    const _candidateId = getValue(_seatIndex, TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE, "candidateId");
+                    if (_candidateId === candidateId) {
+                        return [true, "Same candidate cannot hold more than one seat."];
+                    }
+                }
+            }
 
+            return [false, ""];
         }
     };
 
-    const getHelperText = (partyId, templateRowType) => {
-        return helperTextMap[templateRowType](partyId);
+    const getHelperTextMethod = (templateRowType) => {
+        return helperTextMap[templateRowType];
     };
 
 
@@ -182,32 +188,6 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
         getTallySheetRequestBody
     });
 
-    const currencies = [
-        {
-            value: 'USD',
-            label: '$',
-        },
-        {
-            value: 'EUR',
-            label: '€',
-        },
-        {
-            value: 'BTC',
-            label: '฿',
-        },
-        {
-            value: 'JPY',
-            label: '¥',
-        },
-    ];
-
-    const [currency, setCurrency] = React.useState('EUR');
-
-    const handleChange = (event) => {
-        setCurrency(event.target.value);
-    };
-
-
     function getTallySheetEditForm() {
         const {parties} = election;
 
@@ -280,12 +260,15 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
 
                             const party = election.partyMap[partyId];
 
+
                             rows.push(<TableRow key={partyId}>
                                 <TableCell align="center">
                                     {party.partyName}
                                 </TableCell>
                                 <TableCell align="center">
                                     {(() => {
+                                        const [error, helperText] = getHelperTextMethod(TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE)(seatIndex);
+
                                         if (!candidateId) {
                                             return <small>Not available yet since dependant preference tally sheets are
                                                 incomplete.</small>
@@ -294,7 +277,8 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
                                                 required
                                                 select
                                                 variant="outlined"
-                                                helperText={""}
+                                                error={error}
+                                                helperText={helperText}
                                                 value={candidateId}
                                                 margin="normal"
                                                 size="small"
