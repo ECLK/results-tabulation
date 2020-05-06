@@ -148,7 +148,13 @@ export default function TallySheetEdit_PE_21({history, queryString, election, ta
     };
 
     const validateTallySheetContent = () => {
-        // TODO
+        for (let seatIndex = 0; seatIndex < allocatedSeatCountTotal; seatIndex++) {
+            const [error] = getHelperTextMethod(TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE)(seatIndex);
+
+            if (error) {
+                return false;
+            }
+        }
 
         return true;
     };
