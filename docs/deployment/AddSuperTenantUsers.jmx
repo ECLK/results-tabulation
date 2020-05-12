@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1.1 r1855137">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="AddSuperTenantUsers" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Server Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="is_host" elementType="Argument">
+            <stringProp name="Argument.name">is_host</stringProp>
+            <stringProp name="Argument.value"></stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="is_port" elementType="Argument">
+            <stringProp name="Argument.name">is_port</stringProp>
+            <stringProp name="Argument.value"></stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="adminCredentials" elementType="Argument">
+            <stringProp name="Argument.name">adminCredentials</stringProp>
+            <stringProp name="Argument.value"></stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="rolename_ecVolunteer" elementType="Argument">
+            <stringProp name="Argument.name">rolename_ecVolunteer</stringProp>
+            <stringProp name="Argument.value"></stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Create Super Tenant User" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time"></stringProp>
+        <longProp name="ThreadGroup.start_time">1439374326000</longProp>
+        <longProp name="ThreadGroup.end_time">1439374326000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration">3600</stringProp>
+        <stringProp name="ThreadGroup.delay">10</stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+          <collectionProp name="CookieManager.cookies"/>
+          <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+        </CookieManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create User" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:ser=&quot;http://service.ws.um.carbon.wso2.org&quot; xmlns:xsd=&quot;http://common.mgt.user.carbon.wso2.org/xsd&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;ser:addUser&gt;&#xd;
+         &lt;ser:userName&gt;${un}&lt;/ser:userName&gt;&#xd;
+         &lt;ser:credential&gt;${pwd}&lt;/ser:credential&gt;       &#xd;
+         ${nRoles}&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/nationalId&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${nic}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/fullname&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${fulln}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/mobile&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;+94${mob}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/givenname&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${fn}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/lastname&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${ln}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/otpbackupcodes&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${otpbc}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/area_assign_data_editor&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${caade}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/area_assign_admin&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${caaa}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/area_assign_pol_div_rep_view&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${caapdrvw}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/area_assign_pol_div_rep_verf&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${caapdrvf}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/area_assign_elc_dis_rep_view&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${caaedrvw}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/area_assign_elc_dis_rep_verf&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${caaedrvf}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/area_assign_nat_dis_rep_view&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${caandrvw}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/area_assign_nat_dis_rep_verf&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${caandrvf}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://wso2.org/claims/area_assign_ec_leadership&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${caael}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://eclk.com/party&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${party}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:claims&gt;&#xd;
+            &lt;xsd:claimURI&gt;http://eclk.com/division&lt;/xsd:claimURI&gt;&#xd;
+            &lt;xsd:value&gt;${division}&lt;/xsd:value&gt;&#xd;
+         &lt;/ser:claims&gt;&#xd;
+         &lt;ser:profileName&gt;default&lt;/ser:profileName&gt;&#xd;
+         &lt;ser:requirePasswordChange&gt;false&lt;/ser:requirePasswordChange&gt;&#xd;
+      &lt;/ser:addUser&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${is_host}</stringProp>
+          <stringProp name="HTTPSampler.port">${is_port}</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/services/RemoteUserStoreManagerService</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
+            <stringProp name="delimiter">\t</stringProp>
+            <stringProp name="fileEncoding">UTF-8</stringProp>
+            <stringProp name="filename">/Users/LSF/ec/EC_USER_UPLOAD/test.tsv</stringProp>
+            <boolProp name="ignoreFirstLine">true</boolProp>
+            <boolProp name="quotedData">true</boolProp>
+            <boolProp name="recycle">false</boolProp>
+            <stringProp name="shareMode">shareMode.all</stringProp>
+            <boolProp name="stopThread">true</boolProp>
+            <stringProp name="variableNames">nic,fulln,mob,fn,ln,un,pwd,otpbc,roles,caade,caaa,caapdrvw,caapdrvf,caaedrvw,caaedrvf,caandrvw,caandrvf,caael,party,division</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Basic ${adminCredentials}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">SOAPAction</stringProp>
+                <stringProp name="Header.value">urn:addUser</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">text/xml</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="true">
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters">${roles}</stringProp>
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="script">String roles = vars.get(&quot;roles&quot;);
+String[] roleList = roles.split(&quot;,&quot;);
+String nRoles = &quot;&lt;ser:roleList&gt;&quot;+vars.get(&quot;rolename_ecVolunteer&quot;)+&quot;&lt;/ser:roleList&gt;\n&quot;;
+for (int i = 0; i &lt; roleList.length; i++) {
+    nRoles = nRoles+&quot;&lt;ser:roleList&gt;&quot;+roleList[i]+&quot;&lt;/ser:roleList&gt;\n&quot;;
+}
+vars.put(&quot;nRoles&quot;,nRoles);</stringProp>
+          </BeanShellPreProcessor>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>false</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <threadCounts>true</threadCounts>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>false</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <threadCounts>true</threadCounts>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
