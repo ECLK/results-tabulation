@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {TABULATION_API_URL} from "../../config";
 import {getAccessToken} from "../../auth";
-import {AreaEntity} from "./entities/area.entity";
 import {ElectionEntity} from "./entities/election.entity";
 
 export const ENDPOINT_PATH_ELECTIONS = () => "/election";
@@ -73,18 +72,6 @@ export function getAreaById(areaId) {
 export function getElectionById(electionId) {
     return electionEntity.getById(electionId)
 }
-
-export const TALLY_SHEET_STATUS_ENUM = {
-    NOT_ENTERED: "Not Entered",
-    SUBMITTED: "Submitted",
-    VIEWED: "Viewed",
-    ENTERED: "Entered, Not Submitted",
-    VERIFIED: "Verified",
-    CERTIFIED: "Certified",
-    NOTIFIED: "Notified",
-    RELEASED: "Released"
-};
-
 
 export function getTallySheetProof(proofId) {
     return request({
