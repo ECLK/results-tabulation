@@ -14,6 +14,7 @@ import Processing from "../components/processing";
 import {MessagesConsumer} from "../services/messages.provider"
 import TabulationPage from "../pages";
 import {TallySheetContext} from "../services/tally-sheet.provider";
+import {getErrorCode, getErrorMessage} from "../utils";
 
 export function getAuthAppSignInUrl() {
     return `${AUTH_APP_URL}${AUTH_APP_SIGN_IN_URL_PATH}`;
@@ -100,6 +101,24 @@ export class ProtectedRoute extends Component {
     }
 }
 
+function handleErrorsAndThen({processing, error, then}) {
+    if (processing) {
+        return <TabulationPage>
+            <div className="page-content">
+                <Processing/>
+            </div>
+        </TabulationPage>
+    } else if (error) {
+        return <TabulationPage>
+            <div className="page-content">
+                <Error error={error}/>
+            </div>
+        </TabulationPage>
+    } else {
+        return then();
+    }
+}
+
 function LoadElectionAndThen(props) {
     const {then, electionId} = props;
     const [processing, setProcessing] = useState(true);
@@ -113,7 +132,7 @@ function LoadElectionAndThen(props) {
             setElection(election);
         } catch (error) {
             console.log(error.stack);
-            setError(true);
+            setError(error);
         }
 
         setProcessing(false);
@@ -123,25 +142,7 @@ function LoadElectionAndThen(props) {
         fetchData();
     }, []);
 
-    if (processing) {
-        return <TabulationPage>
-            <div className="page-content">
-                <Processing/>
-            </div>
-        </TabulationPage>
-
-    } else if (error) {
-        return <TabulationPage>
-            <div className="page-content">
-                <Error
-                    title={"Election not found"}
-                />
-            </div>
-        </TabulationPage>
-
-    } else {
-        return then({election});
-    }
+    return handleErrorsAndThen({processing, error, then: () => then({election})});
 }
 
 function LoadTallySheetAndThen(props) {
@@ -161,7 +162,7 @@ function LoadTallySheetAndThen(props) {
             setElection(_election);
         } catch (error) {
             console.log(error.stack);
-            setError(true);
+            setError(error);
         }
         setProcessing(false);
     }
@@ -170,25 +171,7 @@ function LoadTallySheetAndThen(props) {
         fetchData()
     }, []);
 
-    if (processing) {
-        return <TabulationPage>
-            <div className="page-content">
-                <Processing/>
-            </div>
-        </TabulationPage>
-
-    } else if (error) {
-        return <TabulationPage>
-            <div className="page-content">
-                <Error
-                    title={"Tally sheet not found"}
-                />
-            </div>
-        </TabulationPage>
-
-    } else {
-        return then(election, tallySheet, tallySheetId);
-    }
+    return handleErrorsAndThen({processing, error, then: () => then(election, tallySheet, tallySheetId)});
 }
 
 export class ElectionProtectedRoute extends Component {

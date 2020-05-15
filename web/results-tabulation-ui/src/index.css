@@ -152,7 +152,7 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 
 .tally-sheet-page-header-info-link.MuiIconButton-root {
     padding: 0px 10px;
-    color: #03A9F4;
+    color: #607D8B;
 }
 
 .report-view-status .report-view-status-text {
@@ -201,7 +201,7 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 }
 
 .election-list {
-    text-align: left;
+    text-align: center;
     padding-top: 20px;
 }
 
@@ -290,10 +290,15 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 }
 
 .tabulation-page-message {
-    padding: 20px;
-    text-align: center;
+    padding: 60px 20px 100px 20px;
+    text-align: left;
     background-color: rgb(245, 247, 252);
     color: rgb(99, 102, 103);
+    display: flex;
+}
+
+.tabulation-page-message .tabulation-page-message-content {
+    flex: 1;
 }
 
 .activity-wrapper {
@@ -342,4 +347,8 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 
 .activity-tallysheet-link .MuiButton-label {
     font-size: 16px;
+}
+
+.MuiTableCell-head {
+    font-weight: 600 !important;
 }

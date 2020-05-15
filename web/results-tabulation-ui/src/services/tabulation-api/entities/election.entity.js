@@ -1,4 +1,4 @@
-import {ENDPOINT_PATH_ELECTIONS_BY_ID, request} from "../index";
+import {ENDPOINT_PATH_ELECTIONS_BY_ID, getElections, request} from "../index";
 import Entity from "./entity";
 import * as tabulationApi from "../index";
 
@@ -53,6 +53,7 @@ export class ElectionEntity extends Entity {
 
 
         if (fetchSubElections) {
+            election.subElections = await getElections({parentElectionId: electionId});
             for (let i = 0; i < election.subElections.length; i++) {
                 const subElection = election.subElections[i];
                 const subElectionId = subElection.electionId;

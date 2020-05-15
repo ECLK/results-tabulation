@@ -1,4 +1,6 @@
 from app import db
+from exception import ForbiddenException
+from exception.messages import MESSAGE_CODE_PE_21_CANNOT_BE_PROCESSED_WITHOUT_PE_R2
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import TALLY_SHEET_CODES
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
@@ -11,12 +13,15 @@ import math
 
 from flask import render_template
 from orm.entities import Area, Template, Submission
+from orm.entities.Workflow import WorkflowInstance
 from orm.enums import AreaTypeEnum
 
 
 class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
 
     def get_template_column_to_query_filter_map(self, only_group_by_columns=False):
+        extended_election = self.tallySheet.election.get_extended_election()
+
         template_column_to_query_filter_map = super(
             ExtendedTallySheet_PE_21, self).get_template_column_to_query_filter_map(
             only_group_by_columns=only_group_by_columns)
@@ -29,8 +34,19 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
             Submission.Model.latestVersionId != None,
             TallySheetTallySheetModel.parentTallySheetId == self.tallySheet.tallySheetId,
             TallySheet.Model.templateId == Template.Model.templateId,
-            Template.Model.templateName == TALLY_SHEET_CODES.PE_R2
-        )
+            Template.Model.templateName == TALLY_SHEET_CODES.PE_R2,
+            WorkflowInstance.Model.workflowInstanceId == TallySheet.Model.workflowInstanceId,
+            WorkflowInstance.Model.status.in_(
+                extended_election.tally_sheet_verified_statuses_list()
+            ),
+        ).all()
+
+        if len(pe_r2_tally_sheets) == 0:
+            raise ForbiddenException(
+                message="Candidates cannot be allocated until the seat calculation (PE-R2) is completed and verified.",
+                code=MESSAGE_CODE_PE_21_CANNOT_BE_PROCESSED_WITHOUT_PE_R2
+            )
+
         pe_r2_tally_sheet_ids = [tallySheet.tallySheetId for tallySheet in pe_r2_tally_sheets]
 
         for pe_r2_tally_sheet in pe_r2_tally_sheets:

@@ -1,4 +1,4 @@
-import { API_MESSAGES_EN } from "../locale/messages_en";
+import {API_MESSAGES_EN} from "../locale/messages_en";
 
 export * from "../auth";
 export * from "./history";
@@ -58,4 +58,27 @@ export function getErrorCode(e) {
 
 export function getErrorMessage(errorCode) {
     return API_MESSAGES_EN[errorCode] ? API_MESSAGES_EN[errorCode] : "Unknown Error";
+}
+
+export function sum(list, skipInvalidValues = false) {
+    let _sum = null;
+    if (skipInvalidValues) {
+        _sum = 0;
+    }
+
+    for (let i = 0; i < list.length; i++) {
+        const value = list[i];
+
+        if (skipInvalidValues && typeof value !== "number") {
+            continue;
+        }
+
+        if(i == 0) {
+            _sum = value;
+        } else {
+            _sum += value
+        }
+    }
+
+    return _sum;
 }

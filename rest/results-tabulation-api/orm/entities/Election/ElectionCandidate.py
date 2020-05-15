@@ -18,6 +18,7 @@ class ElectionCandidateModel(db.Model):
     candidate = relationship(Candidate.Model, foreign_keys=[candidateId])
 
     candidateName = association_proxy("candidate", "candidateName")
+    candidateNumber = association_proxy("candidate", "candidateNumber")
 
     __table_args__ = (
         db.UniqueConstraint('electionId', 'candidateId', name='CandidatePerElection'),

@@ -25,10 +25,12 @@ export default function TallySheetEdit_PRE_34_CO({history, queryString, election
         const candidateIds = [];
 
         if (qualifiedParties.length === 0) {
-            messages.push("Error", MESSAGES_EN.error_preferences_not_enabled_yet, MESSAGE_TYPES.ERROR);
-            // setTimeout(() => {
+            messages.push({
+                messageTitle: "Error",
+                messageBody: MESSAGES_EN.error_preferences_not_enabled_yet,
+                messageType: MESSAGE_TYPES.ERROR
+            });
             history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType));
-            //}, 5000);
         }
 
         if (tallySheetVersion) {
