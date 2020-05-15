@@ -146,7 +146,12 @@ export default function TallySheetEdit_PE_21({history, election, tallySheet, mes
                         candidateId = draftedElectedCandidateRows[j].candidateId
                     }
 
-                    _tallySheetRows[TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE].map[seatIndex] = {candidateId, partyId};
+                    _tallySheetRows[TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE].map[seatIndex] = {
+                        candidateId, partyId,
+
+                        // TODO remove once the complete validation on backend has been fixed.
+                        numValue: 0
+                    };
                     _tallySheetRows[TALLY_SHEET_ROW_TYPE_ELECTED_CANDIDATE].map[seatIndex] = {
                         ..._tallySheetRows[TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE].map[seatIndex]
                     };
