@@ -266,7 +266,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                     <TableRow>
                         <TableCell align="left">Polling Districts</TableCell>
                         <TableCell align="left">Polling Station</TableCell>
-                        <TableCell align="center">Ordinary Ballot Count</TableCell>
+                        <TableCell align="right">Ordinary Ballot Count</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
