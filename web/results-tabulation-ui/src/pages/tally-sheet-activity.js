@@ -1,5 +1,4 @@
 import React, {useContext, useEffect, useState} from "react";
-import {TALLY_SHEET_STATUS_ENUM} from "../services/tabulation-api";
 import {
     PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW,
     PATH_ELECTION_TALLY_SHEET_LIST,
@@ -14,6 +13,7 @@ import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WOR
 import PreviewTallySheetProofFileButton from "../components/tally-sheet/tally-sheet-proof-file-preview-button";
 import Button from "@material-ui/core/Button";
 import {Check, MoveToInbox, Publish, Save, TurnedIn, VerifiedUser, Visibility} from '@material-ui/icons';
+import TallySheetStatusDescription from "../components/tally-sheet/tally-sheet-status-description";
 
 export default function TallySheetActivityView({tallySheetId, history, election, messages}) {
     const {electionId, rootElection, voteType} = election;
@@ -94,21 +94,7 @@ export default function TallySheetActivityView({tallySheetId, history, election,
                             filter={(action) => action.actionType !== WORKFLOW_ACTION_TYPE_VIEW}
                         />
                     </div>
-                    <div className="report-view-status-text">
-                        {(() => {
-                            if (tallySheetStatus == TALLY_SHEET_STATUS_ENUM.SUBMITTED) {
-                                return "This report has been submitted to the system and waiting for verification";
-                            } else if (tallySheetStatus == TALLY_SHEET_STATUS_ENUM.VIEWED) {
-                                return "This report has been not verified yet";
-                            } else if (tallySheetStatus == TALLY_SHEET_STATUS_ENUM.ENTERED) {
-                                return "This report has no submitted or verified information. The editing is still in progress.";
-                            } else if (tallySheetStatus == TALLY_SHEET_STATUS_ENUM.VERIFIED) {
-                                return "This report has been verified.";
-                            } else if (tallySheetStatus == TALLY_SHEET_STATUS_ENUM.RELEASED) {
-                                return "This report has been released.";
-                            }
-                        })()}
-                    </div>
+                    <TallySheetStatusDescription tallySheetId={tallySheetId}/>
                 </div>
 
                 <Processing showProgress={processing}>
@@ -123,13 +109,13 @@ export default function TallySheetActivityView({tallySheetId, history, election,
                                     <div className="activity-block activity-details">
                                         <strong>{actionName}</strong> by {createdBy} @ {createdAt}
                                         <Button className="activity-tallysheet-link"
-                                            onClick={() => {
-                                                history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId))
-                                            }}
-                                            style={{
-                                                color: "#5079c8",
-                                                textDecoration: "underline"
-                                            }}
+                                                onClick={() => {
+                                                    history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId))
+                                                }}
+                                                style={{
+                                                    color: "#5079c8",
+                                                    textDecoration: "underline"
+                                                }}
                                         >
                                             {tallySheetVersionId}
                                         </Button>
