@@ -114,7 +114,7 @@ class ExtendedTallySheet:
                     InvalidVoteCategory.Model.invalidVoteCategoryId == TallySheetVersionRow.Model.invalidVoteCategoryId]
             }
 
-    def execute_workflow_action(self, workflowActionId, content=None):
+    def execute_workflow_action(self, workflowActionId, tallySheetVersionId, content=None):
         workflow_action = db.session.query(
             WorkflowActionModel
         ).filter(
@@ -125,7 +125,8 @@ class ExtendedTallySheet:
 
         self.authorize_workflow_action(workflow_action=workflow_action, content=content)
 
-        tally_sheet_version = self.on_workflow_tally_sheet_version(workflow_action=workflow_action, content=content)
+        tally_sheet_version = self.on_workflow_tally_sheet_version(
+            workflow_action=workflow_action, tallySheetVersionId=tallySheetVersionId, content=content)
 
         self.on_before_workflow_action(workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
 
@@ -141,7 +142,7 @@ class ExtendedTallySheet:
             UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName),
                                   code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED)
 
-    def on_workflow_tally_sheet_version(self, workflow_action, content=None):
+    def on_workflow_tally_sheet_version(self, workflow_action, tallySheetVersionId, content=None):
         from orm.entities import SubmissionVersion
         from orm.entities.SubmissionVersion import TallySheetVersion
 
@@ -960,6 +961,23 @@ class ExtendedTallySheet:
 
 class ExtendedTallySheetDataEntry(ExtendedTallySheet):
 
+    def on_workflow_tally_sheet_version(self, workflow_action, tallySheetVersionId, content=None):
+        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SUBMIT]:
+            from orm.entities.SubmissionVersion import TallySheetVersion
+
+            tally_sheet_version = db.session.query(
+                TallySheetVersion.Model
+            ).filter(
+                TallySheetVersion.Model.tallySheetVersionId == tallySheetVersionId
+            ).one_or_none()
+
+            self.tallySheet.set_latest_version(tallySheetVersion=tally_sheet_version)
+
+            return tally_sheet_version
+        else:
+            return super(ExtendedTallySheetDataEntry, self).on_workflow_tally_sheet_version(
+                workflow_action=workflow_action, tallySheetVersionId=tallySheetVersionId, content=content)
+
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
         if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_VERIFY]:
             if tally_sheet_version.createdBy == get_user_name():
@@ -979,14 +997,14 @@ class ExtendedTallySheetDataEntry(ExtendedTallySheet):
 
 class ExtendedTallySheetReport(ExtendedTallySheet):
 
-    def on_workflow_tally_sheet_version(self, workflow_action, content=None):
+    def on_workflow_tally_sheet_version(self, workflow_action, tallySheetVersionId, content=None):
         if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY]:
             tally_sheet_version = self.on_tally_sheet_post()
 
             return tally_sheet_version
         else:
             return super(ExtendedTallySheetReport, self).on_workflow_tally_sheet_version(
-                workflow_action=workflow_action, content=content)
+                workflow_action=workflow_action, tallySheetVersionId=tallySheetVersionId, content=content)
 
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
         if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SAVE]:
@@ -1007,14 +1025,7 @@ class ExtendedTallySheetReport(ExtendedTallySheet):
         pass
 
 
-class ExtendedEditableTallySheetReport(ExtendedTallySheet):
-    def on_before_workflow_action(self, workflow_action, tally_sheet_version):
-        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_EDIT]:
-            # To ignore the completion check
-            pass
-        else:
-            return super(ExtendedEditableTallySheetReport, self).on_before_workflow_action(
-                workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
+class ExtendedEditableTallySheetReport(ExtendedTallySheetDataEntry):
 
     def on_tally_sheet_get(self):
         if self.tallySheet.workflowInstance.status in [WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED,
@@ -1023,5 +1034,5 @@ class ExtendedEditableTallySheetReport(ExtendedTallySheet):
             self.on_tally_sheet_post()
             db.session.commit()
 
-    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+    class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
         pass
