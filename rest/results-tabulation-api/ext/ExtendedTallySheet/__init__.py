@@ -1025,32 +1025,7 @@ class ExtendedTallySheetReport(ExtendedTallySheet):
         pass
 
 
-class ExtendedEditableTallySheetReport(ExtendedTallySheet):
-
-    def on_workflow_tally_sheet_version(self, workflow_action, tallySheetVersionId, content=None):
-        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SUBMIT]:
-            from orm.entities.SubmissionVersion import TallySheetVersion
-
-            tally_sheet_version = db.session.query(
-                TallySheetVersion.Model
-            ).filter(
-                TallySheetVersion.Model.tallySheetVersionId == tallySheetVersionId
-            ).one_or_none()
-
-            self.tallySheet.set_latest_version(tallySheetVersion=tally_sheet_version)
-
-            return tally_sheet_version
-        else:
-            return super(ExtendedEditableTallySheetReport, self).on_workflow_tally_sheet_version(
-                workflow_action=workflow_action, tallySheetVersionId=tallySheetVersionId, content=content)
-
-    def on_before_workflow_action(self, workflow_action, tally_sheet_version):
-        if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_EDIT]:
-            # To ignore the completion check
-            pass
-        else:
-            return super(ExtendedEditableTallySheetReport, self).on_before_workflow_action(
-                workflow_action=workflow_action, tally_sheet_version=tally_sheet_version)
+class ExtendedEditableTallySheetReport(ExtendedTallySheetDataEntry):
 
     def on_tally_sheet_get(self):
         if self.tallySheet.workflowInstance.status in [WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED,
@@ -1059,5 +1034,5 @@ class ExtendedEditableTallySheetReport(ExtendedTallySheet):
             self.on_tally_sheet_post()
             db.session.commit()
 
-    class ExtendedTallySheetVersion(ExtendedTallySheet.ExtendedTallySheetVersion):
+    class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
         pass
