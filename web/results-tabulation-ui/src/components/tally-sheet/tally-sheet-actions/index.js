@@ -18,7 +18,7 @@ import {UploadTallySheetProofsDialog} from "./upload-tally-sheet-proofs-dialog";
 import {MESSAGE_TYPES, MessagesContext} from "../../../services/messages.provider";
 import PrintLetterButton from "../print-letter-button";
 import PrintReportButton from "../print-report-button";
-import { getErrorCode, getErrorMessage } from "../../../utils";
+import {getErrorCode, getErrorMessage} from "../../../utils";
 
 const TALLY_SHEET_ACTION_SUCCESS_MESSAGE = {
     [WORKFLOW_ACTION_TYPE_SUBMIT]: "Submitted tally sheet successfully.",
@@ -60,7 +60,7 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
                 if ([
                     WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT
                 ].indexOf(action.actionType) < 0) {
-                    await tallySheetContext.executeTallySheetWorkflow(tallySheet.tallySheetId, action.workflowActionId);
+                    await tallySheetContext.executeTallySheetWorkflow(tallySheet.tallySheetId, action.workflowActionId, tallySheet.latestVersionId);
                 }
 
                 if ([

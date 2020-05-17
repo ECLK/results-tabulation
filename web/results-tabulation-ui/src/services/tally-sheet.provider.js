@@ -121,11 +121,11 @@ export function TallySheetProvider(props) {
         });
     }
 
-    function executeTallySheetWorkflow(tallySheetId, workflowActionId) {
+    function executeTallySheetWorkflow(tallySheetId, workflowActionId, tallySheetVersionId) {
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_WORKFLOW(tallySheetId),
             method: 'put',
-            data: {workflowActionId}
+            data: {workflowActionId, tallySheetVersionId}
         }).then((tallySheet) => {
             _updateTallySheetState(tallySheet);
             return refactorTallySheetObject(tallySheet);
