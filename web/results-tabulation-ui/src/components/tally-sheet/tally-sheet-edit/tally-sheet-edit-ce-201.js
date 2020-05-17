@@ -120,13 +120,24 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
         for (var i = 0; i < pollingStations.length; i++) {
             const _pollingStation = pollingStations[i];
             const _areaMapList = _pollingStation.areaMapList;
+
             if (_areaMapList) {
-                _pollingStation.pollingDistricts = _areaMapList.map((areaMap) => {
-                    return {
-                        areaId: areaMap.pollingDistrictId,
-                        areaName: areaMap.pollingDistrictName
-                    }
-                });
+
+                // Take the polling districts to handle the duplicates.
+                const _pollingDistrictsMap = {};
+                for (let j = 0; j < _areaMapList.length; j++) {
+                    const _areaMap = _areaMapList[j];
+                    _pollingDistrictsMap[_areaMap.pollingDistrictId] = _areaMap;
+                }
+
+                _pollingStation.pollingDistricts = [];
+                for (let pollingDistrictId in _pollingDistrictsMap) {
+                    const _areaMap = _pollingDistrictsMap[pollingDistrictId];
+                    _pollingStation.pollingDistricts.push({
+                        areaId: _areaMap.pollingDistrictId,
+                        areaName: _areaMap.pollingDistrictName
+                    })
+                }
             }
         }
 
