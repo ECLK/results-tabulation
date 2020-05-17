@@ -130,8 +130,8 @@ role_based_access_config = {
             Postal: [READ, PRINT, UNLOCK]
         },
         PE_CE_RO_V1: {
-            Postal: [READ, PRINT, WRITE, LOCK, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT],
-            NonPostal: [READ, PRINT, WRITE, UNLOCK, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT]
+            Postal: [READ, PRINT, WRITE, LOCK],
+            NonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
         POLLING_DIVISION_RESULTS: {
             Postal: [READ, PRINT, WRITE, LOCK],
@@ -145,7 +145,7 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         },
         PE_R2: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT]
+            PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK]
         },
         PE_CE_RO_PR_2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
@@ -154,19 +154,31 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         },
         PE_21: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT]
+            PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK]
         }
     },
     NATIONAL_REPORT_VIEWER_ROLE: {
         ALL_ISLAND_RESULT: {
-            PostalAndNonPostal: [READ, WRITE]
+            PostalAndNonPostal: [READ, WRITE, PRINT]
         }
     },
     NATIONAL_REPORT_VERIFIER_ROLE: {
+        PE_CE_RO_V1: {
+            Postal: [READ, PRINT, WRITE, UNLOCK]
+        },
         POLLING_DIVISION_RESULTS: {
             Postal: [READ, PRINT, WRITE, UNLOCK]
         },
+        PE_CE_RO_PR_1: {
+            Postal: [READ, PRINT, WRITE, UNLOCK]
+        },
+        PE_CE_RO_V2: {
+            PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
+        },
         PE_R2: {
+            PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
+        },
+        PE_CE_RO_PR_2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
         PE_CE_RO_PR_3: {
@@ -181,56 +193,56 @@ role_based_access_config = {
     },
     EC_LEADERSHIP_ROLE: {
         PE_27: {
-            Postal: [READ, PRINT, UNLOCK],
-            NonPostal: [READ, PRINT, UNLOCK]
+            Postal: [READ, PRINT],
+            NonPostal: [READ, PRINT]
         },
         PE_39: {
-            Postal: [READ, PRINT, UNLOCK],
-            NonPostal: [READ, PRINT, UNLOCK]
+            Postal: [READ, PRINT],
+            NonPostal: [READ, PRINT]
         },
         PE_22: {
-            Postal: [READ, PRINT, UNLOCK],
-            NonPostal: [READ, PRINT, UNLOCK]
+            Postal: [READ, PRINT],
+            NonPostal: [READ, PRINT]
         },
         CE_201_PV: {
-            Postal: [READ, PRINT, UNLOCK]
+            Postal: [READ, PRINT]
         },
         CE_201: {
-            NonPostal: [READ, PRINT, UNLOCK]
+            NonPostal: [READ, PRINT]
         },
         PE_4: {
-            Postal: [READ, PRINT, UNLOCK],
-            NonPostal: [READ, PRINT, UNLOCK]
+            Postal: [READ, PRINT],
+            NonPostal: [READ, PRINT]
         },
         PE_CE_RO_V1: {
-            Postal: [READ, PRINT, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
-            NonPostal: [READ, PRINT, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            Postal: [READ, PRINT, WRITE, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
+            NonPostal: [READ, PRINT, WRITE, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
         },
         POLLING_DIVISION_RESULTS: {
-            Postal: [READ, PRINT, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
-            NonPostal: [READ, PRINT, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            Postal: [READ, PRINT, WRITE],
+            NonPostal: [READ, PRINT, WRITE]
         },
         PE_CE_RO_V2: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            PostalAndNonPostal: [READ, PRINT, WRITE]
         },
         PE_R2: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            PostalAndNonPostal: [READ, PRINT, WRITE, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
         },
         PE_CE_RO_PR_1: {
-            Postal: [READ, PRINT, WRITE, UNLOCK],
-            NonPostal: [READ, PRINT, WRITE, UNLOCK]
+            Postal: [READ, PRINT, WRITE],
+            NonPostal: [READ, PRINT, WRITE]
         },
         PE_CE_RO_PR_2: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
+            PostalAndNonPostal: [READ, PRINT, WRITE]
         },
         PE_CE_RO_PR_3: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            PostalAndNonPostal: [READ, PRINT, WRITE]
         },
         PE_21: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            PostalAndNonPostal: [READ, PRINT, WRITE, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
         },
         ALL_ISLAND_RESULT: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            PostalAndNonPostal: [READ, PRINT, WRITE]
         }
     }
 }
