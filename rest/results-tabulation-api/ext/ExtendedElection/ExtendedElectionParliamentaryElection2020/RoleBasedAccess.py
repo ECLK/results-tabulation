@@ -215,8 +215,8 @@ role_based_access_config = {
             NonPostal: [READ, PRINT]
         },
         PE_CE_RO_V1: {
-            Postal: [READ, PRINT, WRITE, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
-            NonPostal: [READ, PRINT, WRITE, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            Postal: [READ, WRITE, PRINT, PRINT_LETTER, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
+            NonPostal: [READ, WRITE, PRINT, PRINT_LETTER, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
         },
         POLLING_DIVISION_RESULTS: {
             Postal: [READ, PRINT, WRITE],
@@ -226,7 +226,7 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
         PE_R2: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
         },
         PE_CE_RO_PR_1: {
             Postal: [READ, PRINT, WRITE],
@@ -239,7 +239,7 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
         PE_21: {
-            PostalAndNonPostal: [READ, PRINT, WRITE, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
         },
         ALL_ISLAND_RESULT: {
             PostalAndNonPostal: [READ, PRINT, WRITE]
