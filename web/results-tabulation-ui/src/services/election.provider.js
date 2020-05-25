@@ -69,12 +69,12 @@ export function ElectionProvider(props) {
         if (election) {
             const {parentElectionId} = election;
             if (parentElectionId) {
-                return await getElectionById(parentElectionId, false, true);
+                return await getElectionById(parentElectionId);
             }
         }
     };
 
-    const getElectionById = async (electionId, fetchSubElections = true, fetchParentElections = true) => {
+    const getElectionById = async (electionId) => {
         let election = state.electionMap[electionId];
 
         if (electionId && !election) {
@@ -85,23 +85,7 @@ export function ElectionProvider(props) {
 
             saveElectionToState(election);
         }
-
-        // if (fetchSubElections && !election.subElectionIds) {
-        //     election.subElectionIds = await getElections({parentElectionId: electionId}).map(({electionId}) => electionId);
-        //     for (let i = 0; i < election.subElections.length; i++) {
-        //         const subElection = election.subElections[i];
-        //         const subElectionId = subElection.electionId;
-        //         Object.assign(subElection, await getElectionById(subElectionId, true, false));
-        //     }
-        // }
-
-        // const {parentElectionId} = election;
-        // let {parentElection} = election;
-        // if (fetchParentElections && parentElectionId && !parentElection) {
-        //     parentElection = await getElectionById(parentElectionId, false, true);
-        //     Object.assign(election, {parentElection});
-        // }
-
+        
         return election;
     };
 
