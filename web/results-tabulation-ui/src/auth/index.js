@@ -8,13 +8,13 @@ import {
 } from "./constants";
 import {AUTH_APP_URL, DEBUG} from "../config";
 import Cookies from 'js-cookie';
-import {getElectionById} from "../services/tabulation-api";
 import Error from "../components/error";
 import Processing from "../components/processing";
 import {MessagesConsumer} from "../services/messages.provider"
 import TabulationPage from "../pages";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 import {getErrorCode, getErrorMessage} from "../utils";
+import {ElectionContext} from "../services/election.provider";
 
 export function getAuthAppSignInUrl() {
     return `${AUTH_APP_URL}${AUTH_APP_SIGN_IN_URL_PATH}`;
@@ -120,6 +120,8 @@ function handleErrorsAndThen({processing, error, then}) {
 }
 
 function LoadElectionAndThen(props) {
+    const electionContext = useContext(ElectionContext);
+    
     const {then, electionId} = props;
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);
@@ -127,7 +129,7 @@ function LoadElectionAndThen(props) {
 
     const fetchData = async () => {
         try {
-            const election = await getElectionById(electionId);
+            const election = await electionContext.getElectionById(electionId);
 
             setElection(election);
         } catch (error) {
@@ -147,6 +149,7 @@ function LoadElectionAndThen(props) {
 
 function LoadTallySheetAndThen(props) {
     const tallySheetContext = useContext(TallySheetContext);
+    const electionContext = useContext(ElectionContext);
 
     const {then, electionId, tallySheetId} = props;
     const [processing, setProcessing] = useState(true);
@@ -157,7 +160,7 @@ function LoadTallySheetAndThen(props) {
     const fetchData = async () => {
         try {
             const _tallySheet = await tallySheetContext.fetchTallySheetById(tallySheetId);
-            const _election = await getElectionById(_tallySheet.electionId);
+            const _election = await electionContext.getElectionById(_tallySheet.electionId);
             setTallySheet(_tallySheet);
             setElection(_election);
         } catch (error) {

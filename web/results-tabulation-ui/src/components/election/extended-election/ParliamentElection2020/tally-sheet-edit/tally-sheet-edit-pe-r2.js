@@ -22,7 +22,9 @@ import {
 
 export default function TallySheetEdit_PE_R2({history, queryString, election, tallySheet, messages}) {
 
-    const {parties} = election;
+    const {parties, metaDataMap} = election;
+    let {numberOfSeatsAllocated} = metaDataMap;
+    numberOfSeatsAllocated = parseInt(numberOfSeatsAllocated);
 
     const [tallySheetRows, setTallySheetRows] = useState({
         [TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1]: {
@@ -174,6 +176,12 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
             }
         }
 
+        // Check the total seats allocation against the gazetted seat allocation.
+        const totalSeatsAllocated = getTotalSeatAllocated();
+        if (totalSeatsAllocated !== numberOfSeatsAllocated) {
+            return false
+        }
+
         return true;
     };
 
@@ -205,6 +213,20 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
         };
     };
 
+    function getTotalSeatAllocated() {
+        let totalSeatsAllocated = 0;
+        _forEachParty((party) => {
+            const {partyName, partyId} = party;
+            const seatsAllocatedFromRound1 = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, "numValue");
+            const seatsAllocatedFromRound2 = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, "numValue");
+            const bonusSeatsAllocated = getValue(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED, "numValue");
+            const seatsAllocated = sum([seatsAllocatedFromRound1, bonusSeatsAllocated, seatsAllocatedFromRound2], true);
+            totalSeatsAllocated += seatsAllocated;
+        });
+
+        return totalSeatsAllocated;
+    }
+
     const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
         messages,
         history,
@@ -218,6 +240,7 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
 
     function getTallySheetEditForm() {
         const {parties} = election;
+        const totalSeatsAllocated = getTotalSeatAllocated();
 
         if (saved) {
 
@@ -237,6 +260,7 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
                         const seatsAllocatedFromRound1 = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, "numValue");
                         const seatsAllocatedFromRound2 = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, "numValue");
                         const bonusSeatsAllocated = getValue(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED, "numValue");
+                        const seatsAllocated = sum([seatsAllocatedFromRound1, bonusSeatsAllocated, seatsAllocatedFromRound2], true);
 
                         return <TableRow key={partyId}>
                             <TableCell align="center">
@@ -252,7 +276,7 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
                                 {seatsAllocatedFromRound2}
                             </TableCell>
                             <TableCell align="center">
-                                {sum([seatsAllocatedFromRound1, bonusSeatsAllocated, seatsAllocatedFromRound2], true)}
+                                {seatsAllocated}
                             </TableCell>
                         </TableRow>
                     })}
@@ -285,6 +309,7 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
                         const seatsAllocatedFromRound1 = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, "numValue");
                         const seatsAllocatedFromRound2 = getValue(partyId, TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, "numValue");
                         const bonusSeatsAllocated = getValue(partyId, TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED, "numValue");
+                        const seatsAllocated = sum([seatsAllocatedFromRound1, bonusSeatsAllocated, seatsAllocatedFromRound2], true);
 
                         const [bonusSeatsAllocatedError, bonusSeatsAllocatedHelperText] = getHelperTextMethod(TALLY_SHEET_ROW_TYPE_BONUS_SEATS_ALLOCATED)(partyId);
                         const [seatsAllocatedFromRound2Error, seatsAllocatedFromRound2HelperText] = getHelperTextMethod(TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2)(partyId);
@@ -322,13 +347,30 @@ export default function TallySheetEdit_PE_R2({history, queryString, election, ta
                                 />
                             </TableCell>
                             <TableCell align="center">
-                                {sum([seatsAllocatedFromRound1, bonusSeatsAllocated, seatsAllocatedFromRound2], true)}
+                                {seatsAllocated}
                             </TableCell>
                         </TableRow>
                     })}
                 </TableBody>
 
                 <TableFooter>
+                    <TableRow>
+                        <TableCell align="right" colSpan={4}>
+                            Total seats allocation
+                        </TableCell>
+                        <TableCell align="center">
+                            <TextField
+                                required
+                                variant="outlined"
+                                error={totalSeatsAllocated !== numberOfSeatsAllocated}
+                                helperText={`Total seats count should be ${numberOfSeatsAllocated}`}
+                                value={totalSeatsAllocated}
+                                size="small"
+                                margin="normal"
+                                disabled={true}
+                            />
+                        </TableCell>
+                    </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={5}>
                             {getActionsBar()}

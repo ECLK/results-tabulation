@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {TABULATION_API_URL} from "../../config";
 import {getAccessToken} from "../../auth";
-import {ElectionEntity} from "./entities/election.entity";
 
 export const ENDPOINT_PATH_ELECTIONS = () => "/election";
 export const ENDPOINT_PATH_ELECTIONS_BY_ID = (electionId) => `/election/${electionId}`;
@@ -28,8 +27,6 @@ export const ENDPOINT_PATH_FILE = (tallySheetId, fileId) => `/tally-sheet/${tall
 export const ENDPOINT_PATH_FILE_DOWNLOAD = (tallySheetId, fileId) => `/tally-sheet/${tallySheetId}/workflow/proof/file/${fileId}/download`;
 
 
-const electionEntity = new ElectionEntity();
-
 const axiosInstance = axios.create({
     baseURL: TABULATION_API_URL,
     headers: {
@@ -46,13 +43,6 @@ export function request(config) {
     return axiosInstance.request(config).then((res) => res.data)
 }
 
-export function getElections({parentElectionId = null, rootElectionId = null}) {
-    return request({
-        url: ENDPOINT_PATH_ELECTIONS(),
-        method: 'get', // default,
-        params: {parentElectionId, rootElectionId}
-    })
-}
 
 export function getAreas({electionId, associatedAreaId, areaType, limit = 10000, offset = 0}) {
     return request({
@@ -62,35 +52,7 @@ export function getAreas({electionId, associatedAreaId, areaType, limit = 10000,
     })
 }
 
-export function getAreaById(areaId) {
-    return request({
-        url: ENDPOINT_PATH_AREAS_BY_ID(areaId),
-        method: 'get', // default,
-    })
-}
 
-export function getElectionById(electionId) {
-    return electionEntity.getById(electionId)
-}
 
-export function getTallySheetProof(proofId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_PROOF(proofId),
-        method: 'get'
-    });
-}
 
-export function finalizeProof(proofId) {
-    return request({
-        url: ENDPOINT_PATH_TALLY_SHEET_PROOF_FINISH(proofId),
-        method: 'put'
-    });
-}
 
-export function getProofImage(tallySheetId, fileId) {
-    return request({
-        url: ENDPOINT_PATH_FILE(tallySheetId, fileId),
-        method: 'get',
-        responseType: 'arraybuffer'
-    });
-}
