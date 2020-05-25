@@ -14,7 +14,10 @@ import {
 import {fieldMatch} from "../../../utils";
 import TallySheetActions from "../tally-sheet-actions";
 import {TallySheetContext} from "../../../services/tally-sheet.provider";
-import {WORKFLOW_ACTION_TYPE_VIEW} from "../constants/WORKFLOW_ACTION_TYPE";
+import {
+    WORKFLOW_ACTION_TYPE_SUBMIT,
+    WORKFLOW_ACTION_TYPE_VERIFY
+} from "../constants/WORKFLOW_ACTION_TYPE";
 
 
 export default function TallySheetListRow(
@@ -83,6 +86,7 @@ export default function TallySheetListRow(
                         <TallySheetActions
                             tallySheetId={tallySheet.tallySheetId}
                             electionId={electionId} history={history}
+                            filter={(action) => [WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_VERIFY].indexOf(action.actionType) < 0}
                         />
                     </div>
                 } else {
