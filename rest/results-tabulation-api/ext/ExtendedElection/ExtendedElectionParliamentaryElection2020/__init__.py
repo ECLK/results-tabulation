@@ -257,7 +257,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"name": "Move to Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
 
-                {"name": "Upload and Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
+                {"name": "Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
 
                 {"name": "Release", "type": WORKFLOW_ACTION_TYPE_RELEASE,
@@ -346,7 +346,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"name": "Move to Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
 
-                {"name": "Upload and Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
+                {"name": "Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
                  "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
 
                 {"name": "Release", "type": WORKFLOW_ACTION_TYPE_RELEASE,
