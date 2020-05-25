@@ -1,4 +1,6 @@
 from typing import Set
+
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from app import db
@@ -39,6 +41,8 @@ class ElectionModel(db.Model):
     partyCandidateDataset = relationship(File.Model, foreign_keys=[partyCandidateDatasetId])
     invalidVoteCategoriesDataset = relationship(File.Model, foreign_keys=[invalidVoteCategoriesDatasetId])
     numberOfSeatsDataset = relationship(File.Model, foreign_keys=[numberOfSeatsDatasetId])
+
+    metaDataList = association_proxy("meta", "metaDataList")
 
     def __init__(self, electionTemplateName, electionName, parentElection, voteType, isListed,
                  party_candidate_dataset_file=None,
