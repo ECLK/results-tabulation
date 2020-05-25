@@ -9,19 +9,22 @@ import {history} from "./utils";
 import {MessagesProvider} from "./services/messages.provider";
 import {TallySheetProvider} from "./services/tally-sheet.provider";
 import {DialogProvider} from "./services/dialog.provider";
+import {ElectionProvider} from "./services/election.provider";
 
 ReactDOM.render(
-    <TallySheetProvider>
-        <DialogProvider>
-            <MessagesProvider>
-                <BrowserRouter>
-                    <Router history={history}>
-                        <App/>
-                    </Router>
-                </BrowserRouter>
-            </MessagesProvider>
-        </DialogProvider>
-    </TallySheetProvider>
+    <ElectionProvider>
+        <TallySheetProvider>
+            <DialogProvider>
+                <MessagesProvider>
+                    <BrowserRouter>
+                        <Router history={history}>
+                            <App/>
+                        </Router>
+                    </BrowserRouter>
+                </MessagesProvider>
+            </DialogProvider>
+        </TallySheetProvider>
+    </ElectionProvider>
     , document.getElementById('root')
 );
 

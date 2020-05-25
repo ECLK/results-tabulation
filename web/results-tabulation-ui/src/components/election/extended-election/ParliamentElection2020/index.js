@@ -22,10 +22,12 @@ import {
 } from "./TALLY_SHEET_CODE";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import * as Settings from './settings'
 import ExtendedElectionDefault from "../extended-election-default";
 import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
+import {ElectionContext} from "../../../../services/election.provider";
+
 
 export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
 
@@ -34,8 +36,15 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
     }
 
     getElectionHome() {
-        const {electionId, electionName, rootElectionId, subElections} = this.election;
+        const electionContext = useContext(ElectionContext);
+        const [subElections, setSubElections] = useState([]);
+
+        const {electionId, electionName, rootElectionId} = this.election;
         const voteTypes = ["Postal", "NonPostal"];
+        
+        useEffect(() => {
+            electionContext.getSubElections(electionId).then(setSubElections);
+        }, [electionId])
 
         if (electionId === rootElectionId) {
             return <div className="page-content">

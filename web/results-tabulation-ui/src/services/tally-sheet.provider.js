@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import ExtendedElection from "../components/election/extended-election";
 import {
     ENDPOINT_PATH_FILE, ENDPOINT_PATH_FILE_DOWNLOAD,
@@ -11,32 +11,23 @@ import {
     ENDPOINT_PATH_TALLY_SHEETS_BY_ID,
     request
 } from "./tabulation-api";
-import {ElectionEntity} from "./tabulation-api/entities/election.entity";
+import {getMetaDataMap} from "./util";
+import {ElectionContext} from "./election.provider";
 
 export const TallySheetContext = React.createContext([]);
 
 
-const electionEntity = new ElectionEntity();
-
 export function TallySheetProvider(props) {
+    const electionContext = useContext(ElectionContext);
+    
     const [state, setState] = useState({
         tallySheetMap: {},
         tallySheetProofFileMap: {}
     });
 
-    function getMetaDataMap(metaDataList) {
-        const metaDataMap = {};
-        for (let i = 0; i < metaDataList.length; i++) {
-            const {metaDataKey, metaDataValue} = metaDataList[i];
-            metaDataMap[metaDataKey] = metaDataValue;
-        }
-
-        return metaDataMap;
-    }
-
     async function refactorTallySheetObject(tallySheet) {
         tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
-        tallySheet.election = await electionEntity.getById(tallySheet.electionId);
+        tallySheet.election = await electionContext.getElectionById(tallySheet.electionId);
 
         const {metaDataList = []} = tallySheet;
         tallySheet.metaDataMap = getMetaDataMap(metaDataList);

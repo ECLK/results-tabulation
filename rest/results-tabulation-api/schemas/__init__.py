@@ -201,12 +201,12 @@ class ElectionSchema(ma.ModelSchema):
             "electionTemplateName",
             "parties",
             "invalidVoteCategories",
-            "subElections",
             "voteType",
             "rootElectionId",
             "rootElection",
-            "parentElection",
-            "isListed"
+            "parentElectionId",
+            "isListed",
+            "metaDataList"
         )
 
         model = Election.Model
@@ -216,14 +216,13 @@ class ElectionSchema(ma.ModelSchema):
 
     parties = ma.Nested(PartySchema, many=True)
     invalidVoteCategories = ma.Nested("InvalidVoteCategory_Schema", many=True)
-    subElections = ma.Nested("self", only=["electionId", "electionName", "subElections", "voteType", "rootElectionId",
-                                           "rootElection", "parties"], many=True)
     rootElection = ma.Nested("self", only=[
         "electionId", "electionName", "voteType", "electionTemplateName", "parties", "invalidVoteCategories"
     ])
     parentElection = ma.Nested("self", only=[
         "electionId", "electionName", "voteType", "electionTemplateName", "parties", "invalidVoteCategories"
     ])
+    metaDataList = ma.Nested(MetaDataSchema, many=True)
 
 
 class TallySheetVersionRow_Schema(ma.ModelSchema):

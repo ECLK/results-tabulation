@@ -1,22 +1,22 @@
-import React, {useEffect, useState} from "react";
-import {getElections} from "../services/tabulation-api";
+import React, {useContext, useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {PATH_ELECTION_BY_ID} from "../App";
 import Processing from "../components/processing";
 import Error from "../components/error";
 import TabulationPage from "./index";
+import {ElectionContext} from "../services/election.provider";
 
 
 export default function Home() {
+    const electionContext = useContext(ElectionContext);
+
     const [electionsList, setElectionsList] = useState([]);
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);
-    const groups = [];
-
 
     // Similar to componentDidMount and componentDidUpdate:
     useEffect(() => {
-        getElections({}).then((electionsList) => {
+        electionContext.getElections({}).then((electionsList) => {
             setElectionsList(electionsList.filter(({electionId, rootElectionId}) => {
                 return electionId === rootElectionId;
             }));
