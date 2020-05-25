@@ -19,7 +19,7 @@ import ImageIcon from '@material-ui/icons/Image';
 import DescriptionIcon from '@material-ui/icons/Description';
 import PreviewTallySheetProofFileButton from "../tally-sheet-proof-file-preview-button";
 import Processing from "../../processing";
-import { getErrorCode, getErrorMessage } from "../../../utils";
+import {getErrorCode, getErrorMessage} from "../../../utils";
 
 export function UploadTallySheetProofsDialog(
     {
@@ -130,6 +130,7 @@ export function UploadTallySheetProofsDialog(
                     </ListItem>
                 })}
             </List>
+            {files.length === 0 ? "No certified documents uploaded." : null}
         </DialogContent>
         <DialogActions>
             {actions.map(({value, onClick}, actionIndex) => {
