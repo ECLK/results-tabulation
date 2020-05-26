@@ -14,8 +14,8 @@ Deploy https://github.com/ECLK/auth-app using platformer cloud
 * Create an app for tabulation backend
 * Connect ECLK/results-tabulation-api in the Repository section
 * Create appropriate BUILD CONFIG
-    * Dockerfile path - ./rest/results-tabulation-api/Dockerfile
-    * Build context - ./rest/results-tabulation-api
+    * Dockerfile path - ./results-tabulation-api/Dockerfile
+    * Build context - ./results-tabulation-api
 * Setup Environment variables on RUN TIME
     * ENV_CONFIG - path to the environment config file
 * Add Config file on CONFIG FILES
