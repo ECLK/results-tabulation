@@ -1,3 +1,9 @@
+import {
+    WORKFLOW_STATUS_TYPE_EMPTY,
+    WORKFLOW_STATUS_TYPE_RELEASED,
+    WORKFLOW_STATUS_TYPE_SAVED
+} from "./WORKFLOW_STATUS_TYPE";
+
 export const TALLY_SHEET_LIST_COLUMN_STATUS = "TALLY_SHEET_LIST_COLUMN_STATUS";
 export const TALLY_SHEET_LIST_COLUMN_ACTIONS = "TALLY_SHEET_LIST_COLUMN_ACTIONS";
 export const TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT = "TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT";
@@ -17,7 +23,16 @@ export const TALLY_SHEET_LIST_COLUMN_LABEL = {
 };
 
 export const TALLY_SHEET_LIST_COLUMN_VALUE = {
-    [TALLY_SHEET_LIST_COLUMN_STATUS]: (tallySheet) => tallySheet.workflowInstance.status,
+    [TALLY_SHEET_LIST_COLUMN_STATUS]: (tallySheet) => {
+        if (tallySheet.template.isDerived & [WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED].indexOf(
+            tallySheet.workflowInstance.status) >= 0) {
+
+            return "Not Verified";
+        } else {
+
+            return tallySheet.workflowInstance.status
+        }
+    },
     [TALLY_SHEET_LIST_COLUMN_ACTIONS]: (tallySheet) => tallySheet["actions"],
     [TALLY_SHEET_LIST_COLUMN_ELECTORAL_DISTRICT]: (tallySheet) => tallySheet["electoralDistrictName"],
     [TALLY_SHEET_LIST_COLUMN_POLLING_DIVISION]: (tallySheet) => tallySheet["pollingDivisionName"],
