@@ -2,7 +2,7 @@
 
 ## Election extensions
 
-Learn how to create an extension [here](../../rest/results-tabulation-api/ext/ExtendedElection)
+Learn how to create an extension [here](../../results-tabulation-api/ext/ExtendedElection)
 
 ## Available election extensions
 

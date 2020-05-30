@@ -1,10 +1,10 @@
 # Contribute
 
 ## How to create an issue
-Please report any issues [here](https://github.com/ECLK/results-tabulation-api/issues). We are delighted to have your feedback and comments.
+Please report any issues [here](https://github.com/ECLK/results-tabulation/issues). We are delighted to have your feedback and comments.
 
 ## How to find an issue to work
-Please look [available issues](https://github.com/ECLK/results-tabulation-api/issues) and look which could be a best fit for your expertise.
+Please look [available issues](https://github.com/ECLK/results-tabulation/issues) and look which could be a best fit for your expertise.
  
 Also, if you have an idea of any feature requests, create an issue and discuss with the maintainers. 
 
