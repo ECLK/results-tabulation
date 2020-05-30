@@ -354,7 +354,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                             </strong>
                         </TableCell>
                         <TableCell align="right">
-                            {Moment(
+                            {timeOfCommencementOfCount !== '' && Moment(
                                 timeOfCommencementOfCount
                             ).format('DD-MM-YYYY h:mm A')}
                         </TableCell>
