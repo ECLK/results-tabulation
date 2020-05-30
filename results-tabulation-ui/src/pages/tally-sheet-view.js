@@ -10,7 +10,7 @@ export default function TallySheetView(props) {
     const tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
 
     const saveAllowed = tallySheet.workflowInstance.actions.filter(action => {
-        return action.allowed && action.actionType === WORKFLOW_ACTION_TYPE_SAVE;
+        return action.allowed && action.authorized && action.actionType === WORKFLOW_ACTION_TYPE_SAVE;
     }).length > 0;
 
     if (!tallySheet.template.isDerived && saveAllowed && tallySheetVersionId === null) {

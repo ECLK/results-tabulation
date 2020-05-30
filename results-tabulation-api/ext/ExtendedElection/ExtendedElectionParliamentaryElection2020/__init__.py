@@ -327,9 +327,9 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                  "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
                  "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
 
-                {"name": "EDIT", "type": WORKFLOW_ACTION_TYPE_SAVE,
+                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_SAVE,
                  "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "EDIT", "type": WORKFLOW_ACTION_TYPE_SAVE,
+                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_SAVE,
                  "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
 
                 {"name": "Submit", "type": WORKFLOW_ACTION_TYPE_SUBMIT,
