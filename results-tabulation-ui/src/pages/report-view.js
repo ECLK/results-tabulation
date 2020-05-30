@@ -10,6 +10,7 @@ import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
 import TallySheetStatusDescription from "../components/tally-sheet/tally-sheet-status-description";
+import Error from "../components/error";
 
 export default function ReportView(props) {
     const tallySheetContext = useContext(TallySheetContext);
@@ -66,6 +67,7 @@ export default function ReportView(props) {
     const getReportViewJsx = () => {
         const {tallySheetCode, tallySheetStatus, area, tallySheetId} = tallySheet;
         const {areaName} = area;
+        let tallySheetVersionHtmlJsx = null;
 
         const additionalBreadCrumbLinks = [
             {
@@ -75,12 +77,28 @@ export default function ReportView(props) {
             {
                 label: areaName.toLowerCase(),
                 to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId)
-            },
-            {
-                label: tallySheetVersionId,
-                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
             }
         ];
+
+        if (tallySheetVersionId) {
+            tallySheetVersionHtmlJsx = <iframe
+                style={{border: "none", width: "100%"}}
+                height={iframeHeight}
+                width={iframeWidth}
+                srcDoc={tallySheetVersionHtml}
+                onLoad={handleIframeHeight()}
+                ref={iframeRef}
+            >
+            </iframe>;
+
+            additionalBreadCrumbLinks.push({
+                label: tallySheetVersionId,
+                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
+            })
+        } else {
+            tallySheetVersionHtmlJsx =
+                <Error title="Tally sheet is empty" body="There's no content available to preview."/>
+        }
 
         return <TabulationTallySheetPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}
                                          tallySheet={tallySheet} history={history}>
@@ -96,17 +114,7 @@ export default function ReportView(props) {
                     <TallySheetStatusDescription tallySheetId={tallySheetId}/>
                 </div>
 
-                <Processing showProgress={processing}>
-                    <iframe
-                        style={{border: "none", width: "100%"}}
-                        height={iframeHeight}
-                        width={iframeWidth}
-                        srcDoc={tallySheetVersionHtml}
-                        onLoad={handleIframeHeight()}
-                        ref={iframeRef}
-                    >
-                    </iframe>
-                </Processing>
+                <Processing showProgress={processing}>{tallySheetVersionHtmlJsx}</Processing>
             </div>
         </TabulationTallySheetPage>
     };
