@@ -1,6 +1,6 @@
 # Election Results Tabulation
 
-- [Documentation](https://eclk.github.io/results-tabulation-api)
+- [Documentation](https://eclk.github.io/results-tabulation)
 
 ## High level architecture
 
