@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 6,
-  "iteration": 1589575392497,
+  "id": 14,
+  "iteration": 1590939099535,
   "links": [],
   "panels": [
     {
@@ -127,59 +127,12 @@
       "valueName": "first"
     },
     {
-      "content": "",
       "datasource": null,
       "gridPos": {
-        "h": 2,
+        "h": 21,
         "w": 9,
         "x": 15,
         "y": 0
-      },
-      "id": 36,
-      "mode": "markdown",
-      "targets": [
-        {
-          "format": "time_series",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  createdAt AS \"time\",\n  statusReportId\nFROM dashboard_status_report\nWHERE\n  $__timeFilter(createdAt)\nORDER BY createdAt",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "statusReportId"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "dashboard_status_report",
-          "timeColumn": "createdAt",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": null,
-      "gridPos": {
-        "h": 6,
-        "w": 9,
-        "x": 15,
-        "y": 2
       },
       "id": 4,
       "options": {
@@ -194,14 +147,14 @@
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "yellow",
+                  "color": "purple",
                   "value": null
                 }
               ]
             },
             "title": "$__cell_1"
           },
-          "limit": 10,
+          "limit": 200,
           "overrides": [],
           "values": true
         },
@@ -215,7 +168,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "\n\nSELECT\n    NOW() as \"time\", tallySheetParties.partyName as \"name\", COALESCE(SUM(tallySheetVersionRow.numValue), 0) AS voteCount\nFROM\n    (\n        SELECT\n            party.*, submission.*, workflowInstance.status, countingCentreAreaMap.*\n        FROM\n            election, party, template, workflowInstance, tallySheet, submission, election_party as electionParty,\n            (\n                SELECT\n                    areaMap.countryId, areaMap.countryName,\n                    areaMap.electoralDistrictId, areaMap.electoralDistrictName,\n                    areaMap.pollingDivisionId, areaMap.pollingDivisionName,\n                    areaMap.countingCentreId, areaMap.countingCentreName\n                FROM\n                    (\n                        SELECT\n                            country.areaId as countryId, country.areaName as countryName,\n                            electoralDistrict.areaId as electoralDistrictId, electoralDistrict.areaName as electoralDistrictName,\n                            pollingDivision.areaId as pollingDivisionId, pollingDivision.areaName as pollingDivisionName,\n                            pollingDistrict.areaId as pollingDistrictId, pollingDistrict.areaName as pollingDistrictName,\n                            pollingStation.areaId as pollingStationId, pollingStation.areaName as pollingStationName,\n                            electionCommission.areaId as electionCommissionId, electionCommission.areaName as electionCommissionName,\n                            districtCentre.areaId as districtCentreId, districtCentre.areaName as districtCentreName,\n                            countingCentre.areaId as countingCentreId, countingCentre.areaName as countingCentreName\n                        FROM\n                            area country, area electoralDistrict, area pollingDivision, area pollingDistrict, area pollingStation,\n                            area electionCommission, area districtCentre, area countingCentre,\n\n                            area_area country_electoralDistrict,\n                            area_area electoralDistrict_pollingDivision,\n                            area_area pollingDivision_pollingDistrict,\n                            area_area pollingDistrict_pollingStation,\n\n                            area_area electionCommission_districtCentre,\n                            area_area districtCentre_countingCentre,\n                            area_area countingCentre_pollingStation\n                        WHERE\n                            country_electoralDistrict.parentAreaId = country.areaId\n                            and country_electoralDistrict.childAreaId = electoralDistrict.areaId\n\n                            and electoralDistrict_pollingDivision.parentAreaId = electoralDistrict.areaId\n                            and electoralDistrict_pollingDivision.childAreaId = pollingDivision.areaId\n\n                            and pollingDivision_pollingDistrict.parentAreaId = pollingDivision.areaId\n                            and pollingDivision_pollingDistrict.childAreaId = pollingDistrict.areaId\n\n                            and pollingDistrict_pollingStation.parentAreaId = pollingDistrict.areaId\n                            and pollingDistrict_pollingStation.childAreaId = pollingStation.areaId\n\n                            and electionCommission_districtCentre.parentAreaId = electionCommission.areaId\n                            and electionCommission_districtCentre.childAreaId = districtCentre.areaId\n\n                            and districtCentre_countingCentre.parentAreaId = districtCentre.areaId\n                            and districtCentre_countingCentre.childAreaId = countingCentre.areaId\n\n                            and countingCentre_pollingStation.parentAreaId = countingCentre.areaId\n                            and countingCentre_pollingStation.childAreaId = pollingStation.areaId\n\n                            and country.areaType = \"Country\" and electoralDistrict.areaType = \"ElectoralDistrict\"\n                            and pollingDivision.areaType = \"PollingDivision\" and pollingDistrict.areaType = \"PollingDistrict\"\n                            and pollingStation.areaType = \"PollingStation\" and countingCentre.areaType = \"CountingCentre\"\n                            and districtCentre.areaType = \"DistrictCentre\" and electionCommission.areaType = \"ElectionCommission\"\n                    ) as areaMap\n                GROUP BY\n                    areaMap.countryId,\n                    areaMap.electoralDistrictId,\n                    areaMap.pollingDivisionId,\n                    areaMap.countingCentreId\n            ) as countingCentreAreaMap\n        WHERE\n            tallySheet.tallySheetId = submission.submissionId\n            and election.electionId = submission.electionId\n            and template.templateId = tallySheet.templateId\n            and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId\n            and submission.areaId = countingCentreAreaMap.countingCentreId\n\n            and electionParty.electionId = election.electionId\n            and party.partyId = electionParty.partyId\n\n            and template.templateName = 'PE-27'\n            \n            and countingCentreAreaMap.electoralDistrictId IN ($electoralDistrictIds)\n            and election.rootElectionId=$rootElectionId\n    ) AS tallySheetParties LEFT OUTER JOIN tallySheetVersionRow ON\n        tallySheetVersionRow.tallySheetVersionId = tallySheetParties.latestVersionId\n        and tallySheetParties.status IN ('Verified', 'Ready to Certify', 'Certified', 'Released')\n        and tallySheetVersionRow.partyId = tallySheetParties.partyId\nGROUP BY\n    tallySheetParties.partyId\nORDER BY\n    voteCount DESC;\n\n",
+          "rawSql": "SELECT  NOW() as \"time\", electoralDistrictParty.partyName AS \"name\", COALESCE(SUM(peR2TallySheetRow.numValue), 0) AS \"seatCount\"\nFROM\n  (SELECT party.*\n  FROM election_party AS electionParty, party, area\n  WHERE\n    electionParty.electionId = area.electionId\n    and area.areaId IN ($electoralDistrictIds)\n    and party.partyId = electionParty.partyId\n  ) AS electoralDistrictParty LEFT JOIN\n    \n  (SELECT tallySheetVersionRow.*\n  FROM tallySheet, submission, template,templateRow, tallySheetVersionRow, workflowInstance,\n    (SELECT electoralDistrict.areaId AS electoralDistrictId, country.areaId AS countryId, country.electionId\n    FROM area AS country, area AS electoralDistrict, area_area AS country_electoralDistrict\n    WHERE\n      country.areaType = \"Country\" and electoralDistrict.areaType = \"ElectoralDistrict\"\n      and country_electoralDistrict.childAreaId = electoralDistrict.areaId\n      and country_electoralDistrict.parentAreaId = country.areaId) as areaMap\n  WHERE\n    submission.submissionId = tallySheet.tallySheetId\n    and submission.areaId = areaMap.electoralDistrictId\n    and template.templateId = tallySheet.templateId\n    and template.templateName = \"PE-R2\"\n    and tallySheetVersionRow.tallySheetVersionId = submission.latestVersionId\n    and templateRow.templateRowId = tallySheetVersionRow.templateRowId\n    and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId\n    and workflowInstance.status IN ('Verified', 'Ready to Certify', 'Certified', 'Released')\n    and templateRow.templateRowType IN (\n      'TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED',\n      'TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2',\n      'TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1'\n    )\n    \n    and areaMap.electionId=$rootElectionId\n    and areaMap.electoralDistrictId IN ($electoralDistrictIds)\n  ) AS peR2TallySheetRow\n  ON electoralDistrictParty.partyId = peR2TallySheetRow.partyId\nGROUP BY\n  electoralDistrictParty.partyId\nORDER BY\n  seatCount DESC;\n",
           "refId": "A",
           "select": [
             [
@@ -241,7 +194,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top 10 Parties",
+      "title": "Seat allocation per party",
       "transparent": true,
       "type": "bargauge"
     },
@@ -1184,78 +1137,6 @@
       "valueName": "current"
     },
     {
-      "datasource": null,
-      "gridPos": {
-        "h": 7,
-        "w": 9,
-        "x": 15,
-        "y": 8
-      },
-      "id": 23,
-      "options": {
-        "displayMode": "lcd",
-        "fieldOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "defaults": {
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "blue",
-                  "value": null
-                }
-              ]
-            },
-            "title": "$__cell_1"
-          },
-          "limit": 10,
-          "overrides": [],
-          "values": true
-        },
-        "orientation": "horizontal",
-        "showUnfilled": true
-      },
-      "pluginVersion": "6.7.3",
-      "targets": [
-        {
-          "format": "table",
-          "group": [],
-          "metricColumn": "none",
-          "rawQuery": true,
-          "rawSql": "\n\nSELECT\n    NOW() as \"time\", \n    CONCAT(tallySheetParties.partyName, \" : \", tallySheetParties.candidateName) as \"name\", \n    COALESCE(SUM(tallySheetVersionRow.numValue), 0) AS voteCount\nFROM\n    (\n        SELECT\n            party.*, candidate.*, submission.*, workflowInstance.status, countingCentreAreaMap.*\n        FROM\n            election, party, candidate, template, workflowInstance, tallySheet, submission, \n            election_party as electionParty, election_candidate AS electionCandidate,\n            (\n                SELECT\n                    areaMap.countryId, areaMap.countryName,\n                    areaMap.electoralDistrictId, areaMap.electoralDistrictName,\n                    areaMap.pollingDivisionId, areaMap.pollingDivisionName,\n                    areaMap.countingCentreId, areaMap.countingCentreName\n                FROM\n                    (\n                        SELECT\n                            country.areaId as countryId, country.areaName as countryName,\n                            electoralDistrict.areaId as electoralDistrictId, electoralDistrict.areaName as electoralDistrictName,\n                            pollingDivision.areaId as pollingDivisionId, pollingDivision.areaName as pollingDivisionName,\n                            pollingDistrict.areaId as pollingDistrictId, pollingDistrict.areaName as pollingDistrictName,\n                            pollingStation.areaId as pollingStationId, pollingStation.areaName as pollingStationName,\n                            electionCommission.areaId as electionCommissionId, electionCommission.areaName as electionCommissionName,\n                            districtCentre.areaId as districtCentreId, districtCentre.areaName as districtCentreName,\n                            countingCentre.areaId as countingCentreId, countingCentre.areaName as countingCentreName\n                        FROM\n                            area country, area electoralDistrict, area pollingDivision, area pollingDistrict, area pollingStation,\n                            area electionCommission, area districtCentre, area countingCentre,\n\n                            area_area country_electoralDistrict,\n                            area_area electoralDistrict_pollingDivision,\n                            area_area pollingDivision_pollingDistrict,\n                            area_area pollingDistrict_pollingStation,\n\n                            area_area electionCommission_districtCentre,\n                            area_area districtCentre_countingCentre,\n                            area_area countingCentre_pollingStation\n                        WHERE\n                            country_electoralDistrict.parentAreaId = country.areaId\n                            and country_electoralDistrict.childAreaId = electoralDistrict.areaId\n\n                            and electoralDistrict_pollingDivision.parentAreaId = electoralDistrict.areaId\n                            and electoralDistrict_pollingDivision.childAreaId = pollingDivision.areaId\n\n                            and pollingDivision_pollingDistrict.parentAreaId = pollingDivision.areaId\n                            and pollingDivision_pollingDistrict.childAreaId = pollingDistrict.areaId\n\n                            and pollingDistrict_pollingStation.parentAreaId = pollingDistrict.areaId\n                            and pollingDistrict_pollingStation.childAreaId = pollingStation.areaId\n\n                            and electionCommission_districtCentre.parentAreaId = electionCommission.areaId\n                            and electionCommission_districtCentre.childAreaId = districtCentre.areaId\n\n                            and districtCentre_countingCentre.parentAreaId = districtCentre.areaId\n                            and districtCentre_countingCentre.childAreaId = countingCentre.areaId\n\n                            and countingCentre_pollingStation.parentAreaId = countingCentre.areaId\n                            and countingCentre_pollingStation.childAreaId = pollingStation.areaId\n\n                            and country.areaType = \"Country\" and electoralDistrict.areaType = \"ElectoralDistrict\"\n                            and pollingDivision.areaType = \"PollingDivision\" and pollingDistrict.areaType = \"PollingDistrict\"\n                            and pollingStation.areaType = \"PollingStation\" and countingCentre.areaType = \"CountingCentre\"\n                            and districtCentre.areaType = \"DistrictCentre\" and electionCommission.areaType = \"ElectionCommission\"\n                    ) as areaMap\n                GROUP BY\n                    areaMap.countryId,\n                    areaMap.electoralDistrictId,\n                    areaMap.pollingDivisionId,\n                    areaMap.countingCentreId\n            ) as countingCentreAreaMap\n        WHERE\n            tallySheet.tallySheetId = submission.submissionId\n            and election.electionId = submission.electionId\n            and template.templateId = tallySheet.templateId\n            and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId\n            and submission.areaId = countingCentreAreaMap.countingCentreId\n\n            and electionParty.electionId = election.electionId\n            and party.partyId = electionParty.partyId\n            \n            and electionCandidate.electionId = election.electionId\n            and electionCandidate.partyId = party.partyId\n            and candidate.candidateId = electionCandidate.candidateId\n\n            and template.templateName = 'PE-4'\n            \n            and countingCentreAreaMap.electoralDistrictId IN ($electoralDistrictIds)\n            and election.rootElectionId=$rootElectionId\n    ) AS tallySheetParties LEFT OUTER JOIN tallySheetVersionRow ON\n        tallySheetVersionRow.tallySheetVersionId = tallySheetParties.latestVersionId\n        and tallySheetParties.status IN ('Verified', 'Ready to Certify', 'Certified', 'Released')\n        and tallySheetVersionRow.partyId = tallySheetParties.partyId\n        and tallySheetVersionRow.candidateId = tallySheetParties.candidateId\nGROUP BY\n    tallySheetParties.candidateId\nORDER BY\n    voteCount DESC;\n\n",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "statusReportId"
-                ],
-                "type": "column"
-              }
-            ]
-          ],
-          "table": "dashboard_status_report",
-          "timeColumn": "createdAt",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            }
-          ]
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 10 candidates",
-      "transparent": true,
-      "type": "bargauge"
-    },
-    {
       "content": "# PE-27-PV",
       "datasource": null,
       "gridPos": {
@@ -2194,15 +2075,206 @@
       "valueName": "current"
     },
     {
+      "datasource": null,
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 15
+      },
+      "id": 37,
+      "options": {
+        "displayMode": "lcd",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "yellow",
+                  "value": null
+                }
+              ]
+            },
+            "title": "$__cell_1"
+          },
+          "limit": 10,
+          "overrides": [],
+          "values": true
+        },
+        "orientation": "horizontal",
+        "showUnfilled": true
+      },
+      "pluginVersion": "6.7.3",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "\n\nSELECT\n    NOW() as \"time\", tallySheetParties.partyName as \"name\", COALESCE(SUM(tallySheetVersionRow.numValue), 0) AS voteCount\nFROM\n    (\n        SELECT\n            party.*, submission.*, workflowInstance.status, countingCentreAreaMap.*\n        FROM\n            election, party, template, workflowInstance, tallySheet, submission, election_party as electionParty,\n            (\n                SELECT\n                    areaMap.countryId, areaMap.countryName,\n                    areaMap.electoralDistrictId, areaMap.electoralDistrictName,\n                    areaMap.pollingDivisionId, areaMap.pollingDivisionName,\n                    areaMap.countingCentreId, areaMap.countingCentreName\n                FROM\n                    (\n                        SELECT\n                            country.areaId as countryId, country.areaName as countryName,\n                            electoralDistrict.areaId as electoralDistrictId, electoralDistrict.areaName as electoralDistrictName,\n                            pollingDivision.areaId as pollingDivisionId, pollingDivision.areaName as pollingDivisionName,\n                            pollingDistrict.areaId as pollingDistrictId, pollingDistrict.areaName as pollingDistrictName,\n                            pollingStation.areaId as pollingStationId, pollingStation.areaName as pollingStationName,\n                            electionCommission.areaId as electionCommissionId, electionCommission.areaName as electionCommissionName,\n                            districtCentre.areaId as districtCentreId, districtCentre.areaName as districtCentreName,\n                            countingCentre.areaId as countingCentreId, countingCentre.areaName as countingCentreName\n                        FROM\n                            area country, area electoralDistrict, area pollingDivision, area pollingDistrict, area pollingStation,\n                            area electionCommission, area districtCentre, area countingCentre,\n\n                            area_area country_electoralDistrict,\n                            area_area electoralDistrict_pollingDivision,\n                            area_area pollingDivision_pollingDistrict,\n                            area_area pollingDistrict_pollingStation,\n\n                            area_area electionCommission_districtCentre,\n                            area_area districtCentre_countingCentre,\n                            area_area countingCentre_pollingStation\n                        WHERE\n                            country_electoralDistrict.parentAreaId = country.areaId\n                            and country_electoralDistrict.childAreaId = electoralDistrict.areaId\n\n                            and electoralDistrict_pollingDivision.parentAreaId = electoralDistrict.areaId\n                            and electoralDistrict_pollingDivision.childAreaId = pollingDivision.areaId\n\n                            and pollingDivision_pollingDistrict.parentAreaId = pollingDivision.areaId\n                            and pollingDivision_pollingDistrict.childAreaId = pollingDistrict.areaId\n\n                            and pollingDistrict_pollingStation.parentAreaId = pollingDistrict.areaId\n                            and pollingDistrict_pollingStation.childAreaId = pollingStation.areaId\n\n                            and electionCommission_districtCentre.parentAreaId = electionCommission.areaId\n                            and electionCommission_districtCentre.childAreaId = districtCentre.areaId\n\n                            and districtCentre_countingCentre.parentAreaId = districtCentre.areaId\n                            and districtCentre_countingCentre.childAreaId = countingCentre.areaId\n\n                            and countingCentre_pollingStation.parentAreaId = countingCentre.areaId\n                            and countingCentre_pollingStation.childAreaId = pollingStation.areaId\n\n                            and country.areaType = \"Country\" and electoralDistrict.areaType = \"ElectoralDistrict\"\n                            and pollingDivision.areaType = \"PollingDivision\" and pollingDistrict.areaType = \"PollingDistrict\"\n                            and pollingStation.areaType = \"PollingStation\" and countingCentre.areaType = \"CountingCentre\"\n                            and districtCentre.areaType = \"DistrictCentre\" and electionCommission.areaType = \"ElectionCommission\"\n                    ) as areaMap\n                GROUP BY\n                    areaMap.countryId,\n                    areaMap.electoralDistrictId,\n                    areaMap.pollingDivisionId,\n                    areaMap.countingCentreId\n            ) as countingCentreAreaMap\n        WHERE\n            tallySheet.tallySheetId = submission.submissionId\n            and election.electionId = submission.electionId\n            and template.templateId = tallySheet.templateId\n            and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId\n            and submission.areaId = countingCentreAreaMap.countingCentreId\n\n            and electionParty.electionId = election.electionId\n            and party.partyId = electionParty.partyId\n\n            and template.templateName = 'PE-27'\n            \n            and countingCentreAreaMap.electoralDistrictId IN ($electoralDistrictIds)\n            and election.rootElectionId=$rootElectionId\n    ) AS tallySheetParties LEFT OUTER JOIN tallySheetVersionRow ON\n        tallySheetVersionRow.tallySheetVersionId = tallySheetParties.latestVersionId\n        and tallySheetParties.status IN ('Verified', 'Ready to Certify', 'Certified', 'Released')\n        and tallySheetVersionRow.partyId = tallySheetParties.partyId\nGROUP BY\n    tallySheetParties.partyId\nORDER BY\n    voteCount DESC;\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top 10 parties",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "datasource": null,
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 8,
+        "y": 15
+      },
+      "id": 23,
+      "options": {
+        "displayMode": "lcd",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "blue",
+                  "value": null
+                }
+              ]
+            },
+            "title": "$__cell_1"
+          },
+          "limit": 10,
+          "overrides": [],
+          "values": true
+        },
+        "orientation": "horizontal",
+        "showUnfilled": true
+      },
+      "pluginVersion": "6.7.3",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "\n\nSELECT\n    NOW() as \"time\", \n    CONCAT(tallySheetParties.partyName, \" : \", tallySheetParties.candidateName) as \"name\", \n    COALESCE(SUM(tallySheetVersionRow.numValue), 0) AS voteCount\nFROM\n    (\n        SELECT\n            party.*, candidate.*, submission.*, workflowInstance.status, countingCentreAreaMap.*\n        FROM\n            election, party, candidate, template, workflowInstance, tallySheet, submission, \n            election_party as electionParty, election_candidate AS electionCandidate,\n            (\n                SELECT\n                    areaMap.countryId, areaMap.countryName,\n                    areaMap.electoralDistrictId, areaMap.electoralDistrictName,\n                    areaMap.pollingDivisionId, areaMap.pollingDivisionName,\n                    areaMap.countingCentreId, areaMap.countingCentreName\n                FROM\n                    (\n                        SELECT\n                            country.areaId as countryId, country.areaName as countryName,\n                            electoralDistrict.areaId as electoralDistrictId, electoralDistrict.areaName as electoralDistrictName,\n                            pollingDivision.areaId as pollingDivisionId, pollingDivision.areaName as pollingDivisionName,\n                            pollingDistrict.areaId as pollingDistrictId, pollingDistrict.areaName as pollingDistrictName,\n                            pollingStation.areaId as pollingStationId, pollingStation.areaName as pollingStationName,\n                            electionCommission.areaId as electionCommissionId, electionCommission.areaName as electionCommissionName,\n                            districtCentre.areaId as districtCentreId, districtCentre.areaName as districtCentreName,\n                            countingCentre.areaId as countingCentreId, countingCentre.areaName as countingCentreName\n                        FROM\n                            area country, area electoralDistrict, area pollingDivision, area pollingDistrict, area pollingStation,\n                            area electionCommission, area districtCentre, area countingCentre,\n\n                            area_area country_electoralDistrict,\n                            area_area electoralDistrict_pollingDivision,\n                            area_area pollingDivision_pollingDistrict,\n                            area_area pollingDistrict_pollingStation,\n\n                            area_area electionCommission_districtCentre,\n                            area_area districtCentre_countingCentre,\n                            area_area countingCentre_pollingStation\n                        WHERE\n                            country_electoralDistrict.parentAreaId = country.areaId\n                            and country_electoralDistrict.childAreaId = electoralDistrict.areaId\n\n                            and electoralDistrict_pollingDivision.parentAreaId = electoralDistrict.areaId\n                            and electoralDistrict_pollingDivision.childAreaId = pollingDivision.areaId\n\n                            and pollingDivision_pollingDistrict.parentAreaId = pollingDivision.areaId\n                            and pollingDivision_pollingDistrict.childAreaId = pollingDistrict.areaId\n\n                            and pollingDistrict_pollingStation.parentAreaId = pollingDistrict.areaId\n                            and pollingDistrict_pollingStation.childAreaId = pollingStation.areaId\n\n                            and electionCommission_districtCentre.parentAreaId = electionCommission.areaId\n                            and electionCommission_districtCentre.childAreaId = districtCentre.areaId\n\n                            and districtCentre_countingCentre.parentAreaId = districtCentre.areaId\n                            and districtCentre_countingCentre.childAreaId = countingCentre.areaId\n\n                            and countingCentre_pollingStation.parentAreaId = countingCentre.areaId\n                            and countingCentre_pollingStation.childAreaId = pollingStation.areaId\n\n                            and country.areaType = \"Country\" and electoralDistrict.areaType = \"ElectoralDistrict\"\n                            and pollingDivision.areaType = \"PollingDivision\" and pollingDistrict.areaType = \"PollingDistrict\"\n                            and pollingStation.areaType = \"PollingStation\" and countingCentre.areaType = \"CountingCentre\"\n                            and districtCentre.areaType = \"DistrictCentre\" and electionCommission.areaType = \"ElectionCommission\"\n                    ) as areaMap\n                GROUP BY\n                    areaMap.countryId,\n                    areaMap.electoralDistrictId,\n                    areaMap.pollingDivisionId,\n                    areaMap.countingCentreId\n            ) as countingCentreAreaMap\n        WHERE\n            tallySheet.tallySheetId = submission.submissionId\n            and election.electionId = submission.electionId\n            and template.templateId = tallySheet.templateId\n            and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId\n            and submission.areaId = countingCentreAreaMap.countingCentreId\n\n            and electionParty.electionId = election.electionId\n            and party.partyId = electionParty.partyId\n            \n            and electionCandidate.electionId = election.electionId\n            and electionCandidate.partyId = party.partyId\n            and candidate.candidateId = electionCandidate.candidateId\n\n            and template.templateName = 'PE-4'\n            \n            and countingCentreAreaMap.electoralDistrictId IN ($electoralDistrictIds)\n            and election.rootElectionId=$rootElectionId\n    ) AS tallySheetParties LEFT OUTER JOIN tallySheetVersionRow ON\n        tallySheetVersionRow.tallySheetVersionId = tallySheetParties.latestVersionId\n        and tallySheetParties.status IN ('Verified', 'Ready to Certify', 'Certified', 'Released')\n        and tallySheetVersionRow.partyId = tallySheetParties.partyId\n        and tallySheetVersionRow.candidateId = tallySheetParties.candidateId\nGROUP BY\n    tallySheetParties.candidateId\nORDER BY\n    voteCount DESC;\n\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top 10 candidates",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
       "content": "",
       "datasource": null,
       "gridPos": {
         "h": 2,
         "w": 6,
         "x": 9,
-        "y": 15
+        "y": 21
       },
       "id": 17,
+      "mode": "markdown",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  createdAt AS \"time\",\n  statusReportId\nFROM dashboard_status_report\nWHERE\n  $__timeFilter(createdAt)\nORDER BY createdAt",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 2,
+        "w": 9,
+        "x": 15,
+        "y": 21
+      },
+      "id": 36,
       "mode": "markdown",
       "targets": [
         {
@@ -2276,8 +2348,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "Kandy",
-          "value": "27611"
+          "text": "Colombo",
+          "value": "27584"
         },
         "datasource": "MySQL",
         "definition": "SELECT \n  areaName AS __text, areaId AS __value \nFROM area, election \nWHERE \n  election.electionId = area.electionId and election.rootElectionId = $rootElectionId and areaType = 'ElectoralDistrict';",
@@ -2325,5 +2397,5 @@
   "variables": {
     "list": []
   },
-  "version": 19
+  "version": 7
 }
