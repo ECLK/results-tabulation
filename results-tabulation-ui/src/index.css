@@ -85,7 +85,13 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 .tally-sheet-code-list li {
     list-style: none;
     font-weight: bold;
-    margin-top: 25px;
+    height: 35px;
+    padding-left: 10px;
+    padding-top: 5px;
+}
+
+.tally-sheet-code-list li:hover {
+    background-color: #cccc;
 }
 
 .btn-select {
@@ -95,7 +101,10 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 
 .btn-list {
     background: #bbb;
-    border: 1px solid bbb;
+}
+
+.tally-sheet-code-list li:hover > .btn-list {
+    background: #4778cf;
 }
 
 .tally-sheet-code-list li a {
@@ -208,10 +217,9 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 .election-list a.election-list-item {
     padding: 10px;
     background-color: #e7e7e7;
-    margin: 10px 26px;
-    /* margin-top: 50px; */
+    margin:10px;
     display: inline-block;
-    width: 300px;
+    width: 260px;
     text-align: center;
     color: #5178c8;
     text-decoration: none;
