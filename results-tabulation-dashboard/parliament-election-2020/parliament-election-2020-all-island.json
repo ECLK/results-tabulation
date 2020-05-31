@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 9,
-  "iteration": 1589738236693,
+  "id": 13,
+  "iteration": 1590939377726,
   "links": [],
   "panels": [
     {
@@ -39,7 +39,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 20,
+        "w": 19,
         "x": 0,
         "y": 0
       },
@@ -125,6 +125,79 @@
         }
       ],
       "valueName": "first"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "gridPos": {
+        "h": 21,
+        "w": 5,
+        "x": 19,
+        "y": 0
+      },
+      "id": 44,
+      "links": [],
+      "options": {
+        "displayMode": "lcd",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "purple",
+                  "value": null
+                }
+              ]
+            },
+            "title": "$__cell_1"
+          },
+          "overrides": [],
+          "values": true
+        },
+        "orientation": "horizontal",
+        "showUnfilled": true
+      },
+      "pluginVersion": "6.7.3",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT  NOW() as \"time\", electoralDistrictParty.partyName AS \"name\", COALESCE(SUM(peR2TallySheetRow.numValue), 0) AS \"seatCount\"\nFROM\n  (SELECT party.*\n  FROM election_party AS electionParty, party\n  WHERE\n    electionParty.electionId = $rootElectionId\n    and party.partyId = electionParty.partyId\n  ) AS electoralDistrictParty LEFT JOIN\n    \n  (SELECT tallySheetVersionRow.*\n  FROM tallySheet, submission, template,templateRow, tallySheetVersionRow, workflowInstance,\n    (SELECT electoralDistrict.areaId AS electoralDistrictId, country.areaId AS countryId, country.electionId\n    FROM area AS country, area AS electoralDistrict, area_area AS country_electoralDistrict\n    WHERE\n      country.areaType = \"Country\" and electoralDistrict.areaType = \"ElectoralDistrict\"\n      and country_electoralDistrict.childAreaId = electoralDistrict.areaId\n      and country_electoralDistrict.parentAreaId = country.areaId) as areaMap\n  WHERE\n    submission.submissionId = tallySheet.tallySheetId\n    and submission.areaId = areaMap.electoralDistrictId\n    and template.templateId = tallySheet.templateId\n    and template.templateName = \"PE-R2\"\n    and tallySheetVersionRow.tallySheetVersionId = submission.latestVersionId\n    and templateRow.templateRowId = tallySheetVersionRow.templateRowId\n    and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId\n    and workflowInstance.status IN ('Verified', 'Ready to Certify', 'Certified', 'Released')\n    and templateRow.templateRowType IN (\n      'TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED',\n      'TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2',\n      'TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1'\n    )\n    \n    and areaMap.electionId=$rootElectionId\n  ) AS peR2TallySheetRow\n  ON electoralDistrictParty.partyId = peR2TallySheetRow.partyId\nGROUP BY\n  electoralDistrictParty.partyId\nORDER BY\n  seatCount DESC;\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Seat allocation per party ",
+      "transparent": true,
+      "type": "bargauge"
     },
     {
       "content": "# PE-27",
@@ -2715,15 +2788,15 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top 10 Parties",
+      "title": "Top 10 parties",
       "transparent": true,
       "type": "bargauge"
     },
     {
       "datasource": null,
       "gridPos": {
-        "h": 7,
-        "w": 9,
+        "h": 6,
+        "w": 10,
         "x": 9,
         "y": 15
       },
@@ -2798,7 +2871,7 @@
         "h": 2,
         "w": 6,
         "x": 9,
-        "y": 22
+        "y": 21
       },
       "id": 17,
       "mode": "markdown",
@@ -2845,7 +2918,7 @@
         "h": 2,
         "w": 9,
         "x": 15,
-        "y": 22
+        "y": 21
       },
       "id": 36,
       "mode": "markdown",
@@ -2886,7 +2959,7 @@
       "type": "text"
     }
   ],
-  "refresh": "10s",
+  "refresh": "30s",
   "schemaVersion": 22,
   "style": "dark",
   "tags": [],
@@ -2944,5 +3017,5 @@
   "variables": {
     "list": []
   },
-  "version": 4
+  "version": 6
 }
