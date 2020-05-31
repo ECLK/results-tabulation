@@ -27,6 +27,7 @@ import * as Settings from './settings'
 import ExtendedElectionDefault from "../extended-election-default";
 import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
 import {ElectionContext} from "../../../../services/election.provider";
+import Processing from "../../../processing";
 
 
 export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
@@ -37,35 +38,35 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
 
     getElectionHome() {
         const electionContext = useContext(ElectionContext);
-        const [subElections, setSubElections] = useState([]);
+        const [subElections, setSubElections] = useState(null);
 
         const {electionId, electionName, rootElectionId} = this.election;
         const voteTypes = ["Postal", "NonPostal"];
-        
+
         useEffect(() => {
             electionContext.getSubElections(electionId).then(setSubElections);
-        }, [electionId])
+        }, [electionId]);
 
         if (electionId === rootElectionId) {
             return <div className="page-content">
                 <h1>{electionName}</h1>
                 <Grid container spacing={3}>
                     <Grid item xs={6} className="election-grid">
-
                         <Grid item xs={12}><h2>District Elections</h2></Grid>
+                        <Processing showProgress={subElections === null}>
+                            <div className="election-list">
+                                {subElections !== null && subElections.map((election) => {
+                                    const {electionId, electionName} = election;
 
-                        <div className="election-list">
-                            {subElections.map((election) => {
-                                const {electionId, electionName} = election;
-
-                                return <Link
-                                    key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
-                                    className="election-list-item"
-                                >
-                                    {electionName}
-                                </Link>
-                            })}
-                        </div>
+                                    return <Link
+                                        key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
+                                        className="election-list-item"
+                                    >
+                                        {electionName}
+                                    </Link>
+                                })}
+                            </div>
+                        </Processing>
                     </Grid>
                     <Grid item xs={6} className="election-grid">
                         <Grid item xs={12}><h2>National Reports</h2></Grid>
