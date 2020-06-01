@@ -36,32 +36,25 @@ https://localhost:5000/ui/
 
 **Create an election**
 
-For testing, first a root token has to be taken. For doing this for the first time, comment out the `@authorize(required_roles=[ADMIN_ROLE])` line in `results-tabulation-api/api/ElectionApi.py`
+For testing locally, following root token can be used for the time.
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJodHRwOi8vd3NvMi5vcmcvY2xhaW1zL3JvbGUiOlsidGFiX2FkbWluIiwidGFiX2RhdGFfZWRpdG9yIiwidGFiX3BvbF9kaXZfcmVwX3ZpZXciLCJ0YWJfcG9sX2Rpdl9yZXBfdmVyZiIsInRhYl9lbGNfZGlzX3JlcF92aWV3IiwidGFiX2VsY19kaXNfcmVwX3ZlcmYiLCJ0YWJfbmF0X2Rpc19yZXBfdmlldyIsInRhYl9uYXRfZGlzX3JlcF92ZXJmIiwidGFiX2VjX2xlYWRlcnNoaXAiXSwiaHR0cDovL3dzbzIub3JnL2NsYWltcy91c2VybmFtZSI6ImphbmFrQGNhcmJvbi5zdXBlciIsImh0dHA6Ly93c28yLm9yZy9jbGFpbXMvYXJlYV9hc3NpZ25fYWRtaW4iOiJbXSIsImp0aSI6IjI5NjYxNWJjLTIzNWQtNGU5My1hMmQ5LWY0OTM5MDE1YWU3OCIsImlhdCI6MTU5MTAyNzgxNiwiZXhwIjoxNTkxMDMxNDE2fQ.7_gyvuSxq3Af7vEGP-jBZYqmLaCFCkiurAACAXfZXks
+```
+
+Then invoke the POST `/election` with five required csv files. csv files can be found in `results-tabulation-api/ext/ExtendedElection/<ext-election-type>/sample-config-data`
 
 eg:-
 
 ```
-# @authorize(required_roles=[ADMIN_ROLE])
-def getRootToken(electionId):
-    return get_root_token(electionId=electionId)
-```
-
-Invoke the GET `/system-testing/election/{electionId}/root-token` and retrive a root token. Insert any number for electionId for the first time.
-
-Then invoke the POST `/election` with four required csv files. csv files can be found in `results-tabulation-api/sample-data/test-4`
-
-eg:-
-
-```
-curl -X POST \
-  http://localhost:5000/election \
-  -H 'X-Jwt-Assertion: <jwt-token-retrived-above>' \
-  -H 'content-type: multipart/form-data' \
-  -F invalidVoteCategoriesDataset=@/home/dinuka/Documents/lsf/repo/results-tabulation-tallysheets/sample-data/test-4/invalid-vote-categories.csv \
-  -F partyCandidatesDataset=@/home/dinuka/Documents/lsf/repo/results-tabulation-tallysheets/sample-data/test-5/party-candidate.csv \
-  -F pollingStationsDataset=@/home/dinuka/Documents/lsf/repo/results-tabulation-tallysheets/sample-data/test-5/data.csv \
-  -F postalCountingCentresDataset=@/home/dinuka/Documents/lsf/repo/results-tabulation-tallysheets/sample-data/test-5/postal-data.csv \
-  -F 'electionName=Test Presidential Election'
+curl -X POST 'http://localhost:5000/election' \
+-H 'X-Jwt-Assertion: <jwt-token-above>' \
+-F 'pollingStationsDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/polling-stations-dataset.csv' \
+-F 'postalCountingCentresDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/postal-counting-centres-dataset.csv' \
+-F 'partyCandidatesDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/party-candidate-dataset.csv' \
+-F 'invalidVoteCategoriesDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/invalid-vote-categories-dataset.csv' \
+-F 'numberOfSeatsDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/number-of-seats-dataset.csv'\
+-F 'electionTemplateName=PARLIAMENT_ELECTION_2020' \
+-F 'electionName=PARLIAMENT ELECTION 2020' 
 ```
 
 **Run tests**
