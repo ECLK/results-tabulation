@@ -46,15 +46,15 @@ Then invoke the POST `/election` with five required csv files. csv files can be 
 eg:-
 
 ```
-curl -X POST 'http://localhost:5000/election' \
+curl -L -X POST 'http://localhost:5000/election' \
 -H 'X-Jwt-Assertion: <jwt-token-above>' \
 -F 'pollingStationsDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/polling-stations-dataset.csv' \
 -F 'postalCountingCentresDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/postal-counting-centres-dataset.csv' \
 -F 'partyCandidatesDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/party-candidate-dataset.csv' \
 -F 'invalidVoteCategoriesDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/invalid-vote-categories-dataset.csv' \
--F 'numberOfSeatsDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/number-of-seats-dataset.csv'\
+-F 'numberOfSeatsDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/number-of-seats-dataset.csv' \
 -F 'electionTemplateName=PARLIAMENT_ELECTION_2020' \
--F 'electionName=PARLIAMENT ELECTION 2020' 
+-F 'electionName=PARLIAMENT ELECTION 2020'
 ```
 
 **Run tests**
