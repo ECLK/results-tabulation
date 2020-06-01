@@ -1,4 +1,4 @@
-ß# Prerequisites (Mac)
+# Prerequisites (Mac)
 
 **Python**
 
