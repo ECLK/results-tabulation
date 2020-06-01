@@ -2,7 +2,9 @@
 
 ## Prerequisites
 
-[setup prerequisites](./prerequisites.html)
+* [Setup prerequisites](./prerequisites.html)
+
+* [Setup auth app ](https://github.com/ECLK/auth-app)
 
 ## Get Started
 
