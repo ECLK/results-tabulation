@@ -48,11 +48,11 @@ eg:-
 ```
 curl -L -X POST 'http://localhost:5000/election' \
 -H 'X-Jwt-Assertion: <jwt-token-above>' \
--F 'pollingStationsDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/polling-stations-dataset.csv' \
--F 'postalCountingCentresDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/postal-counting-centres-dataset.csv' \
--F 'partyCandidatesDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/party-candidate-dataset.csv' \
--F 'invalidVoteCategoriesDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/invalid-vote-categories-dataset.csv' \
--F 'numberOfSeatsDataset=@/Users/lsf/Documents/lsf/repo/results-tabulation-api/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/number-of-seats-dataset.csv' \
+-F 'pollingStationsDataset=@/Users/lsf/Documents/repo/results-tabulation/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/polling-stations-dataset.csv' \
+-F 'postalCountingCentresDataset=@/Users/Documents/lsf/repo/results-tabulation/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/postal-counting-centres-dataset.csv' \
+-F 'partyCandidatesDataset=@/Users/Documents/lsf/repo/results-tabulation/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/party-candidate-dataset.csv' \
+-F 'invalidVoteCategoriesDataset=@/Users/Documents/lsf/repo/results-tabulation/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/invalid-vote-categories-dataset.csv' \
+-F 'numberOfSeatsDataset=@/Users/lsf/Documents/repo/results-tabulation/results-tabulation-api/ext/ExtendedElection/ExtendedElectionParliamentaryElection2020/sample-config-data/2/number-of-seats-dataset.csv' \
 -F 'electionTemplateName=PARLIAMENT_ELECTION_2020' \
 -F 'electionName=PARLIAMENT ELECTION 2020'
 ```
