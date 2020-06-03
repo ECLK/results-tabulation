@@ -57,6 +57,12 @@ curl -L -X POST 'http://localhost:5000/election' \
 -F 'electionName=PARLIAMENT ELECTION 2020'
 ```
 
+**Get root token of an election**
+```
+curl -L -X GET 'http://localhost:5000/system-testing/election/<election-id>/root-token' \
+-H 'X-Jwt-Assertion: <jwt-token-above>'
+```
+
 **Run tests**
 
 `export ENV_CONFIG=./env/test.cfg && pytest tests`
