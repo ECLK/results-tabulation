@@ -270,7 +270,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                                     }}
                                 />
                             </TableCell>
-                            <TableCell align="center">
+                            <TableCell align="right">
                                 <TextField
                                     required
                                     variant="outlined"

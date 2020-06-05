@@ -51,7 +51,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
             return <div className="page-content">
                 <h1>{electionName}</h1>
                 <Grid container spacing={3}>
-                    <Grid item xs={6} className="election-grid">
+                    <Grid item xs={9} className="election-grid">
                         <Grid item xs={12}><h2>District Elections</h2></Grid>
                         <Processing showProgress={subElections === null}>
                             <div className="election-list">
@@ -68,7 +68,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                             </div>
                         </Processing>
                     </Grid>
-                    <Grid item xs={6} className="election-grid">
+                    <Grid item xs={3} className="election-grid">
                         <Grid item xs={12}><h2>National Reports</h2></Grid>
 
                         <Grid item xs={12}>
@@ -100,7 +100,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                             let tallySheetCodeLabels = [];
                             if (voteType === "Postal") {
                                 tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39];
-                                tallySheetCodeLabels = ["CE 201 PV (Postal)", "PE-27 PV (Postal)", "PE-39 (Postal)"];
+                                tallySheetCodeLabels = ["CE 201 PV (Postal)", "PE-27 PV (Postal)", "PE-39 PV (Postal)"];
                             } else if (voteType === "NonPostal") {
                                 tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39];
                                 tallySheetCodeLabels = ["CE 201", "PE-27", "PE-39"];
