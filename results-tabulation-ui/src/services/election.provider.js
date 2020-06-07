@@ -4,7 +4,7 @@ import {
     ENDPOINT_PATH_ELECTIONS_BY_ID,
     request
 } from "./tabulation-api";
-import {getMetaDataMap} from "./util";
+import {getMetaDataMap, getPartyMap} from "./util";
 
 export const ElectionContext = React.createContext([]);
 
@@ -16,15 +16,19 @@ export function ElectionProvider(props) {
     });
 
     const saveElectionToState = (election) => {
-        const {electionId, metaDataList = []} = election;
+        const {electionId, metaDataList = [], parties} = election;
         election.metaDataMap = getMetaDataMap(metaDataList);
+        election.partyMap = getPartyMap(parties);
+
+        // To avoid duplicated election fetches while state update wait
+        state.electionMap[electionId] = {...election};
 
         setState(prevState => {
             return {
                 ...prevState,
                 electionMap: {
                     ...prevState.electionMap,
-                    [electionId]: {...election}
+                    ...state.electionMap,
                 }
             }
         });
@@ -43,12 +47,15 @@ export function ElectionProvider(props) {
                 params: params
             });
 
+            // To avoid duplicated elections fetches while state update wait
+            state.electionList[paramsJsonString] = elections;
+
             setState(prevState => {
                 return {
                     ...prevState,
                     electionList: {
                         ...prevState.electionList,
-                        [paramsJsonString]: elections
+                        ...state.electionList
                     }
                 }
             });
@@ -85,7 +92,7 @@ export function ElectionProvider(props) {
 
             saveElectionToState(election);
         }
-        
+
         return election;
     };
 
