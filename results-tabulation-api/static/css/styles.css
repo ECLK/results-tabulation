@@ -45,6 +45,16 @@
     }
 }
 
+@media print {
+    @page {
+        size: A4;
+        margin-right: 9.5mm;
+        margin-left: 10mm;
+        margin-top: 10mm;
+        margin-bottom: 10mm;
+    }
+}
+
 /* common styles for all reports */
 .top {
     border-top: 1px solid #000 !important;
@@ -122,6 +132,28 @@
     padding: 1px;
 }
 
+
+.missing-value {
+    background-color: #ffa8a1;
+}
+
+.watermark {
+    font-size: 175px;
+    font-weight: bold;
+    opacity: 0.25;
+    transform: rotate(-45deg);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signatures {
+    margin-top: 50px;
+}
+
 /* styles for pre-41*/
 .pre-41 .top-thick {
     border-top: 4px solid #000 !important;
@@ -135,7 +167,7 @@
     border-bottom: 1px dotted #000;
 }
 
-.pre-41 .group {
+.pre-41 .group, .pe-r2 .group {
     display: table;
 }
 
@@ -185,4 +217,44 @@
 
 .CE-201-PV .bracket {
     font-family: 'Raleway', sans-serif;
+}
+
+/* PRE-30-ed*/
+.pre-30-ed .ed th, .ro2 th {
+    text-align: center;
+    height: 222px;
+
+}
+
+.pre-30-ed .ed th div, .ro2 .pd div {
+    -moz-transform: rotate(-90.0deg); /* FF3.5+ */
+    -o-transform: rotate(-90.0deg); /* Opera 10.5 */
+    -webkit-transform: rotate(-90.0deg); /* Saf3.1+, Chrome */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083); /* IE6,IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
+    margin-top: 124px;
+    white-space: nowrap;
+}
+
+/* PRE-all-ed*/
+.pre-all-ed .ed th {
+    text-align: center;
+    height: 194px;
+
+}
+
+.pre-all-ed .ed th div {
+    -moz-transform: rotate(-90.0deg); /* FF3.5+ */
+    -o-transform: rotate(-90.0deg); /* Opera 10.5 */
+    -webkit-transform: rotate(-90.0deg); /* Saf3.1+, Chrome */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083); /* IE6,IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
+    margin-top: 124px;
+    white-space: nowrap;
+}
+
+/* PE-R2 */
+.pe-r2 .group div {
+    display: table-cell;
+    vertical-align: top;
 }
