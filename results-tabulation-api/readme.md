@@ -12,6 +12,9 @@
 
 `source ./venv/bin/activate`
 
+*On Windows:* .\venv\Scripts\activate
+
+
 **Install Dependencies**
 
 `pip install -r requirements.txt`
@@ -23,6 +26,8 @@ Update `env/dev.cfg`
 **Create Database**
 
 `export ENV_CONFIG=./env/dev.cfg && python manage.py create_database`
+
+*On Windows: use* set *instead of* export
 
 **Upgrade the Database**
 
