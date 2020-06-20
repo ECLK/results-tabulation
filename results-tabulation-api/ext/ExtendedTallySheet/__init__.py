@@ -10,10 +10,11 @@ from exception import MethodNotAllowedException, UnauthorizedException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY, \
     MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED, MESSAGE_CODE_TALLY_SHEET_NO_LONGER_READABLE, \
     MESSAGE_CODE_TALLY_SHEET_NO_LONGER_EDITABLE, MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS, \
-    MESSAGE_CODE_TALLY_SHEET_INCOMPLETE
+    MESSAGE_CODE_TALLY_SHEET_INCOMPLETE, \
+    MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_UNLOCKED_WHILE_HAVING_VERIFIED_PARENT_SUMMARY_SHEETS
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_EDIT, \
-    WORKFLOW_ACTION_TYPE_SUBMIT
+    WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED, \
     WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED
 
@@ -141,6 +142,28 @@ class ExtendedTallySheet:
         if not has_role_based_access(self.tallySheet, workflow_action.actionType):
             UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName),
                                   code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED)
+
+        if workflow_action.actionType == WORKFLOW_ACTION_TYPE_REQUEST_CHANGES:
+            from orm.entities.Submission import TallySheet
+            from orm.entities.Submission.TallySheet import TallySheetTallySheetModel
+
+            extended_election = self.tallySheet.submission.election.get_extended_election()
+
+            verified_parent_tally_sheets = db.session.query(
+                TallySheet.Model.tallySheetId
+            ).filter(
+                TallySheetTallySheetModel.childTallySheetId == self.tallySheet.tallySheetId,
+                TallySheet.Model.tallySheetId == TallySheetTallySheetModel.parentTallySheetId,
+                WorkflowInstance.Model.workflowInstanceId == TallySheet.Model.workflowInstanceId,
+                WorkflowInstance.Model.status.in_(
+                    extended_election.tally_sheet_verified_statuses_list()
+                )
+            ).all()
+
+            if len(verified_parent_tally_sheets) > 0:
+                raise MethodNotAllowedException(
+                    message="Cannot request changes since the data from this report has been already aggregated in verified summary reports.",
+                    code=MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_UNLOCKED_WHILE_HAVING_VERIFIED_PARENT_SUMMARY_SHEETS)
 
     def on_workflow_tally_sheet_version(self, workflow_action, tallySheetVersionId, content=None):
         from orm.entities import SubmissionVersion

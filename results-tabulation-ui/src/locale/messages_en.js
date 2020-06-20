@@ -53,6 +53,7 @@ export const API_MESSAGES_EN = {
     4004: "Submission irrelevant version cannot be mapped",
     4005: "Workflow action is now allowed.",
     4006: "Tally sheet is not allowed to be notified.",
-    4007: "Tally sheet is not allowed to be release."
+    4007: "Tally sheet is not allowed to be release.",
+    4008: "Cannot request changes since the data from this report has been already aggregated in verified summary reports."
 
 }
