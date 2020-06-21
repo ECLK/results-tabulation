@@ -33,7 +33,7 @@ export const API_MESSAGES_EN = {
     1008: "Workflow action is not authorized",
 
     // Forbidden
-    2000: "Seat calculation cannot be performed on zero votes",
+    2000: "PE-R2 cannot be viewed unless PE-CE-RO-V2 is verified with a total of votes of non zero.",
     2001: "Proof requires at least one evidence, please upload.",
     2002: "No more evidence is accepted to this proof",
     2003: "PE-21 cannot be processed before PE-R2 is completed and verified.",
