@@ -39,3 +39,21 @@
 5.7 or above
 
 -- TBA --
+
+# Prerequisites (Windows)
+
+**Python**
+
+3.6 or above
+
+**Virtual Environment**
+
+`pip install --user virtualenv`
+
+`virtualenv venv`
+
+**My SQL**
+
+5.7 or above
+
+*If using MySQL with XAMPP, the MariaDB version should be >= 10.2.0*

@@ -12,6 +12,8 @@ from flask_caching import Cache
 from connexion.exceptions import ProblemException
 import json
 
+from util import convert_image_to_data_uri
+
 db = SQLAlchemy()
 ma = Marshmallow()
 
@@ -25,6 +27,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Create the Connexion application instance
 connex_app = connexion.App(__name__, specification_dir=basedir)
+
+# For html reports to get a data url to a static file
+connex_app.app.jinja_env.globals.update(convert_image_to_data_uri=convert_image_to_data_uri)
 
 
 def render_exception(exception):
