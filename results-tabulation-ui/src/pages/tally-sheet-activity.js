@@ -11,7 +11,7 @@ import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
 import PreviewTallySheetProofFileButton from "../components/tally-sheet/tally-sheet-proof-file-preview-button";
-import Button from "@material-ui/core/Button";
+import { Link } from 'react-router-dom';
 import {Check, MoveToInbox, Publish, Save, TurnedIn, VerifiedUser, Visibility} from '@material-ui/icons';
 import TallySheetStatusDescription from "../components/tally-sheet/tally-sheet-status-description";
 
@@ -107,18 +107,18 @@ export default function TallySheetActivityView({tallySheetId, history, election,
                                 return <li key={workflowInstanceLogId} className="activity-row">
                                     <div className="activity-block"><ActionIcon actionType={actionType}/></div>
                                     <div className="activity-block activity-details">
-                                        <strong>{actionName}</strong> by {createdBy} @ {createdAt}
-                                        <Button className="activity-tallysheet-link"
-                                                onClick={() => {
-                                                    history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId))
-                                                }}
+                                        <strong>{actionName}</strong> by {createdBy} @ {createdAt}&nbsp;
+                                        <Link className="activity-tallysheet-link"
+                                                to={
+                                                    PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
+                                                }
                                                 style={{
                                                     color: "#5079c8",
                                                     textDecoration: "underline"
                                                 }}
                                         >
                                             {tallySheetVersionId}
-                                        </Button>
+                                        </Link>
                                         <ul>
                                             {proof.scannedFiles.map(({fileId, fileName}) => {
                                                 return <li className="activity-proof">
