@@ -1,8 +1,54 @@
-version: '2.1'
-
+version: '3.7'
 services:
-  results-tabulation-tallysheets:
-    image: results-tabulation-tallysheets
-    build: .
+
+  # ----------------------------------- Mysql -------------------------------------------
+  mysql:
+    image: mysql:5.7.20
     ports:
-      - 3000:3000
+      - "33306:3306"
+    hostname: "mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+    volumes:
+      - ./database_scripts/init:/docker-entrypoint-initdb.d
+      - ./database_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-p123456"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', "--sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"]
+
+  # ----------------------------------- EC APIM -------------------------------------------
+  # Reference : https://github.com/osixia/docker-openldap#quick-start
+  ecapim:
+    image: lsflk/ecapm:latest
+    container_name: ecapim
+    hostname: "ecapim"
+    environment:
+      - DOMAIN=${DOMAIN}
+    ports:
+      - "10397:10397"
+      - "11111:11111"
+      - "5672:5672"
+      - "7611:7611"
+      - "7711:7711"
+      - "8243:8243"
+      - "8280:8280"
+      - "9099:9099"
+      - "9443:9443"
+      - "9611:9611"
+      - "9711:9711"
+      - "9763:9763"
+      - "9999:9999"
+
+
+  # ----------------------------------- AuthApp -------------------------------------------
+  authapp:
+    image: lsflk/authapp
+    container_name: authapp
+    ports:
+      - "3001:3001"
+    hostname: "authapp"
+    links:
+      - ecapim
