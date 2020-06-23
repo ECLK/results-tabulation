@@ -209,6 +209,7 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
                                         style: {
                                             height: '10px'
                                         },
+                                        maxLength: 100
                                     }}
                                 />
                             </TableCell>
