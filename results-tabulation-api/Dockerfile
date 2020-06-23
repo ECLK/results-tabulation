@@ -22,6 +22,7 @@ RUN apt-get install -y wkhtmltopdf
 # Install requirements
 RUN pip install -r requirements.txt
 RUN export ENV_CONFIG=./env/dev.cfg
+RUN python manage.py create_database; exit 0
 RUN python manage.py db upgrade; exit 0
 
 CMD [ "python", "index.py" ]
