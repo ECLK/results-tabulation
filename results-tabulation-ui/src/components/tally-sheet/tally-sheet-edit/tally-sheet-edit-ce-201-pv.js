@@ -399,6 +399,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                                             style: {
                                                 height: '10px'
                                             },
+                                            maxLength: 100
                                         }}
                                     />
                                 </TableCell>
@@ -546,6 +547,7 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
                                     style: {
                                         height: '10px'
                                     },
+                                    maxLength: 100
                                 }}
                             />
                         </TableCell>

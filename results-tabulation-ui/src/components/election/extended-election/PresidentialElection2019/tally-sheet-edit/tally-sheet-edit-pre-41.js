@@ -260,6 +260,7 @@ export default function TallySheetEdit_PRE_41({history, election, tallySheet, me
                                         style: {
                                             height: '10px'
                                         },
+                                        maxLength: 100
                                     }}
                                 />
                             </TableCell>
