@@ -7,6 +7,7 @@ from auth import has_role_based_access
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT, \
     MESSAGE_CODE_PDF_SERVICE_ENTRY_CREATION_FAILED, MESSAGE_CODE_PDF_SERVICE_FETCH_FAILED
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE
+from external_services.pdf_service import html_to_pdf
 from orm.entities.Election import InvalidVoteCategory
 from orm.entities.IO import File
 from orm.entities.Template import TemplateRowModel
@@ -178,36 +179,18 @@ class TallySheetVersionModel(db.Model):
         tallySheetVersion = cls.get_by_id(tallySheetId, tallySheetVersionId)
 
         if tallySheetVersion.exportedPdfFileId is None:
-            pdf_service_entry_response = requests.request(
-                method="POST",
-                url="%s/generate" % connex_app.app.config['PDF_SERVICE_URL'],
-                headers={'Content-Type': 'application/json'},
-                data=json.dumps({"html": str(tallySheet.html(tallySheetVersionId=tallySheetVersionId))})
+            tally_sheet_version_pdf_content = html_to_pdf(
+                html=str(tallySheet.html(tallySheetVersionId=tallySheetVersionId))
             )
-
-            if pdf_service_entry_response.status_code != 200:
-                raise InternalServerErrorException(
-                    message="Tally sheet version PDF creation failed (tallySheetVersionId=%d)" % tallySheetVersionId,
-                    code=MESSAGE_CODE_PDF_SERVICE_ENTRY_CREATION_FAILED
-                )
-
-            pdf_response = requests.get(url=pdf_service_entry_response.json()["url"])
-
-            if pdf_response.status_code != 200:
-                raise InternalServerErrorException(
-                    message="Tally sheet version PDF fetch failed (tallySheetVersionId=%d)" % tallySheetVersionId,
-                    code=MESSAGE_CODE_PDF_SERVICE_FETCH_FAILED
-                )
-
-            exportedPdfFile = File.create(
-                fileMimeType=pdf_response.headers['content-type'],
-                fileContentLength=pdf_response.headers['content-length'],
-                fileContentType=pdf_response.headers['content-type'],
-                fileContent=pdf_response.content,
+            tally_sheet_version_pdf_file = File.create(
+                fileMimeType="application/pdf",
+                fileContentLength=len(tally_sheet_version_pdf_content),
+                fileContentType="application/pdf",
+                fileContent=tally_sheet_version_pdf_content,
                 fileName="%d-%d" % (tallySheetId, tallySheetVersionId)
             )
 
-            tallySheetVersion.exportedPdfFileId = exportedPdfFile.fileId
+            tallySheetVersion.exportedPdfFileId = tally_sheet_version_pdf_file.fileId
 
             db.session.add(tallySheetVersion)
             db.session.flush()
