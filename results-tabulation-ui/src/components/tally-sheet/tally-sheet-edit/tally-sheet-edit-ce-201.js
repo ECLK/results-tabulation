@@ -23,7 +23,7 @@ import {useTallySheetEdit} from "./index";
 import Processing from "../../processing";
 import {getAreas} from "../../../services/tabulation-api";
 
-export default function TallySheetEdit_CE_201({history, queryString, election, tallySheet, messages}) {
+export default function TallySheetEdit_CE_201({history, queryString, election, tallySheet}) {
     const {electionId} = election;
 
     const [tallySheetRows, setTallySheetRows] = useState({
@@ -223,7 +223,6 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
     };
 
     const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
-        messages,
         history,
         election,
         tallySheet,

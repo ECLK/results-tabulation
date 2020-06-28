@@ -11,7 +11,7 @@ import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PE_4({history, queryString, election, tallySheet, messages}) {
+export default function TallySheetEdit_PE_4({history, queryString, election, tallySheet}) {
     const [candidateWiseFirstPreferenceCountRows, setCandidateWiseFirstPreferenceCountRows] = useState([]);
     const [firstPreferenceCountRow, setFirstPreferenceCountRow] = useState({"numValue": 0});
 
@@ -79,7 +79,6 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
     };
 
     const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
-        messages,
         history,
         election,
         tallySheet,

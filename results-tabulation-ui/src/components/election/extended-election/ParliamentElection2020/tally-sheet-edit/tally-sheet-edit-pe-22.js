@@ -11,7 +11,7 @@ import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PE_22({history, election, tallySheet, messages}) {
+export default function TallySheetEdit_PE_22({history, election, tallySheet}) {
     const [invalidVoteCategoryCountRows, setInvalidVoteCategoryCountRows] = useState([]);
     const [parties, setParties] = useState([]);
     const [partyWiseInvalidVoteCategoryCountRows, setPartyWiseInvalidVoteCategoryCountRows] = useState([]);
@@ -160,7 +160,6 @@ export default function TallySheetEdit_PE_22({history, election, tallySheet, mes
     };
 
     const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
-        messages,
         history,
         election,
         tallySheet,

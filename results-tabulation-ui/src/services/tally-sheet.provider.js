@@ -6,6 +6,7 @@ import {
     ENDPOINT_PATH_TALLY_SHEET_VERSION_BY_ID,
     ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML,
     ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML,
+    ENDPOINT_PATH_TALLY_SHEET_VERSION_PDF,
     ENDPOINT_PATH_TALLY_SHEET_WORKFLOW, ENDPOINT_PATH_TALLY_SHEET_WORKFLOW_LOGS,
     ENDPOINT_PATH_TALLY_SHEETS,
     ENDPOINT_PATH_TALLY_SHEETS_BY_ID,
@@ -19,7 +20,7 @@ export const TallySheetContext = React.createContext([]);
 
 export function TallySheetProvider(props) {
     const electionContext = useContext(ElectionContext);
-    
+
     const [state, setState] = useState({
         tallySheetMap: {},
         tallySheetProofFileMap: {}
@@ -186,6 +187,23 @@ export function TallySheetProvider(props) {
 
         return file;
     }
+    
+    async function fetchTallySheetVersionPdfDataUrl(tallySheetId, tallySheetVersionId = null) {
+        if (!tallySheetVersionId) {
+            tallySheetVersionId = state.tallySheetMap[tallySheetId].latestVersionId
+        }
+        
+        const fileArrayBuffer = await request({
+            url: ENDPOINT_PATH_TALLY_SHEET_VERSION_PDF(tallySheetId, tallySheetVersionId),
+            method: 'get',
+            responseType: 'arraybuffer'
+        });
+
+        const fileBlob = new Blob([fileArrayBuffer], {type: "application/pdf"});
+        const dataUrl = URL.createObjectURL(fileBlob);
+
+        return dataUrl
+    }
 
     async function getTallySheetProofFileDataUrl(tallySheetId, fileId) {
         let file = await getTallySheetProofFile(tallySheetId, fileId);
@@ -235,6 +253,7 @@ export function TallySheetProvider(props) {
             executeTallySheetWorkflow,
             fetchTallySheetVersionHtml,
             fetchTallySheetVersionLetterHtml,
+            fetchTallySheetVersionPdfDataUrl,
             saveTallySheetVersion,
             getTallySheetById,
             getTallySheetProofFile,

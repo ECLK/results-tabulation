@@ -1,25 +1,30 @@
-from typing import Set
-
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
-from app import db
+from app import db, connex_app
 from sqlalchemy.orm import relationship
 
 from auth import has_role_based_access
-from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT, \
+    MESSAGE_CODE_PDF_SERVICE_ENTRY_CREATION_FAILED, MESSAGE_CODE_PDF_SERVICE_FETCH_FAILED
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE
+from external_services.pdf_service import html_to_pdf
 from orm.entities.Election import InvalidVoteCategory
+from orm.entities.IO import File
 from orm.entities.Template import TemplateRowModel
 from orm.entities import SubmissionVersion, TallySheetVersionRow, Area, Candidate, Party, Election
 from orm.entities.Submission import TallySheet
-from exception import NotFoundException, UnauthorizedException
+from exception import NotFoundException, UnauthorizedException, InternalServerErrorException
 from flask import request
+import requests
+import json
 
 
 class TallySheetVersionModel(db.Model):
     __tablename__ = 'tallySheetVersion'
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
                                     primary_key=True)
+    exportedPdfFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId), nullable=True)
+
     isComplete = db.Column(db.Boolean, default=True, nullable=False)
     submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[tallySheetVersionId])
 
@@ -169,6 +174,30 @@ class TallySheetVersionModel(db.Model):
         return tallySheetVersion
 
     @classmethod
+    def get_exported_pdf_file_id(cls, tallySheetId, tallySheetVersionId):
+        tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+        tallySheetVersion = cls.get_by_id(tallySheetId, tallySheetVersionId)
+
+        if tallySheetVersion.exportedPdfFileId is None:
+            tally_sheet_version_pdf_content = html_to_pdf(
+                html=str(tallySheet.html(tallySheetVersionId=tallySheetVersionId))
+            )
+            tally_sheet_version_pdf_file = File.create(
+                fileMimeType="application/pdf",
+                fileContentLength=len(tally_sheet_version_pdf_content),
+                fileContentType="application/pdf",
+                fileContent=tally_sheet_version_pdf_content,
+                fileName="%d-%d" % (tallySheetId, tallySheetVersionId)
+            )
+
+            tallySheetVersion.exportedPdfFileId = tally_sheet_version_pdf_file.fileId
+
+            db.session.add(tallySheetVersion)
+            db.session.flush()
+
+        return tallySheetVersion.exportedPdfFileId
+
+    @classmethod
     def get_all(cls, tallySheetId, tallySheetCode=None):
         query = Model.query.filter(Model.tallySheetId == tallySheetId)
 
@@ -182,6 +211,7 @@ Model = TallySheetVersionModel
 
 create = TallySheetVersionModel.create
 get_by_id = TallySheetVersionModel.get_by_id
+get_exported_pdf_file_id = TallySheetVersionModel.get_exported_pdf_file_id
 get_all = TallySheetVersionModel.get_all
 
 

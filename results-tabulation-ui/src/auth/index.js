@@ -88,12 +88,7 @@ export class ProtectedRoute extends Component {
             return <Route
                 {...this.props}
                 component={(props) => {
-                    return <MessagesConsumer>
-                        {(messages) => {
-                            return <this.props.component {...props} messages={messages}/>
-                        }}
-
-                    </MessagesConsumer>
+                    return <this.props.component {...props}/>
                 }}
             />
         }
@@ -121,7 +116,7 @@ function handleErrorsAndThen({processing, error, then}) {
 
 function LoadElectionAndThen(props) {
     const electionContext = useContext(ElectionContext);
-    
+
     const {then, electionId} = props;
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);

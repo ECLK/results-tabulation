@@ -21,7 +21,7 @@ import {useTallySheetEdit} from "./index";
 import Processing from "../../processing";
 import Moment from "moment";
 
-export default function TallySheetEdit_CE_201_PV({history, queryString, election, tallySheet, messages}) {
+export default function TallySheetEdit_CE_201_PV({history, queryString, election, tallySheet}) {
 
     const DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS = "DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_PV_PACKETS";
     const DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS = "DERIVED_TALLY_SHEET_ROW_TYPE_NUMBER_OF_VALID_BALLOT_PAPERS";
@@ -246,7 +246,6 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
     }
 
     const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
-        messages,
         history,
         election,
         tallySheet,

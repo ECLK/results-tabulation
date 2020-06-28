@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 import {Check, MoveToInbox, Publish, Save, TurnedIn, VerifiedUser, Visibility} from '@material-ui/icons';
 import TallySheetStatusDescription from "../components/tally-sheet/tally-sheet-status-description";
 
-export default function TallySheetActivityView({tallySheetId, history, election, messages}) {
+export default function TallySheetActivityView({tallySheetId, history, election}) {
     const {electionId, rootElection, voteType} = election;
 
     const tallySheetContext = useContext(TallySheetContext);

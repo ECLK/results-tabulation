@@ -11,8 +11,14 @@ export default function PrintReportButton(props) {
         return await tallySheetContext.fetchTallySheetVersionHtml(tallySheetId, tallySheetVersionId);
     };
 
+    const fetchDataUrl = async () => {
+        const {tallySheetId, tallySheetVersionId} = props;
+
+        return await tallySheetContext.fetchTallySheetVersionPdfDataUrl(tallySheetId, tallySheetVersionId);
+    };
+
     return <FetchHtmlAndPrintButton
         {...props}
-        fetchHtml={fetchHtml}
+        fetchDataUrl={fetchDataUrl}
     />
 }

@@ -15,7 +15,7 @@ import Error from "../components/error";
 export default function ReportView(props) {
     const tallySheetContext = useContext(TallySheetContext);
 
-    const {history, election, messages} = props;
+    const {history, election} = props;
     const {electionId, rootElection, voteType} = election;
     const tallySheet = tallySheetContext.getTallySheetById(props.tallySheetId);
 

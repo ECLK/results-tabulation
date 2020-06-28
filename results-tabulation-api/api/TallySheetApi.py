@@ -1,19 +1,13 @@
-import connexion
-
 from api import ProofApi, FileApi
 from app import db
-from auth import authorize, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, EC_LEADERSHIP_ROLE
-from constants.AUTH_CONSTANTS import ALL_ROLES, EC_LEADERSHIP_WRITE_ROLE
+from auth import authorize
+from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
 from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities.Submission import TallySheet
-from orm.entities.Submission.TallySheet import TallySheetModel
-from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.enums import FileTypeEnum
 from schemas import TallySheetSchema, TallySheetSchema_1, WorkflowInstanceLogSchema
-from util import RequestBody, get_paginated_query, result_push_service
+from util import RequestBody
 
 
 @authorize(required_roles=ALL_ROLES)

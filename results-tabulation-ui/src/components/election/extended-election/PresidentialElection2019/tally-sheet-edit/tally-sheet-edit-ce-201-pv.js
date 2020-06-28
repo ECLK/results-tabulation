@@ -11,7 +11,7 @@ import TextField from "@material-ui/core/TextField";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_CE_201_PV({history, queryString, election, tallySheet, messages}) {
+export default function TallySheetEdit_CE_201_PV({history, queryString, election, tallySheet}) {
     const [countingCentreSummary, setCountingCentreSummary] = useState({
         numberOfACoversRejected: 0,
         numberOfBCoversRejected: 0,
@@ -85,7 +85,6 @@ export default function TallySheetEdit_CE_201_PV({history, queryString, election
     };
 
     const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
-        messages,
         history,
         election,
         tallySheet,

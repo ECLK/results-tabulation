@@ -11,7 +11,7 @@ import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PRE_41({history, election, tallySheet, messages}) {
+export default function TallySheetEdit_PRE_41({history, election, tallySheet}) {
     const [candidateWiseCounts, setCandidateWiseCounts] = useState({});
     const [rejectedVoteCount, setRejectedVoteCount] = useState(0);
     const [totalValidVoteCount, setTotalValidVoteCount] = useState(0);
@@ -124,7 +124,6 @@ export default function TallySheetEdit_PRE_41({history, election, tallySheet, me
     };
 
     const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
-        messages,
         history,
         election,
         tallySheet,

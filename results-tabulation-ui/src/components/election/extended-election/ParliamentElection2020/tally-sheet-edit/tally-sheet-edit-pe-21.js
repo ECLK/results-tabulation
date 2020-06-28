@@ -17,7 +17,7 @@ import {
     TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 } from "../TALLY_SHEET_ROW_TYPE";
 
-export default function TallySheetEdit_PE_21({history, election, tallySheet, messages}) {
+export default function TallySheetEdit_PE_21({history, election, tallySheet}) {
 
     const [tallySheetRows, setTallySheetRows] = useState({
         [TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED]: {
@@ -209,7 +209,6 @@ export default function TallySheetEdit_PE_21({history, election, tallySheet, mes
     };
 
     const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
-        messages,
         history,
         election,
         tallySheet,

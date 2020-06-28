@@ -1,5 +1,4 @@
 from app import db
-from auth import authorize, EC_LEADERSHIP_ROLE
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_PROOF_NOT_FOUND
 from util import RequestBody, get_paginated_query

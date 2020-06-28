@@ -1,4 +1,6 @@
 from flask import Response
+
+from api import FileApi
 from app import db
 from auth import authorize
 from constants.AUTH_CONSTANTS import ALL_ROLES
@@ -81,6 +83,31 @@ def html(tallySheetId, tallySheetVersionId):
         )
 
     return Response(tally_sheet.html(tallySheetVersionId=tallySheetVersionId), mimetype='text/html')
+
+
+@authorize(required_roles=ALL_ROLES)
+def pdf(tallySheetId, tallySheetVersionId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException(
+            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
+
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tallySheetId,
+                                                      tallySheetVersionId=tallySheetVersionId)
+
+    if tally_sheet_version is None:
+        raise NotFoundException(
+            message="Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId,
+            code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
+        )
+
+    return FileApi.get_download_file(fileId=tally_sheet_version.get_exported_pdf_file_id(
+        tallySheetId=tallySheetId,
+        tallySheetVersionId=tallySheetVersionId
+    ))
 
 
 @authorize(required_roles=ALL_ROLES)

@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {MESSAGES_EN} from "../../../../../locale/messages_en";
-import {MESSAGE_TYPES} from "../../../../../services/messages.provider";
+import {MESSAGE_TYPES, MessagesContext} from "../../../../../services/messages.provider";
 import {PATH_ELECTION_TALLY_SHEET_LIST} from "../../../../../App";
 import {isNumeric, processNumericValue} from "../../../../../utils";
 import Table from "@material-ui/core/Table";
@@ -13,7 +13,9 @@ import TextField from "@material-ui/core/TextField";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PRE_34_CO({history, queryString, election, tallySheet, messages}) {
+export default function TallySheetEdit_PRE_34_CO({history, queryString, election, tallySheet}) {
+    const messagesContext = useContext(MessagesContext);
+    
     const {tallySheetCode} = tallySheet;
     const {electionId, voteType} = election;
     const [candidateIds, setCandidateIds] = useState([]);
@@ -25,7 +27,7 @@ export default function TallySheetEdit_PRE_34_CO({history, queryString, election
         const candidateIds = [];
 
         if (qualifiedParties.length === 0) {
-            messages.push({
+            messagesContext.push({
                 messageTitle: "Error",
                 messageBody: MESSAGES_EN.error_preferences_not_enabled_yet,
                 messageType: MESSAGE_TYPES.ERROR
@@ -163,7 +165,6 @@ export default function TallySheetEdit_PRE_34_CO({history, queryString, election
     };
 
     const {processing, processingLabel, saved, getActionsBar} = useTallySheetEdit({
-        messages,
         history,
         election,
         tallySheet,
