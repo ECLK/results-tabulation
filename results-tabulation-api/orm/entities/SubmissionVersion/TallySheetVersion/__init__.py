@@ -4,14 +4,15 @@ from app import db, connex_app
 from sqlalchemy.orm import relationship
 
 from auth import has_role_based_access
-from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT, \
+    MESSAGE_CODE_PDF_SERVICE_ENTRY_CREATION_FAILED, MESSAGE_CODE_PDF_SERVICE_FETCH_FAILED
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE
 from orm.entities.Election import InvalidVoteCategory
 from orm.entities.IO import File
 from orm.entities.Template import TemplateRowModel
 from orm.entities import SubmissionVersion, TallySheetVersionRow, Area, Candidate, Party, Election
 from orm.entities.Submission import TallySheet
-from exception import NotFoundException, UnauthorizedException
+from exception import NotFoundException, UnauthorizedException, InternalServerErrorException
 from flask import request
 import requests
 import json
@@ -185,12 +186,18 @@ class TallySheetVersionModel(db.Model):
             )
 
             if pdf_service_entry_response.status_code != 200:
-                raise Exception("PDF service entry creation failed")
+                raise InternalServerErrorException(
+                    message="Tally sheet version PDF creation failed (tallySheetVersionId=%d)" % tallySheetVersionId,
+                    code=MESSAGE_CODE_PDF_SERVICE_ENTRY_CREATION_FAILED
+                )
 
             pdf_response = requests.get(url=pdf_service_entry_response.json()["url"])
 
             if pdf_response.status_code != 200:
-                raise Exception("PDF service fetch failed")
+                raise InternalServerErrorException(
+                    message="Tally sheet version PDF fetch failed (tallySheetVersionId=%d)" % tallySheetVersionId,
+                    code=MESSAGE_CODE_PDF_SERVICE_FETCH_FAILED
+                )
 
             exportedPdfFile = File.create(
                 fileMimeType=pdf_response.headers['content-type'],
