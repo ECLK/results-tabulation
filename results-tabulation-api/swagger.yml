@@ -1236,6 +1236,58 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+
+  /tally-sheet/{tallySheetId}/version/{tallySheetVersionId}/pdf:
+    get:
+      tags:
+        - Tally Sheet Version Export
+      summary: Get by ID
+      operationId: api.TallySheetVersionApi.pdf
+      parameters:
+        - name: tallySheetId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+        - name: tallySheetVersionId
+          required: true
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /tally-sheet/{tallySheetId}/empty/html:
     get:
       tags:

@@ -48,28 +48,43 @@ def get_by_id(fileId):
     return result
 
 
+def create(fileName, fileContent, fileContentType, fileContentLength, fileMimeType,
+                         fileType=FileTypeEnum.Any):
+    file = Model(
+        fileType=fileType,
+        fileMimeType=fileMimeType,
+        fileContentLength=fileContentLength,
+        fileContentType=fileContentType,
+        fileContent=fileContent,
+        fileName=fileName,
+        fileStampId=Stamp.create().stampId
+    )
+
+    db.session.add(file)
+    db.session.flush()
+
+    return file
+
+
 def createFromFileSource(fileSource, fileType=FileTypeEnum.Any):
     # TODO validate the
     #   - file type
     #   - file size
     #         etc.
 
-    file_stamp = Stamp.create()
-
     if fileType is None:
         fileType = FileTypeEnum.Any
 
-    result = Model(
+    file = create(
         fileType=fileType,
         fileMimeType=fileSource.mimetype,
         fileContentLength=fileSource.content_length,
         fileContentType=fileSource.content_type,
         fileContent=fileSource.stream.read(),
-        fileName=fileSource.filename,
-        fileStampId=file_stamp.stampId
+        fileName=fileSource.filename
     )
 
-    db.session.add(result)
+    db.session.add(file)
     db.session.flush()
 
-    return result
+    return file
