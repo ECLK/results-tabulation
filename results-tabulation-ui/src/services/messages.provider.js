@@ -50,7 +50,7 @@ export function MessagesProvider(props) {
 
 
     return <MessagesContext.Provider
-        value={{push, messages: state.messagesList.map((messageId) => state.messagesMap[messageId])}}
+        value={{push}}
     >
         {state.messagesList.map((messageId) => {
             const message = state.messagesMap[messageId];

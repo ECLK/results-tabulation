@@ -8,7 +8,7 @@ import {TabulationTallySheetPage} from "../index";
 import {TallySheetContext} from "../../services/tally-sheet.provider";
 
 
-export default function DataEntryEdit({history, queryString, election, tallySheetId, messages}) {
+export default function DataEntryEdit({history, queryString, election, tallySheetId}) {
     const tallySheetContext = useContext(TallySheetContext);
     const tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
 
@@ -26,7 +26,7 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
     ];
 
     function getEditorJsx() {
-        const props = {history, queryString, election, tallySheet, messages};
+        const props = {history, queryString, election, tallySheet};
         const extendedElection = ExtendedElection(election);
 
         return <extendedElection.TallySheetEditComponent {...props}/>

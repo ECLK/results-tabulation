@@ -1,6 +1,6 @@
 import React, {useEffect, useState, Component, useContext} from "react";
 import {MESSAGES_EN} from "../../../locale/messages_en";
-import {MESSAGE_TYPES} from "../../../services/messages.provider";
+import {MESSAGE_TYPES, MessagesContext} from "../../../services/messages.provider";
 import {
     TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_CE_201_PV
 } from "../constants/TALLY_SHEET_CODE";
@@ -42,8 +42,9 @@ export default class TallySheetEdit extends Component {
 
 export function useTallySheetEdit(props) {
     const tallySheetContext = useContext(TallySheetContext);
+    const messagesContext = useContext(MessagesContext);
 
-    const {messages, history, election, setTallySheetContent, validateTallySheetContent, getTallySheetRequestBody} = props;
+    const {history, election, setTallySheetContent, validateTallySheetContent, getTallySheetRequestBody} = props;
     const [processing, setProcessing] = useState(true);
     const [tallySheetVersion, setTallySheetVersion] = useState(null);
     const [tallySheet, setTallySheet] = useState(props.tallySheet);
@@ -61,7 +62,7 @@ export function useTallySheetEdit(props) {
                 await setTallySheetContent(tallySheet.latestVersion);
                 setProcessing(false);
             } catch (error) {
-                messages.push({
+                messagesContext.push({
                     messageTitle: "Error",
                     messageBody: MESSAGES_EN.error_tallysheet_not_reachable,
                     messageType: MESSAGE_TYPES.ERROR
@@ -94,17 +95,15 @@ export function useTallySheetEdit(props) {
                 setTallySheetVersion(tallySheet.latestVersion);
             } catch (e) {
                 const errorCode = getErrorCode(e);
-                if (errorCode) {
-                    messages.push({
-                        messageTitle: "Error",
-                        messageBody: getErrorMessage(errorCode),
-                        messageType: MESSAGE_TYPES.ERROR
-                    });
-                }
+                messagesContext.push({
+                    messageTitle: "Error",
+                    messageBody: getErrorMessage(errorCode),
+                    messageType: MESSAGE_TYPES.ERROR
+                });
             }
             setProcessing(false);
         } else {
-            messages.push({
+            messagesContext.push({
                 messageTitle: "Error",
                 messageBody: MESSAGES_EN.error_input,
                 messageType: MESSAGE_TYPES.ERROR

@@ -1,8 +1,13 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import Button from "@material-ui/core/Button";
+import {getErrorCode, getErrorMessage} from "../../utils";
+import {MESSAGE_TYPES, MessagesContext} from "../../services/messages.provider";
+import {TallySheetContext} from "../../services/tally-sheet.provider";
 
 export default function FetchHtmlAndPrintButton(props) {
     const {fetchHtml, onClick, fetchDataUrl} = props;
+
+    const messagesContext = useContext(MessagesContext);
 
     const {tallySheetId, tallySheetVersionId, children} = props;
     const [printJobsList, setPrintJobsList] = useState([]);
@@ -39,27 +44,35 @@ export default function FetchHtmlAndPrintButton(props) {
             return {...printJobsMap, [printJob.id]: printJob}
         });
 
-        if (fetchHtml) {
-            const srcDoc = await fetchHtml();
-            await setPrintJobsMap((printJobsMap) => {
-                return {
-                    ...printJobsMap,
-                    [printJob.id]: {
-                        ...printJob,
-                        srcDoc: srcDoc
+        try {
+            if (fetchHtml) {
+                const srcDoc = await fetchHtml();
+                await setPrintJobsMap((printJobsMap) => {
+                    return {
+                        ...printJobsMap,
+                        [printJob.id]: {
+                            ...printJob,
+                            srcDoc: srcDoc
+                        }
                     }
-                }
-            });
-        } else if (fetchDataUrl) {
-            const src = await fetchDataUrl();
-            await setPrintJobsMap((printJobsMap) => {
-                return {
-                    ...printJobsMap,
-                    [printJob.id]: {
-                        ...printJob,
-                        src: src
+                });
+            } else if (fetchDataUrl) {
+                const src = await fetchDataUrl();
+                await setPrintJobsMap((printJobsMap) => {
+                    return {
+                        ...printJobsMap,
+                        [printJob.id]: {
+                            ...printJob,
+                            src: src
+                        }
                     }
-                }
+                });
+            }
+        } catch (e) {
+            messagesContext.push({
+                messageTitle: "Error",
+                messageBody: getErrorMessage(getErrorCode(e)),
+                messageType: MESSAGE_TYPES.ERROR
             });
         }
     };
