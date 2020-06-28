@@ -1668,7 +1668,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             )
             election.meta.add_meta_data(
                 metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION,
-                metaDataValue=row["Required percentage of valid votes"]
+                metaDataValue=0.05
             )
 
         db.session.commit()
