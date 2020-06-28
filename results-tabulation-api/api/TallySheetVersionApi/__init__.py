@@ -1,4 +1,4 @@
-from flask import Response, send_file
+from flask import Response
 
 from api import FileApi
 from app import db
@@ -7,8 +7,6 @@ from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
 from ext.ExtendedTallySheet import ExtendedTallySheet
-from orm.entities.Audit import Stamp
-from orm.entities.IO import File
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetVersionSchema, TallySheetSchema_1

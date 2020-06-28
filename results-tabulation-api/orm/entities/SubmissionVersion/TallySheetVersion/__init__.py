@@ -1,5 +1,3 @@
-from typing import Set
-
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from app import db, connex_app
@@ -15,6 +13,8 @@ from orm.entities import SubmissionVersion, TallySheetVersionRow, Area, Candidat
 from orm.entities.Submission import TallySheet
 from exception import NotFoundException, UnauthorizedException
 from flask import request
+import requests
+import json
 
 
 class TallySheetVersionModel(db.Model):
@@ -177,9 +177,6 @@ class TallySheetVersionModel(db.Model):
         tallySheetVersion = cls.get_by_id(tallySheetId, tallySheetVersionId)
 
         if tallySheetVersion.exportedPdfFileId is None:
-            import requests
-            import json
-
             pdf_service_entry_response = requests.request(
                 method="POST",
                 url="%s/generate" % connex_app.app.config['PDF_SERVICE_URL'],
