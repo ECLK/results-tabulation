@@ -194,7 +194,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
         def html(self, title="", total_registered_voters=None):
             party_wise_seat_calculations = self.get_party_wise_seat_calculations()
 
-            totalVoteCounts = to_comma_seperated_num(party_wise_seat_calculations['numValue'].sum())
+            totalVoteCounts = party_wise_seat_calculations['numValue'].sum()
             twentiethOfTotalVoteCounts = party_wise_seat_calculations.at[0, 'minimumVoteCountRequiredForSeatAllocation']
             total_less_than_twentiethOfTotalVoteCounts = party_wise_seat_calculations[
                 party_wise_seat_calculations["numValue"] < twentiethOfTotalVoteCounts
