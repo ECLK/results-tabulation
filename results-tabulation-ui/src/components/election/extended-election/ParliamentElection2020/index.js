@@ -28,7 +28,7 @@ import ExtendedElectionDefault from "../extended-election-default";
 import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
 import {ElectionContext} from "../../../../services/election.provider";
 import Processing from "../../../processing";
-import {VOTE_TYPE_NON_POSTAL, VOTE_TYPE_POSTAL} from "../../constants/VOTE_TYPE";
+import {VOTE_TYPE_NON_POSTAL, VOTE_TYPE_POSTAL, VOTE_TYPE_POSTAL_AND_NON_POSTAL} from "../../constants/VOTE_TYPE";
 
 export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
 
@@ -214,7 +214,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 <li>PE-CE-RO-V2
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_V2)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_V2, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>
@@ -223,7 +223,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 <li>PE-R2
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_R2)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_R2, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>
@@ -264,7 +264,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 <li>PE-CE-RO-PR-2
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_2)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_2, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>
@@ -273,7 +273,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 <li>PE-CE-RO-PR-3
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_3)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_3, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>
@@ -290,7 +290,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 <li>PE-21
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_21)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_21, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>

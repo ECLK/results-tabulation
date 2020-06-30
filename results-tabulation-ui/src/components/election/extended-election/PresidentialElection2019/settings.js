@@ -21,7 +21,7 @@ import {
 } from "./TALLY_SHEET_CODE";
 import {
     VOTE_TYPE_NON_POSTAL,
-    VOTE_TYPE_POSTAL
+    VOTE_TYPE_POSTAL, VOTE_TYPE_POSTAL_AND_NON_POSTAL
 } from "../../constants/VOTE_TYPE";
 
 const columns_ed_pd_cc_status_actions = [
@@ -66,24 +66,24 @@ export const TALLY_SHEET_LIST_COLUMNS = {
         [VOTE_TYPE_POSTAL]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_30_ED]: {
-        [undefined]: columns_ed_status_actions
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_34_II_RO]: {
-        [undefined]: columns_ed_status_actions
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_34]: {
-        [undefined]: columns_ed_status_actions
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_34_ED]: {
-        [undefined]: columns_ed_status_actions
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ed_status_actions
     },
     [TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS]: {
-        [undefined]: columns_country_status_actions
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_country_status_actions
     },
     [TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS]: {
-        [undefined]: columns_country_status_actions
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_country_status_actions
     },
     [TALLY_SHEET_CODE_PRE_34_AI]: {
-        [undefined]: columns_country_status_actions
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_country_status_actions
     }
 };

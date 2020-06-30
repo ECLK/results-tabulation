@@ -18,7 +18,7 @@ import React from "react";
 import * as Settings from './settings'
 import ExtendedElectionDefault from "../extended-election-default";
 import PresidentialElection2019TallySheetEdit from "./tally-sheet-edit";
-import {VOTE_TYPE_NON_POSTAL, VOTE_TYPE_POSTAL} from "../../constants/VOTE_TYPE";
+import {VOTE_TYPE_NON_POSTAL, VOTE_TYPE_POSTAL, VOTE_TYPE_POSTAL_AND_NON_POSTAL} from "../../constants/VOTE_TYPE";
 
 export default class ExtendedElectionPresidentialElection2019 extends ExtendedElectionDefault {
 
@@ -119,7 +119,7 @@ export default class ExtendedElectionPresidentialElection2019 extends ExtendedEl
                             <li>PRE 30 ED
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_30_ED)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_30_ED, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                 >
                                     List
                                 </Link>
@@ -129,7 +129,7 @@ export default class ExtendedElectionPresidentialElection2019 extends ExtendedEl
                             <li>All Island ED
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS_BY_ELECTORAL_DISTRICTS, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                 >
                                     List
                                 </Link>
@@ -137,7 +137,7 @@ export default class ExtendedElectionPresidentialElection2019 extends ExtendedEl
                             <li>All Island
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_ALL_ISLAND_RESULTS, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                 >
                                     List
                                 </Link>
@@ -197,7 +197,7 @@ export default class ExtendedElectionPresidentialElection2019 extends ExtendedEl
                             <li>Revised 30 ED
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_34_ED)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_34_ED, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                 >
                                     List
                                 </Link>
@@ -205,7 +205,7 @@ export default class ExtendedElectionPresidentialElection2019 extends ExtendedEl
                             <li>Revised All Island
                                 <Link
                                     className="tally-sheet-code-list-item btn-list"
-                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_34_AI)}
+                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PRE_34_AI, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                 >
                                     List
                                 </Link>
