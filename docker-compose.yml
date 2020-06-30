@@ -78,3 +78,19 @@ services:
       - results-tabulation-api-db
     depends_on:
       - results-tabulation-api-db
+
+  results-tabulation-ui:
+    build:
+      context: ./results-tabulation-ui
+      dockerfile: Local.Dockerfile
+    container_name: results-tabulation-ui
+    volumes:
+      - ./results-tabulation-ui/
+    ports:
+      - "3000:3000"
+    links:
+      - results-tabulation-api
+      - ecapim
+      - authapp
+    depends_on:
+      - results-tabulation-api
