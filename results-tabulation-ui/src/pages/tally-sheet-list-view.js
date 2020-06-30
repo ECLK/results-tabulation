@@ -17,11 +17,6 @@ export default function TallySheetListView({history, queryString, election}) {
         props.columns = columns
     }
 
-    const actions = extendedElection.getTallySheetListActions(tallySheetCode, voteType);
-    if (actions) {
-        props.actions = actions
-    }
-
     const additionalBreadCrumbLinks = [
         {
             label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase(),
