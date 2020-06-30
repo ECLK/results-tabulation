@@ -28,6 +28,7 @@ import ExtendedElectionDefault from "../extended-election-default";
 import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
 import {ElectionContext} from "../../../../services/election.provider";
 import Processing from "../../../processing";
+import {VOTE_TYPE_NON_POSTAL, VOTE_TYPE_POSTAL} from "../../constants/VOTE_TYPE";
 
 export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
 
@@ -40,7 +41,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
         const [subElections, setSubElections] = useState(null);
 
         const {electionId, electionName, rootElectionId} = this.election;
-        const voteTypes = ["Postal", "NonPostal"];
+        const voteTypes = [VOTE_TYPE_POSTAL, VOTE_TYPE_NON_POSTAL];
 
         useEffect(() => {
             electionContext.getSubElections(electionId).then(setSubElections);
@@ -75,7 +76,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 <li>All Island Result
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_ALL_ISLAND_RESULT)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_ALL_ISLAND_RESULT, VOTE_TYPE_POSTAL)}
                                     >
                                         List
                                     </Link>
@@ -97,10 +98,10 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         {voteTypes.map((voteType) => {
                             let tallySheetCodes = [];
                             let tallySheetCodeLabels = [];
-                            if (voteType === "Postal") {
+                            if (voteType === VOTE_TYPE_POSTAL) {
                                 tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39];
                                 tallySheetCodeLabels = ["CE 201 PV (Postal)", "PE-27 PV (Postal)", "PE-39 PV (Postal)"];
-                            } else if (voteType === "NonPostal") {
+                            } else if (voteType === VOTE_TYPE_NON_POSTAL) {
                                 tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39];
                                 tallySheetCodeLabels = ["CE 201", "PE-27", "PE-39"];
                             }
@@ -132,10 +133,10 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         {voteTypes.map((voteType) => {
                             let tallySheetCodes = [];
                             let tallySheetCodeLabels = [];
-                            if (voteType === "Postal") {
+                            if (voteType === VOTE_TYPE_POSTAL) {
                                 tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
                                 tallySheetCodeLabels = ["PE-4 PV (Postal)", "PE-22 (Postal)"];
-                            } else if (voteType === "NonPostal") {
+                            } else if (voteType === VOTE_TYPE_NON_POSTAL) {
                                 tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
                                 tallySheetCodeLabels = ["PE-4", "PE-22"];
                             }
@@ -167,10 +168,10 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 {voteTypes.map((voteType) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
-                                    if (voteType === "Postal") {
+                                    if (voteType === VOTE_TYPE_POSTAL) {
                                         tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1];
                                         tallySheetCodeLabels = ["PE-CE-RO-V1 (Postal)"];
-                                    } else if (voteType === "NonPostal") {
+                                    } else if (voteType === VOTE_TYPE_NON_POSTAL) {
                                         tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1];
                                         tallySheetCodeLabels = ["PE-CE-RO-V1"];
                                     }
@@ -190,10 +191,10 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 {voteTypes.map((voteType) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
-                                    if (voteType === "Postal") {
+                                    if (voteType === VOTE_TYPE_POSTAL) {
                                         tallySheetCodes = [TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
                                         tallySheetCodeLabels = ["Polling Division Results (Postal)"];
-                                    } else if (voteType === "NonPostal") {
+                                    } else if (voteType === VOTE_TYPE_NON_POSTAL) {
                                         tallySheetCodes = [TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
                                         tallySheetCodeLabels = ["Polling Division Results"];
                                     }
@@ -240,10 +241,10 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 {voteTypes.map((voteType) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
-                                    if (voteType === "Postal") {
+                                    if (voteType === VOTE_TYPE_POSTAL) {
                                         tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
                                         tallySheetCodeLabels = ["PE-CE-RO-PR-1 (Postal)"];
-                                    } else if (voteType === "NonPostal") {
+                                    } else if (voteType === VOTE_TYPE_NON_POSTAL) {
                                         tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
                                         tallySheetCodeLabels = ["PE-CE-RO-PR-1"];
                                     }
