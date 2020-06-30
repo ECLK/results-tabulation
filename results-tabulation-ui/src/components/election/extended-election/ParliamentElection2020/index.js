@@ -29,11 +29,10 @@ import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
 import {ElectionContext} from "../../../../services/election.provider";
 import Processing from "../../../processing";
 
-
 export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
 
     constructor(election) {
-        super(election, Settings.TALLY_SHEET_LIST_COLUMNS, Settings.TALLY_SHEET_LIST_ACTIONS, ParliamentElection2020TallySheetEdit);
+        super(election, Settings.TALLY_SHEET_LIST_COLUMNS, ParliamentElection2020TallySheetEdit);
     }
 
     getElectionHome() {

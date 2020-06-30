@@ -2,11 +2,6 @@ import React, {useContext} from "react";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import {
-    TALLY_SHEET_LIST_ROW_ACTION_UNLOCK,
-    TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
-    TALLY_SHEET_LIST_ROW_ACTION_VIEW
-} from "../constants/TALLY_SHEET_ACTION";
-import {
     TALLY_SHEET_LIST_COLUMN_ACTIONS,
     TALLY_SHEET_LIST_COLUMN_STATUS,
     TALLY_SHEET_LIST_COLUMN_VALUE
@@ -29,12 +24,7 @@ export default function TallySheetListRow(
             TALLY_SHEET_LIST_COLUMN_STATUS,
             TALLY_SHEET_LIST_COLUMN_ACTIONS
         ],
-        columnMetaMap = {},
-        actions = [
-            TALLY_SHEET_LIST_ROW_ACTION_VIEW,
-            TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
-            TALLY_SHEET_LIST_ROW_ACTION_UNLOCK
-        ]
+        columnMetaMap = {}
     }
 ) {
 

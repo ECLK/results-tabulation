@@ -5,14 +5,8 @@ import Processing from "../../processing";
 import TableBody from "@material-ui/core/TableBody";
 import TallySheetListRow from "./tally-sheet-list-row";
 import {
-    TALLY_SHEET_LIST_ROW_ACTION_UNLOCK,
-    TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
-    TALLY_SHEET_LIST_ROW_ACTION_VIEW
-} from "../constants/TALLY_SHEET_ACTION";
-import {
-    TALLY_SHEET_LIST_COLUMN_ACTIONS, TALLY_SHEET_LIST_COLUMN_LABEL,
-    TALLY_SHEET_LIST_COLUMN_STATUS,
-    TALLY_SHEET_LIST_COLUMN_VALUE
+    TALLY_SHEET_LIST_COLUMN_ACTIONS,
+    TALLY_SHEET_LIST_COLUMN_STATUS
 } from "../constants/TALLY_SHEET_COLUMN";
 import {TallySheetContext} from "../../../services/tally-sheet.provider";
 
@@ -27,12 +21,7 @@ export default function TallySheetListTableBody(
             TALLY_SHEET_LIST_COLUMN_STATUS,
             TALLY_SHEET_LIST_COLUMN_ACTIONS
         ],
-        columnMetaMap = {},
-        actions = [
-            TALLY_SHEET_LIST_ROW_ACTION_VIEW,
-            TALLY_SHEET_LIST_ROW_ACTION_VERIFY,
-            TALLY_SHEET_LIST_ROW_ACTION_UNLOCK
-        ]
+        columnMetaMap = {}
     }
 ) {
     const tallySheetContext = useContext(TallySheetContext);
@@ -56,7 +45,7 @@ export default function TallySheetListTableBody(
         return tallySheetListRows.map((tallySheetListRow, tallySheetListRowIndex) => (<TallySheetListRow
             key={tallySheetListRowIndex}
             tallySheetId={tallySheetListRow.tallySheetId} history={history} electionId={electionId}
-            actions={actions} columns={columns}
+            columns={columns}
             columnMetaMap={columnMetaMap}
         />))
     };

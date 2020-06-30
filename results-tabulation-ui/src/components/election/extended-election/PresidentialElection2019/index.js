@@ -22,7 +22,7 @@ import PresidentialElection2019TallySheetEdit from "./tally-sheet-edit";
 export default class ExtendedElectionPresidentialElection2019 extends ExtendedElectionDefault {
 
     constructor(election) {
-        super(election, Settings.TALLY_SHEET_LIST_COLUMNS, Settings.TALLY_SHEET_LIST_ACTIONS, PresidentialElection2019TallySheetEdit);
+        super(election, Settings.TALLY_SHEET_LIST_COLUMNS, PresidentialElection2019TallySheetEdit);
     }
 
     getElectionHome() {
