@@ -12,7 +12,8 @@ def _get_pdf_entry(html):
             method="POST",
             url="%s/generate" % connex_app.app.config['PDF_SERVICE_URL'],
             headers={'Content-Type': 'application/json'},
-            data=json.dumps({"html": html})
+            data=json.dumps({"html": html}),
+            timeout=300
         )
 
         if pdf_service_entry_response.status_code != 200:
@@ -35,7 +36,7 @@ def _get_pdf_entry(html):
 
 def _get_pdf_response(url):
     try:
-        pdf_response = requests.get(url=url)
+        pdf_response = requests.get(url=url, timeout=300)
 
         if pdf_response.status_code != 200:
             raise InternalServerErrorException(
