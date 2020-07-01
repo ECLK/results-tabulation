@@ -6,7 +6,7 @@ import json
 import traceback
 
 
-def html_to_pdf(html):
+def _get_pdf_entry(html):
     try:
         pdf_service_entry_response = requests.request(
             method="POST",
@@ -14,6 +14,15 @@ def html_to_pdf(html):
             headers={'Content-Type': 'application/json'},
             data=json.dumps({"html": html})
         )
+
+        if pdf_service_entry_response.status_code != 200:
+            raise InternalServerErrorException(
+                message="PDF creation unsuccessful.",
+                code=MESSAGE_CODE_PDF_SERVICE_ENTRY_CREATION_FAILED
+            )
+
+        return pdf_service_entry_response.json()
+
     except Exception as e:
         error_string = traceback.format_exc()
         print(error_string)
@@ -23,14 +32,19 @@ def html_to_pdf(html):
             code=MESSAGE_CODE_PDF_SERVICE_ENTRY_CREATION_FAILED
         )
 
-    if pdf_service_entry_response.status_code != 200:
-        raise InternalServerErrorException(
-            message="PDF creation unsuccessful.",
-            code=MESSAGE_CODE_PDF_SERVICE_ENTRY_CREATION_FAILED
-        )
 
+def _get_pdf_response(url):
     try:
-        pdf_response = requests.get(url=pdf_service_entry_response.json()["url"])
+        pdf_response = requests.get(url=url)
+
+        if pdf_response.status_code != 200:
+            raise InternalServerErrorException(
+                message="PDF fetch unsuccessful.",
+                code=MESSAGE_CODE_PDF_SERVICE_FETCH_FAILED
+            )
+
+        return pdf_response
+
     except Exception as e:
         error_string = traceback.format_exc()
         print(error_string)
@@ -40,10 +54,9 @@ def html_to_pdf(html):
             code=MESSAGE_CODE_PDF_SERVICE_FETCH_FAILED
         )
 
-    if pdf_response.status_code != 200:
-        raise InternalServerErrorException(
-            message="PDF fetch unsuccessful.",
-            code=MESSAGE_CODE_PDF_SERVICE_FETCH_FAILED
-        )
+
+def html_to_pdf(html):
+    pdf_entry = _get_pdf_entry(html)
+    pdf_response = _get_pdf_response(url=pdf_entry["url"])
 
     return pdf_response.content
