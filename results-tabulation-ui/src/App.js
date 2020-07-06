@@ -11,10 +11,12 @@ import TallySheetListView from "./pages/tally-sheet-list-view";
 import TallySheetView from "./pages/tally-sheet-view";
 import TallySheetActivityView from "./pages/tally-sheet-activity";
 import * as serviceWorker from "./serviceWorker";
+import ElectionSettings from "./pages/election-settings";
 
 export const ROUTER_PREFIX = "";
 export const PATH_ELECTION = () => `${ROUTER_PREFIX}/election`;
 export const PATH_ELECTION_BY_ID = (electionId) => `${ROUTER_PREFIX}/election/${electionId}`;
+export const PATH_ELECTION_SETTINGS_BY_ID = (electionId) => `${ROUTER_PREFIX}/election/${electionId}/settings`;
 export const PATH_ELECTION_TALLY_SHEET_LIST = (electionId = null, tallySheetCode = null, voteType = null) => {
     let path = `${ROUTER_PREFIX}/tally-sheet`;
 
@@ -81,6 +83,11 @@ function App() {
                     exact
                     path={PATH_ELECTION_BY_ID(":electionId")}
                     component={Election}
+                />
+                <ElectionProtectedRoute
+                    exact
+                    path={PATH_ELECTION_SETTINGS_BY_ID(":electionId")}
+                    component={ElectionSettings}
                 />
                 <ElectionProtectedRoute
                     exact

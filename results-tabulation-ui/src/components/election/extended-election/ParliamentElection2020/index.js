@@ -1,6 +1,6 @@
 import Grid from "@material-ui/core/Grid";
 import {
-    PATH_ELECTION_BY_ID,
+    PATH_ELECTION_BY_ID, PATH_ELECTION_SETTINGS_BY_ID,
     PATH_ELECTION_TALLY_SHEET_LIST
 } from "../../../../App";
 import {
@@ -50,6 +50,12 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
         if (electionId === rootElectionId) {
             return <div className="page-content">
                 <h1>{electionName}</h1>
+                <Link
+                    key={electionId} to={PATH_ELECTION_SETTINGS_BY_ID(electionId)}
+                    className="election-list-item"
+                >
+                    Settings
+                </Link>
                 <Grid container spacing={3}>
                     <Grid item xs={9} className="election-grid">
                         <Grid item xs={12}><h2>District Elections</h2></Grid>
