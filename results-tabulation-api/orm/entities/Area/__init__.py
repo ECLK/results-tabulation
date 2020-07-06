@@ -187,7 +187,7 @@ def get_all(election_id=None, area_name=None, associated_area_id=None, area_type
 
     if associated_area_id is not None and area_type is not None:
         associated_area = get_by_id(areaId=associated_area_id)
-        query = get_associated_areas_query(areas=[associated_area], areaType=area_type, electionId=election_id)
+        query = get_associated_areas_query(areas=[associated_area], areaType=area_type)
     else:
         query = Model.query
 
@@ -196,7 +196,8 @@ def get_all(election_id=None, area_name=None, associated_area_id=None, area_type
 
     if election is not None:
         query = query.filter(
-            Model.electionId == election_id
+            Model.electionId.in_(
+                election.get_this_and_above_election_ids() + election.get_this_and_below_election_ids())
         )
 
     if area_type is not None:
