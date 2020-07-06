@@ -1,5 +1,6 @@
 import React from "react";
 import {Link} from 'react-router-dom';
+import "./bread-crumb.css";
 
 export default function BreadCrumb({links}) {
     return <ul className="bread-crumb">

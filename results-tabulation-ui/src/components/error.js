@@ -1,6 +1,7 @@
 import React from "react";
 import WarningIcon from '@material-ui/icons/Warning';
 import {getErrorCode, getErrorMessage} from "../utils";
+import "./error.css"
 
 
 export default function Error(

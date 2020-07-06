@@ -5,6 +5,7 @@ import Processing from "../components/processing";
 import Error from "../components/error";
 import TabulationPage from "./index";
 import {ElectionContext} from "../services/election.provider";
+import "./election.css";
 
 
 export default function Home() {

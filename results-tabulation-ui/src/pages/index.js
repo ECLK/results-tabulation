@@ -5,6 +5,7 @@ import {getTallySheetCodeStr} from "../utils/tallySheet";
 import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
 import {ElectionContext} from "../services/election.provider";
+import "./index.css";
 
 
 function ElectionBreadCrumb({election, additionalLinks}) {

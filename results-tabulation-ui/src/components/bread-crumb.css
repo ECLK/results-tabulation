@@ -1,0 +1,27 @@
+ul.bread-crumb {
+    list-style: none;
+    background-color: #636667;
+    padding: 5px 10px;
+    padding-top: 2px;
+    color: white;
+    margin: 0px;
+}
+
+ul.bread-crumb li.bread-crumb-list-item {
+    display: inline;
+    padding: 0px;
+    line-height: 10px;
+}
+
+ul.bread-crumb li.bread-crumb-list-item a {
+    text-decoration: none;
+    color: white;
+    font-size: 13px;
+    line-height: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+ul.bread-crumb li.bread-crumb-list-item a:hover {
+    text-decoration: underline;
+}
