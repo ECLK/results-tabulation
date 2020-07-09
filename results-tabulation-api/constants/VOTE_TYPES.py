@@ -1,3 +1,5 @@
 Postal = "Postal"
 NonPostal = "NonPostal"
+Quarantine = "Quarantine"
+Displaced = "Displaced"
 PostalAndNonPostal = "PostalAndNonPostal"
