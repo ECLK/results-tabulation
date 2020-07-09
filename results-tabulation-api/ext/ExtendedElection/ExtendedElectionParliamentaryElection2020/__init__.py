@@ -1117,13 +1117,15 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             if vote_type not in election_map:
                 sub_election = election.add_sub_election(
                     electionName="%s - %s - %s" % (root_election.electionName, electoral_district_name, vote_type),
-                    voteType=vote_type
+                    voteType=vote_type, isListed=True
                 )
                 election_map[vote_type] = sub_election
                 for party in election.parties:
                     sub_election.add_party(partyId=party.partyId)
                     for candidate in party.candidates:
                         sub_election.add_candidate(partyId=party.partyId, candidateId=candidate.candidateId)
+
+                _get_sub_electoral_district_entry(row, vote_type=vote_type)
             else:
                 sub_election = election_map[vote_type]
 
@@ -1188,9 +1190,59 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
             return data_entry_obj
 
+        def _get_sub_electoral_district_entry(row, vote_type=None):
+            electoral_district = _get_electoral_district_entry(row)
+            postal_election = _get_electoral_district_sub_election(row, vote_type=vote_type)
+
+            polling_division_results_tally_sheet = TallySheet.create(
+                template=tally_sheet_template_polling_division_results, electionId=postal_election.electionId,
+                areaId=electoral_district.areaId,
+                metaId=Meta.create({
+                    "areaId": electoral_district.areaId,
+                    "electionId": postal_election.electionId
+                }).metaId,
+                workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
+            )
+            electoral_district.polling_division_results_tally_sheet_list.append(polling_division_results_tally_sheet)
+            pe_ce_ro_v1_tally_sheet = TallySheet.create(
+                template=tally_sheet_template_pe_ce_ro_v1, electionId=postal_election.electionId,
+                areaId=electoral_district.areaId,
+                metaId=Meta.create({
+                    "areaId": electoral_district.areaId,
+                    "electionId": postal_election.electionId
+                }).metaId,
+                parentTallySheets=[polling_division_results_tally_sheet,
+                                   *electoral_district.pe_ce_ro_v2_tally_sheet_list],
+                workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
+            )
+            electoral_district.pe_ce_ro_v1_tally_sheet_list.append(pe_ce_ro_v1_tally_sheet)
+            electoral_district.pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map[vote_type] = [pe_ce_ro_v1_tally_sheet]
+
+            for party in postal_election.parties:
+                pe_ce_ro_pr_1_tally_sheet = TallySheet.create(
+                    template=tally_sheet_template_pe_ce_ro_pr_1, electionId=postal_election.electionId,
+                    areaId=electoral_district.areaId,
+                    metaId=Meta.create({
+                        "areaId": electoral_district.areaId,
+                        "partyId": party.partyId,
+                        "electionId": postal_election.electionId
+                    }).metaId,
+                    parentTallySheets=[
+                        *electoral_district.pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId]],
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
+                )
+                electoral_district.pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
+
+                party_id_and_vote_type_key = "%s%s" % (party.partyId, vote_type)
+                if party_id_and_vote_type_key not in electoral_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map:
+                    electoral_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
+                        party_id_and_vote_type_key] = [pe_ce_ro_pr_1_tally_sheet]
+                else:
+                    electoral_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
+                        party_id_and_vote_type_key].append(pe_ce_ro_pr_1_tally_sheet)
+
         def _get_electoral_district_entry(row):
             election = _get_electoral_district_election(row)
-            postal_election = _get_electoral_district_sub_election(row, vote_type=Postal)
 
             country = _get_country_entry(row)
 
@@ -1233,32 +1285,16 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
-                polling_division_results_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_polling_division_results, electionId=postal_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": postal_election.electionId
-                    }).metaId,
-                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
-                )]
-                pe_ce_ro_v1_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ce_ro_v1, electionId=postal_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": postal_election.electionId
-                    }).metaId,
-                    parentTallySheets=[*polling_division_results_tally_sheet_list, *pe_ce_ro_v2_tally_sheet_list],
-                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
-                )]
+                polling_division_results_tally_sheet_list = []
+                pe_ce_ro_v1_tally_sheet_list = []
+                pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map = {}
 
                 pe_ce_ro_pr_1_tally_sheet_list = []
-                pe_ce_ro_pr_1_tally_sheet_party_id_wise_map = {}
+                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = {}
                 pe_ce_ro_pr_2_tally_sheet_list = []
-                pe_ce_ro_pr_2_tally_sheet_party_id_wise_map = {}
+                pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = {}
                 pe_ce_ro_pr_3_tally_sheet_list = []
-                pe_ce_ro_pr_3_tally_sheet_party_id_wise_map = {}
+                pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map = {}
                 for party in election.parties:
                     pe_ce_ro_pr_3_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pe_ce_ro_pr_3, electionId=election.electionId,
@@ -1272,7 +1308,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
                     pe_ce_ro_pr_3_tally_sheet_list.append(pe_ce_ro_pr_3_tally_sheet)
-                    pe_ce_ro_pr_3_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_3_tally_sheet
+                    if party.partyId not in pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map:
+                        pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId] = [pe_ce_ro_pr_3_tally_sheet]
+                    else:
+                        pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId].append(
+                            pe_ce_ro_pr_3_tally_sheet)
 
                     pe_ce_ro_pr_2_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pe_ce_ro_pr_2, electionId=election.electionId,
@@ -1282,37 +1322,28 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": election.electionId
                         }).metaId,
-                        parentTallySheets=[pe_ce_ro_pr_3_tally_sheet_party_id_wise_map[party.partyId]],
+                        parentTallySheets=[*pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId]],
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
                     pe_ce_ro_pr_2_tally_sheet_list.append(pe_ce_ro_pr_2_tally_sheet)
-                    pe_ce_ro_pr_2_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_2_tally_sheet
-
-                    pe_ce_ro_pr_1_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_1, electionId=postal_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "partyId": party.partyId,
-                            "electionId": postal_election.electionId
-                        }).metaId,
-                        parentTallySheets=[pe_ce_ro_pr_2_tally_sheet_party_id_wise_map[party.partyId]],
-                        workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
-                    )
-                    pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
-                    pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_1_tally_sheet
+                    if party.partyId not in pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map:
+                        pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId] = [pe_ce_ro_pr_2_tally_sheet]
+                    else:
+                        pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId].append(
+                            pe_ce_ro_pr_2_tally_sheet)
 
                 return {
                     "pe_ce_ro_v1_tally_sheet_list": pe_ce_ro_v1_tally_sheet_list,
+                    "pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map": pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map,
                     "polling_division_results_tally_sheet_list": polling_division_results_tally_sheet_list,
                     "pe_r2_tally_sheet_list": pe_r2_tally_sheet_list,
                     "pe_ce_ro_v2_tally_sheet_list": pe_ce_ro_v2_tally_sheet_list,
                     "pe_ce_ro_pr_1_tally_sheet_list": pe_ce_ro_pr_1_tally_sheet_list,
-                    "pe_ce_ro_pr_1_tally_sheet_party_id_wise_map": pe_ce_ro_pr_1_tally_sheet_party_id_wise_map,
+                    "pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map": pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map,
                     "pe_ce_ro_pr_2_tally_sheet_list": pe_ce_ro_pr_2_tally_sheet_list,
-                    "pe_ce_ro_pr_2_tally_sheet_party_id_wise_map": pe_ce_ro_pr_2_tally_sheet_party_id_wise_map,
+                    "pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map": pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map,
                     "pe_ce_ro_pr_3_tally_sheet_list": pe_ce_ro_pr_3_tally_sheet_list,
-                    "pe_ce_ro_pr_3_tally_sheet_party_id_wise_map": pe_ce_ro_pr_3_tally_sheet_party_id_wise_map
+                    "pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map": pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map
                 }
 
             data_entry_obj = _get_area_entry(election, area_class, area_name, area_key,
@@ -1322,7 +1353,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
         def _get_polling_division_entry(row):
             election = _get_electoral_district_election(row)
-            ordinary_election = _get_electoral_district_sub_election(row, vote_type=NonPostal)
+            vote_type = NonPostal
+            ordinary_election = _get_electoral_district_sub_election(row, vote_type=vote_type)
 
             electoral_district = _get_electoral_district_entry(row)
 
@@ -1331,7 +1363,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             area_key = area_name
 
             def _create_polling_division_tally_sheets(area):
-                pe_ce_ro_pr_2_tally_sheet_party_id_wise_map = electoral_district.pe_ce_ro_pr_2_tally_sheet_party_id_wise_map
+                pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = electoral_district.pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map
                 pe_ce_ro_v2_tally_sheet_list = electoral_district.pe_ce_ro_v2_tally_sheet_list
 
                 polling_division_results_tally_sheet_list = [TallySheet.create(
@@ -1356,7 +1388,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 )]
 
                 pe_ce_ro_pr_1_tally_sheet_list = []
-                pe_ce_ro_pr_1_tally_sheet_party_id_wise_map = {}
+                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = {}
                 for party in election.parties:
                     pe_ce_ro_pr_1_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pe_ce_ro_pr_1, electionId=ordinary_election.electionId,
@@ -1366,16 +1398,23 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": ordinary_election.electionId
                         }).metaId,
-                        parentTallySheets=[pe_ce_ro_pr_2_tally_sheet_party_id_wise_map[party.partyId]],
+                        parentTallySheets=[*pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId]],
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
                     pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
-                    pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId] = pe_ce_ro_pr_1_tally_sheet
+
+                    party_id_and_vote_type_key = "%s%s" % (party.partyId, vote_type)
+                    if party_id_and_vote_type_key not in pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map:
+                        pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[party_id_and_vote_type_key] = [
+                            pe_ce_ro_pr_1_tally_sheet]
+                    else:
+                        pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
+                            party_id_and_vote_type_key].append(pe_ce_ro_pr_1_tally_sheet)
 
                 return {
                     "pe_ce_ro_v1_tally_sheet_list": pe_ce_ro_v1_tally_sheet_list,
                     "pe_ce_ro_pr_1_tally_sheet_list": pe_ce_ro_pr_1_tally_sheet_list,
-                    "pe_ce_ro_pr_1_tally_sheet_party_id_wise_map": pe_ce_ro_pr_1_tally_sheet_party_id_wise_map,
+                    "pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map": pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map,
                     "polling_division_results_tally_sheet_list": polling_division_results_tally_sheet_list,
                 }
 
@@ -1419,7 +1458,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return area
 
         def _get_counting_centre_entry(row):
-            ordinary_election = _get_electoral_district_sub_election(row, vote_type=NonPostal)
+            vote_type = NonPostal
+            ordinary_election = _get_electoral_district_sub_election(row, vote_type=vote_type)
 
             electoral_district = _get_electoral_district_entry(row)
             polling_division = _get_polling_division_entry(row)
@@ -1430,7 +1470,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
             def _create_counting_centre_tally_sheets(area):
                 pe_ce_ro_v1_tally_sheet_list = polling_division.pe_ce_ro_v1_tally_sheet_list
-                pe_ce_ro_pr_1_tally_sheet_party_id_wise_map = polling_division.pe_ce_ro_pr_1_tally_sheet_party_id_wise_map
+                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = polling_division.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map
 
                 pe_27_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pe_27, electionId=ordinary_election.electionId,
@@ -1463,7 +1503,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 )]
 
                 pe_4_tally_sheet_list = []
-                pe_4_tally_sheet_party_id_wise_map = {}
+                pe_4_tally_sheet_list_party_id_wise_map = {}
                 for party in ordinary_election.parties:
                     pe_4_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pe_4, electionId=ordinary_election.electionId,
@@ -1473,11 +1513,16 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": ordinary_election.electionId
                         }).metaId,
-                        parentTallySheets=[pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId]],
+                        parentTallySheets=[*pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
+                            "%s%s" % (party.partyId, vote_type)]],
                         workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                     )
                     pe_4_tally_sheet_list.append(pe_4_tally_sheet)
-                    pe_4_tally_sheet_party_id_wise_map[party.partyId] = pe_4_tally_sheet
+
+                    if party.partyId not in pe_4_tally_sheet_list_party_id_wise_map:
+                        pe_4_tally_sheet_list_party_id_wise_map[party.partyId] = [pe_4_tally_sheet]
+                    else:
+                        pe_4_tally_sheet_list_party_id_wise_map[party.partyId].append(pe_4_tally_sheet)
 
                 pe_ce_201_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_ce_201, electionId=ordinary_election.electionId, areaId=area.areaId,
@@ -1493,7 +1538,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
                     "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
                     "pe_4_tally_sheet_list": pe_4_tally_sheet_list,
-                    "pe_4_tally_sheet_party_id_wise_map": pe_4_tally_sheet_party_id_wise_map,
+                    "pe_4_tally_sheet_list_party_id_wise_map": pe_4_tally_sheet_list_party_id_wise_map,
                     "pe_ce_201_tally_sheet_list": pe_ce_201_tally_sheet_list
                 }
 
@@ -1503,71 +1548,77 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return data_entry_obj
 
         def _get_postal_vote_counting_centre_entry(row):
-            postal_election = _get_electoral_district_sub_election(row, vote_type=Postal)
-
-            electoral_district = _get_electoral_district_entry(row=row)
-
             area_class = CountingCentre
             area_name = row["Counting Centre"]
+            vote_type = row["Vote Type"]
+
+            sub_election = _get_electoral_district_sub_election(row, vote_type=vote_type)
+            electoral_district = _get_electoral_district_entry(row=row)
+
             area_key = "%s-%s" % (electoral_district.areaName, area_name)
 
             def _create_counting_centre_tally_sheets(area):
-                pe_ce_ro_v1_tally_sheet_list = electoral_district.pe_ce_ro_v1_tally_sheet_list
-                pe_ce_ro_pr_1_tally_sheet_party_id_wise_map = electoral_district.pe_ce_ro_pr_1_tally_sheet_party_id_wise_map
+                pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map = electoral_district.pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map
+                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = electoral_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map
 
                 pe_27_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_27, electionId=postal_election.electionId, areaId=area.areaId,
+                    template=tally_sheet_template_pe_27, electionId=sub_election.electionId, areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": postal_election.electionId
+                        "electionId": sub_election.electionId
                     }).metaId,
-                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list,
+                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map[vote_type],
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 pe_39_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_39, electionId=postal_election.electionId,
+                    template=tally_sheet_template_pe_39, electionId=sub_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": postal_election.electionId
+                        "electionId": sub_election.electionId
                     }).metaId,
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 pe_22_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_22, electionId=postal_election.electionId,
+                    template=tally_sheet_template_pe_22, electionId=sub_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": postal_election.electionId
+                        "electionId": sub_election.electionId
                     }).metaId,
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 pe_4_tally_sheet_list = []
-                pe_4_tally_sheet_party_id_wise_map = {}
-                for party in postal_election.parties:
+                pe_4_tally_sheet_list_party_id_wise_map = {}
+                for party in sub_election.parties:
                     pe_4_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_4, electionId=postal_election.electionId,
+                        template=tally_sheet_template_pe_4, electionId=sub_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
-                            "electionId": postal_election.electionId
+                            "electionId": sub_election.electionId
                         }).metaId,
-                        parentTallySheets=[pe_ce_ro_pr_1_tally_sheet_party_id_wise_map[party.partyId]],
+                        parentTallySheets=[*pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
+                            "%s%s" % (party.partyId, vote_type)]],
                         workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                     )
                     pe_4_tally_sheet_list.append(pe_4_tally_sheet)
-                    pe_4_tally_sheet_party_id_wise_map[party.partyId] = pe_4_tally_sheet
+
+                    if party.partyId not in pe_4_tally_sheet_list_party_id_wise_map:
+                        pe_4_tally_sheet_list_party_id_wise_map[party.partyId] = [pe_4_tally_sheet]
+                    else:
+                        pe_4_tally_sheet_list_party_id_wise_map[party.partyId].append(pe_4_tally_sheet)
 
                 pe_ce_201_pv_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_ce_201_pv, electionId=postal_election.electionId,
+                    template=tally_sheet_template_ce_201_pv, electionId=sub_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": postal_election.electionId
+                        "electionId": sub_election.electionId
                     }).metaId,
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
@@ -1577,11 +1628,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
                     "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
                     "pe_4_tally_sheet_list": pe_4_tally_sheet_list,
-                    "pe_4_tally_sheet_party_id_wise_map": pe_4_tally_sheet_party_id_wise_map,
+                    "pe_4_tally_sheet_list_party_id_wise_map": pe_4_tally_sheet_list_party_id_wise_map,
                     "pe_ce_201_pv_tally_sheet_list": pe_ce_201_pv_tally_sheet_list
                 }
 
-            data_entry_obj = _get_area_entry(postal_election, area_class, area_name, area_key,
+            data_entry_obj = _get_area_entry(sub_election, area_class, area_name, area_key,
                                              _create_counting_centre_tally_sheets)
 
             return data_entry_obj
