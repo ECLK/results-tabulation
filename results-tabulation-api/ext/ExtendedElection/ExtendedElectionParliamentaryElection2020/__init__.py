@@ -1059,24 +1059,27 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         }
 
         electoral_district_election_store = {}
+        electoral_district_sub_election_store = {}
         party_store = {}
 
         def _get_candidate(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election = _get_electoral_district_election(row)
+            election_map = _get_electoral_district_sub_election_map(row)
 
             party = _get_party(row)
 
             candidate = Candidate.create(candidateName=row["Candidate Name"], candidateNumber=row["Candidate Number"])
 
-            root_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
             election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
-            postal_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
-            ordinary_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
+            for vote_type in election_map:
+                sub_election = election_map[vote_type]
+                sub_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
 
             return candidate
 
         def _get_party(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election = _get_electoral_district_election(row)
+            election_map = _get_electoral_district_sub_election_map(row)
 
             party_name = row["Party Name (Unique)"]
             party_name_unique = row["Party Name (Unique)"]
@@ -1094,12 +1097,37 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
             party = party_store[party_name_unique]
 
-            root_election.add_party(partyId=party.partyId)
             election.add_party(partyId=party.partyId)
-            postal_election.add_party(partyId=party.partyId)
-            ordinary_election.add_party(partyId=party.partyId)
+            for vote_type in election_map:
+                sub_election = election_map[vote_type]
+                sub_election.add_party(partyId=party.partyId)
 
             return party_store[party_name_unique]
+
+        def _get_electoral_district_sub_election_map(row):
+            electoral_district_name = row["Electoral District"]
+
+            return electoral_district_sub_election_store[electoral_district_name]
+
+        def _get_electoral_district_sub_election(row, vote_type):
+            electoral_district_name = row["Electoral District"]
+            election = _get_electoral_district_election(row)
+            election_map = _get_electoral_district_sub_election_map(row)
+
+            if vote_type not in election_map:
+                sub_election = election.add_sub_election(
+                    electionName="%s - %s - %s" % (root_election.electionName, electoral_district_name, vote_type),
+                    voteType=vote_type
+                )
+                election_map[vote_type] = sub_election
+                for party in election.parties:
+                    sub_election.add_party(partyId=party.partyId)
+                    for candidate in party.candidates:
+                        sub_election.add_candidate(partyId=party.partyId, candidateId=candidate.candidateId)
+            else:
+                sub_election = election_map[vote_type]
+
+            return sub_election
 
         def _get_electoral_district_election(row):
             electoral_district_name = row["Electoral District"]
@@ -1109,21 +1137,12 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     electionName="%s - %s" % (root_election.electionName, electoral_district_name),
                     voteType=PostalAndNonPostal, isListed=True
                 )
-                postal_election = election.add_sub_election(
-                    electionName="%s - %s - Postal" % (root_election.electionName, electoral_district_name),
-                    voteType=Postal
-                )
-                ordinary_election = election.add_sub_election(
-                    electionName="%s - %s - Ordinary" % (root_election.electionName, electoral_district_name),
-                    voteType=NonPostal
-                )
+                electoral_district_election_store[electoral_district_name] = election
+                electoral_district_sub_election_store[electoral_district_name] = {}
+            else:
+                election = electoral_district_election_store[electoral_district_name]
 
-                electoral_district_election_store[electoral_district_name] = [election, postal_election,
-                                                                              ordinary_election]
-
-            election_list = electoral_district_election_store[electoral_district_name]
-
-            return election_list[0], election_list[1], election_list[2]
+            return election
 
         def _get_area_entry(election, area_class, area_name, area_key, create_tally_sheets_callback=None):
 
@@ -1170,7 +1189,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return data_entry_obj
 
         def _get_electoral_district_entry(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election = _get_electoral_district_election(row)
+            postal_election = _get_electoral_district_sub_election(row, vote_type=Postal)
 
             country = _get_country_entry(row)
 
@@ -1301,7 +1321,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return data_entry_obj
 
         def _get_polling_division_entry(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election = _get_electoral_district_election(row)
+            ordinary_election = _get_electoral_district_sub_election(row, vote_type=NonPostal)
 
             electoral_district = _get_electoral_district_entry(row)
 
@@ -1364,7 +1385,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return data_entry_obj
 
         def _get_polling_district_entry(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election = _get_electoral_district_election(row)
 
             electoral_district = _get_electoral_district_entry(row)
             polling_division = _get_polling_division_entry(row)
@@ -1378,7 +1399,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return data_entry_obj
 
         def _get_polling_station_entry(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election = _get_electoral_district_election(row)
 
             electoral_district = _get_electoral_district_entry(row)
             polling_division = _get_polling_division_entry(row)
@@ -1398,7 +1419,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return area
 
         def _get_counting_centre_entry(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            ordinary_election = _get_electoral_district_sub_election(row, vote_type=NonPostal)
 
             electoral_district = _get_electoral_district_entry(row)
             polling_division = _get_polling_division_entry(row)
@@ -1443,7 +1464,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
                 pe_4_tally_sheet_list = []
                 pe_4_tally_sheet_party_id_wise_map = {}
-                for party in election.parties:
+                for party in ordinary_election.parties:
                     pe_4_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pe_4, electionId=ordinary_election.electionId,
                         areaId=area.areaId,
@@ -1482,12 +1503,12 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return data_entry_obj
 
         def _get_postal_vote_counting_centre_entry(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            postal_election = _get_electoral_district_sub_election(row, vote_type=Postal)
 
             electoral_district = _get_electoral_district_entry(row=row)
 
             area_class = CountingCentre
-            area_name = row["Postal Vote Counting Centre"]
+            area_name = row["Counting Centre"]
             area_key = "%s-%s" % (electoral_district.areaName, area_name)
 
             def _create_counting_centre_tally_sheets(area):
@@ -1566,7 +1587,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return data_entry_obj
 
         def _get_district_centre_entry(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election = _get_electoral_district_election(row)
 
             area_class = DistrictCentre
             area_name = row["District Centre"]
@@ -1577,7 +1598,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             return data_entry_obj
 
         def _get_election_commission_entry(row):
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election = _get_electoral_district_election(row)
 
             area_class = ElectionCommission
             area_name = row["Election Commission"]
@@ -1661,7 +1682,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
         for row in get_rows_from_csv(number_of_seats_dataset_file):
             # pass
-            election, postal_election, ordinary_election = _get_electoral_district_election(row)
+            election = _get_electoral_district_election(row)
             election.meta.add_meta_data(
                 metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED,
                 metaDataValue=row["Number of seats"]
