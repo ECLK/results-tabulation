@@ -104,10 +104,14 @@ def pdf(tallySheetId, tallySheetVersionId):
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
-    return FileApi.get_download_file(fileId=tally_sheet_version.get_exported_pdf_file_id(
+    file_response = FileApi.get_download_file(fileId=tally_sheet_version.get_exported_pdf_file_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     ))
+
+    db.session.commit()
+
+    return file_response
 
 
 @authorize(required_roles=ALL_ROLES)
@@ -129,10 +133,14 @@ def letter_pdf(tallySheetId, tallySheetVersionId):
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
-    return FileApi.get_download_file(fileId=tally_sheet_version.get_exported_letter_pdf_file_id(
+    file_response = FileApi.get_download_file(fileId=tally_sheet_version.get_exported_letter_pdf_file_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     ))
+
+    db.session.commit()
+
+    return file_response
 
 
 @authorize(required_roles=ALL_ROLES)

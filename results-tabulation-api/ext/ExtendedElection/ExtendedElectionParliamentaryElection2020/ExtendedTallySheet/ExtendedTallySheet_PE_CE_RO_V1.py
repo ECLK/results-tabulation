@@ -75,12 +75,12 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 data_row = [
                     party_wise_valid_vote_count_result_item.partyName,
                     party_wise_valid_vote_count_result_item.partyAbbreviation,
-                    to_comma_seperated_num(party_wise_valid_vote_count_result_item["numValue"])
+                    to_comma_seperated_num(party_wise_valid_vote_count_result_item.numValue)
                 ]
 
                 if total_valid_vote_count > 0:
                     data_row.append(to_percentage(
-                        party_wise_valid_vote_count_result_item["numValue"] * 100 / total_valid_vote_count))
+                        party_wise_valid_vote_count_result_item.numValue * 100 / total_valid_vote_count))
                 else:
                     data_row.append('')
 
