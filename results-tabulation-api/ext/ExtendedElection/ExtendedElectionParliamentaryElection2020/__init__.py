@@ -1117,7 +1117,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             if vote_type not in election_map:
                 sub_election = election.add_sub_election(
                     electionName="%s - %s - %s" % (root_election.electionName, electoral_district_name, vote_type),
-                    voteType=vote_type, isListed=True
+                    voteType=vote_type, isListed=False
                 )
                 election_map[vote_type] = sub_election
                 for party in election.parties:
@@ -1125,7 +1125,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     for candidate in party.candidates:
                         sub_election.add_candidate(partyId=party.partyId, candidateId=candidate.candidateId)
 
-                _get_sub_electoral_district_entry(row, vote_type=vote_type)
+                if vote_type is not NonPostal:
+                    _get_sub_electoral_district_entry(row, vote_type=vote_type)
             else:
                 sub_election = election_map[vote_type]
 
