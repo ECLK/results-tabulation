@@ -197,14 +197,13 @@ class TallySheetVersionModel(db.Model):
             db.session.flush()
 
         return tallySheetVersion.exportedPdfFileId
-    
 
     @classmethod
     def get_exported_letter_pdf_file_id(cls, tallySheetId, tallySheetVersionId):
         tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
         tallySheetVersion = cls.get_by_id(tallySheetId, tallySheetVersionId)
 
-        if tallySheetVersion.exportedPdfFileId is None:
+        if tallySheetVersion.exportedLetterPdfFileId is None:
             tally_sheet_version_letter_pdf_content = html_to_pdf(
                 html=str(tallySheet.html_letter(tallySheetVersionId=tallySheetVersionId))
             )
