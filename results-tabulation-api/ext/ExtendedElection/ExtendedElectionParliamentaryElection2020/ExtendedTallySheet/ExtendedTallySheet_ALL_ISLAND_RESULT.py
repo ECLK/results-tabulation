@@ -2,8 +2,6 @@ import math
 
 from flask import render_template
 
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_R2 import \
-    get_party_wise_seat_calculations
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities.Area import AreaModel
 from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri
