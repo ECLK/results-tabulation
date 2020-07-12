@@ -15,7 +15,6 @@ from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 from flask import render_template
 from orm.entities import Area
-from constants.VOTE_TYPES import Postal
 from util import to_comma_seperated_num, convert_image_to_data_uri, to_percentage
 from orm.enums import AreaTypeEnum
 import math
@@ -210,10 +209,6 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             stamp = tallySheetVersion.stamp
 
-            pollingDivision = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == Postal:
-                pollingDivision = 'Postal'
-
             content = {
                 "election": {
                     "electionName": tallySheetVersion.submission.election.get_official_name()
@@ -311,9 +306,6 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
-            # pollingDivision = tallySheetVersion.submission.area.areaName
-            # if tallySheetVersion.submission.election.voteType == Postal:
-            #     pollingDivision = 'Postal'
 
             registered_voters_count = float(tallySheetVersion.submission.area.registeredVotersCount)
             content = {
@@ -368,16 +360,16 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                 data_row = [
                     party_wise_valid_vote_count_result_item.partyName,
                     party_wise_valid_vote_count_result_item.partyAbbreviation,
-                    to_comma_seperated_num(party_wise_valid_vote_count_result_item["numValue"]),
+                    to_comma_seperated_num(party_wise_valid_vote_count_result_item.numValue),
                 ]
 
                 if total_valid_vote_count > 0:
                     data_row.append(to_percentage(
-                        party_wise_valid_vote_count_result_item["numValue"] * 100 / total_valid_vote_count))
+                        party_wise_valid_vote_count_result_item.numValue * 100 / total_valid_vote_count))
                 else:
                     data_row.append('')
 
-                data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item["seatsAllocated"]))
+                data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item.seatsAllocated))
 
                 content["data"].append(data_row)
 
