@@ -76,7 +76,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 <li>All Island Result
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_ALL_ISLAND_RESULT, VOTE_TYPE_POSTAL)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_ALL_ISLAND_RESULT, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>
@@ -117,7 +117,6 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                                 >
                                                     List
                                                 </Link>
-
                                             </li>
                                         })}
                                     </ul>
