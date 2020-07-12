@@ -15,6 +15,7 @@ from flask import render_template
 from orm.entities import Area, Template, Submission
 from orm.entities.Workflow import WorkflowInstance
 from orm.enums import AreaTypeEnum
+from util import convert_image_to_data_uri, to_comma_seperated_num
 
 
 class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
@@ -186,6 +187,55 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
 
             html = render_template(
                 'PE-21.html',
+                content=content
+            )
+
+            return html
+
+        def html_letter(self, title="", total_registered_voters=None):
+            tallySheetVersion = self.tallySheetVersion
+            stamp = tallySheetVersion.stamp
+
+            content = {
+                "election": {
+                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                },
+                "stamp": {
+                    "createdAt": stamp.createdAt,
+                    "createdBy": stamp.createdBy,
+                    "barcodeString": stamp.barcodeString
+                },
+                "electoralDistrict": Area.get_associated_areas(
+                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "data": [],
+                "logo": convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png"),
+                "date": stamp.createdAt.strftime("%d/%m/%Y"),
+                "time": stamp.createdAt.strftime("%H:%M:%S %p")
+            }
+
+            elected_candidates_df = self.df.loc[self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE]
+
+            for index in elected_candidates_df.index:
+                candidateId = elected_candidates_df.at[index, "candidateId"]
+                preference_count_df = self.df.loc[(self.df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") & (
+                        self.df['candidateId'] == candidateId)]
+
+                data_row = [
+                    elected_candidates_df.at[index, "partyName"],
+                    elected_candidates_df.at[index, "partyAbbreviation"],
+                    elected_candidates_df.at[index, "candidateName"],
+                    elected_candidates_df.at[index, "candidateNumber"]
+                ]
+
+                if len(preference_count_df) > 0:
+                    data_row.append(preference_count_df.at[preference_count_df.index[0], "numValue"])
+                else:
+                    data_row.append('')
+
+                content["data"].append(data_row)
+
+            html = render_template(
+                'ParliamentaryElection2020/PE-21-LETTER.html',
                 content=content
             )
 
