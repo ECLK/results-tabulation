@@ -15,7 +15,7 @@ from flask import render_template
 from orm.entities import Area, Template, Submission
 from orm.entities.Workflow import WorkflowInstance
 from orm.enums import AreaTypeEnum
-from util import convert_image_to_data_uri, to_comma_seperated_num
+from util import convert_image_to_data_uri
 
 
 class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
