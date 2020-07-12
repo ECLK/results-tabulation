@@ -244,7 +244,8 @@ role_based_access_config = {
                                  RELEASE]
         },
         ALL_ISLAND_RESULT: {
-            PostalAndNonPostal: [READ, PRINT, WRITE]
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, RELEASE]
         }
     }
 }
