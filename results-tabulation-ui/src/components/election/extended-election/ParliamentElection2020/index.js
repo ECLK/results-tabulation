@@ -44,7 +44,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
         const voteTypes = [VOTE_TYPE_POSTAL, VOTE_TYPE_NON_POSTAL];
 
         useEffect(() => {
-            electionContext.getSubElections(electionId).then(setSubElections);
+            electionContext.getSubElections(electionId, null).then(setSubElections);
         }, [electionId]);
 
         if (electionId === rootElectionId) {

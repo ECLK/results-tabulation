@@ -11,8 +11,8 @@ from util import RequestBody, get_paginated_query
 
 
 @authorize(required_roles=ALL_ROLES)
-def get_all(parentElectionId=None, rootElectionId=None):
-    result = Election.get_all(parentElectionId=parentElectionId, rootElectionId=rootElectionId)
+def get_all(parentElectionId=None, rootElectionId=None, isListed=None):
+    result = Election.get_all(parentElectionId=parentElectionId, rootElectionId=rootElectionId, isListed=isListed)
 
     result = get_paginated_query(result).all()
 

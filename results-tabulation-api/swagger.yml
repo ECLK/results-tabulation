@@ -211,6 +211,11 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: isListed
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         '200':
           description: Successful operation.
@@ -416,278 +421,278 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-#  /proof/upload:
-#    put:
-#      tags:
-#        - Proof
-#      summary: Upload a proof.
-#      operationId: api.ProofApi.upload_file
-#      responses:
-#        '200':
-#          description: Successful operation.
-#          content:
-#            application/json:
-#              schema:
-#                type: object
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#      requestBody:
-#        content:
-#          multipart/form-data:
-#            schema:
-#              type: object
-#              properties:
-#                proofId:
-#                  type: integer
-#                  format: int64
-#                scannedFile:
-#                  type: string
-#                  format: binary
-#        description: Proof file
-#        required: True
-#
-#  /proof/{proofId}/finish:
-#    put:
-#      tags:
-#        - Proof
-#      summary: Create.
-#      operationId: api.ProofApi.finish
-#      parameters:
-#        - name: proofId
-#          required: true
-#          in: path
-#          schema:
-#            type: integer
-#            format: int64
-#      responses:
-#        '200':
-#          description: Successful operation.
-#          content:
-#            application/json:
-#              schema:
-#                type: object
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#
-#  /proof/{proofId}:
-#    get:
-#      tags:
-#        - Proof
-#      summary: Create.
-#      operationId: api.ProofApi.get_by_id
-#      parameters:
-#        - name: proofId
-#          required: true
-#          in: path
-#          schema:
-#            type: integer
-#            format: int64
-#      responses:
-#        '200':
-#          description: Successful operation.
-#          content:
-#            application/json:
-#              schema:
-#                type: object
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
+  #  /proof/upload:
+  #    put:
+  #      tags:
+  #        - Proof
+  #      summary: Upload a proof.
+  #      operationId: api.ProofApi.upload_file
+  #      responses:
+  #        '200':
+  #          description: Successful operation.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: object
+  #        '400':
+  #          description: Bad request.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '401':
+  #          description: Unauthorized.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '404':
+  #          description: Resource was not found.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '500':
+  #          description: Unexpected error.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #      requestBody:
+  #        content:
+  #          multipart/form-data:
+  #            schema:
+  #              type: object
+  #              properties:
+  #                proofId:
+  #                  type: integer
+  #                  format: int64
+  #                scannedFile:
+  #                  type: string
+  #                  format: binary
+  #        description: Proof file
+  #        required: True
+  #
+  #  /proof/{proofId}/finish:
+  #    put:
+  #      tags:
+  #        - Proof
+  #      summary: Create.
+  #      operationId: api.ProofApi.finish
+  #      parameters:
+  #        - name: proofId
+  #          required: true
+  #          in: path
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #      responses:
+  #        '200':
+  #          description: Successful operation.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: object
+  #        '400':
+  #          description: Bad request.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '401':
+  #          description: Unauthorized.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '404':
+  #          description: Resource was not found.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '500':
+  #          description: Unexpected error.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #
+  #  /proof/{proofId}:
+  #    get:
+  #      tags:
+  #        - Proof
+  #      summary: Create.
+  #      operationId: api.ProofApi.get_by_id
+  #      parameters:
+  #        - name: proofId
+  #          required: true
+  #          in: path
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #      responses:
+  #        '200':
+  #          description: Successful operation.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: object
+  #        '400':
+  #          description: Bad request.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '401':
+  #          description: Unauthorized.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '404':
+  #          description: Resource was not found.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '500':
+  #          description: Unexpected error.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
 
-#  /file/{fileId}:
-#    get:
-#      tags:
-#        - Files
-#      summary: Get by ID
-#      operationId: api.FileApi.get_by_id
-#      parameters:
-#        - name: fileId
-#          required: true
-#          in: path
-#          schema:
-#            type: integer
-#            format: int64
-#      responses:
-#        '200':
-#          description: OK
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#
-#  /file/{fileId}/inline:
-#    get:
-#      tags:
-#        - Files
-#      summary: Get by ID
-#      operationId: api.FileApi.get_inline_file
-#      parameters:
-#        - name: fileId
-#          required: true
-#          in: path
-#          schema:
-#            type: integer
-#            format: int64
-#      responses:
-#        '200':
-#          description: OK
-#          content:
-#            application/json:
-#              schema:
-#                type: object
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#
-#  /file/{fileId}/download:
-#    get:
-#      tags:
-#        - Files
-#      summary: Get by ID
-#      operationId: api.FileApi.get_download_file
-#      parameters:
-#        - name: fileId
-#          required: true
-#          in: path
-#          schema:
-#            type: integer
-#            format: int64
-#      responses:
-#        '200':
-#          description: OK
-#          content:
-#            application/json:
-#              schema:
-#                type: object
-#        '400':
-#          description: Bad request.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '401':
-#          description: Unauthorized.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '404':
-#          description: Resource was not found.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
-#        '500':
-#          description: Unexpected error.
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/ApiResponse'
+  #  /file/{fileId}:
+  #    get:
+  #      tags:
+  #        - Files
+  #      summary: Get by ID
+  #      operationId: api.FileApi.get_by_id
+  #      parameters:
+  #        - name: fileId
+  #          required: true
+  #          in: path
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #      responses:
+  #        '200':
+  #          description: OK
+  #        '400':
+  #          description: Bad request.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '401':
+  #          description: Unauthorized.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '404':
+  #          description: Resource was not found.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '500':
+  #          description: Unexpected error.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #
+  #  /file/{fileId}/inline:
+  #    get:
+  #      tags:
+  #        - Files
+  #      summary: Get by ID
+  #      operationId: api.FileApi.get_inline_file
+  #      parameters:
+  #        - name: fileId
+  #          required: true
+  #          in: path
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #      responses:
+  #        '200':
+  #          description: OK
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: object
+  #        '400':
+  #          description: Bad request.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '401':
+  #          description: Unauthorized.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '404':
+  #          description: Resource was not found.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '500':
+  #          description: Unexpected error.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #
+  #  /file/{fileId}/download:
+  #    get:
+  #      tags:
+  #        - Files
+  #      summary: Get by ID
+  #      operationId: api.FileApi.get_download_file
+  #      parameters:
+  #        - name: fileId
+  #          required: true
+  #          in: path
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #      responses:
+  #        '200':
+  #          description: OK
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: object
+  #        '400':
+  #          description: Bad request.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '401':
+  #          description: Unauthorized.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '404':
+  #          description: Resource was not found.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
+  #        '500':
+  #          description: Unexpected error.
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ApiResponse'
 
   /area:
     get:
@@ -1651,36 +1656,36 @@ paths:
             type: integer
             format: int64
       responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-          '400':
-            description: Bad request.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ApiResponse'
-          '401':
-            description: Unauthorized.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ApiResponse'
-          '404':
-            description: Resource was not found.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ApiResponse'
-          '500':
-            description: Unexpected error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ApiResponse'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Resource was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
 externalDocs:
   description: Find out more about Swagger
