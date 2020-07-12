@@ -24,7 +24,7 @@
 
         {# TODO review why "padding-top: 1px" is needed to align the pages on print view.#}
         <div style="padding-left: 50px;padding-right: 50px;padding-top: 1px;page-break-before: always; display: block;">
-            <table style="border: none;width: 100%; margin-bottom: 10px;">
+            <table style="border: none;width: 100%; margin-bottom: 50px;">
                 <tbody>
                 <tr>
                     <td style="width:15%; text-align:center;" class="no-padding-bottom no-padding-top">
@@ -36,10 +36,10 @@
                         <span style="font-size: 11px;font-weight: 600;">DEPARTMENT OF ELECTIONS</span><br/>
                         <span style="font-weight: 700;font-weight: 600;font-size: 23px;">
                                         {{ content.election.electionName }}
-                                    </span><br/>
-                        <span style="font-weight:bold;font-size: 15px;">Polling Division Results</span><br/>
-                        <span style="font-size:12px;font-weight: 900;">VOTES RECEIVED BY EACH PARTY</span><br/>
-                        <span style="font-size:12px;font-weight: 500;">
+                        </span><br/>
+                        <span style="font-weight:bold;font-size: 17px;">Polling Division Results</span><br/>
+                        <span style="font-size:12px;font-weight: 700;">VOTES RECEIVED BY EACH PARTY</span><br/>
+                        <span style="font-size:14px;font-weight: 500;">
                             <strong>Electoral District</strong> - {{ content.electoralDistrict }} |
                             <strong>Polling Division</strong> - {{ content.pollingDivision }}
                         </span>
@@ -70,7 +70,7 @@
                     </tr>
                 {% endfor %}
                 <tr>
-                    <td colspan="5" style="height: 40px;"></td>
+                    <td colspan="5" style="height: 50px;"></td>
                 </tr>
                 <tr>
                     <td></td>
