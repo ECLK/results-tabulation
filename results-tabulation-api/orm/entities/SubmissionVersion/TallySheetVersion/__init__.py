@@ -24,6 +24,7 @@ class TallySheetVersionModel(db.Model):
     tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
                                     primary_key=True)
     exportedPdfFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId), nullable=True)
+    exportedLetterPdfFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId), nullable=True)
 
     isComplete = db.Column(db.Boolean, default=True, nullable=False)
     submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[tallySheetVersionId])
@@ -196,6 +197,30 @@ class TallySheetVersionModel(db.Model):
             db.session.flush()
 
         return tallySheetVersion.exportedPdfFileId
+
+    @classmethod
+    def get_exported_letter_pdf_file_id(cls, tallySheetId, tallySheetVersionId):
+        tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+        tallySheetVersion = cls.get_by_id(tallySheetId, tallySheetVersionId)
+
+        if tallySheetVersion.exportedLetterPdfFileId is None:
+            tally_sheet_version_letter_pdf_content = html_to_pdf(
+                html=str(tallySheet.html_letter(tallySheetVersionId=tallySheetVersionId))
+            )
+            tally_sheet_version_letter_pdf_file = File.create(
+                fileMimeType="application/pdf",
+                fileContentLength=len(tally_sheet_version_letter_pdf_content),
+                fileContentType="application/pdf",
+                fileContent=tally_sheet_version_letter_pdf_content,
+                fileName="%d-%d" % (tallySheetId, tallySheetVersionId)
+            )
+
+            tallySheetVersion.exportedLetterPdfFileId = tally_sheet_version_letter_pdf_file.fileId
+
+            db.session.add(tallySheetVersion)
+            db.session.flush()
+
+        return tallySheetVersion.exportedLetterPdfFileId
 
     @classmethod
     def get_all(cls, tallySheetId, tallySheetCode=None):

@@ -104,10 +104,43 @@ def pdf(tallySheetId, tallySheetVersionId):
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
-    return FileApi.get_download_file(fileId=tally_sheet_version.get_exported_pdf_file_id(
+    file_response = FileApi.get_download_file(fileId=tally_sheet_version.get_exported_pdf_file_id(
         tallySheetId=tallySheetId,
         tallySheetVersionId=tallySheetVersionId
     ))
+
+    db.session.commit()
+
+    return file_response
+
+
+@authorize(required_roles=ALL_ROLES)
+def letter_pdf(tallySheetId, tallySheetVersionId):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    if tally_sheet is None:
+        raise NotFoundException(
+            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
+        )
+
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tallySheetId,
+                                                      tallySheetVersionId=tallySheetVersionId)
+
+    if tally_sheet_version is None:
+        raise NotFoundException(
+            message="Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId,
+            code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
+        )
+
+    file_response = FileApi.get_download_file(fileId=tally_sheet_version.get_exported_letter_pdf_file_id(
+        tallySheetId=tallySheetId,
+        tallySheetVersionId=tallySheetVersionId
+    ))
+
+    db.session.commit()
+
+    return file_response
 
 
 @authorize(required_roles=ALL_ROLES)
