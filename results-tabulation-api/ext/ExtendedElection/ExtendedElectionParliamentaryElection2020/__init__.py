@@ -136,7 +136,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             Election.Model.electionId == counting_centre.c.electionId
         ]
 
-        if self.election.voteType == Postal:
+        if self.election.voteType != NonPostal:
             query_args += [
                 bindparam("pollingDivisionId", None),
                 bindparam("pollingDivisionName", None),
