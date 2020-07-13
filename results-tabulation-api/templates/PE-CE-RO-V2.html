@@ -31,7 +31,11 @@
                 Political Party/ Independent Group
             </th>
             <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align: middle; width:{{content.pollingDivisions|length * 80}}px;">
-                Polling Division / Postal Votes
+                Polling Division
+
+                {% for nonPostalVoteType in content.nonPostalVoteTypes %}
+                / {{nonPostalVoteType}} Votes
+                {% endfor %}
             </th>
             <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Total</th>
             <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align: middle;">No. of Votes in Words</th>

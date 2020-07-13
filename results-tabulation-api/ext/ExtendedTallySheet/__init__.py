@@ -681,9 +681,12 @@ class ExtendedTallySheet:
 
             return df
 
-        def get_valid_vote_count_result(self):
+        def get_valid_vote_count_result(self, vote_type=None):
             df = self.df.copy()
             df['numValue'] = df['numValue'].astype(float)
+
+            if vote_type is not None:
+                df = df.loc[df['voteType'] == vote_type]
 
             df = df.loc[
                 (df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") | (df['templateRowType'] == "PARTY_WISE_VOTE")]
@@ -695,9 +698,12 @@ class ExtendedTallySheet:
 
             return df
 
-        def get_rejected_vote_count_result(self):
+        def get_rejected_vote_count_result(self, vote_type=None):
             df = self.df.copy()
             df['numValue'] = df['numValue'].astype(float)
+
+            if vote_type is not None:
+                df = df.loc[df['voteType'] == vote_type]
 
             df = df.loc[df['templateRowType'] == "REJECTED_VOTE"]
 
@@ -708,9 +714,12 @@ class ExtendedTallySheet:
 
             return df
 
-        def get_vote_count_result(self):
+        def get_vote_count_result(self, vote_type=None):
             df = self.df.copy()
             df['numValue'] = df['numValue'].astype(float)
+
+            if vote_type is not None:
+                df = df.loc[df['voteType'] == vote_type]
 
             df = df.groupby(lambda a: True).agg({
                 'numValue': lambda x: x.sum(skipna=False),
@@ -760,11 +769,14 @@ class ExtendedTallySheet:
 
             return df
 
-        def get_party_wise_valid_vote_count_result(self):
+        def get_party_wise_valid_vote_count_result(self, vote_type=None):
             df = self.df.copy()
             df['numValue'] = df['numValue'].astype(float)
 
             df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
+
+            if vote_type is not None:
+                df = df.loc[df['voteType'] == vote_type]
 
             df = df.groupby(
                 ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
