@@ -14,17 +14,11 @@
             .table th {
                 font-weight: 800;
             }
-
-            .report-header span {
-                display: block;
-                margin-bottom: 5px;
-            }
-
         </style>
 
         {# TODO review why "padding-top: 1px" is needed to align the pages on print view.#}
         <div style="padding-left: 50px;padding-right: 50px;padding-top: 1px;page-break-before: always; display: block;">
-            <table style="border: none;width: 100%; margin-bottom: 50px;">
+            <table style="border: none;width: 100%;">
                 <tbody>
                 <tr>
                     <td style="width:15%; text-align:center;" class="no-padding-bottom no-padding-top">
@@ -47,6 +41,8 @@
                 </tr>
                 </tbody>
             </table>
+
+            <div style="width: 100%; padding-bottom: 50px;"></div>
 
             <table class="table table-sm">
                 <tbody>
@@ -131,7 +127,7 @@
                 </tr>
                 </tbody>
             </table>
-            <table class="table table-borderless signatures" style="margin-top: 30px;margin-bottom: 20px;">
+            <table class="table table-borderless signatures" style="padding-top: 30px;padding-bottom: 20px;">
                 <tr style="text-align:center;">
                     {% if pageNumber in [1,2,3,4] %}
                         <td>
