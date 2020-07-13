@@ -41,7 +41,7 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_
     PE_CE_RO_PR_1, \
     PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, \
     ALL_ISLAND_RESULT
-from constants.VOTE_TYPES import Postal, NonPostal, PostalAndNonPostal
+from constants.VOTE_TYPES import NonPostal, PostalAndNonPostal
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import RoleBasedAccess
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \

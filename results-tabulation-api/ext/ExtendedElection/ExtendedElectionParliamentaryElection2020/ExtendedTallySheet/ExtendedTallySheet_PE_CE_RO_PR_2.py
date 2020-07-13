@@ -1,7 +1,8 @@
 from flask import render_template
+
+from constants.VOTE_TYPES import NonPostal
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities import Area
-from constants.VOTE_TYPES import Postal
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
@@ -60,7 +61,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
                 candidate_wise_valid_postal_vote_count_result["numValue"].sum()
             ))
 
-            if tallySheetVersion.submission.election.voteType == Postal:
+            if tallySheetVersion.submission.election.voteType != NonPostal:
                 content["tallySheetCode"] = "CE/RO/PR/2"
 
             for index_1 in candidate_wise_valid_vote_count_result.index:

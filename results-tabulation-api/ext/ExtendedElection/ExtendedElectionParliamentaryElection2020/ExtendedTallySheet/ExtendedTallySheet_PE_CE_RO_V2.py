@@ -1,10 +1,8 @@
 from flask import render_template
 
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
-from orm.entities import Area
-from constants.VOTE_TYPES import Postal, NonPostal
+from constants.VOTE_TYPES import NonPostal
 from util import to_comma_seperated_num
-from orm.enums import AreaTypeEnum
 
 
 class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
