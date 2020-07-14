@@ -1,22 +1,20 @@
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
-from app import db, connex_app
+from app import db
 from sqlalchemy.orm import relationship
 
 from auth import has_role_based_access
-from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT, \
-    MESSAGE_CODE_PDF_SERVICE_ENTRY_CREATION_FAILED, MESSAGE_CODE_PDF_SERVICE_FETCH_FAILED
+from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE
 from external_services.pdf_service import html_to_pdf
-from orm.entities.Election import InvalidVoteCategory
+from orm.entities.Election import InvalidVoteCategory, ElectionParty
 from orm.entities.IO import File
 from orm.entities.Template import TemplateRowModel
 from orm.entities import SubmissionVersion, TallySheetVersionRow, Area, Candidate, Party, Election
 from orm.entities.Submission import TallySheet
-from exception import NotFoundException, UnauthorizedException, InternalServerErrorException
+from exception import NotFoundException, UnauthorizedException
 from flask import request
-import requests
-import json
+from sqlalchemy import and_
 
 
 class TallySheetVersionModel(db.Model):
@@ -71,6 +69,7 @@ class TallySheetVersionModel(db.Model):
                 Candidate.Model.candidateId,
                 Candidate.Model.candidateName,
                 Candidate.Model.candidateNumber,
+                ElectionParty.Model.electionPartyId,
                 Party.Model.partyId,
                 Party.Model.partyName,
                 Party.Model.partySymbol,
@@ -100,6 +99,13 @@ class TallySheetVersionModel(db.Model):
             ).join(
                 Party.Model,
                 Party.Model.partyId == TallySheetVersionRow.Model.partyId,
+                isouter=True
+            ).join(
+                ElectionParty.Model,
+                and_(
+                    ElectionParty.Model.electionId == self.submission.election.electionId,
+                    ElectionParty.Model.partyId == Party.Model.partyId
+                ),
                 isouter=True
             ).join(
                 InvalidVoteCategory.Model,
