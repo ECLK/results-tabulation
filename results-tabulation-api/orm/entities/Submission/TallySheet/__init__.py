@@ -2,7 +2,7 @@ from typing import Set
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-from app import db
+from app import db, cache
 from auth import get_user_access_area_ids, get_user_name, has_role_based_access
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META
 from exception import NotFoundException, UnauthorizedException
@@ -31,33 +31,33 @@ class TallySheetModel(db.Model):
     workflowInstanceId = db.Column(db.Integer, db.ForeignKey(WorkflowInstance.Model.__table__.c.workflowInstanceId),
                                    nullable=True)
 
-    submission = relationship("SubmissionModel", foreign_keys=[tallySheetId])
+    submission = relationship("SubmissionModel", foreign_keys=[tallySheetId], lazy='subquery')
     statusReport = relationship(StatusReport.Model, foreign_keys=[statusReportId])
-    template = relationship(Template.Model, foreign_keys=[templateId])
-    meta = relationship(Meta.Model, foreign_keys=[metaId])
-    _workflowInstance = relationship(WorkflowInstance.Model, foreign_keys=[workflowInstanceId])
+    template = relationship(Template.Model, foreign_keys=[templateId], lazy='subquery')
+    meta = relationship(Meta.Model, foreign_keys=[metaId], lazy='subquery')
+    workflowInstance = relationship(WorkflowInstance.Model, foreign_keys=[workflowInstanceId], lazy='subquery')
 
     electionId = association_proxy("submission", "electionId")
     election = association_proxy("submission", "election")
     areaId = association_proxy("submission", "areaId")
     area = association_proxy("submission", "area")
     latestVersionId = association_proxy("submission", "latestVersionId")
-    latestStamp = association_proxy("submission", "latestStamp")
-    lockedVersionId = association_proxy("submission", "lockedVersionId")
-    lockedVersion = association_proxy("submission", "lockedVersion")
-    notifiedVersionId = association_proxy("submission", "notifiedVersionId")
-    notifiedVersion = association_proxy("submission", "notifiedVersion")
-    releasedVersionId = association_proxy("submission", "releasedVersionId")
-    releasedVersion = association_proxy("submission", "releasedVersion")
-    lockedStamp = association_proxy("submission", "lockedStamp")
-    submittedVersionId = association_proxy("submission", "submittedVersionId")
-    submittedStamp = association_proxy("submission", "submittedStamp")
-    locked = association_proxy("submission", "locked")
-    submitted = association_proxy("submission", "submitted")
-    notified = association_proxy("submission", "notified")
-    released = association_proxy("submission", "released")
-    submissionProofId = association_proxy("submission", "submissionProofId")
-    submissionProof = association_proxy("submission", "submissionProof")
+    # latestStamp = association_proxy("submission", "latestStamp")
+    # lockedVersionId = association_proxy("submission", "lockedVersionId")
+    # lockedVersion = association_proxy("submission", "lockedVersion")
+    # notifiedVersionId = association_proxy("submission", "notifiedVersionId")
+    # notifiedVersion = association_proxy("submission", "notifiedVersion")
+    # releasedVersionId = association_proxy("submission", "releasedVersionId")
+    # releasedVersion = association_proxy("submission", "releasedVersion")
+    # lockedStamp = association_proxy("submission", "lockedStamp")
+    # submittedVersionId = association_proxy("submission", "submittedVersionId")
+    # submittedStamp = association_proxy("submission", "submittedStamp")
+    # locked = association_proxy("submission", "locked")
+    # submitted = association_proxy("submission", "submitted")
+    # notified = association_proxy("submission", "notified")
+    # released = association_proxy("submission", "released")
+    # submissionProofId = association_proxy("submission", "submissionProofId")
+    # submissionProof = association_proxy("submission", "submissionProof")
     versions = association_proxy("submission", "versions")
     metaDataList = association_proxy("meta", "metaDataList")
 
@@ -70,15 +70,17 @@ class TallySheetModel(db.Model):
                            secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId"
                            )
 
-    def get_tally_sheet_workflow_instance_actions(self, workflow_instance):
+    def get_tally_sheet_workflow_instance_actions(self):
         tally_sheet_workflow_instance_actions = db.session.query(
             WorkflowActionModel.workflowActionId,
             WorkflowActionModel.actionName,
             WorkflowActionModel.actionType,
             WorkflowActionModel.fromStatus,
-            WorkflowActionModel.toStatus
+            WorkflowActionModel.toStatus,
+            WorkflowInstance.Model.status
         ).filter(
-            WorkflowActionModel.workflowId == workflow_instance.workflowId
+            WorkflowInstance.Model.workflowInstanceId == self.workflowInstanceId,
+            WorkflowActionModel.workflowId == WorkflowInstance.Model.workflowId
         ).order_by(
             WorkflowActionModel.workflowActionId
         ).all()
@@ -91,7 +93,7 @@ class TallySheetModel(db.Model):
                 "actionType": tally_sheet_workflow_instance_action.actionType,
                 "fromStatus": tally_sheet_workflow_instance_action.fromStatus,
                 "toStatus": tally_sheet_workflow_instance_action.toStatus,
-                "allowed": tally_sheet_workflow_instance_action.fromStatus == workflow_instance.status,
+                "allowed": tally_sheet_workflow_instance_action.fromStatus == tally_sheet_workflow_instance_action.status,
                 "authorized": has_role_based_access(tally_sheet=self,
                                                     access_type=tally_sheet_workflow_instance_action.actionType)
             })
@@ -99,12 +101,8 @@ class TallySheetModel(db.Model):
         return processed_tally_sheet_workflow_instance_actions
 
     @hybrid_property
-    def workflowInstance(self):
-        tally_sheet_workflow_instance = self._workflowInstance
-        setattr(tally_sheet_workflow_instance, "actions",
-                self.get_tally_sheet_workflow_instance_actions(tally_sheet_workflow_instance))
-
-        return tally_sheet_workflow_instance
+    def workflowInstanceActions(self):
+        return self.get_tally_sheet_workflow_instance_actions()
 
     @hybrid_property
     def areaMapList(self):
@@ -137,92 +135,6 @@ class TallySheetModel(db.Model):
     @hybrid_property
     def tallySheetCode(self):
         return self.template.templateName
-
-    def get_status_report_type(self):
-        electoral_district_name = ""
-        polling_division_name = ""
-        status_report_type = ""
-
-        election = self.submission.election
-        submission_area = self.submission.area
-        # if self.tallySheetCode == PRE_30_PD:
-        #     if election.voteType is Postal:
-        #         electoral_district_name = submission_area.areaName
-        #         status_report_type = "PV"
-        #     else:
-        #         electoral_district_name = _get_electoral_district_name(submission_area)
-        #         polling_division_name = submission_area.areaName
-        #         status_report_type = "PD"
-        # elif self.tallySheetCode == PRE_34_PD:
-        #     if election.voteType is Postal:
-        #         electoral_district_name = submission_area.areaName
-        #         status_report_type = "PV [Revised]"
-        #     else:
-        #         electoral_district_name = _get_electoral_district_name(submission_area)
-        #         polling_division_name = submission_area.areaName
-        #         status_report_type = "PD [Revised]"
-        # elif self.tallySheetCode == PRE_30_ED:
-        #     electoral_district_name = submission_area.areaName
-        #     status_report_type = "ED"
-        # elif self.tallySheetCode == PRE_34_ED:
-        #     electoral_district_name = submission_area.areaName
-        #     status_report_type = "ED [Revised]"
-        # else:
-        # TODO
-        status_report_type = self.tallySheetCode
-
-        return electoral_district_name, polling_division_name, status_report_type
-
-    def get_report_status(self):
-        pass
-        # if self.template.has_data_entry():
-        #     if self.locked:
-        #         if self.released:
-        #             return "RELEASED"
-        #         elif self.notified:
-        #             return "NOTIFIED"
-        #         elif self.submissionProof.size() > 0:
-        #             return "CERTIFIED"
-        #         else:
-        #             return "VERIFIED"
-        #     elif self.submitted:
-        #         return "SUBMITTED"
-        #     elif self.latestVersionId is not None:
-        #         return "ENTERED"
-        #     else:
-        #         return "NOT ENTERED"
-        # else:
-        #     if self.locked:
-        #         if self.released:
-        #             return "RELEASED"
-        #         elif self.notified:
-        #             return "NOTIFIED"
-        #         elif self.submissionProof.size() > 0:
-        #             return "CERTIFIED"
-        #         else:
-        #             return "VERIFIED"
-        #     else:
-        #         return "PENDING"
-
-    def update_status_report(self):
-        pass
-        # election = self.submission.election.get_root_election()
-        #
-        # if self.statusReportId is None:
-        #     electoral_district_name, polling_division_name, status_report_type = self.get_status_report_type()
-        #     status_report = StatusReport.create(
-        #         electionId=election.electionId,
-        #         reportType=status_report_type,
-        #         electoralDistrictName=electoral_district_name,
-        #         pollingDivisionName=polling_division_name,
-        #         status=self.get_report_status()
-        #     )
-        #
-        #     self.statusReportId = status_report.statusReportId
-        # else:
-        #     self.statusReport.update_status(
-        #         status=self.get_report_status()
-        #     )
 
     def set_latest_version(self, tallySheetVersion: TallySheetVersion):
         if tallySheetVersion is None:
