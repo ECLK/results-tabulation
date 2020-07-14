@@ -2,21 +2,19 @@ from typing import Set
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-from app import db, cache
-from auth import get_user_access_area_ids, get_user_name, has_role_based_access
+from app import db
+from auth import get_user_access_area_ids, has_role_based_access
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META
 from exception import NotFoundException, UnauthorizedException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_VIEW
-from ext.ExtendedTallySheet import ExtendedTallySheet
-from orm.entities import Submission, Election, Template, TallySheetVersionRow, Candidate, Party, Area, Meta
+from orm.entities import Submission, Election, Template, TallySheetVersionRow, Meta
 from orm.entities.Dashboard import StatusReport
-from orm.entities.Election import ElectionCandidate, ElectionParty, InvalidVoteCategory
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
 from orm.entities.Workflow import WorkflowInstance, WorkflowActionModel
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
-from sqlalchemy import and_, func, or_, case, bindparam
+from sqlalchemy import func, bindparam
 
 from util import get_dict_key_value_or_none
 
