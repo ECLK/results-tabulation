@@ -23,7 +23,7 @@ class ElectionModel(db.Model):
     isListed = db.Column(db.Boolean, nullable=False, default=False)
     metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=True)
 
-    parties = relationship("ElectionPartyModel")
+    parties = relationship("ElectionPartyModel", order_by="ElectionPartyModel.electionPartyId")
     _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
     subElections = relationship("ElectionModel", foreign_keys=[parentElectionId])
     rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId])
