@@ -1,5 +1,4 @@
-from sqlalchemy.ext.hybrid import hybrid_property
-from app import db, cache
+from app import db
 from sqlalchemy.orm import relationship
 from exception import MethodNotAllowedException
 from exception.messages import MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
