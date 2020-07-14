@@ -1,4 +1,4 @@
-from app import db
+from app import db, cache
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
 
@@ -158,6 +158,7 @@ def get_associated_areas_query(areas, areaType, electionId=None):
     return db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by)
 
 
+@cache.memoize(300)
 def get_associated_areas(area, areaType, electionId=None):
     result = get_associated_areas_query(areas=[area], areaType=areaType, electionId=electionId).all()
 
@@ -171,15 +172,6 @@ def create(areaName, electionId):
     )
 
     return area
-
-
-def get_all_areas_of_root_election(election_id):
-    election = Election.Model.query.filter(Election.Model.electionId == election_id).one_or_none()
-
-    if election.parentElectionId is not None:
-        return get_all_areas_of_root_election(election.parentElectionId)
-    else:
-        return get_all(election_id=election_id)
 
 
 def get_all(election_id=None, area_name=None, associated_area_id=None, area_type=None):

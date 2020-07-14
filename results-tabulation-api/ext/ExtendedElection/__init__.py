@@ -1,6 +1,6 @@
 from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
-from app import db
+from app import db, cache
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_VERIFIED, \
     WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, WORKFLOW_STATUS_TYPE_CERTIFIED, WORKFLOW_STATUS_TYPE_RELEASED
 from ext.ExtendedTallySheet import ExtendedTallySheet
@@ -55,11 +55,13 @@ class ExtendedElection:
                        invalid_vote_categories_dataset_file=None, number_of_seats_dataset_file=None):
         pass
 
+    @cache.memoize(300)
     def get_area_map_for_tally_sheet(self, tally_sheet):
         area = tally_sheet.area
 
         return self.get_area_map(area=area)
 
+    @cache.memoize(300)
     def get_area_map(self, area, group_by=None, filter=None):
         from orm.enums import AreaTypeEnum
 

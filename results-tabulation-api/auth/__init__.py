@@ -183,6 +183,7 @@ def authenticate(func, *args, **kwargs):
     return func(*args, **kwargs)
 
 
+@cache.memoize(300)
 def _get_role_area_ids(parentAreaIds, areaType, voteTypes=[]):
     from orm.entities import Area, Election
 
@@ -215,18 +216,12 @@ def _get_role_area_ids(parentAreaIds, areaType, voteTypes=[]):
     return _role_area_ids
 
 
-@decorator
-@authenticate
-def authorize(func, required_roles=None, *args, **kwargs):
+@cache.memoize(300)
+def get_user_access_area_ids_from_claims(claims, required_roles):
     from orm.enums import AreaTypeEnum
 
-    if required_roles is None:
-        return func(*args, **kwargs)
-
-    claims: Dict = get_claims()
-
-    claim_found = False
     user_access_area_ids = []
+    claim_found = False
 
     for role in required_roles:
         claim = AREA_CLAIM_PREFIX + role
@@ -345,6 +340,19 @@ def authorize(func, required_roles=None, *args, **kwargs):
                         areaType=AreaTypeEnum.CountingCentre
                     )
                 ])
+
+    return user_access_area_ids, claim_found
+
+
+@decorator
+@authenticate
+def authorize(func, required_roles=None, *args, **kwargs):
+    if required_roles is None:
+        return func(*args, **kwargs)
+
+    claims: Dict = get_claims()
+    user_access_area_ids, claim_found = get_user_access_area_ids_from_claims(required_roles=required_roles,
+                                                                             claims=claims)
 
     if not claim_found:
         UnauthorizedException(
