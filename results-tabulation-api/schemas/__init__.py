@@ -453,7 +453,6 @@ class TallySheetSchema(ma.ModelSchema):
     metaDataList = ma.Nested(MetaDataSchema, many=True)
     areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
     workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status"])
-    workflowInstanceActions = ma.Nested(StatusActionSchema, many=True)
 
 
 class TemplateRowSchema(ma.ModelSchema):

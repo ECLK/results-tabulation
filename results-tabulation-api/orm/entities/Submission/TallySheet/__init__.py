@@ -12,7 +12,7 @@ from orm.entities import Submission, Election, Template, TallySheetVersionRow, M
 from orm.entities.Dashboard import StatusReport
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
-from orm.entities.Workflow import WorkflowInstance, WorkflowActionModel
+from orm.entities.Workflow import WorkflowInstance
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
 from sqlalchemy import func, bindparam
 
@@ -382,21 +382,6 @@ def _get_electoral_district_name(polling_division):
     return electoral_district_name
 
 
-def refactor_tally_sheet_response(tally_sheet):
-    workflow_instance = tally_sheet.workflowInstance
-    workflow_actions = tally_sheet.workflowInstance.workflow.actions
-    for workflow_action in workflow_actions:
-        setattr(workflow_action, "allowed", workflow_action.fromStatus == workflow_instance.status)
-        setattr(workflow_action, "authorized", has_role_based_access(tally_sheet=tally_sheet,
-                                                                     access_type=workflow_action.actionType))
-    setattr(tally_sheet.workflowInstance, "actions", workflow_actions)
-
-    setattr(tally_sheet, "areaId", tally_sheet.submission.areaId)
-    setattr(tally_sheet, "area", tally_sheet.submission.area)
-
-    return tally_sheet
-
-
 def get_by_id(tallySheetId, tallySheetCode=None):
     # Filter by authorized areas
     user_access_area_ids: Set[int] = get_user_access_area_ids()
@@ -422,7 +407,7 @@ def get_by_id(tallySheetId, tallySheetCode=None):
             code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
         )
 
-    return refactor_tally_sheet_response(tally_sheet)
+    return tally_sheet
 
 
 def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
@@ -456,7 +441,6 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
     authorized_tally_sheet_list = []
     for tally_sheet in tally_sheet_list:
         if has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
-            refactor_tally_sheet_response(tally_sheet)
             authorized_tally_sheet_list.append(tally_sheet)
 
     return authorized_tally_sheet_list

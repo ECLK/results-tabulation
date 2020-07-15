@@ -106,7 +106,7 @@ export function TallySheetProvider(props) {
             method: 'get',
             params: {}
         }).then(async (tallySheet) => {
-            await refactorTallySheetObject(tallySheet);
+            tallySheet = await refactorTallySheetObject(tallySheet);
             _updateTallySheetState(tallySheet);
             return tallySheet;
         })
