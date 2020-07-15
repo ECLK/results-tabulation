@@ -23,13 +23,32 @@ export function TallySheetProvider(props) {
 
     const [state, setState] = useState({
         tallySheetMap: {},
-        tallySheetProofFileMap: {}
+        tallySheetProofFileMap: {},
+        filteredAreaMap: {}
     });
+
+    async function getFilteredAreaMap(tallySheet) {
+        const {areaId} = tallySheet;
+        if (!state.filteredAreaMap[areaId]) {
+            const electionAreaMap = await electionContext.getElectionAreaMap(tallySheet.electionId);
+            state.filteredAreaMap[areaId] = electionAreaMap.filter((areaMap) => {
+                return areaMap["countryId"] === areaId || areaMap["electoralDistrictId"] === areaId || areaMap["pollingDivisionId"] === areaId || areaMap["countingCentreId"] === areaId || areaMap["countryId"] === areaId;
+            });
+            setState({
+                ...state,
+                filteredAreaMap: {
+                    ...state.filteredAreaMap
+                }
+            })
+        }
+
+        return state.filteredAreaMap[areaId];
+    }
 
     async function refactorTallySheetObject(tallySheet) {
         tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
         tallySheet.election = await electionContext.getElectionById(tallySheet.electionId);
-        tallySheet.areaMapList = await electionContext.getElectionAreaMap(tallySheet.electionId);
+        tallySheet.areaMapList = await getFilteredAreaMap(tallySheet);
 
         // TODO fetch actions and area maps
 
