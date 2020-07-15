@@ -60,12 +60,122 @@ class ExtendedElection:
 
         return self.get_area_map(area=area)
 
-    def get_area_map(self):
+    def get_area_map(self, area=None, group_by=None, filter_by=None):
+        from orm.enums import AreaTypeEnum
+
         area_map_subquery = self.get_area_map_query().subquery()
 
-        return db.session.query(area_map_subquery).filter(
-            area_map_subquery.c.electionId.in_(self.election.get_this_and_below_election_ids())
-        )
+        if area is None:
+            return db.session.query(area_map_subquery).filter(
+                area_map_subquery.c.electionId.in_(self.election.get_this_and_below_election_ids())
+            )
+
+        column_name_list = [
+            "pollingStationId", "pollingStationName",
+            "pollingDistrictId", "pollingDistrictName",
+            "countingCentreId", "countingCentreName",
+            "pollingDivisionId", "pollingDivisionName",
+            "electoralDistrictId", "electoralDistrictName",
+            "countryId", "countryName"
+        ]
+        column_name_to_column_map = {
+            "pollingStationId": area_map_subquery.c.pollingStationId,
+            "pollingStationName": area_map_subquery.c.pollingStationName,
+            "pollingDistrictId": area_map_subquery.c.pollingDistrictId,
+            "pollingDistrictName": area_map_subquery.c.pollingDistrictName,
+            "countingCentreId": area_map_subquery.c.countingCentreId,
+            "countingCentreName": area_map_subquery.c.countingCentreName,
+            "pollingDivisionId": area_map_subquery.c.pollingDivisionId,
+            "pollingDivisionName": area_map_subquery.c.pollingDivisionName,
+            "electoralDistrictId": area_map_subquery.c.electoralDistrictId,
+            "electoralDistrictName": area_map_subquery.c.electoralDistrictName,
+            "countryId": area_map_subquery.c.countryId,
+            "countryName": area_map_subquery.c.countryName
+        }
+        query_args = []
+        query_filter = []
+        query_group_by = []
+        area_and_vote_type_wise_group_by_map = {
+            AreaTypeEnum.CountingCentre: [
+                "countingCentreId",
+                "countingCentreName",
+                "pollingDivisionId",
+                "pollingDivisionName",
+                "electoralDistrictId",
+                "electoralDistrictName",
+                "countryId",
+                "countryName"
+            ],
+            AreaTypeEnum.PollingStation: [
+                "pollingDistrictId",
+                "pollingDistrictName",
+                "pollingStationId",
+                "pollingStationName",
+                "countingCentreId",
+                "countingCentreName",
+                "pollingDivisionId",
+                "pollingDivisionName",
+                "electoralDistrictId",
+                "electoralDistrictName",
+                "countryId",
+                "countryName"
+            ],
+            AreaTypeEnum.PollingDivision: [
+                "pollingDivisionId",
+                "pollingDivisionName",
+                "electoralDistrictId",
+                "electoralDistrictName",
+                "countryId",
+                "countryName"
+            ],
+            AreaTypeEnum.ElectoralDistrict: [
+                "electoralDistrictId",
+                "electoralDistrictName",
+                "countryId",
+                "countryName"
+            ],
+            AreaTypeEnum.Country: [
+                "countryId",
+                "countryName"
+            ]
+        }
+
+        area_and_vote_type_wise_filter_map = {
+            AreaTypeEnum.PollingStation: [area_map_subquery.c.pollingStationId == area.areaId],
+            AreaTypeEnum.PollingDistrict: [area_map_subquery.c.pollingDistrictId == area.areaId],
+            AreaTypeEnum.CountingCentre: [area_map_subquery.c.countingCentreId == area.areaId],
+            AreaTypeEnum.PollingDivision: [area_map_subquery.c.pollingDivisionId == area.areaId],
+            AreaTypeEnum.ElectoralDistrict: [area_map_subquery.c.electoralDistrictId == area.areaId],
+            AreaTypeEnum.Country: [area_map_subquery.c.countryId == area.areaId]
+        }
+
+        if group_by is None:
+            if area.areaType in area_and_vote_type_wise_group_by_map:
+                group_by = area_and_vote_type_wise_group_by_map[area.areaType]
+            else:
+                group_by = []
+
+        for column_name in column_name_list:
+            column = column_name_to_column_map[column_name]
+            if column_name in group_by:
+                query_group_by.append(column)
+
+                # Append the column to query.
+                query_args.append(column)
+            else:
+                query_args.append(bindparam(column_name, None))
+
+        if filter_by is None:
+            if area.areaType in area_and_vote_type_wise_filter_map:
+                filter_by = area_and_vote_type_wise_filter_map[area.areaType]
+            else:
+                filter_by = []
+
+        query_filter = filter_by
+
+        area_map = db.session.query(*query_args).filter(*query_filter).group_by(*query_group_by).all()
+
+        return area_map
 
     def get_area_map_query(self):
 
