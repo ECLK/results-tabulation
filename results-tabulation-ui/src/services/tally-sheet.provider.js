@@ -31,6 +31,7 @@ export function TallySheetProvider(props) {
         tallySheet.election = await electionContext.getElectionById(tallySheet.electionId);
         tallySheet.workflowInstance.actions = tallySheet.workflowInstanceActions;
         tallySheet.area = tallySheet.submission.area;
+        tallySheet.areaMapList = await electionContext.getElectionAreaMap(tallySheet.electionId);
 
         // TODO fetch actions and area maps
 

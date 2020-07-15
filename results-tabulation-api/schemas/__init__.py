@@ -395,7 +395,7 @@ class TallySheetSchema_1(ma.ModelSchema):
             "electionId",
             # "areaId",
             # "area",
-            "areaMapList",
+            # "areaMapList",
             "latestVersion",
             "metaDataList",
             # "workflowInstance",

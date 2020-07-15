@@ -6,7 +6,7 @@ from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_ELECTION_NOT_FOUND
 from orm.entities.Election.election_helper import get_root_token
 from orm.entities import Election
-from schemas import ElectionSchema as Schema
+from schemas import ElectionSchema as Schema, AreaMapSchema
 from util import RequestBody, get_paginated_query
 
 
@@ -60,3 +60,18 @@ def create(body):
 @authorize(required_roles=[ADMIN_ROLE])
 def getRootToken(electionId):
     return get_root_token(electionId=electionId)
+
+
+@authorize(required_roles=ALL_ROLES)
+def get_area_map(electionId=None):
+    election = Election.get_by_id(electionId=electionId)
+    if election is None:
+        raise NotFoundException(
+            message="Election not found (electionId=%d)" % electionId,
+            code=MESSAGE_CODE_ELECTION_NOT_FOUND
+        )
+
+    extended_election = election.get_extended_election()
+    area_map = extended_election.get_area_map()
+
+    return AreaMapSchema(many=True).dump(area_map).data
