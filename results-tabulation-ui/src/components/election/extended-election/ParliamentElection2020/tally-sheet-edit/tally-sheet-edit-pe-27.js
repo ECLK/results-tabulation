@@ -244,7 +244,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                         <TableCell align="center">Party Name</TableCell>
                         <TableCell align="center">Party Symbol</TableCell>
                         <TableCell align="center">Count in words</TableCell>
-                        <TableCell align="right">Count in figures</TableCell>
+                        <TableCell align="center">Count in figures</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -270,7 +270,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                                     }}
                                 />
                             </TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center">
                                 <TextField
                                     required
                                     variant="outlined"
@@ -293,7 +293,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                 <TableFooter>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>Total valid vote count</TableCell>
-                        <TableCell align="right">
+                        <TableCell align="center">
                             <TextField
                                 required
                                 error={calculateTotalValidVoteCount() !== validVoteCountRow.numValue}
@@ -306,7 +306,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>Total rejected vote count</TableCell>
-                        <TableCell align="right"><TextField
+                        <TableCell align="center"><TextField
                             required
                             error={!isNumeric(rejectedVoteCountRow.numValue)}
                             helperText={!isNumeric(rejectedVoteCountRow.numValue) ? "Only numeric values are valid" : ''}
@@ -317,7 +317,7 @@ export default function TallySheetEdit_PE_27({history, queryString, election, ta
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>Total vote count</TableCell>
-                        <TableCell align="right">
+                        <TableCell align="center">
                             <TextField
                                 required
                                 error={calculateTotalVoteCount() !== voteCountRow.numValue}

@@ -29,8 +29,6 @@ export function TallySheetProvider(props) {
     async function refactorTallySheetObject(tallySheet) {
         tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
         tallySheet.election = await electionContext.getElectionById(tallySheet.electionId);
-        tallySheet.workflowInstance.actions = tallySheet.workflowInstanceActions;
-        tallySheet.area = tallySheet.submission.area;
         tallySheet.areaMapList = await electionContext.getElectionAreaMap(tallySheet.electionId);
 
         // TODO fetch actions and area maps
@@ -88,9 +86,10 @@ export function TallySheetProvider(props) {
             url: ENDPOINT_PATH_TALLY_SHEETS_BY_ID(tallySheetId),
             method: 'get',
             params: {}
-        }).then((tallySheet) => {
+        }).then(async (tallySheet) => {
+            await refactorTallySheetObject(tallySheet);
             _updateTallySheetState(tallySheet);
-            return refactorTallySheetObject(tallySheet);
+            return tallySheet;
         })
     }
 

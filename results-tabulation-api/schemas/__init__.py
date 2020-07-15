@@ -393,12 +393,12 @@ class TallySheetSchema_1(ma.ModelSchema):
             "templateId",
             "template",
             "electionId",
-            # "areaId",
-            # "area",
+            "areaId",
+            "area",
             # "areaMapList",
             "latestVersion",
             "metaDataList",
-            # "workflowInstance",
+            "workflowInstance",
             "latestVersionId"
         )
 
@@ -407,7 +407,7 @@ class TallySheetSchema_1(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    template = ma.Nested("TemplateSchema", only=["templateId", "templateName", "isDerived"])
+    template = ma.Nested("TemplateSchema", only=["templateId", "templateName", "isDerived", "rows"])
     area = ma.Nested(AreaSchema, only=["areaId", "areaName"])
     versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
     latestVersion = ma.Nested(TallySheetVersionSchema)
@@ -417,7 +417,7 @@ class TallySheetSchema_1(ma.ModelSchema):
     submissionProof = ma.Nested(Proof_Schema)
     metaDataList = ma.Nested(MetaDataSchema, many=True)
     areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
-    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "statuses", "status"])
+    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status"])
 
 
 class TallySheetSchema(ma.ModelSchema):
@@ -428,14 +428,12 @@ class TallySheetSchema(ma.ModelSchema):
             "templateId",
             "template",
             "electionId",
-            # "areaId",
-            # "area",
+            "areaId",
+            "area",
             # "areaMapList",
             "metaDataList",
             "workflowInstance",
-            "workflowInstanceActions",
-            "latestVersionId",
-            "submission"
+            "latestVersionId"
         )
 
         model = TallySheet.Model
@@ -454,7 +452,7 @@ class TallySheetSchema(ma.ModelSchema):
     submissionProof = ma.Nested(Proof_Schema)
     metaDataList = ma.Nested(MetaDataSchema, many=True)
     areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
-    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "status"])
+    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status"])
     workflowInstanceActions = ma.Nested(StatusActionSchema, many=True)
 
 
