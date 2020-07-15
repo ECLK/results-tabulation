@@ -68,47 +68,6 @@ class TallySheetModel(db.Model):
                            secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId"
                            )
 
-    def get_tally_sheet_workflow_instance_actions(self):
-        tally_sheet_workflow_instance_actions = db.session.query(
-            WorkflowActionModel.workflowActionId,
-            WorkflowActionModel.actionName,
-            WorkflowActionModel.actionType,
-            WorkflowActionModel.fromStatus,
-            WorkflowActionModel.toStatus,
-            WorkflowInstance.Model.status
-        ).filter(
-            WorkflowInstance.Model.workflowInstanceId == self.workflowInstanceId,
-            WorkflowActionModel.workflowId == WorkflowInstance.Model.workflowId
-        ).order_by(
-            WorkflowActionModel.workflowActionId
-        ).all()
-
-        processed_tally_sheet_workflow_instance_actions = []
-        for tally_sheet_workflow_instance_action in tally_sheet_workflow_instance_actions:
-            processed_tally_sheet_workflow_instance_actions.append({
-                "workflowActionId": tally_sheet_workflow_instance_action.workflowActionId,
-                "actionName": tally_sheet_workflow_instance_action.actionName,
-                "actionType": tally_sheet_workflow_instance_action.actionType,
-                "fromStatus": tally_sheet_workflow_instance_action.fromStatus,
-                "toStatus": tally_sheet_workflow_instance_action.toStatus,
-                "allowed": tally_sheet_workflow_instance_action.fromStatus == tally_sheet_workflow_instance_action.status,
-                "authorized": has_role_based_access(tally_sheet=self,
-                                                    access_type=tally_sheet_workflow_instance_action.actionType)
-            })
-
-        return processed_tally_sheet_workflow_instance_actions
-
-    @hybrid_property
-    def workflowInstanceActions(self):
-        return self.get_tally_sheet_workflow_instance_actions()
-
-    @hybrid_property
-    def areaMapList(self):
-        extended_election = self.submission.election.get_extended_election()
-        area_map = extended_election.get_area_map_for_tally_sheet(tally_sheet=self)
-
-        return area_map
-
     def add_parent(self, parentTallySheet):
         parentTallySheet.add_child(self)
 
@@ -425,6 +384,22 @@ def _get_electoral_district_name(polling_division):
     return electoral_district_name
 
 
+def refactor_tally_sheet_response(tally_sheet):
+    workflow_instance = tally_sheet.workflowInstance
+    workflow_actions = tally_sheet.workflowInstance.workflow.actions
+    for workflow_action in workflow_actions:
+        setattr(workflow_action, "allowed", workflow_action.fromStatus == workflow_instance.status)
+        setattr(workflow_action, "authorized", has_role_based_access(tally_sheet=tally_sheet,
+                                                                     access_type=workflow_action.actionType))
+    setattr(tally_sheet.workflowInstance, "actions", workflow_actions)
+
+
+    setattr(tally_sheet, "areaId", tally_sheet.submission.areaId)
+    setattr(tally_sheet, "area", tally_sheet.submission.area)
+
+    return tally_sheet
+
+
 def get_by_id(tallySheetId, tallySheetCode=None):
     # Filter by authorized areas
     user_access_area_ids: Set[int] = get_user_access_area_ids()
@@ -450,7 +425,7 @@ def get_by_id(tallySheetId, tallySheetCode=None):
             code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
         )
 
-    return tally_sheet
+    return refactor_tally_sheet_response(tally_sheet)
 
 
 def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
@@ -484,6 +459,7 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
     authorized_tally_sheet_list = []
     for tally_sheet in tally_sheet_list:
         if has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
+            refactor_tally_sheet_response(tally_sheet)
             authorized_tally_sheet_list.append(tally_sheet)
 
     return authorized_tally_sheet_list
