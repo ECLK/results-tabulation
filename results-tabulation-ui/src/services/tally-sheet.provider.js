@@ -29,6 +29,11 @@ export function TallySheetProvider(props) {
     async function refactorTallySheetObject(tallySheet) {
         tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
         tallySheet.election = await electionContext.getElectionById(tallySheet.electionId);
+        tallySheet.workflowInstance.actions = tallySheet.workflowInstanceActions;
+        tallySheet.area = tallySheet.submission.area;
+        tallySheet.areaMapList = await electionContext.getElectionAreaMap(tallySheet.electionId);
+
+        // TODO fetch actions and area maps
 
         const {metaDataList = []} = tallySheet;
         tallySheet.metaDataMap = getMetaDataMap(metaDataList);

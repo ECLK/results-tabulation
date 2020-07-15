@@ -1,4 +1,3 @@
-from sqlalchemy.ext.hybrid import hybrid_property
 from app import db
 from sqlalchemy.orm import relationship
 from exception import MethodNotAllowedException
@@ -26,20 +25,10 @@ class SubmissionModel(db.Model):
     releasedVersionId = db.Column(db.Integer, db.ForeignKey("submissionVersion.submissionVersionId"), nullable=True)
     releasedStampId = db.Column(db.Integer, db.ForeignKey("stamp.stampId"), nullable=True)
 
-    election = relationship(Election.Model, foreign_keys=[electionId])
-    area = relationship(Area.Model, foreign_keys=[areaId])
-    submissionProof = relationship(Proof.Model, foreign_keys=[submissionProofId])
+    election = relationship(Election.Model, foreign_keys=[electionId], lazy='subquery')
+    area = relationship(Area.Model, foreign_keys=[areaId], lazy='subquery')
     submissionHistory = relationship(History.Model, foreign_keys=[submissionId])
     latestVersion = relationship("SubmissionVersionModel", foreign_keys=[latestVersionId])
-    latestStamp = relationship(Stamp.Model, foreign_keys=[latestStampId])
-    lockedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
-    lockedStamp = relationship(Stamp.Model, foreign_keys=[lockedStampId])
-    submittedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
-    submittedStamp = relationship(Stamp.Model, foreign_keys=[submittedStampId])
-    notifiedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
-    notifiedStamp = relationship(Stamp.Model, foreign_keys=[submittedStampId])
-    releasedVersion = relationship("SubmissionVersionModel", foreign_keys=[lockedVersionId])
-    releasedStamp = relationship(Stamp.Model, foreign_keys=[submittedStampId])
     versions = relationship("SubmissionVersionModel", order_by="desc(SubmissionVersionModel.submissionVersionId)",
                             primaryjoin="SubmissionModel.submissionId==SubmissionVersionModel.submissionId")
 

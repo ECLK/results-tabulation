@@ -4,6 +4,7 @@ import {getAccessToken} from "../../auth";
 
 export const ENDPOINT_PATH_ELECTIONS = () => "/election";
 export const ENDPOINT_PATH_ELECTIONS_BY_ID = (electionId) => `/election/${electionId}`;
+export const ENDPOINT_PATH_ELECTION_AREA_MAP_BY_ID = (electionId) => `/election/${electionId}/area-map`;
 export const ENDPOINT_PATH_AREAS = () => "/area";
 export const ENDPOINT_PATH_AREAS_BY_ID = (areaId) => `/area/${areaId}`;
 export const ENDPOINT_PATH_TALLY_SHEETS = () => "/tally-sheet";
