@@ -107,7 +107,8 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             electoral_district.c.areaName.label("electoralDistrictName"),
             counting_centre.c.areaId.label("countingCentreId"),
             counting_centre.c.areaName.label("countingCentreName"),
-            Election.Model.voteType
+            Election.Model.voteType,
+            Election.Model.electionId
         ]
 
         query_filter = [
