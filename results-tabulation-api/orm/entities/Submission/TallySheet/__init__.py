@@ -99,8 +99,6 @@ class TallySheetModel(db.Model):
         else:
             self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
 
-        self.update_status_report()
-
     @hybrid_property
     def latestVersion(self):
         return TallySheetVersion.Model.query.filter(
@@ -392,7 +390,6 @@ def refactor_tally_sheet_response(tally_sheet):
         setattr(workflow_action, "authorized", has_role_based_access(tally_sheet=tally_sheet,
                                                                      access_type=workflow_action.actionType))
     setattr(tally_sheet.workflowInstance, "actions", workflow_actions)
-
 
     setattr(tally_sheet, "areaId", tally_sheet.submission.areaId)
     setattr(tally_sheet, "area", tally_sheet.submission.area)
