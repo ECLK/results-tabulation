@@ -66,7 +66,7 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
             }
         }
 
-        return calculateTotalFirstPreferenceCount() === firstPreferenceCountRow.numValue
+        return true;
     };
 
     const getTallySheetRequestBody = () => {
@@ -126,21 +126,6 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
         return total;
     }
 
-    function calculateTotalFirstPreferenceCount() {
-        return calculateTotalValidFirstPreferenceCount();
-    }
-
-
-    const handleTotalFirstPreferenceCountChange = () => event => {
-        const {value} = event.target;
-        setFirstPreferenceCountRow((firstPreferenceCountRow) => {
-            return {
-                ...firstPreferenceCountRow,
-                numValue: processNumericValue(value)
-            }
-        });
-    };
-
     function getTallySheetEditForm() {
         if (saved) {
             return <Table aria-label="simple table" size={saved ? "small" : "medium"}>
@@ -154,10 +139,10 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
                 </TableHead>
                 <TableBody>
                     {candidateWiseFirstPreferenceCountRows.map((candidateWiseFirstPreferenceCountRow) => {
-                        const {candidateId, candidateName, strValue, numValue} = candidateWiseFirstPreferenceCountRow;
+                        const {candidateId, candidateName, candidateNumber, strValue, numValue} = candidateWiseFirstPreferenceCountRow;
                         return <TableRow key={candidateId}>
                             <TableCell align="center">{candidateName}</TableCell>
-                            <TableCell align="center"></TableCell>
+                            <TableCell align="center">{candidateNumber}</TableCell>
                             <TableCell align="center">{strValue}</TableCell>
                             <TableCell align="right">{numValue}</TableCell>
                         </TableRow>
@@ -166,15 +151,10 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
 
                 <TableFooter>
                     <TableRow>
-                        <TableCell align="right" colSpan={3}>Total vote count</TableCell>
-                        <TableCell align="right">{calculateTotalFirstPreferenceCount()}</TableCell>
-                    </TableRow>
-                    <TableRow>
                         <TableCell align="right" colSpan={4}>
                             {getActionsBar()}
                         </TableCell>
                     </TableRow>
-
                 </TableFooter>
 
             </Table>
@@ -185,17 +165,17 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
                         <TableCell align="center">Candidate Name</TableCell>
                         <TableCell align="center">Candidate Number</TableCell>
                         <TableCell align="center">Count in words</TableCell>
-                        <TableCell align="right">Count in figures</TableCell>
+                        <TableCell align="center">Count in figures</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
 
                     {candidateWiseFirstPreferenceCountRows.map((candidateWiseFirstPreferenceCountRow, candidateWiseFirstPreferenceCountRowIndex) => {
-                        const {candidateId, candidateName, strValue, numValue} = candidateWiseFirstPreferenceCountRow;
+                        const {candidateId, candidateName, candidateNumber, strValue, numValue} = candidateWiseFirstPreferenceCountRow;
 
                         return <TableRow key={candidateId}>
                             <TableCell align="center">{candidateName}</TableCell>
-                            <TableCell align="center"></TableCell>
+                            <TableCell align="center">{candidateNumber}</TableCell>
                             <TableCell align="center">
                                 <TextField
                                     required
@@ -234,24 +214,10 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
 
                 <TableFooter>
                     <TableRow>
-                        <TableCell align="right" colSpan={3}>Total vote count</TableCell>
-                        <TableCell align="right">
-                            <TextField
-                                required
-                                error={calculateTotalFirstPreferenceCount() !== firstPreferenceCountRow.numValue}
-                                helperText={calculateTotalFirstPreferenceCount() !== firstPreferenceCountRow.numValue ? 'Total vote count mismatch!' : ' '}
-                                value={firstPreferenceCountRow.numValue}
-                                margin="normal"
-                                onChange={handleTotalFirstPreferenceCountChange()}
-                            />
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
                         <TableCell align="right" colSpan={4}>
                             {getActionsBar()}
                         </TableCell>
                     </TableRow>
-
                 </TableFooter>
 
             </Table>
