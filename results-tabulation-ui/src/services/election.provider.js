@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {
+    ENDPOINT_PATH_ELECTION_AREA_MAP_BY_ID,
     ENDPOINT_PATH_ELECTIONS,
     ENDPOINT_PATH_ELECTIONS_BY_ID,
     request
@@ -17,8 +18,13 @@ export function ElectionProvider(props) {
 
     const saveElectionToState = (election) => {
         const {electionId, metaDataList = [], parties} = election;
-        election.metaDataMap = getMetaDataMap(metaDataList);
-        election.partyMap = getPartyMap(parties);
+        if (!election.metaDataMap) {
+            election.metaDataMap = getMetaDataMap(metaDataList);
+        }
+
+        if (!election.partyMap) {
+            election.partyMap = getPartyMap(parties);
+        }
 
         // To avoid duplicated election fetches while state update wait
         state.electionMap[electionId] = {...election};
@@ -96,12 +102,29 @@ export function ElectionProvider(props) {
         return election;
     };
 
+
+    const getElectionAreaMap = async (electionId) => {
+        let election = await getElectionById(electionId);
+
+        if (!election.electionAreaMap) {
+            const electionAreaMap = await request({
+                url: ENDPOINT_PATH_ELECTION_AREA_MAP_BY_ID(electionId),
+                method: 'get', // default,
+            });
+
+            saveElectionToState(Object.assign(election, {electionAreaMap}));
+        }
+
+        return election.electionAreaMap;
+    };
+
     return <ElectionContext.Provider
         value={{
             getElectionById: getElectionById,
             getElections: getElections,
             getSubElections: getSubElections,
-            getParentElection: getParentElection
+            getParentElection: getParentElection,
+            getElectionAreaMap: getElectionAreaMap
         }}
     >
         {props.children}

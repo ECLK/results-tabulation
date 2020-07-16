@@ -1,6 +1,7 @@
 from flask import Response
 
 from api import FileApi
+from api.TallySheetApi import refactor_tally_sheet_response
 from app import db
 from auth import authorize
 from constants.AUTH_CONSTANTS import ALL_ROLES
@@ -175,4 +176,4 @@ def create(tallySheetId, body):
 
     db.session.commit()
 
-    return TallySheetSchema_1().dump(tally_sheet).data
+    return TallySheetSchema_1().dump(refactor_tally_sheet_response(tally_sheet)).data

@@ -5,7 +5,7 @@ from decorator import decorator
 from flask import request
 from jose import jwt
 
-from app import cache, db
+from app import db
 from constants import VOTE_TYPES
 from constants.AUTH_CONSTANTS import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
@@ -133,7 +133,7 @@ def has_role_based_access(tally_sheet, access_type):
     extended_election = get_extended_election(election=election)
     role_based_access_config = extended_election.role_based_access_config
 
-    tally_sheet_code = tally_sheet.template.templateName
+    tally_sheet_code = tally_sheet.tallySheetCode
     vote_type = election.voteType
 
     for role in connexion.context[USER_ROLES]:

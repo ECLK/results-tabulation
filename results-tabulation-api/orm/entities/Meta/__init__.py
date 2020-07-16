@@ -8,7 +8,7 @@ class MetaModel(db.Model):
 
     metaId = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    metaDataList = relationship(MetaData.Model)
+    metaDataList = relationship(MetaData.Model, lazy='subquery')
 
     @classmethod
     def create(cls, metaDataDict=None):

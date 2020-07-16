@@ -14,8 +14,8 @@ class ElectionCandidateModel(db.Model):
     qualifiedForPreferences = db.Column(db.Boolean, default=False, nullable=False)
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
-    party = relationship(Party.Model, foreign_keys=[partyId])
-    candidate = relationship(Candidate.Model, foreign_keys=[candidateId])
+    party = relationship(Party.Model, foreign_keys=[partyId], lazy='subquery')
+    candidate = relationship(Candidate.Model, foreign_keys=[candidateId], lazy='subquery')
 
     candidateName = association_proxy("candidate", "candidateName")
     candidateNumber = association_proxy("candidate", "candidateNumber")

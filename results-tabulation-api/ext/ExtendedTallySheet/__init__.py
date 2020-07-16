@@ -19,6 +19,7 @@ from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY
     WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED
 
 from orm.entities import Workflow, Meta
+from orm.entities.Election import ElectionParty
 from orm.entities.Meta import MetaData
 from orm.entities.Workflow import WorkflowInstance, WorkflowActionModel
 from orm.entities.Workflow.WorkflowInstance import WorkflowInstanceLog
@@ -38,6 +39,7 @@ DEFAULT_HTML_TABLE_COLUMNS = [
     "candidateId",
     "candidateName",
     "candidateNumber",
+    "electionPartyId",
     "partyId",
     "partyName",
     "partySymbol",
@@ -441,7 +443,8 @@ class ExtendedTallySheet:
             df = df.loc[df['voteType'] == NonPostal]
 
             df = df.sort_values(
-                by=['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+                by=['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
+                    'candidateName',
                     'candidateNumber', 'areaId', 'areaName'], ascending=True
             ).reset_index()
 
@@ -454,7 +457,8 @@ class ExtendedTallySheet:
             df = df.loc[df['voteType'] == NonPostal]
 
             df = df.sort_values(
-                by=['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'areaId', 'areaName'], ascending=True
+                by=['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'areaId',
+                    'areaName'], ascending=True
             ).reset_index()
 
             return df
@@ -467,13 +471,14 @@ class ExtendedTallySheet:
             df = df.loc[df['voteType'] == NonPostal]
 
             df = df.groupby(
-                ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+                ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
+                 'candidateName',
                  'candidateNumber']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
                 'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
-                by=['partyId', 'candidateId'], ascending=True
+                by=['electionPartyId', 'partyId', 'candidateId'], ascending=True
             ).reset_index()
 
             return df
@@ -486,13 +491,14 @@ class ExtendedTallySheet:
             df = df.loc[df['voteType'] == Postal]
 
             df = df.groupby(
-                ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+                ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
+                 'candidateName',
                  'candidateNumber']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
                 'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
-                by=['partyId', 'candidateId'], ascending=True
+                by=['electionPartyId', 'partyId', 'candidateId'], ascending=True
             ).reset_index()
 
             return df
@@ -505,12 +511,12 @@ class ExtendedTallySheet:
             df = df.loc[df['voteType'] == Postal]
 
             df = df.groupby(
-                ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
+                ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
                 'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
-                by=['partyId'], ascending=True
+                by=['electionPartyId', 'partyId'], ascending=True
             ).reset_index()
 
             return df
@@ -522,13 +528,14 @@ class ExtendedTallySheet:
             df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
 
             df = df.groupby(
-                ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+                ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
+                 'candidateName',
                  'candidateNumber']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
                 'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
-                by=['partyId', 'candidateId'], ascending=True
+                by=['electionPartyId', 'partyId', 'candidateId'], ascending=True
             ).reset_index()
 
             return df
@@ -735,7 +742,8 @@ class ExtendedTallySheet:
             df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
 
             df = df.sort_values(
-                by=['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId', 'candidateName',
+                by=['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
+                    'candidateName',
                     'candidateNumber', 'areaId', 'areaName'], ascending=True
             ).reset_index()
 
@@ -747,7 +755,8 @@ class ExtendedTallySheet:
             df = df.loc[df['templateRowType'] == "PARTY_WISE_VOTE"]
 
             df = df.sort_values(
-                by=['partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'areaId', 'areaName'], ascending=True
+                by=['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'areaId',
+                    'areaName'], ascending=True
             ).reset_index()
             return df
 
@@ -779,12 +788,12 @@ class ExtendedTallySheet:
                 df = df.loc[df['voteType'] == vote_type]
 
             df = df.groupby(
-                ['partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
+                ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
                 'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
             }).sort_values(
-                by=['partyId'], ascending=True
+                by=['electionPartyId', 'partyId'], ascending=True
             ).reset_index()
 
             return df

@@ -1,5 +1,6 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import case
+from sqlalchemy.orm import relationship
 
 from app import db
 
@@ -11,6 +12,8 @@ class WorkflowModel(db.Model):
     workflowName = db.Column(db.String(100), nullable=False)
     firstStatus = db.Column(db.String(100), nullable=False)
     lastStatus = db.Column(db.String(100), nullable=False)
+
+    actions = relationship("WorkflowActionModel", order_by="WorkflowActionModel.workflowActionId", lazy='subquery')
 
     @classmethod
     def create(cls, workflowName, statuses, actions, firstStatus, lastStatus):

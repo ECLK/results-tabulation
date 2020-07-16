@@ -18,6 +18,7 @@ class WorkflowInstanceModel(db.Model):
     latestLogId = db.Column(db.Integer, db.ForeignKey("workflowInstanceLog.workflowInstanceLogId"), nullable=True)
     proofId = db.Column(db.Integer, db.ForeignKey("proof.proofId"), nullable=True)
 
+    workflow = relationship("WorkflowModel", foreign_keys=[workflowId], lazy='subquery')
     latestLog = relationship(WorkflowInstanceLog.Model, foreign_keys=[latestLogId])
     proof = relationship(Proof.Model, foreign_keys=[proofId])
 

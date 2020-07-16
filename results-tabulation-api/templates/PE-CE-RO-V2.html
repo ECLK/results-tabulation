@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 
 {% block container %}
+<style>
+    @media print {
+        @page {
+            size: 850mm 600mm;
+        }
+    }
+</style>
 <div class="font1 pre-30-ed">
     <table class="table table-borderless">
         <tbody>
@@ -92,7 +99,7 @@
     </tbody>
 </table>
 
-<table class="table table-borderless">
+<table class="table table-borderless" style="page-break-before: always;">
     <tr>
         <td></td>
         <td style="vertical-align:bottom; text-align:center;" colspan="2"><b>The entitlement of membership of each Party/ Independent Group is:</b> <br/> <u>Name of Part/ Independent Group</u></td>

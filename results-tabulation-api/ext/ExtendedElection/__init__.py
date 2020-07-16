@@ -1,6 +1,6 @@
 from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
-from app import db
+from app import db, cache
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_VERIFIED, \
     WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, WORKFLOW_STATUS_TYPE_CERTIFIED, WORKFLOW_STATUS_TYPE_RELEASED
 from ext.ExtendedTallySheet import ExtendedTallySheet
@@ -60,10 +60,15 @@ class ExtendedElection:
 
         return self.get_area_map(area=area)
 
-    def get_area_map(self, area, group_by=None, filter=None):
+    def get_area_map(self, area=None, group_by=None, filter_by=None):
         from orm.enums import AreaTypeEnum
 
         area_map_subquery = self.get_area_map_query().subquery()
+
+        if area is None:
+            return db.session.query(area_map_subquery).filter(
+                area_map_subquery.c.electionId.in_(self.election.get_this_and_below_election_ids())
+            )
 
         column_name_list = [
             "pollingStationId", "pollingStationName",
@@ -160,13 +165,13 @@ class ExtendedElection:
             else:
                 query_args.append(bindparam(column_name, None))
 
-        if filter is None:
+        if filter_by is None:
             if area.areaType in area_and_vote_type_wise_filter_map:
-                filter = area_and_vote_type_wise_filter_map[area.areaType]
+                filter_by = area_and_vote_type_wise_filter_map[area.areaType]
             else:
-                filter = []
+                filter_by = []
 
-        query_filter = filter
+        query_filter = filter_by
 
         area_map = db.session.query(*query_args).filter(*query_filter).group_by(*query_group_by).all()
 
@@ -216,7 +221,8 @@ class ExtendedElection:
             polling_station.c.areaName.label("pollingStationName"),
             counting_centre.c.areaId.label("countingCentreId"),
             counting_centre.c.areaName.label("countingCentreName"),
-            Election.Model.voteType
+            Election.Model.voteType,
+            Election.Model.electionId
         ).filter(
             country__electoral_district.parentAreaId == country.c.areaId,
             country__electoral_district.childAreaId == electoral_district.c.areaId,

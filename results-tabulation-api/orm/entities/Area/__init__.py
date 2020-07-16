@@ -173,15 +173,6 @@ def create(areaName, electionId):
     return area
 
 
-def get_all_areas_of_root_election(election_id):
-    election = Election.Model.query.filter(Election.Model.electionId == election_id).one_or_none()
-
-    if election.parentElectionId is not None:
-        return get_all_areas_of_root_election(election.parentElectionId)
-    else:
-        return get_all(election_id=election_id)
-
-
 def get_all(election_id=None, area_name=None, associated_area_id=None, area_type=None):
     election = Election.Model.query.filter(Election.Model.electionId == election_id).one_or_none()
 

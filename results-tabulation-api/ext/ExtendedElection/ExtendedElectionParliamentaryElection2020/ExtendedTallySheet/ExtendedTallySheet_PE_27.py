@@ -58,7 +58,7 @@ class ExtendedTallySheet_PE_27(ExtendedTallySheetDataEntry):
                 row = tallySheetContent[row_index]
                 if row.templateRowType == "PARTY_WISE_VOTE":
                     content["data"].append([
-                        row_index + 1,
+                        len(content["data"]) + 1,
                         row.partyName,
                         row.partySymbol,
                         "" if row.strValue is None else row.strValue,
