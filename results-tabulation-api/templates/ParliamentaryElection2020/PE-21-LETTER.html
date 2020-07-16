@@ -34,7 +34,6 @@
             <th scope="col">Party Abbreviation</th>
             <th scope="col" style="text-align:right;">Candidate Name</th>
             <th scope="col" style="text-align:right;">Candidate Number</th>
-            <th scope="col" style="text-align:right;">Preference Count</th>
         </tr>
         {% for row in content.data %}
             <tr>
@@ -45,8 +44,6 @@
                     style="text-align:right;">{{ row[2] }}</td>
                 <td class="{% if row[3]=='' %}missing-value{% endif %}"
                     style="text-align:right;">{{ row[3] }}</td>
-                <td class="{% if row[4]=='' %}missing-value{% endif %}"
-                    style="text-align:right;">{{ row[4] }}</td>
             </tr>
         {% endfor %}
         <tr>

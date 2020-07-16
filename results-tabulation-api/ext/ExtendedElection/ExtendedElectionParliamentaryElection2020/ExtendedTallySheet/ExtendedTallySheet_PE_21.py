@@ -227,11 +227,6 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
                     elected_candidates_df.at[index, "candidateNumber"]
                 ]
 
-                if len(preference_count_df) > 0:
-                    data_row.append(preference_count_df.at[preference_count_df.index[0], "numValue"])
-                else:
-                    data_row.append('')
-
                 content["data"].append(data_row)
 
             html = render_template(
