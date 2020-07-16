@@ -147,9 +147,6 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             content["rejectedVoteCounts"].append(to_comma_seperated_num(total_rejected_vote_count))
             content["totalVoteCounts"].append(to_comma_seperated_num(total_vote_count))
 
-            if tallySheetVersion.submission.election.voteType != NonPostal:
-                content["tallySheetCode"] = "CE/RO/V1"
-
             number_of_counting_centres = len(area_wise_vote_count_result)
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
                 data_row = []
