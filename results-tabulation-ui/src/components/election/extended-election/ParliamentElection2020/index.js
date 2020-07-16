@@ -144,9 +144,12 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
                                     tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
                                     tallySheetCodeLabels = ["PE-4", "PE-22"];
-                                } else {
+                                } else if (voteType === VOTE_TYPE_POSTAL) {
                                     tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
                                     tallySheetCodeLabels = [`PE-4 PV (${voteType})`, `PE-22 (${voteType})`];
+                                } else {
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
+                                    tallySheetCodeLabels = [`PE-4 (${voteType})`, `PE-22 (${voteType})`];
                                 }
                                 return <Grid item xs={12} key={voteType}>
                                     <Grid item xs={12}>
@@ -174,55 +177,36 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         <Grid item xs={12}><h2>Reports</h2></Grid>
 
                         <Grid item xs={12}>
+
+                            <Processing showProgress={!subElections}>
+                                {subElections !== null && subElections.map(({voteType}) => {
+                                    let tallySheetCodes = [];
+                                    let tallySheetCodeLabels = [];
+                                    if (voteType === VOTE_TYPE_NON_POSTAL) {
+                                        tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1, TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
+                                        tallySheetCodeLabels = ["PE-CE-RO-V1", "Polling Division Results"];
+                                    } else {
+                                        tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1, TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
+                                        tallySheetCodeLabels = [`PE-CE-RO-V1 (${voteType})`, `Polling Division Results (${voteType})`];
+                                    }
+
+                                    return <ul className="tally-sheet-code-list">
+                                        {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                            return <li key={voteType}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                                <Link
+                                                    className="tally-sheet-code-list-item btn-list"
+                                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
+                                                >
+                                                    List
+                                                </Link>
+                                            </li>
+                                        })}
+                                    </ul>
+                                })}
+                            </Processing>
+
+
                             <ul className="tally-sheet-code-list">
-                                <Processing showProgress={!subElections}>
-                                    {subElections !== null && subElections.map(({voteType}) => {
-                                        let tallySheetCodes = [];
-                                        let tallySheetCodeLabels = [];
-                                        if (voteType === VOTE_TYPE_NON_POSTAL) {
-                                            tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1];
-                                            tallySheetCodeLabels = ["PE-CE-RO-V1"];
-                                        } else {
-                                            tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1];
-                                            tallySheetCodeLabels = [`PE-CE-RO-V1 (${voteType})`];
-                                        }
-
-                                        return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
-                                            return <li key={voteType}>{tallySheetCodeLabels[tallySheetCodeIndex]}
-                                                <Link
-                                                    className="tally-sheet-code-list-item btn-list"
-                                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
-                                                >
-                                                    List
-                                                </Link>
-                                            </li>
-                                        });
-                                    })}
-
-                                    {subElections !== null && subElections.map(({voteType}) => {
-                                        let tallySheetCodes = [];
-                                        let tallySheetCodeLabels = [];
-                                        if (voteType === VOTE_TYPE_NON_POSTAL) {
-                                            tallySheetCodes = [TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
-                                            tallySheetCodeLabels = ["Polling Division Results"];
-                                        } else {
-                                            tallySheetCodes = [TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
-                                            tallySheetCodeLabels = [`Polling Division Results (${voteType})`];
-                                        }
-
-                                        return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
-                                            return <li key={voteType}>{tallySheetCodeLabels[tallySheetCodeIndex]}
-                                                <Link
-                                                    className="tally-sheet-code-list-item btn-list"
-                                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
-                                                >
-                                                    List
-                                                </Link>
-                                            </li>
-                                        });
-                                    })}
-                                </Processing>
-
                                 <li>PE-CE-RO-V2
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
@@ -249,30 +233,34 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         <Grid item xs={12}><small>Preferences</small></Grid>
 
                         <Grid item xs={12}>
-                            <ul className="tally-sheet-code-list">
-                                {voteTypes.map((voteType) => {
+                            <Processing showProgress={!subElections}>
+                                {subElections !== null && subElections.map(({voteType}) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
-                                    if (voteType === VOTE_TYPE_POSTAL) {
+                                    if (voteType === VOTE_TYPE_NON_POSTAL) {
                                         tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
-                                        tallySheetCodeLabels = ["PE-CE-RO-PR-1 (Postal)"];
-                                    } else if (voteType === VOTE_TYPE_NON_POSTAL) {
+                                        tallySheetCodeLabels = ["PE-CE-RO-PR-1 "];
+                                    } else {
                                         tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
-                                        tallySheetCodeLabels = ["PE-CE-RO-PR-1"];
+                                        tallySheetCodeLabels = [`PE-CE-RO-PR-1  (${voteType})`];
                                     }
 
-                                    return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
-                                        return <li key={voteType}>{tallySheetCodeLabels[tallySheetCodeIndex]}
-                                            <Link
-                                                className="tally-sheet-code-list-item btn-list"
-                                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
-                                            >
-                                                List
-                                            </Link>
-                                        </li>
-                                    });
-                                })}
+                                    return <ul className="tally-sheet-code-list">
+                                        {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                            return <li key={voteType}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                                <Link
+                                                    className="tally-sheet-code-list-item btn-list"
+                                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
+                                                >
+                                                    List
+                                                </Link>
+                                            </li>
+                                        })}
+                                    </ul>
 
+                                })}
+                            </Processing>
+                            <ul className="tally-sheet-code-list">
                                 <li>PE-CE-RO-PR-2
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
