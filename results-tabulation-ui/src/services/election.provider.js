@@ -40,8 +40,14 @@ export function ElectionProvider(props) {
         });
     };
 
-    const getElections = async ({parentElectionId = null, rootElectionId = null, isListed=true}) => {
-        const params = {parentElectionId, rootElectionId, isListed};
+    const getElections = async ({parentElectionId = null, rootElectionId = null, isListed = true}) => {
+        const params = {parentElectionId, rootElectionId};
+        if (isListed === true) {
+            params["isListed"] = "true";
+        } else if (isListed === false) {
+            params["isListed"] = "false";
+        }
+
         const paramsJsonString = JSON.stringify(params);
 
         let elections = state.electionList[paramsJsonString];
@@ -70,7 +76,7 @@ export function ElectionProvider(props) {
         return elections;
     };
 
-    const getSubElections = async (electionId, isListed=true) => {
+    const getSubElections = async (electionId, isListed = true) => {
         const subElections = await getElections({parentElectionId: electionId, isListed});
 
         return subElections;
