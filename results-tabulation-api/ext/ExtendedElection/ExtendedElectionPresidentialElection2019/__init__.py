@@ -33,7 +33,7 @@ from constants.VOTE_TYPES import Postal, NonPostal
 from ext import TallySheetMap
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019 import RoleBasedAccess
-from ext.ExtendedElection.util import get_rows_from_csv, update_dashboard_tables
+from ext.ExtendedElection.util import get_rows_from_csv
 from orm.entities import Election, Candidate, Template, Party, Meta, Workflow
 from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict
@@ -1376,7 +1376,5 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
             )
 
         db.session.commit()
-
-        update_dashboard_tables()
 
         return root_election
