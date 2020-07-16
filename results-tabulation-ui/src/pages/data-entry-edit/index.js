@@ -12,18 +12,29 @@ export default function DataEntryEdit({history, queryString, election, tallyShee
     const tallySheetContext = useContext(TallySheetContext);
     const tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
 
-    const {tallySheetCode} = tallySheet;
-    const {electionId, rootElection, voteType} = election;
+    const {tallySheetCode, metaDataMap} = tallySheet;
+    const {electionId, voteType} = election;
     const additionalBreadCrumbLinks = [
         {
             label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase(),
             to: PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)
-        },
-        {
-            label: tallySheet.area.areaName,
-            to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
         }
     ];
+
+    if (metaDataMap.partyId && election.partyMap[metaDataMap.partyId]) {
+        // Map the parties to the breadcrumb.
+        const party = election.partyMap[metaDataMap.partyId];
+        const {partyName} = party;
+        additionalBreadCrumbLinks.push({
+            label: `${tallySheet.area.areaName} - ${partyName}`,
+            to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
+        })
+    } else {
+        additionalBreadCrumbLinks.push({
+            label: tallySheet.area.areaName,
+            to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
+        })
+    }
 
     function getEditorJsx() {
         const props = {history, queryString, election, tallySheet};

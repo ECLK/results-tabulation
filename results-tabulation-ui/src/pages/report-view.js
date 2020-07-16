@@ -65,7 +65,7 @@ export default function ReportView(props) {
 
 
     const getReportViewJsx = () => {
-        const {tallySheetCode, tallySheetStatus, area, tallySheetId} = tallySheet;
+        const {tallySheetCode, metaDataMap, area, tallySheetId, election} = tallySheet;
         const {areaName} = area;
         let tallySheetVersionHtmlJsx = null;
 
@@ -79,6 +79,21 @@ export default function ReportView(props) {
                 to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId)
             }
         ];
+
+        if (metaDataMap.partyId && election.partyMap[metaDataMap.partyId]) {
+            // Map the parties to the breadcrumb.
+            const party = election.partyMap[metaDataMap.partyId];
+            const {partyName} = party;
+            additionalBreadCrumbLinks.push({
+                label: `${tallySheet.area.areaName} - ${partyName}`,
+                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
+            })
+        } else {
+            additionalBreadCrumbLinks.push({
+                label: tallySheet.area.areaName,
+                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
+            })
+        }
 
         if (tallySheetVersionId) {
             tallySheetVersionHtmlJsx = <iframe
