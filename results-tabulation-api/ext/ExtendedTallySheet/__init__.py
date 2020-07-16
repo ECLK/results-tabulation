@@ -332,7 +332,7 @@ class ExtendedTallySheet:
             stamp = tallySheetVersion.stamp
 
             if total_registered_voters is None:
-                total_registered_voters = float(tallySheetVersion.submission.area.registeredVotersCount)
+                total_registered_voters = tallySheetVersion.submission.area.get_registered_voters_count()
 
             content = {
                 "resultTitle": title,

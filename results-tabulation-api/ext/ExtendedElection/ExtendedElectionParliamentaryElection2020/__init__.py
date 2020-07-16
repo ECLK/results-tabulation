@@ -1456,6 +1456,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
             area._registeredVotersCount = row["Registered Normal Voters"]
             area._registeredPostalVotersCount = row["Registered Postal Voters"]
+            area._registeredQuarantineVotersCount = row["Registered Quarantine Voters"]
+            area._registeredDisplacedVotersCount = row["Registered Displaced Voters"]
 
             return area
 

@@ -17,11 +17,13 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
-            pollingDivision = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == Postal:
-                pollingDivision = 'Postal'
+            polling_division_name = tallySheetVersion.submission.area.areaName
+            if tallySheetVersion.submission.election.voteType == NonPostal:
+                polling_division_name = 'Postal'
 
-            registered_voters_count = float(tallySheetVersion.submission.area.registeredVotersCount)
+            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count(
+                vote_type=tallySheetVersion.submission.election.voteType)
+            
             content = {
                 "election": {
                     "electionName": tallySheetVersion.submission.election.get_official_name()
@@ -33,7 +35,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 },
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "pollingDivision": pollingDivision,
+                "pollingDivision": polling_division_name,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],

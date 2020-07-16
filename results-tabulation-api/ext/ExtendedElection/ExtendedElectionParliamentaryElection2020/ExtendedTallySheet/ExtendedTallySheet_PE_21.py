@@ -149,9 +149,6 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
 
             return content
 
-        def html_letter(self, title="", total_registered_voters=None):
-            return self.html(title=title, total_registered_voters=total_registered_voters)
-
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
 

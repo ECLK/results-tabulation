@@ -25,13 +25,12 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
             area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
 
             stamp = tallySheetVersion.stamp
-            area: AreaModel = tallySheetVersion.submission.area
 
-            number_of_electors = float(area.registeredVotersCount)
+            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count(
+                vote_type=tallySheetVersion.submission.election.voteType)
             polling_division_name = tallySheetVersion.submission.area.areaName
             if tallySheetVersion.submission.election.voteType != NonPostal:
                 polling_division_name = tallySheetVersion.submission.election.voteType
-                number_of_electors = float(area.registeredPostalVotersCount)
 
             content = {
                 "election": {
@@ -53,7 +52,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
                 "rejectedVotePercentage": '',
                 "totalVoteCount": '',
                 "totalVotePercentage": '',
-                "numberOfElectors": to_comma_seperated_num(number_of_electors)
+                "numberOfElectors": to_comma_seperated_num(registered_voters_count)
             }
 
             total_valid_vote_count = 0
@@ -92,7 +91,8 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
             rejected_vote_percentage = (
                     total_rejected_vote_count * 100 / total_vote_count) if total_vote_count > 0 else 0
             content["rejectedVotePercentage"] = to_percentage(rejected_vote_percentage)
-            total_vote_percentage = (total_vote_count * 100 / number_of_electors) if number_of_electors > 0 else 0
+            total_vote_percentage = (
+                        total_vote_count * 100 / registered_voters_count) if registered_voters_count > 0 else 0
             content["totalVotePercentage"] = to_percentage(total_vote_percentage)
 
             html = render_template(

@@ -307,7 +307,8 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
 
-            registered_voters_count = float(tallySheetVersion.submission.area.registeredVotersCount)
+            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count()
+
             content = {
                 "election": {
                     "electionName": tallySheetVersion.submission.election.get_official_name()
