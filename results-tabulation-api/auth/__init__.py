@@ -247,7 +247,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
                 area.areaId for area in _get_role_area_ids(
                     parentAreaIds=claim_area_ids,
                     areaType=AreaTypeEnum.CountingCentre,
-                    voteTypes=[VOTE_TYPES.Postal, VOTE_TYPES.NonPostal]
+                    voteTypes=[VOTE_TYPES.Postal, VOTE_TYPES.NonPostal, VOTE_TYPES.Quarantine, VOTE_TYPES.Displaced]
                 )
             ])
 
@@ -299,7 +299,7 @@ def authorize(func, required_roles=None, *args, **kwargs):
                 area.areaId for area in _get_role_area_ids(
                     parentAreaIds=claim_area_ids,
                     areaType=AreaTypeEnum.CountingCentre,
-                    voteTypes=[VOTE_TYPES.Postal]
+                    voteTypes=[VOTE_TYPES.Postal, VOTE_TYPES.Quarantine, VOTE_TYPES.Displaced]
                 )
             ])
 

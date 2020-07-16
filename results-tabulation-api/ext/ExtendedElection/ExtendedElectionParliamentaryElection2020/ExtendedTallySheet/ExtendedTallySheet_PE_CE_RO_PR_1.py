@@ -1,7 +1,8 @@
 from flask import render_template
+
+from constants.VOTE_TYPES import NonPostal
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities import Area
-from constants.VOTE_TYPES import Postal
 from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
@@ -23,9 +24,10 @@ class ExtendedTallySheet_PE_CE_RO_PR_1(ExtendedTallySheetReport):
 
             stamp = tallySheetVersion.stamp
 
-            pollingDivision = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == Postal:
-                pollingDivision = 'Postal'
+            polling_division_name = tallySheetVersion.submission.area.areaName
+
+            if tallySheetVersion.submission.election.voteType != NonPostal:
+                polling_division_name = tallySheetVersion.submission.election.voteType
 
             content = {
                 "election": {
@@ -39,7 +41,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_1(ExtendedTallySheetReport):
                 "tallySheetCode": "CE/RO/PR/1",
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "pollingDivision": pollingDivision,
+                "pollingDivision": polling_division_name,
                 "partyName": candidate_and_area_wise_valid_vote_count_result["partyName"].values[0],
                 "data": [],
                 "countingCentres": [],

@@ -1,9 +1,10 @@
 import math
 
 from flask import render_template
+
+from constants.VOTE_TYPES import NonPostal
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities import Area
-from constants.VOTE_TYPES import Postal
 from orm.entities.Area import AreaModel
 from util import to_comma_seperated_num, to_percentage
 from orm.enums import AreaTypeEnum
@@ -25,12 +26,11 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
 
             stamp = tallySheetVersion.stamp
 
-            area: AreaModel = tallySheetVersion.submission.area
-            pollingDivision = area.areaName
-            number_of_electors = float(area.registeredVotersCount)
-            if tallySheetVersion.submission.election.voteType == Postal:
-                pollingDivision = 'Postal'
-                number_of_electors = float(area.registeredPostalVotersCount)
+            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count(
+                vote_type=tallySheetVersion.submission.election.voteType)
+            polling_division_name = tallySheetVersion.submission.area.areaName
+            if tallySheetVersion.submission.election.voteType != NonPostal:
+                polling_division_name = tallySheetVersion.submission.election.voteType
 
             content = {
                 "election": {
@@ -44,7 +44,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
                 "tallySheetCode": "POLLING DIVISION RESULTS",
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "pollingDivision": pollingDivision,
+                "pollingDivision": polling_division_name,
                 "data": [],
                 "totalValidVoteCount": '',
                 "totalValidVotePercentage": '',
@@ -52,7 +52,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
                 "rejectedVotePercentage": '',
                 "totalVoteCount": '',
                 "totalVotePercentage": '',
-                "numberOfElectors": to_comma_seperated_num(number_of_electors)
+                "numberOfElectors": to_comma_seperated_num(registered_voters_count)
             }
 
             total_valid_vote_count = 0
@@ -91,7 +91,8 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
             rejected_vote_percentage = (
                     total_rejected_vote_count * 100 / total_vote_count) if total_vote_count > 0 else 0
             content["rejectedVotePercentage"] = to_percentage(rejected_vote_percentage)
-            total_vote_percentage = (total_vote_count * 100 / number_of_electors) if number_of_electors > 0 else 0
+            total_vote_percentage = (
+                        total_vote_count * 100 / registered_voters_count) if registered_voters_count > 0 else 0
             content["totalVotePercentage"] = to_percentage(total_vote_percentage)
 
             html = render_template(

@@ -1,8 +1,8 @@
 from flask import render_template
 
+from constants.VOTE_TYPES import NonPostal
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities import Area
-from constants.VOTE_TYPES import Postal
 from util import to_comma_seperated_num, convert_image_to_data_uri, to_percentage
 from orm.enums import AreaTypeEnum
 
@@ -17,11 +17,13 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
-            pollingDivision = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == Postal:
-                pollingDivision = 'Postal'
+            polling_division_name = tallySheetVersion.submission.area.areaName
+            if tallySheetVersion.submission.election.voteType == NonPostal:
+                polling_division_name = 'Postal'
 
-            registered_voters_count = float(tallySheetVersion.submission.area.registeredVotersCount)
+            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count(
+                vote_type=tallySheetVersion.submission.election.voteType)
+            
             content = {
                 "election": {
                     "electionName": tallySheetVersion.submission.election.get_official_name()
@@ -33,7 +35,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 },
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "pollingDivision": pollingDivision,
+                "pollingDivision": polling_division_name,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],
@@ -101,9 +103,11 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
-            pollingDivision = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == Postal:
-                pollingDivision = 'Postal'
+
+            polling_division_name = tallySheetVersion.submission.area.areaName
+            if tallySheetVersion.submission.election.voteType != NonPostal:
+                polling_division_name = tallySheetVersion.submission.election.voteType
+
             content = {
                 "election": {
                     "electionName": tallySheetVersion.submission.election.get_official_name()
@@ -116,7 +120,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 "tallySheetCode": "CE/RO/V1",
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "pollingDivision": pollingDivision,
+                "pollingDivision": polling_division_name,
                 "data": [],
                 "countingCentres": [],
                 "validVoteCounts": [],
@@ -144,8 +148,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             content["validVoteCounts"].append(to_comma_seperated_num(total_valid_vote_count))
             content["rejectedVoteCounts"].append(to_comma_seperated_num(total_rejected_vote_count))
             content["totalVoteCounts"].append(to_comma_seperated_num(total_vote_count))
-            if tallySheetVersion.submission.election.voteType == Postal:
-                content["tallySheetCode"] = "CE/RO/V1"
+
             number_of_counting_centres = len(area_wise_vote_count_result)
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
                 data_row = []

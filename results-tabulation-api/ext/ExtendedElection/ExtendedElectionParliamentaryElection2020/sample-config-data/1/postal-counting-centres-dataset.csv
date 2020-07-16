@@ -1,5 +1,9 @@
-Electoral District,District Centre,Postal Vote Counting Centre
-Colombo,Colombo,PVCC-1
-Colombo,Colombo,PVCC-2
-Kandy,Kandy,PVCC-3
-Kandy,Kandy,PVCC-4
+Electoral District,District Centre,Counting Centre,Vote Type
+Colombo,Colombo,PVCC-1,Postal
+Colombo,Colombo,PVCC-2,Postal
+Kandy,Kandy,PVCC-3,Postal
+Kandy,Kandy,PVCC-4,Postal
+Colombo,Colombo,PVCC-5,Displaced
+Colombo,Colombo,PVCC-6,Displaced
+Colombo,Colombo,PVCC-7,Quarantine
+Colombo,Colombo,PVCC-8,Quarantine

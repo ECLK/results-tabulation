@@ -11,10 +11,8 @@ import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PE_4({history, queryString, election, tallySheet}) {
+export default function TallySheetEdit_PE_4({history, election, tallySheet}) {
     const [candidateWiseFirstPreferenceCountRows, setCandidateWiseFirstPreferenceCountRows] = useState([]);
-    const [firstPreferenceCountRow, setFirstPreferenceCountRow] = useState({"numValue": 0});
-
 
     const setTallySheetContent = (tallySheetVersion) => {
         let _candidateWiseFirstPreferenceCountTemplateRow = {};
@@ -27,8 +25,6 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
 
         let _candidateWiseFirstPreferenceCountRowsMap = {};
         let _candidateWiseFirstPreferenceCountRows = [];
-        let _validFirstPreferenceCountRow = {numValue: 0};
-        let _firstPreferenceCountRow = {numValue: 0};
 
         election.partyMap[tallySheet.metaDataMap["partyId"]].candidates.map(candidate => {
             const _candidateWiseFirstPreferenceCountRow = {
@@ -41,22 +37,17 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
             _candidateWiseFirstPreferenceCountRows.push(_candidateWiseFirstPreferenceCountRow);
         });
 
-
         if (tallySheetVersion) {
             const {content} = tallySheetVersion;
             for (let i = 0; i < content.length; i++) {
                 let contentRow = content[i];
                 if (contentRow.templateRowType === "CANDIDATE_FIRST_PREFERENCE") {
                     Object.assign(_candidateWiseFirstPreferenceCountRowsMap[contentRow.candidateId], contentRow);
-                    _validFirstPreferenceCountRow.numValue += contentRow.numValue;
                 }
             }
-
-            _firstPreferenceCountRow.numValue = _validFirstPreferenceCountRow.numValue;
         }
 
         setCandidateWiseFirstPreferenceCountRows(_candidateWiseFirstPreferenceCountRows);
-        setFirstPreferenceCountRow(_firstPreferenceCountRow);
     };
 
     const validateTallySheetContent = () => {
@@ -70,7 +61,6 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
     };
 
     const getTallySheetRequestBody = () => {
-
         return {
             content: [
                 ...candidateWiseFirstPreferenceCountRows,
@@ -115,16 +105,6 @@ export default function TallySheetEdit_PE_4({history, queryString, election, tal
             return _candidateWiseFirstPreferenceCountRows
         });
     };
-
-
-    function calculateTotalValidFirstPreferenceCount() {
-        let total = 0;
-        for (let i = 0; i < candidateWiseFirstPreferenceCountRows.length; i++) {
-            total += parseInt(candidateWiseFirstPreferenceCountRows[i]["numValue"])
-        }
-
-        return total;
-    }
 
     function getTallySheetEditForm() {
         if (saved) {

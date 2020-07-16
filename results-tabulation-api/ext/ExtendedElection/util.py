@@ -75,14 +75,6 @@ def get_root_token(electionId):
     return encoded_jwt_token
 
 
-def update_dashboard_tables():
-    tally_sheets = TallySheet.Model.query.all()
-    for tally_sheet in tally_sheets:
-        tally_sheet.update_status_report()
-
-    db.session.commit()
-
-
 def get_rows_from_csv(csv_file):
     f = csv_file.decode("utf-8")
     reader = csv.DictReader(f.splitlines())

@@ -1,10 +1,12 @@
 from app import db
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
+from sqlalchemy.sql.functions import coalesce
 
+from constants.VOTE_TYPES import NonPostal, Postal, Quarantine
 from orm.entities.Area import AreaMap
 from orm.enums import AreaTypeEnum
-from orm.entities import Election
+from orm.entities import Election, Meta
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
@@ -14,15 +16,13 @@ class AreaModel(db.Model):
     areaName = db.Column(db.String(800), nullable=False)
     areaType = db.Column(db.Enum(AreaTypeEnum), nullable=False)
     electionId = db.Column(db.Integer, db.ForeignKey(Election.Model.__table__.c.electionId), nullable=False)
-    # parentAreaId = db.Column(db.Integer, db.ForeignKey(areaId), nullable=True)
 
     _registeredVotersCount = db.Column(db.Integer(), nullable=True)
     _registeredPostalVotersCount = db.Column(db.Integer(), nullable=True)
+    _registeredQuarantineVotersCount = db.Column(db.Integer(), nullable=True)
+    _registeredDisplacedVotersCount = db.Column(db.Integer(), nullable=True)
 
     election = relationship(Election.Model, foreign_keys=[electionId])
-    # parentArea = relationship("AreaModel", remote_side=[areaId])
-    # childAreas = relationship("AreaModel", foreign_keys=[parentAreaId])
-    # pollingStations = relationship("PollingStationModel")
 
     # this relationship is used for persistence
     children = relationship("AreaAreaModel", lazy="joined",
@@ -33,7 +33,8 @@ class AreaModel(db.Model):
     def __init__(self, areaName, electionId):
         super(AreaModel, self).__init__(
             areaName=areaName,
-            electionId=electionId
+            electionId=electionId,
+            metaId=Meta.create().metaId
         )
         db.session.add(self)
         db.session.flush()
@@ -71,6 +72,33 @@ class AreaModel(db.Model):
         extended_election = self.election.get_extended_election()
 
         return extended_election.get_area_map(area=self)
+
+    def get_registered_voters_count(self, vote_type=None):
+        polling_stations_subquery = get_associated_areas_query(areas=[self],
+                                                               areaType=AreaTypeEnum.PollingStation).subquery()
+
+        _registeredVotersCount = db.Column(db.Integer(), nullable=True)
+        _registeredPostalVotersCount = db.Column(db.Integer(), nullable=True)
+        _registeredQuarantineVotersCount = db.Column(db.Integer(), nullable=True)
+        _registeredDisplacedVotersCount = db.Column(db.Integer(), nullable=True)
+
+        if vote_type == NonPostal:
+            registered_voters_column = coalesce(polling_stations_subquery.c._registeredVotersCount, 0)
+        elif vote_type == Postal:
+            registered_voters_column = coalesce(polling_stations_subquery.c._registeredPostalVotersCount, 0)
+        elif vote_type == Quarantine:
+            registered_voters_column = coalesce(polling_stations_subquery.c._registeredQuarantineVotersCount, 0)
+        elif vote_type == Quarantine:
+            registered_voters_column = coalesce(polling_stations_subquery.c._registeredDisplacedVotersCount, 0)
+        else:
+            registered_voters_column = coalesce(polling_stations_subquery.c._registeredVotersCount, 0) \
+                                       + coalesce(polling_stations_subquery.c._registeredPostalVotersCount, 0) \
+                                       + coalesce(polling_stations_subquery.c._registeredQuarantineVotersCount, 0) \
+                                       + coalesce(polling_stations_subquery.c._registeredDisplacedVotersCount, 0)
+
+        total_registered_voters_count = db.session.query(func.sum(registered_voters_column)).scalar()
+
+        return float(total_registered_voters_count)
 
     @hybrid_property
     def registeredVotersCount(self):

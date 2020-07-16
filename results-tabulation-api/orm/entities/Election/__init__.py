@@ -99,16 +99,6 @@ class ElectionModel(db.Model):
         return _this_and_below_election_ids
 
     @hybrid_property
-    def mappedElectionIds(self):
-
-        # TODO
-
-        if self.parentElectionId is None:
-            return [self.electionId]
-        else:
-            return [self.electionId, self.parentElectionId]
-
-    @hybrid_property
     def invalidVoteCategories(self):
         if self.parentElectionId is None:
             return self._invalidVoteCategories

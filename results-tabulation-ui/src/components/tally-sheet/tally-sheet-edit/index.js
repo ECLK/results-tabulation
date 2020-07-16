@@ -13,7 +13,6 @@ import {getErrorCode, getErrorMessage} from "../../../utils";
 
 
 export default class TallySheetEdit extends Component {
-
     getTallySheetEditForm(tallySheetCode) {
         if (tallySheetCode === TALLY_SHEET_CODE_CE_201) {
             return TallySheetEdit_CE_201;
@@ -47,12 +46,12 @@ export function useTallySheetEdit(props) {
     const {history, election, setTallySheetContent, validateTallySheetContent, getTallySheetRequestBody} = props;
     const [processing, setProcessing] = useState(true);
     const [tallySheetVersion, setTallySheetVersion] = useState(null);
-    const [tallySheet, setTallySheet] = useState(props.tallySheet);
     const [processingLabel, setProcessingLabel] = useState("Loading");
     const [saved, setSaved] = useState(false);
 
+    const {tallySheet} = props;
     const {tallySheetId, tallySheetCode} = tallySheet;
-    const {electionId, voteType} = election;
+    const {electionId} = election;
 
     const init = async () => {
         setProcessing(true);
@@ -78,11 +77,7 @@ export function useTallySheetEdit(props) {
     useEffect(() => {
         init();
     }, []);
-
-    const handleClickBackToEdit = (body) => async (event) => {
-        setSaved(false);
-    };
-
+    
     const handleClickNext = () => async (event) => {
         const body = getTallySheetRequestBody();
 
