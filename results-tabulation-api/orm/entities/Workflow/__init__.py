@@ -13,7 +13,7 @@ class WorkflowModel(db.Model):
     firstStatus = db.Column(db.String(100), nullable=False)
     lastStatus = db.Column(db.String(100), nullable=False)
 
-    actions = relationship("WorkflowActionModel", lazy='subquery')
+    actions = relationship("WorkflowActionModel", order_by="WorkflowActionModel.workflowActionId", lazy='subquery')
 
     @classmethod
     def create(cls, workflowName, statuses, actions, firstStatus, lastStatus):

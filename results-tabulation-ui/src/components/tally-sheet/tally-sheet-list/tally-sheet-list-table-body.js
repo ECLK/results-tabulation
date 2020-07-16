@@ -26,13 +26,16 @@ export default function TallySheetListTableBody(
 ) {
     const tallySheetContext = useContext(TallySheetContext);
     const {electionId} = election;
-    const [tallySheetListRows, setTallySheetListRows] = useState([]);
+    const [tallySheetIds, setTallySheetIds] = useState([]);
     const [processing, setProcessing] = useState(true);
     const [error, setError] = useState(false);
 
     useEffect(() => {
-        tallySheetContext.fetchTallySheet({electionId, tallySheetCode, voteType}).then((tallySheets) => {
-            setTallySheetListRows(tallySheets);
+        tallySheetContext.fetchTallySheetChunks({electionId, tallySheetCode, voteType}, (tallySheetIds) => {
+            setTallySheetIds(prevState => {
+                return [...prevState, ...tallySheetIds]
+            });
+        }).then(() => {
             setProcessing(false);
         }).catch((error) => {
             console.log(error.stack);
@@ -42,9 +45,9 @@ export default function TallySheetListTableBody(
     }, []);
 
     const getTallySheetListJsx = function () {
-        return tallySheetListRows.map((tallySheetListRow, tallySheetListRowIndex) => (<TallySheetListRow
-            key={tallySheetListRowIndex}
-            tallySheetId={tallySheetListRow.tallySheetId} history={history} electionId={electionId}
+        return tallySheetIds.map((tallySheetId, tallySheetIdIndex) => (<TallySheetListRow
+            key={tallySheetIdIndex}
+            tallySheetId={tallySheetId} history={history} electionId={electionId}
             columns={columns}
             columnMetaMap={columnMetaMap}
         />))
@@ -57,14 +60,14 @@ export default function TallySheetListTableBody(
                 <Processing/>
             </TableCell>
         </TableRow>
-    } else if (!tallySheetListRows || error) {
+    } else if (!tallySheetIds || error) {
         tableBody = <TableRow>
             <TableCell colSpan={5} align="center">
                 Tally sheet list cannot be accessed
             </TableCell>
         </TableRow>
-    } else if (tallySheetListRows) {
-        if (tallySheetListRows.length === 0) {
+    } else if (tallySheetIds) {
+        if (tallySheetIds.length === 0) {
             tableBody = <TableRow>
                 <TableCell colSpan={5} align="center">No tally sheets available or authorized to
                     access.</TableCell>
