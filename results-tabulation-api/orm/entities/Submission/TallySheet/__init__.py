@@ -16,7 +16,7 @@ from orm.entities.Workflow import WorkflowInstance
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
 from sqlalchemy import func, bindparam
 
-from util import get_dict_key_value_or_none
+from util import get_dict_key_value_or_none, get_paginated_query
 
 
 class TallySheetModel(db.Model):
@@ -437,7 +437,17 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
     if voteType is not None:
         query_filters.append(Election.Model.voteType == voteType)
 
-    tally_sheet_list = db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by)
+    tally_sheet_list = db.session.query(
+        *query_args
+    ).filter(
+        *query_filters
+    ).group_by(
+        *query_group_by
+    ).order_by(
+        Model.tallySheetId
+    )
+
+    tally_sheet_list = get_paginated_query(tally_sheet_list)
 
     authorized_tally_sheet_list = []
     for tally_sheet in tally_sheet_list:

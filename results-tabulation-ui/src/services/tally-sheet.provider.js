@@ -61,6 +61,30 @@ export function TallySheetProvider(props) {
         return tallySheet
     }
 
+    async function fetchTallySheetChunks({electionId, areaId, tallySheetCode, voteType}, next) {
+        const limit = 500;
+        let offset = 0;
+        let reachedEnd = false;
+        while (!reachedEnd) {
+            const tallySheetIds = await fetchTallySheet({
+                electionId,
+                areaId,
+                tallySheetCode,
+                voteType,
+                limit,
+                offset: offset * limit
+            });
+            next && next(tallySheetIds);
+
+            if (tallySheetIds.length < limit) {
+                // Reached the end of the results.
+                reachedEnd = true;
+            }
+
+            offset++;
+        }
+    }
+
     async function fetchTallySheet({electionId, areaId, tallySheetCode, voteType, limit = 10000, offset = 0}) {
         const tallySheets = await request({
             url: ENDPOINT_PATH_TALLY_SHEETS(),
@@ -68,22 +92,25 @@ export function TallySheetProvider(props) {
             params: {electionId, areaId, tallySheetCode, voteType, limit, offset}
         });
 
-        const _tallySheetMap = {};
+        // const _tallySheetMap = {};
+        const tallySheetIds = [];
         for (let i = 0; i < tallySheets.length; i++) {
             const tallySheet = tallySheets[i];
-            _tallySheetMap[tallySheet.tallySheetId] = tallySheet;
+            const {tallySheetId} = tallySheet;
+            tallySheetIds.push(tallySheetId);
+            state.tallySheetMap[tallySheet.tallySheetId] = tallySheet;
             await refactorTallySheetObject(tallySheet);
         }
 
         setState((state) => {
             return {
                 ...state, tallySheetMap: {
-                    ...state.tallySheetMap, ..._tallySheetMap
+                    ...state.tallySheetMap,
                 }
             }
         });
 
-        return tallySheets;
+        return tallySheetIds;
     }
 
     function _updateTallySheetState(tallySheet) {
@@ -287,6 +314,7 @@ export function TallySheetProvider(props) {
     return <TallySheetContext.Provider
         value={{
             fetchTallySheet,
+            fetchTallySheetChunks,
             fetchTallySheetById,
             fetchTallySheetVersionById,
             uploadTallySheetProof,
