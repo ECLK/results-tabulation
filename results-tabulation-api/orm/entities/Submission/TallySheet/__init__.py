@@ -12,7 +12,7 @@ from orm.entities import Submission, Election, Template, TallySheetVersionRow, M
 from orm.entities.Dashboard import StatusReport
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
-from orm.entities.Workflow import WorkflowInstance, WorkflowActionModel
+from orm.entities.Workflow import WorkflowInstance
 from orm.enums import SubmissionTypeEnum, AreaTypeEnum
 from sqlalchemy import func, bindparam
 
@@ -68,47 +68,6 @@ class TallySheetModel(db.Model):
                            secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId"
                            )
 
-    def get_tally_sheet_workflow_instance_actions(self):
-        tally_sheet_workflow_instance_actions = db.session.query(
-            WorkflowActionModel.workflowActionId,
-            WorkflowActionModel.actionName,
-            WorkflowActionModel.actionType,
-            WorkflowActionModel.fromStatus,
-            WorkflowActionModel.toStatus,
-            WorkflowInstance.Model.status
-        ).filter(
-            WorkflowInstance.Model.workflowInstanceId == self.workflowInstanceId,
-            WorkflowActionModel.workflowId == WorkflowInstance.Model.workflowId
-        ).order_by(
-            WorkflowActionModel.workflowActionId
-        ).all()
-
-        processed_tally_sheet_workflow_instance_actions = []
-        for tally_sheet_workflow_instance_action in tally_sheet_workflow_instance_actions:
-            processed_tally_sheet_workflow_instance_actions.append({
-                "workflowActionId": tally_sheet_workflow_instance_action.workflowActionId,
-                "actionName": tally_sheet_workflow_instance_action.actionName,
-                "actionType": tally_sheet_workflow_instance_action.actionType,
-                "fromStatus": tally_sheet_workflow_instance_action.fromStatus,
-                "toStatus": tally_sheet_workflow_instance_action.toStatus,
-                "allowed": tally_sheet_workflow_instance_action.fromStatus == tally_sheet_workflow_instance_action.status,
-                "authorized": has_role_based_access(tally_sheet=self,
-                                                    access_type=tally_sheet_workflow_instance_action.actionType)
-            })
-
-        return processed_tally_sheet_workflow_instance_actions
-
-    @hybrid_property
-    def workflowInstanceActions(self):
-        return self.get_tally_sheet_workflow_instance_actions()
-
-    @hybrid_property
-    def areaMapList(self):
-        extended_election = self.submission.election.get_extended_election()
-        area_map = extended_election.get_area_map_for_tally_sheet(tally_sheet=self)
-
-        return area_map
-
     def add_parent(self, parentTallySheet):
         parentTallySheet.add_child(self)
 
@@ -139,8 +98,6 @@ class TallySheetModel(db.Model):
             self.submission.set_latest_version(submissionVersion=None)
         else:
             self.submission.set_latest_version(submissionVersion=tallySheetVersion.submissionVersion)
-
-        self.update_status_report()
 
     @hybrid_property
     def latestVersion(self):
@@ -444,7 +401,8 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     tally_sheet = db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by).one_or_none()
 
     # Validate the authorization
-    if not has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
+    if tally_sheet is not None and not has_role_based_access(tally_sheet=tally_sheet,
+                                                             access_type=WORKFLOW_ACTION_TYPE_VIEW):
         raise UnauthorizedException(
             message="Not authorized to view tally sheet. (tallySheetId=%d)" % tallySheetId,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW

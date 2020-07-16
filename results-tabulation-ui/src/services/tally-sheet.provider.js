@@ -23,15 +23,32 @@ export function TallySheetProvider(props) {
 
     const [state, setState] = useState({
         tallySheetMap: {},
-        tallySheetProofFileMap: {}
+        tallySheetProofFileMap: {},
+        filteredAreaMap: {}
     });
+
+    async function getFilteredAreaMap(tallySheet) {
+        const {areaId} = tallySheet;
+        if (!state.filteredAreaMap[areaId]) {
+            const electionAreaMap = await electionContext.getElectionAreaMap(tallySheet.electionId);
+            state.filteredAreaMap[areaId] = electionAreaMap.filter((areaMap) => {
+                return areaMap["countryId"] === areaId || areaMap["electoralDistrictId"] === areaId || areaMap["pollingDivisionId"] === areaId || areaMap["countingCentreId"] === areaId || areaMap["countryId"] === areaId;
+            });
+            setState({
+                ...state,
+                filteredAreaMap: {
+                    ...state.filteredAreaMap
+                }
+            })
+        }
+
+        return state.filteredAreaMap[areaId];
+    }
 
     async function refactorTallySheetObject(tallySheet) {
         tallySheet.tallySheetCode = tallySheet.tallySheetCode.replace(/_/g, "-");
         tallySheet.election = await electionContext.getElectionById(tallySheet.electionId);
-        tallySheet.workflowInstance.actions = tallySheet.workflowInstanceActions;
-        tallySheet.area = tallySheet.submission.area;
-        tallySheet.areaMapList = await electionContext.getElectionAreaMap(tallySheet.electionId);
+        tallySheet.areaMapList = await getFilteredAreaMap(tallySheet);
 
         // TODO fetch actions and area maps
 
@@ -88,9 +105,10 @@ export function TallySheetProvider(props) {
             url: ENDPOINT_PATH_TALLY_SHEETS_BY_ID(tallySheetId),
             method: 'get',
             params: {}
-        }).then((tallySheet) => {
+        }).then(async (tallySheet) => {
+            tallySheet = await refactorTallySheetObject(tallySheet);
             _updateTallySheetState(tallySheet);
-            return refactorTallySheetObject(tallySheet);
+            return tallySheet;
         })
     }
 
