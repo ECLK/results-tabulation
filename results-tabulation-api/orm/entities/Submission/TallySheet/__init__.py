@@ -401,7 +401,8 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     tally_sheet = db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by).one_or_none()
 
     # Validate the authorization
-    if not has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
+    if tally_sheet is not None and not has_role_based_access(tally_sheet=tally_sheet,
+                                                             access_type=WORKFLOW_ACTION_TYPE_VIEW):
         raise UnauthorizedException(
             message="Not authorized to view tally sheet. (tallySheetId=%d)" % tallySheetId,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW
