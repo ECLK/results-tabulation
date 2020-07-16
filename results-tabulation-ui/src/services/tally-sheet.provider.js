@@ -14,6 +14,7 @@ import {
 } from "./tabulation-api";
 import {getMetaDataMap} from "./util";
 import {ElectionContext} from "./election.provider";
+import {TABULATION_API_PAGINATION_LIMIT} from "../config";
 
 export const TallySheetContext = React.createContext([]);
 
@@ -62,7 +63,7 @@ export function TallySheetProvider(props) {
     }
 
     async function fetchTallySheetChunks({electionId, areaId, tallySheetCode, voteType}, next) {
-        const limit = 500;
+        const limit = TABULATION_API_PAGINATION_LIMIT;
         let offset = 0;
         let reachedEnd = false;
         while (!reachedEnd) {
