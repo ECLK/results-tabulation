@@ -101,15 +101,8 @@ export function TallySheetProvider(props) {
             tallySheetIds.push(tallySheetId);
             state.tallySheetMap[tallySheet.tallySheetId] = tallySheet;
             await refactorTallySheetObject(tallySheet);
+            _updateTallySheetState(tallySheet)
         }
-
-        setState((state) => {
-            return {
-                ...state, tallySheetMap: {
-                    ...state.tallySheetMap,
-                }
-            }
-        });
 
         return tallySheetIds;
     }

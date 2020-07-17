@@ -136,12 +136,23 @@ def get_workflow_proof_download_file(tallySheetId, fileId):
 def refactor_tally_sheet_response(tally_sheet):
     workflow_instance = tally_sheet.workflowInstance
     workflow_actions = tally_sheet.workflowInstance.workflow.actions
-    for workflow_action in workflow_actions:
-        setattr(workflow_action, "allowed", workflow_action.fromStatus == workflow_instance.status)
-        setattr(workflow_action, "authorized", has_role_based_access(tally_sheet=tally_sheet,
-                                                                     access_type=workflow_action.actionType))
-    setattr(tally_sheet.workflowInstance, "actions", workflow_actions)
 
+    # Convert the actions list to a list of dictionary objects due to following issue
+    # https://github.com/ECLK/results-tabulation/issues/708
+    workflow_action_dict_list = []
+    for workflow_action in workflow_actions:
+        workflow_action_dict_list.append({
+            "workflowActionId": workflow_action.workflowActionId,
+            "actionName": workflow_action.actionName,
+            "actionType": workflow_action.actionType,
+            "fromStatus": workflow_action.fromStatus,
+            "toStatus": workflow_action.toStatus,
+            "allowed": workflow_action.fromStatus == workflow_instance.status,
+            "authorized": has_role_based_access(tally_sheet=tally_sheet,
+                                                access_type=workflow_action.actionType)
+        })
+
+    setattr(tally_sheet.workflowInstance, "actions", workflow_action_dict_list)
     setattr(tally_sheet, "areaId", tally_sheet.submission.areaId)
     setattr(tally_sheet, "area", tally_sheet.submission.area)
 
