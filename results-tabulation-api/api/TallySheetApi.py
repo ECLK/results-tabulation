@@ -134,7 +134,6 @@ def get_workflow_proof_download_file(tallySheetId, fileId):
 
 
 def refactor_tally_sheet_response(tally_sheet):
-    print("status ", tally_sheet.workflowInstance.status)
     workflow_instance = tally_sheet.workflowInstance
     workflow_actions = tally_sheet.workflowInstance.workflow.actions
 
