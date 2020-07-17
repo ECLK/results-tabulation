@@ -9,6 +9,7 @@ RUN npm install
 ENV REACT_APP_AUTH_APP_URL="https://tabulations.ecdev.opensource.lk"
 ENV REACT_APP_TABULATION_API_URL="https://apim-gateway.ecdev.opensource.lk/tabulation/0.1.0"
 ENV REACT_APP_DEBUG=true
+ENV TABULATION_API_PAGINATION_LIMIT=250
 
 RUN npm run build
 
