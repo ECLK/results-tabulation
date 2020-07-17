@@ -13,13 +13,45 @@ if (process.env.REACT_APP_TABULATION_API_URL) {
 }
 
 if (process.env.REACT_APP_DEBUG) {
-    DEBUG = process.env.REACT_APP_DEBUG;
+    DEBUG = getBooleanEnvVar(process.env.REACT_APP_DEBUG, DEBUG);
 }
 
-if (process.env.TABULATION_API_PAGINATION_LIMIT) {
-    TABULATION_API_PAGINATION_LIMIT = process.env.TABULATION_API_PAGINATION_LIMIT;
+if (process.env.REACT_APP_TABULATION_API_PAGINATION_LIMIT) {
+    TABULATION_API_PAGINATION_LIMIT = getIntEnvVar(process.env.REACT_APP_TABULATION_API_PAGINATION_LIMIT, TABULATION_API_PAGINATION_LIMIT);
 }
 
-if (process.env.USE_PDF_SERVICE) {
-    USE_PDF_SERVICE = process.env.USE_PDF_SERVICE;
+if (process.env.REACT_APP_USE_PDF_SERVICE) {
+    USE_PDF_SERVICE = getBooleanEnvVar(process.env.REACT_APP_USE_PDF_SERVICE, USE_PDF_SERVICE);
+}
+
+function getBooleanEnvVar(envVar, defaultValue) {
+    if (envVar) {
+        envVar = envVar.toLowerCase();
+        if (envVar === "true") {
+            envVar = true;
+        } else if (envVar === "false") {
+            envVar = false;
+        } else {
+            envVar = defaultValue;
+        }
+    } else {
+        envVar = defaultValue;
+    }
+
+    return envVar;
+}
+
+
+function getIntEnvVar(envVar, defaultValue) {
+    if (envVar) {
+        try {
+            envVar = parseInt(envVar);
+        } catch (e) {
+            envVar = defaultValue;
+        }
+    } else {
+        envVar = defaultValue;
+    }
+
+    return envVar;
 }
