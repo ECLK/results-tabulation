@@ -8,7 +8,9 @@ RUN npm install
 
 ENV REACT_APP_AUTH_APP_URL="https://tabulations.ecstag.opensource.lk"
 ENV REACT_APP_TABULATION_API_URL="https://apim-gw.ecstag.opensource.lk/tabulation/0.1.0"
-ENV TABULATION_API_PAGINATION_LIMIT=250
+ENV REACT_APP_DEBUG=false
+ENV REACT_APP_TABULATION_API_PAGINATION_LIMIT=250
+ENV REACT_APP_USE_PDF_SERVICE=true
 
 RUN npm run build
 
