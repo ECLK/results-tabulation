@@ -6,7 +6,7 @@ from sqlalchemy.sql.functions import coalesce
 from constants.VOTE_TYPES import NonPostal, Postal, Quarantine
 from orm.entities.Area import AreaMap
 from orm.enums import AreaTypeEnum
-from orm.entities import Election, Meta
+from orm.entities import Election
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
@@ -33,8 +33,7 @@ class AreaModel(db.Model):
     def __init__(self, areaName, electionId):
         super(AreaModel, self).__init__(
             areaName=areaName,
-            electionId=electionId,
-            metaId=Meta.create().metaId
+            electionId=electionId
         )
         db.session.add(self)
         db.session.flush()

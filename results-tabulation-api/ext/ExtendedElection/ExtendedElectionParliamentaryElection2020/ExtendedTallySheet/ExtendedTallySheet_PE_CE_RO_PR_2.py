@@ -25,10 +25,6 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
 
             stamp = tallySheetVersion.stamp
 
-            pollingDivision = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == Postal:
-                pollingDivision = 'Postal'
-
             content = {
                 "election": {
                     "electionName": tallySheetVersion.submission.election.get_official_name()
@@ -39,9 +35,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "CE/RO/PR/2",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "pollingDivision": pollingDivision,
+                "electoralDistrict": tallySheetVersion.submission.area.areaName,
                 "partyName": candidate_and_area_wise_valid_non_postal_vote_count_result["partyName"].values[0],
                 "data": [],
                 "pollingDivisions": [],
