@@ -819,6 +819,8 @@ class ExtendedTallySheet:
             df = self.df.copy()
             df['numValue'] = df['numValue'].astype(float)
 
+            df = df.loc[(df['templateRowType'] == "PARTY_WISE_VOTE") | (df['templateRowType'] == "REJECTED_VOTE")]
+
             df = df.groupby(
                 ['areaId', "areaName"]
             ).agg({
