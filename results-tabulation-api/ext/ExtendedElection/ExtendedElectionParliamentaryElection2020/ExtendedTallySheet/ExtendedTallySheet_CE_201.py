@@ -59,10 +59,12 @@ class ExtendedTallySheet_CE_201(ExtendedTallySheetDataEntry):
             for polling_station_wise_number_of_ballots_recieved_item_index, polling_station_wise_number_of_ballots_recieved_item in polling_station_wise_number_of_ballots_recieved.iterrows():
                 data_row = []
 
-                data_row.append(Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.PollingDistrict)[
-                                    polling_station_wise_number_of_ballots_recieved_item_index].areaName)
+                polling_station = Area.get_by_id(areaId=polling_station_wise_number_of_ballots_recieved_item.areaId)
+                polling_districts = Area.get_associated_areas(polling_station, AreaTypeEnum.PollingDistrict)
+
+                data_row.append(", ".join([polling_district.areaName for polling_district in polling_districts]))
                 data_row.append(polling_station_wise_number_of_ballots_recieved_item.areaName)
+
                 # data_row.append(to_comma_seperated_num(polling_station_wise_number_of_ballots_recieved_item.numValue))
 
                 # data_row.append(to_comma_seperated_num(polling_station_wise_number_of_spoilt_ballot_papers["numValue"].values[
