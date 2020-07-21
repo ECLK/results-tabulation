@@ -2,11 +2,11 @@
 
 {% block container %}
 <style>
-    @media print {
-        @page {
-            size: 850mm 600mm;
-        }
+@media print {
+    @page {
+        size: 840mm	594mm;
     }
+}
 </style>
 <div class="font1 pre-30-ed">
     <table class="table table-borderless">
@@ -34,7 +34,7 @@
     <table class="table table-borderless" style="table-layout:fixed;">
         <tr style="text-align:center;">
             <td rowspan="2" class="right" style="border-right: 1px solid #000 !important; width:20px;"></td>
-            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2" style="width:200px; vertical-align: middle;">
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2" style="min-width:300px; vertical-align: middle;">
                 Political Party/ Independent Group
             </th>
             <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align: middle; width:{{content.pollingDivisions|length * 80}}px;">
