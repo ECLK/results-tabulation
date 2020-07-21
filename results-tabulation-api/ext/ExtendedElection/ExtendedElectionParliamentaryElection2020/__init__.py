@@ -925,6 +925,17 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
             ]
         )
+        tally_sheet_template_pe_r2_seats_allocated = tally_sheet_template_pe_r2.add_row(
+            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED,
+            hasMany=True,
+            isDerived=False,
+            columns=[
+                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
+            ]
+        )
 
         tally_sheet_template_pe_4 = Template.create(
             templateName=PE_4
@@ -1037,15 +1048,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             columns=[
                 {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
+                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
+                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
-        ).add_derivative_template_row(
-            tally_sheet_template_pe_r2_seats_allocated_from_round_1_row
-        ).add_derivative_template_row(
-            tally_sheet_template_pe_r2_seats_allocated_from_round_2_row
-        ).add_derivative_template_row(
-            tally_sheet_template_pe_r2_bonus_seats_allocated
+        ).add_derivative_template_row(tally_sheet_template_pe_r2_seats_allocated)
+
         )
 
         data_entry_store = {
