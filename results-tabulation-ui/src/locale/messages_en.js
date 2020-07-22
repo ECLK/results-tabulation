@@ -37,6 +37,7 @@ export const API_MESSAGES_EN = {
     2001: "Proof requires at least one evidence, please upload.",
     2002: "No more evidence is accepted to this proof",
     2003: "PE-21 cannot be processed before PE-R2 is completed and verified.",
+    2004: "National list candidates cannot be allocated until the national vote calculation (PE-AI-ED) is completed and verified.",
 
     // Not found
     3000: "Election is not found.",
