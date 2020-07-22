@@ -158,6 +158,7 @@ class CandidateSchema(ma.ModelSchema):
         fields = (
             "candidateId",
             "candidateName",
+            "candidateType",
             "candidateNumber",
             "candidateProfileImageFile",
             "qualifiedForPreferences"

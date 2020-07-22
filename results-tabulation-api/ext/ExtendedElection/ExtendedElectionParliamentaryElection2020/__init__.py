@@ -4,14 +4,20 @@ from sqlalchemy.orm import aliased
 from app import db
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, TALLY_SHEET_COLUMN_SOURCE_CONTENT, \
     TALLY_SHEET_COLUMN_SOURCE_QUERY
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.CANDIDATE_TYPE import CANDIDATE_TYPE_NORMAL, \
+    CANDIDATE_TYPE_NATIONAL_LIST
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_1 import \
+    ExtendedTallySheet_PE_AI_1
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_2 import \
+    ExtendedTallySheet_PE_AI_2
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_ED import \
+    ExtendedTallySheet_PE_AI_ED
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_NL_1 import \
     ExtendedTallySheet_PE_AI_NL_1
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_NL_2 import \
     ExtendedTallySheet_PE_AI_NL_2
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_POLLING_DIVISION_RESULTS import \
     ExtendedTallySheet_POLLING_DIVISION_RESULTS
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_AI_ED import \
-    ExtendedTallySheet_AI_ED
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201 import \
     ExtendedTallySheet_CE_201
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201_PV import \
@@ -44,7 +50,7 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KE
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
     PE_CE_RO_PR_1, \
     PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, \
-    PE_AI_NL_1, PE_AI_ED, PE_AI_1, PE_AI_NL_2
+    PE_AI_NL_1, PE_AI_ED, PE_AI_1, PE_AI_NL_2, PE_AI_2
 from constants.VOTE_TYPES import NonPostal, PostalAndNonPostal
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import RoleBasedAccess
@@ -199,9 +205,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             PE_CE_RO_PR_3: ExtendedTallySheet_PE_CE_RO_PR_3,
             PE_21: ExtendedTallySheet_PE_21,
             POLLING_DIVISION_RESULTS: ExtendedTallySheet_POLLING_DIVISION_RESULTS,
-            PE_AI_ED: ExtendedTallySheet_AI_ED,
+            PE_AI_ED: ExtendedTallySheet_PE_AI_ED,
             PE_AI_NL_1: ExtendedTallySheet_PE_AI_NL_1,
-            PE_AI_NL_2: ExtendedTallySheet_PE_AI_NL_2
+            PE_AI_NL_2: ExtendedTallySheet_PE_AI_NL_2,
+            PE_AI_1: ExtendedTallySheet_PE_AI_1,
+            PE_AI_2: ExtendedTallySheet_PE_AI_2
         }
 
         if templateName in EXTENDED_TEMPLATE_MAP:
@@ -913,12 +921,6 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             ]
         )
 
-
-
-
-
-
-
         tally_sheet_template_pe_ai_nl_2 = Template.create(
             templateName=PE_AI_NL_2
         )
@@ -1244,7 +1246,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         ).add_derivative_template_row(tally_sheet_template_pe_r2_seats_allocated)
 
         tally_sheet_template_pe_ai_2 = Template.create(
-            templateName=PE_AI_1
+            templateName=PE_AI_2
         )
         tally_sheet_template_pe_ai_2_elected_candidates = tally_sheet_template_pe_ai_2.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
@@ -1257,7 +1259,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
             ]
         ).add_derivative_template_row(tally_sheet_template_pe_21_elected_candidates)
-        tally_sheet_template_pe_ai_2_elected_nation_list_candidates= tally_sheet_template_pe_ai_2.add_row(
+        tally_sheet_template_pe_ai_2_elected_nation_list_candidates = tally_sheet_template_pe_ai_2.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_ELECTED_NATIONAL_LIST_CANDIDATE,
             hasMany=True,
             isDerived=True,
@@ -1285,21 +1287,27 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         party_store = {}
 
         def _get_candidate(row):
-            electoral_district_election = _get_electoral_district_election(row)
+            candidate_type = row["Candidate Type"]
 
             party = _get_party(row)
 
-            candidate = Candidate.create(candidateName=row["Candidate Name"], candidateNumber=row["Candidate Number"])
+            candidate = Candidate.create(
+                candidateName=row["Candidate Name"], candidateNumber=row["Candidate Number"],
+                candidateType=candidate_type)
 
             root_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
-            electoral_district_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
-            for electoral_district_sub_election in electoral_district_election.subElections:
-                electoral_district_sub_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
+
+            if candidate_type == CANDIDATE_TYPE_NORMAL:
+                electoral_district_election = _get_electoral_district_election(row)
+                electoral_district_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
+                for electoral_district_sub_election in electoral_district_election.subElections:
+                    electoral_district_sub_election.add_candidate(candidateId=candidate.candidateId,
+                                                                  partyId=party.partyId)
 
             return candidate
 
         def _get_party(row):
-            electoral_district_election = _get_electoral_district_election(row)
+            candidate_type = row["Candidate Type"]
 
             party_name = row["Party Name (Unique)"]
             party_name_unique = row["Party Name (Unique)"]
@@ -1318,9 +1326,12 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             party = party_store[party_name_unique]
 
             root_election.add_party(partyId=party.partyId)
-            electoral_district_election.add_party(partyId=party.partyId)
-            for electoral_district_sub_election in electoral_district_election.subElections:
-                electoral_district_sub_election.add_party(partyId=party.partyId)
+
+            if candidate_type == CANDIDATE_TYPE_NORMAL:
+                electoral_district_election = _get_electoral_district_election(row)
+                electoral_district_election.add_party(partyId=party.partyId)
+                for electoral_district_sub_election in electoral_district_election.subElections:
+                    electoral_district_sub_election.add_party(partyId=party.partyId)
 
             return party_store[party_name_unique]
 

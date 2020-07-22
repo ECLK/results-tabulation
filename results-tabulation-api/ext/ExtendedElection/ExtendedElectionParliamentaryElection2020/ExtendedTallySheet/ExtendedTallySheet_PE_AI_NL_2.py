@@ -1,4 +1,7 @@
 from app import db
+from exception import ForbiddenException
+from exception.messages import MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_ED
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import CANDIDATE_TYPE_NATIONAL_LIST
 
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
@@ -99,19 +102,26 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
 
             content = []
 
-            seats_allocated_per_party_df = self.df.loc[self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED]
+            seats_allocated_per_party_df = self.df.loc[
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED) & (self.df['templateRowType'] > 0)]
+
+            if len(seats_allocated_per_party_df) == 0:
+                raise ForbiddenException(
+                    message="National list candidates cannot be allocated until the national vote calculation (PE-AI-ED) is completed and verified.",
+                    code=MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_ED
+                )
 
             # The derived rows are calculated only if the PE-R2 is available and verified.
             if len(seats_allocated_per_party_df) > 0:
                 for index_1 in seats_allocated_per_party_df.index:
                     party_id = int(seats_allocated_per_party_df.at[index_1, "partyId"])
                     number_of_seats_allocated = seats_allocated_per_party_df.at[index_1, "numValue"]
-                    print("========== party ", party_id)
 
                     if number_of_seats_allocated is not None and not math.isnan(number_of_seats_allocated):
 
                         candidates = db.session.query(Candidate.Model.candidateId).filter(
                             Candidate.Model.candidateId == ElectionCandidateModel.candidateId,
+                            Candidate.Model.candidateType == CANDIDATE_TYPE_NATIONAL_LIST,
                             ElectionCandidateModel.partyId == party_id
                         ).group_by(Candidate.Model.candidateId).order_by(Candidate.Model.candidateId).all()
 
@@ -157,7 +167,8 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
             }
 
             elected_candidates_df = self.df.loc[
-                self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE]
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
+
             elected_candidates_df = elected_candidates_df.sort_values(
                 by=['partyId', 'candidateId'], ascending=True
             )
@@ -198,7 +209,8 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
                 "time": stamp.createdAt.strftime("%H:%M:%S %p")
             }
 
-            elected_candidates_df = self.df.loc[self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE]
+            elected_candidates_df = self.df.loc[
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
 
             for index in elected_candidates_df.index:
                 candidateId = elected_candidates_df.at[index, "candidateId"]

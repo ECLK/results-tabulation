@@ -7,7 +7,7 @@ from orm.entities.Area import AreaModel
 from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri
 
 
-class ExtendedTallySheet_AI_ED(ExtendedTallySheetReport):
+class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html_letter(self, title="", total_registered_voters=None):
