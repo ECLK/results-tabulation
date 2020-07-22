@@ -1,18 +1,40 @@
-Electoral District,Party Name,Party Name (Unique),Party Abbreviation,Party Symbol (Text),Party Symbol (Image),Color,Candidate Name,Candidate Number
-Colombo,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 1,1
-Colombo,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 2,2
-Colombo,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 3,3
-Colombo,Party 2,Party 2,ABR 2,Party Symbol 2,,Color 2,Candidate 1,1
-Colombo,Party 2,Party 2,ABR 2,Party Symbol 2,,Color 2,Candidate 2,2
-Colombo,Party 2,Party 2,ABR 2,Party Symbol 2,,Color 2,Candidate 3,3
-Colombo,Independent Group 1,Colombo - Independent Group 1,ABR 6,Party Symbol 6,,Color 6,Candidate 1,1
-Colombo,Independent Group 1,Colombo - Independent Group 1,ABR 6,Party Symbol 6,,Color 6,Candidate 2,2
-Colombo,Independent Group 1,Colombo - Independent Group 1,ABR 6,Party Symbol 6,,Color 6,Candidate 3,3
-Kandy,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 1,1
-Kandy,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 2,2
-Kandy,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 3,3
-Kandy,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 4,4
-Kandy,Independent Group 1,Kandy - Independent Group 1,ABR 6,Party Symbol 9,,Color 9,Candidate 1,1
-Kandy,Independent Group 1,Kandy - Independent Group 1,ABR 6,Party Symbol 9,,Color 9,Candidate 2,2
-Kandy,Independent Group 1,Kandy - Independent Group 1,ABR 6,Party Symbol 9,,Color 9,Candidate 3,3
-Kandy,Independent Group 1,Kandy - Independent Group 1,ABR 6,Party Symbol 9,,Color 9,Candidate 4,4
+Electoral District,Party Name,Party Name (Unique),Party Abbreviation,Party Symbol (Text),Party Symbol (Image),Color,Candidate Name,Candidate Type,Candidate Number
+Colombo,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 1,Normal,1
+Colombo,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 2,Normal,2
+Colombo,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,Candidate 3,Normal,3
+Colombo,Party 2,Party 2,ABR 2,Party Symbol 2,,Color 2,Candidate 1,Normal,1
+Colombo,Party 2,Party 2,ABR 2,Party Symbol 2,,Color 2,Candidate 2,Normal,2
+Colombo,Party 2,Party 2,ABR 2,Party Symbol 2,,Color 2,Candidate 3,Normal,3
+Colombo,Party 3,Party 3,ABR 3,Party Symbol 3,,Color 3,Candidate 1,Normal,1
+Colombo,Party 3,Party 3,ABR 3,Party Symbol 3,,Color 3,Candidate 2,Normal,2
+Colombo,Party 3,Party 3,ABR 3,Party Symbol 3,,Color 3,Candidate 3,Normal,3
+Colombo,Party 4,Party 4,ABR 4,Party Symbol 4,,Color 4,Candidate 1,Normal,1
+Colombo,Party 4,Party 4,ABR 4,Party Symbol 4,,Color 4,Candidate 2,Normal,2
+Colombo,Party 4,Party 4,ABR 4,Party Symbol 4,,Color 4,Candidate 3,Normal,3
+Colombo,Party 5,Party 5,ABR 5,Party Symbol 5,,Color 5,Candidate 1,Normal,1
+Colombo,Party 5,Party 5,ABR 5,Party Symbol 5,,Color 5,Candidate 2,Normal,2
+Colombo,Party 5,Party 5,ABR 5,Party Symbol 5,,Color 5,Candidate 3,Normal,3
+Colombo,Independent Group 1,Colombo - Independent Group 1,ABR 6,Party Symbol 6,,Color 6,Candidate 1,Normal,1
+Colombo,Independent Group 1,Colombo - Independent Group 1,ABR 6,Party Symbol 6,,Color 6,Candidate 2,Normal,2
+Colombo,Independent Group 1,Colombo - Independent Group 1,ABR 6,Party Symbol 6,,Color 6,Candidate 3,Normal,3
+Colombo,Independent Group 2,Colombo - Independent Group 2,ABR 7,Party Symbol 7,,Color 7,Candidate 1,Normal,1
+Colombo,Independent Group 2,Colombo - Independent Group 2,ABR 7,Party Symbol 7,,Color 7,Candidate 2,Normal,2
+Colombo,Independent Group 2,Colombo - Independent Group 2,ABR 7,Party Symbol 7,,Color 7,Candidate 3,Normal,3
+Colombo,Independent Group 3,Colombo - Independent Group 3,ABR 8,Party Symbol 8,,Color 8,Candidate 1,Normal,1
+Colombo,Independent Group 3,Colombo - Independent Group 3,ABR 8,Party Symbol 8,,Color 8,Candidate 2,Normal,2
+Colombo,Independent Group 3,Colombo - Independent Group 3,ABR 8,Party Symbol 8,,Color 8,Candidate 3,Normal,3
+,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,National List Candidate 1,National List,1
+,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,National List Candidate 2,National List,2
+,Party 1,Party 1,ABR 1,Party Symbol 1,,Color 1,National List Candidate 3,National List,3
+,Party 2,Party 2,ABR 2,Party Symbol 2,,Color 2,National List Candidate 1,National List,1
+,Party 2,Party 2,ABR 2,Party Symbol 2,,Color 2,National List Candidate 2,National List,2
+,Party 2,Party 2,ABR 2,Party Symbol 2,,Color 2,National List Candidate 3,National List,3
+,Party 3,Party 3,ABR 3,Party Symbol 3,,Color 3,National List Candidate 1,National List,1
+,Party 3,Party 3,ABR 3,Party Symbol 3,,Color 3,National List Candidate 2,National List,2
+,Party 3,Party 3,ABR 3,Party Symbol 3,,Color 3,National List Candidate 3,National List,3
+,Party 4,Party 4,ABR 4,Party Symbol 4,,Color 4,National List Candidate 1,National List,1
+,Party 4,Party 4,ABR 4,Party Symbol 4,,Color 4,National List Candidate 2,National List,2
+,Party 4,Party 4,ABR 4,Party Symbol 4,,Color 4,National List Candidate 3,National List,3
+,Party 5,Party 5,ABR 5,Party Symbol 5,,Color 5,National List Candidate 1,National List,1
+,Party 5,Party 5,ABR 5,Party Symbol 5,,Color 5,National List Candidate 2,National List,2
+,Party 5,Party 5,ABR 5,Party Symbol 5,,Color 5,National List Candidate 3,National List,3
