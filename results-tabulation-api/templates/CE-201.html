@@ -81,11 +81,31 @@
         {% endfor %}
 
         {%if content.parliamentaryElection != 1 %}
-        <tr>
-            <td colspan="9"></td>
-            <td colspan="1">Total</td>
-            <td colspan="1"><div class="top" style="border-bottom: double; padding-top: 0.3rem; padding-bottom: 0.3rem;text-align: right">{{ content.totalBallotBoxCount }}</div></td>
-        </tr>
+          <tr>
+              <td colspan="9"></td>
+              <td colspan="1">Total</td>
+              <td colspan="1"><div class="top" style="border-bottom: double; padding-top: 0.3rem; padding-bottom: 0.3rem;text-align: right">{{ content.totalBallotBoxCount }}</div></td>
+          </tr>
+        {% else %}
+          <tr>
+              <td colspan="9"></td>
+          </tr>
+          <tr>
+              <td class="all align-middle" colspan="2">Total</td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle {%if content.totalBallotBoxCount=="" %}missing-value{% endif %}">{{ content.totalBallotBoxCount }}</td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+              <td class="all align-middle"></td>
+          </tr>
         {% endif %}
         <tr>
             <td colspan="9"></td>
