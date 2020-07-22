@@ -82,12 +82,12 @@ export function useTallySheetEdit(props) {
         const body = getTallySheetRequestBody();
 
         if (validateTallySheetContent()) {
-            setSaved(true);
             setProcessing(true);
             setProcessingLabel("Saving");
             try {
                 const tallySheet = await tallySheetContext.saveTallySheetVersion(tallySheetId, tallySheetCode, body);
                 setTallySheetVersion(tallySheet.latestVersion);
+                setSaved(true);
             } catch (e) {
                 const errorCode = getErrorCode(e);
                 messagesContext.push({

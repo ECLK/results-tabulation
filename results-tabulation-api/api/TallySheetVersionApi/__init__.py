@@ -11,7 +11,7 @@ from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetVersionSchema, TallySheetSchema_1
-from util import get_paginated_query, RequestBody
+from util import get_paginated_query, RequestBody, validate_tally_sheet_version_request_content_special_characters
 
 
 def get_all(tallySheetId):
@@ -165,6 +165,10 @@ def get_by_id(tallySheetId, tallySheetVersionId):
 def create(tallySheetId, body):
     request_body = RequestBody(body)
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    # validate user inputs to prevent XSS attacks
+    validate_tally_sheet_version_request_content_special_characters(request_body.get("content"))
+
     if tally_sheet is None:
         raise NotFoundException(
             message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
