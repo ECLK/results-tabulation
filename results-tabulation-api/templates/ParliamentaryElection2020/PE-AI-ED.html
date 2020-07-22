@@ -13,6 +13,12 @@
         .table th {
             font-weight: 800;
         }
+        
+        @media print {
+            @page {
+                size: A4 portrait;
+            }
+        }
     </style>
 
     {# TODO review why "padding-top: 1px" is needed to align the pages on print view.#}
