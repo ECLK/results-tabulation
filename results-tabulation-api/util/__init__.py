@@ -156,3 +156,14 @@ def get_sum_of_all_and_nan_otherwise(array):
             result += val
 
     return result
+
+
+def input_is_valid(content_array):
+    invalid_strings = ["'", "\"", "<", ">", "=", ",", ";"]
+    for array_item in content_array:
+        for value in array_item:
+            text_value = str(array_item[value])
+            for char in invalid_strings:
+                if char in text_value or len(text_value) > 500:
+                    return False
+    return True
