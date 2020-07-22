@@ -23,7 +23,3 @@ def InternalServerErrorException(message="", code=None):
 
 def NotImplementedException(message="", code=None):
     raise ProblemException(501, "Not Implemented", message, "NotImplemented", code)
-
-
-def InvalidInputException(message="", code=None):
-    raise ProblemException(400, "Invalid Input", message, "Forbidden", code)
