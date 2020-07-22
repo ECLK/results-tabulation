@@ -163,8 +163,7 @@ def get_sum_of_all_and_nan_otherwise(array):
 def validate_tally_sheet_version_request_content_special_characters(content_array):
     invalid_strings = ["'", "\"", "<", ">", "=", ",", ";"]
     for array_item in content_array:
-        if "strValue" in array_item:
-            if array_item["strValue"] is not None:
+        if "strValue" in array_item and array_item["strValue"] is not None:
                 text_value = str(array_item["strValue"])
                 for char in invalid_strings:
                     if char in text_value or len(text_value) > 500:
