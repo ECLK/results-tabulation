@@ -164,11 +164,11 @@ def validate_tally_sheet_version_request_content_special_characters(content_arra
     invalid_strings = ["'", "\"", "<", ">", "=", ",", ";"]
     for array_item in content_array:
         if "strValue" in array_item and array_item["strValue"] is not None:
-                text_value = str(array_item["strValue"])
-                for char in invalid_strings:
-                    if char in text_value or len(text_value) > 500:
-                        raise ForbiddenException(
-                            message="Invalid input detected. Use of disallowed characters/invalid input length detected. " + char + " included in " + text_value,
-                            code=MESSAGE_CODE_INVALID_INPUT
-                        )
+            text_value = str(array_item["strValue"])
+            for char in invalid_strings:
+                if char in text_value or len(text_value) > 500:
+                    raise ForbiddenException(
+                        message="Invalid input detected. Use of disallowed characters/invalid input length detected. " + char + " included in " + text_value,
+                        code=MESSAGE_CODE_INVALID_INPUT
+                    )
     return True
