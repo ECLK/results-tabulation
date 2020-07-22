@@ -2,7 +2,8 @@ from constants.AUTH_CONSTANTS import DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_V
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
 from constants.VOTE_TYPES import NonPostal, Postal, PostalAndNonPostal, Displaced, Quarantine
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import PE_AI_ED, PE_AI_NL_1, PE_AI_NL_2, PE_AI_1
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import PE_AI_ED, PE_AI_NL_1, PE_AI_NL_2, PE_AI_1, \
+    PE_AI_SA
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, CE_201, CE_201_PV, \
     PE_4, PE_CE_RO_V1, \
     PE_CE_RO_PR_1, PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, \
@@ -194,6 +195,9 @@ role_based_access_config = {
         PE_AI_ED: {
             PostalAndNonPostal: [READ, WRITE, PRINT]
         },
+        PE_AI_SA: {
+            PostalAndNonPostal: [READ, WRITE, PRINT]
+        },
         PE_AI_NL_1: {
             PostalAndNonPostal: [READ, WRITE, PRINT]
         },
@@ -239,6 +243,9 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
         PE_AI_ED: {
+            PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
+        },
+        PE_AI_SA: {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         },
         PE_AI_NL_1: {
@@ -323,6 +330,9 @@ role_based_access_config = {
                                  RELEASE]
         },
         PE_AI_ED: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT]
+        },
+        PE_AI_SA: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
                                  CERTIFY, RELEASE]
         },
