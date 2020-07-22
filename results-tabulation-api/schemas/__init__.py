@@ -418,7 +418,7 @@ class TallySheetSchema_1(ma.ModelSchema):
     submissionProof = ma.Nested(Proof_Schema)
     metaDataList = ma.Nested(MetaDataSchema, many=True)
     areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
-    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status"])
+    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status", "proof"])
 
 
 class TallySheetSchema(ma.ModelSchema):
@@ -453,7 +453,7 @@ class TallySheetSchema(ma.ModelSchema):
     submissionProof = ma.Nested(Proof_Schema)
     metaDataList = ma.Nested(MetaDataSchema, many=True)
     areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
-    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status"])
+    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status", "proof"])
 
 
 class TemplateRowSchema(ma.ModelSchema):
