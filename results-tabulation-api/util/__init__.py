@@ -158,12 +158,12 @@ def get_sum_of_all_and_nan_otherwise(array):
     return result
 
 
-def input_is_valid(content_array):
+def validate_tally_sheet_version_request_content_special_characters(content_array):
     invalid_strings = ["'", "\"", "<", ">", "=", ",", ";"]
     for array_item in content_array:
-        for value in array_item:
-            text_value = str(array_item[value])
+        if "strValue" in array_item:
+            text_value = str(array_item["strValue"])
             for char in invalid_strings:
                 if char in text_value or len(text_value) > 500:
-                    return False
-    return True
+                    return False, char + " included in " + text_value
+    return True, ""

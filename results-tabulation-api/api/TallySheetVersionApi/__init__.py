@@ -5,14 +5,14 @@ from api.TallySheetApi import refactor_tally_sheet_response
 from app import db
 from auth import authorize
 from constants.AUTH_CONSTANTS import ALL_ROLES
-from exception import NotFoundException, InvalidInputException
+from exception import NotFoundException, ForbiddenException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND, \
     MESSAGE_CODE_INVALID_INPUT
 from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
 from schemas import TallySheetVersionSchema, TallySheetSchema_1
-from util import get_paginated_query, RequestBody, input_is_valid
+from util import get_paginated_query, RequestBody, validate_tally_sheet_version_request_content_special_characters
 
 
 def get_all(tallySheetId):
@@ -168,9 +168,10 @@ def create(tallySheetId, body):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
 
     # validate user inputs to prevent XSS attacks
-    if not input_is_valid(request_body.get("content")):
-        raise InvalidInputException(
-            message="Invalid input detected. Use of disallowed characters/invalid input length detected",
+    input_is_valid, error_message = validate_tally_sheet_version_request_content_special_characters(request_body.get("content"))
+    if not input_is_valid:
+        raise ForbiddenException(
+            message="Invalid input detected. Use of disallowed characters/invalid input length detected. " + error_message,
             code=MESSAGE_CODE_INVALID_INPUT
         )
 
