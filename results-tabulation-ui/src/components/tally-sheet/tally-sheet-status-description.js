@@ -9,13 +9,13 @@ import {TallySheetContext} from "../../services/tally-sheet.provider";
 
 
 const WORKFLOW_STATUS_DESCRIPTION = {
-    [WORKFLOW_STATUS_TYPE_SAVED]: "Still working in progress.",
-    [WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED]: "Changes has been requested.",
-    [WORKFLOW_STATUS_TYPE_SUBMITTED]: "Submitted for verification.",
-    [WORKFLOW_STATUS_TYPE_VERIFIED]: "This is a verified report.",
-    [WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY]: "This report is ready to certify.",
-    [WORKFLOW_STATUS_TYPE_CERTIFIED]: "This report has been certified and ready to release.",
-    [WORKFLOW_STATUS_TYPE_RELEASED]: "This report has been released.",
+    [WORKFLOW_STATUS_TYPE_SAVED]: "In Progress",
+    [WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED]: "Changes Requested",
+    [WORKFLOW_STATUS_TYPE_SUBMITTED]: "Submitted",
+    [WORKFLOW_STATUS_TYPE_VERIFIED]: "Verified",
+    [WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY]: "Ready to Certify.",
+    [WORKFLOW_STATUS_TYPE_CERTIFIED]: "Certified",
+    [WORKFLOW_STATUS_TYPE_RELEASED]: "Released",
 };
 
 export default function TallySheetStatusDescription(props) {
@@ -27,7 +27,7 @@ export default function TallySheetStatusDescription(props) {
     const tallySheetStatus = tallySheet.workflowInstance.status;
 
     if (tallySheetStatus && WORKFLOW_STATUS_DESCRIPTION[tallySheetStatus]) {
-        return <div className="report-view-status-text">
+        return <div style={{color: "#5178c8", fontWeight: 900, fontSize: 16, padding: 15}}>
             {WORKFLOW_STATUS_DESCRIPTION[tallySheetStatus]}
         </div>
     } else {
