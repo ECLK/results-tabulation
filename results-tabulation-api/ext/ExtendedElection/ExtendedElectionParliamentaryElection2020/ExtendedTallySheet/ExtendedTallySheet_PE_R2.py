@@ -240,7 +240,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                 "number_of_members_to_be_elected_minus_1": to_comma_seperated_num(
                     number_of_members_to_be_elected_minus_1),
                 "relevant_no_of_votes_div_by_no_of_members": to_comma_seperated_num(
-                    relevant_no_of_votes_div_by_no_of_members),
+                    relevant_no_of_votes_div_by_no_of_members, num_type=float, round_to=2),
                 "rounded_relevant_no_of_votes_div_by_no_of_members": to_comma_seperated_num(
                     rounded_relevant_no_of_votes_div_by_no_of_members),
                 "total": []
