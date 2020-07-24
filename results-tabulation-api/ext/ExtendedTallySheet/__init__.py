@@ -39,6 +39,7 @@ DEFAULT_HTML_TABLE_COLUMNS = [
     "candidateId",
     "candidateName",
     "candidateNumber",
+    "candidateType",
     "electionPartyId",
     "partyId",
     "partyName",
@@ -444,8 +445,7 @@ class ExtendedTallySheet:
 
             df = df.sort_values(
                 by=['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
-                    'candidateName',
-                    'candidateNumber', 'areaId', 'areaName'], ascending=True
+                    'candidateName', 'candidateNumber', 'candidateType', 'areaId', 'areaName'], ascending=True
             ).reset_index()
 
             return df
@@ -472,8 +472,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(
                 ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
-                 'candidateName',
-                 'candidateNumber']
+                 'candidateName', 'candidateNumber', 'candidateType']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
                 'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
@@ -492,8 +491,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(
                 ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
-                 'candidateName',
-                 'candidateNumber']
+                 'candidateName', 'candidateNumber', 'candidateType']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
                 'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
@@ -529,8 +527,7 @@ class ExtendedTallySheet:
 
             df = df.groupby(
                 ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
-                 'candidateName',
-                 'candidateNumber']
+                 'candidateName', 'candidateNumber', 'candidateType']
             ).agg({
                 'numValue': lambda x: x.sum(skipna=False),
                 'incompleteNumValue': get_sum_of_numbers_only_and_nan_otherwise
@@ -743,8 +740,7 @@ class ExtendedTallySheet:
 
             df = df.sort_values(
                 by=['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
-                    'candidateName',
-                    'candidateNumber', 'areaId', 'areaName'], ascending=True
+                    'candidateName', 'candidateNumber', 'candidateType', 'areaId', 'areaName'], ascending=True
             ).reset_index()
 
             return df
