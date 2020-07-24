@@ -1,8 +1,6 @@
 from app import db
 from exception import ForbiddenException
-from exception.messages import MESSAGE_CODE_SEAT_CALCULATION_CANNOT_BE_DONE_ON_ZERO_VOTES
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
-    META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED
+from exception.messages import MESSAGE_CODE_PE_AI_NL_1_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_ED
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
@@ -11,9 +9,7 @@ from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 from flask import render_template
-from orm.entities import Area
 from util import to_comma_seperated_num, convert_image_to_data_uri, to_percentage
-from orm.enums import AreaTypeEnum
 import math
 import pandas as pd
 import numpy as np
@@ -80,7 +76,7 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
             if total_valid_vote_count == 0:
                 raise ForbiddenException(
                     message="National list seat calculation cannot be done on zero votes.",
-                    code=MESSAGE_CODE_SEAT_CALCULATION_CANNOT_BE_DONE_ON_ZERO_VOTES
+                    code=MESSAGE_CODE_PE_AI_NL_1_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_ED
                 )
 
             valid_vote_count_required_per_seat = total_valid_vote_count / number_of_members_to_be_elected
@@ -203,12 +199,87 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
                 else:
                     data_row.append('')
 
-                data_row.append(party_wise_valid_vote_count_result_item.seatsAllocated)
+                data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item.seatsAllocated))
 
                 content["data"].append(data_row)
 
             html = render_template(
                 'ParliamentaryElection2020/PE-AI-NL-1.html',
+                content=content
+            )
+
+            return html
+
+        def html_letter(self, title="", total_registered_voters=None):
+            tallySheetVersion = self.tallySheetVersion
+            party_wise_valid_vote_count_result = self.get_party_wise_seat_calculations()
+            area_wise_valid_vote_count_result = self.get_area_wise_valid_vote_count_result()
+            area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
+            area_wise_vote_count_result = self.get_area_wise_vote_count_result()
+            stamp = tallySheetVersion.stamp
+
+            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count()
+            content = {
+                "election": {
+                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                },
+                "stamp": {
+                    "createdAt": stamp.createdAt,
+                    "createdBy": stamp.createdBy,
+                    "barcodeString": stamp.barcodeString
+                },
+                "data": [],
+                "validVoteCounts": [0, "0%"],
+                "rejectedVoteCounts": [0, "0%"],
+                "totalVoteCounts": [0, "0%"],
+                "registeredVoters": [
+                    to_comma_seperated_num(registered_voters_count),
+                    100
+                ],
+                "logo": convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png"),
+                "date": stamp.createdAt.strftime("%d/%m/%Y"),
+                "time": stamp.createdAt.strftime("%H:%M:%S %p")
+            }
+
+            total_valid_vote_count = 0
+            for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
+                total_valid_vote_count += float(area_wise_valid_vote_count_result_item.incompleteNumValue)
+            content["validVoteCounts"][0] = to_comma_seperated_num(total_valid_vote_count)
+            content["validVoteCounts"][1] = to_percentage((total_valid_vote_count / registered_voters_count) * 100)
+
+            total_rejected_vote_count = 0
+            for area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.itertuples():
+                total_rejected_vote_count += float(area_wise_rejected_vote_count_result_item.numValue)
+            content["rejectedVoteCounts"][0] = to_comma_seperated_num(total_rejected_vote_count)
+            content["rejectedVoteCounts"][1] = to_percentage(
+                (total_rejected_vote_count / registered_voters_count) * 100)
+
+            total_vote_count = 0
+            for area_wise_vote_count_result_item in area_wise_vote_count_result.itertuples():
+                total_vote_count += float(area_wise_vote_count_result_item.incompleteNumValue)
+            content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
+            content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
+
+            for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
+
+                data_row = [
+                    party_wise_valid_vote_count_result_item.partyName,
+                    party_wise_valid_vote_count_result_item.partyAbbreviation,
+                    to_comma_seperated_num(party_wise_valid_vote_count_result_item.numValue)
+                ]
+
+                if total_valid_vote_count > 0:
+                    data_row.append(to_percentage(
+                        party_wise_valid_vote_count_result_item.numValue * 100 / total_valid_vote_count))
+                else:
+                    data_row.append('')
+
+                data_row.append(to_comma_seperated_num(party_wise_valid_vote_count_result_item.seatsAllocated))
+
+                content["data"].append(data_row)
+
+            html = render_template(
+                'ParliamentaryElection2020/PE-AI-NL-1-LETTER.html',
                 content=content
             )
 
