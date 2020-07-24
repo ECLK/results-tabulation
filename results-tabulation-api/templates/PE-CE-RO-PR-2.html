@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 
 {% block container %}
+<style>
+.print-candidate-width {
+    width: 300px;
+}
+
+@media print {
+    @page {
+        size: 1050mm	742.5mm;
+    }
+    .print-candidate-width {
+        width: initial;
+        min-width: 300px !important;
+    }
+}
+</style>
 <div class="font1">
     <div style="margin-bottom:5px;text-align:right;">
         Report: <b>CE-RO-PR/2</b>
@@ -43,8 +58,8 @@
         <tr style="text-align:center;">
             <th class="left right top" rowspan="3" style="width:200px; border-bottom: 3px solid #000; vertical-align:middle;">Serial No. of the Candidate</th>
             <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align:middle;width:{{content.pollingDivisions|length * 80}}px;">TOTAL OF PREFERENCES TRANSFERRED FROM THE FIRST SUMMARY SHEETS</th>
-            <th class="left right top bottom" colspan="2" style="vertical-align:middle;"></th>
-            <th class="left right top" rowspan="3" style="width:200px; border-bottom: 3px solid #000;  vertical-align:middle;">
+            <th class="left right top bottom" colspan="2" style="width:300px;vertical-align:middle;"></th>
+            <th class="left right top print-candidate-width" rowspan="3" style="border-bottom: 3px solid #000;  vertical-align:middle;">
               Order of Candidates according to the No. of Preferences
             </th>
         </tr>
@@ -57,8 +72,8 @@
             {% for pollingDivision in content.pollingDivisions %}
             <th class="left right top pd" style="vertical-align:middle;border-bottom: 3px solid #000; "><div>{{pollingDivision}}</div></th>
             {% endfor %}
-            <th class="left right top" style="vertical-align:middle;border-bottom: 3px solid #000; ">In Figures</th>
-            <th class="left right top" style="vertical-align:middle;border-bottom: 3px solid #000; ">In Words</th>
+            <th class="left right top" style="width:100px;vertical-align:middle;border-bottom: 3px solid #000; ">In Figures</th>
+            <th class="left right top" style="width:200px;vertical-align:middle;border-bottom: 3px solid #000; ">In Words</th>
         </tr>
         {% for row in content.data %}
         <tr>
