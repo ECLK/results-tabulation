@@ -2,6 +2,13 @@
 
 {% block letter_content %}
     <style>
+
+        @media print {
+            @page {
+                size: A4 portrait;
+            }
+        }
+
         * {
             font-family: "Lucida Console", Courier, monospace;
         }
@@ -17,6 +24,7 @@
         .table th {
             font-weight: 800;
         }
+
     </style>
 
     <div style="padding-left: 50px;padding-right: 50px;">
@@ -33,7 +41,7 @@
                     <span style="font-weight: 700;font-weight: 600;font-size: 23px;">
                     {{ content.election.electionName }}
                 </span><br/>
-                    <span style="font-weight:bold;font-size: 17px;">Votes Received By Each Party</span><br/>
+                    <span style="font-weight:bold;font-size: 17px;">Votes Received by Party</span><br/>
                     <span style="font-size:14px;font-weight: 500;">
                     <strong>All Island </strong> - Sri Lanka
                 </span>
