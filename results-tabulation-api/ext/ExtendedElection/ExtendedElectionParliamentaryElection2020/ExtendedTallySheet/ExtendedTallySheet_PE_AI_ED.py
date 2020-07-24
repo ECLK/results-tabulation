@@ -62,19 +62,19 @@ class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
 
             # sort by vote count descending
             party_wise_valid_vote_count_result = party_wise_valid_vote_count_result.sort_values(
-                by=['numValue'], ascending=False
+                by=['incompleteNumValue'], ascending=False
             ).reset_index()
 
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
                 data_row = [
                     party_wise_valid_vote_count_result_item.partyName,
                     party_wise_valid_vote_count_result_item.partyAbbreviation,
-                    to_comma_seperated_num(party_wise_valid_vote_count_result_item.numValue)
+                    to_comma_seperated_num(party_wise_valid_vote_count_result_item.incompleteNumValue)
                 ]
 
                 if total_valid_vote_count > 0:
                     data_row.append(to_percentage(
-                        party_wise_valid_vote_count_result_item.numValue * 100 / total_valid_vote_count))
+                        party_wise_valid_vote_count_result_item.incompleteNumValue * 100 / total_valid_vote_count))
                 else:
                     data_row.append('')
 
@@ -146,12 +146,12 @@ class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
                 data_row = [
                     party_wise_valid_vote_count_result_item.partyName,
                     party_wise_valid_vote_count_result_item.partyAbbreviation,
-                    to_comma_seperated_num(party_wise_valid_vote_count_result_item.numValue)
+                    to_comma_seperated_num(party_wise_valid_vote_count_result_item.incompleteNumValue)
                 ]
 
                 if total_valid_vote_count > 0:
                     data_row.append(to_percentage(
-                        party_wise_valid_vote_count_result_item.numValue * 100 / total_valid_vote_count))
+                        party_wise_valid_vote_count_result_item.incompleteNumValue * 100 / total_valid_vote_count))
                 else:
                     data_row.append('')
 
