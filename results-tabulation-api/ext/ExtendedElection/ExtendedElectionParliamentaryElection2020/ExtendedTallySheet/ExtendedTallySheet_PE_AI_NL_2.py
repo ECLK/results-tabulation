@@ -1,6 +1,6 @@
 from app import db
 from exception import ForbiddenException
-from exception.messages import MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_ED
+from exception.messages import MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_NL_1
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import CANDIDATE_TYPE_NATIONAL_LIST
 
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
@@ -12,8 +12,7 @@ from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 from flask import render_template
-from orm.entities import Area, Candidate
-from orm.enums import AreaTypeEnum
+from orm.entities import Candidate
 from util import convert_image_to_data_uri
 
 
@@ -41,12 +40,12 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
             content = []
 
             seats_allocated_per_party_df = self.df.loc[
-                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED) & (self.df['templateRowType'] > 0)]
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED) & (self.df['numValue'] > 0)]
 
             if len(seats_allocated_per_party_df) == 0:
                 raise ForbiddenException(
                     message="National list candidates cannot be allocated until the national vote calculation (PE-AI-ED) is completed and verified.",
-                    code=MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_ED
+                    code=MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_NL_1
                 )
 
             # The derived rows are calculated only if the PE-R2 is available and verified.
@@ -122,6 +121,52 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
 
             html = render_template(
                 'ParliamentaryElection2020/PE-AI-NL-2.html',
+                content=content
+            )
+
+            return html
+
+        def html_letter(self, title="", total_registered_voters=None):
+            tallySheetVersion = self.tallySheetVersion
+
+            stamp = tallySheetVersion.stamp
+
+            content = {
+                "election": {
+                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                },
+                "stamp": {
+                    "createdAt": stamp.createdAt,
+                    "createdBy": stamp.createdBy,
+                    "barcodeString": stamp.barcodeString
+                },
+                "data": [],
+                "logo": convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png"),
+                "date": stamp.createdAt.strftime("%d/%m/%Y"),
+                "time": stamp.createdAt.strftime("%H:%M:%S %p")
+            }
+
+            elected_candidates_df = self.df.loc[
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
+
+            elected_candidates_df = elected_candidates_df.sort_values(
+                by=['partyId', 'candidateId'], ascending=True
+            )
+
+            for index in elected_candidates_df.index:
+                party_name = elected_candidates_df.at[index, "partyName"]
+                party_abbreviation = elected_candidates_df.at[index, "partyAbbreviation"]
+                candidate_number = elected_candidates_df.at[index, "candidateNumber"]
+                candidate_name = elected_candidates_df.at[index, "candidateName"]
+                content["data"].append([
+                    party_name,
+                    party_abbreviation,
+                    "" if candidate_number is None else candidate_number,
+                    "" if candidate_name is None else candidate_name
+                ])
+
+            html = render_template(
+                'ParliamentaryElection2020/PE-AI-NL-2-LETTER.html',
                 content=content
             )
 

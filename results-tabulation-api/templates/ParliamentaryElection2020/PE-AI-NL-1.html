@@ -2,9 +2,13 @@
 
 {% block container %}
     <style>
+        * {
+            font-family: "Lucida Console", Courier, monospace;
+        }
+
         .table td, .table th {
             padding: 3px;
-            font-size: 15px;
+            font-size: 13px;
             color: black;
             font-weight: 400;
             border-color: black;
@@ -71,7 +75,7 @@
                 </tr>
             {% endfor %}
             <tr>
-                <td colspan="5" style="height: 50px;"></td>
+                <td colspan="6" style="height: 50px;"></td>
             </tr>
             <tr>
                 <td></td>
@@ -85,6 +89,7 @@
                     style="text-align:right;">
                     {{ content.validVoteCounts[1] }}
                 </td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
@@ -98,6 +103,7 @@
                     style="text-align:right;">
                     {{ content.rejectedVoteCounts[1] }}
                 </td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
@@ -111,6 +117,7 @@
                     style="text-align:right;">
                     {{ content.totalVoteCounts[1] }}
                 </td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
@@ -118,18 +125,21 @@
                 <td><b>Registered No. of Electors</b></td>
                 <td style="text-align:right"><b>{{ content.registeredVoters[0] }}</b></td>
                 <td style="text-align:right"></td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td><b>Time</b></td>
                 <td colspan="2" style="text-align:center;">{{ content.time }}</td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td><b>Date</b></td>
                 <td colspan="2" style="text-align:center;">{{ content.date }}</td>
+                <td></td>
             </tr>
             </tbody>
         </table>
