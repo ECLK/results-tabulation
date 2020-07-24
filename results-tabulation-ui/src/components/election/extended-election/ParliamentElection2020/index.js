@@ -77,8 +77,8 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         <Grid item xs={12}>
                             <ul className="tally-sheet-code-list">
                                 {(() => {
-                                    let tallySheetCodes = [TALLY_SHEET_CODE_PE_AI_ED, TALLY_SHEET_CODE_PE_AI_SA, 
-                                        TALLY_SHEET_CODE_PE_AI_NL_1, TALLY_SHEET_CODE_PE_AI_NL_2, 
+                                    let tallySheetCodes = [TALLY_SHEET_CODE_PE_AI_ED, TALLY_SHEET_CODE_PE_AI_SA,
+                                        TALLY_SHEET_CODE_PE_AI_NL_1, TALLY_SHEET_CODE_PE_AI_NL_2,
                                         TALLY_SHEET_CODE_PE_AI_1, TALLY_SHEET_CODE_PE_AI_2];
                                     let tallySheetCodeLabels = [
                                         "All Island Vote Results",

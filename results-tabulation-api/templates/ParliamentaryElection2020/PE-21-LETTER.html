@@ -2,6 +2,13 @@
 
 {% block letter_content %}
     <style>
+
+        @media print {
+            @page {
+                size: A4 portrait;
+            }
+        }
+
         * {
             font-family: "Lucida Console", Courier, monospace;
         }
