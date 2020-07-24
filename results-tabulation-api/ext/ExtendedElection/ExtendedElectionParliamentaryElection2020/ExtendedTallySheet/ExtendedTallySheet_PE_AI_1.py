@@ -1,11 +1,10 @@
-import pandas as pd
 import numpy as np
 from flask import render_template
 
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
-from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri, get_sum_of_all_and_nan_otherwise, \
+from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri, \
     get_sum_of_numbers_only_and_nan_otherwise
 
 
