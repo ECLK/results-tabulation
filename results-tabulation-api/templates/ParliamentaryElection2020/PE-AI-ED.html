@@ -1,6 +1,6 @@
-{% extends 'ParliamentaryElection2020/letter_with_signatures.html' %}
+{% extends 'base.html' %}
 
-{% block letter_content %}
+{% block container %}
     <style>
         .table td, .table th {
             padding: 3px;
@@ -12,6 +12,12 @@
 
         .table th {
             font-weight: 800;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+            }
         }
     </style>
 
@@ -31,7 +37,7 @@
                 </span><br/>
                     <span style="font-weight:bold;font-size: 17px;">Votes Received By Each Party</span><br/>
                     <span style="font-size:14px;font-weight: 500;">
-                    <strong>All Island </strong> - Sri Lanka
+                    <strong>All Island</strong>
                 </span>
                 </td>
                 <td style="text-align:right; width:15%; font-size:12px; font-weight:bold;"></td>

@@ -40,7 +40,7 @@ export function TallySheetProofFilePreviewDialog({tallySheetId, open, fileId, ha
             <iframe
                 width={"100%"}
                 src={file.dataUrl}
-                style={{backgroundColor: "#2b2b2b", border: "none", minHeight: "100%"}}
+                style={{backgroundColor: "#2b2b2b", border: "none", height: "100%"}}
                 onClick={(evt) => evt.preventDefault()}
             />
         </DialogContent>

@@ -56,7 +56,7 @@ export default function TallySheetListTableBody(
     let tableBody = [];
     if (processing) {
         tableBody = <TableRow>
-            <TableCell colSpan={5} align="center">
+            <TableCell colSpan={columns.length} align="center">
                 <Processing/>
             </TableCell>
         </TableRow>

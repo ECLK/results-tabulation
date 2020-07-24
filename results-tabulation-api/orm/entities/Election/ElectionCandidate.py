@@ -18,6 +18,7 @@ class ElectionCandidateModel(db.Model):
     candidate = relationship(Candidate.Model, foreign_keys=[candidateId], lazy='subquery')
 
     candidateName = association_proxy("candidate", "candidateName")
+    candidateType = association_proxy("candidate", "candidateType")
     candidateNumber = association_proxy("candidate", "candidateNumber")
 
     __table_args__ = (

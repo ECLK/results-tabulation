@@ -11,6 +11,7 @@ import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
 import TallySheetStatusDescription from "../components/tally-sheet/tally-sheet-status-description";
 import Error from "../components/error";
+import Button from "@material-ui/core/Button";
 
 export default function ReportView(props) {
     const tallySheetContext = useContext(TallySheetContext);
@@ -73,10 +74,6 @@ export default function ReportView(props) {
             {
                 label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase(),
                 to: getTallySheetListLink()
-            },
-            {
-                label: areaName.toLowerCase(),
-                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId)
             }
         ];
 
@@ -97,7 +94,7 @@ export default function ReportView(props) {
 
         if (tallySheetVersionId) {
             tallySheetVersionHtmlJsx = <iframe
-                style={{border: "none", width: "100%"}}
+                style={{border: "none", width: "100%", padding: 5, boxSizing: "border-box"}}
                 height={iframeHeight}
                 width={iframeWidth}
                 srcDoc={tallySheetVersionHtml}
@@ -118,15 +115,35 @@ export default function ReportView(props) {
         return <TabulationTallySheetPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}
                                          tallySheet={tallySheet} history={history}>
             <div className="page-content">
-                <div className="report-view-status">
-                    <div className="report-view-status-actions">
-                        <TallySheetActions
-                            tallySheetId={tallySheetId}
-                            electionId={electionId} history={history}
-                            filter={(action) => action.actionType !== WORKFLOW_ACTION_TYPE_VIEW}
-                        />
+                <div className="report-view-status"
+                     style={{display: "flex", marginBottom: 10, borderBottom: "2px dashed #9E9E9E"}}>
+
+                    <div><TallySheetStatusDescription tallySheetId={tallySheetId}/></div>
+
+                    <div style={{flex: 1}}>
+                        {(() => {
+                            if (tallySheetVersionId && tallySheetVersionId !== latestVersion.tallySheetVersionId) {
+                                return <div style={{padding: 10, textAlign: "right"}}>
+                                    This document is
+                                    <strong>&nbsp;OUTDATED.&nbsp;</strong> Click&nbsp;
+                                    <Button variant="contained" size="small" color="secondary"
+                                            onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId))}>
+                                        Here
+                                    </Button>
+                                    &nbsp;to see the latest changes.
+                                </div>
+                            } else {
+                                return <div className="report-view-status-actions">
+                                    <TallySheetActions
+                                        tallySheetId={tallySheetId}
+                                        electionId={electionId} history={history}
+                                        filter={(action) => action.actionType !== WORKFLOW_ACTION_TYPE_VIEW}
+                                    />
+                                </div>
+                            }
+                        })()}
                     </div>
-                    <TallySheetStatusDescription tallySheetId={tallySheetId}/>
+
                 </div>
 
                 <Processing showProgress={processing}>{tallySheetVersionHtmlJsx}</Processing>

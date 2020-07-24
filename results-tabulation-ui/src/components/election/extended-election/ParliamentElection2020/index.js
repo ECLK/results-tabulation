@@ -18,7 +18,9 @@ import {
     TALLY_SHEET_CODE_PE_22,
     TALLY_SHEET_CODE_PE_21,
     TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS,
-    TALLY_SHEET_CODE_ALL_ISLAND_RESULT
+    TALLY_SHEET_CODE_PE_AI_ED,
+    TALLY_SHEET_CODE_PE_AI_NL_1,
+    TALLY_SHEET_CODE_PE_AI_NL_2, TALLY_SHEET_CODE_PE_AI_1, TALLY_SHEET_CODE_PE_AI_2, TALLY_SHEET_CODE_PE_AI_SA
 } from "./TALLY_SHEET_CODE";
 import {Link} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
@@ -51,7 +53,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
             return <div className="page-content">
                 <h1>{electionName}</h1>
                 <Grid container spacing={3}>
-                    <Grid item xs={9} className="election-grid">
+                    <Grid item xs={6} className="election-grid">
                         <Grid item xs={12}><h2>District Elections</h2></Grid>
                         <Processing showProgress={subElections === null}>
                             <div className="election-list">
@@ -68,19 +70,38 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                             </div>
                         </Processing>
                     </Grid>
-                    <Grid item xs={3} className="election-grid">
+                    <Grid item xs={6} className="election-grid">
                         <Grid item xs={12}><h2>National Reports</h2></Grid>
+
 
                         <Grid item xs={12}>
                             <ul className="tally-sheet-code-list">
-                                <li>All Island Result
-                                    <Link
-                                        className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_ALL_ISLAND_RESULT, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
-                                    >
-                                        List
-                                    </Link>
-                                </li>
+                                {(() => {
+                                    let tallySheetCodes = [TALLY_SHEET_CODE_PE_AI_ED, TALLY_SHEET_CODE_PE_AI_SA, 
+                                        TALLY_SHEET_CODE_PE_AI_NL_1, TALLY_SHEET_CODE_PE_AI_NL_2, 
+                                        TALLY_SHEET_CODE_PE_AI_1, TALLY_SHEET_CODE_PE_AI_2];
+                                    let tallySheetCodeLabels = [
+                                        "All Island Vote Results",
+                                        "All Island Seat Composition",
+                                        "National List Composition",
+                                        "Selected National List Candidates",
+                                        "All Island Results",
+                                        "Parliament Members"
+                                    ];
+
+                                    return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                        return <li key={tallySheetCodeIndex}>
+                                            {tallySheetCodeLabels[tallySheetCodeIndex]}
+                                            <Link
+                                                className="tally-sheet-code-list-item btn-list"
+                                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
+                                            >
+                                                List
+                                            </Link>
+                                        </li>
+                                    });
+                                })()}
+
                             </ul>
                         </Grid>
 
@@ -96,7 +117,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         <Grid item xs={12}><h2>Data Entry</h2></Grid>
 
                         <Processing showProgress={!subElections}>
-                            {subElections !== null && subElections.map(({voteType}) => {
+                            {subElections !== null && subElections.map(({voteType, voteTypeIndex}) => {
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -110,7 +131,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                     tallySheetCodeLabels = [`CE 201 (${voteType})`, `PE-27 (${voteType})`, `PE-39 (${voteType})`];
                                 }
 
-                                return <Grid item xs={12} key={voteType}>
+                                return <Grid item xs={12} key={voteTypeIndex}>
                                     <Grid item xs={12}>
                                         <ul className="tally-sheet-code-list">
                                             {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
@@ -138,7 +159,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
 
 
                         <Processing showProgress={!subElections}>
-                            {subElections !== null && subElections.map(({voteType}) => {
+                            {subElections !== null && subElections.map(({voteType, voteTypeIndex}) => {
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -151,7 +172,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                     tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
                                     tallySheetCodeLabels = [`PE-4 (${voteType})`, `PE-22 (${voteType})`];
                                 }
-                                return <Grid item xs={12} key={voteType}>
+                                return <Grid item xs={12} key={voteTypeIndex}>
                                     <Grid item xs={12}>
                                         <ul className="tally-sheet-code-list">
                                             {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
@@ -179,7 +200,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                         <Grid item xs={12}>
 
                             <Processing showProgress={!subElections}>
-                                {subElections !== null && subElections.map(({voteType}) => {
+                                {subElections !== null && subElections.map(({voteType, voteTypeIndex}) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
                                     if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -190,9 +211,10 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                         tallySheetCodeLabels = [`PE-CE-RO-V1 (${voteType})`, `Polling Division Results (${voteType})`];
                                     }
 
-                                    return <ul className="tally-sheet-code-list">
+                                    return <ul className="tally-sheet-code-list" key={voteTypeIndex}>
                                         {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
-                                            return <li key={voteType}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                            return <li
+                                                key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
                                                 <Link
                                                     className="tally-sheet-code-list-item btn-list"
                                                     to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
@@ -234,7 +256,7 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
 
                         <Grid item xs={12}>
                             <Processing showProgress={!subElections}>
-                                {subElections !== null && subElections.map(({voteType}) => {
+                                {subElections !== null && subElections.map(({voteType, voteTypeIndex}) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
                                     if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -245,9 +267,10 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                         tallySheetCodeLabels = [`PE-CE-RO-PR-1  (${voteType})`];
                                     }
 
-                                    return <ul className="tally-sheet-code-list">
+                                    return <ul className="tally-sheet-code-list" key={voteTypeIndex}>
                                         {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
-                                            return <li key={voteType}>{tallySheetCodeLabels[tallySheetCodeIndex]}
+                                            return <li
+                                                key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
                                                 <Link
                                                     className="tally-sheet-code-list-item btn-list"
                                                     to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}

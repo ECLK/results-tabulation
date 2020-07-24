@@ -17,8 +17,7 @@ import {
     TALLY_SHEET_CODE_PE_R2,
     TALLY_SHEET_CODE_PE_39,
     TALLY_SHEET_CODE_PE_22,
-    TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS,
-    TALLY_SHEET_CODE_ALL_ISLAND_RESULT
+    TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS, TALLY_SHEET_CODE_PE_AI_ED
 } from "./TALLY_SHEET_CODE";
 import {
     VOTE_TYPE_DISPLACED,
@@ -118,7 +117,7 @@ export const TALLY_SHEET_LIST_COLUMNS = {
         [VOTE_TYPE_DISPLACED]: columns_ed_cc_status_actions,
         [VOTE_TYPE_QUARANTINE]: columns_ed_cc_status_actions
     },
-    [TALLY_SHEET_CODE_ALL_ISLAND_RESULT]: {
+    [TALLY_SHEET_CODE_PE_AI_ED]: {
         [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_country_status_actions
     }
 };

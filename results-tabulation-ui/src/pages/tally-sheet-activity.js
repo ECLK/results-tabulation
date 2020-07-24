@@ -11,7 +11,7 @@ import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
 import PreviewTallySheetProofFileButton from "../components/tally-sheet/tally-sheet-proof-file-preview-button";
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Check, MoveToInbox, Publish, Save, TurnedIn, VerifiedUser, Visibility} from '@material-ui/icons';
 import TallySheetStatusDescription from "../components/tally-sheet/tally-sheet-status-description";
 
@@ -85,18 +85,6 @@ export default function TallySheetActivityView({tallySheetId, history, election}
                 <div>{rootElection.electionName}</div>
                 <div>{getTallySheetCodeStr({tallySheetCode, voteType})}</div>
 
-
-                <div className="report-view-status">
-                    <div className="report-view-status-actions">
-                        <TallySheetActions
-                            tallySheetId={tallySheetId}
-                            electionId={electionId} history={history}
-                            filter={(action) => action.actionType !== WORKFLOW_ACTION_TYPE_VIEW}
-                        />
-                    </div>
-                    <TallySheetStatusDescription tallySheetId={tallySheetId}/>
-                </div>
-
                 <Processing showProgress={processing}>
                     <div className="activity-wrapper">
                         <ul className="activity-list">
@@ -109,13 +97,13 @@ export default function TallySheetActivityView({tallySheetId, history, election}
                                     <div className="activity-block activity-details">
                                         <strong>{actionName}</strong> by {createdBy} @ {createdAt}&nbsp;
                                         <Link className="activity-tallysheet-link"
-                                                to={
-                                                    PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
-                                                }
-                                                style={{
-                                                    color: "#5079c8",
-                                                    textDecoration: "underline"
-                                                }}
+                                              to={
+                                                  PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
+                                              }
+                                              style={{
+                                                  color: "#5079c8",
+                                                  textDecoration: "underline"
+                                              }}
                                         >
                                             {tallySheetVersionId}
                                         </Link>
