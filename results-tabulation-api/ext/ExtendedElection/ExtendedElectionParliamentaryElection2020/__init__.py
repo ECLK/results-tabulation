@@ -1275,7 +1275,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         tally_sheet_template_pe_ai_1_party_wise_national_list_seat_row = tally_sheet_template_pe_ai_1.add_row(
             templateRowType=TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED,
             hasMany=True,
-            isDerived=False,
+            isDerived=True,
             columns=[
                 {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
                 {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
