@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 
 {% block container %}
+    <style>
+        * {
+            font-family: "Lucida Console", Courier, monospace;
+        }
+
+        .table td, .table th {
+            padding: 3px;
+            font-size: 13px;
+            color: black;
+            font-weight: 400;
+            border-color: black;
+        }
+
+        .table th {
+            font-weight: 800;
+        }
+    </style>
     {% for pageNumber in [1,2,3,4] %}
 
         {# TODO review why "padding-top: 1px" is needed to align the pages on print view.#}
