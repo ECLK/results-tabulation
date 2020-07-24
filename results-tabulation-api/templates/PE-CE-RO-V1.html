@@ -2,9 +2,23 @@
 
 {% block container %}
 <style>
+.print-party-width {
+    width: 300px;
+}
+
 @media print {
     @page {
         size: 1050mm	742.5mm;
+    }
+    .print-heading {
+        font-size: 25px;
+    }
+    .print-group {
+        width: 600px !important;
+    }
+    .print-party-width {
+        width: initial;
+        min-width: 300px !important;
     }
 }
 </style>
@@ -15,7 +29,7 @@
         <tbody>
           <tr>
               <td style="width:50px;"></td>
-              <td class="bold no-padding-left no-padding-right" colspan="3">
+              <td class="bold no-padding-left no-padding-right print-heading" colspan="3">
                   {{content.election.electionName}}
                   <br/>First Summary of Votes polled by each Political Party/ Independent Group per Counting Centre/ Postal Votes Counting Centre
               </td>
@@ -47,7 +61,7 @@
     <table class="table table-borderless" style="table-layout:fixed;">
         <tr style="text-align:center;">
             <td rowspan="2" class="right" style="border-right: 1px solid #000 !important; width:20px;"></td>
-            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2" style="min-width: 300px;vertical-align: middle;">
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left print-party-width" rowspan="2" style="vertical-align: middle;">
                 Political Party/ Independent Group
             </th>
             <th class="left right top bottom" colspan="{{content.countingCentres|length}}" style="vertical-align: middle; width:{{content.countingCentres|length * 80}}px;">
@@ -129,14 +143,14 @@
             <td colspan="2">
                 <div class="group">
                     <div class="block1 all">
-                        <div class="sect1">
+                        <div class="sect1 print-group">
                             <span class="sub-head">Prepared by:</span><br/><br/>
                             <span>Signature .......................</span><br/><br/>
                             <span>Name ..........................</span><br/><br/>
                             <span>Designation ........................</span>
                         </div>
                         <div class="sect2">
-                            <span class="sub-head">Checked by:</span><br/><br/>
+                            <span class="sub-head print-group">Checked by:</span><br/><br/>
                             <span class="indent">Signature .......................</span><br/><br/>
                             <span class="indent">Name ..........................</span><br/><br/>
                             <span class="indent">Designation ........................</span>
