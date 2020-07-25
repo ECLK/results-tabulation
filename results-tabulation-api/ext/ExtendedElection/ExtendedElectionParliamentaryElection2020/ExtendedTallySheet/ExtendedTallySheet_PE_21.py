@@ -104,7 +104,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
             content = []
 
             seats_allocated_per_party_df = self.df.loc[
-                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED) & (self.df['templateRowType'] > 0)]
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED) & (self.df['numValue'] > 0)]
 
             # The derived rows are calculated only if the PE-R2 is available and verified.
             if len(seats_allocated_per_party_df) > 0:

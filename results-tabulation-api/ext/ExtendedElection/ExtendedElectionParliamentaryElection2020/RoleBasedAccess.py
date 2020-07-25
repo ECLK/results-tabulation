@@ -330,7 +330,8 @@ role_based_access_config = {
                                  RELEASE]
         },
         PE_AI_ED: {
-            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT]
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, RELEASE]
         },
         PE_AI_SA: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,

@@ -41,9 +41,9 @@
                     <span style="font-weight: 700;font-weight: 600;font-size: 23px;">
                     {{ content.election.electionName }}
                 </span><br/>
-                    <span style="font-weight:bold;font-size: 17px;">Votes Received by Party</span><br/>
+                    <span style="font-weight:bold;font-size: 17px;">Seat Allocation by Party</span><br/>
                     <span style="font-size:14px;font-weight: 500;">
-                    <strong>All Island </strong> - Sri Lanka
+                    <strong>All Island</strong>
                 </span>
                 </td>
                 <td style="text-align:right; width:15%; font-size:12px; font-weight:bold;"></td>
@@ -61,6 +61,7 @@
                 <th scope="col">Party Abbreviation</th>
                 <th scope="col" style="text-align:right;">Votes Received</th>
                 <th scope="col" style="text-align:right;">Percentage</th>
+                <th scope="col" style="text-align:right;">Seats Allocated</th>
             </tr>
             {% for row in content.data %}
                 <tr>
@@ -71,10 +72,12 @@
                         style="text-align:right;">{{ row[2] }}</td>
                     <td class="{% if row[3]=='' %}missing-value{% endif %}"
                         style="text-align:right;">{{ row[3] }}</td>
+                    <td class="{% if row[4]=='' %}missing-value{% endif %}"
+                        style="text-align:right;">{{ row[4] }}</td>
                 </tr>
             {% endfor %}
             <tr>
-                <td colspan="5" style="height: 50px;"></td>
+                <td colspan="6" style="height: 50px;"></td>
             </tr>
             <tr>
                 <td></td>
@@ -88,6 +91,7 @@
                     style="text-align:right;">
                     {{ content.validVoteCounts[1] }}
                 </td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
@@ -101,6 +105,7 @@
                     style="text-align:right;">
                     {{ content.rejectedVoteCounts[1] }}
                 </td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
@@ -114,6 +119,7 @@
                     style="text-align:right;">
                     {{ content.totalVoteCounts[1] }}
                 </td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
@@ -121,18 +127,21 @@
                 <td><b>Registered No. of Electors</b></td>
                 <td style="text-align:right"><b>{{ content.registeredVoters[0] }}</b></td>
                 <td style="text-align:right"></td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td><b>Time</b></td>
                 <td colspan="2" style="text-align:center;">{{ content.time }}</td>
+                <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td><b>Date</b></td>
                 <td colspan="2" style="text-align:center;">{{ content.date }}</td>
+                <td></td>
             </tr>
             </tbody>
         </table>

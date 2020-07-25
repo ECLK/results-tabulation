@@ -90,10 +90,10 @@ def to_empty_string_or_value(value):
 
 
 def to_percentage(value, round_to=2):
-    if value is None:
+    if value is None or np.isnan(value):
         return "%"
     else:
-        return f'{round(value, round_to)}%'
+        return "%.2f%s" % (round(value, round_to), "%")
 
 
 def to_comma_seperated_num(value, num_type=int, round_to=2):

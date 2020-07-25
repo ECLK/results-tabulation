@@ -69,6 +69,7 @@ class TallySheetVersionModel(db.Model):
                 Candidate.Model.candidateId,
                 Candidate.Model.candidateName,
                 Candidate.Model.candidateNumber,
+                Candidate.Model.candidateType,
                 ElectionParty.Model.electionPartyId,
                 Party.Model.partyId,
                 Party.Model.partyName,

@@ -2,9 +2,20 @@
 
 {% block letter_content %}
     <style>
+
+        @media print {
+            @page {
+                size: A4 portrait;
+            }
+        }
+
+        * {
+            font-family: "Lucida Console", Courier, monospace;
+        }
+
         .table td, .table th {
             padding: 3px;
-            font-size: 15px;
+            font-size: 11px;
             color: black;
             font-weight: 400;
             border-color: black;

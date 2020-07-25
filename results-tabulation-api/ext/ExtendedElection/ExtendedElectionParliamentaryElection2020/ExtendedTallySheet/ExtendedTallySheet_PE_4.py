@@ -4,6 +4,7 @@ from constants.VOTE_TYPES import NonPostal
 from ext.ExtendedTallySheet import ExtendedTallySheetDataEntry
 from orm.entities import Area
 from orm.enums import AreaTypeEnum
+from util import to_comma_seperated_num
 
 
 class ExtendedTallySheet_PE_4(ExtendedTallySheetDataEntry):
@@ -61,7 +62,7 @@ class ExtendedTallySheet_PE_4(ExtendedTallySheetDataEntry):
                     data_row1 = []
                     data_row1.append(row.candidateName)
                     data_row1.append(row.strValue)
-                    data_row1.append(row.numValue)
+                    data_row1.append(to_comma_seperated_num(row.numValue))
                     content["data1"].append(data_row1)
                     i += 1
                 else:
@@ -69,7 +70,7 @@ class ExtendedTallySheet_PE_4(ExtendedTallySheetDataEntry):
                     data_row2.append(row.candidateName)
                     print(row.candidateName)
                     data_row2.append(row.strValue)
-                    data_row2.append(row.numValue)
+                    data_row2.append(to_comma_seperated_num(row.numValue))
                     content["data2"].append(data_row2)
 
             html = render_template(
