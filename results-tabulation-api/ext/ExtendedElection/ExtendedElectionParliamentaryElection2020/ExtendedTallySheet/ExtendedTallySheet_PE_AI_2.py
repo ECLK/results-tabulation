@@ -10,7 +10,8 @@ from util import convert_image_to_data_uri
 class ExtendedTallySheet_PE_AI_2(ExtendedTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
         def get_elected_candidates(self):
-            elected_candidates = self.df.loc[self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE]
+            elected_candidates = self.df.loc[
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
 
             elected_candidates = elected_candidates.sort_values(
                 by=['partyId', 'candidateId'], ascending=True
