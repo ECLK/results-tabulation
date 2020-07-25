@@ -65,7 +65,12 @@
         </tr>
         <tr style="text-align:center;">
 
-            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align:middle;width:{{content.pollingDivisions|length * 80}}px;">Polling Division</th>
+            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align:middle;width:{{content.pollingDivisions|length * 80}}px;">
+                Polling Division
+                {% for nonPostalVoteType in content.nonPostalVoteTypes %}
+                / {{nonPostalVoteType}} Votes
+                {% endfor %}
+            </th>
             <th class="left right top bottom" colspan="2" style="vertical-align:middle;">Grand Total</th>
         </tr>
         <tr style="text-align:center;" class="ro2">

@@ -519,11 +519,14 @@ class ExtendedTallySheet:
 
             return df
 
-        def get_candidate_wise_valid_vote_count_result(self):
+        def get_candidate_wise_valid_vote_count_result(self, vote_type=None):
             df = self.df.copy()
             df['numValue'] = df['numValue'].astype(float)
 
             df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
+
+            if vote_type is not None:
+                df = df.loc[df['voteType'] == vote_type]
 
             df = df.groupby(
                 ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
