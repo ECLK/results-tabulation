@@ -7,7 +7,7 @@ class FolderModel(db.Model):
     __tablename__ = 'folder'
     folderId = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    folderFiles = relationship("FolderFileModel")
+    folderFiles = relationship("FolderFileModel", lazy='subquery')
 
     files = association_proxy("folderFiles", "file")
 

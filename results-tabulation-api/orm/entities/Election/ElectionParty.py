@@ -14,7 +14,11 @@ class ElectionPartyModel(db.Model):
     partyId = db.Column(db.Integer, db.ForeignKey(Party.Model.__table__.c.partyId))
 
     election = relationship("ElectionModel", foreign_keys=[electionId])
-    party = relationship(Party.Model, foreign_keys=[partyId])
+    party = relationship(Party.Model, foreign_keys=[partyId], lazy='subquery')
+    candidates = relationship("ElectionCandidateModel", order_by="ElectionCandidateModel.electionCandidateId",
+                              lazy='subquery',
+                              primaryjoin="and_(ElectionCandidateModel.electionId==ElectionPartyModel.electionId, "
+                                          "foreign(ElectionCandidateModel.partyId)==ElectionPartyModel.partyId)")
 
     partyName = association_proxy("party", "partyName")
     partySymbolFileId = association_proxy("party", "partySymbolFileId")
@@ -25,15 +29,6 @@ class ElectionPartyModel(db.Model):
     __table_args__ = (
         db.UniqueConstraint('electionId', 'partyId', name='PartyPerElection'),
     )
-
-    @hybrid_property
-    def candidates(self):
-        return db.session.query(
-            ElectionCandidate.Model
-        ).filter(
-            ElectionCandidate.Model.electionId == self.electionId,
-            ElectionCandidate.Model.partyId == self.partyId
-        )
 
     def __init__(self, electionId, partyId):
         super(ElectionPartyModel, self).__init__(

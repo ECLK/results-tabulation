@@ -16,7 +16,7 @@ class Stamp(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.now, nullable=False)
     barcodeId = db.Column(db.Integer, db.ForeignKey(Barcode.Model.__table__.c.barcodeId), nullable=False)
 
-    barcode = relationship(Barcode.Model, foreign_keys=[barcodeId])
+    barcode = relationship(Barcode.Model, foreign_keys=[barcodeId], lazy='subquery')
 
     barcodeString = association_proxy("barcode", "barcodeString")
 
