@@ -71,6 +71,7 @@ def create_app():
 
     # Configure the SQLAlchemy part of the app instance
     app.config['SQLALCHEMY_ECHO'] = app.config['DEBUG']
+    app.config['SQLALCHEMY_POOL_SIZE'] = app.config['SQLALCHEMY_POOL_SIZE']
 
     if app.config['DATABASE_PLUGIN'] == "sqlite":
         # this is for unit tests
