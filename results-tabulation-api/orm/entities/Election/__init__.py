@@ -24,11 +24,13 @@ class ElectionModel(db.Model):
     metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=True)
 
     parties = relationship("ElectionPartyModel", order_by="ElectionPartyModel.electionPartyId", lazy='subquery')
-    _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
-    subElections = relationship("ElectionModel", foreign_keys=[parentElectionId])
-    rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId])
-    parentElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[parentElectionId])
-    meta = relationship(Meta.Model, foreign_keys=[metaId])
+    _invalidVoteCategories = relationship("InvalidVoteCategoryModel", lazy='subquery')
+    subElections = relationship("ElectionModel", foreign_keys=[parentElectionId], lazy='subquery')
+    rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId],
+                                lazy='subquery')
+    parentElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[parentElectionId],
+                                  lazy='subquery')
+    meta = relationship(Meta.Model, foreign_keys=[metaId], lazy='subquery')
 
     pollingStationsDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
     postalCountingCentresDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
@@ -244,8 +246,7 @@ def get_all(parentElectionId=None, rootElectionId=None, isListed=True):
     query_args = [ElectionModel]
     query_filters = [Model.electionId.in_(authorized_election_ids)]
 
-    if parentElectionId is not None:
-        query_filters.append(ElectionModel.parentElectionId == parentElectionId)
+    query_filters.append(ElectionModel.parentElectionId == parentElectionId)
 
     if rootElectionId is not None:
         query_filters.append(ElectionModel.rootElectionId == rootElectionId)
