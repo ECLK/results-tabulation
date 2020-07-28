@@ -33,7 +33,7 @@ class TallySheetModel(db.Model):
     statusReport = relationship(StatusReport.Model, foreign_keys=[statusReportId])
     template = relationship(Template.Model, foreign_keys=[templateId], lazy='subquery')
     meta = relationship(Meta.Model, foreign_keys=[metaId], lazy='subquery')
-    workflowInstance = relationship(WorkflowInstance.Model, foreign_keys=[workflowInstanceId], lazy='subquery')
+    workflowInstance = relationship(WorkflowInstance.Model, foreign_keys=[workflowInstanceId])
 
     electionId = association_proxy("submission", "electionId")
     election = association_proxy("submission", "election")
@@ -59,14 +59,14 @@ class TallySheetModel(db.Model):
     versions = association_proxy("submission", "versions")
     metaDataList = association_proxy("meta", "metaDataList")
 
-    children = relationship("TallySheetModel", secondary="tallySheet_tallySheet", lazy="subquery",
-                            primaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId",
-                            secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.childTallySheetId"
-                            )
-    parents = relationship("TallySheetModel", secondary="tallySheet_tallySheet", lazy="subquery",
-                           primaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.childTallySheetId",
-                           secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId"
-                           )
+    # children = relationship("TallySheetModel", secondary="tallySheet_tallySheet", lazy="subquery",
+    #                         primaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId",
+    #                         secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.childTallySheetId"
+    #                         )
+    # parents = relationship("TallySheetModel", secondary="tallySheet_tallySheet", lazy="subquery",
+    #                        primaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.childTallySheetId",
+    #                        secondaryjoin="TallySheetModel.tallySheetId==TallySheetTallySheetModel.parentTallySheetId"
+    #                        )
 
     def add_parent(self, parentTallySheet):
         parentTallySheet.add_child(self)
@@ -401,7 +401,8 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     tally_sheet = db.session.query(*query_args).filter(*query_filters).group_by(*query_group_by).one_or_none()
 
     # Validate the authorization
-    if tally_sheet is not None and not has_role_based_access(tally_sheet=tally_sheet,
+    if tally_sheet is not None and not has_role_based_access(election=tally_sheet.submission.election,
+                                                             tally_sheet_code=tally_sheet.tallySheetCode,
                                                              access_type=WORKFLOW_ACTION_TYPE_VIEW):
         raise UnauthorizedException(
             message="Not authorized to view tally sheet. (tallySheetId=%d)" % tallySheetId,
@@ -411,7 +412,7 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     return tally_sheet
 
 
-def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
+def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None, limit=None, offset=None):
     # Filter by authorized areas
     user_access_area_ids: Set[int] = get_user_access_area_ids()
 
@@ -428,7 +429,7 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
         query_filters.append(Submission.Model.areaId == areaId)
 
     if electionId is not None:
-        election = Election.get_by_id(electionId=electionId)
+        election = Election.get_by_id(user_access_area_ids=user_access_area_ids, electionId=electionId)
         query_filters.append(Election.Model.electionId.in_(election.get_this_and_below_election_ids()))
 
     if tallySheetCode is not None:
@@ -447,11 +448,12 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None):
         Model.tallySheetId
     )
 
-    tally_sheet_list = get_paginated_query(tally_sheet_list)
+    tally_sheet_list = get_paginated_query(query=tally_sheet_list, limit=limit, offset=offset)
 
     authorized_tally_sheet_list = []
     for tally_sheet in tally_sheet_list:
-        if has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_VIEW):
+        if has_role_based_access(election=tally_sheet.submission.election, tally_sheet_code=tally_sheet.tallySheetCode,
+                                 access_type=WORKFLOW_ACTION_TYPE_VIEW):
             authorized_tally_sheet_list.append(tally_sheet)
 
     return authorized_tally_sheet_list

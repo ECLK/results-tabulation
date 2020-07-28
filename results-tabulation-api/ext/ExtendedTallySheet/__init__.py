@@ -142,7 +142,9 @@ class ExtendedTallySheet:
     def authorize_workflow_action(self, workflow_action, content=None):
         from auth import has_role_based_access
 
-        if not has_role_based_access(self.tallySheet, workflow_action.actionType):
+        if not has_role_based_access(election=self.tallySheet.submission.election,
+                                     tally_sheet_code=self.tallySheet.tallySheetCode,
+                                     access_type=workflow_action.actionType):
             UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName),
                                   code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED)
 
@@ -270,7 +272,9 @@ class ExtendedTallySheet:
 
         authorized_workflow_actions = []
         for workflow_action in workflow_actions:
-            if has_role_based_access(tally_sheet=self.tallySheet, access_type=workflow_action.actionType):
+            if has_role_based_access(election=self.tallySheet.submission.election,
+                                     tally_sheet_code=self.tallySheet.tallySheetCode,
+                                     access_type=workflow_action.actionType):
                 authorized_workflow_actions.append(workflow_action)
 
         return authorized_workflow_actions

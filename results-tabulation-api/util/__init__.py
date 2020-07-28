@@ -26,11 +26,15 @@ class Auth:
         return 2
 
 
-def get_paginated_query(query):
-    if "limit" in connexion.request.args and connexion.request.args["limit"] is not None:
+def get_paginated_query(query, limit=None, offset=None):
+    if limit is not None:
+        query = query.limit(limit)
+    elif "limit" in connexion.request.args and connexion.request.args["limit"] is not None:
         query = query.limit(connexion.request.args["limit"])
 
-    if "offset" in connexion.request.args and connexion.request.args["offset"] is not None:
+    if offset is not None:
+        query = query.offset(offset)
+    elif "offset" in connexion.request.args and connexion.request.args["offset"] is not None:
         query = query.offset(connexion.request.args["offset"])
 
     return query
