@@ -10,6 +10,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_VIEW
 from orm.entities import Submission, Election, Template, TallySheetVersionRow, Meta
 from orm.entities.Dashboard import StatusReport
+from orm.entities.Meta import MetaData
 from orm.entities.SubmissionVersion import TallySheetVersion
 from orm.entities.Template import TemplateRow_DerivativeTemplateRow_Model, TemplateRowModel
 from orm.entities.Workflow import WorkflowInstance
@@ -412,7 +413,7 @@ def get_by_id(tallySheetId, tallySheetCode=None):
     return tally_sheet
 
 
-def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None, limit=None, offset=None):
+def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None, partyId=None, limit=None, offset=None):
     # Filter by authorized areas
     user_access_area_ids: Set[int] = get_user_access_area_ids()
 
@@ -437,6 +438,13 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None, li
 
     if voteType is not None:
         query_filters.append(Election.Model.voteType == voteType)
+
+    if partyId is not None:
+        query_filters += [
+            MetaData.Model.metaId == Model.metaId,
+            MetaData.Model.metaDataKey == "partyId",
+            MetaData.Model.metaDataValue == partyId
+        ]
 
     tally_sheet_list = db.session.query(
         *query_args

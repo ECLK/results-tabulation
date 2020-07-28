@@ -13,11 +13,12 @@ from util import RequestBody
 
 
 @authorize(required_roles=ALL_ROLES)
-def getAll(electionId=None, areaId=None, tallySheetCode=None, voteType=None, limit=None, offset=None):
+def getAll(electionId=None, areaId=None, tallySheetCode=None, voteType=None, partyId=None, limit=None, offset=None):
     user_access_area_ids = get_user_access_area_ids()
 
     cached_tally_sheets = _cache_get_all(user_access_area_ids, electionId=electionId, areaId=areaId,
-                                         tallySheetCode=tallySheetCode, voteType=voteType, limit=limit, offset=offset)
+                                         tallySheetCode=tallySheetCode, voteType=voteType, partyId=partyId, limit=limit,
+                                         offset=offset)
 
     _append_latest_workflow_instance_to_cached_tally_sheets(cached_tally_sheets=cached_tally_sheets)
     _append_latest_version_ids_to_cached_tally_sheets(cached_tally_sheets=cached_tally_sheets)
@@ -26,13 +27,14 @@ def getAll(electionId=None, areaId=None, tallySheetCode=None, voteType=None, lim
 
 
 @cache.memoize()
-def _cache_get_all(user_access_area_ids, electionId=None, areaId=None, tallySheetCode=None, voteType=None, limit=None,
-                   offset=None):
+def _cache_get_all(user_access_area_ids, electionId=None, areaId=None, tallySheetCode=None, voteType=None, partyId=None,
+                   limit=None, offset=None):
     tally_sheets = TallySheet.get_all(
         electionId=electionId,
         areaId=areaId,
         tallySheetCode=tallySheetCode,
         voteType=voteType,
+        partyId=partyId,
         limit=limit, offset=offset
     )
 
