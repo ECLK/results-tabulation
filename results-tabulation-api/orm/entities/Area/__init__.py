@@ -66,12 +66,6 @@ class AreaModel(db.Model):
     def get_submissions(self, submissionType):
         return [submission for submission in self.submissions if submission.submissionType is submissionType]
 
-    @hybrid_property
-    def areaMapList(self):
-        extended_election = self.election.get_extended_election()
-
-        return extended_election.get_area_map(area=self)
-
     def get_registered_voters_count(self, vote_type=None):
         polling_stations_subquery = get_associated_areas_query(areas=[self],
                                                                areaType=AreaTypeEnum.PollingStation).subquery()

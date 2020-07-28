@@ -5,7 +5,7 @@ from decorator import decorator
 from flask import request
 from jose import jwt
 
-from app import db
+from app import db, cache
 from constants import VOTE_TYPES
 from constants.AUTH_CONSTANTS import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
@@ -126,14 +126,12 @@ def get_user_access_area_ids() -> Set[int]:
     return connexion.context[USER_ACCESS_AREA_IDS]
 
 
-def has_role_based_access(tally_sheet, access_type):
+def has_role_based_access(election, tally_sheet_code, access_type):
     from ext.ExtendedElection import get_extended_election
 
-    election = tally_sheet.submission.election
     extended_election = get_extended_election(election=election)
     role_based_access_config = extended_election.role_based_access_config
 
-    tally_sheet_code = tally_sheet.tallySheetCode
     vote_type = election.voteType
 
     for role in connexion.context[USER_ROLES]:
@@ -183,6 +181,7 @@ def authenticate(func, *args, **kwargs):
     return func(*args, **kwargs)
 
 
+@cache.memoize()
 def _get_role_area_ids(parentAreaIds, areaType, voteTypes=[]):
     from orm.entities import Area, Election
 

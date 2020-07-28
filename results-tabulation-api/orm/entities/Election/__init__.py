@@ -3,7 +3,7 @@ from typing import Set
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-from app import db
+from app import db, cache
 from auth import get_user_access_area_ids
 from ext.ExtendedElection import get_extended_election
 from orm.entities import Meta
@@ -23,14 +23,12 @@ class ElectionModel(db.Model):
     isListed = db.Column(db.Boolean, nullable=False, default=False)
     metaId = db.Column(db.Integer, db.ForeignKey(Meta.Model.__table__.c.metaId), nullable=True)
 
-    parties = relationship("ElectionPartyModel", order_by="ElectionPartyModel.electionPartyId", lazy='subquery')
-    _invalidVoteCategories = relationship("InvalidVoteCategoryModel", lazy='subquery')
-    subElections = relationship("ElectionModel", foreign_keys=[parentElectionId], lazy='subquery')
-    rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId],
-                                lazy='subquery')
-    parentElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[parentElectionId],
-                                  lazy='subquery')
-    meta = relationship(Meta.Model, foreign_keys=[metaId], lazy='subquery')
+    parties = relationship("ElectionPartyModel", order_by="ElectionPartyModel.electionPartyId")
+    _invalidVoteCategories = relationship("InvalidVoteCategoryModel")
+    subElections = relationship("ElectionModel", foreign_keys=[parentElectionId])
+    rootElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[rootElectionId])
+    parentElection = relationship("ElectionModel", remote_side=[electionId], foreign_keys=[parentElectionId])
+    meta = relationship(Meta.Model, foreign_keys=[metaId])
 
     pollingStationsDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
     postalCountingCentresDatasetId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId))
@@ -87,12 +85,14 @@ class ElectionModel(db.Model):
         extended_election = get_extended_election(election=self)
         return extended_election
 
+    @cache.memoize()
     def get_this_and_above_election_ids(self):
         if self.parentElectionId is None:
             return [self.electionId]
         else:
             return [self.electionId] + self.parentElection.get_this_and_above_election_ids()
 
+    @cache.memoize()
     def get_this_and_below_election_ids(self):
         _this_and_below_election_ids = [self.electionId]
         for subElection in self.subElections:
@@ -185,11 +185,12 @@ class ElectionModel(db.Model):
     def get_root_election(self):
         return self.rootElection
 
+    @cache.memoize()
     def get_official_name(self):
         if self.parentElectionId is None:
             return self.electionName
         else:
-            return self.parentElection.get_official_name()
+            return self.rootElection.get_official_name()
 
 
 Model = ElectionModel
@@ -218,10 +219,9 @@ def create(electionTemplateName, electionName, parentElection=None, voteType=Pos
     return election
 
 
-def get_authorized_election_ids():
+@cache.memoize()
+def get_authorized_election_ids(user_access_area_ids):
     from orm.entities import Area
-
-    user_access_area_ids: Set[int] = get_user_access_area_ids()
 
     authorized_elections = db.session.query(
         ElectionModel
@@ -241,7 +241,8 @@ def get_authorized_election_ids():
 
 
 def get_all(parentElectionId=None, rootElectionId=None, isListed=True):
-    authorized_election_ids = get_authorized_election_ids()
+    user_access_area_ids: Set[int] = get_user_access_area_ids()
+    authorized_election_ids = get_authorized_election_ids(user_access_area_ids=user_access_area_ids)
 
     query_args = [ElectionModel]
     query_filters = [Model.electionId.in_(authorized_election_ids)]
@@ -254,11 +255,12 @@ def get_all(parentElectionId=None, rootElectionId=None, isListed=True):
     if isListed is not None:
         query_filters.append(ElectionModel.isListed == isListed)
 
-    return db.session.query(*query_args).filter(*query_filters)
+    return db.session.query(*query_args).filter(*query_filters).all()
 
 
 def get_by_id(electionId):
-    authorized_election_ids = get_authorized_election_ids()
+    user_access_area_ids: Set[int] = get_user_access_area_ids()
+    authorized_election_ids = get_authorized_election_ids(user_access_area_ids=user_access_area_ids)
 
     result = Model.query.filter(
         Model.electionId == electionId,
