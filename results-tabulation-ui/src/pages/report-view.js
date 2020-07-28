@@ -12,6 +12,10 @@ import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WOR
 import TallySheetStatusDescription from "../components/tally-sheet/tally-sheet-status-description";
 import Error from "../components/error";
 import Button from "@material-ui/core/Button";
+import {
+    TALLY_SHEET_CODE_PE_22,
+    TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_CE_RO_PR_1
+} from "../components/election/extended-election/ParliamentElection2020/TALLY_SHEET_CODE";
 
 export default function ReportView(props) {
     const tallySheetContext = useContext(TallySheetContext);
@@ -68,28 +72,38 @@ export default function ReportView(props) {
     const getReportViewJsx = () => {
         const {tallySheetCode, metaDataMap, area, tallySheetId, election} = tallySheet;
         const {areaName} = area;
-        let tallySheetVersionHtmlJsx = null;
+        let tallySheetVersionHtmlJsx;
+        let additionalBreadCrumbLinks;
 
-        const additionalBreadCrumbLinks = [
-            {
-                label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase(),
-                to: getTallySheetListLink()
+        if (metaDataMap["partyId"]) {
+            const partyId = metaDataMap["partyId"];
+            const party = election.partyMap[partyId];
+
+            if ([TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22, TALLY_SHEET_CODE_PE_CE_RO_PR_1].indexOf(tallySheetCode) >= 0) {
+                additionalBreadCrumbLinks = [{
+                    label: getTallySheetCodeStr({tallySheetCode, voteType}) + " - " + party.partyName.toLowerCase(),
+                    to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode, voteType, partyId)
+                }, {
+                    label: tallySheet.area.areaName.toLowerCase(),
+                    to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
+                }];
+            } else {
+                additionalBreadCrumbLinks = [{
+                    label: getTallySheetCodeStr({tallySheetCode, voteType}),
+                    to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode, voteType)
+                }, {
+                    label: (party.partyName + " - " + tallySheet.area.areaName).toLowerCase(),
+                    to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
+                }];
             }
-        ];
-
-        if (metaDataMap.partyId && election.partyMap[metaDataMap.partyId]) {
-            // Map the parties to the breadcrumb.
-            const party = election.partyMap[metaDataMap.partyId];
-            const {partyName} = party;
-            additionalBreadCrumbLinks.push({
-                label: `${tallySheet.area.areaName} - ${partyName}`,
-                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
-            })
         } else {
-            additionalBreadCrumbLinks.push({
-                label: tallySheet.area.areaName,
+            additionalBreadCrumbLinks = [{
+                label: getTallySheetCodeStr({tallySheetCode, voteType}),
+                to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode, voteType)
+            }, {
+                label: tallySheet.area.areaName.toLowerCase(),
                 to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
-            })
+            }];
         }
 
         if (tallySheetVersionId) {
