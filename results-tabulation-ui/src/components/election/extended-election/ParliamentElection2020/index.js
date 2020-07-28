@@ -22,8 +22,9 @@ import {
     TALLY_SHEET_CODE_PE_AI_NL_1,
     TALLY_SHEET_CODE_PE_AI_NL_2, TALLY_SHEET_CODE_PE_AI_1, TALLY_SHEET_CODE_PE_AI_2, TALLY_SHEET_CODE_PE_AI_SA
 } from "./TALLY_SHEET_CODE";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
+import Button from "@material-ui/core/Button";
 import React, {useContext, useEffect, useState} from "react";
 import * as Settings from './settings'
 import ExtendedElectionDefault from "../extended-election-default";
@@ -31,6 +32,10 @@ import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
 import {ElectionContext} from "../../../../services/election.provider";
 import Processing from "../../../processing";
 import {VOTE_TYPE_NON_POSTAL, VOTE_TYPE_POSTAL, VOTE_TYPE_POSTAL_AND_NON_POSTAL} from "../../constants/VOTE_TYPE";
+import {DialogContext} from "../../../../services/dialog.provider";
+import {MessagesContext} from "../../../../services/messages.provider";
+import {TallySheetProofFilePreviewDialog} from "../../../tally-sheet/tally-sheet-proof-file-preview-dialog";
+import {PartySelectionDialog} from "../../../tally-sheet/party-selection-dialog";
 
 export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
 
@@ -38,12 +43,25 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
         super(election, Settings.TALLY_SHEET_LIST_COLUMNS, ParliamentElection2020TallySheetEdit);
     }
 
+
     getElectionHome() {
+        const history = useHistory();
+        const dialogContext = useContext(DialogContext);
         const electionContext = useContext(ElectionContext);
         const [subElections, setSubElections] = useState(null);
 
         const {electionId, electionName, rootElectionId} = this.election;
-        const voteTypes = [VOTE_TYPE_POSTAL, VOTE_TYPE_NON_POSTAL];
+
+        const selectPartyAndThen = (then) => () => {
+            dialogContext.push({
+                render({open, handleClose, handleOk}) {
+                    return <PartySelectionDialog
+                        electionId={electionId} open={open} handleClose={handleClose}
+                        handleOk={handleOk}
+                    />
+                }
+            }).then((party) => party && then(party));
+        };
 
         useEffect(() => {
             electionContext.getSubElections(electionId, null).then(setSubElections);
@@ -176,15 +194,15 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                     <Grid item xs={12}>
                                         <ul className="tally-sheet-code-list">
                                             {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
-                                                return <li
-                                                    key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
-                                                    <Link
-                                                        className="tally-sheet-code-list-item btn-list"
-                                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
+                                                return <li key={tallySheetCodeIndex}>
+                                                    {tallySheetCodeLabels[tallySheetCodeIndex]}
+                                                    <a className="tally-sheet-code-list-item btn-list"
+                                                       onClick={selectPartyAndThen(({partyId}) => {
+                                                           history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType, partyId))
+                                                       })}
                                                     >
                                                         List
-                                                    </Link>
-
+                                                    </a>
                                                 </li>
                                             })}
                                         </ul>
@@ -271,12 +289,13 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                         {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
                                             return <li
                                                 key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
-                                                <Link
-                                                    className="tally-sheet-code-list-item btn-list"
-                                                    to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType)}
+                                                <a className="tally-sheet-code-list-item btn-list"
+                                                   onClick={selectPartyAndThen(({partyId}) => {
+                                                       history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, voteType, partyId))
+                                                   })}
                                                 >
                                                     List
-                                                </Link>
+                                                </a>
                                             </li>
                                         })}
                                     </ul>

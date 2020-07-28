@@ -62,7 +62,7 @@ export function TallySheetProvider(props) {
         return tallySheet
     }
 
-    async function fetchTallySheetChunks({electionId, areaId, tallySheetCode, voteType}, next) {
+    async function fetchTallySheetChunks({electionId, areaId, tallySheetCode, voteType, partyId}, next) {
         const limit = TABULATION_API_PAGINATION_LIMIT;
         let offset = 0;
         let reachedEnd = false;
@@ -72,6 +72,7 @@ export function TallySheetProvider(props) {
                 areaId,
                 tallySheetCode,
                 voteType,
+                partyId,
                 limit,
                 offset: offset * limit
             });
@@ -86,11 +87,11 @@ export function TallySheetProvider(props) {
         }
     }
 
-    async function fetchTallySheet({electionId, areaId, tallySheetCode, voteType, limit = 10000, offset = 0}) {
+    async function fetchTallySheet({electionId, areaId, tallySheetCode, voteType, partyId, limit = 10000, offset = 0}) {
         const tallySheets = await request({
             url: ENDPOINT_PATH_TALLY_SHEETS(),
             method: 'get',
-            params: {electionId, areaId, tallySheetCode, voteType, limit, offset}
+            params: {electionId, areaId, tallySheetCode, voteType, partyId, limit, offset}
         });
 
         // const _tallySheetMap = {};

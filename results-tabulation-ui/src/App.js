@@ -15,12 +15,12 @@ import * as serviceWorker from "./serviceWorker";
 export const ROUTER_PREFIX = "";
 export const PATH_ELECTION = () => `${ROUTER_PREFIX}/election`;
 export const PATH_ELECTION_BY_ID = (electionId) => `${ROUTER_PREFIX}/election/${electionId}`;
-export const PATH_ELECTION_TALLY_SHEET_LIST = (electionId = null, tallySheetCode = null, voteType = null) => {
+export const PATH_ELECTION_TALLY_SHEET_LIST = (electionId = null, tallySheetCode = null, voteType = null, partyId = null) => {
     let path = `${ROUTER_PREFIX}/tally-sheet`;
 
     // To make sure the `?` is appended before any query parameters
     // And to avoid it's being amended to route descriptions. Since method is used for route description as well.
-    if (electionId || tallySheetCode || voteType) {
+    if (electionId || tallySheetCode || voteType || partyId) {
         path += `?`;
     }
 
@@ -32,6 +32,9 @@ export const PATH_ELECTION_TALLY_SHEET_LIST = (electionId = null, tallySheetCode
     }
     if (voteType) {
         path += `voteType=${voteType}&`;
+    }
+    if (partyId) {
+        path += `partyId=${partyId}&`;
     }
 
     return path;

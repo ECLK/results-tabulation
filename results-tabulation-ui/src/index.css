@@ -119,6 +119,7 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
     width: 50px;
     height: 20px;
     text-align: center;
+    cursor: pointer;
 }
 
 .tally-sheet-code-list .tally-sheet-code-list-item {
@@ -217,7 +218,7 @@ ul.bread-crumb li.bread-crumb-list-item a:hover {
 .election-list a.election-list-item {
     padding: 10px;
     background-color: #e7e7e7;
-    margin:10px;
+    margin: 10px;
     display: inline-block;
     width: 260px;
     text-align: center;

@@ -8,9 +8,9 @@ import {PATH_ELECTION_TALLY_SHEET_LIST} from "../App";
 
 export default function TallySheetListView({history, queryString, election}) {
     const extendedElection = ExtendedElection(election);
-    const {tallySheetCode, voteType} = queryString;
+    const {tallySheetCode, voteType, partyId} = queryString;
 
-    const props = {history, election, tallySheetCode, voteType};
+    const props = {history, election, tallySheetCode, voteType, partyId};
 
     const columns = extendedElection.getTallySheetListColumns(tallySheetCode, voteType);
     if (columns) {

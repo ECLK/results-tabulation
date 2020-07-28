@@ -16,6 +16,7 @@ export default function TallySheetListTableBody(
         history,
         tallySheetCode,
         voteType,
+        partyId,
         election,
         columns = [
             TALLY_SHEET_LIST_COLUMN_STATUS,
@@ -31,7 +32,7 @@ export default function TallySheetListTableBody(
     const [error, setError] = useState(false);
 
     useEffect(() => {
-        tallySheetContext.fetchTallySheetChunks({electionId, tallySheetCode, voteType}, (tallySheetIds) => {
+        tallySheetContext.fetchTallySheetChunks({electionId, tallySheetCode, voteType, partyId}, (tallySheetIds) => {
             setTallySheetIds(prevState => {
                 return [...prevState, ...tallySheetIds]
             });

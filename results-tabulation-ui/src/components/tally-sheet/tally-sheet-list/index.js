@@ -10,6 +10,7 @@ export default function TallySheetList(
         history,
         tallySheetCode,
         voteType,
+        partyId,
         election,
         columns = [
             TALLY_SHEET_LIST_COLUMN_STATUS,
@@ -32,6 +33,7 @@ export default function TallySheetList(
                 history={history}
                 tallySheetCode={tallySheetCode}
                 voteType={voteType}
+                partyId={partyId}
                 election={election}
                 columns={columns}
                 columnMetaMap={columnMetaMap}

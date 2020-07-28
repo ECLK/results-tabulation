@@ -67,18 +67,18 @@ export function DialogProvider(props) {
         {state.dialogsList.map((dialogId) => {
             const dialog = state.dialogsMap[dialogId];
             if (dialog.open) {
-                const handleClose = () => (event) => {
+                const handleClose = (data = null) => (event) => {
                     setState((prevState) => {
                         Object.assign(prevState.dialogsMap[dialogId], {open: false});
 
                         return {...prevState};
                     });
+                    dialog.actionPromiseResolve(data);
                 };
-                const handleOk = () => (event) => {
-                    dialog.actionPromiseResolve();
-                    handleClose()(event);
+                const handleOk = (data = null) => (event) => {
+                    handleClose(data)(event);
                 };
-                const dialogProps = {open: dialog.open, handleClose, handleOk};
+                const dialogProps = {key: dialogId, open: dialog.open, handleClose, handleOk};
 
                 return dialog.render(dialogProps);
             }
