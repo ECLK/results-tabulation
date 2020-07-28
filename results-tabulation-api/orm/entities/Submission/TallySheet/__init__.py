@@ -429,7 +429,7 @@ def get_all(electionId=None, areaId=None, tallySheetCode=None, voteType=None, li
         query_filters.append(Submission.Model.areaId == areaId)
 
     if electionId is not None:
-        election = Election.get_by_id(user_access_area_ids=user_access_area_ids, electionId=electionId)
+        election = Election.get_by_id(electionId=electionId)
         query_filters.append(Election.Model.electionId.in_(election.get_this_and_below_election_ids()))
 
     if tallySheetCode is not None:
