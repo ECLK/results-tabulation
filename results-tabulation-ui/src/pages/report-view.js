@@ -117,10 +117,10 @@ export default function ReportView(props) {
             >
             </iframe>;
 
-            additionalBreadCrumbLinks.push({
-                label: tallySheetVersionId,
-                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
-            })
+            // additionalBreadCrumbLinks.push({
+            //     label: tallySheetVersionId,
+            //     to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
+            // })
         } else {
             tallySheetVersionHtmlJsx =
                 <Error title="Tally sheet is empty" body="There's no content available to preview."/>
