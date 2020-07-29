@@ -142,7 +142,8 @@ def _cache_pdf(user_access_area_ids, tally_sheet_id, tally_sheet_version_id):
 def letter_pdf(tallySheetId, tallySheetVersionId):
     user_access_area_ids = get_user_access_area_ids()
 
-    return _cache_letter_pdf(tally_sheet_id=tallySheetId, tally_sheet_version_id=tallySheetVersionId)
+    return _cache_letter_pdf(user_access_area_ids=user_access_area_ids, tally_sheet_id=tallySheetId,
+                             tally_sheet_version_id=tallySheetVersionId)
 
 
 @cache.memoize()
