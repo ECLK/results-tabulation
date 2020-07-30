@@ -1,7 +1,6 @@
 import MySQLdb
 import sys
 import configparser
-import io
 
 # validate arguments (dbconfig and sql source file)
 if len(sys.argv) < 3:
@@ -21,6 +20,7 @@ portnumb = int(config['mysql']['DATABASE_PORT'].replace("\"", ""))
 # Load the mysql source file
 with open(sys.argv[2]) as f:
     mysql_queries = f.read()
+
 # connect to the db
 conn = MySQLdb.connect(hostname, username, password, database, portnumb)
 cursor = conn.cursor()
