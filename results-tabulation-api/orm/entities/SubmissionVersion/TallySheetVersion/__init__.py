@@ -69,6 +69,7 @@ class TallySheetVersionModel(db.Model):
                 Candidate.Model.candidateId,
                 Candidate.Model.candidateName,
                 Candidate.Model.candidateNumber,
+                Candidate.Model.candidateType,
                 ElectionParty.Model.electionPartyId,
                 Party.Model.partyId,
                 Party.Model.partyName,
@@ -156,7 +157,9 @@ class TallySheetVersionModel(db.Model):
             )
 
         # Validate the authorization
-        if not has_role_based_access(tally_sheet=tally_sheet, access_type=WORKFLOW_ACTION_TYPE_SAVE):
+        if not has_role_based_access(election=tally_sheet.submission.election,
+                                     tally_sheet_code=tally_sheet.tallySheetCode,
+                                     access_type=WORKFLOW_ACTION_TYPE_SAVE):
             raise UnauthorizedException(
                 message="Not authorized to edit tally sheet. (tallySheetId=%d)" % tallySheetId,
                 code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT

@@ -91,9 +91,9 @@ class WorkflowInstanceSchema(ma.ModelSchema):
             "workflowId",
             # "workflowName",
             "actions",
-            "statuses",
+            # "statuses",
             "status",
-            "latestLog",
+            # "latestLog",
             "proof"
         )
 
@@ -158,6 +158,7 @@ class CandidateSchema(ma.ModelSchema):
         fields = (
             "candidateId",
             "candidateName",
+            "candidateType",
             "candidateNumber",
             "candidateProfileImageFile",
             "qualifiedForPreferences"
@@ -395,9 +396,9 @@ class TallySheetSchema_1(ma.ModelSchema):
             "electionId",
             "areaId",
             "area",
-            # "areaMapList",
             "latestVersion",
             "metaDataList",
+            "workflowInstanceId",
             "workflowInstance",
             "latestVersionId"
         )
@@ -417,42 +418,7 @@ class TallySheetSchema_1(ma.ModelSchema):
     submissionProof = ma.Nested(Proof_Schema)
     metaDataList = ma.Nested(MetaDataSchema, many=True)
     areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
-    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status"])
-
-
-class TallySheetSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "tallySheetId",
-            "tallySheetCode",
-            "templateId",
-            "template",
-            "electionId",
-            "areaId",
-            "area",
-            # "areaMapList",
-            "metaDataList",
-            "workflowInstance",
-            "latestVersionId"
-        )
-
-        model = TallySheet.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    template = ma.Nested("TemplateSchema", only=["templateId", "templateName", "isDerived"])
-    area = ma.Nested(AreaSchema, only=["areaId", "areaName"])
-    versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
-    latestVersion = ma.Nested(SubmissionVersionSchema)
-    latestStamp = ma.Nested(StampSchema)
-    lockedStamp = ma.Nested(StampSchema)
-    submittedStamp = ma.Nested(StampSchema)
-    submission = ma.Nested(SubmissionSchema)
-    submissionProof = ma.Nested(Proof_Schema)
-    metaDataList = ma.Nested(MetaDataSchema, many=True)
-    areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
-    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status"])
+    workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status", "proof"])
 
 
 class TemplateRowSchema(ma.ModelSchema):

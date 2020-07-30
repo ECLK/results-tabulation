@@ -9,7 +9,8 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
     TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION, \
-    TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED
+    TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED, \
+    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
 from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
@@ -28,6 +29,7 @@ template_row_to_df_num_value_column_map = {
     TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: "draftBonusSeatsAllocated",
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: "seatsAllocatedFromRound2",
     TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: "bonusSeatsAllocated",
+    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: "seatsAllocated",
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: "voteCountCeilPerSeat",
     TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION: "minimumVoteCountRequiredForSeatAllocation"
 }
@@ -45,14 +47,14 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             if minimum_vote_count_percentage_required is not None:
                 minimum_vote_count_percentage_required = float(minimum_vote_count_percentage_required)
 
-            number_of_seats_allocated = election.meta.get_meta_data(
+            number_of_members_to_be_elected = election.meta.get_meta_data(
                 metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED)
-            if number_of_seats_allocated is not None:
-                number_of_seats_allocated = int(number_of_seats_allocated)
+            if number_of_members_to_be_elected is not None:
+                number_of_members_to_be_elected = int(number_of_members_to_be_elected)
 
             df = self.populate_seats_per_party(
                 minimum_vote_count_percentage_required=minimum_vote_count_percentage_required,
-                number_of_seats_allocated=number_of_seats_allocated
+                number_of_members_to_be_elected=number_of_members_to_be_elected
             )
 
             template_row_map = {
@@ -62,6 +64,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                 TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: [],
                 TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: [],
                 TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: [],
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: [],
                 TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: [],
                 TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION: []
             }
@@ -92,7 +95,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             return content
 
-        def populate_seats_per_party(self, minimum_vote_count_percentage_required, number_of_seats_allocated=0):
+        def populate_seats_per_party(self, minimum_vote_count_percentage_required, number_of_members_to_be_elected=0):
             df = self.get_party_wise_valid_vote_count_result()
 
             total_valid_vote_count = df['numValue'].sum()
@@ -119,11 +122,11 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             for index in df.index:
                 if df.at[index, 'numValue'] == max_valid_vote_count_per_party:
                     df.at[index, 'bonusSeatsAllocated'] = 1
-                    number_of_seats_allocated -= 1
+                    number_of_members_to_be_elected -= 1
                 else:
                     df.at[index, 'bonusSeatsAllocated'] = 0
 
-            valid_vote_count_required_per_seat = total_valid_vote_count_of_qualified_parties / number_of_seats_allocated
+            valid_vote_count_required_per_seat = total_valid_vote_count_of_qualified_parties / number_of_members_to_be_elected
             valid_vote_count_required_per_seat_ceil = math.ceil(valid_vote_count_required_per_seat)
 
             for index in df.index:
@@ -131,7 +134,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                 if df.at[index, 'qualifiedForSeatsAllocation']:
                     number_of_seats_qualified = math.floor(num_value / valid_vote_count_required_per_seat_ceil)
                     df.at[index, 'seatsAllocatedFromRound1'] = number_of_seats_qualified
-                    number_of_seats_allocated -= number_of_seats_qualified
+                    number_of_members_to_be_elected -= number_of_seats_qualified
                     df.at[index, 'validVotesRemainFromRound1'] = num_value % valid_vote_count_required_per_seat_ceil
                 else:
                     df.at[index, 'seatsAllocatedFromRound1'] = 0
@@ -139,10 +142,10 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             df = df.sort_values(by=['validVotesRemainFromRound1'], ascending=False)
             for index in df.index:
-                if df.at[index, 'qualifiedForSeatsAllocation'] and number_of_seats_allocated > 0:
+                if df.at[index, 'qualifiedForSeatsAllocation'] and number_of_members_to_be_elected > 0:
                     number_of_seats_qualified = 1
                     df.at[index, 'seatsAllocatedFromRound2'] = number_of_seats_qualified
-                    number_of_seats_allocated -= number_of_seats_qualified
+                    number_of_members_to_be_elected -= number_of_seats_qualified
                 else:
                     df.at[index, 'seatsAllocatedFromRound2'] = 0
 
@@ -183,15 +186,18 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                         df_column_name = template_row_to_df_num_value_column_map[template_row_type]
                         party_wise_calculations_df.at[index_1, df_column_name] += num_value
 
-            party_wise_calculations_df[
-                'seatsAllocated'] = party_wise_calculations_df.seatsAllocatedFromRound1 + party_wise_calculations_df.seatsAllocatedFromRound2 + party_wise_calculations_df.bonusSeatsAllocated
-
             party_wise_calculations_df = party_wise_calculations_df.sort_values(by=['seatsAllocated'], ascending=False)
 
             return party_wise_calculations_df
 
         def html(self, title="", total_registered_voters=None):
+            election = self.tallySheetVersion.submission.election
             party_wise_seat_calculations = self.get_party_wise_seat_calculations()
+
+            number_of_members_to_be_elected = election.meta.get_meta_data(
+                metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED)
+            if number_of_members_to_be_elected is not None:
+                number_of_members_to_be_elected = int(number_of_members_to_be_elected)
 
             totalVoteCounts = party_wise_seat_calculations['numValue'].sum()
             twentiethOfTotalVoteCounts = party_wise_seat_calculations.at[0, 'minimumVoteCountRequiredForSeatAllocation']
@@ -201,7 +207,8 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             total_votes_after_deduction = party_wise_seat_calculations[
                                               'numValue'].sum() - total_less_than_twentiethOfTotalVoteCounts
-            number_of_members_to_be_elected_minus_1 = party_wise_seat_calculations['seatsAllocated'].sum() - 1
+
+            number_of_members_to_be_elected_minus_1 = number_of_members_to_be_elected - 1
             relevant_no_of_votes_div_by_no_of_members = total_votes_after_deduction / number_of_members_to_be_elected_minus_1
             rounded_relevant_no_of_votes_div_by_no_of_members = math.ceil(relevant_no_of_votes_div_by_no_of_members)
 
@@ -233,7 +240,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                 "number_of_members_to_be_elected_minus_1": to_comma_seperated_num(
                     number_of_members_to_be_elected_minus_1),
                 "relevant_no_of_votes_div_by_no_of_members": to_comma_seperated_num(
-                    relevant_no_of_votes_div_by_no_of_members),
+                    relevant_no_of_votes_div_by_no_of_members, num_type=float, round_to=2),
                 "rounded_relevant_no_of_votes_div_by_no_of_members": to_comma_seperated_num(
                     rounded_relevant_no_of_votes_div_by_no_of_members),
                 "total": []
@@ -244,8 +251,8 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             total_bonusSeatsAllocated = 0
 
             party_wise_seat_calculations = party_wise_seat_calculations[
-                party_wise_seat_calculations["numValue"] >= twentiethOfTotalVoteCounts
-                ]
+                (party_wise_seat_calculations["numValue"] >= twentiethOfTotalVoteCounts) |
+                (party_wise_seat_calculations["seatsAllocated"] > 0)]
 
             for party_wise_seat_calculation_item in party_wise_seat_calculations.itertuples():
                 data_row = []

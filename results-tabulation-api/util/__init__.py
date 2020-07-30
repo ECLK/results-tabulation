@@ -6,6 +6,8 @@ from orm.enums import BallotTypeEnum, AreaTypeEnum
 from sqlalchemy import func
 import base64
 import numpy as np
+from exception import ForbiddenException
+from exception.messages import MESSAGE_CODE_INVALID_INPUT
 
 
 class RequestBody:
@@ -24,11 +26,15 @@ class Auth:
         return 2
 
 
-def get_paginated_query(query):
-    if "limit" in connexion.request.args and connexion.request.args["limit"] is not None:
+def get_paginated_query(query, limit=None, offset=None):
+    if limit is not None:
+        query = query.limit(limit)
+    elif "limit" in connexion.request.args and connexion.request.args["limit"] is not None:
         query = query.limit(connexion.request.args["limit"])
 
-    if "offset" in connexion.request.args and connexion.request.args["offset"] is not None:
+    if offset is not None:
+        query = query.offset(offset)
+    elif "offset" in connexion.request.args and connexion.request.args["offset"] is not None:
         query = query.offset(connexion.request.args["offset"])
 
     return query
@@ -88,10 +94,10 @@ def to_empty_string_or_value(value):
 
 
 def to_percentage(value, round_to=2):
-    if value is None:
+    if value is None or np.isnan(value):
         return "%"
     else:
-        return f'{round(value, round_to)}%'
+        return "%.2f%s" % (round(value, round_to), "%")
 
 
 def to_comma_seperated_num(value, num_type=int, round_to=2):
@@ -156,3 +162,17 @@ def get_sum_of_all_and_nan_otherwise(array):
             result += val
 
     return result
+
+
+def validate_tally_sheet_version_request_content_special_characters(content_array):
+    invalid_strings = ["'", "\"", "<", ">", "=", ",", ";"]
+    for array_item in content_array:
+        if "strValue" in array_item and array_item["strValue"] is not None:
+            text_value = str(array_item["strValue"])
+            for char in invalid_strings:
+                if char in text_value or len(text_value) > 500:
+                    raise ForbiddenException(
+                        message="Invalid input detected. Use of disallowed characters/invalid input length detected. " + char + " included in " + text_value,
+                        code=MESSAGE_CODE_INVALID_INPUT
+                    )
+    return True

@@ -1,19 +1,19 @@
 Electoral District,District Centre,Polling Division,Polling District,Polling Station (English),Polling Station (Sinhala),Polling Station Name (Tamil),Registered Normal Voters,Registered Postal Voters,Counting Centre,Registered Displaced Voters,Registered Quarantine Voters
-Colombo,Colombo,Moratuwa,PD 1,PS 1,PS 1,PS 1,123,456,CC 1,11,1
-Colombo,Colombo,Moratuwa,PD 2,PS 2,PS 2,PS 2,123,456,CC 1,12,2
-Colombo,Colombo,Moratuwa,PD 3,PS 3,PS 3,PS 3,123,456,CC 2,23,3
-Colombo,Colombo,Moratuwa,PD 4,PS 4,PS 4,PS 4,123,456,CC 2,56,4
-Colombo,Colombo,Rathmalana,PD 5,PS 5,PS 5,PS 5,123,456,CC 3,2,5
-Colombo,Colombo,Rathmalana,PD 6,PS 6,PS 6,PS 6,123,456,CC 3,3,6
-Colombo,Colombo,Rathmalana,PD 7,PS 7,PS 7,PS 7,123,456,CC 4,4,7
-Colombo,Colombo,Rathmalana,PD 8,PS 8,PS 8,PS 8,123,456,CC 4,8,8
-Kandy,Kandy,Peradeniya,PD 1,PS 1,PS 1,PS 1,123,456,CC 1,0,0
-Kandy,Kandy,Peradeniya,PD 2,PS 2,PS 2,PS 2,123,456,CC 1,0,0
-Kandy,Kandy,Peradeniya,PD 3,PS 3,PS 3,PS 3,123,456,CC 2,0,0
-Kandy,Kandy,Peradeniya,PD 4,PS 4,PS 4,PS 4,123,456,CC 2,0,0
-Kandy,Kandy,Peradeniya,PD 5,PS 5,PS 5,PS 5,123,456,CC 2,0,0
-Kandy,Kandy,Asgiriya,PD 6,PS 6,PS 6,PS 6,123,456,CC 3,0,0
-Kandy,Kandy,Asgiriya,PD 7,PS 7,PS 7,PS 7,123,456,CC 3,0,0
-Kandy,Kandy,Asgiriya,PD 8,PS 8,PS 8,PS 8,123,456,CC 4,0,0
-Kandy,Kandy,Asgiriya,PD 9,PS 9,PS 9,PS 9,123,456,CC 4,0,0
-Kandy,Kandy,Asgiriya,PD 10,PS 10,PS 10,PS 10,123,456,CC 4,0,0
+01 - Colombo,01 - Colombo,A - Moratuwa,PD 1,PS 1,PS 1,PS 1,123,456,CC 1,11,1
+01 - Colombo,01 - Colombo,A - Moratuwa,PD 2,PS 2,PS 2,PS 2,123,456,CC 1,12,2
+01 - Colombo,01 - Colombo,A - Moratuwa,PD 3,PS 3,PS 3,PS 3,123,456,CC 2,23,3
+01 - Colombo,01 - Colombo,A - Moratuwa,PD 4,PS 4,PS 4,PS 4,123,456,CC 2,56,4
+01 - Colombo,01 - Colombo,B - Rathmalana,PD 5,PS 5,PS 5,PS 5,123,456,CC 3,2,5
+01 - Colombo,01 - Colombo,B - Rathmalana,PD 6,PS 6,PS 6,PS 6,123,456,CC 3,3,6
+01 - Colombo,01 - Colombo,B - Rathmalana,PD 7,PS 7,PS 7,PS 7,123,456,CC 4,4,7
+01 - Colombo,01 - Colombo,B - Rathmalana,PD 8,PS 8,PS 8,PS 8,123,456,CC 4,8,8
+02 - Kandy,02 - Kandy,A - Peradeniya,PD 1,PS 1,PS 1,PS 1,123,456,CC 1,0,0
+02 - Kandy,02 - Kandy,A - Peradeniya,PD 2,PS 2,PS 2,PS 2,123,456,CC 1,0,0
+02 - Kandy,02 - Kandy,A - Peradeniya,PD 3,PS 3,PS 3,PS 3,123,456,CC 2,0,0
+02 - Kandy,02 - Kandy,A - Peradeniya,PD 4,PS 4,PS 4,PS 4,123,456,CC 2,0,0
+02 - Kandy,02 - Kandy,A - Peradeniya,PD 5,PS 5,PS 5,PS 5,123,456,CC 2,0,0
+02 - Kandy,02 - Kandy,B - Asgiriya,PD 6,PS 6,PS 6,PS 6,123,456,CC 3,0,0
+02 - Kandy,02 - Kandy,B - Asgiriya,PD 7,PS 7,PS 7,PS 7,123,456,CC 3,0,0
+02 - Kandy,02 - Kandy,B - Asgiriya,PD 8,PS 8,PS 8,PS 8,123,456,CC 4,0,0
+02 - Kandy,02 - Kandy,B - Asgiriya,PD 9,PS 9,PS 9,PS 9,123,456,CC 4,0,0
+02 - Kandy,02 - Kandy,B - Asgiriya,PD 10,PS 10,PS 10,PS 10,123,456,CC 4,0,0

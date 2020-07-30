@@ -1,26 +1,27 @@
 {% extends 'base.html' %}
 
 {% block container %}
-    {% for pageNumber in [1,2,3,4] %}
-        <style>
-            .table td, .table th {
-                padding: 3px;
-                font-size: 15px;
-                color: black;
-                font-weight: 400;
-                border-color: black;
-            }
+    <style>
+        * {
+            font-family: "Lucida Console", Courier, monospace;
+        }
 
-            .table th {
-                font-weight: 800;
-            }
-        </style>
+        .table td, .table th {
+            padding: 3px;
+            font-size: 13px;
+            color: black;
+            font-weight: 400;
+            border-color: black;
+        }
+
+        .table th {
+            font-weight: 800;
+        }
+    </style>
+    {% for pageNumber in [1,2,3,4] %}
 
         {# TODO review why "padding-top: 1px" is needed to align the pages on print view.#}
-        <div style="padding-left: 50px;padding-right: 50px; padding-top: 1px;page-break-before: always;">
-            {% block letter_header %}{% endblock %}
-
-            <div style="width: 100%; padding-bottom: 50px;"></div>
+        <div style="padding-top: 1px;page-break-before: always;">
 
             {% block letter_content %}{% endblock %}
 
@@ -54,5 +55,6 @@
             </table>
 
         </div>
+
     {% endfor %}
 {% endblock %}

@@ -36,6 +36,8 @@ class ExtendedTallySheet_CE_201(ExtendedTallySheetDataEntry):
             if tallySheetVersion.submission.election.voteType != NonPostal:
                 polling_division_name = tallySheetVersion.submission.election.voteType
 
+            totalBallotBoxCount = 0
+
             content = {
                 "election": {
                     "electionName": tallySheetVersion.submission.election.get_official_name()
@@ -51,7 +53,8 @@ class ExtendedTallySheet_CE_201(ExtendedTallySheetDataEntry):
                 "pollingDivision": polling_division_name,
                 "countingCentre": tallySheetVersion.submission.area.areaName,
                 "parliamentaryElection": 1,
-                "data": []
+                "data": [],
+                "totalBallotBoxCount": totalBallotBoxCount
             }
 
             # Appending polling station wise ballot counts
@@ -80,7 +83,12 @@ class ExtendedTallySheet_CE_201(ExtendedTallySheetDataEntry):
                         polling_station_wise_number_of_ordinary_ballots_in_ballot_box["numValue"].values[
                             polling_station_wise_number_of_ballots_recieved_item_index]))
 
+                totalBallotBoxCount += polling_station_wise_number_of_ordinary_ballots_in_ballot_box["numValue"].values[
+                    polling_station_wise_number_of_ballots_recieved_item_index]
+
                 content["data"].append(data_row)
+
+            content["totalBallotBoxCount"]= to_comma_seperated_num(totalBallotBoxCount)
 
             html = render_template(
                 'CE-201.html',

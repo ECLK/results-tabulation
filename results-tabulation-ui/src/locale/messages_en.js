@@ -37,6 +37,8 @@ export const API_MESSAGES_EN = {
     2001: "Proof requires at least one evidence, please upload.",
     2002: "No more evidence is accepted to this proof",
     2003: "PE-21 cannot be processed before PE-R2 is completed and verified.",
+    2004: "National list allocation for parties cannot be decided until the national vote calculation (PE-AI-ED) is completed and verified.",
+    2005: "National list candidates cannot be determined until the national list allocation for parties is decided and verified.",
 
     // Not found
     3000: "Election is not found.",
@@ -54,6 +56,6 @@ export const API_MESSAGES_EN = {
     4005: "Workflow action is now allowed.",
     4006: "Tally sheet is not allowed to be notified.",
     4007: "Tally sheet is not allowed to be release.",
-    4008: "Cannot request changes since the data from this report has been already aggregated in verified summary reports."
-
+    4008: "Cannot request changes since the data from this report has been already aggregated in verified summary reports.",
+    4009: "Invalid characters used. Please check your inputs"
 }

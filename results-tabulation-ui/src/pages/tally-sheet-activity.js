@@ -11,9 +11,13 @@ import TallySheetActions from "../components/tally-sheet/tally-sheet-actions";
 import {TallySheetContext} from "../services/tally-sheet.provider";
 import {WORKFLOW_ACTION_TYPE_VIEW} from "../components/tally-sheet/constants/WORKFLOW_ACTION_TYPE";
 import PreviewTallySheetProofFileButton from "../components/tally-sheet/tally-sheet-proof-file-preview-button";
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Check, MoveToInbox, Publish, Save, TurnedIn, VerifiedUser, Visibility} from '@material-ui/icons';
 import TallySheetStatusDescription from "../components/tally-sheet/tally-sheet-status-description";
+import {
+    TALLY_SHEET_CODE_PE_22,
+    TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_CE_RO_PR_1
+} from "../components/election/extended-election/ParliamentElection2020/TALLY_SHEET_CODE";
 
 export default function TallySheetActivityView({tallySheetId, history, election}) {
     const {electionId, rootElection, voteType} = election;
@@ -62,40 +66,45 @@ export default function TallySheetActivityView({tallySheetId, history, election}
 
 
     const getReportViewJsx = () => {
-        const {tallySheetCode, tallySheetStatus, area, tallySheetId} = tallySheet;
+        const {tallySheetCode, tallySheetStatus, area, tallySheetId, metaDataMap} = tallySheet;
         const {areaName} = area;
+        let additionalBreadCrumbLinks = [];
 
-        const additionalBreadCrumbLinks = [
-            {
-                label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase(),
-                to: getTallySheetListLink()
-            },
-            {
-                label: areaName.toLowerCase(),
-                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId)
-            },
-            {
-                label: "activity",
-                to: PATH_ELECTION_TALLY_ACTIVITY_SHEET_VIEW(tallySheetId)
+        if (metaDataMap["partyId"]) {
+            const partyId = metaDataMap["partyId"];
+            const party = election.partyMap[partyId];
+
+            if ([TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22, TALLY_SHEET_CODE_PE_CE_RO_PR_1].indexOf(tallySheetCode) >= 0) {
+                additionalBreadCrumbLinks = [{
+                    label: getTallySheetCodeStr({tallySheetCode, voteType}) + " - " + party.partyName.toLowerCase(),
+                    to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode, voteType, partyId)
+                }, {
+                    label: tallySheet.area.areaName.toLowerCase(),
+                    to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
+                }];
+            } else {
+                additionalBreadCrumbLinks = [{
+                    label: getTallySheetCodeStr({tallySheetCode, voteType}),
+                    to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode, voteType)
+                }, {
+                    label: (party.partyName + " - " + tallySheet.area.areaName).toLowerCase(),
+                    to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
+                }];
             }
-        ];
+        } else {
+            additionalBreadCrumbLinks = [{
+                label: getTallySheetCodeStr({tallySheetCode, voteType}),
+                to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode, voteType)
+            }, {
+                label: tallySheet.area.areaName.toLowerCase(),
+                to: PATH_ELECTION_TALLY_SHEET_VIEW(tallySheet.tallySheetId)
+            }];
+        }
 
         return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
             <div className="page-content">
                 <div>{rootElection.electionName}</div>
                 <div>{getTallySheetCodeStr({tallySheetCode, voteType})}</div>
-
-
-                <div className="report-view-status">
-                    <div className="report-view-status-actions">
-                        <TallySheetActions
-                            tallySheetId={tallySheetId}
-                            electionId={electionId} history={history}
-                            filter={(action) => action.actionType !== WORKFLOW_ACTION_TYPE_VIEW}
-                        />
-                    </div>
-                    <TallySheetStatusDescription tallySheetId={tallySheetId}/>
-                </div>
 
                 <Processing showProgress={processing}>
                     <div className="activity-wrapper">
@@ -109,13 +118,13 @@ export default function TallySheetActivityView({tallySheetId, history, election}
                                     <div className="activity-block activity-details">
                                         <strong>{actionName}</strong> by {createdBy} @ {createdAt}&nbsp;
                                         <Link className="activity-tallysheet-link"
-                                                to={
-                                                    PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
-                                                }
-                                                style={{
-                                                    color: "#5079c8",
-                                                    textDecoration: "underline"
-                                                }}
+                                              to={
+                                                  PATH_ELECTION_TALLY_SHEET_VIEW(tallySheetId, tallySheetVersionId)
+                                              }
+                                              style={{
+                                                  color: "#5079c8",
+                                                  textDecoration: "underline"
+                                              }}
                                         >
                                             {tallySheetVersionId}
                                         </Link>

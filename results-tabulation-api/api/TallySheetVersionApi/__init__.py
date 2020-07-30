@@ -1,17 +1,16 @@
 from flask import Response
 
-from api import FileApi
-from api.TallySheetApi import refactor_tally_sheet_response
-from app import db
-from auth import authorize
+from api import FileApi, TallySheetApi
+from app import db, cache
+from auth import authorize, get_user_access_area_ids
 from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
 from ext.ExtendedTallySheet import ExtendedTallySheet
 from orm.entities.Submission import TallySheet
 from orm.entities.SubmissionVersion import TallySheetVersion
-from schemas import TallySheetVersionSchema, TallySheetSchema_1
-from util import get_paginated_query, RequestBody
+from schemas import TallySheetVersionSchema
+from util import get_paginated_query, RequestBody, validate_tally_sheet_version_request_content_special_characters
 
 
 def get_all(tallySheetId):
@@ -44,70 +43,94 @@ def create_empty_and_get_html(tallySheetId):
 
 @authorize(required_roles=ALL_ROLES)
 def letter_html(tallySheetId, tallySheetVersionId):
-    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    user_access_area_ids = get_user_access_area_ids()
+
+    return _cache_letter_html(user_access_area_ids=user_access_area_ids, tally_sheet_id=tallySheetId,
+                              tally_sheet_version_id=tallySheetVersionId)
+
+
+@cache.memoize()
+def _cache_letter_html(user_access_area_ids, tally_sheet_id, tally_sheet_version_id):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tally_sheet_id)
 
     if tally_sheet is None:
         raise NotFoundException(
-            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            message="Tally sheet not found (tallySheetId=%d)" % tally_sheet_id,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
-    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tallySheetId,
-                                                      tallySheetVersionId=tallySheetVersionId)
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tally_sheet_id,
+                                                      tallySheetVersionId=tally_sheet_version_id)
 
     if tally_sheet_version is None:
         raise NotFoundException(
-            message="Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId,
+            message="Tally sheet version not found (tallySheetVersionId=%d)" % tally_sheet_version_id,
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
-    return Response(tally_sheet.html_letter(tallySheetVersionId=tallySheetVersionId), mimetype='text/html')
+    return Response(tally_sheet.html_letter(tallySheetVersionId=tally_sheet_version_id), mimetype='text/html')
 
 
 @authorize(required_roles=ALL_ROLES)
 def html(tallySheetId, tallySheetVersionId):
-    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    user_access_area_ids = get_user_access_area_ids()
+
+    return _cache_html(user_access_area_ids=user_access_area_ids, tally_sheet_id=tallySheetId,
+                       tally_sheet_version_id=tallySheetVersionId)
+
+
+@cache.memoize()
+def _cache_html(user_access_area_ids, tally_sheet_id, tally_sheet_version_id):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tally_sheet_id)
 
     if tally_sheet is None:
         raise NotFoundException(
-            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            message="Tally sheet not found (tallySheetId=%d)" % tally_sheet_id,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
-    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tallySheetId,
-                                                      tallySheetVersionId=tallySheetVersionId)
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tally_sheet_id,
+                                                      tallySheetVersionId=tally_sheet_version_id)
 
     if tally_sheet_version is None:
         raise NotFoundException(
-            message="Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId,
+            message="Tally sheet version not found (tallySheetVersionId=%d)" % tally_sheet_version_id,
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
-    return Response(tally_sheet.html(tallySheetVersionId=tallySheetVersionId), mimetype='text/html')
+    return Response(tally_sheet.html(tallySheetVersionId=tally_sheet_version_id), mimetype='text/html')
 
 
 @authorize(required_roles=ALL_ROLES)
 def pdf(tallySheetId, tallySheetVersionId):
-    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    user_access_area_ids = get_user_access_area_ids()
+
+    return _cache_pdf(user_access_area_ids=user_access_area_ids, tally_sheet_id=tallySheetId,
+                      tally_sheet_version_id=tallySheetVersionId)
+
+
+@cache.memoize()
+def _cache_pdf(user_access_area_ids, tally_sheet_id, tally_sheet_version_id):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tally_sheet_id)
 
     if tally_sheet is None:
         raise NotFoundException(
-            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            message="Tally sheet not found (tallySheetId=%d)" % tally_sheet_id,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
-    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tallySheetId,
-                                                      tallySheetVersionId=tallySheetVersionId)
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tally_sheet_id,
+                                                      tallySheetVersionId=tally_sheet_version_id)
 
     if tally_sheet_version is None:
         raise NotFoundException(
-            message="Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId,
+            message="Tally sheet version not found (tallySheetVersionId=%d)" % tally_sheet_version_id,
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
     file_response = FileApi.get_download_file(fileId=tally_sheet_version.get_exported_pdf_file_id(
-        tallySheetId=tallySheetId,
-        tallySheetVersionId=tallySheetVersionId
+        tallySheetId=tally_sheet_id,
+        tallySheetVersionId=tally_sheet_version_id
     ))
 
     db.session.commit()
@@ -117,26 +140,34 @@ def pdf(tallySheetId, tallySheetVersionId):
 
 @authorize(required_roles=ALL_ROLES)
 def letter_pdf(tallySheetId, tallySheetVersionId):
-    tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+    user_access_area_ids = get_user_access_area_ids()
+
+    return _cache_letter_pdf(user_access_area_ids=user_access_area_ids, tally_sheet_id=tallySheetId,
+                             tally_sheet_version_id=tallySheetVersionId)
+
+
+@cache.memoize()
+def _cache_letter_pdf(user_access_area_ids, tally_sheet_id, tally_sheet_version_id):
+    tally_sheet = TallySheet.get_by_id(tallySheetId=tally_sheet_id)
 
     if tally_sheet is None:
         raise NotFoundException(
-            message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
+            message="Tally sheet not found (tallySheetId=%d)" % tally_sheet_id,
             code=MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
         )
 
-    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tallySheetId,
-                                                      tallySheetVersionId=tallySheetVersionId)
+    tally_sheet_version = TallySheetVersion.get_by_id(tallySheetId=tally_sheet_id,
+                                                      tallySheetVersionId=tally_sheet_version_id)
 
     if tally_sheet_version is None:
         raise NotFoundException(
-            message="Tally sheet version not found (tallySheetVersionId=%d)" % tallySheetVersionId,
+            message="Tally sheet version not found (tallySheetVersionId=%d)" % tally_sheet_version_id,
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
     file_response = FileApi.get_download_file(fileId=tally_sheet_version.get_exported_letter_pdf_file_id(
-        tallySheetId=tallySheetId,
-        tallySheetVersionId=tallySheetVersionId
+        tallySheetId=tally_sheet_id,
+        tallySheetVersionId=tally_sheet_version_id
     ))
 
     db.session.commit()
@@ -165,6 +196,10 @@ def get_by_id(tallySheetId, tallySheetVersionId):
 def create(tallySheetId, body):
     request_body = RequestBody(body)
     tally_sheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
+
+    # validate user inputs to prevent XSS attacks
+    validate_tally_sheet_version_request_content_special_characters(request_body.get("content"))
+
     if tally_sheet is None:
         raise NotFoundException(
             message="Tally sheet not found (tallySheetId=%d)" % tallySheetId,
@@ -176,4 +211,4 @@ def create(tallySheetId, body):
 
     db.session.commit()
 
-    return TallySheetSchema_1().dump(refactor_tally_sheet_response(tally_sheet)).data
+    return TallySheetApi.get_by_id(tallySheetId=tallySheetId)

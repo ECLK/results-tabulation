@@ -2,15 +2,18 @@ from constants.AUTH_CONSTANTS import DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_V
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
 from constants.VOTE_TYPES import NonPostal, Postal, PostalAndNonPostal, Displaced, Quarantine
+from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import PE_AI_ED, PE_AI_NL_1, PE_AI_NL_2, PE_AI_1, \
+    PE_AI_SA
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, CE_201, CE_201_PV, \
     PE_4, PE_CE_RO_V1, \
     PE_CE_RO_PR_1, PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, \
-    ALL_ISLAND_RESULT
+    PE_AI_2
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACTION_TYPE import \
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, \
     WORKFLOW_ACTION_TYPE_RELEASE, WORKFLOW_ACTION_TYPE_EDIT, WORKFLOW_ACTION_TYPE_PRINT, \
     WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_PRINT_LETTER
+from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY
 
 READ = WORKFLOW_ACTION_TYPE_VIEW
 PRINT = WORKFLOW_ACTION_TYPE_PRINT
@@ -23,6 +26,7 @@ UNLOCK = WORKFLOW_ACTION_TYPE_REQUEST_CHANGES
 MOVE_TO_CERTIFY = WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY
 CERTIFY = WORKFLOW_ACTION_TYPE_CERTIFY
 RELEASE = WORKFLOW_ACTION_TYPE_RELEASE
+NOTIFY = WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY
 UPLOAD_PROOF_DOCUMENT = WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT
 
 role_based_access_config = {
@@ -190,7 +194,22 @@ role_based_access_config = {
         }
     },
     NATIONAL_REPORT_VIEWER_ROLE: {
-        ALL_ISLAND_RESULT: {
+        PE_AI_ED: {
+            PostalAndNonPostal: [READ, WRITE, PRINT]
+        },
+        PE_AI_SA: {
+            PostalAndNonPostal: [READ, WRITE, PRINT]
+        },
+        PE_AI_NL_1: {
+            PostalAndNonPostal: [READ, WRITE, PRINT]
+        },
+        PE_AI_NL_2: {
+            PostalAndNonPostal: [READ, WRITE, PRINT]
+        },
+        PE_AI_1: {
+            PostalAndNonPostal: [READ, WRITE, PRINT]
+        },
+        PE_AI_2: {
             PostalAndNonPostal: [READ, WRITE, PRINT]
         }
     },
@@ -225,7 +244,22 @@ role_based_access_config = {
         PE_21: {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
-        ALL_ISLAND_RESULT: {
+        PE_AI_ED: {
+            PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
+        },
+        PE_AI_SA: {
+            PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
+        },
+        PE_AI_NL_1: {
+            PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK]
+        },
+        PE_AI_NL_2: {
+            PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK]
+        },
+        PE_AI_1: {
+            PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
+        },
+        PE_AI_2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         }
     },
@@ -263,10 +297,10 @@ role_based_access_config = {
             Quarantine: [READ, PRINT]
         },
         PE_CE_RO_V1: {
-            Postal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
-            NonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
-            Displaced: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, RELEASE],
-            Quarantine: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, RELEASE]
+            Postal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY, RELEASE],
+            NonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY, RELEASE],
+            Displaced: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY, RELEASE],
+            Quarantine: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY, RELEASE]
         },
         POLLING_DIVISION_RESULTS: {
             Postal: [READ, PRINT, WRITE],
@@ -297,9 +331,29 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY,
                                  RELEASE]
         },
-        ALL_ISLAND_RESULT: {
+        PE_AI_ED: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE]
+        },
+        PE_AI_SA: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, NOTIFY, RELEASE]
+        },
+        PE_AI_NL_1: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, NOTIFY, RELEASE]
+        },
+        PE_AI_NL_2: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, NOTIFY, RELEASE]
+        },
+        PE_AI_1: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, NOTIFY, RELEASE]
+        },
+        PE_AI_2: {
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, NOTIFY, RELEASE]
         }
     }
 }
