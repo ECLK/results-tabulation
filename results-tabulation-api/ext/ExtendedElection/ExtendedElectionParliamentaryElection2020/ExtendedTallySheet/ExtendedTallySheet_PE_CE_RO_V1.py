@@ -80,7 +80,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
             polling_division_name = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == NonPostal:
+            if tallySheetVersion.submission.election.voteType != NonPostal:
                 polling_division_name = 'Postal'
 
             registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count(
