@@ -68,7 +68,6 @@
                 Counting Centre Nos.
             </th>
             <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Total</th>
-            <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align: middle;">Total No. of Votes in Words</th>
         </tr>
         <tr style="text-align:center;">
 
@@ -82,7 +81,6 @@
             {% for cell in row %}
             <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{cell}}</td>
             {% endfor %}
-            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
         {% endfor %}
 

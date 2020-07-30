@@ -59,7 +59,6 @@
                 {% endfor %}
             </th>
             <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Total</th>
-            <th class="left right top bottom" rowspan="2" style="width:200px; vertical-align: middle;">No. of Votes in Words</th>
         </tr>
         <tr style="text-align:center;" class="ed">
 
@@ -73,7 +72,6 @@
             {% for cell in row %}
             <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{cell}}</td>
             {% endfor %}
-            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
         {% endfor %}
 
@@ -88,7 +86,6 @@
             {% for validVoteCount in content.validVoteCounts %}
             <td class="left right top bottom text-right {%if validVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{validVoteCount}}</td>
             {% endfor %}
-            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
 
         <tr>
@@ -98,7 +95,6 @@
             {% for rejectedVoteCount in content.rejectedVoteCounts %}
             <td class="left right top bottom text-right {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{rejectedVoteCount}}</td>
             {% endfor %}
-            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
 
         <tr>
@@ -108,7 +104,6 @@
             {% for totalVoteCount in content.totalVoteCounts %}
             <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{totalVoteCount}}</td>
             {% endfor %}
-            <td class="left right top bottom" style="vertical-align: middle;"></td>
         </tr>
     </tbody>
 </table>
