@@ -6,8 +6,8 @@ COPY ./public /app/public
 WORKDIR /app
 RUN npm install
 
-ENV REACT_APP_AUTH_APP_URL="https://tabulations.ecstage.opensource.lk"
-ENV REACT_APP_TABULATION_API_URL="https://apim-gw.ecstage.opensource.lk/tabulation/0.1.0"
+ENV REACT_APP_AUTH_APP_URL="https://tabulations.training.elections.gov.lk "
+ENV REACT_APP_TABULATION_API_URL="https://apim-gw.training.elections.gov.lk /tabulation/0.1.0"
 ENV REACT_APP_DEBUG=false
 ENV REACT_APP_TABULATION_API_PAGINATION_LIMIT=250
 ENV REACT_APP_USE_PDF_SERVICE=true
