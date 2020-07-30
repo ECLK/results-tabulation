@@ -59,8 +59,8 @@
                 <th scope="col">#</th>
                 <th scope="col">Name of the Party</th>
                 <th scope="col">Party Abbreviation</th>
-                <th scope="col" style="text-align:right;">Candidate Number</th>
-                <th scope="col" style="text-align:right;">Candidate Name</th>
+                <th scope="col" style="text-align:left;">Candidate Number</th>
+                <th scope="col" style="text-align:left;">Candidate Name</th>
             </tr>
             {% for row in content.data %}
                 <tr>
@@ -68,9 +68,9 @@
                     <td class="{% if row[0]=='' %}missing-value{% endif %}">{{ row[0] }}</td>
                     <td class="{% if row[1]=='' %}missing-value{% endif %}">{{ row[1] }}</td>
                     <td class="{% if row[2]=='' %}missing-value{% endif %}"
-                        style="text-align:center;">{{ row[2] }}</td>
+                        style="text-align:left;">{{ row[2] }}</td>
                     <td class="{% if row[3]=='' %}missing-value{% endif %}"
-                        style="text-align:right;">{{ row[3] }}</td>
+                        style="text-align:left;">{{ row[3] }}</td>
                 </tr>
             {% endfor %}
             <tr>
