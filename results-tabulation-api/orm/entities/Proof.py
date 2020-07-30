@@ -19,8 +19,8 @@ class ProofModel(db.Model):
     scannedFilesFolderId = db.Column(db.Integer, db.ForeignKey(Folder.Model.__table__.c.folderId), nullable=False)
     finished = db.Column(db.Boolean, default=False)
 
-    scannedFilesFolder = relationship(Folder.Model, foreign_keys=[scannedFilesFolderId])
-    proofStamp = relationship(Stamp.Model, foreign_keys=[proofStampId])
+    scannedFilesFolder = relationship(Folder.Model, foreign_keys=[scannedFilesFolderId], lazy='subquery')
+    proofStamp = relationship(Stamp.Model, foreign_keys=[proofStampId], lazy='subquery')
 
     scannedFiles = association_proxy("scannedFilesFolder", "files")
     createdBy = association_proxy("proofStamp", "createdBy")

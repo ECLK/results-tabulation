@@ -895,6 +895,12 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: partyId
+          required: false
+          in: query
+          schema:
+            type: integer
+            format: int64
         - name: areaId
           required: false
           in: query

@@ -8,21 +8,30 @@ import {PATH_ELECTION_TALLY_SHEET_LIST} from "../App";
 
 export default function TallySheetListView({history, queryString, election}) {
     const extendedElection = ExtendedElection(election);
-    const {tallySheetCode, voteType} = queryString;
+    const {tallySheetCode, voteType, partyId} = queryString;
 
-    const props = {history, election, tallySheetCode, voteType};
+    const props = {history, election, tallySheetCode, voteType, partyId};
 
     const columns = extendedElection.getTallySheetListColumns(tallySheetCode, voteType);
     if (columns) {
         props.columns = columns
     }
 
-    const additionalBreadCrumbLinks = [
-        {
-            label: getTallySheetCodeStr({tallySheetCode, voteType}).toLowerCase(),
+    const additionalBreadCrumbLinks = [];
+
+    if (partyId) {
+        const party = election.partyMap[partyId];
+        additionalBreadCrumbLinks.push({
+            label: getTallySheetCodeStr({tallySheetCode, voteType}) + " - " + party.partyName.toLowerCase(),
+            to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode, voteType, partyId)
+        });
+    } else {
+        additionalBreadCrumbLinks.push({
+            label: getTallySheetCodeStr({tallySheetCode, voteType}),
             to: PATH_ELECTION_TALLY_SHEET_LIST(election.electionId, tallySheetCode, voteType)
-        }
-    ];
+        });
+    }
+
 
     return <TabulationPage additionalBreadCrumbLinks={additionalBreadCrumbLinks} election={election}>
         <TallySheetList

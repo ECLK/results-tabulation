@@ -16,7 +16,7 @@ export default function Home() {
 
     // Similar to componentDidMount and componentDidUpdate:
     useEffect(() => {
-        electionContext.getElections({}).then((electionsList) => {
+        electionContext.getElections({isListed: true, parentElectionId: null}).then((electionsList) => {
             setElectionsList(electionsList.filter(({electionId, rootElectionId}) => {
                 return electionId === rootElectionId;
             }));

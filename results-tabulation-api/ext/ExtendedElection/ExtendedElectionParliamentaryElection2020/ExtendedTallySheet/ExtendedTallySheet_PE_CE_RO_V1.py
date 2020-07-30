@@ -1,4 +1,5 @@
 from flask import render_template
+import re
 
 from constants.VOTE_TYPES import NonPostal
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
@@ -8,7 +9,68 @@ from orm.enums import AreaTypeEnum
 
 
 class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
+
+    def on_get_release_result_params(self):
+        if self.tallySheet.submission.election.voteType == NonPostal:
+            polling_division = self.tallySheet.submission.area
+            electoral_district = Area.get_associated_areas(polling_division, AreaTypeEnum.ElectoralDistrict)[0]
+            pd_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', polling_division.areaName)
+            pd_code = pd_name_regex_search.group(1)
+            pd_name = pd_name_regex_search.group(2)
+        else:
+            electoral_district = self.tallySheet.submission.area
+            pd_code = "PV"
+            pd_name = 'Postal'
+
+        pd_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
+        ed_code = pd_name_regex_search.group(1)
+        ed_name = pd_name_regex_search.group(2)
+
+        result_type = "RP_V"
+        result_code = "%s%s" % (ed_code, pd_code)
+
+        return result_type, result_code, ed_code, ed_name, pd_code, pd_name
+
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
+        def json(self):
+            extended_tally_sheet = self.tallySheet.get_extended_tally_sheet()
+            result_type, result_code, ed_code, ed_name, pd_code, pd_name = extended_tally_sheet.on_get_release_result_params()
+
+            party_wise_results = self.get_party_wise_valid_vote_count_result()
+
+            registered_voters_count = self.tallySheetVersion.submission.area.get_registered_voters_count(
+                vote_type=self.tallySheetVersion.submission.election.voteType)
+            total_valid_vote_count = 0
+            total_rejected_vote_count = self.get_rejected_vote_count_result()["numValue"].values[0]
+            for party_wise_result in party_wise_results.itertuples():
+                total_valid_vote_count += float(party_wise_result.numValue)
+            total_vote_count = total_valid_vote_count + total_rejected_vote_count
+
+            return {
+                "type": result_type,
+                "level": "POLLING-DIVISION",
+                "ed_code": ed_code,
+                "ed_name": ed_name,
+                "pd_code": pd_code,
+                "pd_name": pd_name,
+                "by_party": [
+                    {
+                        "party_code": party_wise_result.partyAbbreviation,
+                        "party_name": party_wise_result.partyName,
+                        "vote_count": party_wise_result.numValue,
+                        "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100)
+                    } for party_wise_result in party_wise_results.itertuples()
+                ],
+                "summary": {
+                    "valid": total_valid_vote_count,
+                    "rejected": total_rejected_vote_count,
+                    "polled": total_vote_count,
+                    "electors": registered_voters_count,
+                    "percent_valid": to_percentage((total_valid_vote_count / registered_voters_count) * 100),
+                    "percent_rejected": to_percentage((total_rejected_vote_count / registered_voters_count) * 100),
+                    "percent_polled": to_percentage((total_vote_count / registered_voters_count) * 100)
+                }
+            }
 
         def html_letter(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
@@ -18,12 +80,12 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
             polling_division_name = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == NonPostal:
+            if tallySheetVersion.submission.election.voteType != NonPostal:
                 polling_division_name = 'Postal'
 
             registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count(
                 vote_type=tallySheetVersion.submission.election.voteType)
-            
+
             content = {
                 "election": {
                     "electionName": tallySheetVersion.submission.election.get_official_name()

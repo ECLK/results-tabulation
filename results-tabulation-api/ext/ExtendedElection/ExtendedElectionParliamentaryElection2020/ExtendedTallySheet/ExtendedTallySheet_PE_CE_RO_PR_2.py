@@ -19,15 +19,26 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
             tallySheetVersion = self.tallySheetVersion
 
             candidate_and_area_wise_valid_non_postal_vote_count_result = self.get_candidate_and_area_wise_valid_non_postal_vote_count_result()
-            candidate_wise_valid_postal_vote_count_result = self.get_candidate_wise_valid_postal_vote_count_result()
             candidate_wise_valid_vote_count_result = self.get_candidate_wise_valid_vote_count_result()
             area_wise_non_postal_vote_count_result = self.get_area_wise_non_postal_vote_count_result()
 
             stamp = tallySheetVersion.stamp
+            election = tallySheetVersion.submission.election
+
+            non_postal_vote_types = []
+            vote_type_to_candidate_wise_valid_vote_count_result_map = {}
+
+            for sub_election in election.subElections:
+                vote_type_to_candidate_wise_valid_vote_count_result_map[
+                    sub_election.voteType] = self.get_candidate_wise_valid_vote_count_result(
+                    vote_type=sub_election.voteType)
+
+                if sub_election.voteType != NonPostal:
+                    non_postal_vote_types.append(sub_election.voteType)
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -36,6 +47,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
                 },
                 "tallySheetCode": "CE/RO/PR/2",
                 "electoralDistrict": tallySheetVersion.submission.area.areaName,
+                "nonPostalVoteTypes": non_postal_vote_types,
                 "partyName": candidate_and_area_wise_valid_non_postal_vote_count_result["partyName"].values[0],
                 "data": [],
                 "pollingDivisions": [],
@@ -50,10 +62,10 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
                     to_comma_seperated_num(area_wise_non_postal_vote_count_result_item.incompleteNumValue)
                 )
 
-            content["pollingDivisions"].append("Postal")
-            content["totalVoteCounts"].append(to_comma_seperated_num(
-                candidate_wise_valid_postal_vote_count_result["numValue"].sum()
-            ))
+            for vote_type in non_postal_vote_types:
+                content["pollingDivisions"].append(vote_type)
+                content["totalVoteCounts"].append(to_comma_seperated_num(
+                    vote_type_to_candidate_wise_valid_vote_count_result_map[vote_type]["numValue"].sum()))
 
             if tallySheetVersion.submission.election.voteType != NonPostal:
                 content["tallySheetCode"] = "CE/RO/PR/2"
@@ -68,25 +80,21 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
 
                 for index_2 in candidate_and_area_wise_valid_non_postal_vote_count_result.index:
                     if candidate_and_area_wise_valid_non_postal_vote_count_result.at[
-                        index_2, "candidateId"
-                    ] == candidate_id:
+                        index_2, "candidateId"] == candidate_id:
                         data_row.append(to_comma_seperated_num(
-                            candidate_and_area_wise_valid_non_postal_vote_count_result.at[index_2, "numValue"]
-                        ))
+                            candidate_and_area_wise_valid_non_postal_vote_count_result.at[index_2, "numValue"]))
 
-                data_row.append(to_comma_seperated_num(
-                    candidate_wise_valid_postal_vote_count_result.at[index_1, "numValue"]
-                ))
+                for vote_type in non_postal_vote_types:
+                    data_row.append(to_comma_seperated_num(
+                        vote_type_to_candidate_wise_valid_vote_count_result_map[vote_type]["numValue"].values[index_1]))
 
-                data_row.append(to_comma_seperated_num(
-                    candidate_wise_valid_vote_count_result.at[index_1, "incompleteNumValue"]
-                ))
+                data_row.append(
+                    to_comma_seperated_num(candidate_wise_valid_vote_count_result.at[index_1, "incompleteNumValue"]))
 
                 content["data"].append(data_row)
 
-            content["totalVoteCounts"].append(to_comma_seperated_num(
-                candidate_wise_valid_vote_count_result["numValue"].sum()
-            ))
+            content["totalVoteCounts"].append(
+                to_comma_seperated_num(candidate_wise_valid_vote_count_result["incompleteNumValue"].sum()))
 
             html = render_template(
                 'PE-CE-RO-PR-2.html',

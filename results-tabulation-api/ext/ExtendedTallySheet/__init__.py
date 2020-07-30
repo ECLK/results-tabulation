@@ -14,12 +14,12 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY
     MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_UNLOCKED_WHILE_HAVING_VERIFIED_PARENT_SUMMARY_SHEETS
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_EDIT, \
-    WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES
+    WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, WORKFLOW_ACTION_TYPE_RELEASE, \
+    WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED, \
     WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED
 
 from orm.entities import Workflow, Meta
-from orm.entities.Election import ElectionParty
 from orm.entities.Meta import MetaData
 from orm.entities.Workflow import WorkflowInstance, WorkflowActionModel
 from orm.entities.Workflow.WorkflowInstance import WorkflowInstanceLog
@@ -142,7 +142,9 @@ class ExtendedTallySheet:
     def authorize_workflow_action(self, workflow_action, content=None):
         from auth import has_role_based_access
 
-        if not has_role_based_access(self.tallySheet, workflow_action.actionType):
+        if not has_role_based_access(election=self.tallySheet.submission.election,
+                                     tally_sheet_code=self.tallySheet.tallySheetCode,
+                                     access_type=workflow_action.actionType):
             UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName),
                                   code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED)
 
@@ -199,7 +201,40 @@ class ExtendedTallySheet:
             })
         )
 
+        if workflow_action.actionType == WORKFLOW_ACTION_TYPE_RELEASE:
+            self.on_release_result(tally_sheet_version=tally_sheet_version)
+        elif workflow_action.actionType == WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY:
+            self.on_release_result_notify(tally_sheet_version=tally_sheet_version)
+
         return self.tallySheet
+
+    def on_get_release_result_params(self):
+        result_type = None
+        result_code = None
+        ed_code = None
+        ed_name = None
+        pd_code = None
+        pd_name = None
+
+        return result_type, result_code, ed_code, ed_name, pd_code, pd_name
+
+    def on_release_result_notify(self, tally_sheet_version):
+        result_type, result_code, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
+
+        print("\n\n\n\n###### NOTIFY RELEASE ###### %s/%s" % (result_type, result_code))
+
+        # TODO make a hook to the results dist.
+
+    def on_release_result(self, tally_sheet_version):
+        result_type, result_code, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
+
+        extended_tally_sheet_version = self.tallySheet.get_extended_tally_sheet_version(
+            tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
+        data = extended_tally_sheet_version.json()
+
+        print("\n\n\n\n###### RESULT RELEASE ###### %s/%s\n%s" % (result_type, result_code, str(data)))
+
+        # TODO make a hook to the results dist.
 
     def execute_tally_sheet_proof_upload(self):
         workflow_actions = self.on_before_tally_sheet_proof_upload()
@@ -270,7 +305,9 @@ class ExtendedTallySheet:
 
         authorized_workflow_actions = []
         for workflow_action in workflow_actions:
-            if has_role_based_access(tally_sheet=self.tallySheet, access_type=workflow_action.actionType):
+            if has_role_based_access(election=self.tallySheet.submission.election,
+                                     tally_sheet_code=self.tallySheet.tallySheetCode,
+                                     access_type=workflow_action.actionType):
                 authorized_workflow_actions.append(workflow_action)
 
         return authorized_workflow_actions
@@ -324,6 +361,44 @@ class ExtendedTallySheet:
             columns.append("incompleteNumValue")
 
             self.df = pd.DataFrame(data=data, index=index, columns=columns)
+
+        def json(self):
+            return {
+                "type": "RP_V",
+                "level": "POLLING-DIVISION",
+                "ed_code": "",
+                "ed_name": "",
+                "pd_code": "",
+                "pd_name": "",
+                "by_party": [
+                    {
+                        "party_code": "",
+                        "party_name": "",
+                        "vote_count": 0,
+                        "vote_percentage": "",
+                        "seat_count": "",
+                        "national_list_seat_count": 0
+                    }
+                ],
+                "by_candidate": [
+                    {
+                        "party_code": "",
+                        "party_name": "",
+                        "candidate_number": "",
+                        "candidate_name": "",
+                        "candidate_type": ""
+                    }
+                ],
+                "summary": {
+                    "valid": 0,
+                    "rejected": 0,
+                    "polled": 0,
+                    "electors": 0,
+                    "percent_polled": "",
+                    "percent_valid": "",
+                    "percent_rejected": ""
+                }
+            }
 
         def get_post_save_request_content(self):
             return []
@@ -519,11 +594,14 @@ class ExtendedTallySheet:
 
             return df
 
-        def get_candidate_wise_valid_vote_count_result(self):
+        def get_candidate_wise_valid_vote_count_result(self, vote_type=None):
             df = self.df.copy()
             df['numValue'] = df['numValue'].astype(float)
 
             df = df.loc[df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE"]
+
+            if vote_type is not None:
+                df = df.loc[df['voteType'] == vote_type]
 
             df = df.groupby(
                 ['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'candidateId',
