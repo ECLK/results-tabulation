@@ -1,3 +1,7 @@
-How to run the script
+**Install Dependencies**
 
-    python excecute_mysql_query.py [config path] [query file path]
+`pip install -r requirements.txt`
+
+**How to run the script**
+
+`python excecute_mysql_query.py [config path] [query file path]`
