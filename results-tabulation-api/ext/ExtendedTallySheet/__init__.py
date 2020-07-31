@@ -2,7 +2,8 @@ import pandas as pd
 
 from flask import render_template
 from sqlalchemy import MetaData
-
+import requests
+import app
 from app import db
 from auth import get_user_name, has_role_based_access
 from constants.VOTE_TYPES import Postal, NonPostal
@@ -18,6 +19,7 @@ from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE,
     WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED, \
     WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED
+from external_services import results_dist
 
 from orm.entities import Workflow, Meta
 from orm.entities.Meta import MetaData
@@ -221,9 +223,11 @@ class ExtendedTallySheet:
     def on_release_result_notify(self, tally_sheet_version):
         result_type, result_code, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
 
-        print("\n\n\n\n###### NOTIFY RELEASE ###### %s/%s" % (result_type, result_code))
+        extended_tally_sheet_version = self.tallySheet.get_extended_tally_sheet_version(
+            tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
+        data = extended_tally_sheet_version.json()
 
-        # TODO make a hook to the results dist.
+        results_dist.notify_release_result(result_type=result_type, result_code=result_code, data=data)
 
     def on_release_result(self, tally_sheet_version):
         result_type, result_code, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
@@ -232,9 +236,7 @@ class ExtendedTallySheet:
             tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
         data = extended_tally_sheet_version.json()
 
-        print("\n\n\n\n###### RESULT RELEASE ###### %s/%s\n%s" % (result_type, result_code, str(data)))
-
-        # TODO make a hook to the results dist.
+        results_dist.release_result(result_type=result_type, result_code=result_code, data=data)
 
     def execute_tally_sheet_proof_upload(self):
         workflow_actions = self.on_before_tally_sheet_proof_upload()
@@ -249,7 +251,7 @@ class ExtendedTallySheet:
 
         if len(workflow_actions) == 0:
             raise MethodNotAllowedException(message="Tally sheet is longer accepting proof documents.",
-                                            coded=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS)
+                                            code=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS)
 
         return workflow_actions
 
