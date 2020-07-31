@@ -150,7 +150,9 @@ class ExtendedTallySheet:
             UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName),
                                   code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED)
 
-        if workflow_action.actionType == WORKFLOW_ACTION_TYPE_REQUEST_CHANGES:
+        if workflow_action.actionType == WORKFLOW_ACTION_TYPE_REQUEST_CHANGES and workflow_action.toStatus in [
+            WORKFLOW_STATUS_TYPE_SAVED, WORKFLOW_STATUS_TYPE_EMPTY]:
+            
             from orm.entities.Submission import TallySheet
             from orm.entities.Submission.TallySheet import TallySheetTallySheetModel
 
@@ -237,6 +239,8 @@ class ExtendedTallySheet:
         data = extended_tally_sheet_version.json()
 
         results_dist.release_result(result_type=result_type, result_code=result_code, data=data)
+        results_dist.upload_release_documents(result_type=result_type, result_code=result_code,
+                                              files=self.tallySheet.workflowInstance.proof.scannedFiles)
 
     def execute_tally_sheet_proof_upload(self):
         workflow_actions = self.on_before_tally_sheet_proof_upload()

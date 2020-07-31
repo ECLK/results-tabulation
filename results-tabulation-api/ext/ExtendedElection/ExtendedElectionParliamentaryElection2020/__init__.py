@@ -396,11 +396,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
                  "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
                  "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Avoid and Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
                  "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Avoid and Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Avoid and Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED}
             ]
         )
@@ -496,11 +496,11 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
                  "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
                  "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Avoid and Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
                  "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Avoid and Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Avoid and Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED}
             ]
         )
