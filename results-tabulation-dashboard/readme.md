@@ -4,4 +4,4 @@
 
 **How to run the script**
 
-`python excecute_mysql_query.py [config path] [query file path]`
+`python excecute_mysql_query.py [host] [username] [password] [database name] [port] [query file path]`
