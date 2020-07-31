@@ -5,7 +5,7 @@ import {TallySheetContext} from "../../../services/tally-sheet.provider";
 import {
     WORKFLOW_ACTION_TYPE_CERTIFY,
     WORKFLOW_ACTION_TYPE_EDIT,
-    WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
+    WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_NOTIFY,
     WORKFLOW_ACTION_TYPE_PRINT, WORKFLOW_ACTION_TYPE_PRINT_LETTER,
     WORKFLOW_ACTION_TYPE_RELEASE, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
     WORKFLOW_ACTION_TYPE_SAVE,
@@ -27,6 +27,7 @@ const TALLY_SHEET_ACTION_SUCCESS_MESSAGE = {
     [WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY]: "Moved the tally sheet for certifying.",
     [WORKFLOW_ACTION_TYPE_CERTIFY]: "Certified tally sheet successfully.",
     [WORKFLOW_ACTION_TYPE_RELEASE]: "Released tally sheet results successfully.",
+    [WORKFLOW_ACTION_TYPE_NOTIFY]: "Notified the subscribers to await for results.",
     [WORKFLOW_ACTION_TYPE_REQUEST_CHANGES]: "Submitted change request.",
 };
 
