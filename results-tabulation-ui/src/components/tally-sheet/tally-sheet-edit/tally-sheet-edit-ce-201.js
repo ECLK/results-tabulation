@@ -259,7 +259,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                 <TableFooter>
                     <TableRow>
                         <TableCell align="right" colSpan={2}>Total ordinary ballot count</TableCell>
-                        <TableCell align="right">{totalOrdinaryBallotCountRow.numValue}</TableCell>
+                        <TableCell align="center">{totalOrdinaryBallotCountRow.numValue}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>
@@ -314,6 +314,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                         <TableCell align="right" colSpan={2}>Total ordinary ballot count</TableCell>
                         <TableCell align="right"><TextField
                             required
+                            variant="outlined"
                             error={calculateTotalOrdinaryBallotCount() !== totalOrdinaryBallotCountRow.numValue}
                             helperText={calculateTotalOrdinaryBallotCount() !== totalOrdinaryBallotCountRow.numValue ? 'Total ordinary ballot count mismatch!' : ' '}
                             value={totalOrdinaryBallotCountRow.numValue}
