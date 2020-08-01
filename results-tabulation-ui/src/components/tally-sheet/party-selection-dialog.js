@@ -24,9 +24,9 @@ export function PartySelectionDialog({electionId, open, handleClose, handleOk}) 
         <Processing showProgress={!election}>
             <List>
                 {election && election.parties && election.parties.map((party) => {
-                    const {partyId, partyName} = party;
+                    const {partyId, partyName, partyAbbreviation} = party;
                     return <ListItem button onClick={handleOk(party)} key={partyId}>
-                        <ListItemText primary={partyName}/>
+                        <ListItemText primary={partyAbbreviation + " - " + partyName}/>
                     </ListItem>
                 })}
             </List>
