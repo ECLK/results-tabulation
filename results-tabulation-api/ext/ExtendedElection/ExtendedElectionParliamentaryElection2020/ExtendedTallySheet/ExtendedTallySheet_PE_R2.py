@@ -48,7 +48,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
         result_type = "RE_S"
         result_code = ed_code
-        result_level = "ELECTORAL_DISTRICT"
+        result_level = "ELECTORAL-DISTRICT"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
@@ -71,7 +71,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                         "party_code": party_wise_result.partyAbbreviation,
                         "party_name": party_wise_result.partyName,
                         "vote_count": 0,
-                        "vote_percentage": 0,
+                        "vote_percentage": "",
                         "seat_count": int(party_wise_result.seatsAllocated),
                         "national_list_seat_count": 0
                     } for party_wise_result in party_wise_results.itertuples()

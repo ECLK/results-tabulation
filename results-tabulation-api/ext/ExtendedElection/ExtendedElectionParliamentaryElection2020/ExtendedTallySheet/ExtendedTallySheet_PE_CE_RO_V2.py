@@ -18,7 +18,7 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
 
         result_type = "RE_V"
         result_code = ed_code
-        result_level = "ELECTORAL_DISTRICT"
+        result_level = "ELECTORAL-DISTRICT"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 

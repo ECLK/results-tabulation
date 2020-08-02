@@ -94,7 +94,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
 
         result_type = "RE_SC"
         result_code = ed_code
-        result_level = "ELECTORAL_DISTRICT"
+        result_level = "ELECTORAL-DISTRICT"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
