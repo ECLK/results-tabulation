@@ -116,7 +116,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
                     {
                         "party_code": candidate_wise_result.partyAbbreviation,
                         "party_name": candidate_wise_result.partyName,
-                        "candidate_number": candidate_wise_result.candidateNumber,
+                        "candidate_number": str(candidate_wise_result.candidateNumber),
                         "candidate_name": candidate_wise_result.candidateName,
                         "candidate_type": candidate_wise_result.candidateType
                     } for candidate_wise_result in candidate_wise_results.itertuples()

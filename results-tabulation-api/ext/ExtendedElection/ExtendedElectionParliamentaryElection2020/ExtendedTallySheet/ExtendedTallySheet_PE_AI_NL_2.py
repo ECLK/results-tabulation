@@ -17,7 +17,50 @@ from util import convert_image_to_data_uri
 
 
 class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
+    def on_get_release_result_params(self):
+        pd_code = None
+        pd_name = None
+        ed_code = None
+        ed_name = None
+
+        result_type = "RN_NC"
+        result_code = "FINAL"
+        result_level = "NATIONAL"
+
+        return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
+
     class ExtendedTallySheetVersion(ExtendedEditableTallySheetReport.ExtendedTallySheetVersion):
+        def json(self):
+            extended_tally_sheet = self.tallySheet.get_extended_tally_sheet()
+            result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = extended_tally_sheet.on_get_release_result_params()
+
+            candidate_wise_results = self.get_candidate_wise_results().sort_values(
+                by=['electionPartyId', "candidateId"], ascending=[True, True]
+            ).reset_index()
+
+            return {
+                "type": result_type,
+                "level": result_level,
+                "by_candidate": [
+                    {
+                        "party_code": candidate_wise_result.partyAbbreviation,
+                        "party_name": candidate_wise_result.partyName,
+                        "candidate_number": str(candidate_wise_result.candidateNumber),
+                        "candidate_name": candidate_wise_result.candidateName,
+                        "candidate_type": candidate_wise_result.candidateType
+                    } for candidate_wise_result in candidate_wise_results.itertuples()
+                ]
+            }
+
+        def get_candidate_wise_results(self):
+            candidate_wise_results = self.df.loc[
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
+
+            candidate_wise_results = candidate_wise_results.sort_values(
+                by=['electionPartyId', 'candidateId'], ascending=True
+            )
+
+            return candidate_wise_results
 
         def get_post_save_request_content(self):
             tally_sheet_id = self.tallySheetVersion.tallySheetId
@@ -100,18 +143,15 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
                 "time": stamp.createdAt.strftime("%H:%M:%S %p")
             }
 
-            elected_candidates_df = self.df.loc[
-                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
+            candidate_wise_results = self.get_candidate_wise_results().sort_values(
+                by=['electionPartyId', "candidateId"], ascending=[True, True]
+            ).reset_index()
 
-            elected_candidates_df = elected_candidates_df.sort_values(
-                by=['partyId', 'candidateId'], ascending=True
-            )
-
-            for index in elected_candidates_df.index:
-                party_name = elected_candidates_df.at[index, "partyName"]
-                party_abbreviation = elected_candidates_df.at[index, "partyAbbreviation"]
-                candidate_number = elected_candidates_df.at[index, "candidateNumber"]
-                candidate_name = elected_candidates_df.at[index, "candidateName"]
+            for candidate_wise_result in candidate_wise_results.itertuples():
+                party_name = candidate_wise_result.partyName
+                party_abbreviation = candidate_wise_result.partyAbbreviation
+                candidate_number = candidate_wise_result.candidateNumber
+                candidate_name = candidate_wise_result.candidateName
                 content["data"].append([
                     party_name,
                     party_abbreviation,
@@ -146,18 +186,15 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
                 "time": stamp.createdAt.strftime("%H:%M:%S %p")
             }
 
-            elected_candidates_df = self.df.loc[
-                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
+            candidate_wise_results = self.get_candidate_wise_results().sort_values(
+                by=['electionPartyId', "candidateId"], ascending=[True, True]
+            ).reset_index()
 
-            elected_candidates_df = elected_candidates_df.sort_values(
-                by=['partyId', 'candidateId'], ascending=True
-            )
-
-            for index in elected_candidates_df.index:
-                party_name = elected_candidates_df.at[index, "partyName"]
-                party_abbreviation = elected_candidates_df.at[index, "partyAbbreviation"]
-                candidate_number = elected_candidates_df.at[index, "candidateNumber"]
-                candidate_name = elected_candidates_df.at[index, "candidateName"]
+            for candidate_wise_result in candidate_wise_results.itertuples():
+                party_name = candidate_wise_result.partyName
+                party_abbreviation = candidate_wise_result.partyAbbreviation
+                candidate_number = candidate_wise_result.candidateNumber
+                candidate_name = candidate_wise_result.candidateName
                 content["data"].append([
                     party_name,
                     party_abbreviation,
