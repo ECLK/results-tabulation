@@ -32,8 +32,6 @@ class ExtendedTallySheet_PE_AI_2(ExtendedTallySheetReport):
             return {
                 "type": result_type,
                 "level": result_level,
-                "ed_code": ed_code,
-                "ed_name": ed_name,
                 "by_candidate": [
                     {
                         "party_code": candidate_wise_result.partyAbbreviation,
