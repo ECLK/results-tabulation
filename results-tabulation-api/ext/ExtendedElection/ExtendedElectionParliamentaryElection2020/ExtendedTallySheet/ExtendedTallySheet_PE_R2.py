@@ -58,7 +58,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = extended_tally_sheet.on_get_release_result_params()
 
             party_wise_results = self.get_party_wise_seat_calculations().sort_values(
-                by=['seatsAllocated', "electionPartyId"], ascending=[False, True]
+                by=["seatsAllocated", "numValue", "electionPartyId"], ascending=[False, False, True]
             ).reset_index()
 
             return {
@@ -227,7 +227,8 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                         party_wise_calculations_df.at[index_1, df_column_name] += num_value
 
             party_wise_calculations_df = party_wise_calculations_df.sort_values(
-                by=['seatsAllocated', "electionPartyId"], ascending=[False, True])
+                by=["seatsAllocated", "numValue", "electionPartyId"], ascending=[False, False, True]
+            )
 
             return party_wise_calculations_df
 
@@ -293,7 +294,8 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             party_wise_seat_calculations = party_wise_seat_calculations[
                 (party_wise_seat_calculations["numValue"] >= twentiethOfTotalVoteCounts) |
-                (party_wise_seat_calculations["seatsAllocated"] > 0)]
+                (party_wise_seat_calculations["seatsAllocated"] > 0)].sort_values(
+                by=["seatsAllocated", "numValue", "electionPartyId"], ascending=[False, False, True])
 
             for party_wise_seat_calculation_item in party_wise_seat_calculations.itertuples():
                 data_row = []
@@ -400,10 +402,8 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
             content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
 
-            # sort by vote count descending
             party_wise_valid_vote_count_result = party_wise_valid_vote_count_result.sort_values(
-                by=['numValue', 'electionPartyId'], ascending=[False, True]
-            ).reset_index()
+                by=["seatsAllocated", "numValue", "electionPartyId"], ascending=[False, False, True]).reset_index()
 
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
                 data_row = [

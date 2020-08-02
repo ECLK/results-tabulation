@@ -12,6 +12,7 @@ from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 from flask import render_template
+import re
 from orm.entities import Area, Template, Submission
 from orm.entities.Workflow import WorkflowInstance
 from orm.enums import AreaTypeEnum
@@ -82,7 +83,53 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
 
         return template_column_to_query_filter_map
 
+    def on_get_release_result_params(self):
+        pd_code = None
+        pd_name = None
+
+        electoral_district = self.tallySheet.submission.area
+        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
+        ed_code = ed_name_regex_search.group(1)
+        ed_name = ed_name_regex_search.group(2)
+
+        result_type = "RE_SC"
+        result_code = ed_code
+        result_level = "ELECTORAL_DISTRICT"
+
+        return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
+
     class ExtendedTallySheetVersion(ExtendedEditableTallySheetReport.ExtendedTallySheetVersion):
+        def json(self):
+            extended_tally_sheet = self.tallySheet.get_extended_tally_sheet()
+            result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = extended_tally_sheet.on_get_release_result_params()
+
+            candidate_wise_results = self.get_candidate_wise_results().sort_values(
+                by=['electionPartyId', "candidateId"], ascending=[True, True]
+            ).reset_index()
+
+            return {
+                "type": result_type,
+                "level": result_level,
+                "ed_code": ed_code,
+                "ed_name": ed_name,
+                "by_candidate": [
+                    {
+                        "party_code": candidate_wise_result.partyAbbreviation,
+                        "party_name": candidate_wise_result.partyName,
+                        "candidate_number": candidate_wise_result.candidateNumber,
+                        "candidate_name": candidate_wise_result.candidateName,
+                        "candidate_type": candidate_wise_result.candidateType
+                    } for candidate_wise_result in candidate_wise_results.itertuples()
+                ]
+            }
+
+        def get_candidate_wise_results(self):
+            elected_candidates_df = self.df.loc[
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
+            elected_candidates_df = elected_candidates_df.sort_values(
+                by=['electionPartyId', "candidateId"], ascending=[True, True]).reset_index()
+
+            return elected_candidates_df
 
         def get_post_save_request_content(self):
             tally_sheet_id = self.tallySheetVersion.tallySheetId
@@ -173,14 +220,13 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
                 "data": []
             }
 
-            elected_candidates_df = self.df.loc[
-                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
-            elected_candidates_df = elected_candidates_df.sort_values(
-                by=['partyId', 'candidateId'], ascending=True)
+            candidate_wise_results = self.get_candidate_wise_results().sort_values(
+                by=['electionPartyId', "candidateId"], ascending=[True, True]
+            ).reset_index()
 
-            for index in elected_candidates_df.index:
-                candidate_name = elected_candidates_df.at[index, "candidateName"]
-                party_name = elected_candidates_df.at[index, "partyName"]
+            for index in candidate_wise_results.index:
+                candidate_name = candidate_wise_results.at[index, "candidateName"]
+                party_name = candidate_wise_results.at[index, "partyName"]
                 content["data"].append({
                     "candidateName": "" if candidate_name is None else candidate_name,
                     "partyName": party_name
@@ -214,18 +260,16 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
                 "time": stamp.createdAt.strftime("%H:%M:%S %p")
             }
 
-            elected_candidates_df = self.df.loc[self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE]
+            candidate_wise_results = self.get_candidate_wise_results().sort_values(
+                by=['electionPartyId', "candidateId"], ascending=[True, True]
+            ).reset_index()
 
-            for index in elected_candidates_df.index:
-                candidateId = elected_candidates_df.at[index, "candidateId"]
-                preference_count_df = self.df.loc[(self.df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE") & (
-                        self.df['candidateId'] == candidateId)]
-
+            for index in candidate_wise_results.index:
                 data_row = [
-                    elected_candidates_df.at[index, "partyName"],
-                    elected_candidates_df.at[index, "partyAbbreviation"],
-                    elected_candidates_df.at[index, "candidateName"],
-                    elected_candidates_df.at[index, "candidateNumber"]
+                    candidate_wise_results.at[index, "partyName"],
+                    candidate_wise_results.at[index, "partyAbbreviation"],
+                    candidate_wise_results.at[index, "candidateNumber"],
+                    candidate_wise_results.at[index, "candidateName"]
                 ]
 
                 content["data"].append(data_row)
