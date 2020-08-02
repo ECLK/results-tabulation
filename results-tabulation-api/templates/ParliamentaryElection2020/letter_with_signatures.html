@@ -17,15 +17,25 @@
         .table th {
             font-weight: 800;
         }
+        .logo-padding {
+          padding-top: 0;
+        }
     </style>
     {% for pageNumber in [1,2,3,4] %}
+        {% if pageNumber in [2] %}
+            <style>
+                .logo-padding {
+                    padding-top: 1px;
+                }
+            </style>
+        {% endif %}
 
         {# TODO review why "padding-top: 1px" is needed to align the pages on print view.#}
-        <div style="padding-top: 1px;page-break-before: always;">
+        <div style="page-break-before: always;">
 
             {% block letter_content %}{% endblock %}
 
-            <table class="table table-borderless signatures" style="padding-top: 30px;padding-bottom: 20px;">
+            <table class="table table-borderless signatures" style="padding-top: 30px;">
                 <tr style="text-align:center;">
                     {% if pageNumber in [1,2,3,4] %}
                         <td>
