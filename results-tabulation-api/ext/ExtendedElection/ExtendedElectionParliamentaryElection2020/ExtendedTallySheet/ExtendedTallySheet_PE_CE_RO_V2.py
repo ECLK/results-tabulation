@@ -1,12 +1,67 @@
 from flask import render_template
+import re
 
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from constants.VOTE_TYPES import NonPostal
-from util import to_comma_seperated_num
+from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri
 
 
 class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
+    def on_get_release_result_params(self):
+        pd_code = None
+        pd_name = None
+
+        electoral_district = self.tallySheet.submission.area
+        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
+        ed_code = ed_name_regex_search.group(1)
+        ed_name = ed_name_regex_search.group(2)
+
+        result_type = "RE_V"
+        result_code = ed_code
+        result_level = "ELECTORAL_DISTRICT"
+
+        return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
+
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
+        def json(self):
+            extended_tally_sheet = self.tallySheet.get_extended_tally_sheet()
+            result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = extended_tally_sheet.on_get_release_result_params()
+
+            party_wise_results = self.get_party_wise_valid_vote_count_result().sort_values(
+                by=['numValue', "electionPartyId"], ascending=False
+            ).reset_index()
+
+            registered_voters_count = self.tallySheetVersion.submission.area.get_registered_voters_count(
+                vote_type=self.tallySheetVersion.submission.election.voteType)
+            total_valid_vote_count = 0
+            total_rejected_vote_count = self.get_rejected_vote_count_result()["numValue"].values[0]
+            for party_wise_result in party_wise_results.itertuples():
+                total_valid_vote_count += float(party_wise_result.numValue)
+            total_vote_count = total_valid_vote_count + total_rejected_vote_count
+
+            return {
+                "type": result_type,
+                "level": result_level,
+                "ed_code": ed_code,
+                "ed_name": ed_name,
+                "by_party": [
+                    {
+                        "party_code": party_wise_result.partyAbbreviation,
+                        "party_name": party_wise_result.partyName,
+                        "vote_count": int(party_wise_result.numValue),
+                        "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100)
+                    } for party_wise_result in party_wise_results.itertuples()
+                ],
+                "summary": {
+                    "valid": int(total_valid_vote_count),
+                    "rejected": int(total_rejected_vote_count),
+                    "polled": int(total_vote_count),
+                    "electors": int(registered_voters_count),
+                    "percent_valid": to_percentage((total_valid_vote_count / registered_voters_count) * 100),
+                    "percent_rejected": to_percentage((total_rejected_vote_count / registered_voters_count) * 100),
+                    "percent_polled": to_percentage((total_vote_count / registered_voters_count) * 100)
+                }
+            }
 
         def html_letter(self, title="", total_registered_voters=None):
             return super(ExtendedTallySheet_PE_CE_RO_V2.ExtendedTallySheetVersion, self).html_letter(

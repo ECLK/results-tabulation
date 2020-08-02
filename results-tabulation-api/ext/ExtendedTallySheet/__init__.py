@@ -152,7 +152,7 @@ class ExtendedTallySheet:
 
         if workflow_action.actionType == WORKFLOW_ACTION_TYPE_REQUEST_CHANGES and workflow_action.toStatus in [
             WORKFLOW_STATUS_TYPE_SAVED, WORKFLOW_STATUS_TYPE_EMPTY]:
-            
+
             from orm.entities.Submission import TallySheet
             from orm.entities.Submission.TallySheet import TallySheetTallySheetModel
 
@@ -223,7 +223,7 @@ class ExtendedTallySheet:
         return result_type, result_code, ed_code, ed_name, pd_code, pd_name
 
     def on_release_result_notify(self, tally_sheet_version):
-        result_type, result_code, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
+        result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
 
         extended_tally_sheet_version = self.tallySheet.get_extended_tally_sheet_version(
             tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
@@ -232,7 +232,7 @@ class ExtendedTallySheet:
         results_dist.notify_release_result(result_type=result_type, result_code=result_code, data=data)
 
     def on_release_result(self, tally_sheet_version):
-        result_type, result_code, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
+        result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
 
         extended_tally_sheet_version = self.tallySheet.get_extended_tally_sheet_version(
             tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
