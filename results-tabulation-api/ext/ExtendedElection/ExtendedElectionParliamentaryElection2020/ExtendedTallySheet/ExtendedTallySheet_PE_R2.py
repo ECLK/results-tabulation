@@ -21,6 +21,7 @@ from orm.enums import AreaTypeEnum
 import math
 import pandas as pd
 import numpy as np
+import re
 
 template_row_to_df_num_value_column_map = {
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: "seatsAllocatedFromRound1",
@@ -36,7 +37,46 @@ template_row_to_df_num_value_column_map = {
 
 
 class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
+    def on_get_release_result_params(self):
+        pd_code = None
+        pd_name = None
+
+        electoral_district = self.tallySheet.submission.area
+        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
+        ed_code = ed_name_regex_search.group(1)
+        ed_name = ed_name_regex_search.group(2)
+
+        result_type = "RE_S"
+        result_code = ed_code
+        result_level = "ELECTORAL_DISTRICT"
+
+        return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
+
     class ExtendedTallySheetVersion(ExtendedEditableTallySheetReport.ExtendedTallySheetVersion):
+        def json(self):
+            extended_tally_sheet = self.tallySheet.get_extended_tally_sheet()
+            result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = extended_tally_sheet.on_get_release_result_params()
+
+            party_wise_results = self.get_party_wise_seat_calculations().sort_values(
+                by=['seatsAllocated', "electionPartyId"], ascending=[False, True]
+            ).reset_index()
+
+            return {
+                "type": result_type,
+                "level": result_level,
+                "ed_code": ed_code,
+                "ed_name": ed_name,
+                "by_party": [
+                    {
+                        "party_code": party_wise_result.partyAbbreviation,
+                        "party_name": party_wise_result.partyName,
+                        "vote_count": 0,
+                        "vote_percentage": 0,
+                        "seat_count": int(party_wise_result.seatsAllocated),
+                        "national_list_seat_count": 0
+                    } for party_wise_result in party_wise_results.itertuples()
+                ]
+            }
 
         def get_post_save_request_content(self):
             election = self.tallySheetVersion.submission.election
@@ -186,7 +226,8 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                         df_column_name = template_row_to_df_num_value_column_map[template_row_type]
                         party_wise_calculations_df.at[index_1, df_column_name] += num_value
 
-            party_wise_calculations_df = party_wise_calculations_df.sort_values(by=['seatsAllocated'], ascending=False)
+            party_wise_calculations_df = party_wise_calculations_df.sort_values(
+                by=['seatsAllocated', "electionPartyId"], ascending=[False, True])
 
             return party_wise_calculations_df
 
@@ -361,7 +402,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             # sort by vote count descending
             party_wise_valid_vote_count_result = party_wise_valid_vote_count_result.sort_values(
-                by=['numValue'], ascending=False
+                by=['numValue', 'electionPartyId'], ascending=[False, True]
             ).reset_index()
 
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
