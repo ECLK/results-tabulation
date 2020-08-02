@@ -297,10 +297,14 @@ role_based_access_config = {
             Quarantine: [READ, PRINT]
         },
         PE_CE_RO_V1: {
-            Postal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY, RELEASE],
-            NonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY, RELEASE],
-            Displaced: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY, RELEASE],
-            Quarantine: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY, RELEASE]
+            Postal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
+                     RELEASE],
+            NonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
+                        RELEASE],
+            Displaced: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
+                        RELEASE],
+            Quarantine: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
+                         RELEASE]
         },
         POLLING_DIVISION_RESULTS: {
             Postal: [READ, PRINT, WRITE],
@@ -309,11 +313,12 @@ role_based_access_config = {
             Quarantine: [READ, PRINT, WRITE]
         },
         PE_CE_RO_V2: {
-            PostalAndNonPostal: [READ, PRINT, WRITE]
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, NOTIFY, RELEASE]
         },
         PE_R2: {
-            PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY,
-                                 RELEASE]
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, NOTIFY, RELEASE]
         },
         PE_CE_RO_PR_1: {
             Postal: [READ, PRINT, WRITE],
@@ -328,8 +333,8 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
         PE_21: {
-            PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY,
-                                 RELEASE]
+            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+                                 CERTIFY, NOTIFY, RELEASE]
         },
         PE_AI_ED: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
