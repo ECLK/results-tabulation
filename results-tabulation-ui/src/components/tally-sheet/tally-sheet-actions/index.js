@@ -1,11 +1,11 @@
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import {PATH_ELECTION_TALLY_SHEET_VIEW} from "../../../App";
 import Button from "@material-ui/core/Button";
 import {TallySheetContext} from "../../../services/tally-sheet.provider";
 import {
     WORKFLOW_ACTION_TYPE_CERTIFY,
     WORKFLOW_ACTION_TYPE_EDIT,
-    WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
+    WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_NOTIFY,
     WORKFLOW_ACTION_TYPE_PRINT, WORKFLOW_ACTION_TYPE_PRINT_LETTER,
     WORKFLOW_ACTION_TYPE_RELEASE, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
     WORKFLOW_ACTION_TYPE_SAVE,
@@ -27,6 +27,7 @@ const TALLY_SHEET_ACTION_SUCCESS_MESSAGE = {
     [WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY]: "Moved the tally sheet for certifying.",
     [WORKFLOW_ACTION_TYPE_CERTIFY]: "Certified tally sheet successfully.",
     [WORKFLOW_ACTION_TYPE_RELEASE]: "Released tally sheet results successfully.",
+    [WORKFLOW_ACTION_TYPE_NOTIFY]: "Notified the subscribers to await for results.",
     [WORKFLOW_ACTION_TYPE_REQUEST_CHANGES]: "Submitted change request.",
 };
 
@@ -41,8 +42,23 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
     const messageContext = useContext(MessagesContext);
 
     const tallySheet = tallySheetContext.getTallySheetById(tallySheetId);
+    const [processing, setProcessing] = useState(false);
 
-    return tallySheet.workflowInstance.actions.filter((action) => {
+    const fetchAndRefreshData = async () => {
+        try {
+            await tallySheetContext.fetchTallySheetById(tallySheetId);
+        } catch (e) {
+            const errorCode = getErrorCode(e);
+            if (errorCode) {
+                const messageTitle = "Unknown Error";
+                const messageBody = getErrorMessage(errorCode);
+                const messageType = MESSAGE_TYPES.ERROR;
+                messageContext.push({messageTitle, messageBody, messageType})
+            }
+        }
+    };
+
+    const tallySheetActionsJsx = tallySheet.workflowInstance.actions.filter((action) => {
         if (action.allowed) {
             if (filter) {
                 return filter(action);
@@ -56,6 +72,9 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
         let ActionButtonElement = Button;
 
         const onClick = async () => {
+
+            setProcessing(true);
+
             try {
                 if ([
                     WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT
@@ -85,7 +104,11 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
                     const messageType = MESSAGE_TYPES.ERROR;
                     messageContext.push({messageTitle, messageBody, messageType})
                 }
+
+                await fetchAndRefreshData();
             }
+
+            setProcessing(false);
         };
 
         const actionButtonProps = {
@@ -93,11 +116,12 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
             variant: "outlined",
             color: "primary",
             size: "small",
-            disabled: !action.authorized,
-            onClick() {
+            disabled: processing || !action.authorized,
+            onClick: async () => {
+                setProcessing(true);
 
                 if (action.actionType === WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT) {
-                    dialogContext.push({
+                    await dialogContext.push({
                         render({open, handleClose, handleOk}) {
                             return <UploadTallySheetProofsDialog
                                 allowUpload={true} title="Upload certified documents"
@@ -105,7 +129,7 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
                         }
                     })
                 } else if (action.actionType === WORKFLOW_ACTION_TYPE_RELEASE) {
-                    dialogContext.push({
+                    await dialogContext.push({
                         render({open, handleClose, handleOk}) {
                             return <UploadTallySheetProofsDialog
                                 allowUpload={false} title="Release confirmation"
@@ -116,12 +140,13 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
                                 ]}
                             />
                         }
-                    }).then(() => {
-                        onClick()
                     });
+                    await onClick();
                 } else {
-                    onClick();
+                    await onClick();
                 }
+
+                setProcessing(false);
             }
         };
 
@@ -134,4 +159,6 @@ export default function TallySheetActions({tallySheetId, electionId, history, fi
             {action.actionName}
         </ActionButtonElement>
     });
+
+    return tallySheetActionsJsx;
 }

@@ -31,7 +31,7 @@ export default function Processing(
                 <div className="tabulation-linear-progress-bar-content">
                 </div>
             </div>,
-            children
+            showContent ? children : null
         ];
     } else {
         return children;
