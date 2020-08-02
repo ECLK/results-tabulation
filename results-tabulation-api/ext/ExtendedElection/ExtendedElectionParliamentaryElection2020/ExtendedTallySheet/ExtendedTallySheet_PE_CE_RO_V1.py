@@ -39,7 +39,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = extended_tally_sheet.on_get_release_result_params()
 
             party_wise_results = self.get_party_wise_valid_vote_count_result().sort_values(
-                by=['numValue', "electionPartyId"], ascending=False
+                by=['numValue', "electionPartyId"], ascending=[False, True]
             ).reset_index()
 
             registered_voters_count = self.tallySheetVersion.submission.area.get_registered_voters_count(
@@ -62,7 +62,9 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                         "party_code": party_wise_result.partyAbbreviation,
                         "party_name": party_wise_result.partyName,
                         "vote_count": int(party_wise_result.numValue),
-                        "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100)
+                        "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100),
+                        "seat_count": 0,
+                        "national_list_seat_count": 0
                     } for party_wise_result in party_wise_results.itertuples()
                 ],
                 "summary": {
@@ -136,7 +138,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
 
             # sort by vote count descending
             party_wise_valid_vote_count_result = party_wise_valid_vote_count_result.sort_values(
-                by=['numValue', "electionPartyId"], ascending=False
+                by=['numValue', "electionPartyId"], ascending=[False, True]
             ).reset_index()
 
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
