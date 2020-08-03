@@ -356,9 +356,9 @@ class TallySheetModel(db.Model):
         extended_tally_sheet_version = self.get_extended_tally_sheet_version(tallySheetVersionId=tallySheetVersionId)
         return extended_tally_sheet_version.html()
 
-    def html_letter(self, tallySheetVersionId):
+    def html_letter(self, tallySheetVersionId, signatures):
         extended_tally_sheet_version = self.get_extended_tally_sheet_version(tallySheetVersionId=tallySheetVersionId)
-        return extended_tally_sheet_version.html_letter()
+        return extended_tally_sheet_version.html_letter(signatures=signatures)
 
 
 Model = TallySheetModel

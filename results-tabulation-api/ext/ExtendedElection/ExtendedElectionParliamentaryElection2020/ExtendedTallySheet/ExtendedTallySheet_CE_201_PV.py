@@ -10,14 +10,8 @@ from orm.enums import AreaTypeEnum
 class ExtendedTallySheet_CE_201_PV(ExtendedTallySheetDataEntry):
     class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
 
-        def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_CE_201_PV.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
-            )
-
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
-
 
             time_of_commencement = self.get_time_of_commencement()
             number_of_a_packets_found = self.get_number_of_a_packets_found()
@@ -26,8 +20,9 @@ class ExtendedTallySheet_CE_201_PV(ExtendedTallySheetDataEntry):
             number_of_a_covers_rejected = self.get_number_of_a_covers_rejected()
             number_of_b_covers_rejected = self.get_number_of_b_covers_rejected()
 
-            accepted_ballots = number_of_a_packets_found['numValue'].sum() - (number_of_a_covers_rejected['numValue'].values[0] +
-                number_of_b_covers_rejected['numValue'].values[0])
+            accepted_ballots = number_of_a_packets_found['numValue'].sum() - (
+                        number_of_a_covers_rejected['numValue'].values[0] +
+                        number_of_b_covers_rejected['numValue'].values[0])
 
             stamp = tallySheetVersion.stamp
 

@@ -61,7 +61,7 @@ class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
                 }
             }
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             tallySheetVersion = self.tallySheetVersion
             party_wise_valid_vote_count_result = self.get_party_wise_valid_vote_count_result()
             area_wise_valid_vote_count_result = self.get_area_wise_valid_vote_count_result()
@@ -79,6 +79,7 @@ class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
+                "signatures": signatures,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],
@@ -132,7 +133,7 @@ class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/AI-LETTER.html',
+                'ParliamentaryElection2020/PE-AI-ED-LETTER.html',
                 content=content
             )
 
