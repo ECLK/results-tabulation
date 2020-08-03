@@ -23,12 +23,14 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             pd_code = "%sV" % self.tallySheet.submission.election.voteType[0]
             pd_name = self.tallySheet.submission.election.voteType
 
-        pd_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
-        ed_code = pd_name_regex_search.group(1)
-        ed_name = pd_name_regex_search.group(2)
+        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
+        ed_code = ed_name_regex_search.group(1)
+        ed_name = ed_name_regex_search.group(2)
+
+        pd_code = "%s%s" % (ed_code, pd_code)
 
         result_type = "RP_V"
-        result_code = "%s%s" % (ed_code, pd_code)
+        result_code = pd_code
         result_level = "POLLING-DIVISION"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
