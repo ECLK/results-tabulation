@@ -313,11 +313,11 @@ role_based_access_config = {
             Quarantine: [READ, PRINT, WRITE]
         },
         PE_CE_RO_V2: {
-            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+            PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
                                  CERTIFY, NOTIFY, RELEASE]
         },
         PE_R2: {
-            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+            PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
                                  CERTIFY, NOTIFY, RELEASE]
         },
         PE_CE_RO_PR_1: {
@@ -333,7 +333,7 @@ role_based_access_config = {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
         PE_21: {
-            PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
+            PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
                                  CERTIFY, NOTIFY, RELEASE]
         },
         PE_AI_ED: {
