@@ -91,14 +91,7 @@ export function UploadTallySheetProofsDialog(
     }
 
     return <Dialog open={open} onClose={handleClose()} maxWidth="md" fullWidth={true}>
-
         <DialogTitle id="form-dialog-title">{title}</DialogTitle>
-        {/*<div style={{display: "flex", flex: 0, padding: 15}}>*/}
-        {/*    <Typography variant="h5" style={{flex: 1}}>{title}</Typography>*/}
-        {/*    <IconButton aria-label="close" onClick={handleClose()}>*/}
-        {/*        <CloseIcon/>*/}
-        {/*    </IconButton>*/}
-        {/*</div>*/}
         {(() => {
             if (allowUpload) {
                 return <div style={{flex: 0, padding: 10}}>
