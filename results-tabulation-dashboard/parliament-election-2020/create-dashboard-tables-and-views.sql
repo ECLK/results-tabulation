@@ -1,23 +1,6 @@
 CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_increment (
     id INT AUTO_INCREMENT NOT NULL,
-    PRIMARY KEY(id)
-)  ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_tally_sheet_status (
-    id INT AUTO_INCREMENT,
-    incrementId INT NOT NULL,
-    electionId INT NOT NULL,
-    electoralDistrictId INT,
-    pollingDivisionId INT,
-    countingCentreId INT,
-    templateName VARCHAR(50) NOT NULL,
-    voteType VARCHAR(50) NOT NULL,
-    partyId INT,
-    verifiedTallySheetCount INT NOT NULL,
-    releasedTallySheetCount INT NOT NULL,
-    emptyTallySheetCount INT NOT NULL,
-    savedTallySheetCount INT NOT NULL,
-    totalTallySheetCount INT NOT NULL,
+    active INT,
     PRIMARY KEY(id)
 )  ENGINE=INNODB;
 
