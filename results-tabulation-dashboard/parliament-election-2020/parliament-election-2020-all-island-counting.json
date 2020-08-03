@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 39,
-  "iteration": 1596382146700,
+  "id": 41,
+  "iteration": 1596441760099,
   "links": [],
   "panels": [
     {
@@ -203,7 +203,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -622,7 +621,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -1040,7 +1038,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -1566,7 +1563,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -1696,8 +1692,25 @@
       "content": "",
       "datasource": null,
       "gridPos": {
+        "h": 2,
+        "w": 14,
+        "x": 10,
+        "y": 10
+      },
+      "id": 106,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
         "h": 1,
-        "w": 24,
+        "w": 9,
         "x": 0,
         "y": 11
       },
@@ -1769,7 +1782,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -1956,7 +1968,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -2194,11 +2205,27 @@
       "datasource": null,
       "gridPos": {
         "h": 1,
-        "w": 24,
+        "w": 9,
         "x": 0,
         "y": 13
       },
       "id": 76,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 14,
+        "x": 10,
+        "y": 13
+      },
+      "id": 103,
       "mode": "markdown",
       "timeFrom": null,
       "timeShift": null,
@@ -2266,7 +2293,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -2453,7 +2479,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -2691,11 +2716,27 @@
       "datasource": null,
       "gridPos": {
         "h": 1,
-        "w": 24,
+        "w": 9,
         "x": 0,
         "y": 15
       },
       "id": 90,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 14,
+        "x": 10,
+        "y": 15
+      },
+      "id": 104,
       "mode": "markdown",
       "timeFrom": null,
       "timeShift": null,
@@ -2763,7 +2804,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -2950,7 +2990,6 @@
         "ymin": null
       },
       "tableColumn": "",
-      "targets": [],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -3188,11 +3227,27 @@
       "datasource": null,
       "gridPos": {
         "h": 1,
-        "w": 24,
+        "w": 9,
         "x": 0,
         "y": 17
       },
       "id": 89,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 14,
+        "x": 10,
+        "y": 17
+      },
+      "id": 105,
       "mode": "markdown",
       "timeFrom": null,
       "timeShift": null,
@@ -3209,7 +3264,6 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
           "text": "307 - PE 2020 - All Island Test 2",
           "value": "307"
         },
@@ -3259,5 +3313,5 @@
   "variables": {
     "list": []
   },
-  "version": 3
+  "version": 1
 }
