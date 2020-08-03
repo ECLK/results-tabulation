@@ -14,6 +14,5 @@ ADD . /app
 
 # Install requirements
 RUN pip install -r requirements.txt
-RUN export ENV_CONFIG=./env/dev.cfg
 
-CMD [ "python", "excecute_mysql_query.py", "./env/dev.cfg", "./parliament-election-2020/create-or-update-counting-dashboard-tables.sql" ]
+ENTRYPOINT [ "python",  "execute_mysql_query.py"]
