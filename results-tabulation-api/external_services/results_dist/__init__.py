@@ -8,28 +8,36 @@ import traceback
 from orm.entities.IO.File import FileModel
 
 
-def release_result(result_type, result_code, data):
+def release_result(result_type, result_code, data, stamp):
     try:
+        data["timestamp"] = stamp.createdAt.strftime("%m/%d/%Y, %H:%M:%S")
+
+        url = "%s/result/data/%s/%s/%s" % (
+            connex_app.app.config['RESULT_DISSEMINATION_SYSTEM_URL'],
+            connex_app.app.config['RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE'],
+            result_type, result_code
+        )
+        data = str(data)
+
+        print("[RESULTS DIST] %s\n%s" % (url, data))
+
         response = requests.request(
             method="POST",
-            url="%s/result/data/%s/%s/%s" % (
-                connex_app.app.config['RESULT_DISSEMINATION_SYSTEM_URL'],
-                connex_app.app.config['RESULT_DISSEMINATION_SYSTEM_ELECTION_CODE'],
-                result_type, result_code
-            ),
+            url=url,
             headers={'Content-Type': 'application/json'},
-            data=str(data),
+            data=data,
             timeout=300
         )
 
         if response.status_code != 202:
+            print("[RESULTS DIST] Error %d" % response.status_code)
             raise InternalServerErrorException(
                 message="Results releasing failed.",
                 code=MESSAGE_RESULTS_DIST_RELEASE_FAILED
             )
     except Exception as e:
         error_string = traceback.format_exc()
-        print(error_string)
+        print("[RESULTS DIST] Exception\n%s", error_string)
 
         raise InternalServerErrorException(
             message="Results releasing request failed.",

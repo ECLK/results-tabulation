@@ -238,7 +238,8 @@ class ExtendedTallySheet:
             tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
         data = extended_tally_sheet_version.json()
 
-        results_dist.release_result(result_type=result_type, result_code=result_code, data=data)
+        results_dist.release_result(result_type=result_type, result_code=result_code, data=data,
+                                    stamp=tally_sheet_version.stamp)
         results_dist.upload_release_documents(result_type=result_type, result_code=result_code,
                                               files=self.tallySheet.workflowInstance.proof.scannedFiles)
 
