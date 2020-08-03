@@ -133,7 +133,7 @@ class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/AI-LETTER.html',
+                'ParliamentaryElection2020/PE-AI-ED-LETTER.html',
                 content=content
             )
 
