@@ -239,7 +239,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
 
             return html
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             tallySheetVersion = self.tallySheetVersion
             stamp = tallySheetVersion.stamp
 
@@ -252,6 +252,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
+                "signatures": signatures,
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "data": [],

@@ -10,11 +10,6 @@ from util import to_comma_seperated_num
 class ExtendedTallySheet_PE_4(ExtendedTallySheetDataEntry):
     class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
 
-        def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_PE_4.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
-            )
-
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
 

@@ -170,7 +170,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
 
             return html
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             tallySheetVersion = self.tallySheetVersion
             party_wise_results = self.get_party_wise_results()
             stamp = tallySheetVersion.stamp
@@ -185,6 +185,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
+                "signatures": signatures,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],

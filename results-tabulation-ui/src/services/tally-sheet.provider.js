@@ -176,18 +176,19 @@ export function TallySheetProvider(props) {
 
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_HTML(tallySheetId, tallySheetVersionId),
-            method: 'get'
+            method: 'post'
         })
     }
 
-    function fetchTallySheetVersionLetterHtml(tallySheetId, tallySheetVersionId = null) {
+    function fetchTallySheetVersionLetterHtml(tallySheetId, tallySheetVersionId = null, signatures = []) {
         if (!tallySheetVersionId) {
             tallySheetVersionId = state.tallySheetMap[tallySheetId].latestVersionId
         }
 
         return request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_HTML(tallySheetId, tallySheetVersionId),
-            method: 'get'
+            method: 'post',
+            data: {signatures}
         })
     }
 
@@ -240,7 +241,7 @@ export function TallySheetProvider(props) {
 
         const fileArrayBuffer = await request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_PDF(tallySheetId, tallySheetVersionId),
-            method: 'get',
+            method: 'post',
             responseType: 'arraybuffer'
         });
 
@@ -250,15 +251,16 @@ export function TallySheetProvider(props) {
         return dataUrl
     }
 
-    async function fetchTallySheetVersionLetterPdfDataUrl(tallySheetId, tallySheetVersionId = null) {
+    async function fetchTallySheetVersionLetterPdfDataUrl(tallySheetId, tallySheetVersionId = null, signatures = []) {
         if (!tallySheetVersionId) {
             tallySheetVersionId = state.tallySheetMap[tallySheetId].latestVersionId
         }
 
         const fileArrayBuffer = await request({
             url: ENDPOINT_PATH_TALLY_SHEET_VERSION_LETTER_PDF(tallySheetId, tallySheetVersionId),
-            method: 'get',
-            responseType: 'arraybuffer'
+            method: 'post',
+            responseType: 'arraybuffer',
+            data: {signatures}
         });
 
         const fileBlob = new Blob([fileArrayBuffer], {type: "application/pdf"});

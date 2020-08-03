@@ -1,9 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -20,6 +17,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import PreviewTallySheetProofFileButton from "../tally-sheet-proof-file-preview-button";
 import Processing from "../../processing";
 import {getErrorCode, getErrorMessage} from "../../../utils";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 export function UploadTallySheetProofsDialog(
     {
@@ -93,12 +91,14 @@ export function UploadTallySheetProofsDialog(
     }
 
     return <Dialog open={open} onClose={handleClose()} maxWidth="md" fullWidth={true}>
-        <div style={{display: "flex", flex: 0, padding: 15}}>
-            <Typography variant="h5" style={{flex: 1}}>{title}</Typography>
-            <IconButton aria-label="close" onClick={handleClose()}>
-                <CloseIcon/>
-            </IconButton>
-        </div>
+
+        <DialogTitle id="form-dialog-title">{title}</DialogTitle>
+        {/*<div style={{display: "flex", flex: 0, padding: 15}}>*/}
+        {/*    <Typography variant="h5" style={{flex: 1}}>{title}</Typography>*/}
+        {/*    <IconButton aria-label="close" onClick={handleClose()}>*/}
+        {/*        <CloseIcon/>*/}
+        {/*    </IconButton>*/}
+        {/*</div>*/}
         {(() => {
             if (allowUpload) {
                 return <div style={{flex: 0, padding: 10}}>
@@ -134,10 +134,11 @@ export function UploadTallySheetProofsDialog(
         </DialogContent>
         <DialogActions>
             {actions.map(({value, onClick}, actionIndex) => {
-                return <Button key={actionIndex} onClick={onClick()} color="default" variant="outlined">
+                return <Button key={actionIndex} onClick={onClick()} color="primary">
                     {value}
                 </Button>
             })}
         </DialogActions>
     </Dialog>
+
 }

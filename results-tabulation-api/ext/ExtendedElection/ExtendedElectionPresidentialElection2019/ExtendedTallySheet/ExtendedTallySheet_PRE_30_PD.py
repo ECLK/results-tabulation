@@ -11,7 +11,7 @@ from orm.enums import AreaTypeEnum
 class ExtendedTallySheet_PRE_30_PD(ExtendedTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             return super(ExtendedTallySheet_PRE_30_PD.ExtendedTallySheetVersion, self).html_letter(
                 title="Results of Polling Division %s" % self.tallySheetVersion.submission.area.areaName,
                 total_registered_voters=float(get_polling_division_total_registered_voters(tallySheetVersion=self))

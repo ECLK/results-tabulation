@@ -10,11 +10,6 @@ from orm.enums import AreaTypeEnum
 class ExtendedTallySheet_CE_201(ExtendedTallySheetDataEntry):
     class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
 
-        def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_CE_201.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
-            )
-
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
 
@@ -88,7 +83,7 @@ class ExtendedTallySheet_CE_201(ExtendedTallySheetDataEntry):
 
                 content["data"].append(data_row)
 
-            content["totalBallotBoxCount"]= to_comma_seperated_num(totalBallotBoxCount)
+            content["totalBallotBoxCount"] = to_comma_seperated_num(totalBallotBoxCount)
 
             html = render_template(
                 'CE-201.html',

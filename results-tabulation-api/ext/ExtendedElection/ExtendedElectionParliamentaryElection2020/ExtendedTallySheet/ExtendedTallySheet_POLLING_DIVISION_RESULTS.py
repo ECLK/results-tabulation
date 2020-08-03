@@ -13,11 +13,6 @@ from orm.enums import AreaTypeEnum
 class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
-        def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_POLLING_DIVISION_RESULTS.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Polling Division %s" % self.tallySheetVersion.submission.area.areaName
-            )
-
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
 
@@ -92,7 +87,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
                     total_rejected_vote_count * 100 / total_vote_count) if total_vote_count > 0 else 0
             content["rejectedVotePercentage"] = to_percentage(rejected_vote_percentage)
             total_vote_percentage = (
-                        total_vote_count * 100 / registered_voters_count) if registered_voters_count > 0 else 0
+                    total_vote_count * 100 / registered_voters_count) if registered_voters_count > 0 else 0
             content["totalVotePercentage"] = to_percentage(total_vote_percentage)
 
             html = render_template(

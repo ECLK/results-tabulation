@@ -410,7 +410,7 @@ class ExtendedTallySheet:
         def get_post_save_request_content(self):
             return []
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, required_signatures=[]):
             tallySheetVersion = self.tallySheetVersion
             stamp = tallySheetVersion.stamp
 
