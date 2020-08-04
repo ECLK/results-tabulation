@@ -16,7 +16,7 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_EDIT, \
     WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, WORKFLOW_ACTION_TYPE_RELEASE, \
-    WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY
+    WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY, WORKFLOW_ACTION_TYPE_PRINT
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED, \
     WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED
 from external_services import results_dist
@@ -194,7 +194,8 @@ class ExtendedTallySheet:
         return tally_sheet_version
 
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
-        if not tally_sheet_version.isComplete:
+        if workflow_action.actionType not in [WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_PRINT,
+                                              WORKFLOW_ACTION_TYPE_SAVE] and not tally_sheet_version.isComplete:
             raise MethodNotAllowedException(message="Incomplete tally sheet.", code=MESSAGE_CODE_TALLY_SHEET_INCOMPLETE)
 
     def on_workflow_action(self, workflow_action, tally_sheet_version, content=None):
