@@ -1,6 +1,6 @@
 SET @election_template_name = "PARLIAMENT_ELECTION_2020";
 
-INSERT INTO ext_pe2020_dashboard_increment () VALUES();
+INSERT INTO ext_pe2020_dashboard_increment (active) VALUES(0);
 
 SET @lastIncrementId = LAST_INSERT_ID();
 
@@ -120,3 +120,5 @@ GROUP BY
     template.templateName,
     election.voteType,
     metaData.metaDataValue;
+
+UPDATE ext_pe2020_dashboard_increment SET active = 1 WHERE id = @lastIncrementId;

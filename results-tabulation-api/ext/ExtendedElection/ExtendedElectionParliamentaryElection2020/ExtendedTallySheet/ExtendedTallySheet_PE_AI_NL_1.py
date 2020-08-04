@@ -210,7 +210,7 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
 
             return html
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             tallySheetVersion = self.tallySheetVersion
             party_wise_valid_vote_count_result = self.get_party_wise_seat_calculations()
             area_wise_valid_vote_count_result = self.get_area_wise_valid_vote_count_result()
@@ -228,6 +228,7 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
+                "signatures": signatures,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],

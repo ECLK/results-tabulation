@@ -1,6 +1,6 @@
-{% extends 'ParliamentaryElection2020/letter_with_signatures.html' %}
+{% extends 'base.html' %}
 
-{% block letter_content %}
+{% block container %}
     <style>
 
         @media print {
@@ -41,17 +41,17 @@
 
         <div class="group" style="width:100% !important; text-align:center;">
             <div style="width:20% !important;">
-              <img src="data:image/png;base64, {{ content.logo }}" width="65px"
-                   style="display: inline-block"/><br/>
-              <span style="font-size:12px; font-weight:bold;">OFFICIAL RESULTS</span>
+                <img src="data:image/png;base64, {{ content.logo }}" width="65px"
+                     style="display: inline-block"/><br/>
+                <span style="font-size:12px; font-weight:bold;">OFFICIAL RESULTS</span>
             </div>
             <div style="width:80% !important; text-align:center;">
-              <span style="font-size: 11px;font-weight: 600;">DEPARTMENT OF ELECTIONS</span><br/>
-              <span style="font-weight: 700;font-weight: 600;font-size: 23px;">
+                <span style="font-size: 11px;font-weight: 600;">DEPARTMENT OF ELECTIONS</span><br/>
+                <span style="font-weight: 700;font-weight: 600;font-size: 23px;">
                 {{ content.election.electionName }}
               </span><br/>
-              <span style="font-weight:bold;font-size: 17px;">Votes Received by Party</span><br/>
-              <span style="font-size:14px;font-weight: 500;">
+                <span style="font-weight:bold;font-size: 17px;">Votes Received by Party</span><br/>
+                <span style="font-size:14px;font-weight: 500;">
                 <strong>All Island </strong> - Sri Lanka
               </span>
             </div>
@@ -168,4 +168,7 @@
             </tbody>
         </table>
     </div>
+
+    {% include 'ParliamentaryElection2020/signatures.html' with context %}
+
 {% endblock %}

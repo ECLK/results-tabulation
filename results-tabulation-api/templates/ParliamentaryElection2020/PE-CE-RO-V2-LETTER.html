@@ -1,6 +1,6 @@
-{% extends 'ParliamentaryElection2020/letter_with_signatures.html' %}
+{% extends 'base.html' %}
 
-{% block letter_content %}
+{% block container %}
     <style>
 
         @media print {
@@ -165,4 +165,7 @@
             </tbody>
         </table>
     </div>
+
+    {% include 'ParliamentaryElection2020/signatures.html' with context %}
+
 {% endblock %}

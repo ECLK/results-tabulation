@@ -80,7 +80,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 }
             }
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             tallySheetVersion = self.tallySheetVersion
             party_wise_valid_vote_count_result = self.get_party_wise_valid_vote_count_result()
             area_wise_valid_vote_count_result = self.get_area_wise_valid_vote_count_result()
@@ -103,6 +103,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
+                "signatures": signatures,
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,

@@ -42,15 +42,18 @@ def create_empty_and_get_html(tallySheetId):
 
 
 @authorize(required_roles=ALL_ROLES)
-def letter_html(tallySheetId, tallySheetVersionId):
+def letter_html(tallySheetId, tallySheetVersionId, body):
+    request_body = RequestBody(body)
+    signatures = request_body.get("signatures")
+
     user_access_area_ids = get_user_access_area_ids()
 
     return _cache_letter_html(user_access_area_ids=user_access_area_ids, tally_sheet_id=tallySheetId,
-                              tally_sheet_version_id=tallySheetVersionId)
+                              tally_sheet_version_id=tallySheetVersionId, signatures=signatures)
 
 
 @cache.memoize()
-def _cache_letter_html(user_access_area_ids, tally_sheet_id, tally_sheet_version_id):
+def _cache_letter_html(user_access_area_ids, tally_sheet_id, tally_sheet_version_id, signatures):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tally_sheet_id)
 
     if tally_sheet is None:
@@ -68,7 +71,8 @@ def _cache_letter_html(user_access_area_ids, tally_sheet_id, tally_sheet_version
             code=MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
         )
 
-    return Response(tally_sheet.html_letter(tallySheetVersionId=tally_sheet_version_id), mimetype='text/html')
+    return Response(tally_sheet.html_letter(tallySheetVersionId=tally_sheet_version_id, signatures=signatures),
+                    mimetype='text/html')
 
 
 @authorize(required_roles=ALL_ROLES)
@@ -139,15 +143,18 @@ def _cache_pdf(user_access_area_ids, tally_sheet_id, tally_sheet_version_id):
 
 
 @authorize(required_roles=ALL_ROLES)
-def letter_pdf(tallySheetId, tallySheetVersionId):
+def letter_pdf(tallySheetId, tallySheetVersionId, body):
+    request_body = RequestBody(body)
+    signatures = request_body.get("signatures")
+    
     user_access_area_ids = get_user_access_area_ids()
 
     return _cache_letter_pdf(user_access_area_ids=user_access_area_ids, tally_sheet_id=tallySheetId,
-                             tally_sheet_version_id=tallySheetVersionId)
+                             tally_sheet_version_id=tallySheetVersionId, signatures=signatures)
 
 
 @cache.memoize()
-def _cache_letter_pdf(user_access_area_ids, tally_sheet_id, tally_sheet_version_id):
+def _cache_letter_pdf(user_access_area_ids, tally_sheet_id, tally_sheet_version_id, signatures):
     tally_sheet = TallySheet.get_by_id(tallySheetId=tally_sheet_id)
 
     if tally_sheet is None:
@@ -167,7 +174,8 @@ def _cache_letter_pdf(user_access_area_ids, tally_sheet_id, tally_sheet_version_
 
     file_response = FileApi.get_download_file(fileId=tally_sheet_version.get_exported_letter_pdf_file_id(
         tallySheetId=tally_sheet_id,
-        tallySheetVersionId=tally_sheet_version_id
+        tallySheetVersionId=tally_sheet_version_id,
+        signatures=signatures
     ))
 
     db.session.commit()

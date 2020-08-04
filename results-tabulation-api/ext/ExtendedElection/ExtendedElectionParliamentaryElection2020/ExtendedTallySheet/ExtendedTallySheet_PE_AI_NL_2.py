@@ -166,7 +166,7 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
 
             return html
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             tallySheetVersion = self.tallySheetVersion
 
             stamp = tallySheetVersion.stamp
@@ -180,6 +180,7 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
+                "signatures": signatures,
                 "data": [],
                 "logo": convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png"),
                 "date": stamp.createdAt.strftime("%d/%m/%Y"),

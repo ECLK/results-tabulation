@@ -9,11 +9,7 @@ from orm.enums import AreaTypeEnum
 
 class ExtendedTallySheet_PE_39(ExtendedTallySheetDataEntry):
     class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
-        #
-        # def html_letter(self, title="", total_registered_voters=None):
-        #     # TODO: implement
-        #     pass
-        #
+
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
 
