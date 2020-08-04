@@ -1875,24 +1875,24 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
-                pe_39_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_39, electionId=electoral_district_ordinary_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": electoral_district_ordinary_election.electionId
-                    }).metaId,
-                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
-                )]
-                pe_22_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_22, electionId=electoral_district_ordinary_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": electoral_district_ordinary_election.electionId
-                    }).metaId,
-                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
-                )]
+                # pe_39_tally_sheet_list = [TallySheet.create(
+                #     template=tally_sheet_template_pe_39, electionId=electoral_district_ordinary_election.electionId,
+                #     areaId=area.areaId,
+                #     metaId=Meta.create({
+                #         "areaId": area.areaId,
+                #         "electionId": electoral_district_ordinary_election.electionId
+                #     }).metaId,
+                #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
+                # )]
+                # pe_22_tally_sheet_list = [TallySheet.create(
+                #     template=tally_sheet_template_pe_22, electionId=electoral_district_ordinary_election.electionId,
+                #     areaId=area.areaId,
+                #     metaId=Meta.create({
+                #         "areaId": area.areaId,
+                #         "electionId": electoral_district_ordinary_election.electionId
+                #     }).metaId,
+                #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
+                # )]
 
                 pe_4_tally_sheet_list = []
                 pe_4_tally_sheet_list_party_id_wise_map = {}
@@ -1928,8 +1928,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
                 return {
                     "pe_27_tally_sheet_list": pe_27_tally_sheet_list,
-                    "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
-                    "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
+                    # "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
+                    # "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
                     "pe_4_tally_sheet_list": pe_4_tally_sheet_list,
                     "pe_4_tally_sheet_list_party_id_wise_map": pe_4_tally_sheet_list_party_id_wise_map,
                     "pe_ce_201_tally_sheet_list": pe_ce_201_tally_sheet_list
@@ -1965,25 +1965,25 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
-                pe_39_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_39, electionId=electoral_district_sub_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": electoral_district_sub_election.electionId
-                    }).metaId,
-                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
-                )]
-
-                pe_22_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_22, electionId=electoral_district_sub_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": electoral_district_sub_election.electionId
-                    }).metaId,
-                    workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
-                )]
+                # pe_39_tally_sheet_list = [TallySheet.create(
+                #     template=tally_sheet_template_pe_39, electionId=electoral_district_sub_election.electionId,
+                #     areaId=area.areaId,
+                #     metaId=Meta.create({
+                #         "areaId": area.areaId,
+                #         "electionId": electoral_district_sub_election.electionId
+                #     }).metaId,
+                #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
+                # )]
+                # 
+                # pe_22_tally_sheet_list = [TallySheet.create(
+                #     template=tally_sheet_template_pe_22, electionId=electoral_district_sub_election.electionId,
+                #     areaId=area.areaId,
+                #     metaId=Meta.create({
+                #         "areaId": area.areaId,
+                #         "electionId": electoral_district_sub_election.electionId
+                #     }).metaId,
+                #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
+                # )]
 
                 pe_4_tally_sheet_list = []
                 pe_4_tally_sheet_list_party_id_wise_map = {}
@@ -2019,8 +2019,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
 
                 return {
                     "pe_27_tally_sheet_list": pe_27_tally_sheet_list,
-                    "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
-                    "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
+                    # "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
+                    # "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
                     "pe_4_tally_sheet_list": pe_4_tally_sheet_list,
                     "pe_4_tally_sheet_list_party_id_wise_map": pe_4_tally_sheet_list_party_id_wise_map,
                     "pe_ce_201_pv_tally_sheet_list": pe_ce_201_pv_tally_sheet_list
