@@ -12,7 +12,7 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACT
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, \
     WORKFLOW_ACTION_TYPE_RELEASE, WORKFLOW_ACTION_TYPE_EDIT, WORKFLOW_ACTION_TYPE_PRINT, \
-    WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_PRINT_LETTER
+    WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_PRINT_LETTER, WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY
 
 READ = WORKFLOW_ACTION_TYPE_VIEW
@@ -28,6 +28,7 @@ CERTIFY = WORKFLOW_ACTION_TYPE_CERTIFY
 RELEASE = WORKFLOW_ACTION_TYPE_RELEASE
 NOTIFY = WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY
 UPLOAD_PROOF_DOCUMENT = WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT
+BACK_TO_VERIFIED = WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED
 
 role_based_access_config = {
     DATA_EDITOR_ROLE: {
@@ -298,13 +299,13 @@ role_based_access_config = {
         },
         PE_CE_RO_V1: {
             Postal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
-                     RELEASE],
+                     RELEASE, BACK_TO_VERIFIED],
             NonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
-                        RELEASE],
+                        RELEASE, BACK_TO_VERIFIED],
             Displaced: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
-                        RELEASE],
+                        RELEASE, BACK_TO_VERIFIED],
             Quarantine: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
-                         RELEASE]
+                         RELEASE, BACK_TO_VERIFIED]
         },
         POLLING_DIVISION_RESULTS: {
             Postal: [READ, PRINT, WRITE],
@@ -314,11 +315,11 @@ role_based_access_config = {
         },
         PE_CE_RO_V2: {
             PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, NOTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
         PE_R2: {
             PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, NOTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
         PE_CE_RO_PR_1: {
             Postal: [READ, PRINT, WRITE],
@@ -334,31 +335,31 @@ role_based_access_config = {
         },
         PE_21: {
             PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, NOTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
         PE_AI_ED: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, NOTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
         PE_AI_SA: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, NOTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
         PE_AI_NL_1: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, NOTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
         PE_AI_NL_2: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, NOTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
         PE_AI_1: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, NOTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
         PE_AI_2: {
             PostalAndNonPostal: [READ, WRITE, UNLOCK, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
-                                 CERTIFY, NOTIFY, RELEASE]
+                                 CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         }
     }
 }
