@@ -304,6 +304,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
 
                 {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
 
                 {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
@@ -352,6 +354,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED,
                  "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
 
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
                 {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
                 {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
@@ -442,6 +446,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED,
                  "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
 
+                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
                 {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
                 {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
