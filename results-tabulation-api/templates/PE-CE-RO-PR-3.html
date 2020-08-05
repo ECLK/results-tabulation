@@ -64,7 +64,19 @@
                     <td class="left right top bottom text-right">{{ row[3] }}</td>
                     <td class="left right top bottom text-right">{{ row[4] }}</td>
                 </tr>
+
+                {%if (content.data|length==11) and (loop.index==11) %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>&nbsp;</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {% endif %}
+
             {% endfor %}
+
             </tbody>
         </table>
 
