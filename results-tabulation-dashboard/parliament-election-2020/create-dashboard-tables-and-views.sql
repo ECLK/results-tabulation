@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_tally_sheet_status (
 
 CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_area_map (
     id INT AUTO_INCREMENT,
+    electionId INT,
     countryId INT,
     electoralDistrictId INT,
     pollingDivisionId INT,
@@ -32,10 +33,12 @@ CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_area_map (
     PRIMARY KEY(id)
 )  ENGINE=INNODB;
 
-DELETE from ext_pe2020_dashboard_area_map;
+DELETE FROM ext_pe2020_dashboard_area_map;
 
-INSERT INTO ext_pe2020_dashboard_area_map (countryId, electoralDistrictId, pollingDivisionId, countingCentreId, voteType)
+INSERT INTO ext_pe2020_dashboard_area_map (electionId, countryId, electoralDistrictId,
+            pollingDivisionId, countingCentreId, voteType)
     SELECT
+        country.electionId,
         country.areaId as countryId,
         electoralDistrict.areaId as electoralDistrictId,
         pollingDivision.areaId as pollingDivisionId,
@@ -85,8 +88,10 @@ INSERT INTO ext_pe2020_dashboard_area_map (countryId, electoralDistrictId, polli
         pollingDivision.areaId,
         countingCentre.areaId;
 
-INSERT INTO ext_pe2020_dashboard_area_map (countryId, electoralDistrictId, pollingDivisionId, countingCentreId, voteType)
+INSERT INTO ext_pe2020_dashboard_area_map (electionId, countryId, electoralDistrictId, pollingDivisionId,
+        countingCentreId, voteType)
     SELECT
+        country.electionId,
         country.areaId as countryId,
         electoralDistrict.areaId as electoralDistrictId,
         electoralDistrict.areaId as pollingDivisionId,
