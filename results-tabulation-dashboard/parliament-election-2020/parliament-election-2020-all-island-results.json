@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 35,
-  "iteration": 1596656922365,
+  "iteration": 1596658668941,
   "links": [],
   "panels": [
     {
@@ -135,7 +135,7 @@
         "x": 18,
         "y": 0
       },
-      "id": 44,
+      "id": 63,
       "links": [],
       "options": {
         "displayMode": "gradient",
@@ -205,7 +205,7 @@
       "datasource": null,
       "gridPos": {
         "h": 7,
-        "w": 18,
+        "w": 12,
         "x": 0,
         "y": 3
       },
@@ -271,6 +271,80 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Top 10 parties",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": null,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 3
+      },
+      "id": 44,
+      "links": [],
+      "options": {
+        "displayMode": "gradient",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "title": "$__cell_1"
+          },
+          "limit": 10,
+          "overrides": [],
+          "values": true
+        },
+        "orientation": "horizontal",
+        "showUnfilled": true
+      },
+      "pluginVersion": "6.7.3",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  NOW() as \"time\", party.partyName AS \"name\", \n  COALESCE(SUM(ext_pe2020_dashboard_party_wise_national_list_seat_allocation.nationalListSeatCount), 0) AS aggregatedSeatCount\nFROM ext_pe2020_dashboard_party_wise_national_list_seat_allocation, party\nWHERE \n  party.partyId = ext_pe2020_dashboard_party_wise_national_list_seat_allocation.partyId\n  and ext_pe2020_dashboard_party_wise_national_list_seat_allocation.electionId = $rootElectionId\n  and ext_pe2020_dashboard_party_wise_national_list_seat_allocation.incrementId IN (\n    SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\nGROUP BY\n  party.partyId\nORDER BY\n  aggregatedSeatCount DESC, party.partyId\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "National List",
       "transparent": true,
       "type": "bargauge"
     },
@@ -1583,5 +1657,5 @@
   "variables": {
     "list": []
   },
-  "version": 14
+  "version": 15
 }
