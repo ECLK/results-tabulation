@@ -259,7 +259,7 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                 <TableFooter>
                     <TableRow>
                         <TableCell align="right" colSpan={2}>Total ordinary ballot count</TableCell>
-                        <TableCell align="right">{totalOrdinaryBallotCountRow.numValue}</TableCell>
+                        <TableCell align="center">{totalOrdinaryBallotCountRow.numValue}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell align="right" colSpan={3}>

@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_increment (
     id INT AUTO_INCREMENT NOT NULL,
+    active INT,
     PRIMARY KEY(id)
 )  ENGINE=INNODB;
 
@@ -7,41 +8,34 @@ CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_tally_sheet_status (
     id INT AUTO_INCREMENT,
     incrementId INT NOT NULL,
     electionId INT NOT NULL,
-    electoralDistrictId INT NOT NULL,
+    electoralDistrictId INT,
     pollingDivisionId INT,
-    countingCentreId INT NOT NULL,
-    templateName VARCHAR(20) NOT NULL,
-    voteType VARCHAR(20) NOT NULL,
+    countingCentreId INT,
+    templateName VARCHAR(50) NOT NULL,
+    voteType VARCHAR(50) NOT NULL,
     partyId INT,
     verifiedTallySheetCount INT NOT NULL,
+    releasedTallySheetCount INT NOT NULL,
     emptyTallySheetCount INT NOT NULL,
     savedTallySheetCount INT NOT NULL,
     totalTallySheetCount INT NOT NULL,
     PRIMARY KEY(id)
 )  ENGINE=INNODB;
 
-INSERT INTO ext_pe2020_dashboard_increment () VALUES();
+CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_area_map (
+    id INT AUTO_INCREMENT,
+    countryId INT,
+    electoralDistrictId INT,
+    pollingDivisionId INT,
+    countingCentreId INT,
+    voteType VARCHAR(50) NOT NULL,
+    PRIMARY KEY(id)
+)  ENGINE=INNODB;
 
-SET @lastIncrementId = LAST_INSERT_ID();
+DELETE from ext_pe2020_dashboard_area_map;
 
-INSERT INTO ext_pe2020_dashboard_tally_sheet_status (incrementId, electionId, electoralDistrictId, pollingDivisionId,
-    countingCentreId, templateName, voteType, partyId, verifiedTallySheetCount,emptyTallySheetCount,
-    savedTallySheetCount, totalTallySheetCount)
-SELECT
-    @lastIncrementId,
-    election.rootElectionId as electionId,
-    areaMap.electoralDistrictId,
-    areaMap.pollingDivisionId,
-    areaMap.countingCentreId,
-    template.templateName,
-    election.voteType,
-    metaData.metaDataValue as "partyId",
-    COUNT(IF(workflowInstance.status = "Verified", tallySheet.tallySheetId, NULL)) AS verifiedTallySheetCount,
-    COUNT(IF(workflowInstance.status = "Empty", tallySheet.tallySheetId, NULL)) AS emptyTallySheetCount,
-    COUNT(IF(workflowInstance.status = "Saved", tallySheet.tallySheetId, NULL)) AS savedTallySheetCount,
-    COUNT(tallySheet.tallySheetId) AS totalTallySheetCount
-FROM
-    (SELECT
+INSERT INTO ext_pe2020_dashboard_area_map (countryId, electoralDistrictId, pollingDivisionId, countingCentreId, voteType)
+    SELECT
         country.areaId as countryId,
         electoralDistrict.areaId as electoralDistrictId,
         pollingDivision.areaId as pollingDivisionId,
@@ -89,8 +83,10 @@ FROM
         country.areaId,
         electoralDistrict.areaId,
         pollingDivision.areaId,
-        countingCentre.areaId
-    UNION SELECT
+        countingCentre.areaId;
+
+INSERT INTO ext_pe2020_dashboard_area_map (countryId, electoralDistrictId, pollingDivisionId, countingCentreId, voteType)
+    SELECT
         country.areaId as countryId,
         electoralDistrict.areaId as electoralDistrictId,
         electoralDistrict.areaId as pollingDivisionId,
@@ -124,22 +120,4 @@ FROM
     GROUP BY
         country.areaId,
         electoralDistrict.areaId,
-        countingCentre.areaId
-    ) AS areaMap,
-    submission, election, template, workflowInstance,
-    tallySheet left join metaData
-        on metaData.metaId = tallySheet.metaId and metaData.metaDataKey = "partyId"
-WHERE
-    submission.areaId = areaMap.countingCentreId
-    and tallySheet.tallySheetId = submission.submissionId
-    and election.electionId = submission.electionId
-    and template.templateId = tallySheet.templateId
-    and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId
-GROUP BY
-    election.rootElectionId,
-    areaMap.electoralDistrictId,
-    areaMap.pollingDivisionId,
-    areaMap.countingCentreId,
-    template.templateName,
-    election.voteType,
-    metaData.metaDataValue;
+        countingCentre.areaId;

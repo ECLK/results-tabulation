@@ -6,3 +6,4 @@ export const WORKFLOW_STATUS_TYPE_VERIFIED = "Verified";
 export const WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY = "Ready to Certify";
 export const WORKFLOW_STATUS_TYPE_CERTIFIED = "Certified";
 export const WORKFLOW_STATUS_TYPE_RELEASED = "Released";
+export const WORKFLOW_STATUS_TYPE_NOTIFIED = "Release Notified";

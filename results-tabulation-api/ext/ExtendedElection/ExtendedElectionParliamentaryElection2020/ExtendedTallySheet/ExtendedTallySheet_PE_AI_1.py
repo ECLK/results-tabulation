@@ -9,7 +9,59 @@ from util import to_comma_seperated_num, to_percentage, convert_image_to_data_ur
 
 
 class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
+    def on_get_release_result_params(self):
+        pd_code = None
+        pd_name = None
+        ed_code = None
+        ed_name = None
+
+        result_type = "RN_VSN"
+        result_code = "FINAL"
+        result_level = "NATIONAL"
+
+        return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
+
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
+        def json(self):
+            extended_tally_sheet = self.tallySheet.get_extended_tally_sheet()
+            result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = extended_tally_sheet.on_get_release_result_params()
+
+            party_wise_results = self.get_party_wise_results().sort_values(
+                by=["totalSeatsAllocated", "numValue", "electionPartyId"], ascending=[False, False, True]
+            ).reset_index()
+
+            registered_voters_count = self.tallySheetVersion.submission.area.get_registered_voters_count(
+                vote_type=self.tallySheetVersion.submission.election.voteType)
+            total_valid_vote_count = 0
+            total_rejected_vote_count = self.get_rejected_vote_count_result()["numValue"].values[0]
+            for party_wise_result in party_wise_results.itertuples():
+                total_valid_vote_count += float(party_wise_result.numValue)
+            total_vote_count = total_valid_vote_count + total_rejected_vote_count
+
+            return {
+                "type": result_type,
+                "level": result_level,
+                "by_party": [
+                    {
+                        "party_code": party_wise_result.partyAbbreviation,
+                        "party_name": party_wise_result.partyName,
+                        "vote_count": int(party_wise_result.numValue),
+                        "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100),
+                        "seat_count": int(party_wise_result.seatsAllocated),
+                        "national_list_seat_count": int(party_wise_result.nationalListSeatsAllocated),
+                    } for party_wise_result in party_wise_results.itertuples()
+                ],
+                "summary": {
+                    "valid": int(total_valid_vote_count),
+                    "rejected": int(total_rejected_vote_count),
+                    "polled": int(total_vote_count),
+                    "electors": int(registered_voters_count),
+                    "percent_valid": to_percentage((total_valid_vote_count / registered_voters_count) * 100),
+                    "percent_rejected": to_percentage((total_rejected_vote_count / registered_voters_count) * 100),
+                    "percent_polled": to_percentage((total_vote_count / registered_voters_count) * 100)
+                }
+            }
+
         def get_party_wise_results(self):
             party_wise_calculations_df = self.get_party_wise_valid_vote_count_result()
 
@@ -88,9 +140,8 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
             content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
             content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
 
-            # sort by total seat count descending
-            party_wise_results = party_wise_results.sort_values(
-                by=['totalSeatsAllocated'], ascending=False
+            party_wise_results = self.get_party_wise_results().sort_values(
+                by=["totalSeatsAllocated", "numValue", "electionPartyId"], ascending=[False, False, True]
             ).reset_index()
 
             for party_wise_result in party_wise_results.itertuples():
@@ -119,7 +170,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
 
             return html
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             tallySheetVersion = self.tallySheetVersion
             party_wise_results = self.get_party_wise_results()
             stamp = tallySheetVersion.stamp
@@ -134,6 +185,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
+                "signatures": signatures,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],
@@ -163,9 +215,8 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
             content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
             content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
 
-            # sort by total seat count descending
-            party_wise_results = party_wise_results.sort_values(
-                by=['totalSeatsAllocated'], ascending=False
+            party_wise_results = self.get_party_wise_results().sort_values(
+                by=["totalSeatsAllocated", "numValue", "electionPartyId"], ascending=[False, False, True]
             ).reset_index()
 
             for party_wise_result in party_wise_results.itertuples():
@@ -188,7 +239,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-AI-1.html',
+                'ParliamentaryElection2020/PE-AI-1-LETTER.html',
                 content=content
             )
 

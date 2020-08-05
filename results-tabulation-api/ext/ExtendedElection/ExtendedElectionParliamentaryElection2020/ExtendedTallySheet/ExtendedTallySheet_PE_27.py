@@ -9,10 +9,6 @@ from orm.enums import AreaTypeEnum
 
 class ExtendedTallySheet_PE_27(ExtendedTallySheetDataEntry):
     class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
-        def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_PE_27.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
-            )
 
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
@@ -54,22 +50,28 @@ class ExtendedTallySheet_PE_27(ExtendedTallySheetDataEntry):
                 "grandTotal": 0
             }
 
-            for row_index in range(len(tallySheetContent)):
-                row = tallySheetContent[row_index]
-                if row.templateRowType == "PARTY_WISE_VOTE":
-                    content["data"].append([
-                        len(content["data"]) + 1,
-                        row.partyName,
-                        row.partySymbol,
-                        "" if row.strValue is None else row.strValue,
-                        "" if row.numValue is None else to_comma_seperated_num(row.numValue),
-                        ""
-                    ])
-                    content["total"] += 0 if row.numValue is None else row.numValue
-                    content["grandTotal"] += 0 if row.numValue is None else row.numValue
-                elif row.templateRowType == "REJECTED_VOTE":
-                    content["rejectedVotes"] += 0 if row.numValue is None else row.numValue
-                    content["grandTotal"] += 0 if row.numValue is None else row.numValue
+            party_wise_results = self.df.loc[self.df.templateRowType == "PARTY_WISE_VOTE"].sort_values(
+                by=["electionPartyId"], ascending=[True]
+            )
+            rejected_vote_count_results = self.df.loc[self.df.templateRowType == "REJECTED_VOTE"]
+
+            for party_wise_result in party_wise_results.itertuples():
+                content["data"].append([
+                    len(content["data"]) + 1,
+                    party_wise_result.partyName,
+                    party_wise_result.partySymbol,
+                    "" if party_wise_result.strValue is None else party_wise_result.strValue,
+                    "" if party_wise_result.numValue is None else to_comma_seperated_num(party_wise_result.numValue),
+                    ""
+                ])
+                content["total"] += 0 if party_wise_result.numValue is None else party_wise_result.numValue
+                content["grandTotal"] += 0 if party_wise_result.numValue is None else party_wise_result.numValue
+
+            for rejected_vote_count_result in rejected_vote_count_results.itertuples():
+                content[
+                    "rejectedVotes"] += 0 if rejected_vote_count_result.numValue is None else rejected_vote_count_result.numValue
+                content[
+                    "grandTotal"] += 0 if rejected_vote_count_result.numValue is None else rejected_vote_count_result.numValue
 
             content["total"] = to_comma_seperated_num(content["total"])
             content["rejectedVotes"] = to_comma_seperated_num(content["rejectedVotes"])

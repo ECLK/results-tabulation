@@ -2,7 +2,8 @@ import pandas as pd
 
 from flask import render_template
 from sqlalchemy import MetaData
-
+import requests
+import app
 from app import db
 from auth import get_user_name, has_role_based_access
 from constants.VOTE_TYPES import Postal, NonPostal
@@ -15,9 +16,10 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VERIFY
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_EDIT, \
     WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, WORKFLOW_ACTION_TYPE_RELEASE, \
-    WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY
+    WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY, WORKFLOW_ACTION_TYPE_PRINT
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_EMPTY, WORKFLOW_STATUS_TYPE_SAVED, \
     WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED
+from external_services import results_dist
 
 from orm.entities import Workflow, Meta
 from orm.entities.Meta import MetaData
@@ -148,7 +150,9 @@ class ExtendedTallySheet:
             UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName),
                                   code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED)
 
-        if workflow_action.actionType == WORKFLOW_ACTION_TYPE_REQUEST_CHANGES:
+        if workflow_action.actionType == WORKFLOW_ACTION_TYPE_REQUEST_CHANGES and workflow_action.toStatus in [
+            WORKFLOW_STATUS_TYPE_SAVED, WORKFLOW_STATUS_TYPE_EMPTY]:
+
             from orm.entities.Submission import TallySheet
             from orm.entities.Submission.TallySheet import TallySheetTallySheetModel
 
@@ -190,7 +194,8 @@ class ExtendedTallySheet:
         return tally_sheet_version
 
     def on_before_workflow_action(self, workflow_action, tally_sheet_version):
-        if not tally_sheet_version.isComplete:
+        if workflow_action.actionType not in [WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_PRINT,
+                                              WORKFLOW_ACTION_TYPE_SAVE] and not tally_sheet_version.isComplete:
             raise MethodNotAllowedException(message="Incomplete tally sheet.", code=MESSAGE_CODE_TALLY_SHEET_INCOMPLETE)
 
     def on_workflow_action(self, workflow_action, tally_sheet_version, content=None):
@@ -219,22 +224,25 @@ class ExtendedTallySheet:
         return result_type, result_code, ed_code, ed_name, pd_code, pd_name
 
     def on_release_result_notify(self, tally_sheet_version):
-        result_type, result_code, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
-
-        print("\n\n\n\n###### NOTIFY RELEASE ###### %s/%s" % (result_type, result_code))
-
-        # TODO make a hook to the results dist.
-
-    def on_release_result(self, tally_sheet_version):
-        result_type, result_code, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
+        result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
 
         extended_tally_sheet_version = self.tallySheet.get_extended_tally_sheet_version(
             tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
         data = extended_tally_sheet_version.json()
 
-        print("\n\n\n\n###### RESULT RELEASE ###### %s/%s\n%s" % (result_type, result_code, str(data)))
+        results_dist.notify_release_result(result_type=result_type, result_code=result_code, data=data)
 
-        # TODO make a hook to the results dist.
+    def on_release_result(self, tally_sheet_version):
+        result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name = self.on_get_release_result_params()
+
+        extended_tally_sheet_version = self.tallySheet.get_extended_tally_sheet_version(
+            tallySheetVersionId=tally_sheet_version.tallySheetVersionId)
+        data = extended_tally_sheet_version.json()
+
+        results_dist.release_result(result_type=result_type, result_code=result_code, data=data,
+                                    stamp=tally_sheet_version.stamp)
+        results_dist.upload_release_documents(result_type=result_type, result_code=result_code,
+                                              files=self.tallySheet.workflowInstance.proof.scannedFiles)
 
     def execute_tally_sheet_proof_upload(self):
         workflow_actions = self.on_before_tally_sheet_proof_upload()
@@ -249,7 +257,7 @@ class ExtendedTallySheet:
 
         if len(workflow_actions) == 0:
             raise MethodNotAllowedException(message="Tally sheet is longer accepting proof documents.",
-                                            coded=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS)
+                                            code=MESSAGE_CODE_TALLY_SHEET_NO_LONGER_ACCEPTING_PROOF_DOCUMENTS)
 
         return workflow_actions
 
@@ -403,7 +411,7 @@ class ExtendedTallySheet:
         def get_post_save_request_content(self):
             return []
 
-        def html_letter(self, title="", total_registered_voters=None):
+        def html_letter(self, title="", total_registered_voters=None, required_signatures=[]):
             tallySheetVersion = self.tallySheetVersion
             stamp = tallySheetVersion.stamp
 

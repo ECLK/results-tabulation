@@ -9,11 +9,6 @@ from orm.enums import AreaTypeEnum
 class ExtendedTallySheet_PE_CE_RO_PR_3(ExtendedTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
-        def html_letter(self, title="", total_registered_voters=None):
-            return super(ExtendedTallySheet_PE_CE_RO_PR_3.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
-            )
-
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
 

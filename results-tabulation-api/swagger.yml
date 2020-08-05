@@ -1193,7 +1193,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
   /tally-sheet/{tallySheetId}/version/{tallySheetVersionId}/letter/html:
-    get:
+    post:
       tags:
         - Tally Sheet Version Export
       summary: Get by ID
@@ -1211,6 +1211,14 @@ paths:
           schema:
             type: integer
             format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                signatures:
+                  type: array
       responses:
         '200':
           description: OK
@@ -1244,7 +1252,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
   /tally-sheet/{tallySheetId}/version/{tallySheetVersionId}/html:
-    get:
+    post:
       tags:
         - Tally Sheet Version Export
       summary: Get by ID
@@ -1296,7 +1304,7 @@ paths:
 
 
   /tally-sheet/{tallySheetId}/version/{tallySheetVersionId}/letter/pdf:
-    get:
+    post:
       tags:
         - Tally Sheet Version Export
       summary: Get by ID
@@ -1314,6 +1322,14 @@ paths:
           schema:
             type: integer
             format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                signatures:
+                  type: array
       responses:
         '200':
           description: OK
@@ -1347,7 +1363,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
   /tally-sheet/{tallySheetId}/version/{tallySheetVersionId}/pdf:
-    get:
+    post:
       tags:
         - Tally Sheet Version Export
       summary: Get by ID

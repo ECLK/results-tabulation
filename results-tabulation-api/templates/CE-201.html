@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 
 {% block container %}
+<style>
+
+    @media print {
+        @page {
+            size: 220mm 311mm;
+            /* A4 portrait; */
+        }
+    }
+
+</style>
 <div class="font1">
     <br/>
     <table class="table table-borderless font1">

@@ -208,26 +208,27 @@ class TallySheetVersionModel(db.Model):
         return tallySheetVersion.exportedPdfFileId
 
     @classmethod
-    def get_exported_letter_pdf_file_id(cls, tallySheetId, tallySheetVersionId):
+    def get_exported_letter_pdf_file_id(cls, tallySheetId, tallySheetVersionId, signatures):
         tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
         tallySheetVersion = cls.get_by_id(tallySheetId, tallySheetVersionId)
 
-        if tallySheetVersion.exportedLetterPdfFileId is None:
-            tally_sheet_version_letter_pdf_content = html_to_pdf(
-                html=str(tallySheet.html_letter(tallySheetVersionId=tallySheetVersionId))
-            )
-            tally_sheet_version_letter_pdf_file = File.create(
-                fileMimeType="application/pdf",
-                fileContentLength=len(tally_sheet_version_letter_pdf_content),
-                fileContentType="application/pdf",
-                fileContent=tally_sheet_version_letter_pdf_content,
-                fileName="%d-%d" % (tallySheetId, tallySheetVersionId)
-            )
+        # Disable persistence check since the addition of signatures creates different letters.
+        # if tallySheetVersion.exportedLetterPdfFileId is None:
+        tally_sheet_version_letter_pdf_content = html_to_pdf(
+            html=str(tallySheet.html_letter(tallySheetVersionId=tallySheetVersionId, signatures=signatures))
+        )
+        tally_sheet_version_letter_pdf_file = File.create(
+            fileMimeType="application/pdf",
+            fileContentLength=len(tally_sheet_version_letter_pdf_content),
+            fileContentType="application/pdf",
+            fileContent=tally_sheet_version_letter_pdf_content,
+            fileName="%d-%d" % (tallySheetId, tallySheetVersionId)
+        )
 
-            tallySheetVersion.exportedLetterPdfFileId = tally_sheet_version_letter_pdf_file.fileId
+        tallySheetVersion.exportedLetterPdfFileId = tally_sheet_version_letter_pdf_file.fileId
 
-            db.session.add(tallySheetVersion)
-            db.session.flush()
+        db.session.add(tallySheetVersion)
+        db.session.flush()
 
         return tallySheetVersion.exportedLetterPdfFileId
 
