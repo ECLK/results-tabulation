@@ -122,3 +122,4 @@ GROUP BY
     metaData.metaDataValue;
 
 UPDATE ext_pe2020_dashboard_increment SET active = 1 WHERE id = @lastIncrementId;
+DELETE FROM ext_pe2020_dashboard_tally_sheet_status WHERE incrementId < @lastIncrementId;

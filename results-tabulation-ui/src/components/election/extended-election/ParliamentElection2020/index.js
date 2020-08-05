@@ -14,8 +14,6 @@ import {
     TALLY_SHEET_CODE_PE_CE_RO_V1,
     TALLY_SHEET_CODE_PE_CE_RO_V2,
     TALLY_SHEET_CODE_PE_R2,
-    TALLY_SHEET_CODE_PE_39,
-    TALLY_SHEET_CODE_PE_22,
     TALLY_SHEET_CODE_PE_21,
     TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS,
     TALLY_SHEET_CODE_PE_AI_ED,
@@ -139,14 +137,14 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39];
-                                    tallySheetCodeLabels = ["CE 201", "PE-27", "PE-39"];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27];
+                                    tallySheetCodeLabels = ["CE 201", "PE-27"];
                                 } else if (voteType === VOTE_TYPE_POSTAL) {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39];
-                                    tallySheetCodeLabels = [`CE 201 PV (${voteType})`, `PE-27 PV (${voteType})`, `PE-39 PV (${voteType})`];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27];
+                                    tallySheetCodeLabels = [`CE 201 PV (${voteType})`, `PE-27 PV (${voteType})`];
                                 } else {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27, TALLY_SHEET_CODE_PE_39];
-                                    tallySheetCodeLabels = [`CE 201 (${voteType})`, `PE-27 (${voteType})`, `PE-39 (${voteType})`];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27];
+                                    tallySheetCodeLabels = [`CE 201 (${voteType})`, `PE-27 (${voteType})`];
                                 }
 
                                 return <Grid item xs={12} key={voteTypeIndex}>
@@ -181,14 +179,14 @@ export default class ExtendedElectionParliamentElection2020 extends ExtendedElec
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
-                                    tallySheetCodeLabels = ["PE-4", "PE-22"];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
+                                    tallySheetCodeLabels = ["PE-4"];
                                 } else if (voteType === VOTE_TYPE_POSTAL) {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
-                                    tallySheetCodeLabels = [`PE-4 PV (${voteType})`, `PE-22 (${voteType})`];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
+                                    tallySheetCodeLabels = [`PE-4 PV (${voteType})`];
                                 } else {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4, TALLY_SHEET_CODE_PE_22];
-                                    tallySheetCodeLabels = [`PE-4 (${voteType})`, `PE-22 (${voteType})`];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
+                                    tallySheetCodeLabels = [`PE-4 (${voteType})`];
                                 }
                                 return <Grid item xs={12} key={voteTypeIndex}>
                                     <Grid item xs={12}>
