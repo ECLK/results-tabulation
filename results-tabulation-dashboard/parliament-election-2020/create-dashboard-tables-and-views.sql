@@ -22,6 +22,52 @@ CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_tally_sheet_status (
     PRIMARY KEY(id)
 )  ENGINE=INNODB;
 
+CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_party_wise_vote_results (
+    id INT AUTO_INCREMENT,
+    incrementId INT NOT NULL,
+    electionId INT NOT NULL,
+    electoralDistrictId INT,
+    pollingDivisionId INT,
+    countingCentreId INT,
+    voteType VARCHAR(50) NOT NULL,
+    partyId INT,
+    voteCount INT,
+    PRIMARY KEY(id)
+)  ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_vote_results (
+    id INT AUTO_INCREMENT,
+    incrementId INT NOT NULL,
+    electionId INT NOT NULL,
+    electoralDistrictId INT,
+    pollingDivisionId INT,
+    countingCentreId INT,
+    voteType VARCHAR(50) NOT NULL,
+    validVoteCount INT,
+    rejectedVoteCount INT,
+    voteCount INT,
+    PRIMARY KEY(id)
+)  ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_party_wise_seat_allocation (
+    id INT AUTO_INCREMENT,
+    incrementId INT NOT NULL,
+    electionId INT NOT NULL,
+    electoralDistrictId INT,
+    partyId INT,
+    seatCount INT,
+    PRIMARY KEY(id)
+)  ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_party_wise_national_list_seat_allocation (
+    id INT AUTO_INCREMENT,
+    incrementId INT NOT NULL,
+    electionId INT NOT NULL,
+    partyId INT,
+    nationalListSeatCount INT,
+    PRIMARY KEY(id)
+)  ENGINE=INNODB;
+
 CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_area_map (
     id INT AUTO_INCREMENT,
     electionId INT,
@@ -29,21 +75,27 @@ CREATE TABLE IF NOT EXISTS ext_pe2020_dashboard_area_map (
     electoralDistrictId INT,
     pollingDivisionId INT,
     countingCentreId INT,
+    registeredVotersCount INT,
+    registeredPostalVotersCount INT,
+    registeredDisplacedVotersCount INT,
     voteType VARCHAR(50) NOT NULL,
     PRIMARY KEY(id)
 )  ENGINE=INNODB;
 
 DELETE FROM ext_pe2020_dashboard_area_map;
 
-INSERT INTO ext_pe2020_dashboard_area_map (electionId, countryId, electoralDistrictId,
-            pollingDivisionId, countingCentreId, voteType)
+INSERT INTO ext_pe2020_dashboard_area_map (electionId, countryId, electoralDistrictId, pollingDivisionId,
+        countingCentreId, voteType, registeredVotersCount, registeredPostalVotersCount, registeredDisplacedVotersCount)
     SELECT
         country.electionId,
         country.areaId as countryId,
         electoralDistrict.areaId as electoralDistrictId,
         pollingDivision.areaId as pollingDivisionId,
         countingCentre.areaId as countingCentreId,
-        "NonPostal" as voteType
+        "NonPostal" as voteType,
+        COALESCE(SUM(pollingStation._registeredVotersCount)) AS registeredVotersCount,
+        COALESCE(SUM(pollingStation._registeredPostalVotersCount)) AS registeredPostalVotersCount,
+        COALESCE(SUM(pollingStation._registeredDisplacedVotersCount)) AS registeredDisplacedVotersCount
     FROM
         area country, area electoralDistrict, area pollingDivision, area pollingDistrict, area pollingStation,
         area electionCommission, area districtCentre, area countingCentre,
