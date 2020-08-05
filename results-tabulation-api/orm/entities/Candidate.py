@@ -8,7 +8,7 @@ from orm.entities.IO.File import Image
 class CandidateModel(db.Model):
     __tablename__ = 'candidate'
     candidateId = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    candidateName = db.Column(db.String(100), nullable=False)
+    candidateName = db.Column(db.String(250), nullable=False)
     candidateNumber = db.Column(db.String(100), nullable=False, default="")
     candidateType = db.Column(db.String(50), nullable=False, default=CANDIDATE_TYPE_NORMAL)
     candidateProfileImageFileId = db.Column(db.Integer, db.ForeignKey(Image.Model.__table__.c.fileId), nullable=True)
