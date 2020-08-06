@@ -5,7 +5,8 @@
 
         @media print {
             @page {
-                size: A4 portrait;
+                size: 240mm 339mm;
+                /* size: A4 portrait; */
             }
         }
 
@@ -66,7 +67,7 @@
                     <span style="font-size:12px; font-weight:bold;">OFFICIAL RESULTS</span>
                 </td>
                 <td style="text-align:center; vertical-align:middle; width:70%;">
-                    <span style="font-size: 11px;font-weight: 600;">DEPARTMENT OF ELECTIONS</span><br/>
+                    <span style="font-size: 11px;font-weight: 600;">ELECTION COMMISSION OF SRI LANKA</span><br/>
                     <span style="font-weight: 700;font-weight: 600;font-size: 23px;">
                     {{ content.election.electionName }}
                 </span><br/>
@@ -93,6 +94,7 @@
                 <th scope="col" style="text-align:right;">Percentage</th>
             </tr>
             {% for row in content.data %}
+            {% if loop.index <= 44 %}
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td class="{% if row[0]=='' %}missing-value{% endif %}">{{ row[0] }}</td>
@@ -102,6 +104,7 @@
                     <td class="{% if row[3]=='' %}missing-value{% endif %}"
                         style="text-align:right;">{{ row[3] }}</td>
                 </tr>
+                {% endif %}
             {% endfor %}
             <tr>
                 <td colspan="5" style="height: 50px;"></td>
