@@ -12,7 +12,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 
 const signatures = [
     {"name": "MAHINDA DESHAPRIYA", "designation": "Chairman", "organization": "Election Commission"},
-    {"name": "N. J. ABEYESEKERE PC", "designation": "Member", "organization": "Election Commission"},
+    {"name": "N. J. ABEYSEKERE PC", "designation": "Member", "organization": "Election Commission"},
     {"name": "PROF. S. RATNAJEEVAN H. HOOLE", "designation": "Member", "organization": "Election Commission"}
 ];
 
