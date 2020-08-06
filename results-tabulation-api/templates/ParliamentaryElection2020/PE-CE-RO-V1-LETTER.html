@@ -5,8 +5,7 @@
 
         @media print {
             @page {
-                size: 240mm 339mm;
-                /* size: A4 portrait; */
+                size: A4 portrait;
             }
         }
 
@@ -94,7 +93,6 @@
                 <th scope="col" style="text-align:right;">Percentage</th>
             </tr>
             {% for row in content.data %}
-            {% if loop.index <= 44 %}
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td class="{% if row[0]=='' %}missing-value{% endif %}">{{ row[0] }}</td>
@@ -104,7 +102,6 @@
                     <td class="{% if row[3]=='' %}missing-value{% endif %}"
                         style="text-align:right;">{{ row[3] }}</td>
                 </tr>
-                {% endif %}
             {% endfor %}
             <tr>
                 <td colspan="5" style="height: 50px;"></td>
