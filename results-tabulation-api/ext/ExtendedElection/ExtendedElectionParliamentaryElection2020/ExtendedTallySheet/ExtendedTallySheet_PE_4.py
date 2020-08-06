@@ -5,7 +5,7 @@ from ext.ExtendedTallySheet import ExtendedTallySheetDataEntry
 from orm.entities import Area
 from orm.enums import AreaTypeEnum
 from util import to_comma_seperated_num
-
+import math
 
 class ExtendedTallySheet_PE_4(ExtendedTallySheetDataEntry):
     class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
@@ -16,7 +16,7 @@ class ExtendedTallySheet_PE_4(ExtendedTallySheetDataEntry):
             candidate_and_area_wise_valid_vote_count = self.get_candidate_and_area_wise_valid_vote_count_result()
 
             noOfCandidates = candidate_and_area_wise_valid_vote_count.shape[0]
-            noOfRows = round(noOfCandidates / 2)
+            noOfRows = math.ceil(noOfCandidates / 2)
 
             stamp = tallySheetVersion.stamp
 
@@ -52,18 +52,17 @@ class ExtendedTallySheet_PE_4(ExtendedTallySheetDataEntry):
             i = 0
 
             for index, row in candidate_and_area_wise_valid_vote_count.iterrows():
-
                 if i < noOfRows:
                     data_row1 = []
-                    data_row1.append(row.candidateName)
+                    data_row1.append(row.candidateNumber)
                     data_row1.append(row.strValue)
                     data_row1.append(to_comma_seperated_num(row.numValue))
                     content["data1"].append(data_row1)
                     i += 1
                 else:
                     data_row2 = []
-                    data_row2.append(row.candidateName)
-                    print(row.candidateName)
+                    data_row2.append(row.candidateNumber)
+                    # print(row.candidateName)
                     data_row2.append(row.strValue)
                     data_row2.append(to_comma_seperated_num(row.numValue))
                     content["data2"].append(data_row2)
