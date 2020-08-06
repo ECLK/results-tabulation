@@ -131,7 +131,9 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
                         df_column_name = template_row_to_df_num_value_column_map[template_row_type]
                         party_wise_calculations_df.at[index_1, df_column_name] += num_value
 
-            party_wise_calculations_df = party_wise_calculations_df.sort_values(by=['seatsAllocated'], ascending=False)
+            party_wise_calculations_df = party_wise_calculations_df.sort_values(
+                by=['seatsAllocated', "numValue", "electionPartyId"], ascending=[False, False, True]
+            )
 
             return party_wise_calculations_df
 
