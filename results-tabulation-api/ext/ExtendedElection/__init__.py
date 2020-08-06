@@ -2,7 +2,8 @@ from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
 from app import db, cache
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_VERIFIED, \
-    WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, WORKFLOW_STATUS_TYPE_CERTIFIED, WORKFLOW_STATUS_TYPE_RELEASED
+    WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, WORKFLOW_STATUS_TYPE_CERTIFIED, WORKFLOW_STATUS_TYPE_RELEASED, \
+    WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED
 from ext.ExtendedTallySheet import ExtendedTallySheet
 
 
@@ -36,7 +37,8 @@ class ExtendedElection:
             WORKFLOW_STATUS_TYPE_VERIFIED,
             WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
             WORKFLOW_STATUS_TYPE_CERTIFIED,
-            WORKFLOW_STATUS_TYPE_RELEASED
+            WORKFLOW_STATUS_TYPE_RELEASED,
+            WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED
         ]
 
     def get_extended_tally_sheet_class(self, templateName):
