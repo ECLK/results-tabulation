@@ -370,6 +370,9 @@ class ExtendedTallySheet:
 
             self.df = pd.DataFrame(data=data, index=index, columns=columns)
 
+            self.df['numValue'] = pd.to_numeric(self.df['numValue'])
+            self.df['incompleteNumValue'] = pd.to_numeric(self.df['incompleteNumValue'])
+
         def json(self):
             return {
                 "type": "RP_V",
