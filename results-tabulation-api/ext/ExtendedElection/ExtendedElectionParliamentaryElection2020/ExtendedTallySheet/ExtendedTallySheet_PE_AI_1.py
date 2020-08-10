@@ -56,8 +56,8 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                     "rejected": int(total_rejected_vote_count),
                     "polled": int(total_vote_count),
                     "electors": int(registered_voters_count),
-                    "percent_valid": to_percentage((total_valid_vote_count / registered_voters_count) * 100),
-                    "percent_rejected": to_percentage((total_rejected_vote_count / registered_voters_count) * 100),
+                    "percent_valid": to_percentage((total_valid_vote_count / total_vote_count) * 100),
+                    "percent_rejected": to_percentage((total_rejected_vote_count / total_vote_count) * 100),
                     "percent_polled": to_percentage((total_vote_count / registered_voters_count) * 100)
                 }
             }
@@ -131,11 +131,11 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
             total_vote_count = total_valid_vote_count + total_rejected_vote_count
 
             content["validVoteCounts"][0] = to_comma_seperated_num(total_valid_vote_count)
-            content["validVoteCounts"][1] = to_percentage((total_valid_vote_count / registered_voters_count) * 100)
+            content["validVoteCounts"][1] = to_percentage((total_valid_vote_count / total_vote_count) * 100)
 
             content["rejectedVoteCounts"][0] = to_comma_seperated_num(total_rejected_vote_count)
             content["rejectedVoteCounts"][1] = to_percentage(
-                (total_rejected_vote_count / registered_voters_count) * 100)
+                (total_rejected_vote_count / total_vote_count) * 100)
 
             content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
             content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
@@ -206,11 +206,11 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
             total_vote_count = total_valid_vote_count + total_rejected_vote_count
 
             content["validVoteCounts"][0] = to_comma_seperated_num(total_valid_vote_count)
-            content["validVoteCounts"][1] = to_percentage((total_valid_vote_count / registered_voters_count) * 100)
+            content["validVoteCounts"][1] = to_percentage((total_valid_vote_count / total_vote_count) * 100)
 
             content["rejectedVoteCounts"][0] = to_comma_seperated_num(total_rejected_vote_count)
             content["rejectedVoteCounts"][1] = to_percentage(
-                (total_rejected_vote_count / registered_voters_count) * 100)
+                (total_rejected_vote_count / total_vote_count) * 100)
 
             content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
             content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
