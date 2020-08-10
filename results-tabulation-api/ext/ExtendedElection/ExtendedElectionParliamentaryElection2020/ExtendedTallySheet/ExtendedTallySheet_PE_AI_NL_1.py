@@ -184,8 +184,7 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
             for area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.itertuples():
                 total_rejected_vote_count += float(area_wise_rejected_vote_count_result_item.numValue)
             content["rejectedVoteCounts"][0] = to_comma_seperated_num(total_rejected_vote_count)
-            content["rejectedVoteCounts"][1] = to_percentage(
-                (total_rejected_vote_count / total_vote_count) * 100)
+            content["rejectedVoteCounts"][1] = to_percentage((total_rejected_vote_count / total_vote_count) * 100)
 
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
 
@@ -260,8 +259,7 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
             for area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.itertuples():
                 total_rejected_vote_count += float(area_wise_rejected_vote_count_result_item.numValue)
             content["rejectedVoteCounts"][0] = to_comma_seperated_num(total_rejected_vote_count)
-            content["rejectedVoteCounts"][1] = to_percentage(
-                (total_rejected_vote_count / total_vote_count) * 100)
+            content["rejectedVoteCounts"][1] = to_percentage((total_rejected_vote_count / total_vote_count) * 100)
 
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
 

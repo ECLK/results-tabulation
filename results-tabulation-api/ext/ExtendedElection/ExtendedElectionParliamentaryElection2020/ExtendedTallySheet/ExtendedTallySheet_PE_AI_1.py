@@ -134,8 +134,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
             content["validVoteCounts"][1] = to_percentage((total_valid_vote_count / total_vote_count) * 100)
 
             content["rejectedVoteCounts"][0] = to_comma_seperated_num(total_rejected_vote_count)
-            content["rejectedVoteCounts"][1] = to_percentage(
-                (total_rejected_vote_count / total_vote_count) * 100)
+            content["rejectedVoteCounts"][1] = to_percentage((total_rejected_vote_count / total_vote_count) * 100)
 
             content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
             content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
@@ -152,8 +151,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                 ]
 
                 if total_valid_vote_count > 0:
-                    data_row.append(to_percentage(
-                        party_wise_result.validVoteCount * 100 / total_valid_vote_count))
+                    data_row.append(to_percentage(party_wise_result.validVoteCount * 100 / total_valid_vote_count))
                 else:
                     data_row.append('')
 
@@ -209,8 +207,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
             content["validVoteCounts"][1] = to_percentage((total_valid_vote_count / total_vote_count) * 100)
 
             content["rejectedVoteCounts"][0] = to_comma_seperated_num(total_rejected_vote_count)
-            content["rejectedVoteCounts"][1] = to_percentage(
-                (total_rejected_vote_count / total_vote_count) * 100)
+            content["rejectedVoteCounts"][1] = to_percentage((total_rejected_vote_count / total_vote_count) * 100)
 
             content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
             content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
@@ -227,8 +224,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                 ]
 
                 if total_valid_vote_count > 0:
-                    data_row.append(to_percentage(
-                        party_wise_result.validVoteCount * 100 / total_valid_vote_count))
+                    data_row.append(to_percentage(party_wise_result.validVoteCount * 100 / total_valid_vote_count))
                 else:
                     data_row.append('')
 
