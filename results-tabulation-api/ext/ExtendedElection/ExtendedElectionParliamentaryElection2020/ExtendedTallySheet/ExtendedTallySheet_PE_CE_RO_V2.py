@@ -59,8 +59,8 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
                     "rejected": int(total_rejected_vote_count),
                     "polled": int(total_vote_count),
                     "electors": int(registered_voters_count),
-                    "percent_valid": to_percentage((total_valid_vote_count / registered_voters_count) * 100),
-                    "percent_rejected": to_percentage((total_rejected_vote_count / registered_voters_count) * 100),
+                    "percent_valid": to_percentage((total_valid_vote_count / total_vote_count) * 100),
+                    "percent_rejected": to_percentage((total_rejected_vote_count / total_vote_count) * 100),
                     "percent_polled": to_percentage((total_vote_count / registered_voters_count) * 100)
                 }
             }
@@ -100,24 +100,23 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
                 "time": stamp.createdAt.strftime("%H:%M:%S %p")
             }
 
-            total_valid_vote_count = 0
-            for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
-                total_valid_vote_count += float(area_wise_valid_vote_count_result_item.incompleteNumValue)
-            content["validVoteCounts"][0] = to_comma_seperated_num(total_valid_vote_count)
-            content["validVoteCounts"][1] = to_percentage((total_valid_vote_count / registered_voters_count) * 100)
-
-            total_rejected_vote_count = 0
-            for area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.itertuples():
-                total_rejected_vote_count += float(area_wise_rejected_vote_count_result_item.numValue)
-            content["rejectedVoteCounts"][0] = to_comma_seperated_num(total_rejected_vote_count)
-            content["rejectedVoteCounts"][1] = to_percentage(
-                (total_rejected_vote_count / registered_voters_count) * 100)
-
             total_vote_count = 0
             for area_wise_vote_count_result_item in area_wise_vote_count_result.itertuples():
                 total_vote_count += float(area_wise_vote_count_result_item.incompleteNumValue)
             content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
             content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
+
+            total_valid_vote_count = 0
+            for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
+                total_valid_vote_count += float(area_wise_valid_vote_count_result_item.incompleteNumValue)
+            content["validVoteCounts"][0] = to_comma_seperated_num(total_valid_vote_count)
+            content["validVoteCounts"][1] = to_percentage((total_valid_vote_count / total_vote_count) * 100)
+
+            total_rejected_vote_count = 0
+            for area_wise_rejected_vote_count_result_item in area_wise_rejected_vote_count_result.itertuples():
+                total_rejected_vote_count += float(area_wise_rejected_vote_count_result_item.numValue)
+            content["rejectedVoteCounts"][0] = to_comma_seperated_num(total_rejected_vote_count)
+            content["rejectedVoteCounts"][1] = to_percentage((total_rejected_vote_count / total_vote_count) * 100)
 
             # sort by vote count descending
             party_wise_valid_vote_count_result = party_wise_valid_vote_count_result.sort_values(
@@ -190,7 +189,10 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
             total_vote_count = 0
 
             # Append the area wise column totals
-            print(area_wise_valid_non_postal_vote_count_result)
+            for area_wise_non_postal_vote_count_result_item_index, area_wise_non_postal_vote_count_result_item in area_wise_non_postal_vote_count_result.iterrows():
+                content["totalVoteCounts"].append(
+                    to_comma_seperated_num(area_wise_non_postal_vote_count_result_item.incompleteNumValue))
+                total_vote_count += area_wise_non_postal_vote_count_result_item.incompleteNumValue
             for area_wise_valid_non_postal_vote_count_result_item in area_wise_valid_non_postal_vote_count_result.itertuples():
                 content["pollingDivisions"].append(area_wise_valid_non_postal_vote_count_result_item.areaName)
                 content["validVoteCounts"].append(
@@ -201,11 +203,6 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
                 content["rejectedVoteCounts"].append(
                     to_comma_seperated_num(area_wise_rejected_non_postal_vote_count_result_item.numValue))
                 total_rejected_vote_count += area_wise_rejected_non_postal_vote_count_result_item.numValue
-
-            for area_wise_non_postal_vote_count_result_item_index, area_wise_non_postal_vote_count_result_item in area_wise_non_postal_vote_count_result.iterrows():
-                content["totalVoteCounts"].append(
-                    to_comma_seperated_num(area_wise_non_postal_vote_count_result_item.incompleteNumValue))
-                total_vote_count += area_wise_non_postal_vote_count_result_item.incompleteNumValue
 
             for vote_type in non_postal_vote_types:
                 postal_vote_count_result = self.get_vote_count_result(vote_type=vote_type)

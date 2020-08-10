@@ -188,22 +188,23 @@ class TallySheetVersionModel(db.Model):
         tallySheet = TallySheet.get_by_id(tallySheetId=tallySheetId)
         tallySheetVersion = cls.get_by_id(tallySheetId, tallySheetVersionId)
 
-        if tallySheetVersion.exportedPdfFileId is None:
-            tally_sheet_version_pdf_content = html_to_pdf(
-                html=str(tallySheet.html(tallySheetVersionId=tallySheetVersionId))
-            )
-            tally_sheet_version_pdf_file = File.create(
-                fileMimeType="application/pdf",
-                fileContentLength=len(tally_sheet_version_pdf_content),
-                fileContentType="application/pdf",
-                fileContent=tally_sheet_version_pdf_content,
-                fileName="%d-%d" % (tallySheetId, tallySheetVersionId)
-            )
+        # Disable persistence check.
+        # if tallySheetVersion.exportedPdfFileId is None:
+        tally_sheet_version_pdf_content = html_to_pdf(
+            html=str(tallySheet.html(tallySheetVersionId=tallySheetVersionId))
+        )
+        tally_sheet_version_pdf_file = File.create(
+            fileMimeType="application/pdf",
+            fileContentLength=len(tally_sheet_version_pdf_content),
+            fileContentType="application/pdf",
+            fileContent=tally_sheet_version_pdf_content,
+            fileName="%d-%d" % (tallySheetId, tallySheetVersionId)
+        )
 
-            tallySheetVersion.exportedPdfFileId = tally_sheet_version_pdf_file.fileId
+        tallySheetVersion.exportedPdfFileId = tally_sheet_version_pdf_file.fileId
 
-            db.session.add(tallySheetVersion)
-            db.session.flush()
+        db.session.add(tallySheetVersion)
+        db.session.flush()
 
         return tallySheetVersion.exportedPdfFileId
 
