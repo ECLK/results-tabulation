@@ -5,8 +5,7 @@ from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND
 from ext.ExtendedTallySheet import ExtendedTallySheet
-from orm.entities import Election, Submission
-from orm.entities.Submission import TallySheet
+from orm.entities import Election, TallySheet
 from orm.entities.Workflow import WorkflowInstance
 from schemas import TallySheetSchema_1, WorkflowInstanceLogSchema, WorkflowInstanceSchema
 from util import RequestBody
@@ -179,18 +178,14 @@ def get_workflow_proof_download_file(tallySheetId, fileId):
 
 
 def refactor_tally_sheet(tally_sheet):
-    setattr(tally_sheet, "areaId", tally_sheet.submission.areaId)
-    setattr(tally_sheet, "area", tally_sheet.submission.area)
-
     return tally_sheet
 
 
 def _append_latest_version_ids_to_cached_tally_sheets(cached_tally_sheets):
     cached_tally_sheet_ids = [cached_tally_sheet["tallySheetId"] for cached_tally_sheet in cached_tally_sheets]
 
-    tally_sheets = db.session.query(Submission.Model.submissionId.label("tallySheetId"),
-                                    Submission.Model.latestVersionId).filter(
-        Submission.Model.submissionId.in_(cached_tally_sheet_ids))
+    tally_sheets = db.session.query(TallySheet.Model.tallySheetId, TallySheet.Model.latestVersionId).filter(
+        TallySheet.Model.tallySheetId.in_(cached_tally_sheet_ids))
     tally_sheets_map = {tally_sheet.tallySheetId: tally_sheet for tally_sheet in tally_sheets}
 
     for cached_tally_sheet in cached_tally_sheets:
@@ -221,8 +216,8 @@ def _append_latest_workflow_instance_to_cached_tally_sheets(cached_tally_sheets)
 
     tally_sheet_elections = db.session.query(
         Election.Model.electionId, Election.Model.electionTemplateName, Election.Model.voteType
-    ).filter(Election.Model.electionId == Submission.Model.electionId,
-             Submission.Model.submissionId.in_(cached_tally_sheet_ids)).all()
+    ).filter(Election.Model.electionId == TallySheet.Model.electionId,
+             TallySheet.Model.tallySheetId.in_(cached_tally_sheet_ids)).all()
     tally_sheet_elections_map = {tally_sheet_election.electionId: tally_sheet_election for tally_sheet_election in
                                  tally_sheet_elections}
 

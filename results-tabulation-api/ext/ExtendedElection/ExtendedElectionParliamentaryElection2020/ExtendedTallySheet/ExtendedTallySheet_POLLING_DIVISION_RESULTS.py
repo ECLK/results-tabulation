@@ -21,15 +21,15 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
 
             stamp = tallySheetVersion.stamp
 
-            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count(
-                vote_type=tallySheetVersion.submission.election.voteType)
-            polling_division_name = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType != NonPostal:
-                polling_division_name = tallySheetVersion.submission.election.voteType
+            registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count(
+                vote_type=tallySheetVersion.tallySheet.election.voteType)
+            polling_division_name = tallySheetVersion.tallySheet.area.areaName
+            if tallySheetVersion.tallySheet.election.voteType != NonPostal:
+                polling_division_name = tallySheetVersion.tallySheet.election.voteType
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -38,7 +38,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
                 },
                 "tallySheetCode": "POLLING DIVISION RESULTS",
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "data": [],
                 "totalValidVoteCount": '',

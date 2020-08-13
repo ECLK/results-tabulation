@@ -11,7 +11,7 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
         pd_code = None
         pd_name = None
 
-        electoral_district = self.tallySheet.submission.area
+        electoral_district = self.tallySheet.area
         ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
         ed_code = ed_name_regex_search.group(1)
         ed_name = ed_name_regex_search.group(2)
@@ -31,8 +31,8 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
                 by=['numValue', "electionPartyId"], ascending=[False, True]
             ).reset_index()
 
-            registered_voters_count = self.tallySheetVersion.submission.area.get_registered_voters_count(
-                vote_type=self.tallySheetVersion.submission.election.voteType)
+            registered_voters_count = self.tallySheetVersion.tallySheet.area.get_registered_voters_count(
+                vote_type=self.tallySheetVersion.tallySheet.election.voteType)
             total_valid_vote_count = 0
             total_rejected_vote_count = self.get_rejected_vote_count_result()["numValue"].values[0]
             for party_wise_result in party_wise_results.itertuples():
@@ -73,12 +73,12 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
 
-            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count(
-                vote_type=tallySheetVersion.submission.election.voteType)
+            registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count(
+                vote_type=tallySheetVersion.tallySheet.election.voteType)
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -86,7 +86,7 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "signatures": signatures,
-                "electoralDistrict": tallySheetVersion.submission.area.areaName,
+                "electoralDistrict": tallySheetVersion.tallySheet.area.areaName,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],
@@ -159,7 +159,7 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
             rejected_vote_count_result = self.get_rejected_vote_count_result()
 
             stamp = tallySheetVersion.stamp
-            election = tallySheetVersion.submission.election
+            election = tallySheetVersion.tallySheet.election
             non_postal_vote_types = []
             for sub_election in election.subElections:
                 if sub_election.voteType != NonPostal:
@@ -175,7 +175,7 @@ class ExtendedTallySheet_PE_CE_RO_V2(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "CE/RO/V/2",
-                "electoralDistrict": tallySheetVersion.submission.area.areaName,
+                "electoralDistrict": tallySheetVersion.tallySheet.area.areaName,
                 "nonPostalVoteTypes": non_postal_vote_types,
                 "data": [],
                 "pollingDivisions": [],

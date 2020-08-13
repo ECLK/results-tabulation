@@ -9,7 +9,7 @@ class ExtendedTallySheet_PRE_41(ExtendedTallySheetDataEntry):
     class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
         def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             return super(ExtendedTallySheet_PRE_41.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
+                title="Results of Electoral District %s" % self.tallySheetVersion.tallySheet.area.areaName
             )
 
         def html(self, title="", total_registered_voters=None):
@@ -18,7 +18,7 @@ class ExtendedTallySheet_PRE_41(ExtendedTallySheetDataEntry):
 
             stamp = tallySheetVersion.stamp
 
-            polling_divisions = Area.get_associated_areas(tallySheetVersion.submission.area,
+            polling_divisions = Area.get_associated_areas(tallySheetVersion.tallySheet.area,
                                                           AreaTypeEnum.PollingDivision)
             polling_division_name = ""
             if len(polling_divisions) > 0:
@@ -26,7 +26,7 @@ class ExtendedTallySheet_PRE_41(ExtendedTallySheetDataEntry):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -35,12 +35,12 @@ class ExtendedTallySheet_PRE_41(ExtendedTallySheetDataEntry):
                 },
                 "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
-                "countingCentre": tallySheetVersion.submission.area.areaName,
+                "countingCentre": tallySheetVersion.tallySheet.area.areaName,
                 "pollingDistrictNos": ", ".join([
                     pollingDistrict.areaName for pollingDistrict in
-                    Area.get_associated_areas(tallySheetVersion.submission.area, AreaTypeEnum.PollingDistrict)
+                    Area.get_associated_areas(tallySheetVersion.tallySheet.area, AreaTypeEnum.PollingDistrict)
                 ]),
                 "data": [
                 ],

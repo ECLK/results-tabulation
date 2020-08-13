@@ -13,7 +13,7 @@ class ExtendedTallySheet_PRE_30_PD(ExtendedTallySheetReport):
 
         def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             return super(ExtendedTallySheet_PRE_30_PD.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Polling Division %s" % self.tallySheetVersion.submission.area.areaName,
+                title="Results of Polling Division %s" % self.tallySheetVersion.tallySheet.area.areaName,
                 total_registered_voters=float(get_polling_division_total_registered_voters(tallySheetVersion=self))
             )
 
@@ -28,13 +28,13 @@ class ExtendedTallySheet_PRE_30_PD(ExtendedTallySheetReport):
 
             stamp = tallySheetVersion.stamp
 
-            pollingDivision = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == Postal:
+            pollingDivision = tallySheetVersion.tallySheet.area.areaName
+            if tallySheetVersion.tallySheet.election.voteType == Postal:
                 pollingDivision = 'Postal'
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -43,7 +43,7 @@ class ExtendedTallySheet_PRE_30_PD(ExtendedTallySheetReport):
                 },
                 "tallySheetCode": "PRE/30/PD",
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": pollingDivision,
                 "data": [],
                 "countingCentres": [],
@@ -77,7 +77,7 @@ class ExtendedTallySheet_PRE_30_PD(ExtendedTallySheetReport):
             content["rejectedVoteCounts"].append(to_comma_seperated_num(total_rejected_vote_count))
             content["totalVoteCounts"].append(to_comma_seperated_num(total_vote_count))
 
-            if tallySheetVersion.submission.election.voteType == Postal:
+            if tallySheetVersion.tallySheet.election.voteType == Postal:
                 content["tallySheetCode"] = "PRE/30/PV"
 
             number_of_counting_centres = len(area_wise_vote_count_result)

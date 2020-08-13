@@ -7,12 +7,11 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Election.ElectionCandidate import ElectionCandidateModel
-from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 from flask import render_template
-from orm.entities import Candidate
+from orm.entities import Candidate, TallySheet
 from util import convert_image_to_data_uri
 
 
@@ -130,7 +129,7 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -173,7 +172,7 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,

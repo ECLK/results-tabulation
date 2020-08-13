@@ -1,18 +1,15 @@
-from marshmallow.fields import Integer, String
-
 from app import db, ma
-from orm.entities import Election, Proof, Submission, SubmissionVersion, Area, Party, Template, TallySheetVersionRow
+from orm.entities import Election, Proof, Area, Party, Template, TallySheetVersionRow, \
+    TallySheet, TallySheetVersion
 from orm.entities.Area import AreaAreaModel
 from orm.entities.Audit import Stamp
 from orm.entities.Election import ElectionCandidate, InvalidVoteCategory
 from orm.entities.IO import File
 from orm.entities.Meta import MetaData
-from orm.entities.SubmissionVersion import TallySheetVersion
-from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel
 from orm.entities.Workflow import WorkflowStatusModel, WorkflowActionModel, WorkflowInstance
 from orm.entities.Workflow.WorkflowInstance import WorkflowInstanceLog
-from orm.enums import ProofTypeEnum, SubmissionTypeEnum, ElectorateTypeEnum, AreaTypeEnum
+from orm.enums import ProofTypeEnum, ElectorateTypeEnum, AreaTypeEnum
 from marshmallow_enum import EnumField
 
 
@@ -322,48 +319,6 @@ class Proof_Schema(ma.ModelSchema):
     proofType = EnumField(ProofTypeEnum)
 
 
-class SubmissionSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "submissionId",
-            # "submissionType",
-            "electionId",
-            "areaId",
-            "area",
-            "latestVersionId",
-            # "tallySheetProofId",
-            # "submissionProofId",
-            # "versions"
-        )
-
-        model = Submission.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    # latestVersion = ma.Nested(TallySheetVersionSchema)
-    submissionType = EnumField(SubmissionTypeEnum)
-    submissionProof = ma.Nested(Proof_Schema)
-    area = ma.Nested(AreaSchema, only=["areaId", "areaName"])
-
-
-class SubmissionVersionSchema(ma.ModelSchema):
-    class Meta:
-        fields = (
-            "submissionVersionId",
-            # "submission",
-            "createdBy",
-            "createdAt"
-        )
-
-        model = SubmissionVersion.Model
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = db.session
-
-    submission = EnumField(SubmissionSchema)
-
-
 class TallySheetVersionSchema(ma.ModelSchema):
     class Meta:
         fields = (
@@ -382,7 +337,6 @@ class TallySheetVersionSchema(ma.ModelSchema):
         # to use for deserialization
         sqla_session = db.session
 
-    submission = EnumField(SubmissionSchema)
     content = ma.Nested(TallySheetVersionRow_Schema, many=True)
 
 
@@ -410,12 +364,8 @@ class TallySheetSchema_1(ma.ModelSchema):
 
     template = ma.Nested("TemplateSchema", only=["templateId", "templateName", "isDerived", "rows"])
     area = ma.Nested(AreaSchema, only=["areaId", "areaName"])
-    versions = ma.Nested(SubmissionVersionSchema, only="submissionVersionId", many=True)
+    versions = ma.Nested(TallySheetVersionSchema, only="tallySheetVersionId", many=True)
     latestVersion = ma.Nested(TallySheetVersionSchema)
-    latestStamp = ma.Nested(StampSchema)
-    lockedStamp = ma.Nested(StampSchema)
-    submittedStamp = ma.Nested(StampSchema)
-    submissionProof = ma.Nested(Proof_Schema)
     metaDataList = ma.Nested(MetaDataSchema, many=True)
     areaMapList = ma.Nested('AreaMapSchema', many=True, partial=True)
     workflowInstance = ma.Nested(WorkflowInstanceSchema, only=["workflowId", "actions", "status", "proof"])

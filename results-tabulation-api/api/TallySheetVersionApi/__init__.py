@@ -7,8 +7,7 @@ from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_VERSION_NOT_FOUND
 from ext.ExtendedTallySheet import ExtendedTallySheet
-from orm.entities.Submission import TallySheet
-from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.entities import TallySheet, TallySheetVersion
 from schemas import TallySheetVersionSchema
 from util import get_paginated_query, RequestBody, validate_tally_sheet_version_request_content_special_characters
 

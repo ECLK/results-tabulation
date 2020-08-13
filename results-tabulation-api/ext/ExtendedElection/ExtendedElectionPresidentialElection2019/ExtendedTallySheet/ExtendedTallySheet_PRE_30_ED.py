@@ -11,7 +11,7 @@ class ExtendedTallySheet_PRE_30_ED(ExtendedTallySheetReport):
 
         def html_letter(self, title="", total_registered_voters=None, signatures=[]):
             return super(ExtendedTallySheet_PRE_30_ED.ExtendedTallySheetVersion, self).html_letter(
-                title="Results of Electoral District %s" % self.tallySheetVersion.submission.area.areaName
+                title="Results of Electoral District %s" % self.tallySheetVersion.tallySheet.area.areaName
             )
 
         def html(self, title="", total_registered_voters=None):
@@ -34,13 +34,13 @@ class ExtendedTallySheet_PRE_30_ED(ExtendedTallySheetReport):
 
             stamp = tallySheetVersion.stamp
 
-            pollingDivision = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType == Postal:
+            pollingDivision = tallySheetVersion.tallySheet.area.areaName
+            if tallySheetVersion.tallySheet.election.voteType == Postal:
                 pollingDivision = 'Postal'
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -49,7 +49,7 @@ class ExtendedTallySheet_PRE_30_ED(ExtendedTallySheetReport):
                 },
                 "tallySheetCode": "PRE/30/PD",
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": pollingDivision,
                 "data": [],
                 "pollingDivisions": [],

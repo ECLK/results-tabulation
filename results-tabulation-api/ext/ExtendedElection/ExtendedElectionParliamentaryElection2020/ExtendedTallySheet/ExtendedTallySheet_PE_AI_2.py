@@ -59,7 +59,7 @@ class ExtendedTallySheet_PE_AI_2(ExtendedTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -98,7 +98,7 @@ class ExtendedTallySheet_PE_AI_2(ExtendedTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,

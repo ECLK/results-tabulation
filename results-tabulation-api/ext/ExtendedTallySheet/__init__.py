@@ -2,8 +2,6 @@ import pandas as pd
 
 from flask import render_template
 from sqlalchemy import MetaData
-import requests
-import app
 from app import db
 from auth import get_user_name, has_role_based_access
 from constants.VOTE_TYPES import Postal, NonPostal
@@ -74,16 +72,16 @@ class ExtendedTallySheet:
         }
 
     def get_template_column_to_query_filter_map(self, only_group_by_columns=False):
-        from orm.entities import Election, Area, Candidate, Party, TallySheetVersionRow, Submission
+        from orm.entities import Election, Area, Candidate, Party, TallySheet, TallySheetVersionRow
         from orm.entities.Election import InvalidVoteCategory, ElectionCandidate, ElectionParty
 
         if only_group_by_columns:
             return {
                 "electionId": [
-                    Election.Model.electionId == Submission.Model.electionId
+                    Election.Model.electionId == TallySheet.Model.electionId
                 ],
                 "areaId": [
-                    Area.Model.areaId == Submission.Model.areaId
+                    Area.Model.areaId == TallySheet.Model.areaId
                 ],
                 "candidateId": [
                     ElectionCandidate.Model.electionId == Election.Model.electionId,
@@ -99,10 +97,10 @@ class ExtendedTallySheet:
         else:
             return {
                 "electionId": [
-                    Election.Model.electionId == Submission.Model.electionId
+                    Election.Model.electionId == TallySheet.Model.electionId
                 ],
                 "areaId": [
-                    Area.Model.areaId == Submission.Model.areaId
+                    Area.Model.areaId == TallySheet.Model.areaId
                 ],
                 "candidateId": [
                     Candidate.Model.candidateId == TallySheetVersionRow.Model.candidateId,
@@ -144,7 +142,7 @@ class ExtendedTallySheet:
     def authorize_workflow_action(self, workflow_action, content=None):
         from auth import has_role_based_access
 
-        if not has_role_based_access(election=self.tallySheet.submission.election,
+        if not has_role_based_access(election=self.tallySheet.election,
                                      tally_sheet_code=self.tallySheet.tallySheetCode,
                                      access_type=workflow_action.actionType):
             UnauthorizedException(message="Not allowed to %s" % (workflow_action.actionName),
@@ -153,10 +151,10 @@ class ExtendedTallySheet:
         if workflow_action.actionType == WORKFLOW_ACTION_TYPE_REQUEST_CHANGES and workflow_action.toStatus in [
             WORKFLOW_STATUS_TYPE_SAVED, WORKFLOW_STATUS_TYPE_EMPTY]:
 
-            from orm.entities.Submission import TallySheet
-            from orm.entities.Submission.TallySheet import TallySheetTallySheetModel
+            from orm.entities import TallySheet
+            from orm.entities.TallySheet import TallySheetTallySheetModel
 
-            extended_election = self.tallySheet.submission.election.get_extended_election()
+            extended_election = self.tallySheet.election.get_extended_election()
 
             verified_parent_tally_sheets = db.session.query(
                 TallySheet.Model.tallySheetId
@@ -175,14 +173,12 @@ class ExtendedTallySheet:
                     code=MESSAGE_CODE_TALLY_SHEET_CANNOT_BE_UNLOCKED_WHILE_HAVING_VERIFIED_PARENT_SUMMARY_SHEETS)
 
     def on_workflow_tally_sheet_version(self, workflow_action, tallySheetVersionId, content=None):
-        from orm.entities import SubmissionVersion
-        from orm.entities.SubmissionVersion import TallySheetVersion
+        from orm.entities import TallySheetVersion
 
         tally_sheet_version = db.session.query(
             TallySheetVersion.Model
         ).filter(
-            SubmissionVersion.Model.submissionId == self.tallySheet.tallySheetId,
-            SubmissionVersion.Model.submissionVersionId == TallySheetVersion.Model.tallySheetVersionId,
+            TallySheetVersion.Model.tallySheetId == self.tallySheet.tallySheetId,
             TallySheetVersion.Model.tallySheetVersionId == MetaData.Model.metaDataValue,
             MetaData.Model.metaDataKey == "tallySheetVersionId",
             MetaData.Model.metaId == Meta.Model.metaId,
@@ -313,7 +309,7 @@ class ExtendedTallySheet:
 
         authorized_workflow_actions = []
         for workflow_action in workflow_actions:
-            if has_role_based_access(election=self.tallySheet.submission.election,
+            if has_role_based_access(election=self.tallySheet.election,
                                      tally_sheet_code=self.tallySheet.tallySheetCode,
                                      access_type=workflow_action.actionType):
                 authorized_workflow_actions.append(workflow_action)
@@ -419,12 +415,12 @@ class ExtendedTallySheet:
             stamp = tallySheetVersion.stamp
 
             if total_registered_voters is None:
-                total_registered_voters = tallySheetVersion.submission.area.get_registered_voters_count()
+                total_registered_voters = tallySheetVersion.tallySheet.area.get_registered_voters_count()
 
             content = {
                 "resultTitle": title,
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -1094,7 +1090,7 @@ class ExtendedTallySheetDataEntry(ExtendedTallySheet):
 
     def on_workflow_tally_sheet_version(self, workflow_action, tallySheetVersionId, content=None):
         if workflow_action.actionType in [WORKFLOW_ACTION_TYPE_SUBMIT]:
-            from orm.entities.SubmissionVersion import TallySheetVersion
+            from orm.entities import TallySheetVersion
 
             tally_sheet_version = db.session.query(
                 TallySheetVersion.Model

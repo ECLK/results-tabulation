@@ -18,7 +18,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
             area_wise_non_postal_vote_count_result = self.get_area_wise_non_postal_vote_count_result()
 
             stamp = tallySheetVersion.stamp
-            election = tallySheetVersion.submission.election
+            election = tallySheetVersion.tallySheet.election
 
             non_postal_vote_types = []
             vote_type_to_candidate_wise_valid_vote_count_result_map = {}
@@ -41,7 +41,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "CE/RO/PR/2",
-                "electoralDistrict": tallySheetVersion.submission.area.areaName,
+                "electoralDistrict": tallySheetVersion.tallySheet.area.areaName,
                 "nonPostalVoteTypes": non_postal_vote_types,
                 "partyName": candidate_and_area_wise_valid_non_postal_vote_count_result["partyName"].values[0],
                 "data": [],
@@ -62,7 +62,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_2(ExtendedTallySheetReport):
                 content["totalVoteCounts"].append(to_comma_seperated_num(
                     vote_type_to_candidate_wise_valid_vote_count_result_map[vote_type]["numValue"].sum()))
 
-            if tallySheetVersion.submission.election.voteType != NonPostal:
+            if tallySheetVersion.tallySheet.election.voteType != NonPostal:
                 content["tallySheetCode"] = "CE/RO/PR/2"
 
             for index_1 in candidate_wise_valid_vote_count_result.index:

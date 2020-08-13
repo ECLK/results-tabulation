@@ -12,10 +12,9 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
 from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
-from orm.entities.Submission import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 from flask import render_template
-from orm.entities import Area
+from orm.entities import Area, TallySheet
 from util import to_comma_seperated_num, convert_image_to_data_uri, to_percentage
 from orm.enums import AreaTypeEnum
 import math
@@ -41,7 +40,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
         pd_code = None
         pd_name = None
 
-        electoral_district = self.tallySheet.submission.area
+        electoral_district = self.tallySheet.area
         ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
         ed_code = ed_name_regex_search.group(1)
         ed_name = ed_name_regex_search.group(2)
@@ -79,7 +78,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             }
 
         def get_post_save_request_content(self):
-            election = self.tallySheetVersion.submission.election
+            election = self.tallySheetVersion.tallySheet.election
             tally_sheet_id = self.tallySheetVersion.tallySheetId
 
             minimum_vote_count_percentage_required = election.meta.get_meta_data(
@@ -233,7 +232,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             return party_wise_calculations_df
 
         def html(self, title="", total_registered_voters=None):
-            election = self.tallySheetVersion.submission.election
+            election = self.tallySheetVersion.tallySheet.election
             party_wise_seat_calculations = self.get_party_wise_seat_calculations()
 
             number_of_members_to_be_elected = election.meta.get_meta_data(
@@ -243,7 +242,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             total_valid_vote_count = party_wise_seat_calculations['numValue'].sum()
 
-            election = self.tallySheetVersion.submission.election
+            election = self.tallySheetVersion.tallySheet.election
             tally_sheet_id = self.tallySheetVersion.tallySheetId
 
             minimum_vote_count_percentage_required = float(election.meta.get_meta_data(
@@ -267,7 +266,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -276,9 +275,9 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                 },
                 "tallySheetCode": "PE/R2",
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "electoralDistrictId": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
                 "data": [],
                 "rejectedVoteCounts": [],
                 "totalVoteCounts": to_comma_seperated_num(total_valid_vote_count),
@@ -336,7 +335,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             )
 
             # return super(ExtendedTallySheet_PE_R2.ExtendedTallySheetVersion, self).html(
-            #     title="PE-R2 : %s" % self.tallySheetVersion.submission.area.areaName,
+            #     title="PE-R2 : %s" % self.tallySheetVersion.tallySheet.area.areaName,
             #     columns=[
             #         "partyId",
             #         "partyName",
@@ -366,11 +365,11 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
 
-            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count()
+            registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -379,7 +378,7 @@ class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
                 },
                 "signatures": signatures,
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],

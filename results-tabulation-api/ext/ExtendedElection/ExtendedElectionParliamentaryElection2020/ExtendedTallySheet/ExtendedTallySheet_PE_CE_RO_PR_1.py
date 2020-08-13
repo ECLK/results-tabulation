@@ -19,14 +19,14 @@ class ExtendedTallySheet_PE_CE_RO_PR_1(ExtendedTallySheetReport):
 
             stamp = tallySheetVersion.stamp
 
-            polling_division_name = tallySheetVersion.submission.area.areaName
+            polling_division_name = tallySheetVersion.tallySheet.area.areaName
 
-            if tallySheetVersion.submission.election.voteType != NonPostal:
-                polling_division_name = tallySheetVersion.submission.election.voteType
+            if tallySheetVersion.tallySheet.election.voteType != NonPostal:
+                polling_division_name = tallySheetVersion.tallySheet.election.voteType
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -35,7 +35,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_1(ExtendedTallySheetReport):
                 },
                 "tallySheetCode": "CE/RO/PR/1",
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "partyName": candidate_and_area_wise_valid_vote_count_result["partyName"].values[0],
                 "data": [],

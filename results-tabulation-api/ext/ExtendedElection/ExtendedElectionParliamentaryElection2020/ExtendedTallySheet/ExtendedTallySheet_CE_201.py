@@ -22,20 +22,20 @@ class ExtendedTallySheet_CE_201(ExtendedTallySheetDataEntry):
 
             stamp = tallySheetVersion.stamp
 
-            polling_divisions = Area.get_associated_areas(tallySheetVersion.submission.area,
+            polling_divisions = Area.get_associated_areas(tallySheetVersion.tallySheet.area,
                                                           AreaTypeEnum.PollingDivision)
             polling_division_name = ""
             if len(polling_divisions) > 0:
                 polling_division_name = polling_divisions[0].areaName
 
-            if tallySheetVersion.submission.election.voteType != NonPostal:
-                polling_division_name = tallySheetVersion.submission.election.voteType
+            if tallySheetVersion.tallySheet.election.voteType != NonPostal:
+                polling_division_name = tallySheetVersion.tallySheet.election.voteType
 
             totalBallotBoxCount = 0
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -44,9 +44,9 @@ class ExtendedTallySheet_CE_201(ExtendedTallySheetDataEntry):
                 },
                 "tallySheetCode": "CE-201",
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
-                "countingCentre": tallySheetVersion.submission.area.areaName,
+                "countingCentre": tallySheetVersion.tallySheet.area.areaName,
                 "parliamentaryElection": 1,
                 "data": [],
                 "totalBallotBoxCount": totalBallotBoxCount

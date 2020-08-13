@@ -6,14 +6,13 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Meta import MetaData
-from orm.entities.Submission import TallySheet
-from orm.entities.Submission.TallySheet import TallySheetTallySheetModel
+from orm.entities.TallySheet import TallySheetTallySheetModel
 from orm.entities.Template import TemplateRowModel, TemplateModel
 import math
 
 from flask import render_template
 import re
-from orm.entities import Area, Template, Submission
+from orm.entities import Area, Template, TallySheet
 from orm.entities.Workflow import WorkflowInstance
 from orm.enums import AreaTypeEnum
 from util import convert_image_to_data_uri
@@ -32,8 +31,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
         party_ids_to_be_filtered = []
         pe_r2_tally_sheets = db.session.query(TallySheet.Model).filter(
             TallySheet.Model.tallySheetId == TallySheetTallySheetModel.childTallySheetId,
-            TallySheet.Model.tallySheetId == Submission.Model.submissionId,
-            Submission.Model.latestVersionId != None,
+            TallySheet.Model.latestVersionId != None,
             TallySheetTallySheetModel.parentTallySheetId == self.tallySheet.tallySheetId,
             TallySheet.Model.templateId == Template.Model.templateId,
             Template.Model.templateName == TALLY_SHEET_CODES.PE_R2,
@@ -87,7 +85,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
         pd_code = None
         pd_name = None
 
-        electoral_district = self.tallySheet.submission.area
+        electoral_district = self.tallySheet.area
         ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
         ed_code = ed_name_regex_search.group(1)
         ed_name = ed_name_regex_search.group(2)
@@ -204,7 +202,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -213,10 +211,10 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
                 },
                 "tallySheetCode": "PE-21",
                 "electoralDistrictNo": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "countingCentre": tallySheetVersion.submission.area.areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "countingCentre": tallySheetVersion.tallySheet.area.areaName,
                 "data": []
             }
 
@@ -245,7 +243,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -254,7 +252,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
                 },
                 "signatures": signatures,
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "data": [],
                 "logo": convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png"),
                 "date": stamp.createdAt.strftime("%d/%m/%Y"),

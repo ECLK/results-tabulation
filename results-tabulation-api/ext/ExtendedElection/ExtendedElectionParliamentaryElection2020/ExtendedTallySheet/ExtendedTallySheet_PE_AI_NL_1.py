@@ -6,7 +6,7 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
     TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
 from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
-from orm.entities.Submission import TallySheet
+from orm.entities import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
 from flask import render_template
 from util import to_comma_seperated_num, convert_image_to_data_uri, to_percentage
@@ -145,10 +145,10 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
 
-            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count()
+            registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -219,10 +219,10 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
 
-            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count()
+            registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
