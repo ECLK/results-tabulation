@@ -1,5 +1,3 @@
-import numpy as np
-import pandas as pd
 from app import db
 from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_PE_21_CANNOT_BE_PROCESSED_WITHOUT_PE_R2
