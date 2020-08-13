@@ -1,3 +1,5 @@
+import numpy as np
+import pandas as pd
 from app import db
 from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_PE_21_CANNOT_BE_PROCESSED_WITHOUT_PE_R2
@@ -124,12 +126,32 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
             }
 
         def get_candidate_wise_results(self):
-            elected_candidates_df = self.df.loc[
-                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
-            elected_candidates_df = elected_candidates_df.sort_values(
-                by=['electionPartyId', "candidateId"], ascending=[True, True]).reset_index()
 
-            return elected_candidates_df
+            candidate_wise_results_df = self.df.loc[
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
+
+            candidate_wise_results_df["seatsAllocated"] = [0 for i in range(len(candidate_wise_results_df))]
+            candidate_wise_results_df["preferenceCount"] = [0 for i in range(len(candidate_wise_results_df))]
+
+            for index in candidate_wise_results_df.index:
+                party_id = candidate_wise_results_df.at[index, "partyId"]
+                candidate_id = candidate_wise_results_df.at[index, "candidateId"]
+
+                seats_allocated = self.df.loc[(self.df["partyId"] == party_id) & (
+                            self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED)]["numValue"].values[0]
+
+                preference_count = self.df.loc[(self.df["candidateId"] == candidate_id) & (
+                            self.df['templateRowType'] == "CANDIDATE_FIRST_PREFERENCE")]["numValue"].values[0]
+
+                candidate_wise_results_df.at[index, "seatsAllocated"] = seats_allocated
+                candidate_wise_results_df.at[index, "preferenceCount"] = preference_count
+
+            candidate_wise_results_df = candidate_wise_results_df.sort_values(
+                by=["seatsAllocated", "electionPartyId", "preferenceCount", "candidateId"],
+                ascending=[False, True, False, True]
+            )
+
+            return candidate_wise_results_df
 
         def get_post_save_request_content(self):
             tally_sheet_id = self.tallySheetVersion.tallySheetId
@@ -221,7 +243,8 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
             }
 
             candidate_wise_results = self.get_candidate_wise_results().sort_values(
-                by=['electionPartyId', "candidateId"], ascending=[True, True]
+                by=["seatsAllocated", "electionPartyId", "preferenceCount", "candidateId"],
+                ascending=[False, True, False, True]
             ).reset_index()
 
             for index in candidate_wise_results.index:
@@ -262,7 +285,8 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
             }
 
             candidate_wise_results = self.get_candidate_wise_results().sort_values(
-                by=['electionPartyId', "candidateId"], ascending=[True, True]
+                by=["seatsAllocated", "electionPartyId", "preferenceCount", "candidateId"],
+                ascending=[False, True, False, True]
             ).reset_index()
 
             for index in candidate_wise_results.index:
