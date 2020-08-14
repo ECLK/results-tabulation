@@ -40,7 +40,6 @@ def _cache_get_all(user_access_area_ids, electionId=None, areaId=None, tallyShee
     tally_sheet_response_list = []
     for tally_sheet_index in range(len(tally_sheets)):
         tally_sheet = tally_sheets[tally_sheet_index]
-        refactor_tally_sheet(tally_sheet)
         tally_sheet_response_list_item = dict(TallySheetSchema_1(only=[
             "tallySheetId",
             "tallySheetCode",
@@ -69,7 +68,7 @@ def get_by_id(tallySheetId):
     extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
     extended_tally_sheet.execute_tally_sheet_get()
 
-    tally_sheet_response = TallySheetSchema_1().dump(refactor_tally_sheet(tally_sheet)).data
+    tally_sheet_response = TallySheetSchema_1().dump(tally_sheet).data
     _append_latest_workflow_instance_to_cached_tally_sheets(cached_tally_sheets=[tally_sheet_response])
     _append_latest_version_ids_to_cached_tally_sheets(cached_tally_sheets=[tally_sheet_response])
 
@@ -94,7 +93,7 @@ def workflow(tallySheetId, body):
 
     db.session.commit()
 
-    tally_sheet_response = TallySheetSchema_1().dump(refactor_tally_sheet(tally_sheet)).data
+    tally_sheet_response = TallySheetSchema_1().dump(tally_sheet).data
     _append_latest_workflow_instance_to_cached_tally_sheets(cached_tally_sheets=[tally_sheet_response])
     _append_latest_version_ids_to_cached_tally_sheets(cached_tally_sheets=[tally_sheet_response])
 
@@ -118,7 +117,7 @@ def upload_workflow_proof_file(body):
     extended_tally_sheet: ExtendedTallySheet = tally_sheet.get_extended_tally_sheet()
     extended_tally_sheet.execute_tally_sheet_proof_upload()
 
-    tally_sheet_response = TallySheetSchema_1().dump(refactor_tally_sheet(tally_sheet)).data
+    tally_sheet_response = TallySheetSchema_1().dump(tally_sheet).data
     _append_latest_workflow_instance_to_cached_tally_sheets(cached_tally_sheets=[tally_sheet_response])
     _append_latest_version_ids_to_cached_tally_sheets(cached_tally_sheets=[tally_sheet_response])
 
@@ -175,10 +174,6 @@ def get_workflow_proof_download_file(tallySheetId, fileId):
     # TODO validate fileId
 
     return FileApi.get_download_file(fileId=fileId)
-
-
-def refactor_tally_sheet(tally_sheet):
-    return tally_sheet
 
 
 def _append_latest_version_ids_to_cached_tally_sheets(cached_tally_sheets):
