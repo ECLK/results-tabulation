@@ -151,7 +151,7 @@ class ExtendedTallySheet:
                                   code=MESSAGE_CODE_WORKFLOW_ACTION_NOT_AUTHORIZED)
 
         if workflow_action.actionType == WORKFLOW_ACTION_TYPE_REQUEST_CHANGES and workflow_action.toStatus in [
-            WORKFLOW_STATUS_TYPE_SAVED, WORKFLOW_STATUS_TYPE_EMPTY]:
+            WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED]:
 
             from orm.entities.Submission import TallySheet
             from orm.entities.Submission.TallySheet import TallySheetTallySheetModel
