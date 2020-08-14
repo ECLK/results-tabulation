@@ -7,7 +7,7 @@ from auth import get_user_access_area_ids, has_role_based_access
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META
 from exception import NotFoundException, UnauthorizedException, MethodNotAllowedException
 from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_VIEW, \
-    MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
+    MESSAGE_CODE_IRRELEVANT_VERSION_CANNOT_BE_MAPPED_TO_TALLY_SHEET
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_VIEW
 from orm.entities import Election, Template, TallySheetVersionRow, Meta, History, Area, TallySheetVersion
 from orm.entities.Dashboard import StatusReport
@@ -89,7 +89,7 @@ class TallySheetModel(db.Model):
                 raise MethodNotAllowedException(
                     message="Tally sheet version is not belongs to the tally sheet (tallySheetId=%d, tallySheetVersionId=%d)" % (
                         self.tallySheetId, tallySheetVersion.tallySheetVersionId),
-                    code=MESSAGE_CODE_SUBMISSION_IRRELEVANT_VERSION_CANNOT_BE_MAPPED
+                    code=MESSAGE_CODE_IRRELEVANT_VERSION_CANNOT_BE_MAPPED_TO_TALLY_SHEET
                 )
 
             self.latestVersionId = tallySheetVersion.tallySheetVersionId
