@@ -25,13 +25,12 @@ SELECT
     COUNT(tallySheet.tallySheetId) AS totalTallySheetCount
 FROM
     ext_pe2020_dashboard_area_map AS areaMap,
-    submission, election, template, workflowInstance,
+    election, template, workflowInstance,
     tallySheet left join metaData
         on metaData.metaId = tallySheet.metaId and metaData.metaDataKey = "partyId"
 WHERE
-    submission.areaId = areaMap.countingCentreId
-    and tallySheet.tallySheetId = submission.submissionId
-    and election.electionId = submission.electionId
+    tallySheet.areaId = areaMap.countingCentreId
+    and election.electionId = tallySheet.electionId
     and election.electionTemplateName = @election_template_name
     and template.templateId = tallySheet.templateId
     and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId
@@ -66,13 +65,12 @@ SELECT
 FROM
     (SELECT electoralDistrictId, pollingDivisionId FROM ext_pe2020_dashboard_area_map
         WHERE voteTYpe = "NonPostal" GROUP BY electoralDistrictId, pollingDivisionId) AS areaMap,
-    submission, election, template, workflowInstance,
+    election, template, workflowInstance,
     tallySheet left join metaData
         on metaData.metaId = tallySheet.metaId and metaData.metaDataKey = "partyId"
 WHERE
-    submission.areaId = areaMap.pollingDivisionId
-    and tallySheet.tallySheetId = submission.submissionId
-    and election.electionId = submission.electionId
+    tallySheet.areaId = areaMap.pollingDivisionId
+    and election.electionId = tallySheet.electionId
     and election.electionTemplateName = @election_template_name
     and template.templateId = tallySheet.templateId
     and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId
@@ -105,13 +103,12 @@ SELECT
 FROM
     (SELECT electoralDistrictId FROM ext_pe2020_dashboard_area_map
         WHERE voteTYpe = "NonPostal" GROUP BY electoralDistrictId) AS areaMap,
-    submission, election, template, workflowInstance,
+    election, template, workflowInstance,
     tallySheet left join metaData
         on metaData.metaId = tallySheet.metaId and metaData.metaDataKey = "partyId"
 WHERE
-    submission.areaId = areaMap.electoralDistrictId
-    and tallySheet.tallySheetId = submission.submissionId
-    and election.electionId = submission.electionId
+    tallySheet.areaId = areaMap.electoralDistrictId
+    and election.electionId = tallySheet.electionId
     and election.electionTemplateName = @election_template_name
     and template.templateId = tallySheet.templateId
     and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId
@@ -135,18 +132,17 @@ SELECT
     countingCentreElection.voteType,
     party.partyId,
     (SELECT COALESCE(SUM(tallySheetVersionRow.numValue))
-        FROM tallySheet, submission, template, templateRow, workflowInstance, tallySheetVersionRow
+        FROM tallySheet, template, templateRow, workflowInstance, tallySheetVersionRow
         WHERE
-            tallySheet.tallySheetId = submission.submissionId
-            and template.templateId = tallySheet.templateId
+            template.templateId = tallySheet.templateId
             and templateRow.templateid = template.templateId
             and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId
-            and tallySheetVersionRow.tallySheetVersionId = submission.latestVersionId
+            and tallySheetVersionRow.tallySheetVersionId = tallySheet.latestVersionId
             and tallySheetVersionRow.templateRowId = templateRow.templateRowId
             and workflowInstance.status IN ("Verified")
             and templateRow.templateRowType = "PARTY_WISE_VOTE"
             and template.templateName = "PE-27"
-            and submission.areaId = countingCentreId
+            and tallySheet.areaId = countingCentreId
             and tallySheetVersionRow.partyId = party.partyId
     ) AS voteCount
 FROM ext_pe2020_dashboard_area_map AS areaMap, election_party AS electionParty, party,
@@ -177,22 +173,21 @@ SELECT
 FROM ext_pe2020_dashboard_area_map AS areaMap,
          area AS countingCentre, election AS countingCentreElection, area AS pollingDivision, area AS electoralDistrict,
          (SELECT
-            submission.areaId AS countingCentreId,
+            tallySheet.areaId AS countingCentreId,
             SUM(IF(templateRow.templateRowType = "PARTY_WISE_VOTE",tallySheetVersionRow.numValue,0)) validVoteCount,
             SUM(IF(templateRow.templateRowType = "REJECTED_VOTE",tallySheetVersionRow.numValue,0)) rejectedVoteCount,
             SUM(tallySheetVersionRow.numValue) voteCount
-            FROM tallySheet, submission, template, templateRow, workflowInstance, tallySheetVersionRow
+            FROM tallySheet, template, templateRow, workflowInstance, tallySheetVersionRow
             WHERE
-                tallySheet.tallySheetId = submission.submissionId
-                and template.templateId = tallySheet.templateId
+                template.templateId = tallySheet.templateId
                 and templateRow.templateid = template.templateId
                 and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId
-                and tallySheetVersionRow.tallySheetVersionId = submission.latestVersionId
+                and tallySheetVersionRow.tallySheetVersionId = tallySheet.latestVersionId
                 and tallySheetVersionRow.templateRowId = templateRow.templateRowId
                 and workflowInstance.status IN ("Verified")
                 and templateRow.templateRowType IN ("PARTY_WISE_VOTE", "REJECTED_VOTE")
                 and template.templateName = "PE-27"
-            GROUP BY submission.areaId
+            GROUP BY tallySheet.areaId
         ) AS voteCounts
 WHERE
     countingCentre.areaId = areaMap.countingCentreId
@@ -217,18 +212,17 @@ SELECT
     electoralDistrict.areaId AS electoralDistrictId,
     party.partyId,
     (SELECT COALESCE(SUM(tallySheetVersionRow.numValue), 0)
-        FROM tallySheet, submission, template, templateRow, workflowInstance, tallySheetVersionRow
+        FROM tallySheet, template, templateRow, workflowInstance, tallySheetVersionRow
         WHERE
-            tallySheet.tallySheetId = submission.submissionId
-            and template.templateId = tallySheet.templateId
+            template.templateId = tallySheet.templateId
             and templateRow.templateid = template.templateId
             and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId
-            and tallySheetVersionRow.tallySheetVersionId = submission.latestVersionId
+            and tallySheetVersionRow.tallySheetVersionId = tallySheet.latestVersionId
             and tallySheetVersionRow.templateRowId = templateRow.templateRowId
             and workflowInstance.status IN ("Verified", "Ready to Certify", "Certified", "Release Notified", "Released")
             and templateRow.templateRowType = "TEMPLATE_ROW_TYPE_SEATS_ALLOCATED"
             and template.templateName = "PE-R2"
-            and submission.areaId = areaMap.electoralDistrictId
+            and tallySheet.areaId = areaMap.electoralDistrictId
             and tallySheetVersionRow.partyId = party.partyId
     ) AS seatCount
 FROM
@@ -252,18 +246,17 @@ SELECT
     election.electionId AS electionId,
     party.partyId,
     (SELECT COALESCE(SUM(tallySheetVersionRow.numValue), 0)
-        FROM tallySheet, submission, template, templateRow, workflowInstance, tallySheetVersionRow
+        FROM tallySheet, template, templateRow, workflowInstance, tallySheetVersionRow
         WHERE
-            tallySheet.tallySheetId = submission.submissionId
-            and template.templateId = tallySheet.templateId
+            template.templateId = tallySheet.templateId
             and templateRow.templateid = template.templateId
             and workflowInstance.workflowInstanceId = tallySheet.workflowInstanceId
-            and tallySheetVersionRow.tallySheetVersionId = submission.latestVersionId
+            and tallySheetVersionRow.tallySheetVersionId = tallySheet.latestVersionId
             and tallySheetVersionRow.templateRowId = templateRow.templateRowId
             and workflowInstance.status IN ("Verified", "Ready to Certify", "Certified", "Release Notified", "Released")
             and templateRow.templateRowType = "TEMPLATE_ROW_TYPE_SEATS_ALLOCATED"
             and template.templateName = "PE-AI-NL-1"
-            and submission.electionId = election.electionId
+            and tallySheet.electionId = election.electionId
             and tallySheetVersionRow.partyId = party.partyId
     ) AS nationalListSeatCount
 FROM
