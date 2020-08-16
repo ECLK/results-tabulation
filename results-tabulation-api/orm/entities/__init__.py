@@ -14,8 +14,7 @@ from orm.entities.Area.Electorate import Country, Province, AdministrativeDistri
 
 from orm.entities.Area.Office import DistrictCentre, CountingCentre, PollingStation, ElectionCommission
 
-from orm.entities import Submission, SubmissionVersion
-from orm.entities.SubmissionVersion import TallySheetVersion
+from orm.entities import TallySheet, TallySheetVersion, TallySheetVersionRow
 
 from orm.entities.Election import InvalidVoteCategory
 from orm.entities.Dashboard import StatusCE201

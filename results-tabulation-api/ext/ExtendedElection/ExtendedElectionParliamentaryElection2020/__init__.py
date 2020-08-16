@@ -77,11 +77,10 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_STA
     WORKFLOW_STATUS_TYPE_VERIFIED, WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, \
     WORKFLOW_STATUS_TYPE_CERTIFIED, WORKFLOW_STATUS_TYPE_RELEASED, WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED
 from ext.ExtendedElection.util import get_rows_from_csv
-from orm.entities import Candidate, Template, Party, Meta, Workflow
+from orm.entities import Candidate, Template, Party, Meta, Workflow, TallySheet
 from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
-from orm.entities.Submission import TallySheet
 from orm.enums import AreaTypeEnum
 
 role_based_access_config = RoleBasedAccess.role_based_access_config
@@ -366,7 +365,8 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
                  "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
                 {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
+                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED,
+                 "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
 
                 {"name": "Print Letter", "type": WORKFLOW_ACTION_TYPE_PRINT_LETTER,
                  "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED,

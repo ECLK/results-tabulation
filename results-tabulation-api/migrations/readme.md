@@ -30,6 +30,7 @@ revision = '65900aaf5afd'
 down_revision = 'a8a2fc4e4c77'
 branch_labels = None
 depends_on = None
+db = sa
 
 
 def upgrade():
@@ -40,14 +41,14 @@ def upgrade():
     
     class _Election(Base):
         __tablename__ = 'election'
-        electionId = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-        rootElectionId = sa.Column(sa.Integer,
-                                   sa.ForeignKey("election.electionId", name="fk_election_root_election_id"),
+        electionId = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        rootElectionId = db.Column(db.Integer,
+                                   db.ForeignKey("election.electionId", name="fk_election_root_election_id"),
                                    nullable=True)
-        parentElectionId = sa.Column(sa.Integer, sa.ForeignKey("election.electionId"), nullable=True)
-        isListed = sa.Column(sa.String(100), nullable=False)
+        parentElectionId = db.Column(db.Integer, db.ForeignKey("election.electionId"), nullable=True)
+        isListed = db.Column(db.String(100), nullable=False)
 
-    op.add_column('election', sa.Column('isListed', sa.String(length=100), nullable=False))
+    op.add_column('election', db.Column('isListed', db.String(length=100), nullable=False))
 
     existing_elections = session.query(
         _Election

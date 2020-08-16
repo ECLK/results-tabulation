@@ -145,7 +145,7 @@ class TemplateRow_DerivativeTemplateRow_Model(db.Model):
         db.session.flush()
 
 
-def create(templateName):
+def create(templateName, structure):
     result = Model(
         templateName=templateName
     )

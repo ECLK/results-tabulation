@@ -34,11 +34,10 @@ from ext import TallySheetMap
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionPresidentialElection2019 import RoleBasedAccess
 from ext.ExtendedElection.util import get_rows_from_csv
-from orm.entities import Election, Candidate, Template, Party, Meta, Workflow
+from orm.entities import Candidate, Template, Party, Meta, Workflow, TallySheet
 from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
-from orm.entities.Submission import TallySheet
 from orm.enums import AreaTypeEnum
 
 role_based_access_config = RoleBasedAccess.role_based_access_config

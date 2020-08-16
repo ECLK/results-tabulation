@@ -1,12 +1,10 @@
 import csv
-from app import db
 from auth import AREA_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, \
     EC_LEADERSHIP_ROLE, SUB, ROLE_CLAIM, ROLE_PREFIX
 
 from orm.entities import Area
-from orm.entities.Submission import TallySheet
 from orm.enums import AreaTypeEnum
 from jose import jwt
 

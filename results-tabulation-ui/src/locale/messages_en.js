@@ -45,14 +45,13 @@ export const API_MESSAGES_EN = {
     3001: "Proof is not found.",
     3002: "Tally sheet is not found.",
     3003: "Tally sheet version is not found.",
-    3004: "Submission is not found.",
 
     // Method not allowed
     4000: "Tally sheet is no longer readable.",
     4001: "Tally sheet is no longer editable.",
     4002: "Tally sheet is no longer accepting proof documents.",
     4003: "Tally sheet is incomplete.",
-    4004: "Submission irrelevant version cannot be mapped",
+    4004: "Irrelevant version cannot be mapped",
     4005: "Workflow action is now allowed.",
     4006: "Tally sheet is not allowed to be notified.",
     4007: "Tally sheet is not allowed to be release.",

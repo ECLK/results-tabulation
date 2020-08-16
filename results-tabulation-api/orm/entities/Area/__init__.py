@@ -63,9 +63,6 @@ class AreaModel(db.Model):
     def get_associated_areas(self, areaType, electionId=None):
         return self.get_associated_areas_query(areaType, electionId).all()
 
-    def get_submissions(self, submissionType):
-        return [submission for submission in self.submissions if submission.submissionType is submissionType]
-
     @hybrid_property
     def areaMapList(self):
         extended_election = self.election.get_extended_election()

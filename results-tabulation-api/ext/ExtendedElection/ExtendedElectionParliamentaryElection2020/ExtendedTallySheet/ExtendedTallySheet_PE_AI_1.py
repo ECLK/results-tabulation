@@ -30,8 +30,8 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                 by=["totalSeatsAllocated", "numValue", "electionPartyId"], ascending=[False, False, True]
             ).reset_index()
 
-            registered_voters_count = self.tallySheetVersion.submission.area.get_registered_voters_count(
-                vote_type=self.tallySheetVersion.submission.election.voteType)
+            registered_voters_count = self.tallySheetVersion.tallySheet.area.get_registered_voters_count(
+                vote_type=self.tallySheetVersion.tallySheet.election.voteType)
             total_valid_vote_count = 0
             total_rejected_vote_count = self.get_rejected_vote_count_result()["numValue"].values[0]
             for party_wise_result in party_wise_results.itertuples():
@@ -101,10 +101,10 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
             party_wise_results = self.get_party_wise_results()
             stamp = tallySheetVersion.stamp
 
-            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count()
+            registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -173,10 +173,10 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
             party_wise_results = self.get_party_wise_results()
             stamp = tallySheetVersion.stamp
 
-            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count()
+            registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,

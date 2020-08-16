@@ -2,8 +2,7 @@ import random
 
 from flask import Response
 
-from app import db
-from orm.entities.Submission.TallySheet import TallySheetModel
+from orm.entities.TallySheet import TallySheetModel
 from tests.util import get_tally_sheet_code
 
 
@@ -42,8 +41,6 @@ class TestTallySheetVersionPRE21Api:
 
         count = 75
         invalid_vote_category_id = 2
-
-        from orm.entities.SubmissionVersion import TallySheetVersion
 
         tally_sheet_version = random_tally_sheet.create_empty_version()
 

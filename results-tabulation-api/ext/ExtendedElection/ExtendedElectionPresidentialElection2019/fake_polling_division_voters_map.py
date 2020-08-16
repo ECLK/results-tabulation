@@ -170,12 +170,12 @@ polling_division_postal_voters_count = {
 
 
 def get_polling_division_total_registered_voters(tallySheetVersion):
-    election = tallySheetVersion.submission.election
-    polling_division_id = tallySheetVersion.submission.areaId
+    election = tallySheetVersion.tallySheet.election
+    polling_division_id = tallySheetVersion.tallySheet.areaId
     total_registered_voters = 0
 
     if election.voteType == Postal:
-        electoral_district = tallySheetVersion.submission.area
+        electoral_district = tallySheetVersion.tallySheet.area
         postal_counting_centres = electoral_district.get_associated_areas(
             areaType=AreaTypeEnum.CountingCentre,
             electionId=election.electionId
@@ -183,7 +183,7 @@ def get_polling_division_total_registered_voters(tallySheetVersion):
         for postal_counting_centre in postal_counting_centres:
             total_registered_voters = total_registered_voters + postal_counting_centre._registeredVotersCount
     else:
-        total_registered_voters = tallySheetVersion.submission.area.registeredVotersCount
+        total_registered_voters = tallySheetVersion.tallySheet.area.registeredVotersCount
 
         if str(polling_division_id) in polling_division_postal_voters_count:
             total_registered_postal_voters = polling_division_postal_voters_count[str(polling_division_id)]

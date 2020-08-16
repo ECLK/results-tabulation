@@ -12,16 +12,16 @@ from orm.enums import AreaTypeEnum
 class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
 
     def on_get_release_result_params(self):
-        if self.tallySheet.submission.election.voteType == NonPostal:
-            polling_division = self.tallySheet.submission.area
+        if self.tallySheet.election.voteType == NonPostal:
+            polling_division = self.tallySheet.area
             electoral_district = Area.get_associated_areas(polling_division, AreaTypeEnum.ElectoralDistrict)[0]
             pd_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', polling_division.areaName)
             pd_code = pd_name_regex_search.group(1)
             pd_name = pd_name_regex_search.group(2)
         else:
-            electoral_district = self.tallySheet.submission.area
-            pd_code = "%sV" % self.tallySheet.submission.election.voteType[0]
-            pd_name = self.tallySheet.submission.election.voteType
+            electoral_district = self.tallySheet.area
+            pd_code = "%sV" % self.tallySheet.election.voteType[0]
+            pd_name = self.tallySheet.election.voteType
 
         ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
         ed_code = ed_name_regex_search.group(1)
@@ -44,8 +44,8 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 by=['numValue', "electionPartyId"], ascending=[False, True]
             ).reset_index()
 
-            registered_voters_count = self.tallySheetVersion.submission.area.get_registered_voters_count(
-                vote_type=self.tallySheetVersion.submission.election.voteType)
+            registered_voters_count = self.tallySheetVersion.tallySheet.area.get_registered_voters_count(
+                vote_type=self.tallySheetVersion.tallySheet.election.voteType)
             total_valid_vote_count = 0
             total_rejected_vote_count = self.get_rejected_vote_count_result()["numValue"].values[0]
             for party_wise_result in party_wise_results.itertuples():
@@ -87,16 +87,16 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
-            polling_division_name = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType != NonPostal:
-                polling_division_name = tallySheetVersion.submission.election.voteType
+            polling_division_name = tallySheetVersion.tallySheet.area.areaName
+            if tallySheetVersion.tallySheet.election.voteType != NonPostal:
+                polling_division_name = tallySheetVersion.tallySheet.election.voteType
 
-            registered_voters_count = tallySheetVersion.submission.area.get_registered_voters_count(
-                vote_type=tallySheetVersion.submission.election.voteType)
+            registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count(
+                vote_type=tallySheetVersion.tallySheet.election.voteType)
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -105,7 +105,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 },
                 "signatures": signatures,
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
@@ -174,13 +174,13 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
             area_wise_vote_count_result = self.get_area_wise_vote_count_result()
             stamp = tallySheetVersion.stamp
 
-            polling_division_name = tallySheetVersion.submission.area.areaName
-            if tallySheetVersion.submission.election.voteType != NonPostal:
-                polling_division_name = tallySheetVersion.submission.election.voteType
+            polling_division_name = tallySheetVersion.tallySheet.area.areaName
+            if tallySheetVersion.tallySheet.election.voteType != NonPostal:
+                polling_division_name = tallySheetVersion.tallySheet.election.voteType
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -189,7 +189,7 @@ class ExtendedTallySheet_PE_CE_RO_V1(ExtendedTallySheetReport):
                 },
                 "tallySheetCode": "CE/RO/V1",
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "data": [],
                 "countingCentres": [],

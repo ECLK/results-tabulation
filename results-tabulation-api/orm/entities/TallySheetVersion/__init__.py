@@ -8,10 +8,10 @@ from exception.messages import MESSAGE_CODE_TALLY_SHEET_NOT_FOUND, MESSAGE_CODE_
 from ext.ExtendedElection.WORKFLOW_ACTION_TYPE import WORKFLOW_ACTION_TYPE_SAVE
 from external_services.pdf_service import html_to_pdf
 from orm.entities.Election import InvalidVoteCategory, ElectionParty
+from orm.entities.History import HistoryVersion
 from orm.entities.IO import File
 from orm.entities.Template import TemplateRowModel
-from orm.entities import SubmissionVersion, TallySheetVersionRow, Area, Candidate, Party, Election
-from orm.entities.Submission import TallySheet
+from orm.entities import TallySheetVersionRow, Area, Candidate, Party, Election, TallySheet
 from exception import NotFoundException, UnauthorizedException
 from flask import request
 from sqlalchemy import and_
@@ -19,25 +19,22 @@ from sqlalchemy import and_
 
 class TallySheetVersionModel(db.Model):
     __tablename__ = 'tallySheetVersion'
-    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(SubmissionVersion.Model.__table__.c.submissionVersionId),
+    tallySheetVersionId = db.Column(db.Integer, db.ForeignKey(HistoryVersion.Model.__table__.c.historyVersionId),
                                     primary_key=True)
+    tallySheetId = db.Column(db.Integer, db.ForeignKey("tallySheet.tallySheetId"))
     exportedPdfFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId), nullable=True)
     exportedLetterPdfFileId = db.Column(db.Integer, db.ForeignKey(File.Model.__table__.c.fileId), nullable=True)
-
     isComplete = db.Column(db.Boolean, default=True, nullable=False)
-    submissionVersion = relationship(SubmissionVersion.Model, foreign_keys=[tallySheetVersionId])
 
-    submission = association_proxy("submissionVersion", "submission")
-    tallySheetId = association_proxy("submissionVersion", "submissionId")
-    createdBy = association_proxy("submissionVersion", "createdBy")
-    createdAt = association_proxy("submissionVersion", "createdAt")
-    stamp = association_proxy("submissionVersion", "stamp")
+    tallySheet = relationship("TallySheetModel", foreign_keys=[tallySheetId])
+    historyVersion = relationship(HistoryVersion.Model, foreign_keys=[tallySheetVersionId])
+
+    createdBy = association_proxy("historyVersion", "createdBy")
+    createdAt = association_proxy("historyVersion", "createdAt")
+    stamp = association_proxy("historyVersion", "historyStamp")
 
     def set_complete(self):
         self.isComplete = True
-
-    def set_locked(self):
-        self.submissionVersion.set_locked()
 
     @hybrid_property
     def content(self):
@@ -104,7 +101,7 @@ class TallySheetVersionModel(db.Model):
             ).join(
                 ElectionParty.Model,
                 and_(
-                    ElectionParty.Model.electionId == self.submission.election.electionId,
+                    ElectionParty.Model.electionId == self.tallySheet.election.electionId,
                     ElectionParty.Model.partyId == Party.Model.partyId
                 ),
                 isouter=True
@@ -137,13 +134,11 @@ class TallySheetVersionModel(db.Model):
             self.tallySheetVersionId
         )
 
-    def __init__(self, tallySheetId):
-        submissionVersion = SubmissionVersion.create(submissionId=tallySheetId)
-
+    def __init__(self, tallySheetId, tallySheetVersionId):
         super(TallySheetVersionModel, self).__init__(
-            tallySheetVersionId=submissionVersion.submissionVersionId
+            tallySheetId=tallySheetId,
+            tallySheetVersionId=tallySheetVersionId
         )
-
         db.session.add(self)
         db.session.flush()
 
@@ -157,7 +152,7 @@ class TallySheetVersionModel(db.Model):
             )
 
         # Validate the authorization
-        if not has_role_based_access(election=tally_sheet.submission.election,
+        if not has_role_based_access(election=tally_sheet.election,
                                      tally_sheet_code=tally_sheet.tallySheetCode,
                                      access_type=WORKFLOW_ACTION_TYPE_SAVE):
             raise UnauthorizedException(
@@ -165,7 +160,9 @@ class TallySheetVersionModel(db.Model):
                 code=MESSAGE_CODE_TALLY_SHEET_NOT_AUTHORIZED_TO_EDIT
             )
 
-        return TallySheetVersionModel(tallySheetId=tallySheetId)
+        historyVersion = HistoryVersion.create(tallySheetId)
+
+        return TallySheetVersionModel(tallySheetId=tallySheetId, tallySheetVersionId=historyVersion.historyVersionId)
 
     @classmethod
     def get_by_id(cls, tallySheetId, tallySheetVersionId):

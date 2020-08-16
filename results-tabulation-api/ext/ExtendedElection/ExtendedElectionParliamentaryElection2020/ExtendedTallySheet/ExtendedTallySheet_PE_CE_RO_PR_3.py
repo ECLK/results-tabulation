@@ -18,7 +18,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_3(ExtendedTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.submission.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -27,7 +27,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_3(ExtendedTallySheetReport):
                 },
                 "tallySheetCode": "CE/RO/PR/1",
                 "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.submission.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "partyName": candidate_wise_valid_vote_count_result["partyName"].values[0],
                 "data": []
             }
