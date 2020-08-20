@@ -4,6 +4,7 @@ from flask import render_template
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities import Area
 from orm.enums import AreaTypeEnum
+from util import to_comma_seperated_num
 
 
 class ExtendedTallySheet_PE_CE_RO_PR_3(ExtendedTallySheetReport):
@@ -43,7 +44,7 @@ class ExtendedTallySheet_PE_CE_RO_PR_3(ExtendedTallySheetReport):
                 candidate_id = candidate_wise_valid_vote_count_result.at[index_1, "candidateId"]
                 candidate_number = candidate_wise_valid_vote_count_result.at[index_1, "candidateNumber"]
                 candidate_name = candidate_wise_valid_vote_count_result.at[index_1, "candidateName"]
-                num_value = candidate_wise_valid_vote_count_result.at[index_1, "numValue"]
+                num_value = to_comma_seperated_num(candidate_wise_valid_vote_count_result.at[index_1, "numValue"])
 
                 data_row.append(position_of_candidate)
                 data_row.append("%s - %s" % (candidate_number, candidate_name))
