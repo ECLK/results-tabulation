@@ -229,9 +229,11 @@ class TallySheetModel(db.Model):
                     TallySheetTallySheetModel.childTallySheetId == TallySheetModel.tallySheetId,
 
                     # Tally sheet templates
+                    Template.Model.templateId == TallySheetModel.templateId,
+                    TemplateRowModel.templateId == Template.TemplateRowModel.templateId,
                     TemplateRow_DerivativeTemplateRow_Model.templateRowId == templateRow.templateRowId,
-                    TemplateRowModel.templateId == TallySheetModel.templateId,
-                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowId == TemplateRowModel.templateRowId,
+                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateName == Template.Model.templateName,
+                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowType == TemplateRowModel.templateRowType,
 
                     # Workflow
                     WorkflowInstance.Model.workflowInstanceId == TallySheetModel.workflowInstanceId,
@@ -257,9 +259,11 @@ class TallySheetModel(db.Model):
                     TallySheetTallySheetModel.childTallySheetId == TallySheetModel.tallySheetId,
 
                     # Tally sheet templates
+                    Template.Model.templateId == TallySheetModel.templateId,
+                    TemplateRowModel.templateId == Template.TemplateRowModel.templateId,
                     TemplateRow_DerivativeTemplateRow_Model.templateRowId == templateRow.templateRowId,
-                    TemplateRowModel.templateId == TallySheetModel.templateId,
-                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowId == TemplateRowModel.templateRowId,
+                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateName == Template.Model.templateName,
+                    TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowType == TemplateRowModel.templateRowType,
 
                     # Workflow
                     WorkflowInstance.Model.workflowInstanceId == TallySheetModel.workflowInstanceId,

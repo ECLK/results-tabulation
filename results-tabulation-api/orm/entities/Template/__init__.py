@@ -68,12 +68,7 @@ class TemplateRowModel(db.Model):
     isDerived = db.Column(db.Boolean, nullable=False, default=False)
     loadOnPostSave = db.Column(db.Boolean, nullable=False, default=False)
 
-    derivativeTemplateRows = relationship(
-        "TemplateRowModel", secondary="templateRow_derivativeTemplateRow", lazy="subquery",
-        primaryjoin="TemplateRowModel.templateRowId==TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowId",
-        secondaryjoin="TemplateRow_DerivativeTemplateRow_Model.templateRowId==TemplateRowModel.templateRowId"
-    )
-
+    template = relationship("TemplateModel")
     columns = relationship("TemplateRowColumnModel")
 
     def __init__(self, templateId, templateRowType, hasMany=False, isDerived=False, loadOnPostSave=False):
@@ -90,8 +85,9 @@ class TemplateRowModel(db.Model):
 
     def add_derivative_template_row(self, derivativeTemplateRow):
         TemplateRow_DerivativeTemplateRow_Model(
-            self.templateRowId,
-            derivativeTemplateRow.templateRowId
+            templateRowId=self.templateRowId,
+            derivativeTemplateName=derivativeTemplateRow.template.templateName,
+            derivativeTemplateRowType=derivativeTemplateRow.templateRowType
         )
 
         return self
@@ -133,12 +129,14 @@ class TemplateRowColumnModel(db.Model):
 class TemplateRow_DerivativeTemplateRow_Model(db.Model):
     __tablename__ = 'templateRow_derivativeTemplateRow'
     templateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True)
-    derivativeTemplateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True)
+    derivativeTemplateName = db.Column(db.String(100), nullable=False, primary_key=True)
+    derivativeTemplateRowType = db.Column(db.String(200), nullable=False, primary_key=True)
 
-    def __init__(self, templateRowId, derivativeTemplateRowId):
+    def __init__(self, templateRowId, derivativeTemplateName, derivativeTemplateRowType):
         super(TemplateRow_DerivativeTemplateRow_Model, self).__init__(
             templateRowId=templateRowId,
-            derivativeTemplateRowId=derivativeTemplateRowId
+            derivativeTemplateName=derivativeTemplateName,
+            derivativeTemplateRowType=derivativeTemplateRowType
         )
 
         db.session.add(self)
