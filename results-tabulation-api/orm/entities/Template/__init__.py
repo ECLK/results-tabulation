@@ -40,13 +40,12 @@ class TemplateModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-    def add_row(self, templateRowType, hasMany=False, isDerived=False, loadOnPostSave=False, columns=[]):
+    def add_row(self, templateRowType, hasMany=False, isDerived=False, columns=[]):
         templateRow = TemplateRowModel(
             templateId=self.templateId,
             templateRowType=templateRowType,
             hasMany=hasMany,
-            isDerived=isDerived,
-            loadOnPostSave=loadOnPostSave
+            isDerived=isDerived
         )
 
         for column in columns:
@@ -66,18 +65,16 @@ class TemplateRowModel(db.Model):
     templateRowType = db.Column(db.String(200), nullable=False)
     hasMany = db.Column(db.Boolean, nullable=False, default=False)
     isDerived = db.Column(db.Boolean, nullable=False, default=False)
-    loadOnPostSave = db.Column(db.Boolean, nullable=False, default=False)
 
     template = relationship("TemplateModel")
     columns = relationship("TemplateRowColumnModel")
 
-    def __init__(self, templateId, templateRowType, hasMany=False, isDerived=False, loadOnPostSave=False):
+    def __init__(self, templateId, templateRowType, hasMany=False, isDerived=False):
         super(TemplateRowModel, self).__init__(
             templateId=templateId,
             templateRowType=templateRowType,
             hasMany=hasMany,
-            isDerived=isDerived,
-            loadOnPostSave=loadOnPostSave
+            isDerived=isDerived
         )
 
         db.session.add(self)
@@ -152,7 +149,7 @@ def create(templateName, templateRowTypesMap=None):
         for templateRowType, templateRowParameters in templateRowTypesMap.items():
             parameters = {"templateRowType": templateRowType}
 
-            for parameter_name in ["hasMany", "isDerived", "loadOnPostSave", "columns"]:
+            for parameter_name in ["hasMany", "isDerived", "columns"]:
                 if parameter_name in templateRowParameters:
                     parameters[parameter_name] = templateRowParameters[parameter_name]
 
