@@ -107,6 +107,7 @@ class TallySheetModel(db.Model):
     def create(cls, template, electionId, areaId, metaId, workflowInstanceId, parentTallySheets=None,
                childTallySheets=None):
         tally_sheet = TallySheetModel(
+            tallySheetId=History.create().historyId,
             electionId=electionId,
             areaId=areaId,
             templateId=template.templateId,
