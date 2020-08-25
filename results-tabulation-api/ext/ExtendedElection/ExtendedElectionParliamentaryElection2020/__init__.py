@@ -238,47 +238,36 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 WORKFLOW_STATUS_TYPE_SUBMITTED,
                 WORKFLOW_STATUS_TYPE_VERIFIED
             ],
-            actions=[
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_EMPTY},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Enter", "type": WORKFLOW_ACTION_TYPE_SAVE,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "EDIT", "type": WORKFLOW_ACTION_TYPE_SAVE,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-
-                {"name": "Submit", "type": WORKFLOW_ACTION_TYPE_SUBMIT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
-
-                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-
-                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-
-                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
-
-                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED}
-            ]
+            actionsMap={
+                WORKFLOW_STATUS_TYPE_EMPTY: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_EMPTY},
+                    {"name": "Enter", "type": WORKFLOW_ACTION_TYPE_SAVE, "toStatus": WORKFLOW_STATUS_TYPE_SAVED}
+                ],
+                WORKFLOW_STATUS_TYPE_SAVED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_SAVE, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Submit", "type": WORKFLOW_ACTION_TYPE_SUBMIT, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED}
+                ],
+                WORKFLOW_STATUS_TYPE_SUBMITTED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
+                    {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                ],
+                WORKFLOW_STATUS_TYPE_VERIFIED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED}
+                ],
+                WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                    {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                ]
+            }
         )
 
         workflow_report: Workflow = Workflow.create(
@@ -291,32 +280,28 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 WORKFLOW_STATUS_TYPE_SAVED,
                 WORKFLOW_STATUS_TYPE_VERIFIED
             ],
-            actions=[
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED}
-            ]
+            actionsMap={
+                WORKFLOW_STATUS_TYPE_EMPTY: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_SAVED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_VERIFIED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED}
+                ],
+                WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                    {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ]
+            }
         )
 
         workflow_released_report: Workflow = Workflow.create(
@@ -332,81 +317,68 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 WORKFLOW_STATUS_TYPE_CERTIFIED,
                 WORKFLOW_STATUS_TYPE_RELEASED
             ],
-            actions=[
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
-                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
-
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
-                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
-
-                {"name": "Print Letter", "type": WORKFLOW_ACTION_TYPE_PRINT_LETTER,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Upload Certified Documents", "type": WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
-                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
-
-                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Move to Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
-
-                {"name": "Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
-
-                {"name": "Notify Release", "type": WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
-
-                {"name": "Release", "type": WORKFLOW_ACTION_TYPE_RELEASE,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
-
-                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
-                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
-                 "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED}
-            ]
+            actionsMap={
+                WORKFLOW_STATUS_TYPE_EMPTY: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_SAVED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_VERIFIED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Print Letter", "type": WORKFLOW_ACTION_TYPE_PRINT_LETTER,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                    {"name": "Move to Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
+                     "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                ],
+                WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                    {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                     "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                     "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                    {"name": "Upload Certified Documents", "type": WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT,
+                     "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                    {"name": "Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
+                    {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_CERTIFIED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
+                    {"name": "Notify Release", "type": WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY,
+                     "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
+                    {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                     "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                     "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
+                    {"name": "Release", "type": WORKFLOW_ACTION_TYPE_RELEASE,
+                     "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
+                    {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_RELEASED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
+                    {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED}
+                ]
+            }
         )
 
         workflow_edit_allowed_released_report: Workflow = Workflow.create(
@@ -423,92 +395,74 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 WORKFLOW_STATUS_TYPE_CERTIFIED,
                 WORKFLOW_STATUS_TYPE_RELEASED
             ],
-            actions=[
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
-                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
-                {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
-
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
-                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
-                {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
-
-                {"name": "Print Letter", "type": WORKFLOW_ACTION_TYPE_PRINT_LETTER,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED,
-                 "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Upload Certified Documents", "type": WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
-                 "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
-
-                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_SAVE,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_EMPTY, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_SAVE,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-
-                {"name": "Submit", "type": WORKFLOW_ACTION_TYPE_SUBMIT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SAVED, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
-
-                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-                {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
-
-                {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_SUBMITTED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-
-                {"name": "Move to Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
-
-                {"name": "Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
-
-                {"name": "Notify Release", "type": WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
-
-                {"name": "Release", "type": WORKFLOW_ACTION_TYPE_RELEASE,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
-
-                {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_VERIFIED, "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
-                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY,
-                 "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_CERTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
-                {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
-                 "fromStatus": WORKFLOW_STATUS_TYPE_RELEASED, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED}
-            ]
+            actionsMap={
+                WORKFLOW_STATUS_TYPE_EMPTY: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_SAVE, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                ],
+                WORKFLOW_STATUS_TYPE_SAVED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_SAVE, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Submit", "type": WORKFLOW_ACTION_TYPE_SUBMIT, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
+                ],
+                WORKFLOW_STATUS_TYPE_SUBMITTED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_SUBMITTED},
+                    {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                    {"name": "Verify", "type": WORKFLOW_ACTION_TYPE_VERIFY, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_VERIFIED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Print Letter", "type": WORKFLOW_ACTION_TYPE_PRINT_LETTER,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                    {"name": "Request Changes", "type": WORKFLOW_ACTION_TYPE_REQUEST_CHANGES,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                    {"name": "Move to Certify", "type": WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY,
+                     "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                ],
+                WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED},
+                    {"name": "Edit", "type": WORKFLOW_ACTION_TYPE_EDIT, "toStatus": WORKFLOW_STATUS_TYPE_SAVED},
+                ],
+                WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                     "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                     "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                    {"name": "Upload Certified Documents", "type": WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT,
+                     "toStatus": WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY},
+                    {"name": "Certify", "type": WORKFLOW_ACTION_TYPE_CERTIFY,
+                     "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
+                    {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_CERTIFIED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_CERTIFIED},
+                    {"name": "Notify Release", "type": WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY,
+                     "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
+                    {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW,
+                     "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT,
+                     "toStatus": WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED},
+                    {"name": "Release", "type": WORKFLOW_ACTION_TYPE_RELEASE,
+                     "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
+                    {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED},
+                ],
+                WORKFLOW_STATUS_TYPE_RELEASED: [
+                    {"name": "View", "type": WORKFLOW_ACTION_TYPE_VIEW, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
+                    {"name": "Print", "type": WORKFLOW_ACTION_TYPE_PRINT, "toStatus": WORKFLOW_STATUS_TYPE_RELEASED},
+                    {"name": "Back to Verified", "type": WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED,
+                     "toStatus": WORKFLOW_STATUS_TYPE_VERIFIED}
+                ]
+            }
         )
 
         if not party_candidate_dataset_file:

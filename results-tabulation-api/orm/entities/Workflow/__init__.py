@@ -16,7 +16,7 @@ class WorkflowModel(db.Model):
     actions = relationship("WorkflowActionModel", order_by="WorkflowActionModel.workflowActionId", lazy='subquery')
 
     @classmethod
-    def create(cls, workflowName, statuses, actions, firstStatus, lastStatus):
+    def create(cls, workflowName, statuses, firstStatus, lastStatus, actions=None, actionsMap=None):
         workflow: WorkflowModel = cls(workflowName=workflowName, firstStatus=firstStatus, lastStatus=lastStatus)
         db.session.add(workflow)
         db.session.flush()
@@ -27,14 +27,26 @@ class WorkflowModel(db.Model):
                 status=status
             )
 
-        for action in actions:
-            WorkflowActionModel.create(
-                workflowId=workflow.workflowId,
-                actionName=action["name"],
-                actionType=action["type"],
-                fromStatus=action["fromStatus"],
-                toStatus=action["toStatus"]
-            )
+        if actionsMap is not None:
+            for fromStatus, _actions in actionsMap.items():
+                for _action in _actions:
+                    WorkflowActionModel.create(
+                        workflowId=workflow.workflowId,
+                        actionName=_action["name"],
+                        actionType=_action["type"],
+                        fromStatus=fromStatus,
+                        toStatus=_action["toStatus"]
+                    )
+
+        if actions is not None:
+            for _action in actions:
+                WorkflowActionModel.create(
+                    workflowId=workflow.workflowId,
+                    actionName=_action["name"],
+                    actionType=_action["type"],
+                    fromStatus=_action["fromStatus"],
+                    toStatus=_action["toStatus"]
+                )
 
         return workflow
 
