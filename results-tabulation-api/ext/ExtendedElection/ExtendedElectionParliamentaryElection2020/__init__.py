@@ -2,8 +2,8 @@ from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
 
 from app import db
-from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META, TALLY_SHEET_COLUMN_SOURCE_CONTENT, \
-    TALLY_SHEET_COLUMN_SOURCE_QUERY
+from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META as SOURCE_META, \
+    TALLY_SHEET_COLUMN_SOURCE_CONTENT as SOURCE_CONTENT, TALLY_SHEET_COLUMN_SOURCE_QUERY as SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.CANDIDATE_TYPE import CANDIDATE_TYPE_NORMAL, \
     CANDIDATE_TYPE_NATIONAL_LIST
 from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_1 import \
@@ -527,851 +527,897 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
             invalid_vote_categories_dataset_file = root_election.invalidVoteCategoriesDataset.fileContent
 
         tally_sheet_template_ce_201 = Template.create(
-            templateName=CE_201
-        )
-        tally_sheet_template_ce_201_ballot_box_row = tally_sheet_template_ce_201.add_row(
-            templateRowType="BALLOT_BOX",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "ballotBoxId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_number_of_ballots_received = tally_sheet_template_ce_201.add_row(
-            templateRowType="NUMBER_OF_BALLOTS_RECEIVED",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_number_of_ballots_spoilt = tally_sheet_template_ce_201.add_row(
-            templateRowType="NUMBER_OF_BALLOTS_SPOILT",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_number_of_ballots_issued = tally_sheet_template_ce_201.add_row(
-            templateRowType="NUMBER_OF_BALLOTS_ISSUED",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_number_of_ballots_unused = tally_sheet_template_ce_201.add_row(
-            templateRowType="NUMBER_OF_BALLOTS_UNUSED",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_number_of_ordinary_ballots_in_ballot_paper_account = tally_sheet_template_ce_201.add_row(
-            templateRowType="NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_PAPER_ACCOUNT",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_number_of_ordinary_ballots_in_ballot_box = tally_sheet_template_ce_201.add_row(
-            templateRowType="NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_BOX",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_number_of_tendered_ballots_in_ballot_paper_account = tally_sheet_template_ce_201.add_row(
-            templateRowType="NUMBER_OF_TENDERED_BALLOTS_IN_BALLOT_PAPER_ACCOUNT",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_number_of_tendered_ballots_in_ballot_box = tally_sheet_template_ce_201.add_row(
-            templateRowType="NUMBER_OF_TENDERED_BALLOTS_IN_BALLOT_BOX",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
+            templateName=CE_201,
+            templateRowTypesMap={
+                "BALLOT_BOX": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "ballotBoxId", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_BALLOTS_RECEIVED": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_BALLOTS_SPOILT": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_BALLOTS_ISSUED": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_BALLOTS_UNUSED": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_PAPER_ACCOUNT": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_ORDINARY_BALLOTS_IN_BALLOT_BOX": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_TENDERED_BALLOTS_IN_BALLOT_PAPER_ACCOUNT": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_TENDERED_BALLOTS_IN_BALLOT_BOX": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+            }
         )
 
         tally_sheet_template_ce_201_pv = Template.create(
-            templateName=CE_201_PV
-        )
-
-        tally_sheet_template_ce_201_pv_situation_row = tally_sheet_template_ce_201_pv.add_row(
-            templateRowType="SITUATION",
-            hasMany=False,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_pv_time_of_commencement_row = tally_sheet_template_ce_201_pv.add_row(
-            templateRowType="TIME_OF_COMMENCEMENT",
-            hasMany=False,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_pv_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
-            templateRowType="BALLOT_BOX",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "ballotBoxId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_pv_number_of_packets_inserted_to_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
-            templateRowType="NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "ballotBoxId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_pv_number_of_packets_found_inside_ballot_box_row = tally_sheet_template_ce_201_pv.add_row(
-            templateRowType="NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "ballotBoxId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_pv_number_of_packets_rejected_after_opening_cover_a_row = tally_sheet_template_ce_201_pv.add_row(
-            templateRowType="NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A",
-            hasMany=False,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_ce_201_pv_number_of_packets_rejected_after_opening_cover_b_row = tally_sheet_template_ce_201_pv.add_row(
-            templateRowType="NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B",
-            hasMany=False,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
+            templateName=CE_201_PV,
+            templateRowTypesMap={
+                "SITUATION": {
+                    "hasMany": False,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "strValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "TIME_OF_COMMENCEMENT": {
+                    "hasMany": False,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "strValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "BALLOT_BOX": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "ballotBoxId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "strValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_PACKETS_INSERTED_TO_BALLOT_BOX": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "ballotBoxId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_PACKETS_FOUND_INSIDE_BALLOT_BOX": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "ballotBoxId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_A": {
+                    "hasMany": False,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "NUMBER_OF_PACKETS_REJECTED_AFTER_OPENING_COVER_B": {
+                    "hasMany": False,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                }
+            }
         )
 
         tally_sheet_template_pe_27 = Template.create(
-            templateName=PE_27
-        )
-        tally_sheet_template_pe_27_party_wise_vote_row = tally_sheet_template_pe_27.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "strValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_27_rejected_vote_row = tally_sheet_template_pe_27.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=False,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
+            templateName=PE_27,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "strValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": False,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                }
+            }
         )
 
         tally_sheet_template_pe_39 = Template.create(
-            templateName=PE_39
-        )
-        tally_sheet_template_pe_39_ground_of_rejection_wise_row = tally_sheet_template_pe_39.add_row(
-            templateRowType="NUMBER_OF_VOTES_REJECTED_AGAINST_GROUNDS_FOR_REJECTION",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "invalidVoteCategoryId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
+            templateName=PE_39,
+            templateRowTypesMap={
+                "PARTY_WISE_INVALID_VOTE_COUNT": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "invalidVoteCategoryId", "grouped": False, "func": None,
+                         "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                }
+            }
         )
 
         tally_sheet_template_pe_22 = Template.create(
-            templateName=PE_22
-        )
-        tally_sheet_template_pe_22_party_and_invalid_vote_category_wise_vote_count_row = tally_sheet_template_pe_22.add_row(
-            templateRowType="PARTY_WISE_INVALID_VOTE_COUNT",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "invalidVoteCategoryId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
+            templateName=PE_22,
+            templateRowTypesMap={
+                "PARTY_WISE_INVALID_VOTE_COUNT": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "invalidVoteCategoryId", "grouped": False, "func": None,
+                         "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                }
+            }
         )
 
         tally_sheet_template_pe_ce_ro_v1 = Template.create(
-            templateName=PE_CE_RO_V1
+            templateName=PE_CE_RO_V1,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_27, "templateRowType": "PARTY_WISE_VOTE"}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_27, "templateRowType": "REJECTED_VOTE"}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_pe_ce_ro_v1_party_wise_vote_row = tally_sheet_template_pe_ce_ro_v1.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_27_party_wise_vote_row)
-        tally_sheet_template_pe_ce_ro_v1_rejected_vote_row = tally_sheet_template_pe_ce_ro_v1.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_27_rejected_vote_row)
 
         tally_sheet_template_polling_division_results = Template.create(
-            templateName=POLLING_DIVISION_RESULTS
+            templateName=POLLING_DIVISION_RESULTS,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_V1, "templateRowType": "PARTY_WISE_VOTE"}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_V1, "templateRowType": "REJECTED_VOTE"}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_polling_division_results_party_wise_vote_row = tally_sheet_template_polling_division_results.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_party_wise_vote_row)
-        tally_sheet_template_polling_division_results_rejected_vote_row = tally_sheet_template_polling_division_results.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_rejected_vote_row)
 
         tally_sheet_template_pe_ce_ro_v2 = Template.create(
-            templateName=PE_CE_RO_V2
+            templateName=PE_CE_RO_V2,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_V1, "templateRowType": "PARTY_WISE_VOTE"}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_V1, "templateRowType": "REJECTED_VOTE"}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_pe_ce_ro_v2_party_wise_vote_row = tally_sheet_template_pe_ce_ro_v2.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_party_wise_vote_row)
-        tally_sheet_template_pe_ce_ro_v2_rejected_vote_row = tally_sheet_template_pe_ce_ro_v2.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v1_rejected_vote_row)
 
         tally_sheet_template_pe_ai_ed = Template.create(
-            templateName=PE_AI_ED
+            templateName=PE_AI_ED,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_V2, "templateRowType": "PARTY_WISE_VOTE"}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_V2, "templateRowType": "REJECTED_VOTE"}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_pe_ai_ed_party_wise_vote_row = tally_sheet_template_pe_ai_ed.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v2_party_wise_vote_row)
-        tally_sheet_template_pe_ai_ed_rejected_vote_row = tally_sheet_template_pe_ai_ed.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v2_rejected_vote_row)
 
         tally_sheet_template_pe_ai_nl_1 = Template.create(
-            templateName=PE_AI_NL_1
-        )
-        tally_sheet_template_pe_ai_nl_1_party_wise_vote_row = tally_sheet_template_pe_ai_nl_1.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_ed_party_wise_vote_row)
-        tally_sheet_template_pe_ai_nl_1_rejected_vote_row = tally_sheet_template_pe_ai_nl_1.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_ed_rejected_vote_row)
-        tally_sheet_template_pe_ai_nl_1_valid_vote_count_ceil_per_seat = tally_sheet_template_pe_ai_nl_1.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_ai_nl_1_seats_allocated_from_round_1_row = tally_sheet_template_pe_ai_nl_1.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_ai_nl_1_valid_votes_remain_from_round_1_row = tally_sheet_template_pe_ai_nl_1.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_ai_nl_1_draft_seats_allocated_from_round_2_row = tally_sheet_template_pe_ai_nl_1.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_ai_nl_1_seats_allocated_from_round_2_row = tally_sheet_template_pe_ai_nl_1.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_ai_nl_1_seats_allocated = tally_sheet_template_pe_ai_nl_1.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
+            templateName=PE_AI_NL_1,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_ED, "templateRowType": "REJECTED_VOTE"}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                }
+            }
         )
 
         tally_sheet_template_pe_ai_nl_2 = Template.create(
-            templateName=PE_AI_NL_2
-        )
-        tally_sheet_template_pe_ai_nl_2_party_wise_national_list_seat_row = tally_sheet_template_pe_ai_nl_2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_nl_1_seats_allocated)
-        tally_sheet_template_pe_ai_nl_2_elected_candidates = tally_sheet_template_pe_ai_nl_2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "candidateId", "grouped": True, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_ai_nl_2_draft_elected_candidates = tally_sheet_template_pe_ai_nl_2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "candidateId", "grouped": True, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
+            templateName=PE_AI_NL_2,
+            templateRowTypesMap={
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_NL_1, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                }
+            }
         )
 
         tally_sheet_template_pe_r2 = Template.create(
-            templateName=PE_R2
-        )
-        tally_sheet_template_pe_r2_party_wise_vote_row = tally_sheet_template_pe_r2.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v2_party_wise_vote_row)
-        tally_sheet_template_pe_r2_rejected_vote_row = tally_sheet_template_pe_r2.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_v2_rejected_vote_row)
-        tally_sheet_template_pe_r2_valid_vote_count_ceil_per_seat = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_r2_valid_vote_count_qualified_for_seat_allocation = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_r2_seats_allocated_from_round_1_row = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_r2_valid_votes_remain_from_round_1_row = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_r2_draft_seats_allocated_from_round_2_row = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_r2_draft_bonus_seats_allocated = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_r2_seats_allocated_from_round_2_row = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_r2_bonus_seats_allocated = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_r2_seats_allocated = tally_sheet_template_pe_r2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
+            templateName=PE_R2,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_V2, "templateRowType": "PARTY_WISE_VOTE"}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_V2, "templateRowType": "REJECTED_VOTE"}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+                    ]
+                }
+            }
         )
 
         tally_sheet_template_pe_4 = Template.create(
-            templateName=PE_4
-        )
-        tally_sheet_template_pe_4_candidate_wise_first_preference_row = tally_sheet_template_pe_4.add_row(
-            templateRowType="CANDIDATE_FIRST_PREFERENCE",
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "candidateId", "grouped": False, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "numValue", "grouped": False, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
+            templateName=PE_4,
+            templateRowTypesMap={
+                "CANDIDATE_FIRST_PREFERENCE": {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": False, "func": None, "source": SOURCE_META},
+                        {"columnName": "candidateId", "grouped": False, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "numValue", "grouped": False, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                }
+            }
         )
 
         tally_sheet_template_pe_ce_ro_pr_1 = Template.create(
-            templateName=PE_CE_RO_PR_1
+            templateName=PE_CE_RO_PR_1,
+            templateRowTypesMap={
+                "CANDIDATE_FIRST_PREFERENCE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_4, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_pe_ce_ro_pr_1_candidate_wise_first_preference_row = tally_sheet_template_pe_ce_ro_pr_1.add_row(
-            templateRowType="CANDIDATE_FIRST_PREFERENCE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_4_candidate_wise_first_preference_row)
 
         tally_sheet_template_pe_ce_ro_pr_2 = Template.create(
-            templateName=PE_CE_RO_PR_2
+            templateName=PE_CE_RO_PR_2,
+            templateRowTypesMap={
+                "CANDIDATE_FIRST_PREFERENCE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_PR_1, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_pe_ce_ro_pr_2_candidate_wise_first_preference_row = tally_sheet_template_pe_ce_ro_pr_2.add_row(
-            templateRowType="CANDIDATE_FIRST_PREFERENCE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_pr_1_candidate_wise_first_preference_row)
 
         tally_sheet_template_pe_ce_ro_pr_3 = Template.create(
-            templateName=PE_CE_RO_PR_3
+            templateName=PE_CE_RO_PR_3,
+            templateRowTypesMap={
+                "CANDIDATE_FIRST_PREFERENCE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_PR_2, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_pe_ce_ro_pr_3_candidate_wise_first_preference_row = tally_sheet_template_pe_ce_ro_pr_3.add_row(
-            templateRowType="CANDIDATE_FIRST_PREFERENCE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_pr_2_candidate_wise_first_preference_row)
 
         tally_sheet_template_pe_ai_sa = Template.create(
-            templateName=PE_AI_SA
+            templateName=PE_AI_SA,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_ED, "templateRowType": "REJECTED_VOTE"}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_R2, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_pe_ai_sa_party_wise_seat_allocation = tally_sheet_template_pe_ai_sa.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_r2_seats_allocated)
-        tally_sheet_template_pe_ai_sa_party_wise_vote_row = tally_sheet_template_pe_ai_sa.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_ed_party_wise_vote_row)
-        tally_sheet_template_pe_ai_sa_rejected_vote_row = tally_sheet_template_pe_ai_sa.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_ed_rejected_vote_row)
 
         tally_sheet_template_pe_21 = Template.create(
-            templateName=PE_21
+            templateName=PE_21,
+            templateRowTypesMap={
+                "CANDIDATE_FIRST_PREFERENCE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_CE_RO_PR_2, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_R2, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE: {
+                    "hasMany": True,
+                    "isDerived": False,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_CONTENT}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_pe_21_elected_candidates = tally_sheet_template_pe_21.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "candidateId", "grouped": True, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_21_draft_elected_candidates = tally_sheet_template_pe_21.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE,
-            hasMany=True,
-            isDerived=False,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT},
-                {"columnName": "candidateId", "grouped": True, "func": None,
-                 "source": TALLY_SHEET_COLUMN_SOURCE_CONTENT}
-            ]
-        )
-        tally_sheet_template_pe_21_candidate_wise_first_preference_row = tally_sheet_template_pe_21.add_row(
-            templateRowType="CANDIDATE_FIRST_PREFERENCE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ce_ro_pr_3_candidate_wise_first_preference_row)
-        tally_sheet_template_pe_21_party_wise_seat_allocation = tally_sheet_template_pe_21.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_r2_seats_allocated)
 
         tally_sheet_template_pe_ai_1 = Template.create(
-            templateName=PE_AI_1
+            templateName=PE_AI_1,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_ED, "templateRowType": "REJECTED_VOTE"}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_SA, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_NL_1, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
+                    ]
+                }
+            }
         )
-        tally_sheet_template_pe_ai_1_party_wise_vote_row = tally_sheet_template_pe_ai_1.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_ed_party_wise_vote_row)
-        tally_sheet_template_pe_ai_1_rejected_vote_row = tally_sheet_template_pe_ai_1.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_ed_rejected_vote_row)
-        tally_sheet_template_pe_ai_1_party_wise_seat_row = tally_sheet_template_pe_ai_1.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_sa_party_wise_seat_allocation)
-        tally_sheet_template_pe_ai_1_party_wise_national_list_seat_row = tally_sheet_template_pe_ai_1.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_nl_1_seats_allocated)
 
         tally_sheet_template_pe_ai_2 = Template.create(
-            templateName=PE_AI_2
-        )
-        tally_sheet_template_pe_ai_2_party_wise_vote_row = tally_sheet_template_pe_ai_2.add_row(
-            templateRowType="PARTY_WISE_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_ed_party_wise_vote_row)
-        tally_sheet_template_pe_ai_2_rejected_vote_row = tally_sheet_template_pe_ai_2.add_row(
-            templateRowType="REJECTED_VOTE",
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_ed_rejected_vote_row)
-        tally_sheet_template_pe_ai_2_party_wise_seat_row = tally_sheet_template_pe_ai_2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_sa_party_wise_seat_allocation)
-        tally_sheet_template_pe_ai_2_party_wise_national_list_seat_row = tally_sheet_template_pe_ai_2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED,
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_META},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(tally_sheet_template_pe_ai_nl_1_seats_allocated)
-        tally_sheet_template_pe_ai_2_elected_candidates = tally_sheet_template_pe_ai_2.add_row(
-            templateRowType=TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE,
-            hasMany=True,
-            isDerived=True,
-            columns=[
-                {"columnName": "electionId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "areaId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "partyId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "candidateId", "grouped": True, "func": None, "source": TALLY_SHEET_COLUMN_SOURCE_QUERY},
-                {"columnName": "numValue", "grouped": False, "func": "sum", "source": TALLY_SHEET_COLUMN_SOURCE_QUERY}
-            ]
-        ).add_derivative_template_row(
-            tally_sheet_template_pe_21_elected_candidates
-        ).add_derivative_template_row(
-            tally_sheet_template_pe_ai_nl_2_elected_candidates
+            templateName=PE_AI_2,
+            templateRowTypesMap={
+                "PARTY_WISE_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
+                    ]
+                },
+                "REJECTED_VOTE": {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_ED, "templateRowType": "REJECTED_VOTE"}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_SA, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED: {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_AI_NL_1, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
+                    ]
+                },
+                TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE: {
+                    "hasMany": True,
+                    "isDerived": True,
+                    "columns": [
+                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                    ],
+                    "derivativeRows": [
+                        {"templateName": PE_21, "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE},
+                        {"templateName": PE_AI_NL_2, "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE}
+                    ]
+                }
+            }
         )
 
         data_entry_store = {
@@ -1980,7 +2026,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
                 #     }).metaId,
                 #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 # )]
-                # 
+                #
                 # pe_22_tally_sheet_list = [TallySheet.create(
                 #     template=tally_sheet_template_pe_22, electionId=electoral_district_sub_election.electionId,
                 #     areaId=area.areaId,

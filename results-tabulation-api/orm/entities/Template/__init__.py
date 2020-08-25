@@ -143,12 +143,22 @@ class TemplateRow_DerivativeTemplateRow_Model(db.Model):
         db.session.flush()
 
 
-def create(templateName, structure):
-    result = Model(
+def create(templateName, templateRowTypesMap=None):
+    template = Model(
         templateName=templateName
     )
 
-    return result
+    if templateRowTypesMap is not None:
+        for templateRowType, templateRowParameters in templateRowTypesMap.items():
+            parameters = {"templateRowType": templateRowType}
+
+            for parameter_name in ["hasMany", "isDerived", "loadOnPostSave", "columns"]:
+                if parameter_name in templateRowParameters:
+                    parameters[parameter_name] = templateRowParameters[parameter_name]
+
+            template.add_row(**parameters)
+
+    return template
 
 
 def get(templateName):
