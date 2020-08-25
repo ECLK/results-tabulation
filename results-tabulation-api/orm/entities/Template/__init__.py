@@ -40,13 +40,12 @@ class TemplateModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-    def add_row(self, templateRowType, hasMany=False, isDerived=False, loadOnPostSave=False, columns=[]):
+    def add_row(self, templateRowType, hasMany=False, isDerived=False, columns=[]):
         templateRow = TemplateRowModel(
             templateId=self.templateId,
             templateRowType=templateRowType,
             hasMany=hasMany,
-            isDerived=isDerived,
-            loadOnPostSave=loadOnPostSave
+            isDerived=isDerived
         )
 
         for column in columns:
@@ -66,23 +65,16 @@ class TemplateRowModel(db.Model):
     templateRowType = db.Column(db.String(200), nullable=False)
     hasMany = db.Column(db.Boolean, nullable=False, default=False)
     isDerived = db.Column(db.Boolean, nullable=False, default=False)
-    loadOnPostSave = db.Column(db.Boolean, nullable=False, default=False)
 
-    derivativeTemplateRows = relationship(
-        "TemplateRowModel", secondary="templateRow_derivativeTemplateRow", lazy="subquery",
-        primaryjoin="TemplateRowModel.templateRowId==TemplateRow_DerivativeTemplateRow_Model.derivativeTemplateRowId",
-        secondaryjoin="TemplateRow_DerivativeTemplateRow_Model.templateRowId==TemplateRowModel.templateRowId"
-    )
-
+    template = relationship("TemplateModel")
     columns = relationship("TemplateRowColumnModel")
 
-    def __init__(self, templateId, templateRowType, hasMany=False, isDerived=False, loadOnPostSave=False):
+    def __init__(self, templateId, templateRowType, hasMany=False, isDerived=False):
         super(TemplateRowModel, self).__init__(
             templateId=templateId,
             templateRowType=templateRowType,
             hasMany=hasMany,
-            isDerived=isDerived,
-            loadOnPostSave=loadOnPostSave
+            isDerived=isDerived
         )
 
         db.session.add(self)
@@ -90,8 +82,9 @@ class TemplateRowModel(db.Model):
 
     def add_derivative_template_row(self, derivativeTemplateRow):
         TemplateRow_DerivativeTemplateRow_Model(
-            self.templateRowId,
-            derivativeTemplateRow.templateRowId
+            templateRowId=self.templateRowId,
+            derivativeTemplateName=derivativeTemplateRow.template.templateName,
+            derivativeTemplateRowType=derivativeTemplateRow.templateRowType
         )
 
         return self
@@ -133,24 +126,36 @@ class TemplateRowColumnModel(db.Model):
 class TemplateRow_DerivativeTemplateRow_Model(db.Model):
     __tablename__ = 'templateRow_derivativeTemplateRow'
     templateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True)
-    derivativeTemplateRowId = db.Column(db.Integer, db.ForeignKey("templateRow.templateRowId"), primary_key=True)
+    derivativeTemplateName = db.Column(db.String(100), nullable=False, primary_key=True)
+    derivativeTemplateRowType = db.Column(db.String(200), nullable=False, primary_key=True)
 
-    def __init__(self, templateRowId, derivativeTemplateRowId):
+    def __init__(self, templateRowId, derivativeTemplateName, derivativeTemplateRowType):
         super(TemplateRow_DerivativeTemplateRow_Model, self).__init__(
             templateRowId=templateRowId,
-            derivativeTemplateRowId=derivativeTemplateRowId
+            derivativeTemplateName=derivativeTemplateName,
+            derivativeTemplateRowType=derivativeTemplateRowType
         )
 
         db.session.add(self)
         db.session.flush()
 
 
-def create(templateName, structure):
-    result = Model(
+def create(templateName, templateRowTypesMap=None):
+    template = Model(
         templateName=templateName
     )
 
-    return result
+    if templateRowTypesMap is not None:
+        for templateRowType, templateRowParameters in templateRowTypesMap.items():
+            parameters = {"templateRowType": templateRowType}
+
+            for parameter_name in ["hasMany", "isDerived", "columns"]:
+                if parameter_name in templateRowParameters:
+                    parameters[parameter_name] = templateRowParameters[parameter_name]
+
+            template.add_row(**parameters)
+
+    return template
 
 
 def get(templateName):
