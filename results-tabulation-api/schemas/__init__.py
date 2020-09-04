@@ -288,6 +288,17 @@ class AreaMapSchema(ma.ModelSchema):
         )
 
 
+class MappedAreaSchema(ma.ModelSchema):
+    class Meta:
+        fields = (
+            "areaId",
+            "areaName",
+            "areaType",
+            "mappedAreaId",
+            "mappedAreaName",
+        )
+
+
 class AreaAreaSchema(ma.ModelSchema):
     class Meta:
         fields = (

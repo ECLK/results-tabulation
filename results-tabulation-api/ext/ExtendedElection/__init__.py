@@ -6,7 +6,6 @@ from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_VERIF
     WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED
 from ext.ExtendedTallySheet import ExtendedTallySheet
 
-
 def get_extended_election(election):
     from constants.ELECTION_TEMPLATES import PRESIDENTIAL_ELECTION_2019, PARLIAMENT_ELECTION_2020
     from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import ExtendedElectionParliamentaryElection2020
@@ -61,6 +60,28 @@ class ExtendedElection:
         area = tally_sheet.area
 
         return self.get_area_map(area=area)
+
+    def get_mapped_area(self, area_ids=None, requested_area_type=None):
+
+        from orm.entities import Area
+        from schemas import AreaMapSchema
+        filtered_area_map = []
+
+        for area_id in str(area_ids).split(","):
+            input_area = Area.Model.query.filter(Area.Model.areaId == area_id).one_or_none()
+            area_map = self.get_area_map(area=input_area)
+            area_map_data = AreaMapSchema(many=True).dump(area_map).data
+
+            for area_data in area_map_data:
+                filtered_area_map.append({
+                    "areaId": input_area.areaId,
+                    "areaName": input_area.areaName,
+                    "areaType": input_area.areaType.name,
+                    "mappedAreaId": area_data[requested_area_type+"Id"],
+                    "mappedAreaName": area_data[requested_area_type+"Name"]
+                })
+
+        return filtered_area_map
 
     def get_area_map(self, area=None, group_by=None, filter_by=None):
         from orm.enums import AreaTypeEnum
