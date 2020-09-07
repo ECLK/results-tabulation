@@ -78,7 +78,8 @@ class ExtendedElection:
                     "areaName": input_area.areaName,
                     "areaType": input_area.areaType.name,
                     "mappedAreaId": area_data[requested_area_type+"Id"],
-                    "mappedAreaName": area_data[requested_area_type+"Name"]
+                    "mappedAreaName": area_data[requested_area_type+"Name"],
+                    "mappedAreaType": requested_area_type
                 })
 
         return filtered_area_map

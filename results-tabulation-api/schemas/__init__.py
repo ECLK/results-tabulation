@@ -296,6 +296,7 @@ class MappedAreaSchema(ma.ModelSchema):
             "areaType",
             "mappedAreaId",
             "mappedAreaName",
+            "mappedAreaType",
         )
 
 
