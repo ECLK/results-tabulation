@@ -291,6 +291,7 @@ class AreaMapSchema(ma.ModelSchema):
 class MappedAreaSchema(ma.ModelSchema):
     class Meta:
         fields = (
+            "tallySheetId",
             "areaId",
             "areaName",
             "areaType",
