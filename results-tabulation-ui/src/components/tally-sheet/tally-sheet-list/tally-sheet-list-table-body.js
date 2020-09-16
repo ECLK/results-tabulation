@@ -39,11 +39,8 @@ export default function TallySheetListTableBody(
             setTallySheetIds(prevState => {
                 return [...prevState, ...tallySheetIds]
             });
-            console.log(election);
             // Fetch areaTypes for each tallysheet
-            tallySheetAreaContext.fetchTallySheetMappedArea(election.rootElectionId, tallySheetIds, "electoralDistrict").then((response) => {
-                console.log(response);
-                })
+            tallySheetAreaContext.fetchTallySheetMappedArea(92, tallySheetIds, "electoralDistrict")
 
         }).then(() => {
             setProcessing(false);

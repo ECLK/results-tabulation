@@ -11,10 +11,11 @@ export function TallySheetAreaProvider(props) {
         areaMap: {},
     });
 
-    const saveAreaMapToState = (areaMap, areaId) => {
+    const saveAreaMapToState = (areaMap) => {
 
-        // To avoid duplicated areaMap fetches while state update wait
-        state.areaMap[areaId] = {...areaMap};
+        for (const [index, item] of areaMap.entries()) {
+            state.areaMap[item["tallySheetId"]] = item;
+        }
 
         setState(prevState => {
             return {
@@ -39,16 +40,14 @@ export function TallySheetAreaProvider(props) {
         console.log(newTallySheetIds.toString());
         if (newTallySheetIds.length > 0) {
             const electionMappedArea = await request({
-                url: ENDPOINT_PATH_ELECTION_MAPPED_AREA_BY_ID(electionId,tallySheetIds, areaType),
+                url: ENDPOINT_PATH_ELECTION_MAPPED_AREA_BY_ID(electionId, tallySheetIds, areaType),
                 method: 'get', // default,
             });
 
-            console.log(electionMappedArea);
-
-            // saveAreaMapToState(Object.assign(election, {electionAreaMap}));
+            saveAreaMapToState(electionMappedArea);
         }
-
-        return "hello2";
+        console.log(state.areaMap)
+        return state.areaMap;
     }
 
     return <TallySheetAreaContext.Provider
