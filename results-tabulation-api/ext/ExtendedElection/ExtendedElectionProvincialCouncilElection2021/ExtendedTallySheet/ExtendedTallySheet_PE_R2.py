@@ -1,10 +1,10 @@
 from app import db
 from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_SEAT_CALCULATION_CANNOT_BE_DONE_ON_ZERO_VOTES
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.META_DATA_KEY import \
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION, \
     META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \

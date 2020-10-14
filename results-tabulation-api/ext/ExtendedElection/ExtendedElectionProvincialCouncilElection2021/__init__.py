@@ -4,59 +4,59 @@ from sqlalchemy.orm import aliased
 from app import db
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META as SOURCE_META, \
     TALLY_SHEET_COLUMN_SOURCE_CONTENT as SOURCE_CONTENT, TALLY_SHEET_COLUMN_SOURCE_QUERY as SOURCE_QUERY
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.CANDIDATE_TYPE import CANDIDATE_TYPE_NORMAL, \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.CANDIDATE_TYPE import CANDIDATE_TYPE_NORMAL, \
     CANDIDATE_TYPE_NATIONAL_LIST
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_1 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_1 import \
     ExtendedTallySheet_PE_AI_1
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_2 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_2 import \
     ExtendedTallySheet_PE_AI_2
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_ED import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_ED import \
     ExtendedTallySheet_PE_AI_ED
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_NL_1 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_NL_1 import \
     ExtendedTallySheet_PE_AI_NL_1
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_NL_2 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_NL_2 import \
     ExtendedTallySheet_PE_AI_NL_2
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_AI_SA import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_SA import \
     ExtendedTallySheet_PE_AI_SA
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_POLLING_DIVISION_RESULTS import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_POLLING_DIVISION_RESULTS import \
     ExtendedTallySheet_POLLING_DIVISION_RESULTS
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_CE_201 import \
     ExtendedTallySheet_CE_201
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_CE_201_PV import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_CE_201_PV import \
     ExtendedTallySheet_CE_201_PV
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_21 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_21 import \
     ExtendedTallySheet_PE_21
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_22 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_22 import \
     ExtendedTallySheet_PE_22
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_27 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_27 import \
     ExtendedTallySheet_PE_27
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_39 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_39 import \
     ExtendedTallySheet_PE_39
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_4 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_4 import \
     ExtendedTallySheet_PE_4
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_PR_1 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_PR_1 import \
     ExtendedTallySheet_PE_CE_RO_PR_1
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_PR_2 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_PR_2 import \
     ExtendedTallySheet_PE_CE_RO_PR_2
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_PR_3 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_PR_3 import \
     ExtendedTallySheet_PE_CE_RO_PR_3
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_V1 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_V1 import \
     ExtendedTallySheet_PE_CE_RO_V1
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_V2 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_CE_RO_V2 import \
     ExtendedTallySheet_PE_CE_RO_V2
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.ExtendedTallySheet.ExtendedTallySheet_PE_R2 import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_R2 import \
     ExtendedTallySheet_PE_R2
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.META_DATA_KEY import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.META_DATA_KEY import \
     META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED, \
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
     PE_CE_RO_PR_1, \
     PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, \
     PE_AI_NL_1, PE_AI_ED, PE_AI_1, PE_AI_NL_2, PE_AI_2, PE_AI_SA
 from constants.VOTE_TYPES import NonPostal, PostalAndNonPostal
 from ext.ExtendedElection import ExtendedElection
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import RoleBasedAccess
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import RoleBasedAccess
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
@@ -64,14 +64,14 @@ from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW
     TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, \
     TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE, \
     TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_ACTION_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.WORKFLOW_ACTION_TYPE import \
     WORKFLOW_ACTION_TYPE_VIEW, \
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, \
     WORKFLOW_ACTION_TYPE_VERIFY, WORKFLOW_ACTION_TYPE_EDIT, \
     WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, WORKFLOW_ACTION_TYPE_RELEASE, \
     WORKFLOW_ACTION_TYPE_PRINT, WORKFLOW_ACTION_TYPE_UPLOAD_PROOF_DOCUMENT, WORKFLOW_ACTION_TYPE_PRINT_LETTER, \
     WORKFLOW_ACTION_TYPE_RELEASE_NOTIFY, WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.WORKFLOW_STATUS_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.WORKFLOW_STATUS_TYPE import \
     WORKFLOW_STATUS_TYPE_EMPTY, \
     WORKFLOW_STATUS_TYPE_SAVED, WORKFLOW_STATUS_TYPE_CHANGES_REQUESTED, WORKFLOW_STATUS_TYPE_SUBMITTED, \
     WORKFLOW_STATUS_TYPE_VERIFIED, WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, \
@@ -86,9 +86,9 @@ from orm.enums import AreaTypeEnum
 role_based_access_config = RoleBasedAccess.role_based_access_config
 
 
-class ExtendedElectionParliamentaryElection2020(ExtendedElection):
+class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
     def __init__(self, election):
-        super(ExtendedElectionParliamentaryElection2020, self).__init__(
+        super(ExtendedElectionProvincialCouncilElection2021, self).__init__(
             election=election,
             role_based_access_config=role_based_access_config
         )
@@ -217,7 +217,7 @@ class ExtendedElectionParliamentaryElection2020(ExtendedElection):
         if templateName in EXTENDED_TEMPLATE_MAP:
             return EXTENDED_TEMPLATE_MAP[templateName]
         else:
-            return super(ExtendedElectionParliamentaryElection2020, self).get_extended_tally_sheet_class(
+            return super(ExtendedElectionProvincialCouncilElection2021, self).get_extended_tally_sheet_class(
                 templateName=templateName
             )
 

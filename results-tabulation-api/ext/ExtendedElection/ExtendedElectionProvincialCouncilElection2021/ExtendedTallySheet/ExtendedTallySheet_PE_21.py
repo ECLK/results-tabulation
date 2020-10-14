@@ -1,8 +1,8 @@
 from app import db
 from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_PE_21_CANNOT_BE_PROCESSED_WITHOUT_PE_R2
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import TALLY_SHEET_CODES
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import TALLY_SHEET_CODES
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Meta import MetaData

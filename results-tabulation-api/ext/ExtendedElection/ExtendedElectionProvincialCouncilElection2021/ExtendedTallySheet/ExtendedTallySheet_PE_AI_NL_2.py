@@ -1,9 +1,9 @@
 from app import db
 from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_NL_1
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import CANDIDATE_TYPE_NATIONAL_LIST
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import CANDIDATE_TYPE_NATIONAL_LIST
 
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Election.ElectionCandidate import ElectionCandidateModel
