@@ -102,6 +102,8 @@ class ExtendedElection:
             "countingCentreId", "countingCentreName",
             "pollingDivisionId", "pollingDivisionName",
             "electoralDistrictId", "electoralDistrictName",
+            "administrativeDistrictId", "administrativeDistrictName",
+            "provinceId", "provinceName"
             "countryId", "countryName"
         ]
         column_name_to_column_map = {
@@ -115,6 +117,10 @@ class ExtendedElection:
             "pollingDivisionName": area_map_subquery.c.pollingDivisionName,
             "electoralDistrictId": area_map_subquery.c.electoralDistrictId,
             "electoralDistrictName": area_map_subquery.c.electoralDistrictName,
+            "administrativeDistrictId": area_map_subquery.c.administrativeDistrictId,
+            "administrativeDistrictName": area_map_subquery.c.administrativeDistrictName,
+            "provinceId": area_map_subquery.c.provinceId,
+            "provinceName": area_map_subquery.c.provinceName,
             "countryId": area_map_subquery.c.countryId,
             "countryName": area_map_subquery.c.countryName
         }
@@ -129,6 +135,10 @@ class ExtendedElection:
                 "pollingDivisionName",
                 "electoralDistrictId",
                 "electoralDistrictName",
+                "administrativeDistrictId",
+                "administrativeDistrictName",
+                "provinceId",
+                "provinceName",
                 "countryId",
                 "countryName"
             ],
@@ -143,6 +153,10 @@ class ExtendedElection:
                 "pollingDivisionName",
                 "electoralDistrictId",
                 "electoralDistrictName",
+                "administrativeDistrictId",
+                "administrativeDistrictName",
+                "provinceId",
+                "provinceName",
                 "countryId",
                 "countryName"
             ],
@@ -151,12 +165,30 @@ class ExtendedElection:
                 "pollingDivisionName",
                 "electoralDistrictId",
                 "electoralDistrictName",
+                "administrativeDistrictId",
+                "administrativeDistrictName",
+                "provinceId",
+                "provinceName",
                 "countryId",
                 "countryName"
             ],
             AreaTypeEnum.ElectoralDistrict: [
                 "electoralDistrictId",
                 "electoralDistrictName",
+                "countryId",
+                "countryName"
+            ],
+            AreaTypeEnum.AdministrativeDistrict: [
+                "administrativeDistrictId",
+                "administrativeDistrictName",
+                "provinceId",
+                "provinceName",
+                "countryId",
+                "countryName"
+            ],
+            AreaTypeEnum.Province: [
+                "provinceId",
+                "provinceName",
                 "countryId",
                 "countryName"
             ],
@@ -172,6 +204,8 @@ class ExtendedElection:
             AreaTypeEnum.CountingCentre: [area_map_subquery.c.countingCentreId == area.areaId],
             AreaTypeEnum.PollingDivision: [area_map_subquery.c.pollingDivisionId == area.areaId],
             AreaTypeEnum.ElectoralDistrict: [area_map_subquery.c.electoralDistrictId == area.areaId],
+            AreaTypeEnum.AdministrativeDistrict: [area_map_subquery.c.administrativeDistrictId == area.areaId],
+            AreaTypeEnum.Province: [area_map_subquery.c.provinceId == area.areaId],
             AreaTypeEnum.Country: [area_map_subquery.c.countryId == area.areaId]
         }
 
@@ -211,8 +245,12 @@ class ExtendedElection:
 
         country = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.Country).subquery()
+        province = db.session.query(Area.Model).filter(
+            Area.Model.areaType == AreaTypeEnum.Province).subquery()
         electoral_district = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.ElectoralDistrict).subquery()
+        administrative_district = db.session.query(Area.Model).filter(
+            Area.Model.areaType == AreaTypeEnum.AdministrativeDistrict).subquery()
         polling_division = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.PollingDivision).subquery()
         polling_district = db.session.query(Area.Model).filter(
@@ -226,7 +264,10 @@ class ExtendedElection:
         election_commission = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.ElectionCommission).subquery()
 
+        country__province = aliased(AreaAreaModel)
+        province__administrative_district = aliased(AreaAreaModel)
         country__electoral_district = aliased(AreaAreaModel)
+        administrative_district__polling_division = aliased(AreaAreaModel)
         electoral_district__polling_division = aliased(AreaAreaModel)
         polling_division__polling_district = aliased(AreaAreaModel)
         polling_district__polling_station = aliased(AreaAreaModel)
@@ -237,8 +278,12 @@ class ExtendedElection:
         query = db.session.query(
             country.c.areaId.label("countryId"),
             country.c.areaName.label("countryName"),
+            province.c.areaId.label("provinceId"),
+            province.c.areaName.label("provinceName"),
             electoral_district.c.areaId.label("electoralDistrictId"),
             electoral_district.c.areaName.label("electoralDistrictName"),
+            administrative_district.c.areaId.label("administrativeDistrictId"),
+            administrative_district.c.areaName.label("administrativeDistrictName"),
             polling_division.c.areaId.label("pollingDivisionId"),
             polling_division.c.areaName.label("pollingDivisionName"),
             polling_district.c.areaId.label("pollingDistrictId"),
@@ -252,6 +297,15 @@ class ExtendedElection:
         ).filter(
             country__electoral_district.parentAreaId == country.c.areaId,
             country__electoral_district.childAreaId == electoral_district.c.areaId,
+
+            country__province.parentAreaId == country.c.areaId,
+            country__province.childAreaId == province.c.areaId,
+
+            province__administrative_district.parentAreaId == province.c.areaId,
+            province__administrative_district.childAreaId == administrative_district.c.areaId,
+
+            administrative_district__polling_division.parentAreaId == administrative_district.c.areaId,
+            administrative_district__polling_division.childAreaId == polling_division.c.areaId,
 
             electoral_district__polling_division.parentAreaId == electoral_district.c.areaId,
             electoral_district__polling_division.childAreaId == polling_division.c.areaId,
