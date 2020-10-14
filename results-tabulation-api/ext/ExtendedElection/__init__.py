@@ -7,13 +7,15 @@ from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_VERIF
 from ext.ExtendedTallySheet import ExtendedTallySheet
 
 def get_extended_election(election):
-    from constants.ELECTION_TEMPLATES import PRESIDENTIAL_ELECTION_2019, PARLIAMENT_ELECTION_2020
+    from constants.ELECTION_TEMPLATES import PRESIDENTIAL_ELECTION_2019, PARLIAMENT_ELECTION_2020, PROVINCIAL_COUNCIL_ELECTION_2021
+    from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import ExtendedElectionProvincialCouncilElection2021
     from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import ExtendedElectionParliamentaryElection2020
     from ext.ExtendedElection.ExtendedElectionPresidentialElection2019 import ExtendedElectionPresidentialElection2019
 
     EXTENDED_ELECTION_MAP = {
         PRESIDENTIAL_ELECTION_2019: ExtendedElectionPresidentialElection2019,
-        PARLIAMENT_ELECTION_2020: ExtendedElectionParliamentaryElection2020
+        PARLIAMENT_ELECTION_2020: ExtendedElectionParliamentaryElection2020,
+        PROVINCIAL_COUNCIL_ELECTION_2021: ExtendedElectionProvincialCouncilElection2021
     }
 
     if election.electionTemplateName in EXTENDED_ELECTION_MAP:
