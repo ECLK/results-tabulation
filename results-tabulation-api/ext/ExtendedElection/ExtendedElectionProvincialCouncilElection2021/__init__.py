@@ -79,7 +79,7 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.WORKFLOW
 from ext.ExtendedElection.util import get_rows_from_csv
 from orm.entities import Candidate, Template, Party, Meta, Workflow, TallySheet
 from orm.entities.Area import AreaMap
-from orm.entities.Area.Electorate import Country, ElectoralDistrict, PollingDivision, PollingDistrict
+from orm.entities.Area.Electorate import Country, AdministrativeDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
 from orm.enums import AreaTypeEnum
 
@@ -100,8 +100,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
         country = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.Country).subquery()
-        electoral_district = db.session.query(Area.Model).filter(
-            Area.Model.areaType == AreaTypeEnum.ElectoralDistrict).subquery()
+        administrative_district = db.session.query(Area.Model).filter(
+            Area.Model.areaType == AreaTypeEnum.AdministrativeDistrict).subquery()
         polling_division = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.PollingDivision).subquery()
         polling_district = db.session.query(Area.Model).filter(
@@ -115,8 +115,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         election_commission = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.ElectionCommission).subquery()
 
-        country__electoral_district = aliased(AreaAreaModel)
-        electoral_district__polling_division = aliased(AreaAreaModel)
+        country__administrative_district = aliased(AreaAreaModel)
+        administrative_district__polling_division = aliased(AreaAreaModel)
         polling_division__polling_district = aliased(AreaAreaModel)
         polling_district__polling_station = aliased(AreaAreaModel)
         counting_centre__polling_station = aliased(AreaAreaModel)
@@ -124,13 +124,13 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         election_commission__district_centre = aliased(AreaAreaModel)
 
         # For postal vote counting centres.
-        electoral_district__counting_centre = aliased(AreaAreaModel)
+        administrative_district__counting_centre = aliased(AreaAreaModel)
 
         query_args = [
             country.c.areaId.label("countryId"),
             country.c.areaName.label("countryName"),
-            electoral_district.c.areaId.label("electoralDistrictId"),
-            electoral_district.c.areaName.label("electoralDistrictName"),
+            administrative_district.c.areaId.label("administrativeDistrictId"),
+            administrative_district.c.areaName.label("administrativeDistrictName"),
             counting_centre.c.areaId.label("countingCentreId"),
             counting_centre.c.areaName.label("countingCentreName"),
             Election.Model.voteType,
@@ -138,8 +138,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         ]
 
         query_filter = [
-            country__electoral_district.parentAreaId == country.c.areaId,
-            country__electoral_district.childAreaId == electoral_district.c.areaId,
+            country__administrative_district.parentAreaId == country.c.areaId,
+            country__administrative_district.childAreaId == administrative_district.c.areaId,
 
             district_centre__counting_centre.parentAreaId == district_centre.c.areaId,
             district_centre__counting_centre.childAreaId == counting_centre.c.areaId,
@@ -160,8 +160,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 bindparam("pollingStationName", None)
             ]
             query_filter += [
-                electoral_district__counting_centre.parentAreaId == electoral_district.c.areaId,
-                electoral_district__counting_centre.childAreaId == counting_centre.c.areaId
+                administrative_district__counting_centre.parentAreaId == administrative_district.c.areaId,
+                administrative_district__counting_centre.childAreaId == counting_centre.c.areaId
             ]
         else:
             query_args += [
@@ -173,8 +173,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 polling_station.c.areaName.label("pollingStationName")
             ]
             query_filter += [
-                electoral_district__polling_division.parentAreaId == electoral_district.c.areaId,
-                electoral_district__polling_division.childAreaId == polling_division.c.areaId,
+                administrative_district__polling_division.parentAreaId == administrative_district.c.areaId,
+                administrative_district__polling_division.childAreaId == polling_division.c.areaId,
 
                 polling_division__polling_district.parentAreaId == polling_division.c.areaId,
                 polling_division__polling_district.childAreaId == polling_district.c.areaId,
@@ -1376,7 +1376,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
         data_entry_store = {
             AreaTypeEnum.Country: {},
-            AreaTypeEnum.ElectoralDistrict: {},
+            AreaTypeEnum.Province: {},
+            AreaTypeEnum.AdministrativeDistrict: {},
             AreaTypeEnum.PollingDivision: {},
             AreaTypeEnum.PollingDistrict: {},
             AreaTypeEnum.PollingStation: {},
@@ -1385,8 +1386,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             AreaTypeEnum.ElectionCommission: {},
         }
 
-        electoral_district_election_store = {}
-        electoral_district_sub_election_store = {}
+        administrative_district_election_store = {}
+        administrative_district_sub_election_store = {}
         party_store = {}
 
         def _get_candidate(row):
@@ -1401,10 +1402,10 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             root_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
 
             if candidate_type == CANDIDATE_TYPE_NORMAL:
-                electoral_district_election = _get_electoral_district_election(row)
-                electoral_district_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
-                for electoral_district_sub_election in electoral_district_election.subElections:
-                    electoral_district_sub_election.add_candidate(candidateId=candidate.candidateId,
+                administrative_district_election = _get_administrative_district_election(row)
+                administrative_district_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
+                for administrative_district_sub_election in administrative_district_election.subElections:
+                    administrative_district_sub_election.add_candidate(candidateId=candidate.candidateId,
                                                                   partyId=party.partyId)
 
             return candidate
@@ -1431,53 +1432,53 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             root_election.add_party(partyId=party.partyId)
 
             if candidate_type == CANDIDATE_TYPE_NORMAL:
-                electoral_district_election = _get_electoral_district_election(row)
-                electoral_district_election.add_party(partyId=party.partyId)
-                for electoral_district_sub_election in electoral_district_election.subElections:
-                    electoral_district_sub_election.add_party(partyId=party.partyId)
+                administrative_district_election = _get_administrative_district_election(row)
+                administrative_district_election.add_party(partyId=party.partyId)
+                for administrative_district_sub_election in administrative_district_election.subElections:
+                    administrative_district_sub_election.add_party(partyId=party.partyId)
 
             return party_store[party_name_unique]
 
-        def _get_electoral_district_sub_election_map(row):
-            electoral_district_name = row["Electoral District"]
+        def _get_administrative_district_sub_election_map(row):
+            administrative_district_name = row["Administrative District"]
 
-            return electoral_district_sub_election_store[electoral_district_name]
+            return administrative_district_sub_election_store[administrative_district_name]
 
-        def _get_electoral_district_sub_election(row, vote_type):
-            electoral_district_name = row["Electoral District"]
-            electoral_district_election = _get_electoral_district_election(row)
-            election_map = _get_electoral_district_sub_election_map(row)
+        def _get_administrative_district_sub_election(row, vote_type):
+            administrative_district_name = row["Administrative District"]
+            administrative_district_election = _get_administrative_district_election(row)
+            election_map = _get_administrative_district_sub_election_map(row)
 
             if vote_type not in election_map:
-                sub_election = electoral_district_election.add_sub_election(
-                    electionName="%s - %s - %s" % (root_election.electionName, electoral_district_name, vote_type),
+                sub_election = administrative_district_election.add_sub_election(
+                    electionName="%s - %s - %s" % (root_election.electionName, administrative_district_name, vote_type),
                     voteType=vote_type, isListed=False
                 )
                 election_map[vote_type] = sub_election
-                for party in electoral_district_election.parties:
+                for party in administrative_district_election.parties:
                     sub_election.add_party(partyId=party.partyId)
                     for candidate in party.candidates:
                         sub_election.add_candidate(partyId=party.partyId, candidateId=candidate.candidateId)
 
                 if vote_type is not NonPostal:
-                    _get_sub_electoral_district_entry(row, vote_type=vote_type)
+                    _get_sub_administrative_district_entry(row, vote_type=vote_type)
             else:
                 sub_election = election_map[vote_type]
 
             return sub_election
 
-        def _get_electoral_district_election(row):
-            electoral_district_name = row["Electoral District"]
+        def _get_administrative_district_election(row):
+            administrative_district_name = row["Administrative District"]
 
-            if electoral_district_name not in electoral_district_election_store:
+            if administrative_district_name not in administrative_district_election_store:
                 election = root_election.add_sub_election(
-                    electionName="%s - %s" % (root_election.electionName, electoral_district_name),
+                    electionName="%s - %s" % (root_election.electionName, administrative_district_name),
                     voteType=PostalAndNonPostal, isListed=True
                 )
-                electoral_district_election_store[electoral_district_name] = election
-                electoral_district_sub_election_store[electoral_district_name] = {}
+                administrative_district_election_store[administrative_district_name] = election
+                administrative_district_sub_election_store[administrative_district_name] = {}
             else:
-                election = electoral_district_election_store[electoral_district_name]
+                election = administrative_district_election_store[administrative_district_name]
 
             return election
 
@@ -1581,101 +1582,101 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
             return data_entry_obj
 
-        def _get_sub_electoral_district_entry(row, vote_type=None):
-            electoral_district = _get_electoral_district_entry(row)
-            electoral_district_sub_election = _get_electoral_district_sub_election(row, vote_type=vote_type)
+        def _get_sub_administrative_district_entry(row, vote_type=None):
+            administrative_district = _get_administrative_district_entry(row)
+            administrative_district_sub_election = _get_administrative_district_sub_election(row, vote_type=vote_type)
 
             polling_division_results_tally_sheet = TallySheet.create(
                 template=tally_sheet_template_polling_division_results,
-                electionId=electoral_district_sub_election.electionId,
-                areaId=electoral_district.areaId,
+                electionId=administrative_district_sub_election.electionId,
+                areaId=administrative_district.areaId,
                 metaId=Meta.create({
-                    "areaId": electoral_district.areaId,
-                    "electionId": electoral_district_sub_election.electionId
+                    "areaId": administrative_district.areaId,
+                    "electionId": administrative_district_sub_election.electionId
                 }).metaId,
                 workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
             )
-            electoral_district.polling_division_results_tally_sheet_list.append(polling_division_results_tally_sheet)
+            administrative_district.polling_division_results_tally_sheet_list.append(polling_division_results_tally_sheet)
             pe_ce_ro_v1_tally_sheet = TallySheet.create(
-                template=tally_sheet_template_pe_ce_ro_v1, electionId=electoral_district_sub_election.electionId,
-                areaId=electoral_district.areaId,
+                template=tally_sheet_template_pe_ce_ro_v1, electionId=administrative_district_sub_election.electionId,
+                areaId=administrative_district.areaId,
                 metaId=Meta.create({
-                    "areaId": electoral_district.areaId,
-                    "electionId": electoral_district_sub_election.electionId
+                    "areaId": administrative_district.areaId,
+                    "electionId": administrative_district_sub_election.electionId
                 }).metaId,
                 parentTallySheets=[polling_division_results_tally_sheet,
-                                   *electoral_district.pe_ce_ro_v2_tally_sheet_list],
+                                   *administrative_district.pe_ce_ro_v2_tally_sheet_list],
                 workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
             )
-            electoral_district.pe_ce_ro_v1_tally_sheet_list.append(pe_ce_ro_v1_tally_sheet)
-            electoral_district.pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map[vote_type] = [pe_ce_ro_v1_tally_sheet]
+            administrative_district.pe_ce_ro_v1_tally_sheet_list.append(pe_ce_ro_v1_tally_sheet)
+            administrative_district.pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map[vote_type] = [pe_ce_ro_v1_tally_sheet]
 
-            for party in electoral_district_sub_election.parties:
+            for party in administrative_district_sub_election.parties:
                 pe_ce_ro_pr_1_tally_sheet = TallySheet.create(
-                    template=tally_sheet_template_pe_ce_ro_pr_1, electionId=electoral_district_sub_election.electionId,
-                    areaId=electoral_district.areaId,
+                    template=tally_sheet_template_pe_ce_ro_pr_1, electionId=administrative_district_sub_election.electionId,
+                    areaId=administrative_district.areaId,
                     metaId=Meta.create({
-                        "areaId": electoral_district.areaId,
+                        "areaId": administrative_district.areaId,
                         "partyId": party.partyId,
-                        "electionId": electoral_district_sub_election.electionId
+                        "electionId": administrative_district_sub_election.electionId
                     }).metaId,
                     parentTallySheets=[
-                        *electoral_district.pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId]],
+                        *administrative_district.pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId]],
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )
-                electoral_district.pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
+                administrative_district.pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
 
                 party_id_and_vote_type_key = "%s%s" % (party.partyId, vote_type)
-                if party_id_and_vote_type_key not in electoral_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map:
-                    electoral_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
+                if party_id_and_vote_type_key not in administrative_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map:
+                    administrative_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
                         party_id_and_vote_type_key] = [pe_ce_ro_pr_1_tally_sheet]
                 else:
-                    electoral_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
+                    administrative_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
                         party_id_and_vote_type_key].append(pe_ce_ro_pr_1_tally_sheet)
 
-        def _get_electoral_district_entry(row):
-            electoral_district_election = _get_electoral_district_election(row)
+        def _get_administrative_district_entry(row):
+            administrative_district_election = _get_administrative_district_election(row)
 
             country = _get_country_entry(row)
 
-            area_class = ElectoralDistrict
-            area_name = row["Electoral District"]
+            area_class = AdministrativeDistrict
+            area_name = row["Administrative District"]
             area_key = area_name
 
-            def _create_electoral_district_tally_sheets(area):
+            def _create_administrative_district_tally_sheets(area):
                 pe_ai_ed_tally_sheet_list = country.pe_ai_ed_tally_sheet_list
                 pe_ai_sa_tally_sheet_list = country.pe_ai_sa_tally_sheet_list
                 pe_ai_1_tally_sheet_list = country.pe_ai_1_tally_sheet_list
                 pe_ai_2_tally_sheet_list = country.pe_ai_2_tally_sheet_list
 
                 pe_21_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_21, electionId=electoral_district_election.electionId,
+                    template=tally_sheet_template_pe_21, electionId=administrative_district_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": electoral_district_election.electionId
+                        "electionId": administrative_district_election.electionId
                     }).metaId,
                     parentTallySheets=[*pe_ai_2_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_r2_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_r2, electionId=electoral_district_election.electionId,
+                    template=tally_sheet_template_pe_r2, electionId=administrative_district_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": electoral_district_election.electionId
+                        "electionId": administrative_district_election.electionId
                     }).metaId,
                     parentTallySheets=[*pe_21_tally_sheet_list, *pe_ai_sa_tally_sheet_list, *pe_ai_1_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_ce_ro_v2_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ce_ro_v2, electionId=electoral_district_election.electionId,
+                    template=tally_sheet_template_pe_ce_ro_v2, electionId=administrative_district_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": electoral_district_election.electionId
+                        "electionId": administrative_district_election.electionId
                     }).metaId,
                     parentTallySheets=[*pe_r2_tally_sheet_list, *pe_ai_ed_tally_sheet_list],
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
@@ -1691,14 +1692,14 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = {}
                 pe_ce_ro_pr_3_tally_sheet_list = []
                 pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map = {}
-                for party in electoral_district_election.parties:
+                for party in administrative_district_election.parties:
                     pe_ce_ro_pr_3_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_3, electionId=electoral_district_election.electionId,
+                        template=tally_sheet_template_pe_ce_ro_pr_3, electionId=administrative_district_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
-                            "electionId": electoral_district_election.electionId
+                            "electionId": administrative_district_election.electionId
                         }).metaId,
                         parentTallySheets=pe_21_tally_sheet_list,
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
@@ -1711,12 +1712,12 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                             pe_ce_ro_pr_3_tally_sheet)
 
                     pe_ce_ro_pr_2_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_2, electionId=electoral_district_election.electionId,
+                        template=tally_sheet_template_pe_ce_ro_pr_2, electionId=administrative_district_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
-                            "electionId": electoral_district_election.electionId
+                            "electionId": administrative_district_election.electionId
                         }).metaId,
                         parentTallySheets=[*pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId]],
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
@@ -1742,42 +1743,42 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     "pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map": pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map
                 }
 
-            data_entry_obj = _get_area_entry(electoral_district_election, area_class, area_name, area_key,
-                                             _create_electoral_district_tally_sheets)
+            data_entry_obj = _get_area_entry(administrative_district_election, area_class, area_name, area_key,
+                                             _create_administrative_district_tally_sheets)
 
             return data_entry_obj
 
         def _get_polling_division_entry(row):
-            electoral_district_ordinary_election = _get_electoral_district_sub_election(row, vote_type=NonPostal)
+            administrative_district_ordinary_election = _get_administrative_district_sub_election(row, vote_type=NonPostal)
 
-            electoral_district = _get_electoral_district_entry(row)
+            administrative_district = _get_administrative_district_entry(row)
 
             area_class = PollingDivision
             area_name = row["Polling Division"]
             area_key = area_name
 
             def _create_polling_division_tally_sheets(area):
-                pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = electoral_district.pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map
-                pe_ce_ro_v2_tally_sheet_list = electoral_district.pe_ce_ro_v2_tally_sheet_list
+                pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = administrative_district.pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map
+                pe_ce_ro_v2_tally_sheet_list = administrative_district.pe_ce_ro_v2_tally_sheet_list
 
                 polling_division_results_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_polling_division_results,
-                    electionId=electoral_district_ordinary_election.electionId,
+                    electionId=administrative_district_ordinary_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": electoral_district_ordinary_election.electionId
+                        "electionId": administrative_district_ordinary_election.electionId
                     }).metaId,
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
                 pe_ce_ro_v1_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pe_ce_ro_v1,
-                    electionId=electoral_district_ordinary_election.electionId,
+                    electionId=administrative_district_ordinary_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": electoral_district_ordinary_election.electionId
+                        "electionId": administrative_district_ordinary_election.electionId
                     }).metaId,
                     parentTallySheets=[*polling_division_results_tally_sheet_list, *pe_ce_ro_v2_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
@@ -1785,15 +1786,15 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
                 pe_ce_ro_pr_1_tally_sheet_list = []
                 pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = {}
-                for party in electoral_district_ordinary_election.parties:
+                for party in administrative_district_ordinary_election.parties:
                     pe_ce_ro_pr_1_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pe_ce_ro_pr_1,
-                        electionId=electoral_district_ordinary_election.electionId,
+                        electionId=administrative_district_ordinary_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
-                            "electionId": electoral_district_ordinary_election.electionId
+                            "electionId": administrative_district_ordinary_election.electionId
                         }).metaId,
                         parentTallySheets=[*pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId]],
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
@@ -1815,39 +1816,39 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     "polling_division_results_tally_sheet_list": polling_division_results_tally_sheet_list,
                 }
 
-            data_entry_obj = _get_area_entry(electoral_district_ordinary_election, area_class, area_name, area_key,
+            data_entry_obj = _get_area_entry(administrative_district_ordinary_election, area_class, area_name, area_key,
                                              _create_polling_division_tally_sheets)
 
             return data_entry_obj
 
         def _get_polling_district_entry(row):
-            electoral_district_ordinary_election = _get_electoral_district_sub_election(row, vote_type=NonPostal)
+            administrative_district_ordinary_election = _get_administrative_district_sub_election(row, vote_type=NonPostal)
 
-            electoral_district = _get_electoral_district_entry(row)
+            administrative_district = _get_administrative_district_entry(row)
             polling_division = _get_polling_division_entry(row)
 
             area_class = PollingDistrict
             area_name = row["Polling District"]
-            area_key = "%s-%s-%s" % (electoral_district.areaName, polling_division.areaName, area_name)
+            area_key = "%s-%s-%s" % (administrative_district.areaName, polling_division.areaName, area_name)
 
-            data_entry_obj = _get_area_entry(electoral_district_ordinary_election, area_class, area_name, area_key)
+            data_entry_obj = _get_area_entry(administrative_district_ordinary_election, area_class, area_name, area_key)
 
             return data_entry_obj
 
         def _get_polling_station_entry(row):
-            electoral_district_ordinary_election = _get_electoral_district_sub_election(row, vote_type=NonPostal)
+            administrative_district_ordinary_election = _get_administrative_district_sub_election(row, vote_type=NonPostal)
 
-            electoral_district = _get_electoral_district_entry(row)
+            administrative_district = _get_administrative_district_entry(row)
             polling_division = _get_polling_division_entry(row)
             polling_district = _get_polling_district_entry(row)
 
             area_class = PollingStation
             area_name = row["Polling Station"]
             area_key = "%s-%s-%s-%s" % (
-                electoral_district.areaName, polling_division.areaName, polling_district.areaName, area_name
+                administrative_district.areaName, polling_division.areaName, polling_district.areaName, area_name
             )
 
-            area = _get_area_entry(electoral_district_ordinary_election, area_class, area_name, area_key)
+            area = _get_area_entry(administrative_district_ordinary_election, area_class, area_name, area_key)
 
             area._registeredVotersCount = row["Registered Normal Voters"]
             area._registeredPostalVotersCount = row["Registered Postal Voters"]
@@ -1857,59 +1858,59 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             return area
 
         def _get_counting_centre_entry(row):
-            electoral_district_ordinary_election = _get_electoral_district_sub_election(row, vote_type=NonPostal)
+            administrative_district_ordinary_election = _get_administrative_district_sub_election(row, vote_type=NonPostal)
 
-            electoral_district = _get_electoral_district_entry(row)
+            administrative_district = _get_administrative_district_entry(row)
             polling_division = _get_polling_division_entry(row)
 
             area_class = CountingCentre
             area_name = row["Counting Centre"]
-            area_key = "%s-%s" % (electoral_district.areaName, area_name)
+            area_key = "%s-%s" % (administrative_district.areaName, area_name)
 
             def _create_counting_centre_tally_sheets(area):
                 pe_ce_ro_v1_tally_sheet_list = polling_division.pe_ce_ro_v1_tally_sheet_list
                 pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = polling_division.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map
 
                 pe_27_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_27, electionId=electoral_district_ordinary_election.electionId,
+                    template=tally_sheet_template_pe_27, electionId=administrative_district_ordinary_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": electoral_district_ordinary_election.electionId
+                        "electionId": administrative_district_ordinary_election.electionId
                     }).metaId,
                     parentTallySheets=pe_ce_ro_v1_tally_sheet_list,
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 # pe_39_tally_sheet_list = [TallySheet.create(
-                #     template=tally_sheet_template_pe_39, electionId=electoral_district_ordinary_election.electionId,
+                #     template=tally_sheet_template_pe_39, electionId=administrative_district_ordinary_election.electionId,
                 #     areaId=area.areaId,
                 #     metaId=Meta.create({
                 #         "areaId": area.areaId,
-                #         "electionId": electoral_district_ordinary_election.electionId
+                #         "electionId": administrative_district_ordinary_election.electionId
                 #     }).metaId,
                 #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 # )]
                 # pe_22_tally_sheet_list = [TallySheet.create(
-                #     template=tally_sheet_template_pe_22, electionId=electoral_district_ordinary_election.electionId,
+                #     template=tally_sheet_template_pe_22, electionId=administrative_district_ordinary_election.electionId,
                 #     areaId=area.areaId,
                 #     metaId=Meta.create({
                 #         "areaId": area.areaId,
-                #         "electionId": electoral_district_ordinary_election.electionId
+                #         "electionId": administrative_district_ordinary_election.electionId
                 #     }).metaId,
                 #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 # )]
 
                 pe_4_tally_sheet_list = []
                 pe_4_tally_sheet_list_party_id_wise_map = {}
-                for party in electoral_district_ordinary_election.parties:
+                for party in administrative_district_ordinary_election.parties:
                     pe_4_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_4, electionId=electoral_district_ordinary_election.electionId,
+                        template=tally_sheet_template_pe_4, electionId=administrative_district_ordinary_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
-                            "electionId": electoral_district_ordinary_election.electionId
+                            "electionId": administrative_district_ordinary_election.electionId
                         }).metaId,
                         parentTallySheets=[*pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
                             "%s%s" % (party.partyId, NonPostal)]],
@@ -1923,11 +1924,11 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         pe_4_tally_sheet_list_party_id_wise_map[party.partyId].append(pe_4_tally_sheet)
 
                 pe_ce_201_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_ce_201, electionId=electoral_district_ordinary_election.electionId,
+                    template=tally_sheet_template_ce_201, electionId=administrative_district_ordinary_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": electoral_district_ordinary_election.electionId
+                        "electionId": administrative_district_ordinary_election.electionId
                     }).metaId,
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
@@ -1941,66 +1942,66 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     "pe_ce_201_tally_sheet_list": pe_ce_201_tally_sheet_list
                 }
 
-            data_entry_obj = _get_area_entry(electoral_district_ordinary_election, area_class, area_name, area_key,
+            data_entry_obj = _get_area_entry(administrative_district_ordinary_election, area_class, area_name, area_key,
                                              _create_counting_centre_tally_sheets)
 
             return data_entry_obj
 
-        def _get_electoral_district_counting_centre_entry(row):
+        def _get_administrative_district_counting_centre_entry(row):
             area_class = CountingCentre
             area_name = row["Counting Centre"]
             vote_type = row["Vote Type"]
 
-            electoral_district_sub_election = _get_electoral_district_sub_election(row, vote_type=vote_type)
-            electoral_district = _get_electoral_district_entry(row=row)
+            administrative_district_sub_election = _get_administrative_district_sub_election(row, vote_type=vote_type)
+            administrative_district = _get_administrative_district_entry(row=row)
 
-            area_key = "%s-%s" % (electoral_district.areaName, area_name)
+            area_key = "%s-%s" % (administrative_district.areaName, area_name)
 
             def _create_counting_centre_tally_sheets(area):
-                pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map = electoral_district.pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map
-                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = electoral_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map
+                pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map = administrative_district.pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map
+                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = administrative_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map
 
                 pe_27_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_27, electionId=electoral_district_sub_election.electionId,
+                    template=tally_sheet_template_pe_27, electionId=administrative_district_sub_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": electoral_district_sub_election.electionId
+                        "electionId": administrative_district_sub_election.electionId
                     }).metaId,
                     parentTallySheets=pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map[vote_type],
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
                 # pe_39_tally_sheet_list = [TallySheet.create(
-                #     template=tally_sheet_template_pe_39, electionId=electoral_district_sub_election.electionId,
+                #     template=tally_sheet_template_pe_39, electionId=administrative_district_sub_election.electionId,
                 #     areaId=area.areaId,
                 #     metaId=Meta.create({
                 #         "areaId": area.areaId,
-                #         "electionId": electoral_district_sub_election.electionId
+                #         "electionId": administrative_district_sub_election.electionId
                 #     }).metaId,
                 #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 # )]
                 #
                 # pe_22_tally_sheet_list = [TallySheet.create(
-                #     template=tally_sheet_template_pe_22, electionId=electoral_district_sub_election.electionId,
+                #     template=tally_sheet_template_pe_22, electionId=administrative_district_sub_election.electionId,
                 #     areaId=area.areaId,
                 #     metaId=Meta.create({
                 #         "areaId": area.areaId,
-                #         "electionId": electoral_district_sub_election.electionId
+                #         "electionId": administrative_district_sub_election.electionId
                 #     }).metaId,
                 #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 # )]
 
                 pe_4_tally_sheet_list = []
                 pe_4_tally_sheet_list_party_id_wise_map = {}
-                for party in electoral_district_sub_election.parties:
+                for party in administrative_district_sub_election.parties:
                     pe_4_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_4, electionId=electoral_district_sub_election.electionId,
+                        template=tally_sheet_template_pe_4, electionId=administrative_district_sub_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
-                            "electionId": electoral_district_sub_election.electionId
+                            "electionId": administrative_district_sub_election.electionId
                         }).metaId,
                         parentTallySheets=[*pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
                             "%s%s" % (party.partyId, vote_type)]],
@@ -2014,11 +2015,11 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         pe_4_tally_sheet_list_party_id_wise_map[party.partyId].append(pe_4_tally_sheet)
 
                 pe_ce_201_pv_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_ce_201_pv, electionId=electoral_district_sub_election.electionId,
+                    template=tally_sheet_template_ce_201_pv, electionId=administrative_district_sub_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
-                        "electionId": electoral_district_sub_election.electionId
+                        "electionId": administrative_district_sub_election.electionId
                     }).metaId,
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
@@ -2032,30 +2033,30 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     "pe_ce_201_pv_tally_sheet_list": pe_ce_201_pv_tally_sheet_list
                 }
 
-            data_entry_obj = _get_area_entry(electoral_district_sub_election, area_class, area_name, area_key,
+            data_entry_obj = _get_area_entry(administrative_district_sub_election, area_class, area_name, area_key,
                                              _create_counting_centre_tally_sheets)
 
             return data_entry_obj
 
         def _get_district_centre_entry(row):
-            electoral_district_election = _get_electoral_district_election(row)
+            administrative_district_election = _get_administrative_district_election(row)
 
             area_class = DistrictCentre
             area_name = row["District Centre"]
             area_key = area_name
 
-            data_entry_obj = _get_area_entry(electoral_district_election, area_class, area_name, area_key)
+            data_entry_obj = _get_area_entry(administrative_district_election, area_class, area_name, area_key)
 
             return data_entry_obj
 
         def _get_election_commission_entry(row):
-            electoral_district_election = _get_electoral_district_election(row)
+            administrative_district_election = _get_administrative_district_election(row)
 
             area_class = ElectionCommission
             area_name = row["Election Commission"]
             area_key = area_name
 
-            data_entry_obj = _get_area_entry(electoral_district_election, area_class, area_name, area_key)
+            data_entry_obj = _get_area_entry(administrative_district_election, area_class, area_name, area_key)
 
             return data_entry_obj
 
@@ -2070,7 +2071,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
             country = _get_country_entry(row=row)
 
-            electoral_district = _get_electoral_district_entry(row=row)
+            administrative_district = _get_administrative_district_entry(row=row)
             polling_division = _get_polling_division_entry(row=row)
             polling_district = _get_polling_district_entry(row=row)
             election_commission = _get_election_commission_entry(row=row)
@@ -2078,8 +2079,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             counting_centre = _get_counting_centre_entry(row=row)
             polling_station = _get_polling_station_entry(row=row)
 
-            country.add_child(electoral_district.areaId)
-            electoral_district.add_child(polling_division.areaId)
+            country.add_child(administrative_district.areaId)
+            administrative_district.add_child(polling_division.areaId)
             polling_division.add_child(polling_district.areaId)
             polling_district.add_child(polling_station.areaId)
             election_commission.add_child(district_centre.areaId)
@@ -2095,7 +2096,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 electionCommissionId=election_commission.areaId,
                 pollingDistrictId=polling_district.areaId,
                 pollingDivisionId=polling_division.areaId,
-                electoralDistrictId=electoral_district.areaId,
+                administrativeDistrictId=administrative_district.areaId,
                 countryId=country.areaId
             )
 
@@ -2106,15 +2107,15 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
             country = _get_country_entry(row=row)
 
-            electoral_district = _get_electoral_district_entry(row=row)
+            administrative_district = _get_administrative_district_entry(row=row)
             election_commission = _get_election_commission_entry(row=row)
             district_centre = _get_district_centre_entry(row=row)
-            postal_vote_counting_centre = _get_electoral_district_counting_centre_entry(row=row)
+            postal_vote_counting_centre = _get_administrative_district_counting_centre_entry(row=row)
 
-            country.add_child(electoral_district.areaId)
+            country.add_child(administrative_district.areaId)
             election_commission.add_child(district_centre.areaId)
             district_centre.add_child(postal_vote_counting_centre.areaId)
-            electoral_district.add_child(postal_vote_counting_centre.areaId)
+            administrative_district.add_child(postal_vote_counting_centre.areaId)
 
             AreaMap.create(
                 electionId=root_election.electionId,
@@ -2122,17 +2123,17 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 countingCentreId=postal_vote_counting_centre.areaId,
                 districtCentreId=district_centre.areaId,
                 electionCommissionId=election_commission.areaId,
-                electoralDistrictId=electoral_district.areaId,
+                administrativeDistrictId=administrative_district.areaId,
                 countryId=country.areaId
             )
 
         for row in get_rows_from_csv(number_of_seats_dataset_file):
-            electoral_district_election = _get_electoral_district_election(row)
-            electoral_district_election.meta.add_meta_data(
+            administrative_district_election = _get_administrative_district_election(row)
+            administrative_district_election.meta.add_meta_data(
                 metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED,
                 metaDataValue=row["Number of seats"]
             )
-            electoral_district_election.meta.add_meta_data(
+            administrative_district_election.meta.add_meta_data(
                 metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION,
                 metaDataValue=0.05
             )
