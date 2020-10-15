@@ -47,7 +47,7 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Extended
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_R2 import \
     ExtendedTallySheet_PE_R2
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.META_DATA_KEY import \
-    META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED, \
+    META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED, META_DATA_KEY_ELECTION_NUMBER_OF_BONUS_SEATS_ALLOCATED, \
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
     PE_CE_RO_PR_1, \
@@ -79,7 +79,7 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.WORKFLOW
 from ext.ExtendedElection.util import get_rows_from_csv
 from orm.entities import Candidate, Template, Party, Meta, Workflow, TallySheet
 from orm.entities.Area import AreaMap
-from orm.entities.Area.Electorate import Country, AdministrativeDistrict, PollingDivision, PollingDistrict
+from orm.entities.Area.Electorate import Country, Province, AdministrativeDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
 from orm.enums import AreaTypeEnum
 
@@ -1386,6 +1386,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             AreaTypeEnum.ElectionCommission: {},
         }
 
+        province_election_store = {}
         administrative_district_election_store = {}
         administrative_district_sub_election_store = {}
         party_store = {}
@@ -1467,11 +1468,26 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
             return sub_election
 
+        def _get_province_election(row):
+            province_name = row["Province"]
+
+            if province_name not in province_election_store:
+                election = root_election.add_sub_election(
+                    electionName="%s - %s" % (root_election.electionName, province_name),
+                    voteType=PostalAndNonPostal, isListed=True
+                )
+                province_election_store[province_name] = election
+            else:
+                election = province_election_store[province_name]
+
+            return election
+
         def _get_administrative_district_election(row):
             administrative_district_name = row["Administrative District"]
+            province_election= _get_province_election(row)
 
             if administrative_district_name not in administrative_district_election_store:
-                election = root_election.add_sub_election(
+                election = province_election.add_sub_election(
                     electionName="%s - %s" % (root_election.electionName, administrative_district_name),
                     voteType=PostalAndNonPostal, isListed=True
                 )
@@ -1579,6 +1595,19 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
             data_entry_obj = _get_area_entry(root_election, area_class, area_name, area_key,
                                              _create_country_tally_sheets)
+
+            return data_entry_obj
+
+        def _get_province_entry(row):
+            area_class = Province
+            area_name = row["Province"]
+            area_key = area_name
+
+            def _create_province_tally_sheets(area):
+                return None
+
+            data_entry_obj = _get_area_entry(root_election, area_class, area_name, area_key,
+                                             _create_province_tally_sheets)
 
             return data_entry_obj
 
@@ -2070,7 +2099,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             row["Polling Station"] = row["Polling Station (English)"]
 
             country = _get_country_entry(row=row)
-
+            province = _get_province_entry(row=row)
             administrative_district = _get_administrative_district_entry(row=row)
             polling_division = _get_polling_division_entry(row=row)
             polling_district = _get_polling_district_entry(row=row)
@@ -2079,7 +2108,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             counting_centre = _get_counting_centre_entry(row=row)
             polling_station = _get_polling_station_entry(row=row)
 
-            country.add_child(administrative_district.areaId)
+            country.add_child(province.areaId)
+            province.add_child(administrative_district.areaId)
             administrative_district.add_child(polling_division.areaId)
             polling_division.add_child(polling_district.areaId)
             polling_district.add_child(polling_station.areaId)
@@ -2097,6 +2127,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 pollingDistrictId=polling_district.areaId,
                 pollingDivisionId=polling_division.areaId,
                 administrativeDistrictId=administrative_district.areaId,
+                provinceId=province.areaId,
                 countryId=country.areaId
             )
 
@@ -2106,13 +2137,14 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             row["Election Commission"] = "Sri Lanka Election Commission"
 
             country = _get_country_entry(row=row)
-
+            province = _get_province_entry(row=row)
             administrative_district = _get_administrative_district_entry(row=row)
             election_commission = _get_election_commission_entry(row=row)
             district_centre = _get_district_centre_entry(row=row)
             postal_vote_counting_centre = _get_administrative_district_counting_centre_entry(row=row)
 
-            country.add_child(administrative_district.areaId)
+            country.add_child(province.areaId)
+            province.add_child(administrative_district.areaId)
             election_commission.add_child(district_centre.areaId)
             district_centre.add_child(postal_vote_counting_centre.areaId)
             administrative_district.add_child(postal_vote_counting_centre.areaId)
@@ -2124,10 +2156,17 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 districtCentreId=district_centre.areaId,
                 electionCommissionId=election_commission.areaId,
                 administrativeDistrictId=administrative_district.areaId,
+                provinceId=province.areaId,
                 countryId=country.areaId
             )
 
         for row in get_rows_from_csv(number_of_seats_dataset_file):
+            province_election = _get_province_election(row)
+            province_election.meta.add_meta_data(
+                metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_BONUS_SEATS_ALLOCATED,
+                metaDataValue=row["Bonus seats"]
+            )
+
             administrative_district_election = _get_administrative_district_election(row)
             administrative_district_election.meta.add_meta_data(
                 metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED,
