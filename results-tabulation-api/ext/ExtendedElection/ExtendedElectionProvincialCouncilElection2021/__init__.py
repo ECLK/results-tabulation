@@ -6,20 +6,6 @@ from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META a
     TALLY_SHEET_COLUMN_SOURCE_CONTENT as SOURCE_CONTENT, TALLY_SHEET_COLUMN_SOURCE_QUERY as SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.CANDIDATE_TYPE import CANDIDATE_TYPE_NORMAL, \
     CANDIDATE_TYPE_NATIONAL_LIST
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_1 import \
-    ExtendedTallySheet_PE_AI_1
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_2 import \
-    ExtendedTallySheet_PE_AI_2
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_ED import \
-    ExtendedTallySheet_PE_AI_ED
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_NL_1 import \
-    ExtendedTallySheet_PE_AI_NL_1
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_NL_2 import \
-    ExtendedTallySheet_PE_AI_NL_2
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_PE_AI_SA import \
-    ExtendedTallySheet_PE_AI_SA
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_POLLING_DIVISION_RESULTS import \
-    ExtendedTallySheet_POLLING_DIVISION_RESULTS
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_CE_201 import \
     ExtendedTallySheet_CE_201
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_CE_201_PV import \
@@ -638,7 +624,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         )
 
         tally_sheet_template_pce_35 = Template.create(
-            templateName=PE_27,
+            templateName=PCE_35,
             templateRowTypesMap={
                 "PARTY_WISE_VOTE": {
                     "hasMany": True,
@@ -663,8 +649,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             }
         )
 
-        tally_sheet_template_pe_ce_ro_v1 = Template.create(
-            templateName=PE_CE_RO_V1,
+        tally_sheet_template_pce_ce_ro_v1 = Template.create(
+            templateName=PCE_CE_RO_V1,
             templateRowTypesMap={
                 "PARTY_WISE_VOTE": {
                     "hasMany": True,
@@ -676,7 +662,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_27, "templateRowType": "PARTY_WISE_VOTE"}
+                        {"templateName": PCE_35, "templateRowType": "PARTY_WISE_VOTE"}
                     ]
                 },
                 "REJECTED_VOTE": {
@@ -688,14 +674,45 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_27, "templateRowType": "REJECTED_VOTE"}
+                        {"templateName": PCE_35, "templateRowType": "REJECTED_VOTE"}
                     ]
                 }
             }
         )
 
-        tally_sheet_template_polling_division_results = Template.create(
-            templateName=POLLING_DIVISION_RESULTS,
+        # tally_sheet_template_polling_division_results = Template.create(
+        #     templateName=POLLING_DIVISION_RESULTS,
+        #     templateRowTypesMap={
+        #         "PARTY_WISE_VOTE": {
+        #             "hasMany": True,
+        #             "isDerived": True,
+        #             "columns": [
+        #                 {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+        #             ],
+        #             "derivativeRows": [
+        #                 {"templateName": PCE_CE_RO_V1, "templateRowType": "PARTY_WISE_VOTE"}
+        #             ]
+        #         },
+        #         "REJECTED_VOTE": {
+        #             "hasMany": True,
+        #             "isDerived": True,
+        #             "columns": [
+        #                 {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+        #             ],
+        #             "derivativeRows": [
+        #                 {"templateName": PCE_CE_RO_V1, "templateRowType": "REJECTED_VOTE"}
+        #             ]
+        #         }
+        #     }
+        # )
+
+        tally_sheet_template_pce_ce_ro_v2 = Template.create(
+            templateName=PCE_CE_RO_V2,
             templateRowTypesMap={
                 "PARTY_WISE_VOTE": {
                     "hasMany": True,
@@ -707,7 +724,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_CE_RO_V1, "templateRowType": "PARTY_WISE_VOTE"}
+                        {"templateName": PCE_CE_RO_V1, "templateRowType": "PARTY_WISE_VOTE"}
                     ]
                 },
                 "REJECTED_VOTE": {
@@ -719,14 +736,14 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_CE_RO_V1, "templateRowType": "REJECTED_VOTE"}
+                        {"templateName": PCE_CE_RO_V1, "templateRowType": "REJECTED_VOTE"}
                     ]
                 }
             }
         )
 
-        tally_sheet_template_pe_ce_ro_v2 = Template.create(
-            templateName=PE_CE_RO_V2,
+        tally_sheet_template_pce_r2 = Template.create(
+            templateName=PCE_R2,
             templateRowTypesMap={
                 "PARTY_WISE_VOTE": {
                     "hasMany": True,
@@ -738,7 +755,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_CE_RO_V1, "templateRowType": "PARTY_WISE_VOTE"}
+                        {"templateName": PCE_CE_RO_V2, "templateRowType": "PARTY_WISE_VOTE"}
                     ]
                 },
                 "REJECTED_VOTE": {
@@ -750,198 +767,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_CE_RO_V1, "templateRowType": "REJECTED_VOTE"}
-                    ]
-                }
-            }
-        )
-
-        tally_sheet_template_pe_ai_ed = Template.create(
-            templateName=PE_AI_ED,
-            templateRowTypesMap={
-                "PARTY_WISE_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_CE_RO_V2, "templateRowType": "PARTY_WISE_VOTE"}
-                    ]
-                },
-                "REJECTED_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_CE_RO_V2, "templateRowType": "REJECTED_VOTE"}
-                    ]
-                }
-            }
-        )
-
-        tally_sheet_template_pe_ai_nl_1 = Template.create(
-            templateName=PE_AI_NL_1,
-            templateRowTypesMap={
-                "PARTY_WISE_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
-                    ]
-                },
-                "REJECTED_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_ED, "templateRowType": "REJECTED_VOTE"}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
-                    ]
-                }
-            }
-        )
-
-        tally_sheet_template_pe_ai_nl_2 = Template.create(
-            templateName=PE_AI_NL_2,
-            templateRowTypesMap={
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_NL_1, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_CONTENT}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_CONTENT}
-                    ]
-                }
-            }
-        )
-
-        tally_sheet_template_pe_r2 = Template.create(
-            templateName=PE_R2,
-            templateRowTypesMap={
-                "PARTY_WISE_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_CE_RO_V2, "templateRowType": "PARTY_WISE_VOTE"}
-                    ]
-                },
-                "REJECTED_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_CE_RO_V2, "templateRowType": "REJECTED_VOTE"}
+                        {"templateName": PCE_CE_RO_V2, "templateRowType": "REJECTED_VOTE"}
                     ]
                 },
                 TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: {
@@ -1035,8 +861,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             }
         )
 
-        tally_sheet_template_pe_4 = Template.create(
-            templateName=PE_4,
+        tally_sheet_template_pce_co_pr_4 = Template.create(
+            templateName=PCE_CE_CO_PR_4,
             templateRowTypesMap={
                 "CANDIDATE_FIRST_PREFERENCE": {
                     "hasMany": True,
@@ -1052,8 +878,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             }
         )
 
-        tally_sheet_template_pe_ce_ro_pr_1 = Template.create(
-            templateName=PE_CE_RO_PR_1,
+        tally_sheet_template_pce_ce_ro_pr_1 = Template.create(
+            templateName=PCE_CE_RO_PR_1,
             templateRowTypesMap={
                 "CANDIDATE_FIRST_PREFERENCE": {
                     "hasMany": True,
@@ -1066,14 +892,14 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_4, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
+                        {"templateName": PCE_CE_CO_PR_4, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
                     ]
                 }
             }
         )
 
-        tally_sheet_template_pe_ce_ro_pr_2 = Template.create(
-            templateName=PE_CE_RO_PR_2,
+        tally_sheet_template_pce_ce_ro_pr_2 = Template.create(
+            templateName=PCE_CE_RO_PR_2,
             templateRowTypesMap={
                 "CANDIDATE_FIRST_PREFERENCE": {
                     "hasMany": True,
@@ -1086,14 +912,14 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_CE_RO_PR_1, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
+                        {"templateName": PCE_CE_RO_PR_1, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
                     ]
                 }
             }
         )
 
-        tally_sheet_template_pe_ce_ro_pr_3 = Template.create(
-            templateName=PE_CE_RO_PR_3,
+        tally_sheet_template_pce_ce_ro_pr_3 = Template.create(
+            templateName=PCE_CE_RO_PR_3,
             templateRowTypesMap={
                 "CANDIDATE_FIRST_PREFERENCE": {
                     "hasMany": True,
@@ -1106,38 +932,71 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_CE_RO_PR_2, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
+                        {"templateName": PCE_CE_RO_PR_2, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
                     ]
                 }
             }
         )
 
-        tally_sheet_template_pe_ai_sa = Template.create(
-            templateName=PE_AI_SA,
+        # tally_sheet_template_pce_ai_sa = Template.create(
+        #     templateName=PCE_AI_SA,
+        #     templateRowTypesMap={
+        #         "PARTY_WISE_VOTE": {
+        #             "hasMany": True,
+        #             "isDerived": True,
+        #             "columns": [
+        #                 {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+        #             ],
+        #             "derivativeRows": [
+        #                 {"templateName": PCE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
+        #             ]
+        #         },
+        #         "REJECTED_VOTE": {
+        #             "hasMany": True,
+        #             "isDerived": True,
+        #             "columns": [
+        #                 {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+        #             ],
+        #             "derivativeRows": [
+        #                 {"templateName": PCE_AI_ED, "templateRowType": "REJECTED_VOTE"}
+        #             ]
+        #         },
+        #         TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
+        #             "hasMany": True,
+        #             "isDerived": True,
+        #             "columns": [
+        #                 {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+        #                 {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+        #                 {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+        #                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+        #             ],
+        #             "derivativeRows": [
+        #                 {"templateName": PCE_R2, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
+        #             ]
+        #         }
+        #     }
+        # )
+
+        tally_sheet_template_pce_ce_ro_pr_3 = Template.create(
+            templateName=PCE_CE_RO_PR_3,
             templateRowTypesMap={
-                "PARTY_WISE_VOTE": {
+                "CANDIDATE_FIRST_PREFERENCE": {
                     "hasMany": True,
                     "isDerived": True,
                     "columns": [
                         {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
                         {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
                         {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
-                    ]
-                },
-                "REJECTED_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_ED, "templateRowType": "REJECTED_VOTE"}
+                        {"templateName": PCE_CE_RO_PR_2, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
                     ]
                 },
                 TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
@@ -1150,40 +1009,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
-                        {"templateName": PE_R2, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
-                    ]
-                }
-            }
-        )
-
-        tally_sheet_template_pe_21 = Template.create(
-            templateName=PE_21,
-            templateRowTypesMap={
-                "CANDIDATE_FIRST_PREFERENCE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_CE_RO_PR_2, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_R2, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
+                        {"templateName": PCE_R2, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
                     ]
                 },
                 TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE: {
@@ -1204,134 +1030,6 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
                         {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
                         {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_CONTENT}
-                    ]
-                }
-            }
-        )
-
-        tally_sheet_template_pe_ai_1 = Template.create(
-            templateName=PE_AI_1,
-            templateRowTypesMap={
-                "PARTY_WISE_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
-                    ]
-                },
-                "REJECTED_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_ED, "templateRowType": "REJECTED_VOTE"}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_SA, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED: {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_NL_1, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
-                    ]
-                }
-            }
-        )
-
-        tally_sheet_template_pe_ai_2 = Template.create(
-            templateName=PE_AI_2,
-            templateRowTypesMap={
-                "PARTY_WISE_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
-                    ]
-                },
-                "REJECTED_VOTE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_ED, "templateRowType": "REJECTED_VOTE"}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_SA, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED: {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_AI_NL_1, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE: {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PE_21, "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE},
-                        {"templateName": PE_AI_NL_2, "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE}
                     ]
                 }
             }
@@ -1487,8 +1185,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             area_key = area_name
 
             def _create_country_tally_sheets(area):
-                pe_ai_2_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ai_2, electionId=root_election.electionId,
+                pce_ai_2_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_ai_2, electionId=root_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
@@ -1496,8 +1194,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     }).metaId,
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
-                pe_ai_1_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ai_1, electionId=root_election.electionId,
+                pce_ai_1_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_ai_1, electionId=root_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
@@ -1505,55 +1203,55 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     }).metaId,
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
-                pe_ai_nl_2_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ai_nl_2, electionId=root_election.electionId,
+                pce_ai_nl_2_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_ai_nl_2, electionId=root_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": root_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_ai_2_tally_sheet_list],
+                    parentTallySheets=[*pce_ai_2_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
-                pe_ai_nl_1_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ai_nl_1, electionId=root_election.electionId,
+                pce_ai_nl_1_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_ai_nl_1, electionId=root_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": root_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_ai_nl_2_tally_sheet_list, *pe_ai_1_tally_sheet_list],
+                    parentTallySheets=[*pce_ai_nl_2_tally_sheet_list, *pce_ai_1_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
-                pe_ai_sa_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ai_sa, electionId=root_election.electionId,
+                pce_ai_sa_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_ai_sa, electionId=root_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": root_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_ai_1_tally_sheet_list],
+                    parentTallySheets=[*pce_ai_1_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
-                pe_ai_ed_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ai_ed, electionId=root_election.electionId,
+                pce_ai_ed_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_ai_ed, electionId=root_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": root_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_ai_sa_tally_sheet_list, *pe_ai_nl_1_tally_sheet_list,
-                                       *pe_ai_1_tally_sheet_list],
+                    parentTallySheets=[*pce_ai_sa_tally_sheet_list, *pce_ai_nl_1_tally_sheet_list,
+                                       *pce_ai_1_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 return {
-                    "pe_ai_ed_tally_sheet_list": pe_ai_ed_tally_sheet_list,
-                    "pe_ai_sa_tally_sheet_list": pe_ai_sa_tally_sheet_list,
-                    "pe_ai_nl_1_tally_sheet_list": pe_ai_nl_1_tally_sheet_list,
-                    "pe_ai_nl_2_tally_sheet_list": pe_ai_nl_2_tally_sheet_list,
-                    "pe_ai_1_tally_sheet_list": pe_ai_1_tally_sheet_list,
-                    "pe_ai_2_tally_sheet_list": pe_ai_2_tally_sheet_list
+                    "pce_ai_ed_tally_sheet_list": pce_ai_ed_tally_sheet_list,
+                    "pce_ai_sa_tally_sheet_list": pce_ai_sa_tally_sheet_list,
+                    "pce_ai_nl_1_tally_sheet_list": pce_ai_nl_1_tally_sheet_list,
+                    "pce_ai_nl_2_tally_sheet_list": pce_ai_nl_2_tally_sheet_list,
+                    "pce_ai_1_tally_sheet_list": pce_ai_1_tally_sheet_list,
+                    "pce_ai_2_tally_sheet_list": pce_ai_2_tally_sheet_list
                 }
 
             data_entry_obj = _get_area_entry(root_election, area_class, area_name, area_key,
@@ -1590,24 +1288,24 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             )
             administrative_district.polling_division_results_tally_sheet_list.append(
                 polling_division_results_tally_sheet)
-            pe_ce_ro_v1_tally_sheet = TallySheet.create(
-                template=tally_sheet_template_pe_ce_ro_v1, electionId=administrative_district_sub_election.electionId,
+            pce_ce_ro_v1_tally_sheet = TallySheet.create(
+                template=tally_sheet_template_pce_ce_ro_v1, electionId=administrative_district_sub_election.electionId,
                 areaId=administrative_district.areaId,
                 metaId=Meta.create({
                     "areaId": administrative_district.areaId,
                     "electionId": administrative_district_sub_election.electionId
                 }).metaId,
                 parentTallySheets=[polling_division_results_tally_sheet,
-                                   *administrative_district.pe_ce_ro_v2_tally_sheet_list],
+                                   *administrative_district.pce_ce_ro_v2_tally_sheet_list],
                 workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
             )
-            administrative_district.pe_ce_ro_v1_tally_sheet_list.append(pe_ce_ro_v1_tally_sheet)
-            administrative_district.pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map[vote_type] = [
-                pe_ce_ro_v1_tally_sheet]
+            administrative_district.pce_ce_ro_v1_tally_sheet_list.append(pce_ce_ro_v1_tally_sheet)
+            administrative_district.pce_ce_ro_v1_tally_sheet_list_vote_typce_wise_map[vote_type] = [
+                pce_ce_ro_v1_tally_sheet]
 
             for party in administrative_district_sub_election.parties:
-                pe_ce_ro_pr_1_tally_sheet = TallySheet.create(
-                    template=tally_sheet_template_pe_ce_ro_pr_1,
+                pce_ce_ro_pr_1_tally_sheet = TallySheet.create(
+                    template=tally_sheet_template_pce_ce_ro_pr_1,
                     electionId=administrative_district_sub_election.electionId,
                     areaId=administrative_district.areaId,
                     metaId=Meta.create({
@@ -1616,18 +1314,18 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "electionId": administrative_district_sub_election.electionId
                     }).metaId,
                     parentTallySheets=[
-                        *administrative_district.pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId]],
+                        *administrative_district.pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId]],
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )
-                administrative_district.pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
+                administrative_district.pce_ce_ro_pr_1_tally_sheet_list.append(pce_ce_ro_pr_1_tally_sheet)
 
-                party_id_and_vote_type_key = "%s%s" % (party.partyId, vote_type)
-                if party_id_and_vote_type_key not in administrative_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map:
-                    administrative_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
-                        party_id_and_vote_type_key] = [pe_ce_ro_pr_1_tally_sheet]
+                party_id_and_vote_typce_key = "%s%s" % (party.partyId, vote_type)
+                if party_id_and_vote_typce_key not in administrative_district.pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map:
+                    administrative_district.pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map[
+                        party_id_and_vote_typce_key] = [pce_ce_ro_pr_1_tally_sheet]
                 else:
-                    administrative_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
-                        party_id_and_vote_type_key].append(pe_ce_ro_pr_1_tally_sheet)
+                    administrative_district.pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map[
+                        party_id_and_vote_typce_key].append(pce_ce_ro_pr_1_tally_sheet)
 
         def _get_administrative_district_entry(row):
             administrative_district_election = _get_administrative_district_election(row)
@@ -1639,57 +1337,57 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             area_key = area_name
 
             def _create_administrative_district_tally_sheets(area):
-                pe_ai_ed_tally_sheet_list = country.pe_ai_ed_tally_sheet_list
-                pe_ai_sa_tally_sheet_list = country.pe_ai_sa_tally_sheet_list
-                pe_ai_1_tally_sheet_list = country.pe_ai_1_tally_sheet_list
-                pe_ai_2_tally_sheet_list = country.pe_ai_2_tally_sheet_list
+                pce_ai_ed_tally_sheet_list = country.pce_ai_ed_tally_sheet_list
+                pce_ai_sa_tally_sheet_list = country.pce_ai_sa_tally_sheet_list
+                pce_ai_1_tally_sheet_list = country.pce_ai_1_tally_sheet_list
+                pce_ai_2_tally_sheet_list = country.pce_ai_2_tally_sheet_list
 
-                pe_21_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_21, electionId=administrative_district_election.electionId,
+                pce_21_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_21, electionId=administrative_district_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": administrative_district_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_ai_2_tally_sheet_list],
+                    parentTallySheets=[*pce_ai_2_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
-                pe_r2_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_r2, electionId=administrative_district_election.electionId,
+                pce_r2_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_r2, electionId=administrative_district_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": administrative_district_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_21_tally_sheet_list, *pe_ai_sa_tally_sheet_list, *pe_ai_1_tally_sheet_list],
+                    parentTallySheets=[*pce_21_tally_sheet_list, *pce_ai_sa_tally_sheet_list, *pce_ai_1_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
-                pe_ce_ro_v2_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ce_ro_v2, electionId=administrative_district_election.electionId,
+                pce_ce_ro_v2_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_ce_ro_v2, electionId=administrative_district_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": administrative_district_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pe_r2_tally_sheet_list, *pe_ai_ed_tally_sheet_list],
+                    parentTallySheets=[*pce_r2_tally_sheet_list, *pce_ai_ed_tally_sheet_list],
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
                 polling_division_results_tally_sheet_list = []
-                pe_ce_ro_v1_tally_sheet_list = []
-                pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map = {}
+                pce_ce_ro_v1_tally_sheet_list = []
+                pce_ce_ro_v1_tally_sheet_list_vote_typce_wise_map = {}
 
-                pe_ce_ro_pr_1_tally_sheet_list = []
-                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = {}
-                pe_ce_ro_pr_2_tally_sheet_list = []
-                pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = {}
-                pe_ce_ro_pr_3_tally_sheet_list = []
-                pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map = {}
+                pce_ce_ro_pr_1_tally_sheet_list = []
+                pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map = {}
+                pce_ce_ro_pr_2_tally_sheet_list = []
+                pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = {}
+                pce_ce_ro_pr_3_tally_sheet_list = []
+                pce_ce_ro_pr_3_tally_sheet_list_party_id_wise_map = {}
                 for party in administrative_district_election.parties:
-                    pe_ce_ro_pr_3_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_3,
+                    pce_ce_ro_pr_3_tally_sheet = TallySheet.create(
+                        template=tally_sheet_template_pce_ce_ro_pr_3,
                         electionId=administrative_district_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
@@ -1697,18 +1395,18 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": administrative_district_election.electionId
                         }).metaId,
-                        parentTallySheets=pe_21_tally_sheet_list,
+                        parentTallySheets=pce_21_tally_sheet_list,
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
-                    pe_ce_ro_pr_3_tally_sheet_list.append(pe_ce_ro_pr_3_tally_sheet)
-                    if party.partyId not in pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map:
-                        pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId] = [pe_ce_ro_pr_3_tally_sheet]
+                    pce_ce_ro_pr_3_tally_sheet_list.append(pce_ce_ro_pr_3_tally_sheet)
+                    if party.partyId not in pce_ce_ro_pr_3_tally_sheet_list_party_id_wise_map:
+                        pce_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId] = [pce_ce_ro_pr_3_tally_sheet]
                     else:
-                        pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId].append(
-                            pe_ce_ro_pr_3_tally_sheet)
+                        pce_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId].append(
+                            pce_ce_ro_pr_3_tally_sheet)
 
-                    pe_ce_ro_pr_2_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_2,
+                    pce_ce_ro_pr_2_tally_sheet = TallySheet.create(
+                        template=tally_sheet_template_pce_ce_ro_pr_2,
                         electionId=administrative_district_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
@@ -1716,28 +1414,28 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": administrative_district_election.electionId
                         }).metaId,
-                        parentTallySheets=[*pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId]],
+                        parentTallySheets=[*pce_ce_ro_pr_3_tally_sheet_list_party_id_wise_map[party.partyId]],
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
-                    pe_ce_ro_pr_2_tally_sheet_list.append(pe_ce_ro_pr_2_tally_sheet)
-                    if party.partyId not in pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map:
-                        pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId] = [pe_ce_ro_pr_2_tally_sheet]
+                    pce_ce_ro_pr_2_tally_sheet_list.append(pce_ce_ro_pr_2_tally_sheet)
+                    if party.partyId not in pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map:
+                        pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId] = [pce_ce_ro_pr_2_tally_sheet]
                     else:
-                        pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId].append(
-                            pe_ce_ro_pr_2_tally_sheet)
+                        pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId].append(
+                            pce_ce_ro_pr_2_tally_sheet)
 
                 return {
-                    "pe_ce_ro_v1_tally_sheet_list": pe_ce_ro_v1_tally_sheet_list,
-                    "pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map": pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map,
+                    "pce_ce_ro_v1_tally_sheet_list": pce_ce_ro_v1_tally_sheet_list,
+                    "pce_ce_ro_v1_tally_sheet_list_vote_typce_wise_map": pce_ce_ro_v1_tally_sheet_list_vote_typce_wise_map,
                     "polling_division_results_tally_sheet_list": polling_division_results_tally_sheet_list,
-                    "pe_r2_tally_sheet_list": pe_r2_tally_sheet_list,
-                    "pe_ce_ro_v2_tally_sheet_list": pe_ce_ro_v2_tally_sheet_list,
-                    "pe_ce_ro_pr_1_tally_sheet_list": pe_ce_ro_pr_1_tally_sheet_list,
-                    "pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map": pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map,
-                    "pe_ce_ro_pr_2_tally_sheet_list": pe_ce_ro_pr_2_tally_sheet_list,
-                    "pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map": pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map,
-                    "pe_ce_ro_pr_3_tally_sheet_list": pe_ce_ro_pr_3_tally_sheet_list,
-                    "pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map": pe_ce_ro_pr_3_tally_sheet_list_party_id_wise_map
+                    "pce_r2_tally_sheet_list": pce_r2_tally_sheet_list,
+                    "pce_ce_ro_v2_tally_sheet_list": pce_ce_ro_v2_tally_sheet_list,
+                    "pce_ce_ro_pr_1_tally_sheet_list": pce_ce_ro_pr_1_tally_sheet_list,
+                    "pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map": pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map,
+                    "pce_ce_ro_pr_2_tally_sheet_list": pce_ce_ro_pr_2_tally_sheet_list,
+                    "pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map": pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map,
+                    "pce_ce_ro_pr_3_tally_sheet_list": pce_ce_ro_pr_3_tally_sheet_list,
+                    "pce_ce_ro_pr_3_tally_sheet_list_party_id_wise_map": pce_ce_ro_pr_3_tally_sheet_list_party_id_wise_map
                 }
 
             data_entry_obj = _get_area_entry(administrative_district_election, area_class, area_name, area_key,
@@ -1756,8 +1454,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             area_key = area_name
 
             def _create_polling_division_tally_sheets(area):
-                pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = administrative_district.pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map
-                pe_ce_ro_v2_tally_sheet_list = administrative_district.pe_ce_ro_v2_tally_sheet_list
+                pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = administrative_district.pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map
+                pce_ce_ro_v2_tally_sheet_list = administrative_district.pce_ce_ro_v2_tally_sheet_list
 
                 polling_division_results_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_polling_division_results,
@@ -1770,23 +1468,23 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
-                pe_ce_ro_v1_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pe_ce_ro_v1,
+                pce_ce_ro_v1_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_ce_ro_v1,
                     electionId=administrative_district_ordinary_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": administrative_district_ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=[*polling_division_results_tally_sheet_list, *pe_ce_ro_v2_tally_sheet_list],
+                    parentTallySheets=[*polling_division_results_tally_sheet_list, *pce_ce_ro_v2_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
-                pe_ce_ro_pr_1_tally_sheet_list = []
-                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = {}
+                pce_ce_ro_pr_1_tally_sheet_list = []
+                pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map = {}
                 for party in administrative_district_ordinary_election.parties:
-                    pe_ce_ro_pr_1_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_ce_ro_pr_1,
+                    pce_ce_ro_pr_1_tally_sheet = TallySheet.create(
+                        template=tally_sheet_template_pce_ce_ro_pr_1,
                         electionId=administrative_district_ordinary_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
@@ -1794,23 +1492,23 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": administrative_district_ordinary_election.electionId
                         }).metaId,
-                        parentTallySheets=[*pe_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId]],
+                        parentTallySheets=[*pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map[party.partyId]],
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
-                    pe_ce_ro_pr_1_tally_sheet_list.append(pe_ce_ro_pr_1_tally_sheet)
+                    pce_ce_ro_pr_1_tally_sheet_list.append(pce_ce_ro_pr_1_tally_sheet)
 
-                    party_id_and_vote_type_key = "%s%s" % (party.partyId, NonPostal)
-                    if party_id_and_vote_type_key not in pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map:
-                        pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[party_id_and_vote_type_key] = [
-                            pe_ce_ro_pr_1_tally_sheet]
+                    party_id_and_vote_typce_key = "%s%s" % (party.partyId, NonPostal)
+                    if party_id_and_vote_typce_key not in pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map:
+                        pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map[party_id_and_vote_typce_key] = [
+                            pce_ce_ro_pr_1_tally_sheet]
                     else:
-                        pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
-                            party_id_and_vote_type_key].append(pe_ce_ro_pr_1_tally_sheet)
+                        pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map[
+                            party_id_and_vote_typce_key].append(pce_ce_ro_pr_1_tally_sheet)
 
                 return {
-                    "pe_ce_ro_v1_tally_sheet_list": pe_ce_ro_v1_tally_sheet_list,
-                    "pe_ce_ro_pr_1_tally_sheet_list": pe_ce_ro_pr_1_tally_sheet_list,
-                    "pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map": pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map,
+                    "pce_ce_ro_v1_tally_sheet_list": pce_ce_ro_v1_tally_sheet_list,
+                    "pce_ce_ro_pr_1_tally_sheet_list": pce_ce_ro_pr_1_tally_sheet_list,
+                    "pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map": pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map,
                     "polling_division_results_tally_sheet_list": polling_division_results_tally_sheet_list,
                 }
 
@@ -1869,10 +1567,10 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             area_key = "%s-%s" % (administrative_district.areaName, area_name)
 
             def _create_counting_centre_tally_sheets(area):
-                pe_ce_ro_v1_tally_sheet_list = polling_division.pe_ce_ro_v1_tally_sheet_list
-                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = polling_division.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map
+                pce_ce_ro_v1_tally_sheet_list = polling_division.pce_ce_ro_v1_tally_sheet_list
+                pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map = polling_division.pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map
 
-                pe_27_tally_sheet_list = [TallySheet.create(
+                pce_27_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pce_35,
                     electionId=administrative_district_ordinary_election.electionId,
                     areaId=area.areaId,
@@ -1880,12 +1578,12 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": administrative_district_ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list,
+                    parentTallySheets=pce_ce_ro_v1_tally_sheet_list,
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
-                # pe_39_tally_sheet_list = [TallySheet.create(
-                #     template=tally_sheet_template_pe_39, electionId=administrative_district_ordinary_election.electionId,
+                # pce_39_tally_sheet_list = [TallySheet.create(
+                #     template=tally_sheet_template_pce_39, electionId=administrative_district_ordinary_election.electionId,
                 #     areaId=area.areaId,
                 #     metaId=Meta.create({
                 #         "areaId": area.areaId,
@@ -1893,8 +1591,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 #     }).metaId,
                 #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 # )]
-                # pe_22_tally_sheet_list = [TallySheet.create(
-                #     template=tally_sheet_template_pe_22, electionId=administrative_district_ordinary_election.electionId,
+                # pce_22_tally_sheet_list = [TallySheet.create(
+                #     template=tally_sheet_template_pce_22, electionId=administrative_district_ordinary_election.electionId,
                 #     areaId=area.areaId,
                 #     metaId=Meta.create({
                 #         "areaId": area.areaId,
@@ -1903,11 +1601,11 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 # )]
 
-                pe_4_tally_sheet_list = []
-                pe_4_tally_sheet_list_party_id_wise_map = {}
+                pce_4_tally_sheet_list = []
+                pce_4_tally_sheet_list_party_id_wise_map = {}
                 for party in administrative_district_ordinary_election.parties:
-                    pe_4_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_4,
+                    pce_4_tally_sheet = TallySheet.create(
+                        template=tally_sheet_template_pce_4,
                         electionId=administrative_district_ordinary_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
@@ -1915,18 +1613,18 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                             "partyId": party.partyId,
                             "electionId": administrative_district_ordinary_election.electionId
                         }).metaId,
-                        parentTallySheets=[*pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
+                        parentTallySheets=[*pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map[
                             "%s%s" % (party.partyId, NonPostal)]],
                         workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                     )
-                    pe_4_tally_sheet_list.append(pe_4_tally_sheet)
+                    pce_4_tally_sheet_list.append(pce_4_tally_sheet)
 
-                    if party.partyId not in pe_4_tally_sheet_list_party_id_wise_map:
-                        pe_4_tally_sheet_list_party_id_wise_map[party.partyId] = [pe_4_tally_sheet]
+                    if party.partyId not in pce_4_tally_sheet_list_party_id_wise_map:
+                        pce_4_tally_sheet_list_party_id_wise_map[party.partyId] = [pce_4_tally_sheet]
                     else:
-                        pe_4_tally_sheet_list_party_id_wise_map[party.partyId].append(pe_4_tally_sheet)
+                        pce_4_tally_sheet_list_party_id_wise_map[party.partyId].append(pce_4_tally_sheet)
 
-                pe_ce_201_tally_sheet_list = [TallySheet.create(
+                pce_ce_201_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_ce_201,
                     electionId=administrative_district_ordinary_election.electionId,
                     areaId=area.areaId,
@@ -1938,12 +1636,12 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 )]
 
                 return {
-                    "pe_27_tally_sheet_list": pe_27_tally_sheet_list,
-                    # "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
-                    # "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
-                    "pe_4_tally_sheet_list": pe_4_tally_sheet_list,
-                    "pe_4_tally_sheet_list_party_id_wise_map": pe_4_tally_sheet_list_party_id_wise_map,
-                    "pe_ce_201_tally_sheet_list": pe_ce_201_tally_sheet_list
+                    "pce_27_tally_sheet_list": pce_27_tally_sheet_list,
+                    # "pce_39_tally_sheet_list": pce_39_tally_sheet_list,
+                    # "pce_22_tally_sheet_list": pce_22_tally_sheet_list,
+                    "pce_4_tally_sheet_list": pce_4_tally_sheet_list,
+                    "pce_4_tally_sheet_list_party_id_wise_map": pce_4_tally_sheet_list_party_id_wise_map,
+                    "pce_ce_201_tally_sheet_list": pce_ce_201_tally_sheet_list
                 }
 
             data_entry_obj = _get_area_entry(administrative_district_ordinary_election, area_class, area_name, area_key,
@@ -1962,22 +1660,22 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             area_key = "%s-%s" % (administrative_district.areaName, area_name)
 
             def _create_counting_centre_tally_sheets(area):
-                pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map = administrative_district.pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map
-                pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = administrative_district.pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map
+                pce_ce_ro_v1_tally_sheet_list_vote_typce_wise_map = administrative_district.pce_ce_ro_v1_tally_sheet_list_vote_typce_wise_map
+                pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map = administrative_district.pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map
 
-                pe_27_tally_sheet_list = [TallySheet.create(
+                pce_27_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pce_35, electionId=administrative_district_sub_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
                         "areaId": area.areaId,
                         "electionId": administrative_district_sub_election.electionId
                     }).metaId,
-                    parentTallySheets=pe_ce_ro_v1_tally_sheet_list_vote_type_wise_map[vote_type],
+                    parentTallySheets=pce_ce_ro_v1_tally_sheet_list_vote_typce_wise_map[vote_type],
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
-                # pe_39_tally_sheet_list = [TallySheet.create(
-                #     template=tally_sheet_template_pe_39, electionId=administrative_district_sub_election.electionId,
+                # pce_39_tally_sheet_list = [TallySheet.create(
+                #     template=tally_sheet_template_pce_39, electionId=administrative_district_sub_election.electionId,
                 #     areaId=area.areaId,
                 #     metaId=Meta.create({
                 #         "areaId": area.areaId,
@@ -1986,8 +1684,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 # )]
                 #
-                # pe_22_tally_sheet_list = [TallySheet.create(
-                #     template=tally_sheet_template_pe_22, electionId=administrative_district_sub_election.electionId,
+                # pce_22_tally_sheet_list = [TallySheet.create(
+                #     template=tally_sheet_template_pce_22, electionId=administrative_district_sub_election.electionId,
                 #     areaId=area.areaId,
                 #     metaId=Meta.create({
                 #         "areaId": area.areaId,
@@ -1996,29 +1694,29 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 #     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 # )]
 
-                pe_4_tally_sheet_list = []
-                pe_4_tally_sheet_list_party_id_wise_map = {}
+                pce_4_tally_sheet_list = []
+                pce_4_tally_sheet_list_party_id_wise_map = {}
                 for party in administrative_district_sub_election.parties:
-                    pe_4_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pe_4, electionId=administrative_district_sub_election.electionId,
+                    pce_4_tally_sheet = TallySheet.create(
+                        template=tally_sheet_template_pce_4, electionId=administrative_district_sub_election.electionId,
                         areaId=area.areaId,
                         metaId=Meta.create({
                             "areaId": area.areaId,
                             "partyId": party.partyId,
                             "electionId": administrative_district_sub_election.electionId
                         }).metaId,
-                        parentTallySheets=[*pe_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
+                        parentTallySheets=[*pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map[
                             "%s%s" % (party.partyId, vote_type)]],
                         workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                     )
-                    pe_4_tally_sheet_list.append(pe_4_tally_sheet)
+                    pce_4_tally_sheet_list.append(pce_4_tally_sheet)
 
-                    if party.partyId not in pe_4_tally_sheet_list_party_id_wise_map:
-                        pe_4_tally_sheet_list_party_id_wise_map[party.partyId] = [pe_4_tally_sheet]
+                    if party.partyId not in pce_4_tally_sheet_list_party_id_wise_map:
+                        pce_4_tally_sheet_list_party_id_wise_map[party.partyId] = [pce_4_tally_sheet]
                     else:
-                        pe_4_tally_sheet_list_party_id_wise_map[party.partyId].append(pe_4_tally_sheet)
+                        pce_4_tally_sheet_list_party_id_wise_map[party.partyId].append(pce_4_tally_sheet)
 
-                pe_ce_201_pv_tally_sheet_list = [TallySheet.create(
+                pce_ce_201_pv_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_ce_201_pv, electionId=administrative_district_sub_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
@@ -2029,12 +1727,12 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 )]
 
                 return {
-                    "pe_27_tally_sheet_list": pe_27_tally_sheet_list,
-                    # "pe_39_tally_sheet_list": pe_39_tally_sheet_list,
-                    # "pe_22_tally_sheet_list": pe_22_tally_sheet_list,
-                    "pe_4_tally_sheet_list": pe_4_tally_sheet_list,
-                    "pe_4_tally_sheet_list_party_id_wise_map": pe_4_tally_sheet_list_party_id_wise_map,
-                    "pe_ce_201_pv_tally_sheet_list": pe_ce_201_pv_tally_sheet_list
+                    "pce_27_tally_sheet_list": pce_27_tally_sheet_list,
+                    # "pce_39_tally_sheet_list": pce_39_tally_sheet_list,
+                    # "pce_22_tally_sheet_list": pce_22_tally_sheet_list,
+                    "pce_4_tally_sheet_list": pce_4_tally_sheet_list,
+                    "pce_4_tally_sheet_list_party_id_wise_map": pce_4_tally_sheet_list_party_id_wise_map,
+                    "pce_ce_201_pv_tally_sheet_list": pce_ce_201_pv_tally_sheet_list
                 }
 
             data_entry_obj = _get_area_entry(administrative_district_sub_election, area_class, area_name, area_key,
