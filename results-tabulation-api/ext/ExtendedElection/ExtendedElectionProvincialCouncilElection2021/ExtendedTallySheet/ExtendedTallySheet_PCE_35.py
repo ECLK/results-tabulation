@@ -7,7 +7,7 @@ from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_PE_27(ExtendedTallySheetDataEntry):
+class ExtendedTallySheet_PCE_35(ExtendedTallySheetDataEntry):
     class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
 
         def html(self, title="", total_registered_voters=None):

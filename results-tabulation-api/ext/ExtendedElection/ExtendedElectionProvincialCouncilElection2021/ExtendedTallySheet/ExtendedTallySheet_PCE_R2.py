@@ -35,7 +35,7 @@ template_row_to_df_num_value_column_map = {
 }
 
 
-class ExtendedTallySheet_PE_R2(ExtendedEditableTallySheetReport):
+class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
     def on_get_release_result_params(self):
         pd_code = None
         pd_name = None

@@ -7,7 +7,7 @@ from util import to_comma_seperated_num
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_PE_22(ExtendedTallySheetDataEntry):
+class ExtendedTallySheet_PCE_31(ExtendedTallySheetDataEntry):
     class ExtendedTallySheetVersion(ExtendedTallySheetDataEntry.ExtendedTallySheetVersion):
 
         def html(self, title="", total_registered_voters=None):
@@ -35,7 +35,7 @@ class ExtendedTallySheet_PE_22(ExtendedTallySheetDataEntry):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
-                "tallySheetCode": "PE-39",
+                "tallySheetCode": "PCE-31",
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,

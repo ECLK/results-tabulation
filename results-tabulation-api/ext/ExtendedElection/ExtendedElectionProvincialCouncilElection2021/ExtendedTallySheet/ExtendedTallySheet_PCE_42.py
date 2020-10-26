@@ -18,13 +18,13 @@ from orm.enums import AreaTypeEnum
 from util import convert_image_to_data_uri
 
 
-class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
+class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
 
     def get_template_column_to_query_filter_map(self, only_group_by_columns=False):
         extended_election = self.tallySheet.election.get_extended_election()
 
         template_column_to_query_filter_map = super(
-            ExtendedTallySheet_PE_21, self).get_template_column_to_query_filter_map(
+            ExtendedTallySheet_PCE_42, self).get_template_column_to_query_filter_map(
             only_group_by_columns=only_group_by_columns)
         template_column_to_query_column_map = self.get_template_column_to_query_column_map()
 
@@ -34,7 +34,7 @@ class ExtendedTallySheet_PE_21(ExtendedEditableTallySheetReport):
             TallySheet.Model.latestVersionId != None,
             TallySheetTallySheetModel.parentTallySheetId == self.tallySheet.tallySheetId,
             TallySheet.Model.templateId == Template.Model.templateId,
-            Template.Model.templateName == TALLY_SHEET_CODES.PE_R2,
+            Template.Model.templateName == TALLY_SHEET_CODES.PCE_42,
             WorkflowInstance.Model.workflowInstanceId == TallySheet.Model.workflowInstanceId,
             WorkflowInstance.Model.status.in_(
                 extended_election.tally_sheet_verified_statuses_list()
