@@ -1607,7 +1607,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 return None
 
             data_entry_obj = _get_area_entry(root_election, area_class, area_name, area_key,
-                                             _create_province_tally_sheets)
+                                             None)
 
             return data_entry_obj
 
