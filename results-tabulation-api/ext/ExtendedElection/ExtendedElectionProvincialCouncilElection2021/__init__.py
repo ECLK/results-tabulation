@@ -2117,19 +2117,19 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             district_centre.add_child(counting_centre.areaId)
             counting_centre.add_child(polling_station.areaId)
 
-            AreaMap.create(
-                electionId=root_election.electionId,
-                voteType=NonPostal,
-                pollingStationId=polling_station.areaId,
-                countingCentreId=counting_centre.areaId,
-                districtCentreId=district_centre.areaId,
-                electionCommissionId=election_commission.areaId,
-                pollingDistrictId=polling_district.areaId,
-                pollingDivisionId=polling_division.areaId,
-                administrativeDistrictId=administrative_district.areaId,
-                provinceId=province.areaId,
-                countryId=country.areaId
-            )
+            # AreaMap.create(
+            #     electionId=root_election.electionId,
+            #     voteType=NonPostal,
+            #     pollingStationId=polling_station.areaId,
+            #     countingCentreId=counting_centre.areaId,
+            #     districtCentreId=district_centre.areaId,
+            #     electionCommissionId=election_commission.areaId,
+            #     pollingDistrictId=polling_district.areaId,
+            #     pollingDivisionId=polling_division.areaId,
+            #     administrativeDistrictId=administrative_district.areaId,
+            #     provinceId=province.areaId,
+            #     countryId=country.areaId
+            # )
 
         for row in get_rows_from_csv(postal_counting_centers_dataset_file):
             vote_type = row["Vote Type"]
@@ -2149,16 +2149,16 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             district_centre.add_child(postal_vote_counting_centre.areaId)
             administrative_district.add_child(postal_vote_counting_centre.areaId)
 
-            AreaMap.create(
-                electionId=root_election.electionId,
-                voteType=vote_type,
-                countingCentreId=postal_vote_counting_centre.areaId,
-                districtCentreId=district_centre.areaId,
-                electionCommissionId=election_commission.areaId,
-                administrativeDistrictId=administrative_district.areaId,
-                provinceId=province.areaId,
-                countryId=country.areaId
-            )
+            # AreaMap.create(
+            #     electionId=root_election.electionId,
+            #     voteType=vote_type,
+            #     countingCentreId=postal_vote_counting_centre.areaId,
+            #     districtCentreId=district_centre.areaId,
+            #     electionCommissionId=election_commission.areaId,
+            #     administrativeDistrictId=administrative_district.areaId,
+            #     provinceId=province.areaId,
+            #     countryId=country.areaId
+            # )
 
         for row in get_rows_from_csv(number_of_seats_dataset_file):
             province_election = _get_province_election(row)
