@@ -49,10 +49,10 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Extended
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.META_DATA_KEY import \
     META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED, META_DATA_KEY_ELECTION_NUMBER_OF_BONUS_SEATS_ALLOCATED, \
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import PE_27, PE_4, PE_CE_RO_V1, \
-    PE_CE_RO_PR_1, \
-    PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, CE_201, CE_201_PV, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, \
-    PE_AI_NL_1, PE_AI_ED, PE_AI_1, PE_AI_NL_2, PE_AI_2, PE_AI_SA
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import CE_201, CE_201_PV, \
+    PCE_31, PCE_34, PCE_35, PCE_42, PCE_CE_CO_PR_1, PCE_CE_CO_PR_2, PCE_CE_CO_PR_3, PCE_CE_CO_PR_4, PCE_CE_RO_PR_1, \
+    PCE_CE_RO_PR_2, PCE_CE_RO_PR_3, PCE_CE_RO_V1, PCE_CE_RO_V2, PCE_R1, PCE_R1_PV, PCE_R2, PROVINCIAL_RESULT_CANDIDATES, \
+    PROVINCIAL_RESULT_PARTY_WISE, PROVINCIAL_RESULT_PARTY_WISE_POSTAL, PROVINCIAL_RESULT_PARTY_WISE_WITH_SEATS
 from constants.VOTE_TYPES import NonPostal, PostalAndNonPostal
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import RoleBasedAccess
