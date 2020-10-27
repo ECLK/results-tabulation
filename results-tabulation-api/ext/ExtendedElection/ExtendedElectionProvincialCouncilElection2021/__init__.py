@@ -1,7 +1,13 @@
+from jose import jwt
 from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
 
 from app import db
+from constants.AUTH_CONSTANTS import DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
+    POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
+    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, ADMIN_ROLE, \
+    ROLE_CLAIM, AREA_CLAIM_PREFIX, SUB, EC_LEADERSHIP_ROLE, ROLE_PREFIX, ADMINISTRATIVE_DISTRICT_REPORT_VIEWER_ROLE, \
+    ADMINISTRATIVE_DISTRICT_REPORT_VERIFIER_ROLE, PROVINCIAL_REPORT_VERIFIER_ROLE, PROVINCIAL_REPORT_VIEWER_ROLE
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META as SOURCE_META, \
     TALLY_SHEET_COLUMN_SOURCE_CONTENT as SOURCE_CONTENT, TALLY_SHEET_COLUMN_SOURCE_QUERY as SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.CANDIDATE_TYPE import CANDIDATE_TYPE_NORMAL, \
@@ -2117,19 +2123,19 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             district_centre.add_child(counting_centre.areaId)
             counting_centre.add_child(polling_station.areaId)
 
-            # AreaMap.create(
-            #     electionId=root_election.electionId,
-            #     voteType=NonPostal,
-            #     pollingStationId=polling_station.areaId,
-            #     countingCentreId=counting_centre.areaId,
-            #     districtCentreId=district_centre.areaId,
-            #     electionCommissionId=election_commission.areaId,
-            #     pollingDistrictId=polling_district.areaId,
-            #     pollingDivisionId=polling_division.areaId,
-            #     administrativeDistrictId=administrative_district.areaId,
-            #     provinceId=province.areaId,
-            #     countryId=country.areaId
-            # )
+            AreaMap.create(
+                electionId=root_election.electionId,
+                voteType=NonPostal,
+                pollingStationId=polling_station.areaId,
+                countingCentreId=counting_centre.areaId,
+                districtCentreId=district_centre.areaId,
+                electionCommissionId=election_commission.areaId,
+                pollingDistrictId=polling_district.areaId,
+                pollingDivisionId=polling_division.areaId,
+                administrativeDistrictId=administrative_district.areaId,
+                provinceId=province.areaId,
+                countryId=country.areaId
+            )
 
         for row in get_rows_from_csv(postal_counting_centers_dataset_file):
             vote_type = row["Vote Type"]
@@ -2149,16 +2155,16 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             district_centre.add_child(postal_vote_counting_centre.areaId)
             administrative_district.add_child(postal_vote_counting_centre.areaId)
 
-            # AreaMap.create(
-            #     electionId=root_election.electionId,
-            #     voteType=vote_type,
-            #     countingCentreId=postal_vote_counting_centre.areaId,
-            #     districtCentreId=district_centre.areaId,
-            #     electionCommissionId=election_commission.areaId,
-            #     administrativeDistrictId=administrative_district.areaId,
-            #     provinceId=province.areaId,
-            #     countryId=country.areaId
-            # )
+            AreaMap.create(
+                electionId=root_election.electionId,
+                voteType=vote_type,
+                countingCentreId=postal_vote_counting_centre.areaId,
+                districtCentreId=district_centre.areaId,
+                electionCommissionId=election_commission.areaId,
+                administrativeDistrictId=administrative_district.areaId,
+                provinceId=province.areaId,
+                countryId=country.areaId
+            )
 
         for row in get_rows_from_csv(number_of_seats_dataset_file):
             province_election = _get_province_election(row)
@@ -2182,3 +2188,80 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         db.session.commit()
 
         return root_election
+
+    def get_root_token(self):
+        from orm.entities import Area
+        from orm.enums import AreaTypeEnum
+
+        provinces = Area.get_associated_areas_query(
+            areas=[], areaType=AreaTypeEnum.Province, electionId=self.election.electionId
+        ).all()
+        administrative_districts = Area.get_associated_areas_query(
+            areas=[], areaType=AreaTypeEnum.AdministrativeDistrict, electionId=self.election.electionId
+        ).all()
+        countries = Area.get_associated_areas_query(
+            areas=[], areaType=AreaTypeEnum.Country, electionId=self.election.electionId
+        ).all()
+
+        jwt_payload = {
+            ROLE_CLAIM: [
+                ROLE_PREFIX + ADMIN_ROLE,
+                ROLE_PREFIX + DATA_EDITOR_ROLE,
+                ROLE_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE,
+                ROLE_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE,
+                ROLE_PREFIX + ADMINISTRATIVE_DISTRICT_REPORT_VIEWER_ROLE,
+                ROLE_PREFIX + ADMINISTRATIVE_DISTRICT_REPORT_VERIFIER_ROLE,
+                ROLE_PREFIX + PROVINCIAL_REPORT_VIEWER_ROLE,
+                ROLE_PREFIX + PROVINCIAL_REPORT_VIEWER_ROLE,
+                ROLE_PREFIX + NATIONAL_REPORT_VIEWER_ROLE,
+                ROLE_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE,
+                ROLE_PREFIX + EC_LEADERSHIP_ROLE
+            ],
+            SUB: "janak@carbon.super", AREA_CLAIM_PREFIX + ADMIN_ROLE: str([]),
+            AREA_CLAIM_PREFIX + DATA_EDITOR_ROLE: str([{
+                "areaId": administrative_district.areaId,
+                "areaName": administrative_district.areaName
+            } for administrative_district in administrative_districts]),
+            AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE: str([{
+                "areaId": administrative_district.areaId,
+                "areaName": administrative_district.areaName
+            } for administrative_district in administrative_districts]),
+            AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE: str([{
+                "areaId": administrative_district.areaId,
+                "areaName": administrative_district.areaName
+            } for administrative_district in administrative_districts]),
+            AREA_CLAIM_PREFIX + ADMINISTRATIVE_DISTRICT_REPORT_VIEWER_ROLE: str([{
+                "areaId": administrative_district.areaId,
+                "areaName": administrative_district.areaName
+            } for administrative_district in administrative_districts]),
+            AREA_CLAIM_PREFIX + ADMINISTRATIVE_DISTRICT_REPORT_VERIFIER_ROLE: str([{
+                "areaId": administrative_district.areaId,
+                "areaName": administrative_district.areaName
+            } for administrative_district in administrative_districts]),
+            AREA_CLAIM_PREFIX + PROVINCIAL_REPORT_VIEWER_ROLE: str([{
+                "areaId": province.areaId,
+                "areaName": province.areaName
+            } for province in provinces]),
+            AREA_CLAIM_PREFIX + PROVINCIAL_REPORT_VERIFIER_ROLE: str([{
+                "areaId": province.areaId,
+                "areaName": province.areaName
+            } for province in provinces]),
+            AREA_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([{
+                "areaId": country.areaId,
+                "areaName": country.areaName
+            } for country in countries]),
+            AREA_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([{
+                "areaId": country.areaId,
+                "areaName": country.areaName
+            } for country in countries]),
+            AREA_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([{
+                "areaId": country.areaId,
+                "areaName": country.areaName
+            } for country in countries])
+        }
+
+        # Generate a token with claims for everything.
+        key = "jwt_secret"
+        encoded_jwt_token = jwt.encode(jwt_payload, key)
+
+        return encoded_jwt_token
