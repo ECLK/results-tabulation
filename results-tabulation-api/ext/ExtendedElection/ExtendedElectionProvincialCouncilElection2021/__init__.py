@@ -1265,6 +1265,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             area_key = area_name
 
             def _create_province_tally_sheets(area):
+                # TODO : create province tallysheet templates
                 return None
 
             data_entry_obj = _get_area_entry(root_election, area_class, area_name, area_key,
