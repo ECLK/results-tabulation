@@ -7,3 +7,4 @@ run_dev_server\.sh
 _site
 .sass-cache
 .DS_Store
+run.sh
