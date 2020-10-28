@@ -4,8 +4,7 @@ from sqlalchemy.orm import aliased
 
 from app import db
 from constants.AUTH_CONSTANTS import DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
-    POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
-    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, ADMIN_ROLE, \
+    POLLING_DIVISION_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, ADMIN_ROLE, \
     ROLE_CLAIM, AREA_CLAIM_PREFIX, SUB, EC_LEADERSHIP_ROLE, ROLE_PREFIX, ADMINISTRATIVE_DISTRICT_REPORT_VIEWER_ROLE, \
     ADMINISTRATIVE_DISTRICT_REPORT_VERIFIER_ROLE, PROVINCIAL_REPORT_VERIFIER_ROLE, PROVINCIAL_REPORT_VIEWER_ROLE
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META as SOURCE_META, \
@@ -191,7 +190,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             PCE_35: ExtendedTallySheet_PCE_35,
             PCE_42: ExtendedTallySheet_PCE_42,
             PCE_CE_CO_PR_4: ExtendedTallySheet_PCE_CE_CO_PR_4,
-            PCE_CE_RO_PR_1:ExtendedTallySheet_PCE_CE_RO_PR_1,
+            PCE_CE_RO_PR_1: ExtendedTallySheet_PCE_CE_RO_PR_1,
             PCE_CE_RO_PR_2: ExtendedTallySheet_PCE_CE_RO_PR_2,
             PCE_CE_RO_PR_3: ExtendedTallySheet_PCE_CE_RO_PR_3,
             PCE_CE_RO_V1: ExtendedTallySheet_PCE_CE_RO_V1,
@@ -1367,7 +1366,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": administrative_district_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pce_21_tally_sheet_list, *pce_ai_sa_tally_sheet_list, *pce_ai_1_tally_sheet_list],
+                    parentTallySheets=[*pce_21_tally_sheet_list, *pce_ai_sa_tally_sheet_list,
+                                       *pce_ai_1_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -1506,7 +1506,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
                     party_id_and_vote_typce_key = "%s%s" % (party.partyId, NonPostal)
                     if party_id_and_vote_typce_key not in pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map:
-                        pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map[party_id_and_vote_typce_key] = [
+                        pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map[
+                            party_id_and_vote_typce_key] = [
                             pce_ce_ro_pr_1_tally_sheet]
                     else:
                         pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_typce_wise_map[
