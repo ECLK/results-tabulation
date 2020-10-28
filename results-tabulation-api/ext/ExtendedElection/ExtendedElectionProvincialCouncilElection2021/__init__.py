@@ -1,11 +1,4 @@
-from jose import jwt
 from app import db
-from constants.AUTH_CONSTANTS import DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
-    POLLING_DIVISION_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, ADMIN_ROLE, \
-    ROLE_CLAIM, AREA_CLAIM_PREFIX, SUB, EC_LEADERSHIP_ROLE, ROLE_PREFIX, ADMINISTRATIVE_DISTRICT_REPORT_VIEWER_ROLE, \
-    ADMINISTRATIVE_DISTRICT_REPORT_VERIFIER_ROLE, PROVINCIAL_REPORT_VERIFIER_ROLE, PROVINCIAL_REPORT_VIEWER_ROLE
-from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META as SOURCE_META, \
-    TALLY_SHEET_COLUMN_SOURCE_CONTENT as SOURCE_CONTENT, TALLY_SHEET_COLUMN_SOURCE_QUERY as SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.CANDIDATE_TYPE import CANDIDATE_TYPE_NORMAL, \
     CANDIDATE_TYPE_NATIONAL_LIST
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedTallySheet.ExtendedTallySheet_CE_201 import \
@@ -71,7 +64,7 @@ from orm.entities.Area.Electorate import Country, Province, AdministrativeDistri
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
 from orm.enums import AreaTypeEnum
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedFunctions import \
-    get_area_map_query, get_extended_tally_sheet_class
+    get_area_map_query, get_extended_tally_sheet_class, get_root_token
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Workflows import data_entry, report, \
     released_report, edit_allowed_released_report
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TallysheetTemplates import ce_201, ce_201_pv, \
@@ -148,7 +141,6 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
         def _get_candidate(row):
             candidate_type = row["Candidate Type"]
-
             party = _get_party(row)
 
             candidate = Candidate.create(
@@ -954,78 +946,4 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         return root_election
 
     def get_root_token(self):
-        from orm.entities import Area
-        from orm.enums import AreaTypeEnum
-
-        provinces = Area.get_associated_areas_query(
-            areas=[], areaType=AreaTypeEnum.Province, electionId=self.election.electionId
-        ).all()
-        administrative_districts = Area.get_associated_areas_query(
-            areas=[], areaType=AreaTypeEnum.AdministrativeDistrict, electionId=self.election.electionId
-        ).all()
-        countries = Area.get_associated_areas_query(
-            areas=[], areaType=AreaTypeEnum.Country, electionId=self.election.electionId
-        ).all()
-
-        jwt_payload = {
-            ROLE_CLAIM: [
-                ROLE_PREFIX + ADMIN_ROLE,
-                ROLE_PREFIX + DATA_EDITOR_ROLE,
-                ROLE_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE,
-                ROLE_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE,
-                ROLE_PREFIX + ADMINISTRATIVE_DISTRICT_REPORT_VIEWER_ROLE,
-                ROLE_PREFIX + ADMINISTRATIVE_DISTRICT_REPORT_VERIFIER_ROLE,
-                ROLE_PREFIX + PROVINCIAL_REPORT_VIEWER_ROLE,
-                ROLE_PREFIX + PROVINCIAL_REPORT_VIEWER_ROLE,
-                ROLE_PREFIX + NATIONAL_REPORT_VIEWER_ROLE,
-                ROLE_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE,
-                ROLE_PREFIX + EC_LEADERSHIP_ROLE
-            ],
-            SUB: "janak@carbon.super", AREA_CLAIM_PREFIX + ADMIN_ROLE: str([]),
-            AREA_CLAIM_PREFIX + DATA_EDITOR_ROLE: str([{
-                "areaId": administrative_district.areaId,
-                "areaName": administrative_district.areaName
-            } for administrative_district in administrative_districts]),
-            AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE: str([{
-                "areaId": administrative_district.areaId,
-                "areaName": administrative_district.areaName
-            } for administrative_district in administrative_districts]),
-            AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE: str([{
-                "areaId": administrative_district.areaId,
-                "areaName": administrative_district.areaName
-            } for administrative_district in administrative_districts]),
-            AREA_CLAIM_PREFIX + ADMINISTRATIVE_DISTRICT_REPORT_VIEWER_ROLE: str([{
-                "areaId": administrative_district.areaId,
-                "areaName": administrative_district.areaName
-            } for administrative_district in administrative_districts]),
-            AREA_CLAIM_PREFIX + ADMINISTRATIVE_DISTRICT_REPORT_VERIFIER_ROLE: str([{
-                "areaId": administrative_district.areaId,
-                "areaName": administrative_district.areaName
-            } for administrative_district in administrative_districts]),
-            AREA_CLAIM_PREFIX + PROVINCIAL_REPORT_VIEWER_ROLE: str([{
-                "areaId": province.areaId,
-                "areaName": province.areaName
-            } for province in provinces]),
-            AREA_CLAIM_PREFIX + PROVINCIAL_REPORT_VERIFIER_ROLE: str([{
-                "areaId": province.areaId,
-                "areaName": province.areaName
-            } for province in provinces]),
-            AREA_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([{
-                "areaId": country.areaId,
-                "areaName": country.areaName
-            } for country in countries]),
-            AREA_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([{
-                "areaId": country.areaId,
-                "areaName": country.areaName
-            } for country in countries]),
-            AREA_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([{
-                "areaId": country.areaId,
-                "areaName": country.areaName
-            } for country in countries])
-        }
-
-        # Generate a token with claims for everything.
-        key = "jwt_secret"
-        encoded_jwt_token = jwt.encode(jwt_payload, key)
-
-        return encoded_jwt_token
+        return get_root_token.get_root_token(self)
