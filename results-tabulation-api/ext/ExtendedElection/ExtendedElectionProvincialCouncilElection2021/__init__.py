@@ -1,7 +1,4 @@
 from jose import jwt
-from sqlalchemy import bindparam
-from sqlalchemy.orm import aliased
-
 from app import db
 from constants.AUTH_CONSTANTS import DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, ADMIN_ROLE, \
@@ -75,6 +72,8 @@ from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCen
 from orm.enums import AreaTypeEnum
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedFunctions.get_area_map_query import \
     get_area_map_query
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.ExtendedFunctions.get_extended_tally_sheet_class import \
+    get_extended_tally_sheet_class
 
 role_based_access_config = RoleBasedAccess.role_based_access_config
 
@@ -90,33 +89,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         return get_area_map_query(self)
 
     def get_extended_tally_sheet_class(self, templateName):
-        EXTENDED_TEMPLATE_MAP = {
-            CE_201: ExtendedTallySheet_CE_201,
-            CE_201_PV: ExtendedTallySheet_CE_201_PV,
-            PCE_31: ExtendedTallySheet_PCE_31,
-            PCE_34: ExtendedTallySheet_PCE_34,
-            PCE_35: ExtendedTallySheet_PCE_35,
-            PCE_42: ExtendedTallySheet_PCE_42,
-            PCE_CE_CO_PR_4: ExtendedTallySheet_PCE_CE_CO_PR_4,
-            PCE_CE_RO_PR_1: ExtendedTallySheet_PCE_CE_RO_PR_1,
-            PCE_CE_RO_PR_2: ExtendedTallySheet_PCE_CE_RO_PR_2,
-            PCE_CE_RO_PR_3: ExtendedTallySheet_PCE_CE_RO_PR_3,
-            PCE_CE_RO_V1: ExtendedTallySheet_PCE_CE_RO_V1,
-            PCE_CE_RO_V2: ExtendedTallySheet_PCE_CE_RO_V2,
-            PCE_R2: ExtendedTallySheet_PCE_R2,
-            PROVINCIAL_RESULT_CANDIDATES: "",
-            PROVINCIAL_RESULT_PARTY_WISE: "",
-            PROVINCIAL_RESULT_PARTY_WISE_POSTAL: "",
-            PROVINCIAL_RESULT_PARTY_WISE_WITH_SEATS: "",
-
-        }
-
-        if templateName in EXTENDED_TEMPLATE_MAP:
-            return EXTENDED_TEMPLATE_MAP[templateName]
-        else:
-            return super(ExtendedElectionProvincialCouncilElection2021, self).get_extended_tally_sheet_class(
-                templateName=templateName
-            )
+        return get_extended_tally_sheet_class(self, templateName)
 
     def build_election(self, party_candidate_dataset_file=None,
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
