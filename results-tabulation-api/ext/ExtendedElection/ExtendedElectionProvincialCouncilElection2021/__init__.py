@@ -75,7 +75,7 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Extended
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Workflows import data_entry, report, \
     released_report, edit_allowed_released_report
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TallysheetTemplates import ce_201, ce_201_pv, \
-    pce_35, pce_ce_ro_v1, pce_ce_ro_v2, pce_r2, pce_co_pr_4
+    pce_35, pce_ce_ro_v1, pce_ce_ro_v2, pce_r2, pce_co_pr_4, pce_ce_ro_pr_1, pce_ce_ro_pr_2, pce_ce_ro_pr_3
 
 role_based_access_config = RoleBasedAccess.role_based_access_config
 
@@ -124,164 +124,10 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         tally_sheet_template_pce_ce_ro_v1 = pce_ce_ro_v1.create_template()
         tally_sheet_template_pce_ce_ro_v2 = pce_ce_ro_v2.create_template()
         tally_sheet_template_pce_r2 = pce_r2.create_template()
-        tally_sheet_template_pce_co_pr_4 =pce_co_pr_4.create_template()
-
-        tally_sheet_template_pce_ce_ro_pr_1 = Template.create(
-            templateName=PCE_CE_RO_PR_1,
-            templateRowTypesMap={
-                "CANDIDATE_FIRST_PREFERENCE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PCE_CE_CO_PR_4, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
-                    ]
-                }
-            }
-        )
-
-        tally_sheet_template_pce_ce_ro_pr_2 = Template.create(
-            templateName=PCE_CE_RO_PR_2,
-            templateRowTypesMap={
-                "CANDIDATE_FIRST_PREFERENCE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PCE_CE_RO_PR_1, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
-                    ]
-                }
-            }
-        )
-
-        tally_sheet_template_pce_ce_ro_pr_3 = Template.create(
-            templateName=PCE_CE_RO_PR_3,
-            templateRowTypesMap={
-                "CANDIDATE_FIRST_PREFERENCE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PCE_CE_RO_PR_2, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
-                    ]
-                }
-            }
-        )
-
-        # tally_sheet_template_pce_ai_sa = Template.create(
-        #     templateName=PCE_AI_SA,
-        #     templateRowTypesMap={
-        #         "PARTY_WISE_VOTE": {
-        #             "hasMany": True,
-        #             "isDerived": True,
-        #             "columns": [
-        #                 {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-        #                 {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-        #                 {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-        #                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-        #             ],
-        #             "derivativeRows": [
-        #                 {"templateName": PCE_AI_ED, "templateRowType": "PARTY_WISE_VOTE"}
-        #             ]
-        #         },
-        #         "REJECTED_VOTE": {
-        #             "hasMany": True,
-        #             "isDerived": True,
-        #             "columns": [
-        #                 {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-        #                 {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-        #                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-        #             ],
-        #             "derivativeRows": [
-        #                 {"templateName": PCE_AI_ED, "templateRowType": "REJECTED_VOTE"}
-        #             ]
-        #         },
-        #         TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
-        #             "hasMany": True,
-        #             "isDerived": True,
-        #             "columns": [
-        #                 {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-        #                 {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-        #                 {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-        #                 {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-        #             ],
-        #             "derivativeRows": [
-        #                 {"templateName": PCE_R2, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
-        #             ]
-        #         }
-        #     }
-        # )
-
-        tally_sheet_template_pce_ce_ro_pr_3 = Template.create(
-            templateName=PCE_CE_RO_PR_3,
-            templateRowTypesMap={
-                "CANDIDATE_FIRST_PREFERENCE": {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PCE_CE_RO_PR_2, "templateRowType": "CANDIDATE_FIRST_PREFERENCE"}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
-                    "hasMany": True,
-                    "isDerived": True,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
-                    ],
-                    "derivativeRows": [
-                        {"templateName": PCE_R2, "templateRowType": TEMPLATE_ROW_TYPE_SEATS_ALLOCATED}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_CONTENT}
-                    ]
-                },
-                TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE: {
-                    "hasMany": True,
-                    "isDerived": False,
-                    "columns": [
-                        {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                        {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_CONTENT}
-                    ]
-                }
-            }
-        )
+        tally_sheet_template_pce_co_pr_4 = pce_co_pr_4.create_template()
+        tally_sheet_template_pce_ce_ro_pr_1 = pce_ce_ro_pr_1.create_template()
+        tally_sheet_template_pce_ce_ro_pr_2 = pce_ce_ro_pr_2.create_template()
+        tally_sheet_template_pce_ce_ro_pr_3 = pce_ce_ro_pr_3.create_template()
 
         data_entry_store = {
             AreaTypeEnum.Country: {},
