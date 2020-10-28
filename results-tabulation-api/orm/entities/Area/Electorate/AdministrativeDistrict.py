@@ -1,16 +1,11 @@
 from orm.entities.Area import Electorate
 from orm.enums import AreaTypeEnum
-from sqlalchemy.orm import synonym
-from sqlalchemy.ext.associationproxy import association_proxy
 
 
 class AdministrativeDistrictModel(Electorate.Model):
     __mapper_args__ = {
         'polymorphic_identity': AreaTypeEnum.AdministrativeDistrict
     }
-
-    province = synonym("parentElectorate")
-    country = association_proxy("parentElectorate", "country")
 
 
 Model = AdministrativeDistrictModel

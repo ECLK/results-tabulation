@@ -10,7 +10,8 @@ from constants import VOTE_TYPES
 from constants.AUTH_CONSTANTS import EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     SUB, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, POLLING_DIVISION_REPORT_VERIFIER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, AREA_CLAIM_PREFIX, ADMIN_ROLE, \
-    JWT_TOKEN_HEADER_KEY, ROLE_CLAIM, ROLE_PREFIX
+    JWT_TOKEN_HEADER_KEY, ROLE_CLAIM, ROLE_PREFIX, ADMINISTRATIVE_DISTRICT_REPORT_VIEWER_ROLE, \
+    ADMINISTRATIVE_DISTRICT_REPORT_VERIFIER_ROLE, PROVINCIAL_REPORT_VIEWER_ROLE, PROVINCIAL_REPORT_VERIFIER_ROLE
 
 from exception import UnauthorizedException
 
@@ -302,6 +303,41 @@ def authorize(func, required_roles=None, *args, **kwargs):
                 )
             ])
 
+
+        elif role is ADMINISTRATIVE_DISTRICT_REPORT_VIEWER_ROLE:
+            user_access_area_ids.extend(claim_area_ids)
+
+        elif role is ADMINISTRATIVE_DISTRICT_REPORT_VERIFIER_ROLE:
+            user_access_area_ids.extend(claim_area_ids)
+
+            user_access_area_ids.extend([
+                area.areaId for area in _get_role_area_ids(
+                    parentAreaIds=claim_area_ids,
+                    areaType=AreaTypeEnum.PollingDivision
+                )
+            ])
+
+            user_access_area_ids.extend([
+                area.areaId for area in _get_role_area_ids(
+                    parentAreaIds=claim_area_ids,
+                    areaType=AreaTypeEnum.CountingCentre,
+                    voteTypes=[VOTE_TYPES.Postal, VOTE_TYPES.Quarantine, VOTE_TYPES.Displaced]
+                )
+            ])
+
+        elif role is PROVINCIAL_REPORT_VIEWER_ROLE:
+            user_access_area_ids.extend(claim_area_ids)
+
+        elif role is PROVINCIAL_REPORT_VERIFIER_ROLE:
+            user_access_area_ids.extend(claim_area_ids)
+
+            user_access_area_ids.extend([
+                area.areaId for area in _get_role_area_ids(
+                    parentAreaIds=claim_area_ids,
+                    areaType=AreaTypeEnum.AdministrativeDistrict
+                )
+            ])
+
         elif role is NATIONAL_REPORT_VIEWER_ROLE:
             # To list, view and lock All Island Reports.
             user_access_area_ids.extend(claim_area_ids)
@@ -318,11 +354,32 @@ def authorize(func, required_roles=None, *args, **kwargs):
                 )
             ])
 
+            user_access_area_ids.extend([
+                area.areaId for area in _get_role_area_ids(
+                    parentAreaIds=claim_area_ids,
+                    areaType=AreaTypeEnum.Province
+                )
+            ])
+
         elif role is EC_LEADERSHIP_ROLE:
 
             for country_id in claim_area_ids:
                 # To list, view and unlock All Island Reports
                 user_access_area_ids.extend(claim_area_ids)
+
+                user_access_area_ids.extend([
+                    area.areaId for area in _get_role_area_ids(
+                        parentAreaIds=claim_area_ids,
+                        areaType=AreaTypeEnum.Province
+                    )
+                ])
+
+                user_access_area_ids.extend([
+                    area.areaId for area in _get_role_area_ids(
+                        parentAreaIds=claim_area_ids,
+                        areaType=AreaTypeEnum.AdministrativeDistrict
+                    )
+                ])
 
                 user_access_area_ids.extend([
                     area.areaId for area in _get_role_area_ids(

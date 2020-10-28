@@ -2,12 +2,15 @@ from auth import AREA_CLAIM_PREFIX, ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISI
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, \
     EC_LEADERSHIP_ROLE, SUB, ROLE_CLAIM, ROLE_PREFIX
-from orm.entities import Area
+from ext.ExtendedElection import get_extended_election
+from orm.entities import Area, Election
 from orm.enums import AreaTypeEnum
 from jose import jwt
 
 
-def get_root_token(electionId):
+def get_root_token(election):
+    electionId = election.electionId
+
     electoral_districts = Area.get_associated_areas_query(
         areas=[], areaType=AreaTypeEnum.ElectoralDistrict, electionId=electionId
     ).all()

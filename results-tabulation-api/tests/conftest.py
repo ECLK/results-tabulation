@@ -48,7 +48,10 @@ def test_client():
         election = create_test_election()
 
         from orm.entities.Election.election_helper import get_root_token
-        jwt_token = get_root_token(election.electionId)
+        from ext.ExtendedElection import get_extended_election
+
+        extended_election = get_extended_election(election=election)
+        jwt_token = extended_election.get_root_token()
 
         tc.environ_base['HTTP_AUTHORIZATION'] = 'Bearer ' + jwt_token
 

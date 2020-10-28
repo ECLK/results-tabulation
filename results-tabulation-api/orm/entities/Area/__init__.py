@@ -141,12 +141,15 @@ def get_presidential_area_map_query():
 def get_associated_areas_query(areas, areaType, electionId=None):
     presidential_area_map_sub_query = get_presidential_area_map_query().subquery()
 
-    area_types = [AreaTypeEnum.Country, AreaTypeEnum.ElectoralDistrict, AreaTypeEnum.PollingDivision,
-                  AreaTypeEnum.PollingDistrict, AreaTypeEnum.PollingStation, AreaTypeEnum.CountingCentre,
-                  AreaTypeEnum.DistrictCentre, AreaTypeEnum.ElectionCommission]
+    area_types = [AreaTypeEnum.Country, AreaTypeEnum.Province, AreaTypeEnum.AdministrativeDistrict,
+                  AreaTypeEnum.ElectoralDistrict, AreaTypeEnum.PollingDivision, AreaTypeEnum.PollingDistrict,
+                  AreaTypeEnum.PollingStation, AreaTypeEnum.CountingCentre, AreaTypeEnum.DistrictCentre,
+                  AreaTypeEnum.ElectionCommission]
 
     area_type_to_column_map = {
         AreaTypeEnum.Country: presidential_area_map_sub_query.c.countryId,
+        AreaTypeEnum.Province: presidential_area_map_sub_query.c.provinceId,
+        AreaTypeEnum.AdministrativeDistrict: presidential_area_map_sub_query.c.administrativeDistrictId,
         AreaTypeEnum.ElectoralDistrict: presidential_area_map_sub_query.c.electoralDistrictId,
         AreaTypeEnum.PollingDivision: presidential_area_map_sub_query.c.pollingDivisionId,
         AreaTypeEnum.PollingDistrict: presidential_area_map_sub_query.c.pollingDistrictId,
