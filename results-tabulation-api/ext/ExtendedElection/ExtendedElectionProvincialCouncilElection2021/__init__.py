@@ -66,7 +66,8 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Workflow
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TallysheetTemplates import ce_201, ce_201_pv, \
     pce_31, pce_34, pce_35, pce_ce_ro_v1, pce_ce_ro_v2, pce_r2, pce_ce_co_pr_4, pce_ce_ro_pr_1, pce_ce_ro_pr_2, \
     pce_ce_ro_pr_3, pce_ce_co_pr_3, pce_42, pce_r1, administrative_district_result_party_wise_postal, \
-    polling_division_result_party_wise, provincial_result_candidates, provincial_result_party_wise_with_seats
+    polling_division_result_party_wise, provincial_result_candidates, provincial_result_party_wise_with_seats, \
+    polling_division_results
 
 role_based_access_config = RoleBasedAccess.role_based_access_config
 
@@ -131,6 +132,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
         tally_sheet_template_administrative_district_result_party_wise_postal = administrative_district_result_party_wise_postal.create_template()
         tally_sheet_template_polling_division_result_party_wise = polling_division_result_party_wise.create_template()
+        tally_sheet_template_polling_division_results = polling_division_results.create_template()
         tally_sheet_template_provincial_result_party_wise_with_seats = provincial_result_party_wise_with_seats.create_template()
         tally_sheet_template_provincial_result_candidates = provincial_result_candidates.create_template()
 
@@ -746,7 +748,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     if party.partyId not in pce_ce_co_pr_4_tally_sheet_list_party_id_wise_map:
                         pce_ce_co_pr_4_tally_sheet_list_party_id_wise_map[party.partyId] = [pce_ce_co_pr_4_tally_sheet]
                     else:
-                        pce_ce_co_pr_4_tally_sheet_list_party_id_wise_map[party.partyId].append(pce_ce_co_pr_4_tally_sheet)
+                        pce_ce_co_pr_4_tally_sheet_list_party_id_wise_map[party.partyId].append(
+                            pce_ce_co_pr_4_tally_sheet)
 
                 pce_ce_201_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_ce_201,
