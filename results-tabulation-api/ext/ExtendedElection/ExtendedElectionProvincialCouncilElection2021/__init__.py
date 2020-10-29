@@ -30,10 +30,6 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Extended
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.META_DATA_KEY import \
     META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED, META_DATA_KEY_ELECTION_NUMBER_OF_BONUS_SEATS_ALLOCATED, \
     META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import CE_201, CE_201_PV, \
-    PCE_31, PCE_34, PCE_35, PCE_42, PCE_CE_CO_PR_1, PCE_CE_CO_PR_2, PCE_CE_CO_PR_3, PCE_CE_CO_PR_4, PCE_CE_RO_PR_1, \
-    PCE_CE_RO_PR_2, PCE_CE_RO_PR_3, PCE_CE_RO_V1, PCE_CE_RO_V2, PCE_R1, PCE_R1_PV, PCE_R2, PROVINCIAL_RESULT_CANDIDATES, \
-    PROVINCIAL_RESULT_PARTY_WISE, PROVINCIAL_RESULT_PARTY_WISE_POSTAL, PROVINCIAL_RESULT_PARTY_WISE_WITH_SEATS
 from constants.VOTE_TYPES import NonPostal, PostalAndNonPostal
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import RoleBasedAccess
@@ -58,7 +54,7 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.WORKFLOW
     WORKFLOW_STATUS_TYPE_VERIFIED, WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, \
     WORKFLOW_STATUS_TYPE_CERTIFIED, WORKFLOW_STATUS_TYPE_RELEASED, WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED
 from ext.ExtendedElection.util import get_rows_from_csv
-from orm.entities import Candidate, Template, Party, Meta, Workflow, TallySheet
+from orm.entities import Candidate, Party, Meta, Workflow, TallySheet
 from orm.entities.Area import AreaMap
 from orm.entities.Area.Electorate import Country, Province, AdministrativeDistrict, PollingDivision, PollingDistrict
 from orm.entities.Area.Office import PollingStation, CountingCentre, DistrictCentre, ElectionCommission
@@ -69,7 +65,8 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Workflow
     released_report, edit_allowed_released_report
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TallysheetTemplates import ce_201, ce_201_pv, \
     pce_31, pce_34, pce_35, pce_ce_ro_v1, pce_ce_ro_v2, pce_r2, pce_ce_co_pr_4, pce_ce_ro_pr_1, pce_ce_ro_pr_2, \
-    pce_ce_ro_pr_3, pce_ce_co_pr_3, pce_42, pce_r1
+    pce_ce_ro_pr_3, pce_ce_co_pr_3, pce_42, pce_r1, administrative_district_result_party_wise_postal, \
+    polling_division_result_party_wise, provincial_result_candidates, provincial_result_party_wise_with_seats
 
 role_based_access_config = RoleBasedAccess.role_based_access_config
 
@@ -135,10 +132,10 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         tally_sheet_template_pce_42 = pce_42.create_template()
 
         # provincial council
-        tally_sheet_template_pce_ad_pv = ""
-        tally_sheet_template_pce_pd = ""
-        tally_sheet_template_pce_province_sa = ""
-        tally_sheet_template_pce_province_candidates = ""
+        tally_sheet_template_administrative_district_result_party_wise_postal = administrative_district_result_party_wise_postal.create_template()
+        tally_sheet_template_polling_division_result_party_wise = polling_division_result_party_wise.create_template()
+        tally_sheet_template_provincial_result_party_wise_with_seats = provincial_result_party_wise_with_seats.create_template()
+        tally_sheet_template_provincial_result_candidates = provincial_result_candidates.create_template()
 
         data_entry_store = {
             AreaTypeEnum.Country: {},
