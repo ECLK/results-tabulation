@@ -69,7 +69,7 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Workflow
     released_report, edit_allowed_released_report
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TallysheetTemplates import ce_201, ce_201_pv, \
     pce_31, pce_34, pce_35, pce_ce_ro_v1, pce_ce_ro_v2, pce_r2, pce_ce_co_pr_4, pce_ce_ro_pr_1, pce_ce_ro_pr_2, \
-    pce_ce_ro_pr_3, pce_ce_co_pr_3, pce_42
+    pce_ce_ro_pr_3, pce_ce_co_pr_3, pce_42, pce_r1
 
 role_based_access_config = RoleBasedAccess.role_based_access_config
 
@@ -124,7 +124,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
         # district center
         tally_sheet_template_pce_ce_ro_v1 = pce_ce_ro_v1.create_template()
-        tally_sheet_template_pce_r1 = ""
+        tally_sheet_template_pce_r1 = pce_r1.create_template()
         tally_sheet_template_pce_ce_ro_v2 = pce_ce_ro_v2.create_template()
         tally_sheet_template_pce_r2 = pce_r2.create_template()
 
@@ -132,7 +132,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         tally_sheet_template_pce_ce_ro_pr_2 = pce_ce_ro_pr_2.create_template()
         tally_sheet_template_pce_ce_ro_pr_3 = pce_ce_ro_pr_3.create_template()
 
-        tally_sheet_template_pce_42 = pce_42.create_template()  # pe21
+        tally_sheet_template_pce_42 = pce_42.create_template()
 
         # provincial council
         tally_sheet_template_pce_ad_pv = ""
