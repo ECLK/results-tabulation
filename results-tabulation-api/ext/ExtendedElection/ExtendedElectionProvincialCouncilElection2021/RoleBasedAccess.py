@@ -2,12 +2,12 @@ from constants.AUTH_CONSTANTS import DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_V
     POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, \
     EC_LEADERSHIP_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE
 from constants.VOTE_TYPES import NonPostal, Postal, PostalAndNonPostal, Displaced, Quarantine
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import PE_AI_ED, PE_AI_NL_1, PE_AI_NL_2, PE_AI_1, \
-    PE_AI_SA
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import PE_27, CE_201, CE_201_PV, \
-    PE_4, PE_CE_RO_V1, \
-    PE_CE_RO_PR_1, PE_CE_RO_V2, PE_R2, PE_CE_RO_PR_2, PE_CE_RO_PR_3, PE_39, PE_22, PE_21, POLLING_DIVISION_RESULTS, \
-    PE_AI_2
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import CE_201, CE_201_PV, \
+    PCE_31, PCE_34, PCE_35, PCE_CE_CO_PR_1, PCE_CE_CO_PR_2, PCE_CE_CO_PR_3, PCE_CE_CO_PR_4, PCE_CE_RO_V1, PCE_R1, \
+    PCE_R1_PV, PCE_CE_RO_V2, PCE_R2, PCE_CE_RO_PR_1, PCE_CE_RO_PR_2, PCE_CE_RO_PR_3, PCE_42, \
+    ADMINISTRATIVE_DISTRICT_RESULT_PARTY_WISE_POSTAL, POLLING_DIVISION_RESULT_PARTY_WISE, POLLING_DIVISION_RESULTS, \
+    PROVINCIAL_RESULT_PARTY_WISE_WITH_SEATS, ADMINISTRATIVE_DISTRICT_RESULT_CANDIDATES
+
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.WORKFLOW_ACTION_TYPE import \
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_VIEW, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_VERIFY, \
     WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, WORKFLOW_ACTION_TYPE_MOVE_TO_CERTIFY, WORKFLOW_ACTION_TYPE_CERTIFY, \
@@ -32,19 +32,19 @@ BACK_TO_VERIFIED = WORKFLOW_ACTION_TYPE_BACK_TO_VERIFIED
 
 role_based_access_config = {
     DATA_EDITOR_ROLE: {
-        PE_27: {
+        PCE_35: {
             NonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Postal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Displaced: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Quarantine: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK]
         },
-        PE_39: {
+        PCE_34: {
             NonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Postal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Displaced: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Quarantine: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK]
         },
-        PE_22: {
+        PCE_31: {
             NonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Postal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Displaced: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
@@ -58,7 +58,7 @@ role_based_access_config = {
             Displaced: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Quarantine: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK]
         },
-        PE_4: {
+        PCE_CE_CO_PR_4: {
             NonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Postal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
             Displaced: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK],
@@ -66,44 +66,44 @@ role_based_access_config = {
         },
     },
     POLLING_DIVISION_REPORT_VIEWER_ROLE: {
-        PE_CE_RO_V1: {
+        PCE_CE_RO_V1: {
             NonPostal: [READ, PRINT, WRITE]
         },
         POLLING_DIVISION_RESULTS: {
             NonPostal: [READ, PRINT, WRITE]
         },
-        PE_CE_RO_PR_1: {
+        PCE_CE_RO_PR_1: {
             NonPostal: [READ, PRINT, WRITE]
         }
     },
     POLLING_DIVISION_REPORT_VERIFIER_ROLE: {
-        PE_27: {
+        PCE_35: {
             NonPostal: [READ, PRINT, UNLOCK]
         },
-        PE_39: {
+        PCE_34: {
             NonPostal: [READ, PRINT, UNLOCK]
         },
-        PE_22: {
+        PCE_31: {
             NonPostal: [READ, PRINT, UNLOCK]
         },
         CE_201: {
             NonPostal: [READ, PRINT, UNLOCK]
         },
-        PE_4: {
+        PCE_CE_CO_PR_4: {
             NonPostal: [READ, PRINT, UNLOCK]
         },
-        PE_CE_RO_V1: {
+        PCE_CE_RO_V1: {
             NonPostal: [READ, PRINT, WRITE, LOCK]
         },
         POLLING_DIVISION_RESULTS: {
             NonPostal: [READ, PRINT, WRITE, LOCK]
         },
-        PE_CE_RO_PR_1: {
+        PCE_CE_RO_PR_1: {
             NonPostal: [READ, PRINT, WRITE, LOCK]
         }
     },
     ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: {
-        PE_CE_RO_V1: {
+        PCE_CE_RO_V1: {
             Postal: [READ, PRINT, WRITE],
             Displaced: [READ, PRINT, WRITE],
             Quarantine: [READ, PRINT, WRITE]
@@ -113,39 +113,39 @@ role_based_access_config = {
             Displaced: [READ, PRINT, WRITE],
             Quarantine: [READ, PRINT, WRITE]
         },
-        PE_CE_RO_PR_1: {
+        PCE_CE_RO_PR_1: {
             Postal: [READ, PRINT, WRITE],
             Displaced: [READ, PRINT, WRITE],
             Quarantine: [READ, PRINT, WRITE]
         },
-        PE_CE_RO_V2: {
+        PCE_CE_RO_V2: {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
-        PE_R2: {
+        PCE_R2: {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
-        PE_CE_RO_PR_2: {
+        PCE_CE_RO_PR_2: {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
-        PE_CE_RO_PR_3: {
+        PCE_CE_RO_PR_3: {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
-        PE_21: {
+        PCE_42: {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         }
     },
     ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: {
-        PE_27: {
+        PCE_35: {
             Postal: [READ, PRINT, UNLOCK],
             Displaced: [READ, PRINT, UNLOCK],
             Quarantine: [READ, PRINT, UNLOCK]
         },
-        PE_39: {
+        PCE_34: {
             Postal: [READ, PRINT, UNLOCK],
             Displaced: [READ, PRINT, UNLOCK],
             Quarantine: [READ, PRINT, UNLOCK]
         },
-        PE_22: {
+        PCE_31: {
             Postal: [READ, PRINT, UNLOCK],
             Displaced: [READ, PRINT, UNLOCK],
             Quarantine: [READ, PRINT, UNLOCK]
@@ -155,12 +155,12 @@ role_based_access_config = {
             Displaced: [READ, PRINT, UNLOCK],
             Quarantine: [READ, PRINT, UNLOCK]
         },
-        PE_4: {
+        PCE_CE_CO_PR_4: {
             Postal: [READ, PRINT, UNLOCK],
             Displaced: [READ, PRINT, UNLOCK],
             Quarantine: [READ, PRINT, UNLOCK]
         },
-        PE_CE_RO_V1: {
+        PCE_CE_RO_V1: {
             Postal: [READ, PRINT, WRITE, LOCK],
             NonPostal: [READ, PRINT, WRITE, UNLOCK],
             Displaced: [READ, PRINT, WRITE, LOCK],
@@ -172,25 +172,25 @@ role_based_access_config = {
             Displaced: [READ, PRINT, WRITE, LOCK],
             Quarantine: [READ, PRINT, WRITE, LOCK]
         },
-        PE_CE_RO_PR_1: {
+        PCE_CE_RO_PR_1: {
             Postal: [READ, PRINT, WRITE, LOCK],
             NonPostal: [READ, PRINT, WRITE, UNLOCK],
             Displaced: [READ, PRINT, WRITE, LOCK],
             Quarantine: [READ, PRINT, WRITE, LOCK]
         },
-        PE_CE_RO_V2: {
+        PCE_CE_RO_V2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         },
-        PE_R2: {
+        PCE_R2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK]
         },
-        PE_CE_RO_PR_2: {
+        PCE_CE_RO_PR_2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         },
-        PE_CE_RO_PR_3: {
+        PCE_CE_RO_PR_3: {
             PostalAndNonPostal: [READ, PRINT, WRITE, LOCK]
         },
-        PE_21: {
+        PCE_42: {
             PostalAndNonPostal: [READ, PRINT, WRITE, SUBMIT, EDIT, LOCK]
         }
     },
@@ -215,7 +215,7 @@ role_based_access_config = {
         }
     },
     NATIONAL_REPORT_VERIFIER_ROLE: {
-        PE_CE_RO_V1: {
+        PCE_CE_RO_V1: {
             Postal: [READ, PRINT, WRITE, UNLOCK],
             Displaced: [READ, PRINT, WRITE, UNLOCK],
             Quarantine: [READ, PRINT, WRITE, UNLOCK]
@@ -225,24 +225,24 @@ role_based_access_config = {
             Displaced: [READ, PRINT, WRITE, UNLOCK],
             Quarantine: [READ, PRINT, WRITE, UNLOCK]
         },
-        PE_CE_RO_PR_1: {
+        PCE_CE_RO_PR_1: {
             Postal: [READ, PRINT, WRITE, UNLOCK],
             Displaced: [READ, PRINT, WRITE, UNLOCK],
             Quarantine: [READ, PRINT, WRITE, UNLOCK]
         },
-        PE_CE_RO_V2: {
+        PCE_CE_RO_V2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
-        PE_R2: {
+        PCE_R2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
-        PE_CE_RO_PR_2: {
+        PCE_CE_RO_PR_2: {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
-        PE_CE_RO_PR_3: {
+        PCE_CE_RO_PR_3: {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
-        PE_21: {
+        PCE_42: {
             PostalAndNonPostal: [READ, PRINT, WRITE, UNLOCK]
         },
         PE_AI_ED: {
@@ -265,19 +265,19 @@ role_based_access_config = {
         }
     },
     EC_LEADERSHIP_ROLE: {
-        PE_27: {
+        PCE_35: {
             Postal: [READ, PRINT],
             NonPostal: [READ, PRINT],
             Displaced: [READ, PRINT],
             Quarantine: [READ, PRINT]
         },
-        PE_39: {
+        PCE_34: {
             Postal: [READ, PRINT],
             NonPostal: [READ, PRINT],
             Displaced: [READ, PRINT],
             Quarantine: [READ, PRINT]
         },
-        PE_22: {
+        PCE_31: {
             Postal: [READ, PRINT],
             NonPostal: [READ, PRINT],
             Displaced: [READ, PRINT],
@@ -291,13 +291,13 @@ role_based_access_config = {
         CE_201: {
             NonPostal: [READ, PRINT]
         },
-        PE_4: {
+        PCE_CE_CO_PR_4: {
             Postal: [READ, PRINT],
             NonPostal: [READ, PRINT],
             Displaced: [READ, PRINT],
             Quarantine: [READ, PRINT]
         },
-        PE_CE_RO_V1: {
+        PCE_CE_RO_V1: {
             Postal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
                      RELEASE, BACK_TO_VERIFIED],
             NonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY, CERTIFY, NOTIFY,
@@ -313,27 +313,27 @@ role_based_access_config = {
             Displaced: [READ, PRINT, WRITE],
             Quarantine: [READ, PRINT, WRITE]
         },
-        PE_CE_RO_V2: {
+        PCE_CE_RO_V2: {
             PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
                                  CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
-        PE_R2: {
+        PCE_R2: {
             PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
                                  CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
-        PE_CE_RO_PR_1: {
+        PCE_CE_RO_PR_1: {
             Postal: [READ, PRINT, WRITE],
             NonPostal: [READ, PRINT, WRITE],
             Displaced: [READ, PRINT, WRITE],
             Quarantine: [READ, PRINT, WRITE]
         },
-        PE_CE_RO_PR_2: {
+        PCE_CE_RO_PR_2: {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
-        PE_CE_RO_PR_3: {
+        PCE_CE_RO_PR_3: {
             PostalAndNonPostal: [READ, PRINT, WRITE]
         },
-        PE_21: {
+        PCE_42: {
             PostalAndNonPostal: [READ, WRITE, PRINT, PRINT_LETTER, UPLOAD_PROOF_DOCUMENT, MOVE_TO_CERTIFY,
                                  CERTIFY, NOTIFY, RELEASE, BACK_TO_VERIFIED]
         },
