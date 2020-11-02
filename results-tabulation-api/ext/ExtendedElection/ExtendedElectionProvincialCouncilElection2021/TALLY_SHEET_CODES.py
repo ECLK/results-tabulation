@@ -18,9 +18,9 @@ PCE_R1_PV = "PCE-R1-PV"
 PCE_CE_RO_V2 = "PCE-CE-RO-V2"
 PCE_R2 = "PCE-R2"
 
-PCE_CE_RO_PR_1 = "PE-CE-RO-PR-1"
-PCE_CE_RO_PR_2 = "PE-CE-RO-PR-2"
-PCE_CE_RO_PR_3 = "PE-CE-RO-PR-3"
+PCE_CE_RO_PR_1 = "PCE-CE-RO-PR-1"
+PCE_CE_RO_PR_2 = "PCE-CE-RO-PR-2"
+PCE_CE_RO_PR_3 = "PCE-CE-RO-PR-3"
 PCE_42 = "PCE-42"
 
 # -------------------------------------------
