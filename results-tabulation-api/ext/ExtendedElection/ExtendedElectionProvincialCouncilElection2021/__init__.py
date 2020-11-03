@@ -430,6 +430,10 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
             def _create_administrative_district_tally_sheets(area):
                 pce_pr_pw_sa_tally_sheet_list = province.pce_pr_pw_sa_tally_sheet_list
+                pce_pr_bs_1_tally_sheet_list = province.pce_pr_bs_1_tally_sheet_list
+                pce_pr_bs_2_tally_sheet_list = province.pce_pr_bs_2_tally_sheet_list
+                pce_pr_cd_tally_sheet_list = province.pce_pr_cd_tally_sheet_list
+                pce_pr_pw_tally_sheet_list = province.pce_pr_pw_tally_sheet_list
 
                 pce_42_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pce_42, electionId=administrative_district_election.electionId,
@@ -438,7 +442,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": administrative_district_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pce_pr_pw_sa_tally_sheet_list],
+                    parentTallySheets=[*pce_pr_cd_tally_sheet_list, *pce_pr_pw_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -449,7 +453,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": administrative_district_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pce_pr_pw_sa_tally_sheet_list,
+                    parentTallySheets=[*pce_pr_pw_sa_tally_sheet_list,*pce_pr_cd_tally_sheet_list,
                                        *pce_42_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
@@ -486,6 +490,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                             "areaId": administrative_district.areaId,
                             "electionId": administrative_district_election.electionId
                         }).metaId,
+                        parentTallySheets=pce_pr_pw_sa_tally_sheet_list,
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                     )
                     pce_pd_pw_tally_sheet_list.append(pce_pd_pw_tally_sheet)
