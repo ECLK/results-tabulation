@@ -33,14 +33,6 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.META_DAT
 from constants.VOTE_TYPES import NonPostal, PostalAndNonPostal
 from ext.ExtendedElection import ExtendedElection
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import RoleBasedAccess
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
-    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
-    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, \
-    TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
-    TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, \
-    TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, \
-    TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE, \
-    TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.WORKFLOW_ACTION_TYPE import \
     WORKFLOW_ACTION_TYPE_VIEW, \
     WORKFLOW_ACTION_TYPE_SAVE, WORKFLOW_ACTION_TYPE_SUBMIT, WORKFLOW_ACTION_TYPE_REQUEST_CHANGES, \
@@ -65,10 +57,9 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Workflow
     released_report, edit_allowed_released_report
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TallysheetTemplates import ce_201, ce_201_pv, \
     pce_31, pce_34, pce_35, pce_ce_ro_v1, pce_ce_ro_v2, pce_r2, pce_ce_co_pr_4, pce_ce_ro_pr_1, pce_ce_ro_pr_2, \
-    pce_ce_ro_pr_3, pce_ce_co_pr_3, pce_42, pce_r1, administrative_district_result_party_wise_postal, \
-    polling_division_result_party_wise, administrative_district_result_candidates, \
-    provincial_result_party_wise_with_seats, \
-    polling_division_results
+    pce_ce_ro_pr_3, pce_42, pce_pr_pw, pce_pr_bs_1, pce_pr_bs_2, pce_pr_cd, \
+    pce_pd_pw, \
+    pce_pr_pw_sa
 
 role_based_access_config = RoleBasedAccess.role_based_access_config
 
@@ -117,11 +108,9 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         tally_sheet_template_pce_35 = pce_35.create_template()
 
         tally_sheet_template_pce_31 = pce_31.create_template()
-        tally_sheet_template_pce_ce_co_pr_3 = pce_ce_co_pr_3.create_template()
         tally_sheet_template_pce_ce_co_pr_4 = pce_ce_co_pr_4.create_template()
 
         tally_sheet_template_pce_ce_ro_v1 = pce_ce_ro_v1.create_template()
-        tally_sheet_template_pce_r1 = pce_r1.create_template()
         tally_sheet_template_pce_ce_ro_v2 = pce_ce_ro_v2.create_template()
         tally_sheet_template_pce_r2 = pce_r2.create_template()
 
@@ -131,11 +120,12 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
         tally_sheet_template_pce_42 = pce_42.create_template()
 
-        tally_sheet_template_administrative_district_result_party_wise_postal = administrative_district_result_party_wise_postal.create_template()
-        tally_sheet_template_polling_division_result_party_wise = polling_division_result_party_wise.create_template()
-        tally_sheet_template_polling_division_results = polling_division_results.create_template()
-        tally_sheet_template_provincial_result_party_wise_with_seats = provincial_result_party_wise_with_seats.create_template()
-        tally_sheet_template_administrative_district_candidates = administrative_district_result_candidates.create_template()
+        tally_sheet_template_pce_pd_pw = pce_pd_pw.create_template()
+        tally_sheet_template_pce_pr_pw_sa = pce_pr_pw_sa.create_template()
+        tally_sheet_template_pce_pr_pw = pce_pr_pw.create_template()
+        tally_sheet_template_pce_pr_cd = pce_pr_cd.create_template()
+        tally_sheet_template_pce_pr_bs_1 = pce_pr_bs_1.create_template()
+        tally_sheet_template_pce_pr_bs_2 = pce_pr_bs_2.create_template()
 
         data_entry_store = {
             AreaTypeEnum.Country: {},
@@ -150,7 +140,6 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         }
 
         province_election_store = {}
-        province_sub_election_store = {}
         administrative_district_election_store = {}
         administrative_district_sub_election_store = {}
         party_store = {}
@@ -253,8 +242,50 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             province_election = _get_province_election(row)
 
             def _create_province_tally_sheets(area):
-                provincial_result_party_wise_with_seats_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_provincial_result_party_wise_with_seats,
+                pce_pr_bs_1_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_pr_bs_1,
+                    electionId=province_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": province_election.electionId
+                    }).metaId,
+                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
+                )]
+
+                pce_pr_bs_2_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_pr_bs_2,
+                    electionId=province_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": province_election.electionId
+                    }).metaId,
+                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
+                )]
+
+                pce_pr_pw_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_pr_pw,
+                    electionId=province_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": province_election.electionId
+                    }).metaId,
+                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
+                )]
+                pce_pr_cd_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_pr_cd,
+                    electionId=province_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": province_election.electionId
+                    }).metaId,
+                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
+                )]
+                pce_pr_pw_sa_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_pr_pw_sa,
                     electionId=province_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
@@ -264,71 +295,17 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
                 return {
-                    "provincial_result_party_wise_with_seats_tally_sheet_list": provincial_result_party_wise_with_seats_tally_sheet_list,
+                    "pce_pr_bs_1_tally_sheet_list": pce_pr_bs_1_tally_sheet_list,
+                    "pce_pr_bs_2_tally_sheet_list": pce_pr_bs_2_tally_sheet_list,
+                    "pce_pr_pw_sa_tally_sheet_list": pce_pr_pw_sa_tally_sheet_list,
+                    "pce_pr_cd_tally_sheet_list": pce_pr_cd_tally_sheet_list,
+                    "pce_pr_pw_tally_sheet_list": pce_pr_pw_tally_sheet_list,
                 }
 
             data_entry_obj = _get_area_entry(root_election, area_class, area_name, area_key,
                                              _create_province_tally_sheets)
 
             return data_entry_obj
-
-        def _get_province_sub_election_map(row):
-            province_name = row["Province"]
-
-            return province_sub_election_store[province_name]
-
-        def _get_sub_province_entry(row, vote_type=None):
-            province = _get_province_entry(row)
-            province_sub_election = _get_province_sub_election(row, vote_type=vote_type)
-
-            administrative_district_results_tally_sheet = TallySheet.create(
-                template=tally_sheet_template_provincial_result_party_wise_with_seats,
-                electionId=province_sub_election.electionId,
-                areaId=province.areaId,
-                metaId=Meta.create({
-                    "areaId": province.areaId,
-                    "electionId": province_sub_election.electionId
-                }).metaId,
-                workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
-            )
-            province.administrative_district_results_tally_sheet_list.append(
-                administrative_district_results_tally_sheet)
-
-            pce_r2_tally_sheet = TallySheet.create(
-                template=tally_sheet_template_pce_r2, electionId=province_sub_election.electionId,
-                areaId=province.areaId,
-                metaId=Meta.create({
-                    "areaId": province.areaId,
-                    "electionId": province_sub_election.electionId
-                }).metaId,
-                parentTallySheets=[administrative_district_results_tally_sheet,
-                                   *province.provincial_result_party_wise_with_seats_tally_sheet_list],
-                workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
-            )
-            province.provincial_result_party_wise_with_seats_tally_sheet_list.append(pce_r2_tally_sheet)
-
-        def _get_province_sub_election(row, vote_type):
-            province_name = row["Province"]
-            province_election = _get_province_election(row)
-            election_map = _get_province_sub_election_map(row)
-
-            if vote_type not in election_map:
-                sub_election = province_election.add_sub_election(
-                    electionName="%s - %s - %s" % (root_election.electionName, province_name, vote_type),
-                    voteType=vote_type, isListed=False
-                )
-                election_map[vote_type] = sub_election
-                for party in province_election.parties:
-                    sub_election.add_party(partyId=party.partyId)
-                    for candidate in party.candidates:
-                        sub_election.add_candidate(partyId=party.partyId, candidateId=candidate.candidateId)
-
-                if vote_type is not NonPostal:
-                    _get_sub_province_entry(row, vote_type=vote_type)
-            else:
-                sub_election = election_map[vote_type]
-
-            return sub_election
 
         def _get_province_election(row):
             province_name = row["Province"]
@@ -392,8 +369,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             administrative_district = _get_administrative_district_entry(row)
             administrative_district_sub_election = _get_administrative_district_sub_election(row, vote_type=vote_type)
 
-            polling_division_results_tally_sheet = TallySheet.create(
-                template=polling_division_result_party_wise,
+            pce_pd_pw_tally_sheet = TallySheet.create(
+                template=pce_pd_pw,
                 electionId=administrative_district_sub_election.electionId,
                 areaId=administrative_district.areaId,
                 metaId=Meta.create({
@@ -402,8 +379,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 }).metaId,
                 workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
             )
-            administrative_district.polling_division_results_tally_sheet_list.append(
-                polling_division_results_tally_sheet)
+            administrative_district.pce_pd_pw_tally_sheet_list.append(
+                pce_pd_pw_tally_sheet)
             pce_ce_ro_v1_tally_sheet = TallySheet.create(
                 template=tally_sheet_template_pce_ce_ro_v1, electionId=administrative_district_sub_election.electionId,
                 areaId=administrative_district.areaId,
@@ -411,7 +388,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     "areaId": administrative_district.areaId,
                     "electionId": administrative_district_sub_election.electionId
                 }).metaId,
-                parentTallySheets=[polling_division_results_tally_sheet,
+                parentTallySheets=[pce_pd_pw_tally_sheet,
                                    *administrative_district.pce_ce_ro_v2_tally_sheet_list],
                 workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
             )
@@ -452,29 +429,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             area_key = area_name
 
             def _create_administrative_district_tally_sheets(area):
-                provincial_result_party_wise_with_seats_tally_sheet_list = province.provincial_result_party_wise_with_seats_tally_sheet_list
-
-                pce_r2_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pce_r2, electionId=administrative_district_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": administrative_district_election.electionId
-                    }).metaId,
-                    parentTallySheets=[*provincial_result_party_wise_with_seats_tally_sheet_list],
-                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
-                )]
-
-                pce_r1_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_pce_r1, electionId=administrative_district_election.electionId,
-                    areaId=area.areaId,
-                    metaId=Meta.create({
-                        "areaId": area.areaId,
-                        "electionId": administrative_district_election.electionId
-                    }).metaId,
-                    parentTallySheets=[*provincial_result_party_wise_with_seats_tally_sheet_list],
-                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
-                )]
+                pce_pr_pw_sa_tally_sheet_list = province.pce_pr_pw_sa_tally_sheet_list
 
                 pce_42_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pce_42, electionId=administrative_district_election.electionId,
@@ -483,9 +438,19 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": administrative_district_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pce_r2_tally_sheet_list,
-                                       *provincial_result_party_wise_with_seats_tally_sheet_list,
-                                       *pce_r1_tally_sheet_list],
+                    parentTallySheets=[*pce_pr_pw_sa_tally_sheet_list],
+                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
+                )]
+
+                pce_r2_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_r2, electionId=administrative_district_election.electionId,
+                    areaId=area.areaId,
+                    metaId=Meta.create({
+                        "areaId": area.areaId,
+                        "electionId": administrative_district_election.electionId
+                    }).metaId,
+                    parentTallySheets=[*pce_pr_pw_sa_tally_sheet_list,
+                                       *pce_42_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -497,13 +462,14 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "electionId": administrative_district_election.electionId
                     }).metaId,
                     parentTallySheets=[*pce_r2_tally_sheet_list,
-                                       *provincial_result_party_wise_with_seats_tally_sheet_list],
+                                       *pce_pr_pw_sa_tally_sheet_list],
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
-                polling_division_results_tally_sheet_list = []
+                pce_pd_pw_tally_sheet_list = []
                 pce_ce_ro_v1_tally_sheet_list = []
                 pce_ce_ro_v1_tally_sheet_list_vote_type_wise_map = {}
+                pce_pd_pw_tally_sheet_list_vote_type_wise_map = {}
 
                 pce_ce_ro_pr_1_tally_sheet_list = []
                 pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map = {}
@@ -512,6 +478,23 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 pce_ce_ro_pr_3_tally_sheet_list = []
                 pce_ce_ro_pr_3_tally_sheet_list_party_id_wise_map = {}
                 for party in administrative_district_election.parties:
+                    pce_pd_pw_tally_sheet = TallySheet.create(
+                        template=pce_pd_pw,
+                        electionId=administrative_district_election.electionId,
+                        areaId=administrative_district.areaId,
+                        metaId=Meta.create({
+                            "areaId": administrative_district.areaId,
+                            "electionId": administrative_district_election.electionId
+                        }).metaId,
+                        workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
+                    )
+                    pce_pd_pw_tally_sheet_list.append(pce_pd_pw_tally_sheet)
+                    if party.partyId not in pce_pd_pw_tally_sheet_list_vote_type_wise_map:
+                        pce_pd_pw_tally_sheet_list_vote_type_wise_map[party.partyId] = [pce_pd_pw_tally_sheet]
+                    else:
+                        pce_pd_pw_tally_sheet_list_vote_type_wise_map[party.partyId].append(
+                            pce_pd_pw_tally_sheet)
+
                     pce_ce_ro_pr_3_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pce_ce_ro_pr_3,
                         electionId=administrative_district_election.electionId,
@@ -553,8 +536,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 return {
                     "pce_ce_ro_v1_tally_sheet_list": pce_ce_ro_v1_tally_sheet_list,
                     "pce_ce_ro_v1_tally_sheet_list_vote_type_wise_map": pce_ce_ro_v1_tally_sheet_list_vote_type_wise_map,
-                    "polling_division_results_tally_sheet_list": polling_division_results_tally_sheet_list,
-                    "pce_r1_tally_sheet_list": pce_r1_tally_sheet_list,
+                    "pce_pd_pw_tally_sheet_list": pce_pd_pw_tally_sheet_list,
+                    "pce_pd_pw_tally_sheet_list_vote_type_wise_map": pce_pd_pw_tally_sheet_list,
                     "pce_r2_tally_sheet_list": pce_r2_tally_sheet_list,
                     "pce_42_tally_sheet_list": pce_42_tally_sheet_list,
                     "pce_ce_ro_v2_tally_sheet_list": pce_ce_ro_v2_tally_sheet_list,
@@ -617,33 +600,10 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
                 )]
 
-                pce_ce_co_pr_3_tally_sheet_list = []
                 pce_ce_co_pr_4_tally_sheet_list = []
-                pce_ce_co_pr_3_tally_sheet_list_party_id_wise_map = {}
                 pce_ce_co_pr_4_tally_sheet_list_party_id_wise_map = {}
 
                 for party in administrative_district_sub_election.parties:
-                    pce_ce_co_pr_3_tally_sheet = TallySheet.create(
-                        template=tally_sheet_template_pce_ce_co_pr_3,
-                        electionId=administrative_district_sub_election.electionId,
-                        areaId=area.areaId,
-                        metaId=Meta.create({
-                            "areaId": area.areaId,
-                            "partyId": party.partyId,
-                            "electionId": administrative_district_sub_election.electionId
-                        }).metaId,
-                        parentTallySheets=[*pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map[
-                            "%s%s" % (party.partyId, vote_type)]],
-                        workflowInstanceId=workflow_data_entry.get_new_instance().workflowInstanceId
-                    )
-                    pce_ce_co_pr_3_tally_sheet_list.append(pce_ce_co_pr_3_tally_sheet)
-
-                    if party.partyId not in pce_ce_co_pr_3_tally_sheet_list_party_id_wise_map:
-                        pce_ce_co_pr_3_tally_sheet_list_party_id_wise_map[party.partyId] = [pce_ce_co_pr_3_tally_sheet]
-                    else:
-                        pce_ce_co_pr_3_tally_sheet_list_party_id_wise_map[party.partyId].append(
-                            pce_ce_co_pr_3_tally_sheet)
-
                     pce_ce_co_pr_4_tally_sheet = TallySheet.create(
                         template=tally_sheet_template_pce_ce_co_pr_4,
                         electionId=administrative_district_sub_election.electionId,
@@ -679,8 +639,6 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     "pce_35_tally_sheet_list": pce_35_tally_sheet_list,
                     "pce_34_tally_sheet_list": pce_34_tally_sheet_list,
                     "pce_31_tally_sheet_list": pce_31_tally_sheet_list,
-                    "pce_ce_co_pr_3_tally_sheet_list": pce_ce_co_pr_3_tally_sheet_list,
-                    "pce_ce_co_pr_3_tally_sheet_list_party_id_wise_map": pce_ce_co_pr_3_tally_sheet_list_party_id_wise_map,
                     "pce_ce_co_pr_4_tally_sheet_list": pce_ce_co_pr_4_tally_sheet_list,
                     "pce_ce_co_pr_4_tally_sheet_list_party_id_wise_map": pce_ce_co_pr_4_tally_sheet_list_party_id_wise_map,
                     "pce_ce_201_pv_tally_sheet_list": pce_ce_201_pv_tally_sheet_list
@@ -705,8 +663,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = administrative_district.pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map
                 pce_ce_ro_v2_tally_sheet_list = administrative_district.pce_ce_ro_v2_tally_sheet_list
 
-                polling_division_results_tally_sheet_list = [TallySheet.create(
-                    template=tally_sheet_template_polling_division_results,
+                pce_pd_pw_tally_sheet_list = [TallySheet.create(
+                    template=tally_sheet_template_pce_pd_pw,
                     electionId=administrative_district_ordinary_election.electionId,
                     areaId=area.areaId,
                     metaId=Meta.create({
@@ -724,7 +682,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": administrative_district_ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=[*polling_division_results_tally_sheet_list, *pce_ce_ro_v2_tally_sheet_list],
+                    parentTallySheets=[*pce_pd_pw_tally_sheet_list, *pce_ce_ro_v2_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -758,7 +716,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     "pce_ce_ro_v1_tally_sheet_list": pce_ce_ro_v1_tally_sheet_list,
                     "pce_ce_ro_pr_1_tally_sheet_list": pce_ce_ro_pr_1_tally_sheet_list,
                     "pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map": pce_ce_ro_pr_1_tally_sheet_list_party_id_and_vote_type_wise_map,
-                    "polling_division_results_tally_sheet_list": polling_division_results_tally_sheet_list,
+                    "pce_pd_pw_tally_sheet_list": pce_pd_pw_tally_sheet_list,
                 }
 
             data_entry_obj = _get_area_entry(administrative_district_ordinary_election, area_class, area_name, area_key,
