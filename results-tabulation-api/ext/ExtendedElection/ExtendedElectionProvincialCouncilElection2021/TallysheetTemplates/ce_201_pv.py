@@ -1,7 +1,7 @@
 from orm.entities import Template
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import CE_201_PV
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META as SOURCE_META, \
-    TALLY_SHEET_COLUMN_SOURCE_CONTENT as SOURCE_CONTENT, TALLY_SHEET_COLUMN_SOURCE_QUERY as SOURCE_QUERY
+    TALLY_SHEET_COLUMN_SOURCE_CONTENT as SOURCE_CONTENT
 
 
 def create_template():

@@ -25,9 +25,10 @@ PCE_42 = "PCE-42"
 
 # -------------------------------------------
 
-PCE_PD_PW = "PCE-PD-PW"
-PCE_PR_PW = "PCE-PR-PW"
-PCE_PR_CD = "PCE-PR-CD"
-PCE_PR_BS_1 = "PCE-PR-BS-1"
-PCE_PR_BS_2 = "PCE-PR-BS-2"
-PCE_PR_PW_SA = "PCE-PR-PW-SA"
+PCE_PD_V = "PCE-PD-V"
+PCE_PC_V = "PCE-PC-V"
+PCE_PC_CD = "PCE-PC-CD"
+PCE_PC_BS_1 = "PCE-PC-BS-1"
+PCE_PC_BS_2 = "PCE-PC-BS-2"
+PCE_PC_SA_1 = "PCE-PC-V-SA-1"
+PCE_PC_SA_2 = "PCE-PC-V-SA-2"

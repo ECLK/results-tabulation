@@ -1,6 +1,6 @@
 from orm.entities import Template
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import \
-    PCE_PR_BS_1, PCE_PR_PW
+    PCE_PC_BS_1, PCE_PC_V
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META as SOURCE_META, \
     TALLY_SHEET_COLUMN_SOURCE_CONTENT as SOURCE_CONTENT, TALLY_SHEET_COLUMN_SOURCE_QUERY as SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
@@ -12,7 +12,7 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE
 
 def create_template():
     return Template.create(
-        templateName=PCE_PR_BS_1,
+        templateName=PCE_PC_BS_1,
         templateRowTypesMap={
             "PARTY_WISE_VOTE": {
                 "hasMany": True,
@@ -24,7 +24,7 @@ def create_template():
                     {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                 ],
                 "derivativeRows": [
-                    {"templateName": PCE_PR_PW, "templateRowType": "PARTY_WISE_VOTE"}
+                    {"templateName": PCE_PC_V, "templateRowType": "PARTY_WISE_VOTE"}
                 ]
             },
             "REJECTED_VOTE": {
@@ -36,7 +36,7 @@ def create_template():
                     {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
                 ],
                 "derivativeRows": [
-                    {"templateName": PCE_PR_PW, "templateRowType": "REJECTED_VOTE"}
+                    {"templateName": PCE_PC_V, "templateRowType": "REJECTED_VOTE"}
                 ]
             },
             TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: {
