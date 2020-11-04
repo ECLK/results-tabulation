@@ -1,6 +1,6 @@
 from orm.entities import Template
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import PCE_CE_RO_PR_2, \
-    PCE_CE_RO_PR_3, PCE_R2
+    PCE_CE_RO_PR_3
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_QUERY as SOURCE_QUERY
 
 
