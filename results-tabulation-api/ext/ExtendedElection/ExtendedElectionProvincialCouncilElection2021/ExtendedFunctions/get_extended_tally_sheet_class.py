@@ -26,13 +26,11 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.Extended
     ExtendedTallySheet_PCE_R2
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import CE_201, CE_201_PV, \
     PCE_31, PCE_34, PCE_35, PCE_42, PCE_CE_CO_PR_1, PCE_CE_CO_PR_2, PCE_CE_CO_PR_3, PCE_CE_CO_PR_4, PCE_CE_RO_PR_1, \
-    PCE_CE_RO_PR_2, PCE_CE_RO_PR_3, PCE_CE_RO_V1, PCE_CE_RO_V2, PCE_R1, PCE_R1_PV, PCE_R2, PROVINCIAL_RESULT_CANDIDATES, \
-    PROVINCIAL_RESULT_PARTY_WISE, PROVINCIAL_RESULT_PARTY_WISE_POSTAL, PROVINCIAL_RESULT_PARTY_WISE_WITH_SEATS
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import \
-    ExtendedElectionProvincialCouncilElection2021
+    PCE_CE_RO_PR_2, PCE_CE_RO_PR_3, PCE_CE_RO_V1, PCE_CE_RO_V2, PCE_R1, PCE_R1_PV, PCE_R2, PCE_PD_V, PCE_PC_V, \
+    PCE_PC_CD, PCE_PC_BS_1, PCE_PC_BS_2, PCE_PC_SA_1, PCE_PC_SA_2
 
 
-def get_extended_tally_sheet_class(election, templateName):
+def get_extended_tally_sheet_class(election, templateName, electionClass):
     EXTENDED_TEMPLATE_MAP = {
         CE_201: ExtendedTallySheet_CE_201,
         CE_201_PV: ExtendedTallySheet_CE_201_PV,
@@ -47,16 +45,11 @@ def get_extended_tally_sheet_class(election, templateName):
         PCE_CE_RO_V1: ExtendedTallySheet_PCE_CE_RO_V1,
         PCE_CE_RO_V2: ExtendedTallySheet_PCE_CE_RO_V2,
         PCE_R2: ExtendedTallySheet_PCE_R2,
-        PROVINCIAL_RESULT_CANDIDATES: "",
-        PROVINCIAL_RESULT_PARTY_WISE: "",
-        PROVINCIAL_RESULT_PARTY_WISE_POSTAL: "",
-        PROVINCIAL_RESULT_PARTY_WISE_WITH_SEATS: "",
-
     }
 
     if templateName in EXTENDED_TEMPLATE_MAP:
         return EXTENDED_TEMPLATE_MAP[templateName]
     else:
-        return super(ExtendedElectionProvincialCouncilElection2021, election).get_extended_tally_sheet_class(
+        return super(electionClass, election).get_extended_tally_sheet_class(
             templateName=templateName
         )

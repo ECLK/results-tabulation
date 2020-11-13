@@ -75,7 +75,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         return get_area_map_query.get_area_map_query(self)
 
     def get_extended_tally_sheet_class(self, templateName):
-        return get_extended_tally_sheet_class.get_extended_tally_sheet_class(self, templateName)
+        return get_extended_tally_sheet_class.get_extended_tally_sheet_class(self, templateName, ExtendedElectionProvincialCouncilElection2021)
 
     def build_election(self, party_candidate_dataset_file=None,
                        polling_station_dataset_file=None, postal_counting_centers_dataset_file=None,
@@ -392,7 +392,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             administrative_district_sub_election = _get_administrative_district_sub_election(row, vote_type=vote_type)
 
             pce_pd_v_tally_sheet = TallySheet.create(
-                template=pce_pd_v,
+                template=tally_sheet_template_pce_pd_v,
                 electionId=administrative_district_sub_election.electionId,
                 areaId=administrative_district.areaId,
                 metaId=Meta.create({
@@ -410,7 +410,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     "areaId": administrative_district.areaId,
                     "electionId": administrative_district_sub_election.electionId
                 }).metaId,
-                parentTallySheets=[*pce_pd_v_tally_sheet,
+                parentTallySheets=[pce_pd_v_tally_sheet,
                                    *administrative_district.pce_ce_ro_v2_tally_sheet_list],
                 workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
             )
@@ -506,11 +506,11 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 pce_ce_ro_pr_3_tally_sheet_list_party_id_wise_map = {}
                 for party in administrative_district_election.parties:
                     pce_pd_v_tally_sheet = TallySheet.create(
-                        template=pce_pd_v,
+                        template=tally_sheet_template_pce_pd_v,
                         electionId=administrative_district_election.electionId,
-                        areaId=administrative_district.areaId,
+                        areaId=area.areaId,
                         metaId=Meta.create({
-                            "areaId": administrative_district.areaId,
+                            "areaId": area.areaId,
                             "electionId": administrative_district_election.electionId
                         }).metaId,
                         workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
