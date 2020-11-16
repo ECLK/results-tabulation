@@ -15,7 +15,7 @@ import TallySheetEdit_PE_21 from "./tally-sheet-edit-pe-21";
 import TallySheetEdit_PE_AI_NL_1 from "./tally-sheet-edit-pe-ai-nl-1";
 import TallySheetEdit_PE_AI_NL_2 from "./tally-sheet-edit-pe-ai-nl-2";
 
-export default class ParliamentElection2020TallySheetEdit extends TallySheetEdit {
+export default class ProvincialCouncilElection2021TallySheetEdit extends TallySheetEdit {
     getTallySheetEditForm(tallySheetCode) {
         if (tallySheetCode === TALLY_SHEET_CODE_PE_27) {
             return TallySheetEdit_PE_27

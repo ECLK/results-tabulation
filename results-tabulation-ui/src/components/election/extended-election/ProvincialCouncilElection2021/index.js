@@ -26,7 +26,7 @@ import Button from "@material-ui/core/Button";
 import React, {useContext, useEffect, useState} from "react";
 import * as Settings from './settings'
 import ExtendedElectionDefault from "../extended-election-default";
-import ParliamentElection2020TallySheetEdit from "./tally-sheet-edit";
+import ProvincialCouncilElection2021TallySheetEdit from "./tally-sheet-edit";
 import {ElectionContext} from "../../../../services/election.provider";
 import Processing from "../../../processing";
 import {VOTE_TYPE_NON_POSTAL, VOTE_TYPE_POSTAL, VOTE_TYPE_POSTAL_AND_NON_POSTAL} from "../../constants/VOTE_TYPE";
@@ -35,10 +35,10 @@ import {MessagesContext} from "../../../../services/messages.provider";
 import {TallySheetProofFilePreviewDialog} from "../../../tally-sheet/tally-sheet-proof-file-preview-dialog";
 import {PartySelectionDialog} from "../../../tally-sheet/party-selection-dialog";
 
-export default class ExtendedElectionParliamentElection2020 extends ExtendedElectionDefault {
+export default class ExtendedElectionProvincialCouncilElection2021 extends ExtendedElectionDefault {
 
     constructor(election) {
-        super(election, Settings.TALLY_SHEET_LIST_COLUMNS, ParliamentElection2020TallySheetEdit);
+        super(election, Settings.TALLY_SHEET_LIST_COLUMNS, ProvincialCouncilElection2021TallySheetEdit);
     }
 
 
