@@ -25,7 +25,7 @@ export function getExtendedElectionClass(election) {
             extendedElectionClass = ExtendedElectionParliamentElection2020;
             break;
         case ELECTION_TEMPLATE_NAME.PROVINCIAL_COUNCIL_ELECTION_2021:
-            extendedElectionClass = ExtendedElectionParliamentElection2020;
+            extendedElectionClass = ExtendedElectionProvincialCouncilElection2021;
             break;
         default:
             extendedElectionClass = ExtendedElectionDefault;

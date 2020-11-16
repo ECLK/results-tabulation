@@ -41,12 +41,32 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
         super(election, Settings.TALLY_SHEET_LIST_COLUMNS, ProvincialCouncilElection2021TallySheetEdit);
     }
 
-
     getElectionHome() {
+        function addDistrictElections(districtElections) {
+            let currentDistrictElections = DistrictElections === null ? [] : DistrictElections;
+
+            if (districtElections !== null && districtElections.length > 0) {
+                const parentElectionId = districtElections[0].parentElectionId;
+                currentDistrictElections["provincial_" + parentElectionId] = districtElections;
+            }
+            setDistrictElections(currentDistrictElections);
+
+        }
+
+        function setSubElections(provinceElections) {
+            setProvinceElections(provinceElections);
+            {
+                provinceElections !== null && provinceElections.map((districtElection) => {
+                    electionContext.getSubElections(districtElection.electionId, null).then(addDistrictElections)
+                })
+            }
+        }
+
         const history = useHistory();
         const dialogContext = useContext(DialogContext);
         const electionContext = useContext(ElectionContext);
-        const [subElections, setSubElections] = useState(null);
+        const [ProvinceElections, setProvinceElections] = useState(null);
+        const [DistrictElections, setDistrictElections] = useState(null);
 
         const {electionId, electionName, rootElectionId} = this.election;
 
@@ -62,7 +82,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
         };
 
         useEffect(() => {
-            electionContext.getSubElections(electionId, null).then(setSubElections);
+            electionContext.getSubElections(electionId, null).then(setSubElections)
         }, [electionId]);
 
         if (electionId === rootElectionId) {
@@ -70,24 +90,28 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                 <h1>{electionName}</h1>
                 <Grid container spacing={3}>
                     <Grid item xs={6} className="election-grid">
-                        <Grid item xs={12}><h2>District Elections</h2></Grid>
-                        <Processing showProgress={subElections === null}>
+                        <Grid item xs={12}><h2>Provincial Elections</h2></Grid>
+                        <Processing showProgress={ProvinceElections === null}>
                             <div className="election-list">
-                                {subElections !== null && subElections.map((election) => {
+                                {ProvinceElections !== null && ProvinceElections.map((election) => {
                                     const {electionId, electionName} = election;
-
-                                    return <Link
-                                        key={electionId} to={PATH_ELECTION_BY_ID(electionId)}
-                                        className="election-list-item"
-                                    >
-                                        {electionName}
-                                    </Link>
+                                    return <div key={electionId}>
+                                        {electionName}<br/>
+                                        {DistrictElections !== null && DistrictElections["provincial_" + electionId].map((districtElection) => {
+                                            return <Link
+                                                key={districtElection.electionId} to={PATH_ELECTION_BY_ID(districtElection.electionId)}
+                                                className="election-list-item"
+                                            >
+                                                {districtElection.electionName}
+                                            </Link>
+                                        })}
+                                    </div>
                                 })}
                             </div>
                         </Processing>
                     </Grid>
                     <Grid item xs={6} className="election-grid">
-                        <Grid item xs={12}><h2>National Reports</h2></Grid>
+                        <Grid item xs={12}><h2>Provincial Reports</h2></Grid>
 
 
                         <Grid item xs={12}>
@@ -132,8 +156,8 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
 
                         <Grid item xs={12}><h2>Data Entry</h2></Grid>
 
-                        <Processing showProgress={!subElections}>
-                            {subElections !== null && subElections.map(({voteType, voteTypeIndex}) => {
+                        <Processing showProgress={!ProvinceElections}>
+                            {ProvinceElections !== null && ProvinceElections.map(({voteType, voteTypeIndex}) => {
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -171,11 +195,13 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                         <br/>
                         <Divider/>
 
-                        <Grid item xs={12}><small>Preferences</small></Grid>
+                        <Grid item xs={12}>
+                            <small>Preferences</small>
+                        </Grid>
 
 
-                        <Processing showProgress={!subElections}>
-                            {subElections !== null && subElections.map(({voteType, voteTypeIndex}) => {
+                        <Processing showProgress={!ProvinceElections}>
+                            {ProvinceElections !== null && ProvinceElections.map(({voteType, voteTypeIndex}) => {
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -215,8 +241,8 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
 
                         <Grid item xs={12}>
 
-                            <Processing showProgress={!subElections}>
-                                {subElections !== null && subElections.map(({voteType, voteTypeIndex}) => {
+                            <Processing showProgress={!ProvinceElections}>
+                                {ProvinceElections !== null && ProvinceElections.map(({voteType, voteTypeIndex}) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
                                     if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -268,11 +294,13 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                         <br/>
                         <Divider/>
 
-                        <Grid item xs={12}><small>Preferences</small></Grid>
+                        <Grid item xs={12}>
+                            <small>Preferences</small>
+                        </Grid>
 
                         <Grid item xs={12}>
-                            <Processing showProgress={!subElections}>
-                                {subElections !== null && subElections.map(({voteType, voteTypeIndex}) => {
+                            <Processing showProgress={!ProvinceElections}>
+                                {ProvinceElections !== null && ProvinceElections.map(({voteType, voteTypeIndex}) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
                                     if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -323,7 +351,9 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
 
                         <br/>
                         <Divider/>
-                        <Grid item xs={12}><small>Votes + Preferences</small></Grid>
+                        <Grid item xs={12}>
+                            <small>Votes + Preferences</small>
+                        </Grid>
 
                         <Grid item xs={12}>
                             <ul className="tally-sheet-code-list">
