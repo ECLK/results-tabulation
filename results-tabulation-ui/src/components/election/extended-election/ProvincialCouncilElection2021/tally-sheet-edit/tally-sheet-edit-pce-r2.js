@@ -20,7 +20,7 @@ import {
     TALLY_SHEET_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1
 } from "../TALLY_SHEET_ROW_TYPE";
 
-export default function TallySheetEdit_PE_R2({history, queryString, election, tallySheet}) {
+export default function TallySheetEdit_PCE_R2({history, queryString, election, tallySheet}) {
 
     const {parties, metaDataMap} = election;
     let {numberOfSeatsAllocated} = metaDataMap;

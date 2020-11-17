@@ -16,8 +16,9 @@ import {
     TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED,
     TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 } from "../TALLY_SHEET_ROW_TYPE";
+import {CANDIDATE_TYPE_NATIONAL_LIST} from "../CANDIDATE_TYPE";
 
-export default function TallySheetEdit_PE_21({history, election, tallySheet}) {
+export default function TallySheetEdit_PCE_PC_BS_2({history, election, tallySheet}) {
 
     const [tallySheetRows, setTallySheetRows] = useState({
         [TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED]: {
@@ -219,8 +220,7 @@ export default function TallySheetEdit_PE_21({history, election, tallySheet}) {
 
     function getCandidateLabel({candidateName, candidateNumber} = {}) {
         if (!candidateName || !candidateNumber) {
-            return <small>Not available yet since dependant preference tally sheets are
-                incomplete.</small>
+            return <small>No enough national list candidates nominated.</small>
         } else {
             return `${candidateNumber}. ${candidateName}`;
         }
@@ -317,7 +317,9 @@ export default function TallySheetEdit_PE_21({history, election, tallySheet}) {
                                                     width: '200px'
                                                 }}
                                             >
-                                                {party.candidates.map(({candidateId, candidateName, candidateNumber}) => (
+                                                {party.candidates.filter(({candidateType}) => {
+                                                    return candidateType === CANDIDATE_TYPE_NATIONAL_LIST;
+                                                }).map(({candidateId, candidateName, candidateNumber}) => (
                                                     <MenuItem key={candidateId} value={candidateId}>
                                                         {getCandidateLabel({candidateName, candidateNumber})}
                                                     </MenuItem>

@@ -6,19 +6,29 @@ import {
 import {
     TALLY_SHEET_CODE_CE_201,
     TALLY_SHEET_CODE_CE_201_PV,
-    TALLY_SHEET_CODE_PE_27,
-    TALLY_SHEET_CODE_PE_4,
-    TALLY_SHEET_CODE_PE_CE_RO_PR_1,
-    TALLY_SHEET_CODE_PE_CE_RO_PR_2,
-    TALLY_SHEET_CODE_PE_CE_RO_PR_3,
-    TALLY_SHEET_CODE_PE_CE_RO_V1,
-    TALLY_SHEET_CODE_PE_CE_RO_V2,
-    TALLY_SHEET_CODE_PE_R2,
-    TALLY_SHEET_CODE_PE_21,
-    TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS,
-    TALLY_SHEET_CODE_PE_AI_ED,
-    TALLY_SHEET_CODE_PE_AI_NL_1,
-    TALLY_SHEET_CODE_PE_AI_NL_2, TALLY_SHEET_CODE_PE_AI_1, TALLY_SHEET_CODE_PE_AI_2, TALLY_SHEET_CODE_PE_AI_SA
+    TALLY_SHEET_CODE_PCE_31,
+    TALLY_SHEET_CODE_PCE_34,
+    TALLY_SHEET_CODE_PCE_35,
+    TALLY_SHEET_CODE_PCE_CE_CO_PR_1,
+    TALLY_SHEET_CODE_PCE_CE_CO_PR_2,
+    TALLY_SHEET_CODE_PCE_CE_CO_PR_3,
+    TALLY_SHEET_CODE_PCE_CE_CO_PR_4,
+    TALLY_SHEET_CODE_PCE_CE_RO_V1,
+    TALLY_SHEET_CODE_PCE_R1,
+    TALLY_SHEET_CODE_PCE_R1_PV,
+    TALLY_SHEET_CODE_PCE_CE_RO_V2,
+    TALLY_SHEET_CODE_PCE_R2,
+    TALLY_SHEET_CODE_PCE_CE_RO_PR_1,
+    TALLY_SHEET_CODE_PCE_CE_RO_PR_2,
+    TALLY_SHEET_CODE_PCE_CE_RO_PR_3,
+    TALLY_SHEET_CODE_PCE_42,
+    TALLY_SHEET_CODE_PCE_PD_V,
+    TALLY_SHEET_CODE_PCE_PC_V,
+    TALLY_SHEET_CODE_PCE_PC_CD,
+    TALLY_SHEET_CODE_PCE_PC_BS_1,
+    TALLY_SHEET_CODE_PCE_PC_BS_2,
+    TALLY_SHEET_CODE_PCE_PC_SA_1,
+    TALLY_SHEET_CODE_PCE_PC_SA_2
 } from "./TALLY_SHEET_CODE";
 import {Link, useHistory} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
@@ -117,16 +127,19 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                         <Grid item xs={12}>
                             <ul className="tally-sheet-code-list">
                                 {(() => {
-                                    let tallySheetCodes = [TALLY_SHEET_CODE_PE_AI_ED, TALLY_SHEET_CODE_PE_AI_SA,
-                                        TALLY_SHEET_CODE_PE_AI_NL_1, TALLY_SHEET_CODE_PE_AI_NL_2,
-                                        TALLY_SHEET_CODE_PE_AI_1, TALLY_SHEET_CODE_PE_AI_2];
+                                    let tallySheetCodes = [TALLY_SHEET_CODE_PCE_PC_V,
+                                        TALLY_SHEET_CODE_PCE_PC_CD,
+                                        TALLY_SHEET_CODE_PCE_PC_BS_1,
+                                        TALLY_SHEET_CODE_PCE_PC_BS_2,
+                                        TALLY_SHEET_CODE_PCE_PC_SA_1,
+                                        TALLY_SHEET_CODE_PCE_PC_SA_2];
                                     let tallySheetCodeLabels = [
-                                        "All Island Vote Results",
-                                        "All Island Seat Composition",
-                                        "National List Composition",
-                                        "Selected National List Candidates",
-                                        "All Island Results",
-                                        "Parliament Members"
+                                        "Provincial Vote Results",
+                                        "Candidates List",
+                                        "Bonus Seat Allocation 1",
+                                        "Bonus Seat Allocation 2",
+                                        "Seat Allocation 1",
+                                        "Seat Allocation 2",
                                     ];
 
                                     return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
@@ -161,14 +174,14 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PE_27];
-                                    tallySheetCodeLabels = ["CE 201", "PE-27"];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201, TALLY_SHEET_CODE_PCE_35];
+                                    tallySheetCodeLabels = ["CE 201", "PCE-35"];
                                 } else if (voteType === VOTE_TYPE_POSTAL) {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27];
-                                    tallySheetCodeLabels = [`CE 201 PV (${voteType})`, `PE-27 PV (${voteType})`];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PCE_35];
+                                    tallySheetCodeLabels = [`CE 201 PV (${voteType})`, `PCE-35 PV (${voteType})`];
                                 } else {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PE_27];
-                                    tallySheetCodeLabels = [`CE 201 (${voteType})`, `PE-27 (${voteType})`];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_CE_201_PV, TALLY_SHEET_CODE_PCE_35];
+                                    tallySheetCodeLabels = [`CE 201 (${voteType})`, `PCE-35 (${voteType})`];
                                 }
 
                                 return <Grid item xs={12} key={voteTypeIndex}>
@@ -205,14 +218,14 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
-                                    tallySheetCodeLabels = ["PE-4"];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PCE_CE_CO_PR_4];
+                                    tallySheetCodeLabels = ["PCE-CE-RO-PR-4"];
                                 } else if (voteType === VOTE_TYPE_POSTAL) {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
-                                    tallySheetCodeLabels = [`PE-4 PV (${voteType})`];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PCE_CE_CO_PR_4];
+                                    tallySheetCodeLabels = [`PCE-CE-RO-PR-4 PV (${voteType})`];
                                 } else {
-                                    tallySheetCodes = [TALLY_SHEET_CODE_PE_4];
-                                    tallySheetCodeLabels = [`PE-4 (${voteType})`];
+                                    tallySheetCodes = [TALLY_SHEET_CODE_PCE_CE_CO_PR_4];
+                                    tallySheetCodeLabels = [`PCE-CE-RO-PR-4 (${voteType})`];
                                 }
                                 return <Grid item xs={12} key={voteTypeIndex}>
                                     <Grid item xs={12}>
@@ -246,11 +259,11 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
                                     if (voteType === VOTE_TYPE_NON_POSTAL) {
-                                        tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1, TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
-                                        tallySheetCodeLabels = ["PE-CE-RO-V1", "Polling Division Results"];
+                                        tallySheetCodes = [TALLY_SHEET_CODE_PCE_CE_RO_V1, TALLY_SHEET_CODE_PCE_PD_V];
+                                        tallySheetCodeLabels = ["PCE-CE-RO-V1", "Polling Division Results"];
                                     } else {
-                                        tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_V1, TALLY_SHEET_CODE_POLLING_DIVISION_RESULTS];
-                                        tallySheetCodeLabels = [`PE-CE-RO-V1 (${voteType})`, `Polling Division Results (${voteType})`];
+                                        tallySheetCodes = [TALLY_SHEET_CODE_PCE_CE_RO_V1, TALLY_SHEET_CODE_PCE_PD_V];
+                                        tallySheetCodeLabels = [`PCE-CE-RO-V1 (${voteType})`, `Polling Division Results (${voteType})`];
                                     }
 
                                     return <ul className="tally-sheet-code-list" key={voteTypeIndex}>
@@ -271,19 +284,19 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
 
 
                             <ul className="tally-sheet-code-list">
-                                <li>PE-CE-RO-V2
+                                <li>PCE-CE-RO-V2
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_V2, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PCE_CE_RO_V2, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>
                                 </li>
 
-                                <li>PE-R2
+                                <li>PCE-R2
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_R2, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PCE_R2, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>
@@ -304,11 +317,11 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
                                     if (voteType === VOTE_TYPE_NON_POSTAL) {
-                                        tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
-                                        tallySheetCodeLabels = ["PE-CE-RO-PR-1 "];
+                                        tallySheetCodes = [TALLY_SHEET_CODE_PCE_CE_RO_PR_1];
+                                        tallySheetCodeLabels = ["PCE-CE-RO-PR-1 "];
                                     } else {
-                                        tallySheetCodes = [TALLY_SHEET_CODE_PE_CE_RO_PR_1];
-                                        tallySheetCodeLabels = [`PE-CE-RO-PR-1  (${voteType})`];
+                                        tallySheetCodes = [TALLY_SHEET_CODE_PCE_CE_RO_PR_1];
+                                        tallySheetCodeLabels = [`PCE-CE-RO-PR-1  (${voteType})`];
                                     }
 
                                     return <ul className="tally-sheet-code-list" key={voteTypeIndex}>
@@ -329,19 +342,19 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                 })}
                             </Processing>
                             <ul className="tally-sheet-code-list">
-                                <li>PE-CE-RO-PR-2
+                                <li>PCE-CE-RO-PR-2
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_2, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PCE_CE_RO_PR_2, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>
                                 </li>
 
-                                <li>PE-CE-RO-PR-3
+                                <li>PCE-CE-RO-PR-3
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_CE_RO_PR_3, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PCE_CE_RO_PR_3, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>
@@ -357,10 +370,10 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
 
                         <Grid item xs={12}>
                             <ul className="tally-sheet-code-list">
-                                <li>PE-21
+                                <li>PCE-42
                                     <Link
                                         className="tally-sheet-code-list-item btn-list"
-                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PE_21, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
+                                        to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, TALLY_SHEET_CODE_PCE_42, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
                                     >
                                         List
                                     </Link>

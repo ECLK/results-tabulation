@@ -11,7 +11,7 @@ import {isNumeric, processNumericValue} from "../../../../../utils";
 import Processing from "../../../../processing";
 import {useTallySheetEdit} from "../../../../tally-sheet/tally-sheet-edit";
 
-export default function TallySheetEdit_PE_39({history, election, tallySheet}) {
+export default function TallySheetEdit_PCE_34({history, election, tallySheet}) {
     const [rejectionReasonWiseVoteCountRows, setRejectionReasonWiseVoteCountRows] = useState([]);
     const [rejectedVoteCountRow, setRejectedVoteCountRow] = useState({"numValue": 0});
 
