@@ -25,9 +25,21 @@ export default class ExtendedElectionDefault {
         const firstAreaMap = getFirstOrNull(areaMapList);
         if (firstAreaMap) {
             const {
-                countingCentreName = "", pollingDivisionName = "", electoralDistrictName = "", countryName = ""
+                countingCentreName = "",
+                pollingDivisionName = "",
+                electoralDistrictName = "",
+                administrativeDistrictName = "",
+                provinceName = "",
+                countryName = ""
             } = firstAreaMap;
-            Object.assign(tallySheet, {countingCentreName, pollingDivisionName, electoralDistrictName, countryName});
+            Object.assign(tallySheet, {
+                countingCentreName,
+                pollingDivisionName,
+                electoralDistrictName,
+                administrativeDistrictName,
+                provinceName,
+                countryName
+            });
         }
 
         return tallySheet;
