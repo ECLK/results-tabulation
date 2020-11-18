@@ -170,7 +170,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                         <Grid item xs={12}><h2>Data Entry</h2></Grid>
 
                         <Processing showProgress={!ProvinceElections}>
-                            {ProvinceElections !== null && ProvinceElections.map(({voteType, voteTypeIndex}) => {
+                            {ProvinceElections !== null && ProvinceElections.map(({voteType}) => {
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -184,7 +184,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                     tallySheetCodeLabels = [`CE 201 (${voteType})`, `PCE-35 (${voteType})`];
                                 }
 
-                                return <Grid item xs={12} key={voteTypeIndex}>
+                                return <Grid item xs={12} key={voteType}>
                                     <Grid item xs={12}>
                                         <ul className="tally-sheet-code-list">
                                             {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
@@ -214,7 +214,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
 
 
                         <Processing showProgress={!ProvinceElections}>
-                            {ProvinceElections !== null && ProvinceElections.map(({voteType, voteTypeIndex}) => {
+                            {ProvinceElections !== null && ProvinceElections.map(({voteType}) => {
                                 let tallySheetCodes = [];
                                 let tallySheetCodeLabels = [];
                                 if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -227,7 +227,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                     tallySheetCodes = [TALLY_SHEET_CODE_PCE_CE_CO_PR_4];
                                     tallySheetCodeLabels = [`PCE-CE-RO-PR-4 (${voteType})`];
                                 }
-                                return <Grid item xs={12} key={voteTypeIndex}>
+                                return <Grid item xs={12} key={voteType}>
                                     <Grid item xs={12}>
                                         <ul className="tally-sheet-code-list">
                                             {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
@@ -255,7 +255,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                         <Grid item xs={12}>
 
                             <Processing showProgress={!ProvinceElections}>
-                                {ProvinceElections !== null && ProvinceElections.map(({voteType, voteTypeIndex}) => {
+                                {ProvinceElections !== null && ProvinceElections.map(({voteType}) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
                                     if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -266,7 +266,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                         tallySheetCodeLabels = [`PCE-CE-RO-V1 (${voteType})`, `Polling Division Results (${voteType})`];
                                     }
 
-                                    return <ul className="tally-sheet-code-list" key={voteTypeIndex}>
+                                    return <ul className="tally-sheet-code-list" key={voteType}>
                                         {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
                                             return <li
                                                 key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
@@ -313,7 +313,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
 
                         <Grid item xs={12}>
                             <Processing showProgress={!ProvinceElections}>
-                                {ProvinceElections !== null && ProvinceElections.map(({voteType, voteTypeIndex}) => {
+                                {ProvinceElections !== null && ProvinceElections.map(({voteType}) => {
                                     let tallySheetCodes = [];
                                     let tallySheetCodeLabels = [];
                                     if (voteType === VOTE_TYPE_NON_POSTAL) {
@@ -324,7 +324,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                         tallySheetCodeLabels = [`PCE-CE-RO-PR-1  (${voteType})`];
                                     }
 
-                                    return <ul className="tally-sheet-code-list" key={voteTypeIndex}>
+                                    return <ul className="tally-sheet-code-list" key={voteType}>
                                         {tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
                                             return <li
                                                 key={tallySheetCodeIndex}>{tallySheetCodeLabels[tallySheetCodeIndex]}
