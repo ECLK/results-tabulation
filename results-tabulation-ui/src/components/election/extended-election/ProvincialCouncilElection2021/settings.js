@@ -19,6 +19,12 @@ import {
     TALLY_SHEET_CODE_PCE_CE_RO_PR_3,
     TALLY_SHEET_CODE_PCE_PD_V,
     TALLY_SHEET_CODE_PCE_PC_V,
+    TALLY_SHEET_CODE_PCE_PC_CD,
+    TALLY_SHEET_CODE_PCE_PC_BS_1,
+    TALLY_SHEET_CODE_PCE_PC_BS_2,
+    TALLY_SHEET_CODE_PCE_PC_SA_1,
+    TALLY_SHEET_CODE_PCE_PC_SA_2
+
 } from "./TALLY_SHEET_CODE";
 import {
     VOTE_TYPE_DISPLACED,
@@ -119,6 +125,21 @@ export const TALLY_SHEET_LIST_COLUMNS = {
         [VOTE_TYPE_QUARANTINE]: columns_ad_cc_status_actions
     },
     [TALLY_SHEET_CODE_PCE_PC_V]: {
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_province_status_actions
+    },
+    [TALLY_SHEET_CODE_PCE_PC_CD]: {
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_province_status_actions
+    },
+    [TALLY_SHEET_CODE_PCE_PC_BS_1]: {
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_province_status_actions
+    },
+    [TALLY_SHEET_CODE_PCE_PC_BS_2]: {
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_province_status_actions
+    },
+    [TALLY_SHEET_CODE_PCE_PC_SA_1]: {
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_province_status_actions
+    },
+    [TALLY_SHEET_CODE_PCE_PC_SA_2]: {
         [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_province_status_actions
     }
 };
