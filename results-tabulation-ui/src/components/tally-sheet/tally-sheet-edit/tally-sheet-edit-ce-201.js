@@ -117,9 +117,9 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
         }));
 
         const pollingStations = await getAreas({associatedAreaId: tallySheet.areaId, areaType: "PollingStation"});
-        for (var i = 0; i < pollingStations.length; i++) {
+        for (let i = 0; i < pollingStations.length; i++) {
             const _pollingStation = pollingStations[i];
-            const _areaMapList = _pollingStation.areaMapList;
+            const _areaMapList = tallySheet.areaMapList;
 
             if (_areaMapList) {
 
