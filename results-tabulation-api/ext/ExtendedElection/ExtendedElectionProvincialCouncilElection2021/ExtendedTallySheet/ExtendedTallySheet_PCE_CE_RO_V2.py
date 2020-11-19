@@ -11,14 +11,14 @@ class ExtendedTallySheet_PCE_CE_RO_V2(ExtendedTallySheetReport):
         pd_code = None
         pd_name = None
 
-        electoral_district = self.tallySheet.area
-        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
+        administrative_district = self.tallySheet.area
+        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', administrative_district.areaName)
         ed_code = ed_name_regex_search.group(1)
         ed_name = ed_name_regex_search.group(2)
 
         result_type = "RE_V"
         result_code = ed_code
-        result_level = "ELECTORAL-DISTRICT"
+        result_level = "ADMINISTRATIVE-DISTRICT"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
@@ -86,7 +86,7 @@ class ExtendedTallySheet_PCE_CE_RO_V2(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "signatures": signatures,
-                "electoralDistrict": tallySheetVersion.tallySheet.area.areaName,
+                "administrativeDistrict": tallySheetVersion.tallySheet.area.areaName,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],
@@ -175,7 +175,7 @@ class ExtendedTallySheet_PCE_CE_RO_V2(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "CE/RO/V/2",
-                "electoralDistrict": tallySheetVersion.tallySheet.area.areaName,
+                "administrativeDistrict": tallySheetVersion.tallySheet.area.areaName,
                 "nonPostalVoteTypes": non_postal_vote_types,
                 "data": [],
                 "pollingDivisions": [],

@@ -37,8 +37,8 @@ class ExtendedTallySheet_PCE_PD_V(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "PCE-PD-V",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "data": [],
                 "totalValidVoteCount": '',

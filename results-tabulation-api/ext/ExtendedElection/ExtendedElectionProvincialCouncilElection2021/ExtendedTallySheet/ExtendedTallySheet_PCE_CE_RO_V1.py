@@ -14,16 +14,16 @@ class ExtendedTallySheet_PCE_CE_RO_V1(ExtendedTallySheetReport):
     def on_get_release_result_params(self):
         if self.tallySheet.election.voteType == NonPostal:
             polling_division = self.tallySheet.area
-            electoral_district = Area.get_associated_areas(polling_division, AreaTypeEnum.ElectoralDistrict)[0]
+            administrative_district = Area.get_associated_areas(polling_division, AreaTypeEnum.AdministrativeDistrict)[0]
             pd_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', polling_division.areaName)
             pd_code = pd_name_regex_search.group(1)
             pd_name = pd_name_regex_search.group(2)
         else:
-            electoral_district = self.tallySheet.area
+            administrative_district = self.tallySheet.area
             pd_code = "%sV" % self.tallySheet.election.voteType[0]
             pd_name = self.tallySheet.election.voteType
 
-        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
+        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', administrative_district.areaName)
         ed_code = ed_name_regex_search.group(1)
         ed_name = ed_name_regex_search.group(2)
 
@@ -104,8 +104,8 @@ class ExtendedTallySheet_PCE_CE_RO_V1(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "signatures": signatures,
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
@@ -188,8 +188,8 @@ class ExtendedTallySheet_PCE_CE_RO_V1(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "CE/RO/V1",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "data": [],
                 "countingCentres": [],

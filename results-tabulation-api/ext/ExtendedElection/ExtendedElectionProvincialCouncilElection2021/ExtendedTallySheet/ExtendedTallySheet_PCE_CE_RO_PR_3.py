@@ -27,8 +27,8 @@ class ExtendedTallySheet_PCE_CE_RO_PR_3(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "CE/RO/PR/1",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "partyName": candidate_wise_valid_vote_count_result["partyName"].values[0],
                 "data": []
             }

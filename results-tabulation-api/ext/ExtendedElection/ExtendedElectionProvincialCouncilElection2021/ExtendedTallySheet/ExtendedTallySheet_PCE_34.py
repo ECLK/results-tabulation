@@ -36,8 +36,8 @@ class ExtendedTallySheet_PCE_34(ExtendedTallySheetDataEntry):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "PCE-39",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "countingCentre": tallySheetVersion.tallySheet.area.areaName,
                 "data": [],

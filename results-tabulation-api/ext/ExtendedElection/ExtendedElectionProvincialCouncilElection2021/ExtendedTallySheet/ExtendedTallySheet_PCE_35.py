@@ -35,8 +35,8 @@ class ExtendedTallySheet_PCE_35(ExtendedTallySheetDataEntry):
                     "barcodeString": stamp.barcodeString
                 },
                 "title": "PRESIDENTIAL ELECTION ACT NO. 15 OF 1981",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "countingCentre": tallySheetVersion.tallySheet.area.areaName,
                 "pollingDistrictNos": ", ".join([

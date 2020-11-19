@@ -40,14 +40,14 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
         pd_code = None
         pd_name = None
 
-        electoral_district = self.tallySheet.area
-        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', electoral_district.areaName)
+        administrative_district = self.tallySheet.area
+        ed_name_regex_search = re.match('([0-9a-zA-Z]*) *- *(.*)', administrative_district.areaName)
         ed_code = ed_name_regex_search.group(1)
         ed_name = ed_name_regex_search.group(2)
 
         result_type = "RE_S"
         result_code = ed_code
-        result_level = "ELECTORAL-DISTRICT"
+        result_level = "ADMINISTRATIVE-DISTRICT"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
@@ -274,10 +274,10 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "PE/R2",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
-                "electoralDistrictId": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
+                "administrativeDistrictId": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaId,
                 "data": [],
                 "rejectedVoteCounts": [],
                 "totalVoteCounts": to_comma_seperated_num(total_valid_vote_count),
@@ -377,8 +377,8 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "signatures": signatures,
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "data": [],
                 "validVoteCounts": [0, "0%"],
                 "rejectedVoteCounts": [0, "0%"],

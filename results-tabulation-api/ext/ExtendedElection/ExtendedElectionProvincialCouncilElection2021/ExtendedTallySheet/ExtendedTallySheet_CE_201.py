@@ -43,8 +43,8 @@ class ExtendedTallySheet_CE_201(ExtendedTallySheetDataEntry):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "CE-201",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "countingCentre": tallySheetVersion.tallySheet.area.areaName,
                 "parliamentaryElection": 1,

@@ -45,8 +45,8 @@ class ExtendedTallySheet_CE_201_PV(ExtendedTallySheetDataEntry):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "CE-201-PV",
-                "electoralDistrict": Area.get_associated_areas(
-                    tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
+                "administrativeDistrict": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
                 "countingCentre": tallySheetVersion.tallySheet.area.areaName,
                 "timeOfCommencementOfCount": time_of_commencement["strValue"].values[0],

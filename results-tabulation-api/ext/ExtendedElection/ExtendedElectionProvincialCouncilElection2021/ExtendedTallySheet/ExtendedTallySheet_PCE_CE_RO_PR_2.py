@@ -41,7 +41,7 @@ class ExtendedTallySheet_PCE_CE_RO_PR_2(ExtendedTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "CE/RO/PR/2",
-                "electoralDistrict": tallySheetVersion.tallySheet.area.areaName,
+                "administrativeDistrict": tallySheetVersion.tallySheet.area.areaName,
                 "nonPostalVoteTypes": non_postal_vote_types,
                 "partyName": candidate_and_area_wise_valid_non_postal_vote_count_result["partyName"].values[0],
                 "data": [],
