@@ -1,0 +1,491 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<style>
+.print-party-width {
+    width: 300px;
+}
+
+@media print {
+    @page {
+        size: 840mm	594mm;
+    }
+    .print-heading {
+        font-size: 20px;
+    }
+    .print-gap {
+        margin-right: 200px !important;
+    }
+    .print-party-width {
+        width: initial;
+        min-width: 300px !important;
+    }
+}
+</style>
+<div class="font1 pre-30-ed">
+    <table class="table table-borderless">
+        <tbody>
+          <tr>
+              <td style="width:50px;"></td>
+              <td class="bold no-padding print-heading" style="line-height:initial; width:500px;">
+                  {{content.election.electionName}}
+                  <br/><span style="font-size:10px;">RETURNING OFFICER'S STATEMENTOF THE TOTAL NUMBER OF VOTES POLLED BY EACH PARTY/ INDEPENDENT GROUP FOR THE ELECTOTRAL DISTRICT</span>
+              </td>
+              <td class="bold no-padding-bottom no-padding-top" style="text-align:center; vertical-align:bottom; text-decoration:underline; white-space:nowrap;">Administrative District of No. {{content.administrativeDistrict}}</td>
+              <td class="no-padding" style="vertical-align:bottom;">
+                  <div class="all float-right"><h1 class="bold">CE/RO/V/2</h1></div>
+              </td>
+          </tr>
+          <tr>
+              <td style="width:50px;"></td>
+              <td class="no-padding" colspan="3">
+                  <i style="font-size:12px;">Total Number of votes polled by each contesting Party/ Independent Group is as follows:</i>
+              </td>
+          </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-borderless" style="table-layout:fixed;">
+        <tr style="text-align:center;">
+            <td rowspan="2" class="right" style="border-right: 1px solid #000 !important; width:40px;"></td>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left print-party-width" rowspan="2" style="vertical-align: middle;">
+                Political Party/ Independent Group
+            </th>
+            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align: middle; width:{{content.pollingDivisions|length * 80}}px;">
+                Polling Division
+
+                {% for nonPostalVoteType in content.nonPostalVoteTypes %}
+                / {{nonPostalVoteType}} Votes
+                {% endfor %}
+            </th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Total</th>
+        </tr>
+        <tr style="text-align:center;" class="ed">
+
+            {% for pollingDivision in content.pollingDivisions %}
+            <th class="left right top bottom"><div>{{pollingDivision}}</div></th>
+            {% endfor %}
+        </tr>
+
+        {% for row in content.data %}
+        <tr>
+            {% for cell in row %}
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{cell}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td colspan="2"></td>
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                <i>Valid Votes</i>
+            </th>
+            {% for validVoteCount in content.validVoteCounts %}
+            <td class="left right top bottom text-right {%if validVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{validVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                <i>Rejected Votes</i>
+            </th>
+            {% for rejectedVoteCount in content.rejectedVoteCounts %}
+            <td class="left right top bottom text-right {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{rejectedVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                <i>Votes Polled</i>
+            </th>
+            {% for totalVoteCount in content.totalVoteCounts %}
+            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{totalVoteCount}}</td>
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-borderless" style="page-break-before: always;">
+    <tr>
+        <td></td>
+        <td style="vertical-align:bottom; text-align:center;" colspan="2"><b>The entitlement of membership of each Party/ Independent Group is:</b> <br/> <u>Name of Part/ Independent Group</u></td>
+        <td style="vertical-align:bottom; text-align:center;"><u>No. of Members</u></td>
+        <td rowspan="6" class="no-padding-left no-padding-right">
+          <div class="group">
+              <div class="block1 all" style="width:100%;">
+                  <div class="sect1 print-gap">
+                      <span class="sub-head"><b>Prepared by:</b></span><br/><br/>
+                      <span>Signature .......................</span><br/><br/>
+                      <span>Name ..........................</span><br/><br/>
+                      <span>Designation ........................</span>
+                  </div>
+                  <div class="sect2">
+                      <span class="sub-head"><b>Checked by:</b></span><br/><br/>
+                      <span class="indent">Signature .......................</span><br/><br/>
+                      <span class="indent">Name ..........................</span><br/><br/>
+                      <span class="indent">Designation ........................</span>
+                  </div>
+              </div>
+          </div>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+        <td class="no-padding-left no-padding-right" rowspan="5">
+          <div class="group all block">
+              <span class="sub-head"><b>Witness by Assistant Returning Officer</b></span><br/><br/>
+              <span>Name .....................................</span><br/><br/>
+              <span>Signature .....................................</span>
+          </div>
+        <td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="2" class="no-padding-top no-padding-bottom" style="text-align:center;">....................................................................................................................</td>
+        <td class="no-padding-top no-padding-bottom" style="text-align:center;">..........................................................</u></td>
+    </tr>
+    <tr>
+        <td colspan="5"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><u>Name</u></td>
+        <td><u>Party/ Independent Group represented</u></td>
+        <td><u>Signature</u></td>
+        <td rowspan="8" class="no-padding-left no-padding-right">
+          <div class="group">
+              <div>
+                  Time .....................................<br/>
+                  Date .....................................
+              </div>
+              <div class="all" style="margin-left:20px; padding-left:10px; padding-right:10px;">
+                  <br/><br/><br/><br/>
+                  .....................................<br/>
+                  <span class="bold">Returning Officer</span><br/></br/>
+              </div>
+          </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">1</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">2</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">3</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">4</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">5</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">6</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">7</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">8</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">9</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">10</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">11</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">12</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">13</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">14</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">15</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">16</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">17</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">18</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">19</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">20</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">21</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">22</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">23</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">24</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">25</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">26</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">27</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">28</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">29</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">30</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">31</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">32</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">33</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">34</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">35</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">36</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">37</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">38</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">39</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="no-padding-top no-padding-bottom no-padding-right">40</td>
+        <td class="no-padding-top no-padding-bottom no-padding-left">.....................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td class="no-padding-top no-padding-bottom">..........................................................................</td>
+        <td></td>
+    </tr>
+</table>
+
+
+</div>
+{% endblock %}

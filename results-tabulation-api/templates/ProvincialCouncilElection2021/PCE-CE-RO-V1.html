@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<style>
+.print-party-width {
+    width: 300px;
+}
+
+@media print {
+    @page {
+        size: 1100mm	777.8mm;
+    }
+    .print-heading {
+        font-size: 25px;
+    }
+    .print-group {
+        width: 600px !important;
+    }
+    .print-party-width {
+        width: initial;
+        min-width: 300px !important;
+    }
+}
+</style>
+<div class="font1 pre-30-ed">
+    <div class="bottom" style="margin-bottom:5px;"></div>
+
+    <table class="table table-borderless">
+        <tbody>
+          <tr>
+              <td style="width:50px;"></td>
+              <td class="bold no-padding-left no-padding-right print-heading" colspan="3">
+                  {{content.election.electionName}}
+                  <br/>First Summary of Votes polled by each Political Party/ Independent Group per Counting Centre/ Postal Votes Counting Centre
+              </td>
+              <td class="no-padding-left no-padding-right" colspan="2">
+                  <div class="all float-right"><h1 class="bold">CE/RO/V1</h1></div>
+              </td>
+          </tr>
+          <tr>
+              <td style="width:50px;"></td>
+              <td class="bold no-padding-left no-padding-right" colspan="3">
+                  <div class="all bold" style="width: fit-content; padding: 5px;">
+                      Administrative District : <span class="bold" style="text-transform: uppercase;">{{content.administrativeDistrict}}</span>
+                  </div>
+              </td>
+              <td class="no-padding-left no-padding-right" colspan="2">
+                  <div style="float:right; display:flex;">
+                      <div class="all" style="width: fit-content; padding: 5px; display:inline;">
+                          <span class="bold">Polling Division :</span>
+                      </div>
+                      <div class="all" style="width: fit-content; padding: 5px; display:inline; background-color: #ccc;">
+                          <span class="bold" style="text-transform: uppercase;">{{content.pollingDivision}}</span>
+                      </div>
+                  </div>
+              </td>
+          </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-borderless" style="table-layout:fixed;">
+        <tr style="text-align:center;">
+            <td rowspan="2" class="right" style="border-right: 1px solid #000 !important; width:40px;"></td>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left print-party-width" rowspan="2" style="vertical-align: middle;">
+                Political Party/ Independent Group
+            </th>
+            <th class="left right top bottom" colspan="{{content.countingCentres|length}}" style="vertical-align: middle; width:{{content.countingCentres|length * 80}}px;">
+                Counting Centre Nos.
+            </th>
+            <th class="left right top bottom" rowspan="2" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Total</th>
+        </tr>
+        <tr style="text-align:center;">
+
+            {% for countingCentre in content.countingCentres %}
+            <th class="left right top bottom" style="padding-left:0; padding-right:0;"><div>{{countingCentre}}</div></th>
+            {% endfor %}
+        </tr>
+
+        {% for row in content.data %}
+        <tr>
+            {% for cell in row %}
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{cell}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+
+        <!-- <tr>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+            <td class="all">1</td>
+
+        </tr> -->
+
+        <tr>
+            <td colspan="2"></td>
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                No. of Valid Votes
+            </th>
+            {% for validVoteCount in content.validVoteCounts %}
+            <td class="left right top bottom text-right {%if validVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{validVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                No. of Rejected Votes
+            </th>
+            {% for rejectedVoteCount in content.rejectedVoteCounts %}
+            <td class="left right top bottom text-right {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{rejectedVoteCount}}</td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            <th colspan="2" class="text-right">
+                Total No. of Votes Polled <br/>
+                <small>(Including Rejected)</small>
+            </th>
+            {% for totalVoteCount in content.totalVoteCounts %}
+            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{totalVoteCount}}</td>
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-borderless">
+    <tbody>
+        <tr>
+            <td></td>
+            <td colspan="2">
+                <div class="group">
+                    <div class="block1 all">
+                        <div class="sect1 print-group">
+                            <span class="sub-head">Prepared by:</span><br/><br/>
+                            <span>Signature .......................</span><br/><br/>
+                            <span>Name ..........................</span><br/><br/>
+                            <span>Designation ........................</span>
+                        </div>
+                        <div class="sect2">
+                            <span class="sub-head print-group">Checked by:</span><br/><br/>
+                            <span class="indent">Signature .......................</span><br/><br/>
+                            <span class="indent">Name ..........................</span><br/><br/>
+                            <span class="indent">Designation ........................</span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td colspan="2" style="vertical-align: bottom;">
+                <div class="group">
+                    <div>
+                        Time .....................................<br/><br/>
+                        Date .....................................
+                    </div>
+                    <div style="margin-left:20px;">
+                        .....................................<br/><br/>
+                        <span class="bold">Returning Officer</span><br/></br/>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}

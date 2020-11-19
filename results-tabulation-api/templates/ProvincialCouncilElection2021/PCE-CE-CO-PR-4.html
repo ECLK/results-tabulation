@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="font1 pre-41">
+
+    <table class="table table-borderless">
+        <tbody>
+          <tr>
+              <td style="width:50px;"></td>
+              <td class="bold no-padding-left no-padding-right"></td>
+              <td class="no-padding-left no-padding-right" style="width:100px;">
+                  <div class="all float-right"><h1 class="bold">CE-CO-PR/4</h1></div>
+              </td>
+          </tr>
+          <tr>
+              <td style="width:50px;"></td>
+              <td class="bold no-padding-left no-padding-right" style="text-align:center;">{{content.election.electionName}}</td>
+              <td class="no-padding-left no-padding-right" style="width:100px;"></td>
+          </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-borderless">
+        <tbody>
+          <tr>
+              <td class="no-padding">
+                <div class="group" style="width:100%">
+                  <div class="all" style="vertical-align:top; width:45%; padding-top:1rem; padding-left:1rem;">
+                    <p>Polling Division <span class="dotted-line">{{content.pollingDivision}}</span></p>
+
+                    <p>Counting Hall No. <span class="all" style="padding:5px";>{{content.countingCentre}}</span></p>
+                  </div>
+
+                  <div style="vertical-align:top;width:10%;">&nbsp;</div>
+
+                  <div class="all" style="vertical-align:top; width:45%; padding-top:1rem; padding-left:1rem;">
+                    <p>Electorial District <span class="dotted-line">{{content.administrativeDistrict}}</span></p>
+
+                    <p>Name of the Political Party / Independent Group <span class="dotted-line">{{content.partyName}}</span></p>
+                  </div>
+                </div>
+              </td>
+          </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-borderless" style="table-layout:fixed;">
+        <tr style="text-align:center;">
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2" style="width:100px; vertical-align: middle;">
+                Candidate Id.
+            </th>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="1" colspan="2" style="width:300px; vertical-align: middle;">
+                Number of Votes
+            </th>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="2" style="width:100px; vertical-align: middle;">
+                Candidate Id.
+            </th>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" rowspan="1" colspan="2" style="width:300px; vertical-align: middle;">
+                Number of Votes
+            </th>
+        </tr>
+        <tr style="text-align:center;">
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" style="vertical-align: middle;">
+                In Words
+            </th>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" style="vertical-align: middle;">
+                In Figures
+            </th>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" style="vertical-align: middle;">
+                In Words
+            </th>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" style="vertical-align: middle;">
+                In Figures
+            </th>
+        </tr>
+
+
+        {% for row in content.data1 %}
+        <tr>
+          {% set count = loop.index-1 %}
+
+          <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[0]}}</td>
+          <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[1]}}</td>
+          <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[2]}}</td>
+
+          {% if content.data2[count] %}
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{content.data2[count][0]}}</td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{content.data2[count][1]}}</td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{content.data2[count][2]}}</td>
+          {% else %}
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;"></td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;"></td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;"></td>
+          {% endif %}
+
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td colspan="6"></td>
+        </tr>
+
+        <tr>
+            <td class="no-padding-left all" colspan="6">
+              <div class="group" style="width:100%">
+                <div style="vertical-align:top; width:49%; padding-top:1rem; padding-left:1rem;">
+                  <p>Copied by : Signature : ........................................</p>
+                  <p>Checked by : Signature : ........................................</p>
+                  <p>Re-Checked by : Signature : ........................................</p>
+                </div>
+
+                <div style="vertical-align:top;width:2%%;">&nbsp;</div>
+
+                <div style="vertical-align:top; width:49%; padding-top:1rem; padding-left:1rem;">
+                  <p>Name : ........................................</p>
+                  <p>Name : ........................................</p>
+                  <p>Name : ........................................</p>
+                </div>
+              </div>
+            </td>
+        </tr>
+
+
+    </tbody>
+</table>
+
+
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="font1 pre-30-ed">
+    <div class="bottom" style="margin-bottom:5px;"></div>
+
+    <table class="table table-borderless">
+        <tbody>
+          <tr>
+              <td style="width:50px;"></td>
+              <td class="no-padding-left no-padding-right" colspan="3">
+                  <span class="bold">{{content.election.electionName}}</span>
+                  <br/>The Approval from Commissioner of Elections to issue the <br/>
+                  Results of Polling Division -
+              </td>
+              <td class="no-padding-left no-padding-right" colspan="2">
+                  <div class="all float-right" style="text-align:center; width:200px;">
+                    <h1 class="bold">{{content.tallySheetCode}}</h1>
+                    <span class="bold" style="text-transform: uppercase;">{{content.pollingDivision}}</span>
+                  </div>
+              </td>
+          </tr>
+          <tr>
+              <td style="width:50px;"></td>
+              <td class="bold no-padding" style="text-transform: uppercase;" colspan="3">
+                  Administrative District of <u>{{content.administrativeDistrict}}</u>
+              </td>
+              <td class="no-padding-left no-padding-right" colspan="2"></td>
+          </tr>
+          <tr>
+              <td style="width:50px;"></td>
+              <td class="no-padding-left no-padding-right" style="text-align:justify;"colspan="5">
+                  Your approval is sought to release the following results in accordance
+                  with the reports received from all the Counting Centers regarding the number
+                  of votes polled by each contesting Party and Group in respect of above Polling
+                  Division. Further I have to inform that the poll at none of the polling stations
+                  has been annulled.
+              </td>
+          </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-borderless" style="table-layout:fixed;">
+        <tr style="text-align:center;">
+            <td class="right" style="border-right: 1px solid #000 !important; width:20px;"></td>
+            <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left" style="width:200px; vertical-align: middle;">
+                Name of the Political Party / Independent Group*
+            </th>
+            <th class="left right top bottom" style="vertical-align: middle; padding-left:0; padding-right:0;width:80px;">Votes Obtained</th>
+        </tr>
+
+        {% for row in content.data %}
+        <tr>
+            <td class="left right top bottom text-right" style="vertical-align: middle; padding-left:initial;">{{row[0]}}</td>
+            <td class="left right top bottom text-left" style="vertical-align: middle; padding-left:20px;">{{row[1]}}</td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[2]}}</td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td></td>
+            <td class="text-right"><i>Total Votes</i></td>
+            <td class="left right top bottom text-right {%if validVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{content.validVoteCount}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="text-right"><i>Rejected Votes</i></td>
+            <td class="left right top bottom text-right {%if rejectedVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{content.rejectedVoteCount}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="text-right"><i>Total Poll</i></td>
+            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align: middle;">{{content.totalVoteCount}}</td>
+        </tr>
+    </tbody>
+</table>
+<br/>
+<table class="table table-borderless" style="table-layout:fixed;">
+    <tbody>
+      <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>
+              <span style="text-align:left;">............................................</span><br/>
+              <span class="bold" style="text-align:left;">Returning Officer</span><br/>
+              <span class="bold" style="text-transform:uppercase; text-align:left;">{{content.administrativeDistrict}}</span> <b>Administrative District</b><br/>
+              <span style="text-align:left;">Official Form</span><br/>
+          </td>
+      </tr>
+      <tr>
+          <td colspan="3" class="no-padding-left no-padding-right">
+            <span>Date:- ........................</span><br/>
+            <span>Time:- ........................</span><br/>
+            <span class="bold" style="font-size: 14px;"><i>* Number of votes obtained according to the Descending Order</i></span>
+          </td>
+          <td></td>
+      </tr>
+    </tbody>
+</table>
+
+<table class="table table-borderless">
+    <tbody>
+      <tr>
+          <td colspan="3" class="top no-padding">The release of the results in accordance with the above Report is approved.</td>
+      </tr>
+      <tr>
+          <td class="no-padding" width="70px"><i><u>Remarks : </u></i></td>
+          <td class="no-padding" width="200px"></td>
+          <td class="no-padding"></td>
+      </tr>
+      <tr>
+          <td class="no-padding"></td>
+          <td class="no-padding">
+              ............................................................................................................................................<br/>
+              ............................................................................................................................................<br/>
+              ............................................................................................................................................<br/>
+          </td>
+          <td class="no-padding"></td>
+      </tr>
+      <tr>
+          <td class="no-padding"></td>
+          <td class="no-padding"></td>
+          <td class="bold no-padding">
+            MAHINDA DESHAPRIYA<br/> 
+            Commissioner of Election
+          </td>
+      </tr>
+    </tbody>
+</table>
+</div>
+{% endblock %}

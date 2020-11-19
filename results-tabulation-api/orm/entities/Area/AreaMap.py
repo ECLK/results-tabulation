@@ -13,6 +13,8 @@ class AreaMapModel(db.Model):
     pollingDistrictId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
     pollingDivisionId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
     electoralDistrictId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
+    administrativeDistrictId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
+    provinceId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
     countryId = db.Column(db.Integer, db.ForeignKey("area.areaId"), nullable=True)
 
     def __init__(
@@ -26,6 +28,8 @@ class AreaMapModel(db.Model):
             pollingDistrictId=None,
             pollingDivisionId=None,
             electoralDistrictId=None,
+            administrativeDistrictId=None,
+            provinceId=None,
             countryId=None
     ):
         super(AreaMapModel, self).__init__(
@@ -38,6 +42,8 @@ class AreaMapModel(db.Model):
             pollingDistrictId=pollingDistrictId,
             pollingDivisionId=pollingDivisionId,
             electoralDistrictId=electoralDistrictId,
+            administrativeDistrictId=administrativeDistrictId,
+            provinceId=provinceId,
             countryId=countryId
         )
         db.session.add(self)
@@ -57,6 +63,8 @@ def create(
         pollingDistrictId=None,
         pollingDivisionId=None,
         electoralDistrictId=None,
+        administrativeDistrictId=None,
+        provinceId=None,
         countryId=None
 ):
     election = Model(
@@ -69,6 +77,8 @@ def create(
         pollingDistrictId=pollingDistrictId,
         pollingDivisionId=pollingDivisionId,
         electoralDistrictId=electoralDistrictId,
+        administrativeDistrictId=administrativeDistrictId,
+        provinceId=provinceId,
         countryId=countryId
     )
 

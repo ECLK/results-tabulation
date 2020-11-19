@@ -33,7 +33,7 @@ export function TallySheetProvider(props) {
         if (!state.filteredAreaMap[areaId]) {
             const electionAreaMap = await electionContext.getElectionAreaMap(tallySheet.electionId);
             state.filteredAreaMap[areaId] = electionAreaMap.filter((areaMap) => {
-                return areaMap["countryId"] === areaId || areaMap["electoralDistrictId"] === areaId || areaMap["pollingDivisionId"] === areaId || areaMap["countingCentreId"] === areaId || areaMap["countryId"] === areaId;
+                return areaMap["countryId"] === areaId || areaMap["provinceId"] === areaId || areaMap["administrativeDistrictId"] === areaId || areaMap["electoralDistrictId"] === areaId || areaMap["pollingDistrictId"] === areaId || areaMap["pollingDivisionId"] === areaId || areaMap["pollingStationId"] === areaId  || areaMap["countingCentreId"] === areaId || areaMap["countryId"] === areaId;
             });
             setState({
                 ...state,

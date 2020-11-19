@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<div class="pre-41">
+    <table class="table table-borderless font1">
+        <tbody>
+        <tr>
+            <td colspan="5" class="right no-padding-top no-padding-bottom no-padding-left bold">
+                <div class="group">
+                    <div><i class="fas fa-caret-right"></i></div>
+                    <div><i>Begin of Sheet</i></div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="top-thick"></td>
+            <td class="top-thick bold no-padding-left" colspan="2">
+              {{content.election.electionName}}<br/>
+              Written Statement of the Counting Officer on the Number of Votes
+              given to each Recognized Political Party / Independent Group under <br/>
+              Section 53(7) of Parliamentary Election Act, No. 1 of 1981
+            </td>
+            <td align="right" class="right top-thick bottom no-padding-bottom" colspan="2">
+                <div class="all float-right" style="padding:5px;"><h1 class="bold">PCE-35</h1></div>
+            </td>
+            <td class="top-thick" colspan="2"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="all no-padding" style="text-align:center;" colspan="4">
+                <h1 class="bold">Administrative District - <span style="text-transform: uppercase;">
+                  {{content.administrativeDistrict}}</span></h1>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="all bold" colspan="4">
+                Polling Division / Postal Votes : <span style="text-decoration-line: underline;text-decoration-style: dotted;">{{content.pollingDivision}}</span></h1>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="no-padding" colspan="3">
+                <span class="bold">Polling District Nos.</span>
+                <span class="dotted-line">{{content.pollingDistrictNos}}</span>
+            </td>
+            <td class="right" rowspan="2">
+                <div class="all" style="text-align:center;">
+                  <h1>{{content.countingCentre}}</h1>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="no-padding" colspan="2">
+                <span class="bold">Place of Counting : </span><span style="text-decoration-line: underline;text-decoration-style: dotted;">xxxx</span></h1>
+            </td>
+            <td class="no-padding bold" style="text-align:right;">
+                Counting Center No.
+            </td>
+        </tr>
+
+
+        <tr class="bold right">
+            <th class="right bottom" style="text-align: center; vertical-align:middle;" rowspan="2">
+                &nbsp;
+            </th>
+            <th class="left right top bottom no-padding" style="text-align: center; vertical-align:middle;"rowspan="2">
+                Name of the Political Party / Independent Group
+            </th>
+            <th class="left right top bottom no-padding" style="text-align: center; vertical-align:middle;" rowspan="2">
+                Symbol
+            </th>
+            <th class="left right top bottom no-padding" style="text-align: center; vertical-align:middle;" colspan="2">
+                Number of Votes Polled
+            </th>
+            <th class="left right top bottom" style="text-align: center; vertical-align:middle;" rowspan="2">
+                Name of Agent
+            </th>
+            <th class="left right top bottom" style="text-align: center; vertical-align:middle;" rowspan="2">
+                Signature
+            </th>
+        </tr>
+        <tr class="bold right">
+            <th class="left right top bottom no-padding" style="text-align: center; vertical-align:middle;">
+                In Words (Block Letters)
+            </th>
+            <th class="left right top bottom no-padding" style="text-align: center; vertical-align:middle;">
+                In Figures
+            </th>
+        </tr>
+        {% for row in content.data %}
+        <tr>
+            <td class="left right top bottom {%if row[0]=="" %}missing-value{% endif %}" style="text-align:right">{{row[0]}}</td>
+            <td class="left right top bottom {%if row[1]=="" %}missing-value{% endif %}">{{row[1]}}</td>
+            <td class="left right top bottom {%if row[2]=="" %}missing-value{% endif %}">{{row[2]}}</td>
+            <td class="left right top bottom" style="text-transform: capitalize;">{{row[3]}}</td>
+            <td class="left right top bottom {%if row[4]=="" %}missing-value{% endif %}" style="text-align:right">{{row[4]}}</td>
+            <td class="left right top bottom">{{row[5]}}</td>
+            <td class="left right top bottom"></td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3" align="right"></td>
+            <td align="right" class="font1 bold left right top bottom">Total Votes</td>
+            <td class="left right top bottom {%if content.total=="" %}missing-value{% endif %}" style="text-align:right">{{content.total}}</td>
+        </tr>
+        <tr>
+            <td colspan="3" align="right"></td>
+            <td align="right" class="font1 bold left right top bottom">Rejected Votes
+            </td>
+            <td class="left right top bottom {%if content.rejectedVotes =="" %}missing-value{% endif %}" style="text-align:right">{{content.rejectedVotes}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2" class="bold no-padding-left" style="vertical-align:bottom;"><u>Witness AROO</u></td>
+            <td align="right" class="font1 bold left right top bottom">Polled Votes</td>
+            <td class="left right top bottom {%if content.grandTotal =="" %}missing-value{% endif %}" style="text-align:right">{{content.grandTotal}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2" class="bold no-padding">Name</td>
+            <td class="bold no-padding">Designation</td>
+            <td class="bold no-padding right">Signature</td>
+        </tr>
+        <tr>
+            <td class="bold no-padding-top no-padding-bottom" align="right">1.</td>
+            <td colspan="2" class="bold no-padding">...................................</td>
+            <td class="bold no-padding-top no-padding-bottom">...................................</td>
+            <td class="bold no-padding-top no-padding-bottom right">...................................</td>
+        </tr>
+        <tr>
+            <td class="bold  no-padding-top no-padding-bottom" align="right">2.</td>
+            <td colspan="2" class="bold no-padding">...................................</td>
+            <td class="bold no-padding-top no-padding-bottom">...................................</td>
+            <td class="bold no-padding-top no-padding-bottom right">...................................</td>
+        </tr>
+
+        <tr>
+            <td colspan="5" class="right">
+                <div class="all">
+                    <p class="bold" style="margin-left:5px;">Returning Officer, <span style="text-transform: uppercase;">
+                      {{content.administrativeDistrict}}</span> District</p>
+
+                    <p class="bold" style="margin-left:5px;">*The ballot boxes of the following Polling Districts were not opened in view of the directions given under Section 48A of the Parliamentary Elections Act No. 1 of 1981</p>
+
+                    <p class="bold" style="margin-left:20px;"><i>No. of Polling Districts - </i></p>
+                    <p class="bold" style="margin-left:30px;">...................................................</p>
+
+                    <p class="bold" style="margin-left:5px;">*The ballot boxes of the following Polling Districts were not received by me.</p>
+
+                    <p class="bold" style="margin-left:20px;"><i>No. of Polling Districts - </i></p>
+                    <p class="bold" style="margin-left:30px;">...................................................</p>
+
+                    <table class="table table-borderless bold" style="margin-left:20px;">
+                      <tbody>
+                        <tr>
+                          <td style="vertical-align:top;" class="no-padding">Date : ...................................</td>
+                          <td style="vertical-align:top;text-align:center;" class="no-padding">....................................<br/>Signature of Counting Officer</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <p style="margin-left:5px;"><i>*Delete if not applicable</i></p>
+                <div>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="5" class="right">
+              <div class="group">
+                <div class="all" style="vertical-align:top; padding:5px; width:25%;">
+                    <p><i>Before submission of this form to the Commissioner of Elections the Signature and the Official Frank of the Returning Officer should be placed here.</i></p>
+                </div>
+
+                <div style="vertical-align:top;">&nbsp;</div>
+
+                <div class="all bold">
+                    <p style="margin-left:5px;">Certified Correct,</p>
+                    <p style="text-align:center;">........................................</br>Signature of Counting Officer</p>
+
+                    <table class="table table-borderless bold" style="margin-left:5px;">
+                      <tbody>
+                        <tr>
+                          <td>Name : .......................................</td>
+                          <td>Designation : .......................................</td>
+                        </tr>
+                        <tr>
+                          <td>Date : ........................</td>
+                          <td>Time : ........................</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                <div>
+              </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="5" class="bottom-thick right"></td>
+            <td colspan="2" class="bottom-thick"></td>
+        </tr>
+        <tr>
+            <td colspan="5" style="padding-right: 50px;" class="bold no-padding-top no-padding-bottom right">
+                <div class="group" style="float: right;">
+                    <div><i>End of Page</i></div>
+                    <div><i class="fas fa-caret-left"></i></div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

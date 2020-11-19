@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block container %}
+    <style>
+
+        @media print {
+            @page {
+                size: A4 portrait;
+            }
+        }
+
+        * {
+            font-family: "Lucida Console", Courier, monospace;
+        }
+
+        .table td, .table th {
+            padding: 3px;
+            font-size: 13px;
+            color: black;
+            font-weight: 400;
+            border-color: black;
+        }
+
+        .table th {
+            font-weight: 800;
+        }
+
+        .group div {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .group div span {
+            text-align: center;
+        }
+    </style>
+
+    <div style="padding-left: 50px;padding-right: 50px;">
+        <!-- <div class="group" style="width:100% !important; text-align:center;">
+            <div style="width:20% !important;">
+              <img src="data:image/png;base64, {{ content.logo }}" width="65px"
+                   style="display: inline-block"/><br/>
+              <span style="font-size:12px; font-weight:bold;">OFFICIAL RESULTS</span>
+            </div>
+            <div style="width:80% !important; text-align:center;">
+              <span style="font-size: 11px;font-weight: 600;">DEPARTMENT OF ELECTIONS</span><br/>
+              <span style="font-weight: 700;font-weight: 600;font-size: 23px;">
+                {{ content.election.electionName }}
+              </span><br/>
+              <span style="font-weight:bold;font-size: 17px;">Votes Received by Party</span><br/>
+              <span style="font-size:14px;font-weight: 500;">
+                <strong>Administrative District</strong> - {{ content.administrativeDistrict }}
+              </span>
+            </div>
+            <div style="width:20% !important; text-align:center;">&nbsp;</div>
+        </div> -->
+
+        <table style="border: none;width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width:15%; text-align:center;" class="no-padding-bottom no-padding-top">
+                    <img src="data:image/png;base64, {{ content.logo }}" width="65px"
+                         style="display: inline-block"/><br/>
+                    <span style="font-size:12px; font-weight:bold;">OFFICIAL RESULTS</span>
+                </td>
+                <td style="text-align:center; vertical-align:middle; width:70%;">
+                    <span style="font-size: 11px;font-weight: 600;">ELECTION COMMISSION OF SRI LANKA</span><br/>
+                    <span style="font-weight: 700;font-weight: 600;font-size: 23px;">
+                    {{ content.election.electionName }}
+                </span><br/>
+                    <span style="font-weight:bold;font-size: 17px;">Votes Received by Party</span><br/>
+                    <span style="font-size:14px;font-weight: 500;">
+                    <strong>Administrative District</strong> - {{ content.administrativeDistrict }}
+                </span>
+                </td>
+                <td style="text-align:right; width:15%; font-size:12px; font-weight:bold;"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="width: 100%; padding-bottom: 50px;"></div>
+
+        <table class="table table-sm" style="width:100%;">
+            <tbody>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col" style="width:40%;">Name of the Party</th>
+                <th scope="col">Party Abbreviation</th>
+                <th scope="col" style="text-align:right;">Votes Received</th>
+                <th scope="col" style="text-align:right;">Percentage</th>
+            </tr>
+            {% for row in content.data %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="{% if row[0]=='' %}missing-value{% endif %}">{{ row[0] }}</td>
+                    <td class="{% if row[1]=='' %}missing-value{% endif %}">{{ row[1] }}</td>
+                    <td class="{% if row[2]=='' %}missing-value{% endif %}"
+                        style="text-align:right;">{{ row[2] }}</td>
+                    <td class="{% if row[3]=='' %}missing-value{% endif %}"
+                        style="text-align:right;">{{ row[3] }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="5" style="height: 50px;"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><b>Total Valid Votes</b></td>
+                <td class="{% if content.validVoteCounts[0]=='' %}missing-value{% endif %}"
+                    style="text-align:right;">
+                    <b>{{ content.validVoteCounts[0] }}</b>
+                </td>
+                <td class="{% if content.validVoteCounts[1]=='' %}missing-value{% endif %}"
+                    style="text-align:right;">
+                    {{ content.validVoteCounts[1] }}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><b>Rejected Votes</b></td>
+                <td class="{% if content.rejectedVoteCounts[0]=='' %}missing-value{% endif %}"
+                    style="text-align:right;">
+                    <b>{{ content.rejectedVoteCounts[0] }}</b>
+                </td>
+                <td class="{% if content.rejectedVoteCounts[1]=='' %}missing-value{% endif %}"
+                    style="text-align:right;">
+                    {{ content.rejectedVoteCounts[1] }}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><b>Total Polled</b></td>
+                <td class="{% if content.totalVoteCounts[0]=='' %}missing-value{% endif %}"
+                    style="text-align:right;">
+                    <b>{{ content.totalVoteCounts[0] }}</b>
+                </td>
+                <td class="{% if content.totalVoteCounts[1]=='' %}missing-value{% endif %}"
+                    style="text-align:right;">
+                    {{ content.totalVoteCounts[1] }}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><b>Registered No. of Electors</b></td>
+                <td style="text-align:right"><b>{{ content.registeredVoters[0] }}</b></td>
+                <td style="text-align:right"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><b>Time</b></td>
+                <td colspan="2" style="text-align:center;">{{ content.time }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><b>Date</b></td>
+                <td colspan="2" style="text-align:center;">{{ content.date }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% include 'ParliamentaryElection2020/signatures.html' with context %}
+
+    {% include 'ParliamentaryElection2020/calculation-information.html' with context %}
+
+{% endblock %}

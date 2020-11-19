@@ -1,19 +1,26 @@
+from jose import jwt
 from sqlalchemy import bindparam
 from sqlalchemy.orm import aliased
 from app import db, cache
+from constants.AUTH_CONSTANTS import ADMIN_ROLE, DATA_EDITOR_ROLE, POLLING_DIVISION_REPORT_VIEWER_ROLE, \
+    POLLING_DIVISION_REPORT_VERIFIER_ROLE, ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE, \
+    ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE, NATIONAL_REPORT_VIEWER_ROLE, NATIONAL_REPORT_VERIFIER_ROLE, \
+    EC_LEADERSHIP_ROLE, ROLE_PREFIX, ROLE_CLAIM, AREA_CLAIM_PREFIX, SUB
 from ext.ExtendedElection.WORKFLOW_STATUS_TYPE import WORKFLOW_STATUS_TYPE_VERIFIED, \
     WORKFLOW_STATUS_TYPE_READY_TO_CERTIFY, WORKFLOW_STATUS_TYPE_CERTIFIED, WORKFLOW_STATUS_TYPE_RELEASED, \
     WORKFLOW_STATUS_TYPE_RELEASE_NOTIFIED
 from ext.ExtendedTallySheet import ExtendedTallySheet
 
 def get_extended_election(election):
-    from constants.ELECTION_TEMPLATES import PRESIDENTIAL_ELECTION_2019, PARLIAMENT_ELECTION_2020
+    from constants.ELECTION_TEMPLATES import PRESIDENTIAL_ELECTION_2019, PARLIAMENT_ELECTION_2020, PROVINCIAL_COUNCIL_ELECTION_2021
+    from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import ExtendedElectionProvincialCouncilElection2021
     from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import ExtendedElectionParliamentaryElection2020
     from ext.ExtendedElection.ExtendedElectionPresidentialElection2019 import ExtendedElectionPresidentialElection2019
 
     EXTENDED_ELECTION_MAP = {
         PRESIDENTIAL_ELECTION_2019: ExtendedElectionPresidentialElection2019,
-        PARLIAMENT_ELECTION_2020: ExtendedElectionParliamentaryElection2020
+        PARLIAMENT_ELECTION_2020: ExtendedElectionParliamentaryElection2020,
+        PROVINCIAL_COUNCIL_ELECTION_2021: ExtendedElectionProvincialCouncilElection2021
     }
 
     if election.electionTemplateName in EXTENDED_ELECTION_MAP:
@@ -100,6 +107,8 @@ class ExtendedElection:
             "countingCentreId", "countingCentreName",
             "pollingDivisionId", "pollingDivisionName",
             "electoralDistrictId", "electoralDistrictName",
+            "administrativeDistrictId", "administrativeDistrictName",
+            "provinceId", "provinceName"
             "countryId", "countryName"
         ]
         column_name_to_column_map = {
@@ -113,6 +122,10 @@ class ExtendedElection:
             "pollingDivisionName": area_map_subquery.c.pollingDivisionName,
             "electoralDistrictId": area_map_subquery.c.electoralDistrictId,
             "electoralDistrictName": area_map_subquery.c.electoralDistrictName,
+            "administrativeDistrictId": area_map_subquery.c.administrativeDistrictId,
+            "administrativeDistrictName": area_map_subquery.c.administrativeDistrictName,
+            "provinceId": area_map_subquery.c.provinceId,
+            "provinceName": area_map_subquery.c.provinceName,
             "countryId": area_map_subquery.c.countryId,
             "countryName": area_map_subquery.c.countryName
         }
@@ -127,6 +140,10 @@ class ExtendedElection:
                 "pollingDivisionName",
                 "electoralDistrictId",
                 "electoralDistrictName",
+                "administrativeDistrictId",
+                "administrativeDistrictName",
+                "provinceId",
+                "provinceName",
                 "countryId",
                 "countryName"
             ],
@@ -141,6 +158,10 @@ class ExtendedElection:
                 "pollingDivisionName",
                 "electoralDistrictId",
                 "electoralDistrictName",
+                "administrativeDistrictId",
+                "administrativeDistrictName",
+                "provinceId",
+                "provinceName",
                 "countryId",
                 "countryName"
             ],
@@ -149,12 +170,30 @@ class ExtendedElection:
                 "pollingDivisionName",
                 "electoralDistrictId",
                 "electoralDistrictName",
+                "administrativeDistrictId",
+                "administrativeDistrictName",
+                "provinceId",
+                "provinceName",
                 "countryId",
                 "countryName"
             ],
             AreaTypeEnum.ElectoralDistrict: [
                 "electoralDistrictId",
                 "electoralDistrictName",
+                "countryId",
+                "countryName"
+            ],
+            AreaTypeEnum.AdministrativeDistrict: [
+                "administrativeDistrictId",
+                "administrativeDistrictName",
+                "provinceId",
+                "provinceName",
+                "countryId",
+                "countryName"
+            ],
+            AreaTypeEnum.Province: [
+                "provinceId",
+                "provinceName",
                 "countryId",
                 "countryName"
             ],
@@ -170,6 +209,8 @@ class ExtendedElection:
             AreaTypeEnum.CountingCentre: [area_map_subquery.c.countingCentreId == area.areaId],
             AreaTypeEnum.PollingDivision: [area_map_subquery.c.pollingDivisionId == area.areaId],
             AreaTypeEnum.ElectoralDistrict: [area_map_subquery.c.electoralDistrictId == area.areaId],
+            AreaTypeEnum.AdministrativeDistrict: [area_map_subquery.c.administrativeDistrictId == area.areaId],
+            AreaTypeEnum.Province: [area_map_subquery.c.provinceId == area.areaId],
             AreaTypeEnum.Country: [area_map_subquery.c.countryId == area.areaId]
         }
 
@@ -209,8 +250,12 @@ class ExtendedElection:
 
         country = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.Country).subquery()
+        province = db.session.query(Area.Model).filter(
+            Area.Model.areaType == AreaTypeEnum.Province).subquery()
         electoral_district = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.ElectoralDistrict).subquery()
+        administrative_district = db.session.query(Area.Model).filter(
+            Area.Model.areaType == AreaTypeEnum.AdministrativeDistrict).subquery()
         polling_division = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.PollingDivision).subquery()
         polling_district = db.session.query(Area.Model).filter(
@@ -224,7 +269,10 @@ class ExtendedElection:
         election_commission = db.session.query(Area.Model).filter(
             Area.Model.areaType == AreaTypeEnum.ElectionCommission).subquery()
 
+        country__province = aliased(AreaAreaModel)
+        province__administrative_district = aliased(AreaAreaModel)
         country__electoral_district = aliased(AreaAreaModel)
+        administrative_district__polling_division = aliased(AreaAreaModel)
         electoral_district__polling_division = aliased(AreaAreaModel)
         polling_division__polling_district = aliased(AreaAreaModel)
         polling_district__polling_station = aliased(AreaAreaModel)
@@ -235,8 +283,12 @@ class ExtendedElection:
         query = db.session.query(
             country.c.areaId.label("countryId"),
             country.c.areaName.label("countryName"),
+            province.c.areaId.label("provinceId"),
+            province.c.areaName.label("provinceName"),
             electoral_district.c.areaId.label("electoralDistrictId"),
             electoral_district.c.areaName.label("electoralDistrictName"),
+            administrative_district.c.areaId.label("administrativeDistrictId"),
+            administrative_district.c.areaName.label("administrativeDistrictName"),
             polling_division.c.areaId.label("pollingDivisionId"),
             polling_division.c.areaName.label("pollingDivisionName"),
             polling_district.c.areaId.label("pollingDistrictId"),
@@ -250,6 +302,15 @@ class ExtendedElection:
         ).filter(
             country__electoral_district.parentAreaId == country.c.areaId,
             country__electoral_district.childAreaId == electoral_district.c.areaId,
+
+            country__province.parentAreaId == country.c.areaId,
+            country__province.childAreaId == province.c.areaId,
+
+            province__administrative_district.parentAreaId == province.c.areaId,
+            province__administrative_district.childAreaId == administrative_district.c.areaId,
+
+            administrative_district__polling_division.parentAreaId == administrative_district.c.areaId,
+            administrative_district__polling_division.childAreaId == polling_division.c.areaId,
 
             electoral_district__polling_division.parentAreaId == electoral_district.c.areaId,
             electoral_district__polling_division.childAreaId == polling_division.c.areaId,
@@ -273,3 +334,68 @@ class ExtendedElection:
         )
 
         return query
+
+    def get_root_token(self):
+        from orm.entities import Area
+        from orm.enums import AreaTypeEnum
+
+        electoral_districts = Area.get_associated_areas_query(
+            areas=[], areaType=AreaTypeEnum.ElectoralDistrict, electionId=self.election.electionId
+        ).all()
+
+        countries = Area.get_associated_areas_query(
+            areas=[], areaType=AreaTypeEnum.Country, electionId=self.election.electionId
+        ).all()
+
+        jwt_payload = {
+            ROLE_CLAIM: [
+                ROLE_PREFIX + ADMIN_ROLE,
+                ROLE_PREFIX + DATA_EDITOR_ROLE,
+                ROLE_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE,
+                ROLE_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE,
+                ROLE_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE,
+                ROLE_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE,
+                ROLE_PREFIX + NATIONAL_REPORT_VIEWER_ROLE,
+                ROLE_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE,
+                ROLE_PREFIX + EC_LEADERSHIP_ROLE
+            ],
+            SUB: "janak@carbon.super", AREA_CLAIM_PREFIX + ADMIN_ROLE: str([]),
+            AREA_CLAIM_PREFIX + DATA_EDITOR_ROLE: str([{
+                "areaId": electoral_district.areaId,
+                "areaName": electoral_district.areaName
+            } for electoral_district in electoral_districts]),
+            AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VIEWER_ROLE: str([{
+                "areaId": electoral_district.areaId,
+                "areaName": electoral_district.areaName
+            } for electoral_district in electoral_districts]),
+            AREA_CLAIM_PREFIX + POLLING_DIVISION_REPORT_VERIFIER_ROLE: str([{
+                "areaId": electoral_district.areaId,
+                "areaName": electoral_district.areaName
+            } for electoral_district in electoral_districts]),
+            AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VIEWER_ROLE: str([{
+                "areaId": electoral_district.areaId,
+                "areaName": electoral_district.areaName
+            } for electoral_district in electoral_districts]),
+            AREA_CLAIM_PREFIX + ELECTORAL_DISTRICT_REPORT_VERIFIER_ROLE: str([{
+                "areaId": electoral_district.areaId,
+                "areaName": electoral_district.areaName
+            } for electoral_district in electoral_districts]),
+            AREA_CLAIM_PREFIX + NATIONAL_REPORT_VIEWER_ROLE: str([{
+                "areaId": country.areaId,
+                "areaName": country.areaName
+            } for country in countries]),
+            AREA_CLAIM_PREFIX + NATIONAL_REPORT_VERIFIER_ROLE: str([{
+                "areaId": country.areaId,
+                "areaName": country.areaName
+            } for country in countries]),
+            AREA_CLAIM_PREFIX + EC_LEADERSHIP_ROLE: str([{
+                "areaId": country.areaId,
+                "areaName": country.areaName
+            } for country in countries])
+        }
+
+        # Generate a token with claims for everything.
+        key = "jwt_secret"
+        encoded_jwt_token = jwt.encode(jwt_payload, key)
+
+        return encoded_jwt_token

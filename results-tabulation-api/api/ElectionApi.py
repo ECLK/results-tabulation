@@ -4,7 +4,6 @@ from auth import ADMIN_ROLE, authorize, get_user_access_area_ids
 from constants.AUTH_CONSTANTS import ALL_ROLES
 from exception import NotFoundException
 from exception.messages import MESSAGE_CODE_ELECTION_NOT_FOUND
-from orm.entities.Election.election_helper import get_root_token
 from orm.entities import Election
 from schemas import ElectionSchema as Schema, AreaMapSchema, MappedAreaSchema
 from util import RequestBody
@@ -77,7 +76,11 @@ def create(body):
 
 @authorize(required_roles=[ADMIN_ROLE])
 def getRootToken(electionId):
-    return get_root_token(electionId=electionId)
+    from ext.ExtendedElection import get_extended_election
+
+    election = Election.Model.query.filter(Election.Model.electionId == electionId).one_or_none()
+    extended_election = get_extended_election(election=election)
+    return extended_election.get_root_token()
 
 
 @authorize(required_roles=ALL_ROLES)

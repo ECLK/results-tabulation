@@ -1,0 +1,12 @@
+<table class="table table-borderless signatures" style="padding-top: 30px;">
+    <tr style="text-align:center;">
+        {% for signature in content.signatures %}
+            <td>
+                ....................................</br>
+                {{ signature.name }} </br>
+                {{ signature.designation }} </br>
+                {{ signature.organization }} </br>
+            </td>
+        {% endfor %}
+    </tr>
+</table>
