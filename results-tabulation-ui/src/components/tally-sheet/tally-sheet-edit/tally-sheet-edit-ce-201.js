@@ -133,10 +133,12 @@ export default function TallySheetEdit_CE_201({history, queryString, election, t
                 _pollingStation.pollingDistricts = [];
                 for (let pollingDistrictId in _pollingDistrictsMap) {
                     const _areaMap = _pollingDistrictsMap[pollingDistrictId];
-                    _pollingStation.pollingDistricts.push({
-                        areaId: _areaMap.pollingDistrictId,
-                        areaName: _areaMap.pollingDistrictName
-                    })
+                    if (_pollingStation.areaId===_areaMap.pollingStationId) {
+                        _pollingStation.pollingDistricts.push({
+                            areaId: _areaMap.pollingDistrictId,
+                            areaName: _areaMap.pollingDistrictName
+                        })
+                    }
                 }
             }
         }
