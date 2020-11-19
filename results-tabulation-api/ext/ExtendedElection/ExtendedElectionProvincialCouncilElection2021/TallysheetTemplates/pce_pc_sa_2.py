@@ -1,6 +1,6 @@
 from orm.entities import Template
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TALLY_SHEET_CODES import PCE_R2, \
-    PCE_PC_SA_1, PCE_PC_V, PCE_PC_BS_1
+    PCE_PC_SA_2, PCE_PC_V, PCE_PC_BS_1
 from constants.TALLY_SHEET_COLUMN_SOURCE import TALLY_SHEET_COLUMN_SOURCE_META as SOURCE_META, \
     TALLY_SHEET_COLUMN_SOURCE_CONTENT as SOURCE_CONTENT, TALLY_SHEET_COLUMN_SOURCE_QUERY as SOURCE_QUERY
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
@@ -9,7 +9,7 @@ from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE
 
 def create_template():
     return Template.create(
-        templateName=PCE_PC_SA_1,
+        templateName=PCE_PC_SA_2,
         templateRowTypesMap={
             "PARTY_WISE_VOTE": {
                 "hasMany": True,
