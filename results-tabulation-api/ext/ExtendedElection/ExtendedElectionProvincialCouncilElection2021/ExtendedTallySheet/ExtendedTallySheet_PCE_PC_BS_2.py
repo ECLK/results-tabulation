@@ -1,9 +1,9 @@
 from app import db
 from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_NL_1
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import CANDIDATE_TYPE_NATIONAL_LIST
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import CANDIDATE_TYPE_NATIONAL_LIST
 
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities.Election.ElectionCandidate import ElectionCandidateModel
@@ -86,11 +86,11 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
 
             if len(seats_allocated_per_party_df) == 0:
                 raise ForbiddenException(
-                    message="National list candidates cannot be allocated until the national vote calculation (PE-AI-ED) is completed and verified.",
+                    message="National list candidates cannot be allocated until the national vote calculation (PCE-AI-ED) is completed and verified.",
                     code=MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_NL_1
                 )
 
-            # The derived rows are calculated only if the PE-R2 is available and verified.
+            # The derived rows are calculated only if the PCE-R2 is available and verified.
             if len(seats_allocated_per_party_df) > 0:
                 for index_1 in seats_allocated_per_party_df.index:
                     party_id = int(seats_allocated_per_party_df.at[index_1, "partyId"])
@@ -159,7 +159,7 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
                 ])
 
             html = render_template(
-                'ParliamentaryElection2020/PE-AI-NL-2.html',
+                'ProvincialCouncilElection2021/PCE-AI-NL-2.html',
                 content=content
             )
 
@@ -203,7 +203,7 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
                 ])
 
             html = render_template(
-                'ParliamentaryElection2020/PE-AI-NL-2-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-AI-NL-2-LETTER.html',
                 content=content
             )
 

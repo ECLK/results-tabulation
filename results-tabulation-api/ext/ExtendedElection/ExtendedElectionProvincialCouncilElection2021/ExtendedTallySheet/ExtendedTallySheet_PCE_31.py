@@ -78,7 +78,7 @@ class ExtendedTallySheet_PCE_31(ExtendedTallySheetDataEntry):
             content["totalRejectedVotes"] = to_comma_seperated_num(total_rejected_count)
 
             html = render_template(
-                'PE-22.html',
+                'ProvincialCouncilElection2021/PCE-31.html',
                 content=content
             )
 

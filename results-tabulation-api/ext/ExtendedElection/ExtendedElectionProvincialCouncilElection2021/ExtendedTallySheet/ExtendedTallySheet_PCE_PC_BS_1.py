@@ -1,7 +1,7 @@
 from app import db
 from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_PE_AI_NL_1_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_ED
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
     TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
@@ -205,7 +205,7 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-AI-NL-1.html',
+                'ProvincialCouncilElection2021/PCE-AI-NL-1.html',
                 content=content
             )
 
@@ -280,7 +280,7 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-AI-NL-1-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-AI-NL-1-LETTER.html',
                 content=content
             )
 

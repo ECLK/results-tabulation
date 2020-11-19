@@ -1,7 +1,7 @@
 import numpy as np
 from flask import render_template
 
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri, \
@@ -162,7 +162,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-AI-1.html',
+                'ProvincialCouncilElection2021/PCE-AI-1.html',
                 content=content
             )
 
@@ -235,7 +235,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-AI-1-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-AI-1-LETTER.html',
                 content=content
             )
 

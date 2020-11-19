@@ -78,7 +78,7 @@ class ExtendedTallySheet_PCE_35(ExtendedTallySheetDataEntry):
             content["grandTotal"] = to_comma_seperated_num(content["grandTotal"])
 
             html = render_template(
-                'PE-27.html',
+                'PCE-27.html',
                 content=content
             )
 

@@ -159,7 +159,7 @@ class ExtendedTallySheet_PCE_CE_RO_V1(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-CE-RO-V1-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-CE-RO-V1-LETTER.html',
                 content=content
             )
 
@@ -243,7 +243,7 @@ class ExtendedTallySheet_PCE_CE_RO_V1(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'PE-CE-RO-V1.html',
+                'PCE-CE-RO-V1.html',
                 content=content
             )
 

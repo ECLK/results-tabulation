@@ -43,7 +43,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
 
         if len(pe_r2_tally_sheets) == 0:
             raise ForbiddenException(
-                message="Candidates cannot be allocated until the seat calculation (PE-R2) is completed and verified.",
+                message="Candidates cannot be allocated until the seat calculation (PCE-R2) is completed and verified.",
                 code=MESSAGE_CODE_PE_21_CANNOT_BE_PROCESSED_WITHOUT_PE_R2
             )
 
@@ -171,7 +171,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
             seats_allocated_per_party_df = self.df.loc[
                 (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_SEATS_ALLOCATED) & (self.df['numValue'] > 0)]
 
-            # The derived rows are calculated only if the PE-R2 is available and verified.
+            # The derived rows are calculated only if the PCE-R2 is available and verified.
             if len(seats_allocated_per_party_df) > 0:
                 candidate_wise_valid_vote_count_result = self.get_candidate_wise_valid_vote_count_result().sort_values(
                     by=['numValue'], ascending=False
@@ -229,7 +229,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
-                "tallySheetCode": "PE-21",
+                "tallySheetCode": "PCE-21",
                 "electoralDistrictNo": Area.get_associated_areas(
                     tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaId,
                 "electoralDistrict": Area.get_associated_areas(
@@ -252,7 +252,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
                 })
 
             html = render_template(
-                'PE-21.html',
+                'PCE-21.html',
                 content=content
             )
 
@@ -296,7 +296,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-21-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-21-LETTER.html',
                 content=content
             )
 

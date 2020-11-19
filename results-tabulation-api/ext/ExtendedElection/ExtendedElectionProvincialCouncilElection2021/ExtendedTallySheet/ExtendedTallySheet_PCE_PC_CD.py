@@ -1,7 +1,7 @@
 from flask import render_template
 
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020 import CANDIDATE_TYPE_NATIONAL_LIST
-from ext.ExtendedElection.ExtendedElectionParliamentaryElection2020.TEMPLATE_ROW_TYPE import \
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import CANDIDATE_TYPE_NATIONAL_LIST
+from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from util import convert_image_to_data_uri
@@ -86,7 +86,7 @@ class ExtendedTallySheet_PE_AI_2(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-AI-2.html',
+                'ProvincialCouncilElection2021/PCE-AI-2.html',
                 content=content
             )
 
@@ -126,7 +126,7 @@ class ExtendedTallySheet_PE_AI_2(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-AI-2-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-AI-2-LETTER.html',
                 content=content
             )
 

@@ -38,7 +38,7 @@ class ExtendedTallySheet_PCE_CE_CO_PR_4(ExtendedTallySheetDataEntry):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
-                "tallySheetCode": "PE-4",
+                "tallySheetCode": "PCE-4",
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
@@ -68,7 +68,7 @@ class ExtendedTallySheet_PCE_CE_CO_PR_4(ExtendedTallySheetDataEntry):
                     content["data2"].append(data_row2)
 
             html = render_template(
-                'PE-4.html',
+                'PCE-4.html',
                 content=content
             )
 

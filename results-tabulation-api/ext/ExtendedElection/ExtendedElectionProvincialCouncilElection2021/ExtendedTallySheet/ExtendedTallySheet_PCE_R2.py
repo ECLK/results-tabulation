@@ -330,12 +330,12 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
             content["total"].append(to_comma_seperated_num(party_wise_seat_calculations['seatsAllocated'].sum()))
 
             html = render_template(
-                'PE-R2.html',
+                'PCE-R2.html',
                 content=content
             )
 
             # return super(ExtendedTallySheet_PE_R2.ExtendedTallySheetVersion, self).html(
-            #     title="PE-R2 : %s" % self.tallySheetVersion.tallySheet.area.areaName,
+            #     title="PCE-R2 : %s" % self.tallySheetVersion.tallySheet.area.areaName,
             #     columns=[
             #         "partyId",
             #         "partyName",
@@ -431,7 +431,7 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ParliamentaryElection2020/PE-R2-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-R2-LETTER.html',
                 content=content
             )
 

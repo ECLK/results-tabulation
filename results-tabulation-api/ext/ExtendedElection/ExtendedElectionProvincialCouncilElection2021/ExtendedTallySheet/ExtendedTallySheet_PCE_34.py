@@ -35,7 +35,7 @@ class ExtendedTallySheet_PCE_34(ExtendedTallySheetDataEntry):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
-                "tallySheetCode": "PE-39",
+                "tallySheetCode": "PCE-39",
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
@@ -55,7 +55,7 @@ class ExtendedTallySheet_PCE_34(ExtendedTallySheetDataEntry):
             content["rejectedVotes"] = to_comma_seperated_num(total_rejected_count)
 
             html = render_template(
-                'PE-39.html',
+                'PCE-39.html',
                 content=content
             )
 

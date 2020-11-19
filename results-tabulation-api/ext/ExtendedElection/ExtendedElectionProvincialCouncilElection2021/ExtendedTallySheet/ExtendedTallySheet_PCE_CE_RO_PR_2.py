@@ -92,7 +92,7 @@ class ExtendedTallySheet_PCE_CE_RO_PR_2(ExtendedTallySheetReport):
                 to_comma_seperated_num(candidate_wise_valid_vote_count_result["incompleteNumValue"].sum()))
 
             html = render_template(
-                'PE-CE-RO-PR-2.html',
+                'PCE-CE-RO-PR-2.html',
                 content=content
             )
 

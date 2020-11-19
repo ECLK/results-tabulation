@@ -74,7 +74,7 @@ class ExtendedTallySheet_PCE_CE_RO_PR_1(ExtendedTallySheetReport):
             ))
 
             html = render_template(
-                'PE-CE-RO-PR-1.html',
+                'PCE-CE-RO-PR-1.html',
                 content=content
             )
 
