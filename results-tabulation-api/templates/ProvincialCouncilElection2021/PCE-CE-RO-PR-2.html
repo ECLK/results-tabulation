@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<style>
+.print-candidate-width {
+    width: 300px;
+}
+
+@media print {
+    @page {
+        size: 840mm	594mm;
+    }
+    .print-candidate-width {
+        width: initial;
+        min-width: 300px !important;
+    }
+}
+</style>
+<div class="font1">
+    <div style="margin-bottom:5px;text-align:right;">
+        Report: <b>CE-RO-PR/2</b>
+    </div>
+    <table class="table table-borderless" style="margin-bottom:0;">
+        <tbody>
+        <tr>
+            <td></td>
+            <td class="bold no-padding-right" style="text-align:center; width:90%;">
+                <h1>{{content.election.electionName}}</h1>
+                CENTER FOR DECLARATION OF RESULTS<br/>
+                Second Summary of Preferences Counted in All the Counting Centres<br/>
+                (INCLUSIVE OF THOSE COUNTED AT THE POSTAL VOTES COUNTING CENTERS)
+            </td>
+            <td>
+                <div class="all float-right"><h1 class="bold">RO</h1></div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-borderless">
+        <tbody>
+        <tr>
+            <td class="no-padding-left no-padding-right" style="width:50%;">
+                Electoral District :
+                <span style="text-decoration: underline; text-decoration-style:dotted;"> {{content.electoralDistrict}}</span>
+            </td>
+            <td class="no-padding-left no-padding-right" style="text-align:right;width:50%;">
+                Name of Political Party/ Independent Group No :
+                <span style="text-decoration: underline; text-decoration-style:dotted;"> {{content.partyName}}</span>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <table class="table table-borderless" style="table-layout:fixed;">
+        <tbody>
+        <tr style="text-align:center;">
+            <th class="left right top print-candidate-width" rowspan="3" style="border-bottom: 3px solid #000; vertical-align:middle;">Serial No. of the Candidate</th>
+            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align:middle;width:{{content.pollingDivisions|length * 80}}px;">TOTAL OF PREFERENCES TRANSFERRED FROM THE FIRST SUMMARY SHEETS</th>
+            <th class="left right top bottom" colspan="2" style="width:300px;vertical-align:middle;"></th>
+            <th class="left right top" rowspan="3" style="width:200px; border-bottom: 3px solid #000;  vertical-align:middle;">
+              Order of Candidates according to the No. of Preferences
+            </th>
+        </tr>
+        <tr style="text-align:center;">
+
+            <th class="left right top bottom" colspan="{{content.pollingDivisions|length}}" style="vertical-align:middle;width:{{content.pollingDivisions|length * 80}}px;">
+                Polling Division
+                {% for nonPostalVoteType in content.nonPostalVoteTypes %}
+                / {{nonPostalVoteType}} Votes
+                {% endfor %}
+            </th>
+            <th class="left right top bottom" colspan="2" style="vertical-align:middle;">Grand Total</th>
+        </tr>
+        <tr style="text-align:center;" class="ro2">
+            {% for pollingDivision in content.pollingDivisions %}
+            <th class="left right top pd" style="vertical-align:middle;border-bottom: 3px solid #000; "><div>{{pollingDivision}}</div></th>
+            {% endfor %}
+            <th class="left right top" style="width:100px;vertical-align:middle;border-bottom: 3px solid #000; ">In Figures</th>
+            <th class="left right top" style="width:200px;vertical-align:middle;border-bottom: 3px solid #000; ">In Words</th>
+        </tr>
+        {% for row in content.data %}
+        <tr>
+            {% for cell in row %}
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}">{{cell}}</td>
+            {% endfor %}
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}"></td>
+            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}"></td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            {% for totalVoteCount in content.totalVoteCounts %}
+            <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align:middle;">{{totalVoteCount}}</td>
+            {% endfor %}
+            <td class="all"></td>
+            <td></td>
+
+        </tr>
+
+    </tbody>
+</table>
+<table class="table table-borderless">
+  <tr>
+    <td>Date: ............................................</td>
+    <td>Prepared by (Name): .......................................  Signature: .......................................</td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td></td>
+    <td>Checked by (Name): .......................................  Signature: .......................................</td>
+    <td style="text-align:center;">.......................................<br/>Returning Officer</td>
+  </tr>
+</table>
+
+</div>
+{% endblock %}
