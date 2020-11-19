@@ -78,7 +78,7 @@ class ExtendedTallySheet_PCE_35(ExtendedTallySheetDataEntry):
             content["grandTotal"] = to_comma_seperated_num(content["grandTotal"])
 
             html = render_template(
-                'PCE-27.html',
+                'ProvincialCouncilElection2021/PCE-35.html',
                 content=content
             )
 

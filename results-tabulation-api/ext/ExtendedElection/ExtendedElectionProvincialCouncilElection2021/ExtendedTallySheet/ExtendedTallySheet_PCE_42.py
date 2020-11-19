@@ -252,7 +252,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
                 })
 
             html = render_template(
-                'PCE-21.html',
+                'ProvincialCouncilElection2021/PCE-42.html',
                 content=content
             )
 
@@ -296,7 +296,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-21-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-42-LETTER.html',
                 content=content
             )
 

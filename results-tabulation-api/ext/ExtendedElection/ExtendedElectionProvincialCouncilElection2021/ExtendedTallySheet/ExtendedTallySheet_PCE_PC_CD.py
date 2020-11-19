@@ -7,7 +7,7 @@ from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from util import convert_image_to_data_uri
 
 
-class ExtendedTallySheet_PE_AI_2(ExtendedTallySheetReport):
+class ExtendedTallySheet_PCE_PC_CD(ExtendedTallySheetReport):
     def on_get_release_result_params(self):
         pd_code = None
         pd_name = None
@@ -86,7 +86,7 @@ class ExtendedTallySheet_PE_AI_2(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-2.html',
+                'ProvincialCouncilElection2021/PCE-PC-CD.html',
                 content=content
             )
 
@@ -126,7 +126,7 @@ class ExtendedTallySheet_PE_AI_2(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-2-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-PC-CD-LETTER.html',
                 content=content
             )
 

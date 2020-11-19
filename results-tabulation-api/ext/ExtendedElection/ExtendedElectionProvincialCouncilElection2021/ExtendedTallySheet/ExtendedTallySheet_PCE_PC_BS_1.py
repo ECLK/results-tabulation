@@ -24,7 +24,7 @@ template_row_to_df_num_value_column_map = {
 }
 
 
-class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
+class ExtendedTallySheet_PCE_PC_BS_1(ExtendedEditableTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedEditableTallySheetReport.ExtendedTallySheetVersion):
 
         def get_post_save_request_content(self):
@@ -205,7 +205,7 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-NL-1.html',
+                'ProvincialCouncilElection2021/PCE-PC-BS-1.html',
                 content=content
             )
 
@@ -280,7 +280,7 @@ class ExtendedTallySheet_PE_AI_NL_1(ExtendedEditableTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-NL-1-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-PC-BS-1-LETTER.html',
                 content=content
             )
 

@@ -243,7 +243,7 @@ class ExtendedTallySheet_PCE_CE_RO_V1(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'PCE-CE-RO-V1.html',
+                'ProvincialCouncilElection2021/PCE-CE-RO-V1.html',
                 content=content
             )
 

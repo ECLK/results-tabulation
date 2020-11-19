@@ -68,7 +68,7 @@ class ExtendedTallySheet_PCE_CE_CO_PR_4(ExtendedTallySheetDataEntry):
                     content["data2"].append(data_row2)
 
             html = render_template(
-                'PCE-4.html',
+                'ProvincialCouncilElection2021/PCE-CE-CO-PR-4.html',
                 content=content
             )
 

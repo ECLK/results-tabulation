@@ -74,7 +74,7 @@ class ExtendedTallySheet_PCE_CE_RO_PR_1(ExtendedTallySheetReport):
             ))
 
             html = render_template(
-                'PCE-CE-RO-PR-1.html',
+                'ProvincialCouncilElection2021/PCE-CE-RO-PR-1.html',
                 content=content
             )
 

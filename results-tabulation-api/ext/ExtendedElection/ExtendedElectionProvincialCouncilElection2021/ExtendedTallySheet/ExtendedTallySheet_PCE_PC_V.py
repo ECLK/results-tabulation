@@ -7,7 +7,7 @@ from orm.entities.Area import AreaModel
 from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri
 
 
-class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
+class ExtendedTallySheet_PCE_PC_V(ExtendedTallySheetReport):
     def on_get_release_result_params(self):
         pd_code = None
         pd_name = None
@@ -132,7 +132,7 @@ class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-ED-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-PC-V-LETTER.html',
                 content=content
             )
 
@@ -209,7 +209,7 @@ class ExtendedTallySheet_PE_AI_ED(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-ED.html',
+                'ProvincialCouncilElection2021/PCE-PC-V.html',
                 content=content
             )
 

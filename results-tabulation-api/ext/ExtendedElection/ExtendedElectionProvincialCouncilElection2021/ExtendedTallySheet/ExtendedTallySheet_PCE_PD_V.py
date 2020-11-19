@@ -10,7 +10,7 @@ from util import to_comma_seperated_num, to_percentage
 from orm.enums import AreaTypeEnum
 
 
-class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
+class ExtendedTallySheet_PCE_PD_V(ExtendedTallySheetReport):
     class ExtendedTallySheetVersion(ExtendedTallySheetReport.ExtendedTallySheetVersion):
 
         def html(self, title="", total_registered_voters=None):
@@ -36,7 +36,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
-                "tallySheetCode": "POLLING DIVISION RESULTS",
+                "tallySheetCode": "PCE-PD-V",
                 "electoralDistrict": Area.get_associated_areas(
                     tallySheetVersion.tallySheet.area, AreaTypeEnum.ElectoralDistrict)[0].areaName,
                 "pollingDivision": polling_division_name,
@@ -91,7 +91,7 @@ class ExtendedTallySheet_POLLING_DIVISION_RESULTS(ExtendedTallySheetReport):
             content["totalVotePercentage"] = to_percentage(total_vote_percentage)
 
             html = render_template(
-                'POLLING-DIVISION-RESULTS.html',
+                'ProvincialCouncilElection2021/PCE-PD-V.html',
                 content=content
             )
 

@@ -330,7 +330,7 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
             content["total"].append(to_comma_seperated_num(party_wise_seat_calculations['seatsAllocated'].sum()))
 
             html = render_template(
-                'PCE-R2.html',
+                'ProvincialCouncilElection2021/PCE-R2.html',
                 content=content
             )
 

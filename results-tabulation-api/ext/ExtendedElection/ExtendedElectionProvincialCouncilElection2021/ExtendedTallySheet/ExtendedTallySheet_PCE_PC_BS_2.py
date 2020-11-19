@@ -15,7 +15,7 @@ from orm.entities import Candidate, TallySheet
 from util import convert_image_to_data_uri
 
 
-class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
+class ExtendedTallySheet_PCE_PC_BS_2(ExtendedEditableTallySheetReport):
     def on_get_release_result_params(self):
         pd_code = None
         pd_name = None
@@ -159,7 +159,7 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
                 ])
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-NL-2.html',
+                'ProvincialCouncilElection2021/PCE-PC-BS-1.html',
                 content=content
             )
 
@@ -203,7 +203,7 @@ class ExtendedTallySheet_PE_AI_NL_2(ExtendedEditableTallySheetReport):
                 ])
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-NL-2-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-PC-BS-1-LETTER.html',
                 content=content
             )
 

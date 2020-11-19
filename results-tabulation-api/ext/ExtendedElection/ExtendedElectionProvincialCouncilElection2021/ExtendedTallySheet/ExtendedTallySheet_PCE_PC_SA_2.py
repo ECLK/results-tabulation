@@ -2,13 +2,13 @@ import numpy as np
 from flask import render_template
 
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
-    TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
+    TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri, \
     get_sum_of_numbers_only_and_nan_otherwise
 
 
-class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
+class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
     def on_get_release_result_params(self):
         pd_code = None
         pd_name = None
@@ -84,7 +84,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                                 index_1, "seatsAllocated"] = get_sum_of_numbers_only_and_nan_otherwise(
                                 [party_wise_calculations_df.at[index_1, "seatsAllocated"], num_value])
 
-                        if template_row_type == TEMPLATE_ROW_TYPE_NATIONAL_LIST_SEATS_ALLOCATED:
+                        if template_row_type == TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED:
                             party_wise_calculations_df.at[
                                 index_1, "nationalListSeatsAllocated"] = get_sum_of_numbers_only_and_nan_otherwise(
                                 [party_wise_calculations_df.at[index_1, "nationalListSeatsAllocated"], num_value])
@@ -162,7 +162,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-1.html',
+                'ProvincialCouncilElection2021/PCE-PC-SA-2.html',
                 content=content
             )
 
@@ -235,7 +235,7 @@ class ExtendedTallySheet_PE_AI_1(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-1-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-PC-SA-2-LETTER.html',
                 content=content
             )
 

@@ -8,7 +8,7 @@ from util import to_comma_seperated_num, convert_image_to_data_uri, to_percentag
     get_sum_of_numbers_only_and_nan_otherwise
 
 
-class ExtendedTallySheet_PE_AI_SA(ExtendedTallySheetReport):
+class ExtendedTallySheet_PCE_PC_SA_1(ExtendedTallySheetReport):
     def on_get_release_result_params(self):
         pd_code = None
         pd_name = None
@@ -156,7 +156,7 @@ class ExtendedTallySheet_PE_AI_SA(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-SA.html',
+                'ProvincialCouncilElection2021/PCE-PC-SA-1.html',
                 content=content
             )
 
@@ -234,7 +234,7 @@ class ExtendedTallySheet_PE_AI_SA(ExtendedTallySheetReport):
                 content["data"].append(data_row)
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-AI-SA-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-PC-SA-1-LETTER.html',
                 content=content
             )
 
