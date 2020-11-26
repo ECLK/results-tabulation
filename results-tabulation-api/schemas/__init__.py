@@ -281,8 +281,12 @@ class AreaMapSchema(ma.ModelSchema):
             "countingCentreName",
             "pollingDivisionId",
             "pollingDivisionName",
-            "electoralDistrictId",
-            "electoralDistrictName",
+            # "electoralDistrictId",
+            # "electoralDistrictName",
+            "administrativeDistrictId",
+            "administrativeDistrictName",
+            "provinceId",
+            "provinceName",
             "countryName",
             "countryId"
         )
