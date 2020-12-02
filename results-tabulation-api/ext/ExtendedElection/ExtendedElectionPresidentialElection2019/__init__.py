@@ -102,6 +102,10 @@ class ExtendedElectionPresidentialElection2019(ExtendedElection):
         query_args = [
             country.c.areaId.label("countryId"),
             country.c.areaName.label("countryName"),
+            bindparam("provinceId", None),
+            bindparam("provinceName", None),
+            bindparam("administrativeDistrictId", None),
+            bindparam("administrativeDistrictName", None),
             electoral_district.c.areaId.label("electoralDistrictId"),
             electoral_district.c.areaName.label("electoralDistrictName"),
             counting_centre.c.areaId.label("countingCentreId"),
