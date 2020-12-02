@@ -47,6 +47,8 @@ def get_area_map_query(election):
         province.c.areaName.label("provinceName"),
         administrative_district.c.areaId.label("administrativeDistrictId"),
         administrative_district.c.areaName.label("administrativeDistrictName"),
+        bindparam("electoralDistrictId", None),
+        bindparam("electoralDistrictName", None),
         counting_centre.c.areaId.label("countingCentreId"),
         counting_centre.c.areaName.label("countingCentreName"),
         Election.Model.voteType,

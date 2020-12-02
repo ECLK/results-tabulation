@@ -40,7 +40,7 @@ class TemplateModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-    def add_row(self, templateRowType, hasMany=False, isDerived=False, columns=[]):
+    def add_row(self, templateRowType, hasMany=False, isDerived=False, columns=[], derivativeRows=[]):
         templateRow = TemplateRowModel(
             templateId=self.templateId,
             templateRowType=templateRowType,
@@ -51,6 +51,11 @@ class TemplateModel(db.Model):
         for column in columns:
             templateRow.add_column(column["columnName"], source=column["source"], grouped=column["grouped"],
                                    func=column["func"])
+
+        for derivativeRow in derivativeRows:
+            templateRow.add_derivative_template_row(
+                derivativeTemplateName=derivativeRow["templateName"],
+                derivativeTemplateRowType=derivativeRow["templateRowType"])
 
         return templateRow
 
@@ -80,11 +85,11 @@ class TemplateRowModel(db.Model):
         db.session.add(self)
         db.session.flush()
 
-    def add_derivative_template_row(self, derivativeTemplateRow):
+    def add_derivative_template_row(self, derivativeTemplateName, derivativeTemplateRowType):
         TemplateRow_DerivativeTemplateRow_Model(
             templateRowId=self.templateRowId,
-            derivativeTemplateName=derivativeTemplateRow.template.templateName,
-            derivativeTemplateRowType=derivativeTemplateRow.templateRowType
+            derivativeTemplateName=derivativeTemplateName,
+            derivativeTemplateRowType=derivativeTemplateRowType
         )
 
         return self
@@ -149,7 +154,7 @@ def create(templateName, templateRowTypesMap=None):
         for templateRowType, templateRowParameters in templateRowTypesMap.items():
             parameters = {"templateRowType": templateRowType}
 
-            for parameter_name in ["hasMany", "isDerived", "columns"]:
+            for parameter_name in ["hasMany", "isDerived", "columns", "derivativeRows"]:
                 if parameter_name in templateRowParameters:
                     parameters[parameter_name] = templateRowParameters[parameter_name]
 
