@@ -78,7 +78,7 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
         const [ProvinceElections, setProvinceElections] = useState(null);
         const [DistrictElections, setDistrictElections] = useState(null);
 
-        const {electionId, electionName, rootElectionId} = this.election;
+        const {electionId, electionName, rootElectionId, parentElectionId} = this.election;
 
         const selectPartyAndThen = (then) => () => {
             dialogContext.push({
@@ -92,10 +92,14 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
         };
 
         useEffect(() => {
-            electionContext.getSubElections(electionId, null).then(setSubElections)
+            if (electionId===rootElectionId || rootElectionId==parentElectionId) {
+                electionContext.getSubElections(rootElectionId, null).then(setSubElections)
+            }else{
+                electionContext.getSubElections(electionId, null).then(setSubElections)
+            }
         }, [electionId]);
 
-        if (electionId === rootElectionId) {
+        if (electionId === rootElectionId || rootElectionId==parentElectionId) {
             return <div className="page-content">
                 <h1>{electionName}</h1>
                 <Grid container spacing={3}>
@@ -104,12 +108,12 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                         <Processing showProgress={ProvinceElections === null}>
                             <div className="election-list">
                                 {ProvinceElections !== null && ProvinceElections.map((election) => {
-                                    const {electionId, electionName} = election;
-                                    return <div key={electionId}>
-                                        {electionName}<br/>
-                                        {DistrictElections !== null && DistrictElections["provincial_" + electionId].map((districtElection) => {
+                                    return <div key={election.electionId}>
+                                        {election.electionName}<br/>
+                                        {DistrictElections !== null && DistrictElections["provincial_" + election.electionId].map((districtElection) => {
                                             return <Link
-                                                key={districtElection.electionId} to={PATH_ELECTION_BY_ID(districtElection.electionId)}
+                                                key={districtElection.electionId}
+                                                to={PATH_ELECTION_BY_ID(districtElection.electionId)}
                                                 className="election-list-item"
                                             >
                                                 {districtElection.electionName}
