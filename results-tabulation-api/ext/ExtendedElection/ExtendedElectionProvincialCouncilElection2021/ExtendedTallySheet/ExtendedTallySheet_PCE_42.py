@@ -1,6 +1,6 @@
 from app import db
 from exception import ForbiddenException
-from exception.messages import MESSAGE_CODE_PE_21_CANNOT_BE_PROCESSED_WITHOUT_PE_R2
+from exception.messages import MESSAGE_CODE_PCE_42_CANNOT_BE_PROCESSED_WITHOUT_PCE_R2
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import TALLY_SHEET_CODES
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
@@ -43,8 +43,8 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
 
         if len(pe_r2_tally_sheets) == 0:
             raise ForbiddenException(
-                message="Candidates cannot be allocated until the seat calculation (PCE-R2) is completed and verified.",
-                code=MESSAGE_CODE_PE_21_CANNOT_BE_PROCESSED_WITHOUT_PE_R2
+                message="PCE-42 cannot be processed before PCE-R2 is completed and verified.",
+                code=MESSAGE_CODE_PCE_42_CANNOT_BE_PROCESSED_WITHOUT_PCE_R2
             )
 
         pe_r2_tally_sheet_ids = [tallySheet.tallySheetId for tallySheet in pe_r2_tally_sheets]

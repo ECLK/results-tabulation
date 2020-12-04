@@ -1,6 +1,6 @@
 from app import db
 from exception import ForbiddenException
-from exception.messages import MESSAGE_CODE_PE_AI_NL_1_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_ED
+from exception.messages import MESSAGE_CODE_PCE_PC_BS_1_CANNOT_BE_PROCESSED_WITHOUT_PCE_PC_V
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
@@ -75,8 +75,8 @@ class ExtendedTallySheet_PCE_PC_BS_1(ExtendedEditableTallySheetReport):
 
             if total_valid_vote_count == 0:
                 raise ForbiddenException(
-                    message="National list seat calculation cannot be done on zero votes.",
-                    code=MESSAGE_CODE_PE_AI_NL_1_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_ED
+                    message="Bonus Seat Allocation 1 (PCE_PC_BS_1) cannot be decided until the Provincial Vote Results (PCE-PC-V) is completed and verified.",
+                    code=MESSAGE_CODE_PCE_PC_BS_1_CANNOT_BE_PROCESSED_WITHOUT_PCE_PC_V
                 )
 
             valid_vote_count_required_per_seat = total_valid_vote_count / number_of_members_to_be_elected

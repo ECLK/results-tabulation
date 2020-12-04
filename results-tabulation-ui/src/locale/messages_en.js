@@ -39,6 +39,9 @@ export const API_MESSAGES_EN = {
     2003: "PE-21 cannot be processed before PE-R2 is completed and verified.",
     2004: "National list allocation for parties cannot be decided until the national vote calculation (PE-AI-ED) is completed and verified.",
     2005: "National list candidates cannot be determined until the national list allocation for parties is decided and verified.",
+    2006: "PCE-42 cannot be processed before PCE-R2 is completed and verified.",
+    2007: "Bonus Seat Allocation 1 (PCE_PC_BS_1) cannot be decided until the Provincial Vote Results (PCE-PC-V) is completed and verified.",
+    2008: "Bonus Seat Allocation 2 (PCE_PC_BS_2) cannot be determined until the Bonus Seat Allocation 1 (PCE_PC_BS_1) is decided and verified.",
 
     // Not found
     3000: "Election is not found.",
