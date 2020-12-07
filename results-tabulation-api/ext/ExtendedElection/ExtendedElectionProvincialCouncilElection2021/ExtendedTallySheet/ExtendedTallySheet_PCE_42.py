@@ -29,7 +29,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
         template_column_to_query_column_map = self.get_template_column_to_query_column_map()
 
         party_ids_to_be_filtered = []
-        pe_r2_tally_sheets = db.session.query(TallySheet.Model).filter(
+        pce_r2_tally_sheets = db.session.query(TallySheet.Model).filter(
             TallySheet.Model.tallySheetId == TallySheetTallySheetModel.childTallySheetId,
             TallySheet.Model.latestVersionId != None,
             TallySheetTallySheetModel.parentTallySheetId == self.tallySheet.tallySheetId,
