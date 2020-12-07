@@ -108,7 +108,7 @@ class ExtendedElection:
             "pollingDivisionId", "pollingDivisionName",
             "electoralDistrictId", "electoralDistrictName",
             "administrativeDistrictId", "administrativeDistrictName",
-            "provinceId", "provinceName"
+            "provinceId", "provinceName",
             "countryId", "countryName"
         ]
         column_name_to_column_map = {
