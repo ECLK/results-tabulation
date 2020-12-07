@@ -1,6 +1,6 @@
 from app import db
 from exception import ForbiddenException
-from exception.messages import MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_NL_1
+from exception.messages import MESSAGE_CODE_PCE_PC_BS_2_CANNOT_BE_PROCESSED_WITHOUT_PCE_PC_BS_1
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import CANDIDATE_TYPE_NATIONAL_LIST
 
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
@@ -86,8 +86,8 @@ class ExtendedTallySheet_PCE_PC_BS_2(ExtendedEditableTallySheetReport):
 
             if len(seats_allocated_per_party_df) == 0:
                 raise ForbiddenException(
-                    message="National list candidates cannot be allocated until the national vote calculation (PCE-AI-ED) is completed and verified.",
-                    code=MESSAGE_CODE_PE_AI_NL_2_CANNOT_BE_PROCESSED_WITHOUT_PE_AI_NL_1
+                    message="Bonus Seat Allocation 2 (PCE_PC_BS_2) cannot be determined until the Bonus Seat Allocation 1 (PCE_PC_BS_1) is decided and verified.",
+                    code=MESSAGE_CODE_PCE_PC_BS_2_CANNOT_BE_PROCESSED_WITHOUT_PCE_PC_BS_1
                 )
 
             # The derived rows are calculated only if the PCE-R2 is available and verified.
