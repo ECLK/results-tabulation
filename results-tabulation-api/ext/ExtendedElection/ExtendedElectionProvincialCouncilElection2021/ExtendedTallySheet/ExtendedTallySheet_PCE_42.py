@@ -41,17 +41,17 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
             ),
         ).all()
 
-        if len(pe_r2_tally_sheets) == 0:
+        if len(pce_r2_tally_sheets) == 0:
             raise ForbiddenException(
                 message="PCE-42 cannot be processed before PCE-R2 is completed and verified.",
                 code=MESSAGE_CODE_PCE_42_CANNOT_BE_PROCESSED_WITHOUT_PCE_R2
             )
 
-        pe_r2_tally_sheet_ids = [tallySheet.tallySheetId for tallySheet in pe_r2_tally_sheets]
+        pce_r2_tally_sheet_ids = [tallySheet.tallySheetId for tallySheet in pce_r2_tally_sheets]
 
-        for pe_r2_tally_sheet in pe_r2_tally_sheets:
-            pe_r2_extended_tally_sheet_version = pe_r2_tally_sheet.get_extended_tally_sheet_version(
-                tallySheetVersionId=pe_r2_tally_sheet.latestVersionId)
+        for pce_r2_tally_sheet in pce_r2_tally_sheets:
+            pe_r2_extended_tally_sheet_version = pce_r2_tally_sheet.get_extended_tally_sheet_version(
+                tallySheetVersionId=pce_r2_tally_sheet.latestVersionId)
             party_wise_seat_calculation_df = pe_r2_extended_tally_sheet_version.get_party_wise_seat_calculations()
             for party_wise_seat_calculation_df_index in party_wise_seat_calculation_df.index:
                 seats_allocated = party_wise_seat_calculation_df.at[
@@ -67,7 +67,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
             TallySheet.Model.tallySheetId == TallySheetTallySheetModel.childTallySheetId,
             TallySheetTallySheetModel.parentTallySheetId == self.tallySheet.tallySheetId,
             TallySheet.Model.templateId == Template.Model.templateId,
-            Template.Model.templateName == TALLY_SHEET_CODES.PE_CE_RO_PR_3,
+            Template.Model.templateName == TALLY_SHEET_CODES.PCE_CE_RO_PR_3,
             MetaData.Model.metaId == TallySheet.Model.metaId,
             MetaData.Model.metaDataKey == "partyId",
             MetaData.Model.metaDataValue.in_(party_ids_to_be_filtered)
@@ -76,7 +76,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
 
         template_column_to_query_filter_map["partyId"] += [
             template_column_to_query_column_map["partyId"].in_(party_ids_to_be_filtered),
-            TallySheet.Model.tallySheetId.in_(pe_ce_ro_pr_3_tally_sheet_ids + pe_r2_tally_sheet_ids)
+            TallySheet.Model.tallySheetId.in_(pe_ce_ro_pr_3_tally_sheet_ids + pce_r2_tally_sheet_ids)
         ]
 
         return template_column_to_query_filter_map
