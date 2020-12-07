@@ -273,7 +273,7 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
-                "tallySheetCode": "PE/R2",
+                "tallySheetCode": "PCE/R2",
                 "administrativeDistrict": Area.get_associated_areas(
                     tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "administrativeDistrictId": Area.get_associated_areas(
