@@ -34,7 +34,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
             TallySheet.Model.latestVersionId != None,
             TallySheetTallySheetModel.parentTallySheetId == self.tallySheet.tallySheetId,
             TallySheet.Model.templateId == Template.Model.templateId,
-            Template.Model.templateName == TALLY_SHEET_CODES.PCE_42,
+            Template.Model.templateName == TALLY_SHEET_CODES.PCE_R2,
             WorkflowInstance.Model.workflowInstanceId == TallySheet.Model.workflowInstanceId,
             WorkflowInstance.Model.status.in_(
                 extended_election.tally_sheet_verified_statuses_list()
