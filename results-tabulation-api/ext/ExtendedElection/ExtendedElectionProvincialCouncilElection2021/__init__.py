@@ -207,7 +207,9 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             root_election.add_party(partyId=party.partyId)
 
             if candidate_type == CANDIDATE_TYPE_NORMAL:
+                province_election = _get_province_election(row)
                 administrative_district_election = _get_administrative_district_election(row)
+                province_election.add_party(partyId=party.partyId)
                 administrative_district_election.add_party(partyId=party.partyId)
                 for administrative_district_sub_election in administrative_district_election.subElections:
                     administrative_district_sub_election.add_party(partyId=party.partyId)
