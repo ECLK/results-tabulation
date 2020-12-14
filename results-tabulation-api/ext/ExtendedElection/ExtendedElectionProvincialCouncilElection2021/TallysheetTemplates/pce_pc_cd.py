@@ -69,7 +69,7 @@ def create_template():
                         {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
                         {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
                         {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_QUERY},
-                        {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_QUERY}
+                        {"columnName": "candidateId", "grouped": True, "func": None, "source": SOURCE_QUERY}
                     ],
                     "derivativeRows": [
                         {"templateName": PCE_42, "templateRowType": TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE},
