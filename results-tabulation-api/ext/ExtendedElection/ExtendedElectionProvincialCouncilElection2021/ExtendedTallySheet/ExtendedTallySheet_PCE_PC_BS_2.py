@@ -1,7 +1,6 @@
 from app import db
 from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_PCE_PC_BS_2_CANNOT_BE_PROCESSED_WITHOUT_PCE_PC_BS_1
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import CANDIDATE_TYPE_NATIONAL_LIST
 
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED, TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
@@ -24,7 +23,7 @@ class ExtendedTallySheet_PCE_PC_BS_2(ExtendedEditableTallySheetReport):
 
         result_type = "RN_NC"
         result_code = "FINAL"
-        result_level = "NATIONAL"
+        result_level = "PROVINCE"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
@@ -100,7 +99,6 @@ class ExtendedTallySheet_PCE_PC_BS_2(ExtendedEditableTallySheetReport):
 
                         candidates = db.session.query(Candidate.Model.candidateId).filter(
                             Candidate.Model.candidateId == ElectionCandidateModel.candidateId,
-                            Candidate.Model.candidateType == CANDIDATE_TYPE_NATIONAL_LIST,
                             ElectionCandidateModel.partyId == party_id
                         ).group_by(Candidate.Model.candidateId).order_by(Candidate.Model.candidateId).all()
 
@@ -159,7 +157,7 @@ class ExtendedTallySheet_PCE_PC_BS_2(ExtendedEditableTallySheetReport):
                 ])
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-PC-BS-1.html',
+                'ProvincialCouncilElection2021/PCE-PC-BS-2.html',
                 content=content
             )
 
@@ -203,7 +201,7 @@ class ExtendedTallySheet_PCE_PC_BS_2(ExtendedEditableTallySheetReport):
                 ])
 
             html = render_template(
-                'ProvincialCouncilElection2021/PCE-PC-BS-1-LETTER.html',
+                'ProvincialCouncilElection2021/PCE-PC-BS-2-LETTER.html',
                 content=content
             )
 

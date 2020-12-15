@@ -10,6 +10,7 @@ import {
     TALLY_SHEET_CODE_PCE_31,
     TALLY_SHEET_CODE_PCE_34,
     TALLY_SHEET_CODE_PCE_35,
+    TALLY_SHEET_CODE_PCE_42,
     TALLY_SHEET_CODE_PCE_CE_CO_PR_4,
     TALLY_SHEET_CODE_PCE_CE_RO_V1,
     TALLY_SHEET_CODE_PCE_CE_RO_V2,
@@ -110,6 +111,9 @@ export const TALLY_SHEET_LIST_COLUMNS = {
         [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ad_status_actions
     },
     [TALLY_SHEET_CODE_PCE_R2]: {
+        [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ad_status_actions
+    },
+    [TALLY_SHEET_CODE_PCE_42]: {
         [VOTE_TYPE_POSTAL_AND_NON_POSTAL]: columns_ad_status_actions
     },
     [TALLY_SHEET_CODE_PCE_34]: {

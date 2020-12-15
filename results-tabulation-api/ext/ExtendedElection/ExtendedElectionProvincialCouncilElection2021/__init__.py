@@ -177,7 +177,9 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
 
             if candidate_type == CANDIDATE_TYPE_NORMAL:
 
+                province_election = _get_province_election(row)
                 administrative_district_election = _get_administrative_district_election(row)
+                province_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
                 administrative_district_election.add_candidate(candidateId=candidate.candidateId, partyId=party.partyId)
 
                 for administrative_district_sub_election in administrative_district_election.subElections:
@@ -207,7 +209,9 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             root_election.add_party(partyId=party.partyId)
 
             if candidate_type == CANDIDATE_TYPE_NORMAL:
+                province_election = _get_province_election(row)
                 administrative_district_election = _get_administrative_district_election(row)
+                province_election.add_party(partyId=party.partyId)
                 administrative_district_election.add_party(partyId=party.partyId)
                 for administrative_district_sub_election in administrative_district_election.subElections:
                     administrative_district_sub_election.add_party(partyId=party.partyId)
@@ -251,7 +255,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": province_election.electionId
                     }).metaId,
-                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
+                    workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
                 pce_pc_bs_2_tally_sheet_list = [TallySheet.create(
@@ -274,7 +278,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": province_election.electionId
                     }).metaId,
-                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
+                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pce_pc_bs_1_tally_sheet_list = [TallySheet.create(
@@ -299,7 +303,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "electionId": province_election.electionId
                     }).metaId,
                     parentTallySheets=[*pce_pc_cd_tally_sheet_list, *pce_pc_sa_2_tally_sheet_list],
-                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
+                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 pce_pc_v_tally_sheet_list = [TallySheet.create(
@@ -312,7 +316,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     }).metaId,
                     parentTallySheets=[*pce_pc_bs_1_tally_sheet_list, *pce_pc_cd_tally_sheet_list,
                                        *pce_pc_sa_1_tally_sheet_list, *pce_pc_sa_2_tally_sheet_list],
-                    workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
+                    workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
                 return {

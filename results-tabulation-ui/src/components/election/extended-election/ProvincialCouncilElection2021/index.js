@@ -132,16 +132,16 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                             <ul className="tally-sheet-code-list">
                                 {(() => {
                                     let tallySheetCodes = [TALLY_SHEET_CODE_PCE_PC_V,
-                                        TALLY_SHEET_CODE_PCE_PC_CD,
                                         TALLY_SHEET_CODE_PCE_PC_BS_1,
                                         TALLY_SHEET_CODE_PCE_PC_BS_2,
+                                        TALLY_SHEET_CODE_PCE_PC_CD,
                                         TALLY_SHEET_CODE_PCE_PC_SA_1,
                                         TALLY_SHEET_CODE_PCE_PC_SA_2];
                                     let tallySheetCodeLabels = [
                                         "Provincial Vote Results",
-                                        "Candidates List",
                                         "Bonus Seat Allocation 1",
                                         "Bonus Seat Allocation 2",
+                                        "Candidates List",
                                         "Seat Allocation 1",
                                         "Seat Allocation 2",
                                     ];
