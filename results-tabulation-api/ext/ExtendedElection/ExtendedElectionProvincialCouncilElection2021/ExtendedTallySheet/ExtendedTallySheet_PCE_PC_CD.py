@@ -79,7 +79,7 @@ class ExtendedTallySheet_PCE_PC_CD(ExtendedTallySheetReport):
                 data_row = [
                     candidate_wise_result.partyName,
                     candidate_wise_result.partyAbbreviation,
-                    "National List" if candidate_wise_result.candidateType == CANDIDATE_TYPE_NATIONAL_LIST else candidate_wise_result.areaName,
+                    candidate_wise_result.areaName,
                     candidate_wise_result.candidateNumber,
                     candidate_wise_result.candidateName
                 ]

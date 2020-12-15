@@ -317,9 +317,7 @@ export default function TallySheetEdit_PCE_PC_BS_2({history, election, tallyShee
                                                     width: '200px'
                                                 }}
                                             >
-                                                {party.candidates.filter(({candidateType}) => {
-                                                    return candidateType === CANDIDATE_TYPE_NATIONAL_LIST;
-                                                }).map(({candidateId, candidateName, candidateNumber}) => (
+                                                {party.candidates.map(({candidateId, candidateName, candidateNumber}) => (
                                                     <MenuItem key={candidateId} value={candidateId}>
                                                         {getCandidateLabel({candidateName, candidateNumber})}
                                                     </MenuItem>
