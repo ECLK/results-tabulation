@@ -127,7 +127,8 @@ class ExtendedTallySheet_PCE_PC_BS_2(ExtendedEditableTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name(),
+                    "provinceName": tallySheetVersion.tallySheet.area.areaName
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -170,7 +171,8 @@ class ExtendedTallySheet_PCE_PC_BS_2(ExtendedEditableTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name(),
+                    "provinceName": tallySheetVersion.tallySheet.area.areaName
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
