@@ -16,7 +16,6 @@ import {
     TALLY_SHEET_ROW_TYPE_SEATS_ALLOCATED,
     TEMPLATE_ROW_TYPE_DRAFT_ELECTED_CANDIDATE
 } from "../TALLY_SHEET_ROW_TYPE";
-import {CANDIDATE_TYPE_NATIONAL_LIST} from "../CANDIDATE_TYPE";
 
 export default function TallySheetEdit_PCE_PC_BS_2({history, election, tallySheet}) {
 
@@ -220,7 +219,7 @@ export default function TallySheetEdit_PCE_PC_BS_2({history, election, tallyShee
 
     function getCandidateLabel({candidateName, candidateNumber} = {}) {
         if (!candidateName || !candidateNumber) {
-            return <small>No enough national list candidates nominated.</small>
+            return <small>No enough bonus seat candidates nominated.</small>
         } else {
             return `${candidateNumber}. ${candidateName}`;
         }
