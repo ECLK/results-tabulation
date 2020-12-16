@@ -23,7 +23,7 @@ class ExtendedTallySheet_PCE_PC_BS_2(ExtendedEditableTallySheetReport):
 
         result_type = "RN_NC"
         result_code = "FINAL"
-        result_level = "PROVINCE"
+        result_level = "PROVINCIAL"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 

@@ -17,7 +17,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
 
         result_type = "RN_VSN"
         result_code = "FINAL"
-        result_level = "NATIONAL"
+        result_level = "PROVINCIAL"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
@@ -48,7 +48,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
                         "vote_count": int(party_wise_result.numValue),
                         "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100),
                         "seat_count": int(party_wise_result.seatsAllocated),
-                        "national_list_seat_count": int(party_wise_result.nationalListSeatsAllocated),
+                        "bonus_seat_count": int(party_wise_result.bonusSeatsAllocated),
                     } for party_wise_result in party_wise_results.itertuples()
                 ],
                 "summary": {
@@ -157,7 +157,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
                     data_row.append('')
 
                 data_row.append(to_comma_seperated_num(party_wise_result.seatsAllocated))
-                data_row.append(to_comma_seperated_num(party_wise_result.nationalListSeatsAllocated))
+                data_row.append(to_comma_seperated_num(party_wise_result.bonusSeatsAllocated))
                 data_row.append(to_comma_seperated_num(party_wise_result.totalSeatsAllocated))
 
                 content["data"].append(data_row)
@@ -231,7 +231,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
                     data_row.append('')
 
                 data_row.append(to_comma_seperated_num(party_wise_result.seatsAllocated))
-                data_row.append(to_comma_seperated_num(party_wise_result.nationalListSeatsAllocated))
+                data_row.append(to_comma_seperated_num(party_wise_result.bonusSeatsAllocated))
                 data_row.append(to_comma_seperated_num(party_wise_result.totalSeatsAllocated))
 
                 content["data"].append(data_row)
