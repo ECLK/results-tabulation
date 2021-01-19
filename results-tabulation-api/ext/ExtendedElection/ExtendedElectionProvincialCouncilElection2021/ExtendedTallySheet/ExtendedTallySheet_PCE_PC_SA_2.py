@@ -67,7 +67,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
 
             for index_1 in party_wise_calculations_df.index:
                 party_wise_calculations_df.at[index_1, "seatsAllocated"] = np.nan
-                party_wise_calculations_df.at[index_1, "nationalListSeatsAllocated"] = np.nan
+                party_wise_calculations_df.at[index_1, "bonusSeatsAllocated"] = np.nan
                 party_wise_calculations_df.at[index_1, "validVoteCount"] = party_wise_calculations_df.at[
                     index_1, "numValue"]
 
@@ -86,13 +86,13 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
 
                         if template_row_type == TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED:
                             party_wise_calculations_df.at[
-                                index_1, "nationalListSeatsAllocated"] = get_sum_of_numbers_only_and_nan_otherwise(
-                                [party_wise_calculations_df.at[index_1, "nationalListSeatsAllocated"], num_value])
+                                index_1, "bonusSeatsAllocated"] = get_sum_of_numbers_only_and_nan_otherwise(
+                                [party_wise_calculations_df.at[index_1, "bonusSeatsAllocated"], num_value])
 
                 party_wise_calculations_df.at[
                     index_1, "totalSeatsAllocated"] = get_sum_of_numbers_only_and_nan_otherwise(
                     [party_wise_calculations_df.at[index_1, "seatsAllocated"],
-                     party_wise_calculations_df.at[index_1, "nationalListSeatsAllocated"]])
+                     party_wise_calculations_df.at[index_1, "bonusSeatsAllocated"]])
 
             return party_wise_calculations_df
 
