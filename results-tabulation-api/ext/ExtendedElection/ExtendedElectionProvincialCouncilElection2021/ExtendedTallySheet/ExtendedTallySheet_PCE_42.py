@@ -230,6 +230,10 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "tallySheetCode": "PCE-21",
+                "provinceNo": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.Province)[0].areaId,
+                "province": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.Province)[0].areaName,
                 "administrativeDistrictNo": Area.get_associated_areas(
                     tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaId,
                 "administrativeDistrict": Area.get_associated_areas(
@@ -272,6 +276,8 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
                     "barcodeString": stamp.barcodeString
                 },
                 "signatures": signatures,
+                "province": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.Province)[0].areaName,
                 "administrativeDistrict": Area.get_associated_areas(
                     tallySheetVersion.tallySheet.area, AreaTypeEnum.AdministrativeDistrict)[0].areaName,
                 "data": [],

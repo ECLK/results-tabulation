@@ -17,7 +17,7 @@ class ExtendedTallySheet_PCE_PC_SA_1(ExtendedTallySheetReport):
 
         result_type = "RN_VS"
         result_code = "FINAL"
-        result_level = "NATIONAL"
+        result_level = "PROVINCIAL"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
@@ -48,7 +48,7 @@ class ExtendedTallySheet_PCE_PC_SA_1(ExtendedTallySheetReport):
                         "vote_count": int(party_wise_result.numValue),
                         "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100),
                         "seat_count": int(party_wise_result.seatsAllocated),
-                        "national_list_seat_count": 0
+                        "bonus_seat_count": 0
                     } for party_wise_result in party_wise_results.itertuples()
                 ],
                 "summary": {
@@ -96,7 +96,8 @@ class ExtendedTallySheet_PCE_PC_SA_1(ExtendedTallySheetReport):
             registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name(),
+                    "provinceName": tallySheetVersion.tallySheet.area.areaName
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -173,7 +174,8 @@ class ExtendedTallySheet_PCE_PC_SA_1(ExtendedTallySheetReport):
             registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name(),
+                    "provinceName": tallySheetVersion.tallySheet.area.areaName
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,

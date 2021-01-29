@@ -66,7 +66,7 @@ class ExtendedTallySheet_PCE_CE_RO_V1(ExtendedTallySheetReport):
                         "vote_count": int(party_wise_result.numValue),
                         "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100),
                         "seat_count": 0,
-                        "national_list_seat_count": 0
+                        "bonus_seat_count": 0
                     } for party_wise_result in party_wise_results.itertuples()
                 ],
                 "summary": {

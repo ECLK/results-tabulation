@@ -148,7 +148,8 @@ class ExtendedTallySheet_PCE_PC_BS_1(ExtendedEditableTallySheetReport):
             registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name(),
+                    "provinceName": tallySheetVersion.tallySheet.area.areaName
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -222,7 +223,8 @@ class ExtendedTallySheet_PCE_PC_BS_1(ExtendedEditableTallySheetReport):
             registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name(),
+                    "provinceName": tallySheetVersion.tallySheet.area.areaName
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
