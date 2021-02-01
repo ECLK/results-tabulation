@@ -2,36 +2,30 @@
 
 {% block container %}
     <div class="font1">
-        <div style="margin-bottom:5px;text-align:right;">
-            <b>Form No. : CE-RO-PR/3</b>
-        </div>
         <table class="table table-borderless" style="margin-bottom:0;">
             <tbody>
-            <tr>
-                <td class="bold no-padding-right" style="text-align:center;width:90%;">
-                    <h1>{{ content.election.electionName }}</h1>
-                    <p>CENTER FOR DECLARATION OF RESULTS<br/>
-                        POSITION OF CANDIDATES ACCORDING TO PREFERENCES</p>
-                </td>
-                <td>
-                    <div class="all float-right"><h1 class="bold">RO</h1></div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <table class="table table-borderless">
-            <tbody>
-            <tr>
-                <td class="no-padding-left no-padding-right" style="width:50%;">
-                    <span style="text-decoration: underline; text-decoration-style:dotted;"> {{ content.administrativeDistrict }}</span>
-                    Administrative District
-                </td>
-                <td class="no-padding-left no-padding-right" style="text-align:right;width:50%;">
-                    Name of Political Party/ Independent Group No :
-                    <span style="text-decoration: underline; text-decoration-style:dotted;"> {{ content.partyName }}</span>
-                </td>
-            </tr>
-
+                <tr>
+                    <td class="bold no-padding-right" style="width:90%;">
+                        <div style="text-decoration: underline; text-transform: uppercase;" class="bold">
+                            {{ content.election.electionName }}
+                        </div>
+                        <div class="bold" style="text-transform: uppercase;">
+                            CENTER FOR DECLARATION OF RESULTS<br/>
+                            POSITION OF CANDIDATES ACCORDING TO PREFERENCES
+                        </div>
+                        <p style="margin-top: 5px;">
+                            Name of Political Party/ Independent Group No :
+                        <span style="text-decoration: underline; text-decoration-style:dotted;"> {{ content.partyName }}</span>
+                        </p>
+                        <div class="bold">
+                            <span style="font-size: 1.5rem;">Administrative District :</span>
+                            <span style="text-transform: uppercase; font-size: 2rem;"> {{ content.administrativeDistrict }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="all float-right" style="padding-left: 5px; padding-right: 5px;"><h1 class="bold">CE/RO/PR/3</h1></div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 
@@ -39,16 +33,16 @@
             <tbody>
             <tr style="text-align:center;">
                 <th class="left right top bottom" style="vertical-align:middle;" rowspan="2">
-                    Position According to No. of Preferences Received
+                    Position according to No. of Preferences Received
                 </th>
                 <th class="left right top bottom" style="width:300px;vertical-align:middle;" rowspan="2">
-                    Serial No. and Name of Candidate
+                    Serial No. of the Candidate
+                </th>
+                <th class="left right top bottom" style="width:300px;vertical-align:middle;" rowspan="2">
+                    Name of the Candidate
                 </th>
                 <th class="left right top bottom" style="vertical-align:middle;" colspan="2">
-                    Number of Preferences Received
-                </th>
-                <th class="left right top bottom" style="vertical-align:middle;" rowspan="2">
-                    Position According to No. of Preferences Received
+                    Total No. of Preferences Received
                 </th>
 
             </tr>
@@ -60,8 +54,8 @@
                 <tr>
                     <td class="left right top bottom text-right">{{ row[0] }}</td>
                     <td class="left right top bottom text-right">{{ row[1] }}</td>
-                    <td class="left right top bottom text-right {% if row[2]=="" %}missing-value{% endif %}">{{ row[2] }}</td>
-                    <td class="left right top bottom text-right">{{ row[3] }}</td>
+                    <td class="left right top bottom text-right">{{ row[2] }}</td>
+                    <td class="left right top bottom text-right {% if row[3]=="" %}missing-value{% endif %}">{{ row[3] }}</td>
                     <td class="left right top bottom text-right">{{ row[4] }}</td>
                 </tr>
 
@@ -69,174 +63,138 @@
                     <tr>
                         <td></td>
                         <td></td>
-                        <td>&nbsp;</td>
                         <td></td>
+                        <td>&nbsp;</td>
                         <td></td>
                     </tr>
                 {% endif %}
 
             {% endfor %}
+            <tr>
+                <td></td>
+                <td></td>
+                <td class="bold">Total</td>
+                <td style="border-bottom: double;" class="left right top text-right {% if content.totalVoteCounts=="" %}missing-value{% endif %}">
+                    {{ content.totalVoteCounts[0] }}
+                </td>
+                <td style="border-bottom: double;" class="left right top text-right"></td>
+            </tr>
 
             </tbody>
         </table>
 
         <table class="table table-borderless">
             <tbody>
+                <tr>
+                    <td>
+                        <div class="group" style="width: 100%;">
+                            <div class="block1 all" style="width: 32.33%;">
+                                <div class="sect1">
+                                    <span class="sub-head">Witnessed by:</span> ARO<br/><br/>
+                                    <span>Signature .......................</span><br/><br/>
+                                    <span>Name ..........................</span><br/><br/>
+                                    <span>Designation ........................</span>
+                                </div>
+                            </div>
+                            <div class="block2 all" style="width: 33.33%;">
+                                <div class="sect1">
+                                    <span class="sub-head">Prepared by:</span><br/><br/>
+                                    <span>Signature .......................</span><br/><br/>
+                                    <span>Name ..........................</span><br/><br/>
+                                    <span>Designation ........................</span>
+                                </div>
+                            </div>
+                            <div class="block2 all" style="width: 33.33%;">
+                                <div class="sect1">
+                                    <span class="sub-head">Checked by:</span><br/><br/>
+                                    <span>Signature .......................</span><br/><br/>
+                                    <span>Name ..........................</span><br/><br/>
+                                    <span>Designation ........................</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr> 
+            </tbody>
+        </table>
+
+        <table class="table table-borderless all">
+            <tbody>
+            
             <tr>
-                <td colspan="8" class="bold no-padding"><i>Witnessed by :</i></td>
+                <td style="padding-left: 1px" class="bold sub-head"><i>Agent's Name</i></td>
+                <td style="padding-left: 1px" class="bold sub-head"><i>Party/ Independent Group</i></td>
+                <td style="padding-left: 1px" class="bold sub-head"><i>Signature</i></td>
             </tr>
             <tr>
-                <td colspan="5" class="bold no-padding"><i>ARO's Signature :
-                    ............................................................</i></td>
-                <td></td>
-                <td class="bold no-padding">Prepared by :</td>
-                <td rowspan="2" class="no-padding-top">1.
-                    ..........................................................<br/>
-                    2. ..........................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;">
+                    1.....................................................................
                 </td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             <tr>
-                <td colspan="5" class="bold no-padding"><i>Name :
-                    ..............................................................................</i></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td colspan="5" class="bold no-padding"><i>Agents : </i></td>
-                <td></td>
-                <td class="bold no-padding">Checked by :</td>
-                <td rowspan="2" class="no-padding-top">1.
-                    ..........................................................<br/>
-                    2. ..........................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;"> 
+                    2.....................................................................
                 </td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             <tr>
-                <td></td>
-                <td class="bold" style="text-align:center;"><i>Name</i></td>
-                <td></td>
-                <td class="bold" style="text-align:center;"><i>Party/ Independent Group</i></td>
-                <td class="bold" style="text-align:center;"><i>Signature</i></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td style="text-align:right;" class="no-padding">1.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;">
+                    3.....................................................................
                 </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             <tr>
-                <td style="text-align:right;" class="no-padding">2.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;">
+                    4.....................................................................
                 </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             <tr>
-                <td style="text-align:right;" class="no-padding">3.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;">
+                    5.....................................................................
                 </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             <tr>
-                <td style="text-align:right;" class="no-padding">4.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;">
+                    6.....................................................................
                 </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td colspan="2" style="text-align:center;" class="no-padding">
-                    .............................................................<br/></td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             <tr>
-                <td style="text-align:right;" class="no-padding">5.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;">
+                    7.....................................................................
                 </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td colspan="2" style="text-align:center;" class="no-padding"><b><i>Returning Officer.</i></b></td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             <tr>
-                <td style="text-align:right;" class="no-padding">6.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;">
+                    8.....................................................................
                 </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             <tr>
-                <td style="text-align:right;" class="no-padding">7.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;">
+                    9.....................................................................
                 </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td class="no-padding"><b><i>Time : </i></b></td>
-                <td></td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             <tr>
-                <td style="text-align:right;" class="no-padding">8.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
+                <td style="padding-left: 1px; padding-top: .25rem; padding-bottom: .25rem;">
+                    10.....................................................................
                 </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td style="text-align:right;" class="no-padding">9.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
-                </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td class="no-padding"><b><i>Date : </i></b></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td style="text-align:right;" class="no-padding">10.</td>
-                <td style="text-align:center;" class="no-padding">
-                    ....................................................................
-                </td>
-                <td></td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td style="text-align:center;" class="no-padding">.....................................</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
+                <td style="padding-top: .25rem; padding-bottom: .25rem;">.....................................................................</td>
             </tr>
             </tbody>
         </table>
