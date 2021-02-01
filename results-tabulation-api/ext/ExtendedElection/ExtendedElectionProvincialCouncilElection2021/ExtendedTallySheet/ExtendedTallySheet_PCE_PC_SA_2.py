@@ -17,7 +17,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
 
         result_type = "RN_VSN"
         result_code = "FINAL"
-        result_level = "NATIONAL"
+        result_level = "PROVINCIAL"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
@@ -48,7 +48,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
                         "vote_count": int(party_wise_result.numValue),
                         "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100),
                         "seat_count": int(party_wise_result.seatsAllocated),
-                        "national_list_seat_count": int(party_wise_result.nationalListSeatsAllocated),
+                        "bonus_seat_count": int(party_wise_result.bonusSeatsAllocated),
                     } for party_wise_result in party_wise_results.itertuples()
                 ],
                 "summary": {
@@ -67,7 +67,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
 
             for index_1 in party_wise_calculations_df.index:
                 party_wise_calculations_df.at[index_1, "seatsAllocated"] = np.nan
-                party_wise_calculations_df.at[index_1, "nationalListSeatsAllocated"] = np.nan
+                party_wise_calculations_df.at[index_1, "bonusSeatsAllocated"] = np.nan
                 party_wise_calculations_df.at[index_1, "validVoteCount"] = party_wise_calculations_df.at[
                     index_1, "numValue"]
 
@@ -86,13 +86,13 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
 
                         if template_row_type == TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED:
                             party_wise_calculations_df.at[
-                                index_1, "nationalListSeatsAllocated"] = get_sum_of_numbers_only_and_nan_otherwise(
-                                [party_wise_calculations_df.at[index_1, "nationalListSeatsAllocated"], num_value])
+                                index_1, "bonusSeatsAllocated"] = get_sum_of_numbers_only_and_nan_otherwise(
+                                [party_wise_calculations_df.at[index_1, "bonusSeatsAllocated"], num_value])
 
                 party_wise_calculations_df.at[
                     index_1, "totalSeatsAllocated"] = get_sum_of_numbers_only_and_nan_otherwise(
                     [party_wise_calculations_df.at[index_1, "seatsAllocated"],
-                     party_wise_calculations_df.at[index_1, "nationalListSeatsAllocated"]])
+                     party_wise_calculations_df.at[index_1, "bonusSeatsAllocated"]])
 
             return party_wise_calculations_df
 
@@ -104,7 +104,8 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
             registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name(),
+                    "provinceName": tallySheetVersion.tallySheet.area.areaName
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -156,7 +157,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
                     data_row.append('')
 
                 data_row.append(to_comma_seperated_num(party_wise_result.seatsAllocated))
-                data_row.append(to_comma_seperated_num(party_wise_result.nationalListSeatsAllocated))
+                data_row.append(to_comma_seperated_num(party_wise_result.bonusSeatsAllocated))
                 data_row.append(to_comma_seperated_num(party_wise_result.totalSeatsAllocated))
 
                 content["data"].append(data_row)
@@ -176,7 +177,8 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
             registered_voters_count = tallySheetVersion.tallySheet.area.get_registered_voters_count()
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name(),
+                    "provinceName": tallySheetVersion.tallySheet.area.areaName
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -229,7 +231,7 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
                     data_row.append('')
 
                 data_row.append(to_comma_seperated_num(party_wise_result.seatsAllocated))
-                data_row.append(to_comma_seperated_num(party_wise_result.nationalListSeatsAllocated))
+                data_row.append(to_comma_seperated_num(party_wise_result.bonusSeatsAllocated))
                 data_row.append(to_comma_seperated_num(party_wise_result.totalSeatsAllocated))
 
                 content["data"].append(data_row)

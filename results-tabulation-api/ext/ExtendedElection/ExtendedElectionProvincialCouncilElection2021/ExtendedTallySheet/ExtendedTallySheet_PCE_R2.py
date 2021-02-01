@@ -72,7 +72,7 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
                         "vote_count": 0,
                         "vote_percentage": "",
                         "seat_count": int(party_wise_result.seatsAllocated),
-                        "national_list_seat_count": 0
+                        "bonus_seat_count": 0
                     } for party_wise_result in party_wise_results.itertuples()
                 ]
             }

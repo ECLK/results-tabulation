@@ -16,7 +16,7 @@ class ExtendedTallySheet_PCE_PC_V(ExtendedTallySheetReport):
 
         result_type = "RN_V"
         result_code = "FINAL"
-        result_level = "NATIONAL"
+        result_level = "PROVINCIAL"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
@@ -47,7 +47,7 @@ class ExtendedTallySheet_PCE_PC_V(ExtendedTallySheetReport):
                         "vote_count": int(party_wise_result.numValue),
                         "vote_percentage": to_percentage((party_wise_result.numValue / total_valid_vote_count) * 100),
                         "seat_count": 0,
-                        "national_list_seat_count": 0
+                        "bonus_seat_count": 0
                     } for party_wise_result in party_wise_results.itertuples()
                 ],
                 "summary": {

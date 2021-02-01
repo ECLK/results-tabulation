@@ -1,6 +1,5 @@
 from flask import render_template
 
-from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021 import CANDIDATE_TYPE_NATIONAL_LIST
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
@@ -16,7 +15,7 @@ class ExtendedTallySheet_PCE_PC_CD(ExtendedTallySheetReport):
 
         result_type = "RN_SCNC"
         result_code = "FINAL"
-        result_level = "NATIONAL"
+        result_level = "PROVINCIAL"
 
         return result_type, result_code, result_level, ed_code, ed_name, pd_code, pd_name
 
@@ -120,7 +119,7 @@ class ExtendedTallySheet_PCE_PC_CD(ExtendedTallySheetReport):
                 data_row = [
                     candidate_wise_result.partyName,
                     candidate_wise_result.partyAbbreviation,
-                    "National List" if candidate_wise_result.candidateType == CANDIDATE_TYPE_NATIONAL_LIST else candidate_wise_result.areaName,
+                    candidate_wise_result.areaName,
                     candidate_wise_result.candidateNumber,
                     candidate_wise_result.candidateName
                 ]
