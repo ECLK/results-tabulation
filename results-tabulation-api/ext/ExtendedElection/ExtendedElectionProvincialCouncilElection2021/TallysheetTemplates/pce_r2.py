@@ -89,16 +89,16 @@ def create_template():
                     {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
                 ]
             },
-            TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: {
-                "hasMany": True,
-                "isDerived": False,
-                "columns": [
-                    {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                    {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                    {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                    {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
-                ]
-            },
+            # TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: {
+            #     "hasMany": True,
+            #     "isDerived": False,
+            #     "columns": [
+            #         {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+            #         {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+            #         {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+            #         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+            #     ]
+            # },
             TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: {
                 "hasMany": True,
                 "isDerived": False,
@@ -109,16 +109,16 @@ def create_template():
                     {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
                 ]
             },
-            TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: {
-                "hasMany": True,
-                "isDerived": False,
-                "columns": [
-                    {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
-                    {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
-                    {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
-                    {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
-                ]
-            },
+            # TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: {
+            #     "hasMany": True,
+            #     "isDerived": False,
+            #     "columns": [
+            #         {"columnName": "electionId", "grouped": True, "func": None, "source": SOURCE_META},
+            #         {"columnName": "areaId", "grouped": True, "func": None, "source": SOURCE_META},
+            #         {"columnName": "partyId", "grouped": True, "func": None, "source": SOURCE_CONTENT},
+            #         {"columnName": "numValue", "grouped": False, "func": "sum", "source": SOURCE_CONTENT}
+            #     ]
+            # },
             TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: {
                 "hasMany": True,
                 "isDerived": False,
