@@ -3,8 +3,8 @@ from exception import ForbiddenException
 from exception.messages import MESSAGE_CODE_PCE_PC_BS_1_CANNOT_BE_PROCESSED_WITHOUT_PCE_PC_V
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1, TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1, \
-    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
-    TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2, TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
+    TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT, \
+    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED
 from ext.ExtendedTallySheet import ExtendedEditableTallySheetReport
 from orm.entities import TallySheet
 from orm.entities.Template import TemplateRowModel, TemplateModel
@@ -15,10 +15,6 @@ import pandas as pd
 import numpy as np
 
 template_row_to_df_num_value_column_map = {
-    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: "seatsAllocatedFromRound1",
-    TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: "validVotesRemainFromRound1",
-    TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: "draftSeatsAllocatedFromRound2",
-    TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: "seatsAllocatedFromRound2",
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: "seatsAllocated",
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: "voteCountCeilPerSeat"
 }
@@ -29,15 +25,11 @@ class ExtendedTallySheet_PCE_PC_BS_1(ExtendedEditableTallySheetReport):
 
         def get_post_save_request_content(self):
             tally_sheet_id = self.tallySheetVersion.tallySheetId
-            number_of_members_to_be_elected = 29
+            number_of_members_to_be_elected = 2
 
             df = self.populate_seats_per_party(number_of_members_to_be_elected=number_of_members_to_be_elected)
 
             template_row_map = {
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: [],
-                TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: [],
-                TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: [],
-                TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: [],
                 TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: [],
                 TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: []
             }
@@ -82,27 +74,18 @@ class ExtendedTallySheet_PCE_PC_BS_1(ExtendedEditableTallySheetReport):
             valid_vote_count_required_per_seat = total_valid_vote_count / number_of_members_to_be_elected
             valid_vote_count_required_per_seat_ceil = math.ceil(valid_vote_count_required_per_seat)
 
+            df = df.sort_values(by=['numValue'], ascending=True)
+            max_num_value_index = 0
+            max_num_value = 0
+
             for index in df.index:
                 num_value = df.at[index, 'numValue']
-                number_of_seats_qualified = math.floor(num_value / valid_vote_count_required_per_seat_ceil)
-                df.at[index, 'seatsAllocatedFromRound1'] = number_of_seats_qualified
-                number_of_members_to_be_elected -= number_of_seats_qualified
-                df.at[index, 'validVotesRemainFromRound1'] = num_value % valid_vote_count_required_per_seat_ceil
+                if num_value > max_num_value:
+                    max_num_value=num_value
+                    max_num_value_index=index
+                df.at[index, 'seatsAllocated'] = 0
 
-            df = df.sort_values(by=['validVotesRemainFromRound1'], ascending=False)
-            for index in df.index:
-                if number_of_members_to_be_elected > 0:
-                    number_of_seats_qualified = 1
-                    df.at[index, 'seatsAllocatedFromRound2'] = number_of_seats_qualified
-                    number_of_members_to_be_elected -= number_of_seats_qualified
-                else:
-                    df.at[index, 'seatsAllocatedFromRound2'] = 0
-
-            df['seatsAllocated'] = df.seatsAllocatedFromRound1 + df.seatsAllocatedFromRound2
-
-            df['draftSeatsAllocatedFromRound2'] = df.seatsAllocatedFromRound2
-
-            df = df.sort_values(by=['numValue'], ascending=False)
+            df.at[max_num_value_index, 'seatsAllocated'] = 2
 
             df["voteCountCeilPerSeat"] = pd.Series(
                 np.full(len(df.index), valid_vote_count_required_per_seat_ceil),
@@ -250,7 +233,7 @@ class ExtendedTallySheet_PCE_PC_BS_1(ExtendedEditableTallySheetReport):
                 total_vote_count += float(area_wise_vote_count_result_item.incompleteNumValue)
             content["totalVoteCounts"][0] = to_comma_seperated_num(total_vote_count)
             content["totalVoteCounts"][1] = to_percentage((total_vote_count / registered_voters_count) * 100)
-            
+
             total_valid_vote_count = 0
             for area_wise_valid_vote_count_result_item in area_wise_valid_vote_count_result.itertuples():
                 total_valid_vote_count += float(area_wise_valid_vote_count_result_item.incompleteNumValue)
