@@ -5,14 +5,20 @@
 
     <table class="table table-borderless">
         <tbody>
-          <tr>
-              <td class="bold no-padding-left no-padding-right bottom" style="vertical-align:middle;">
-                Parliamentary Election Act, No. 1 of 1981, Section 62 - Form "L"
-              </td>
-              <td class="no-padding-left no-padding-right bottom" style="width:200px; vertical-align:middle;">
-                  <div class="all float-right"><h1 class="bold">PCE-42</h1></div>
-              </td>
-          </tr>
+            <tr>
+                <td></td>
+                <td class="no-padding-left no-padding-right" style="width:200px; vertical-align:middle;">
+                    <div class="float-right bold">PCE-42</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="bold no-padding-left no-padding-right" style="vertical-align:middle; text-align:center" colspan="2">
+                Provincial Councils Elections Act</br>
+                Section 60</br>
+                Form "L"
+                </td>
+            </tr>
+
 
           <tr>
               <td class="bold no-padding-left no-padding-right" style="vertical-align:middle; text-align:center" colspan="2">
@@ -23,9 +29,9 @@
           <tr>
               <td class="no-padding-left no-padding-right" style="vertical-align:middle; text-align:justify;" colspan="2">
                 I hereby certify that the following Members, nominated by the recognized Poloitical Party or
-                Independent Group shown against the name of each such member, were elected for Administrative
-                District No. <span style="border-bottom: 1px dotted #000;">{{content.administrativeDistrictNo}}</span> - <span style="border-bottom: 1px dotted #000;">{{content.administrativeDistrict}}</span>
-                 at the election held on XXXX.
+                Independent group shown against the name of each such Member, were elected for <span style="border-bottom: 1px dotted #000;">{{content.administrativeDistrictNo}}</span> Provincial Council
+                from the Administrative District of <span style="border-bottom: 1px dotted #000;">{{content.administrativeDistrict}}</span>
+                 the election held on ..........................
               </td>
           </tr>
         </tbody>
@@ -38,35 +44,36 @@
                 Name of Member elected
             </th>
             <th class="left right top bottom" style="vertical-align: middle;">
-                Recognized Political Party or Independent Group which nominated the Member
+                Recognized political party or independent group which nominated the Member
             </th>
         </tr>
 
 
         {% for row in content.data %}
         <tr>
-          <td class="left right top bottom text-right">{{loop.index}}</td>
-          <td class="left right top bottom text-right {%if row.candidateName=="" %}missing-value{% endif %}">{{row.candidateName}}</td>
-          <td class="left right top bottom text-right {%if row.partyName=="" %}missing-value{% endif %}">{{row.partyName}}</td>
+          <td class="left right top bottom">{{loop.index}}</td>
+          <td class="left right top bottom {%if row.candidateName=="" %}missing-value{% endif %}">{{row.candidateName}}</td>
+          <td class="left right top bottom {%if row.partyName=="" %}missing-value{% endif %}">{{row.partyName}}</td>
         </tr>
         {% endfor %}
 
         <tr>
             <td colspan="3"></td>
         </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td style="text-align:center;">.........................................<br/>
-              Returning Officer - <span style="border-bottom: 1px dotted #000;">{{content.administrativeDistrict}}</span> Administrative District
-
-            </td>
-        </tr>
+        
         <tr>
             <td colspan="3"></td>
         </tr>
         <tr class="no-padding-left">
-            <td colspan="3">Dated at ....................................... this .......... Day of April 2020.</td>
+            <td colspan="3">Dated at ....................................... this .......... day of ........... 20..........</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td style="text-align:right;">&nbsp;Returning Officer<br/>
+              <span style="border-bottom: 1px dotted #000;">{{content.administrativeDistrict}}</span> Administrative District
+
+            </td>
         </tr>
 
     </tbody>

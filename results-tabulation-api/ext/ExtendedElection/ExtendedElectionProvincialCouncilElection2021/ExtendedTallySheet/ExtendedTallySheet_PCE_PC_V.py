@@ -141,6 +141,7 @@ class ExtendedTallySheet_PCE_PC_V(ExtendedTallySheetReport):
 
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
+
             party_wise_valid_vote_count_result = self.get_party_wise_valid_vote_count_result()
             area_wise_valid_vote_count_result = self.get_area_wise_valid_vote_count_result()
             area_wise_rejected_vote_count_result = self.get_area_wise_rejected_vote_count_result()
@@ -198,7 +199,6 @@ class ExtendedTallySheet_PCE_PC_V(ExtendedTallySheetReport):
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
                 data_row = [
                     party_wise_valid_vote_count_result_item.partyName,
-                    party_wise_valid_vote_count_result_item.partyAbbreviation,
                     to_comma_seperated_num(party_wise_valid_vote_count_result_item.incompleteNumValue)
                 ]
 

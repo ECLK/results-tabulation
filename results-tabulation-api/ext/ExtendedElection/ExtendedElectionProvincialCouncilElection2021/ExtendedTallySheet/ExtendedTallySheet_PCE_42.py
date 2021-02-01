@@ -229,7 +229,7 @@ class ExtendedTallySheet_PCE_42(ExtendedEditableTallySheetReport):
                     "createdBy": stamp.createdBy,
                     "barcodeString": stamp.barcodeString
                 },
-                "tallySheetCode": "PCE-21",
+                "tallySheetCode": "PCE-42",
                 "provinceNo": Area.get_associated_areas(
                     tallySheetVersion.tallySheet.area, AreaTypeEnum.Province)[0].areaId,
                 "province": Area.get_associated_areas(
