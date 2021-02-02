@@ -26,9 +26,9 @@ template_row_to_df_num_value_column_map = {
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: "seatsAllocatedFromRound1",
     TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: "validVotesRemainFromRound1",
     TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: "draftSeatsAllocatedFromRound2",
-    TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: "draftBonusSeatsAllocated",
+    # TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: "draftBonusSeatsAllocated",
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: "seatsAllocatedFromRound2",
-    TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: "bonusSeatsAllocated",
+    # TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: "bonusSeatsAllocated",
     TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: "seatsAllocated",
     TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: "voteCountCeilPerSeat",
     TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION: "minimumVoteCountRequiredForSeatAllocation"
@@ -72,7 +72,7 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
                         "vote_count": 0,
                         "vote_percentage": "",
                         "seat_count": int(party_wise_result.seatsAllocated),
-                        "bonus_seat_count": 0
+                        # "bonus_seat_count": 0
                     } for party_wise_result in party_wise_results.itertuples()
                 ]
             }
@@ -100,9 +100,9 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
                 TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_1: [],
                 TEMPLATE_ROW_TYPE_VALID_VOTES_REMAIN_FROM_ROUND_1: [],
                 TEMPLATE_ROW_TYPE_DRAFT_SEATS_ALLOCATED_FROM_ROUND_2: [],
-                TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: [],
+                # TEMPLATE_ROW_TYPE_DRAFT_BONUS_SEATS_ALLOCATED: [],
                 TEMPLATE_ROW_TYPE_SEATS_ALLOCATED_FROM_ROUND_2: [],
-                TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: [],
+                # TEMPLATE_ROW_TYPE_BONUS_SEATS_ALLOCATED: [],
                 TEMPLATE_ROW_TYPE_SEATS_ALLOCATED: [],
                 TEMPLATE_ROW_TYPE_VALID_VOTE_COUNT_CEIL_PER_SEAT: [],
                 TEMPLATE_ROW_TYPE_MINIMUM_VALID_VOTE_COUNT_REQUIRED_FOR_SEAT_ALLOCATION: []
@@ -158,12 +158,12 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
 
             max_valid_vote_count_per_party = df['numValue'].max()
 
-            for index in df.index:
-                if df.at[index, 'numValue'] == max_valid_vote_count_per_party:
-                    df.at[index, 'bonusSeatsAllocated'] = 1
-                    number_of_members_to_be_elected -= 1
-                else:
-                    df.at[index, 'bonusSeatsAllocated'] = 0
+            # for index in df.index:
+            #     if df.at[index, 'numValue'] == max_valid_vote_count_per_party:
+            #         df.at[index, 'bonusSeatsAllocated'] = 1
+            #         number_of_members_to_be_elected -= 1
+            #     else:
+            #         df.at[index, 'bonusSeatsAllocated'] = 0
 
             valid_vote_count_required_per_seat = total_valid_vote_count_of_qualified_parties / number_of_members_to_be_elected
             valid_vote_count_required_per_seat_ceil = math.ceil(valid_vote_count_required_per_seat)
@@ -188,10 +188,11 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
                 else:
                     df.at[index, 'seatsAllocatedFromRound2'] = 0
 
-            df['seatsAllocated'] = df.seatsAllocatedFromRound1 + df.seatsAllocatedFromRound2 + df.bonusSeatsAllocated
+            # df['seatsAllocated'] = df.seatsAllocatedFromRound1 + df.seatsAllocatedFromRound2 + df.bonusSeatsAllocated
+            df['seatsAllocated'] = df.seatsAllocatedFromRound1 + df.seatsAllocatedFromRound2
 
             df['draftSeatsAllocatedFromRound2'] = df.seatsAllocatedFromRound2
-            df['draftBonusSeatsAllocated'] = df.bonusSeatsAllocated
+            # df['draftBonusSeatsAllocated'] = df.bonusSeatsAllocated
 
             df = df.sort_values(by=['numValue'], ascending=False)
 
@@ -297,7 +298,7 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
 
             total_seatsAllocatedFromRound1 = 0
             total_seatsAllocatedFromRound2 = 0
-            total_bonusSeatsAllocated = 0
+            # total_bonusSeatsAllocated = 0
 
             party_wise_seat_calculations = party_wise_seat_calculations[
                 (party_wise_seat_calculations[
@@ -313,20 +314,20 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
                 data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.seatsAllocatedFromRound1))
                 data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.validVotesRemainFromRound1))
                 data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.seatsAllocatedFromRound2))
-                data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.bonusSeatsAllocated))
+                # data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.bonusSeatsAllocated))
                 data_row.append(to_comma_seperated_num(party_wise_seat_calculation_item.seatsAllocated))
 
                 content["data"].append(data_row)
 
                 total_seatsAllocatedFromRound1 += int(party_wise_seat_calculation_item.seatsAllocatedFromRound1)
                 total_seatsAllocatedFromRound2 += int(party_wise_seat_calculation_item.seatsAllocatedFromRound2)
-                total_bonusSeatsAllocated += int(party_wise_seat_calculation_item.bonusSeatsAllocated)
+                # total_bonusSeatsAllocated += int(party_wise_seat_calculation_item.bonusSeatsAllocated)
 
             # get the totals
             content["total"].append(to_comma_seperated_num(total_valid_votes_after_deduction))
             content["total"].append(to_comma_seperated_num(total_seatsAllocatedFromRound1))
             content["total"].append(to_comma_seperated_num(total_seatsAllocatedFromRound2))
-            content["total"].append(to_comma_seperated_num(total_bonusSeatsAllocated))
+            # content["total"].append(to_comma_seperated_num(total_bonusSeatsAllocated))
             content["total"].append(to_comma_seperated_num(party_wise_seat_calculations['seatsAllocated'].sum()))
 
             html = render_template(
