@@ -972,11 +972,11 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             )
 
         for row in get_rows_from_csv(number_of_seats_dataset_file):
-            province_election = _get_province_election(row)
-            province_election.meta.add_meta_data(
-                metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_BONUS_SEATS_ALLOCATED,
-                metaDataValue=row["Bonus seats"]
-            )
+            # province_election = _get_province_election(row)
+            # province_election.meta.add_meta_data(
+            #     metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_BONUS_SEATS_ALLOCATED,
+            #     metaDataValue=row["Bonus seats"]
+            # )
 
             administrative_district_election = _get_administrative_district_election(row)
             administrative_district_election.meta.add_meta_data(
