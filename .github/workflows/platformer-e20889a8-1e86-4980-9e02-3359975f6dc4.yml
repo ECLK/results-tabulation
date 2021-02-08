@@ -2,7 +2,7 @@ name: Platformer Generated stag-api-tag-push Build
 on:
   push:
     tags:
-      - stag-*
+      - 'stag-**'
 jobs:
   build:
     runs-on:
