@@ -1,7 +1,7 @@
 from flask import render_template
-
+import pandas as pd
 from ext.ExtendedElection.ExtendedElectionProvincialCouncilElection2021.TEMPLATE_ROW_TYPE import \
-    TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE
+    TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE, TEMPLATE_ROW_TYPE_ELECTED_BONUS_CANDIDATE
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from util import convert_image_to_data_uri
 
@@ -45,12 +45,16 @@ class ExtendedTallySheet_PCE_PC_CD(ExtendedTallySheetReport):
         def get_candidate_wise_results(self):
             elected_candidates = self.df.loc[
                 (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_CANDIDATE) & (self.df['numValue'] == 0)]
+            bonus_candidates = self.df.loc[
+                (self.df['templateRowType'] == TEMPLATE_ROW_TYPE_ELECTED_BONUS_CANDIDATE) & (self.df['numValue'] == 0)]
+            final_elected_candidates = pd.concat([elected_candidates, bonus_candidates]).drop_duplicates(
+                subset=['partyId', 'candidateId'])
 
-            elected_candidates = elected_candidates.sort_values(
+            final_elected_candidates = final_elected_candidates.sort_values(
                 by=['partyId', 'candidateId'], ascending=True
             ).reset_index()
 
-            return elected_candidates
+            return final_elected_candidates
 
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
