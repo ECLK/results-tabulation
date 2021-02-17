@@ -1,0 +1,4505 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 44,
+  "iteration": 1596623404308,
+  "links": [],
+  "panels": [
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 27,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "ALL ISLAND COUNTING DASHBOARD",
+      "prefixFontSize": "100%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT \"Sri Lanka\"",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "170%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "first"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 46,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 0,
+        "y": 4
+      },
+      "id": 79,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "PE-27",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 4,
+        "y": 4
+      },
+      "id": 38,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "pluginVersion": "6.7.3",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "ED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": true,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 9,
+        "y": 4
+      },
+      "id": 18,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "PD",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n\n\n-- SELECT\n--   CONCAT(\n--     SUM(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedTallySheetCount), \"/\", COUNT(*), \" - \",\n--     ROUND(SUM(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedTallySheetCount) * 100 / COUNT(*), 0), \"%\"\n--   ) AS \"\"\n-- FROM\n-- (SELECT\n--   SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedTallySheetCount\n-- FROM\n--   ext_pe2020_dashboard_tally_sheet_status\n-- WHERE\n--   ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n--   and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n--   and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n--   and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\n-- GROUP BY\n--   ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 14,
+        "y": 4
+      },
+      "id": 8,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "PV PD",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 19,
+        "y": 4
+      },
+      "id": 107,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "DV PD",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 9,
+        "y": 5
+      },
+      "id": 109,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "CC",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.countingCentreId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n\n\n-- SELECT\n--   CONCAT(\n--     SUM(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedTallySheetCount), \"/\", COUNT(*), \" - \",\n--     ROUND(SUM(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedTallySheetCount) * 100 / COUNT(*), 0), \"%\"\n--   ) AS \"\"\n-- FROM\n-- (SELECT\n--   SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedTallySheetCount\n-- FROM\n--   ext_pe2020_dashboard_tally_sheet_status\n-- WHERE\n--   ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n--   and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n--   and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n--   and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\n-- GROUP BY\n--   ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 14,
+        "y": 5
+      },
+      "id": 110,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "PV CC",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.countingCentreId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n\n\n-- SELECT\n--   CONCAT(\n--     SUM(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedTallySheetCount), \"/\", COUNT(*), \" - \",\n--     ROUND(SUM(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedTallySheetCount) * 100 / COUNT(*), 0), \"%\"\n--   ) AS \"\"\n-- FROM\n-- (SELECT\n--   SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedTallySheetCount\n-- FROM\n--   ext_pe2020_dashboard_tally_sheet_status\n-- WHERE\n--   ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n--   and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n--   and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n--   and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\n-- GROUP BY\n--   ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 19,
+        "y": 5
+      },
+      "id": 111,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "DV CC",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.countingCentreId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n\n\n-- SELECT\n--   CONCAT(\n--     SUM(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedTallySheetCount), \"/\", COUNT(*), \" - \",\n--     ROUND(SUM(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedTallySheetCount) * 100 / COUNT(*), 0), \"%\"\n--   ) AS \"\"\n-- FROM\n-- (SELECT\n--   SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedTallySheetCount\n-- FROM\n--   ext_pe2020_dashboard_tally_sheet_status\n-- WHERE\n--   ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n--   and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n--   and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-27\"\n--   and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\n-- GROUP BY\n--   ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 45,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 0,
+        "y": 7
+      },
+      "id": 80,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "CE-201",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 4,
+        "y": 7
+      },
+      "id": 39,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "ED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"CE-201\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 9,
+        "y": 7
+      },
+      "id": 19,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "PD",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"CE-201\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 14,
+        "y": 7
+      },
+      "id": 9,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "PV PD",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"CE-201-PV\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 19,
+        "y": 7
+      },
+      "id": 108,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "DV PD",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"CE-201-PV\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 9,
+        "y": 8
+      },
+      "id": 112,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "CC",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"CE-201\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.countingCentreId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 14,
+        "y": 8
+      },
+      "id": 113,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "PV CC",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"CE-201-PV\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.countingCentreId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 19,
+        "y": 8
+      },
+      "id": 114,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "DV CC",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"CE-201-PV\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.countingCentreId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 47,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 0,
+        "y": 10
+      },
+      "id": 81,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "PE-CE-RO-V1",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 4,
+        "y": 10
+      },
+      "id": 85,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "ED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-V1\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 9,
+        "y": 10
+      },
+      "id": 84,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "PD",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-V1\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 14,
+        "y": 10
+      },
+      "id": 86,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "PV PD",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-V1\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 19,
+        "y": 10
+      },
+      "id": 115,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "PV PD",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-V1\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 9,
+        "y": 11
+      },
+      "id": 93,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "RELEASED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-V1\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId,\n  ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 14,
+        "y": 11
+      },
+      "id": 116,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "RELEASED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-V1\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId,\n  ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 19,
+        "y": 11
+      },
+      "id": 117,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "RELEASED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-V1\"\n  and ext_pe2020_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId,\n  ext_pe2020_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 75,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 0,
+        "y": 13
+      },
+      "id": 15,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "PE-4",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 4,
+        "y": 13
+      },
+      "id": 66,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "pluginVersion": "6.7.3",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "parties",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-4\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.partyId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 2,
+        "w": 14,
+        "x": 10,
+        "y": 13
+      },
+      "id": 106,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 9,
+        "x": 0,
+        "y": 14
+      },
+      "id": 83,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 0,
+        "y": 15
+      },
+      "id": 97,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "PE-CE-RO-PR-1",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 4,
+        "y": 15
+      },
+      "id": 98,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "pluginVersion": "6.7.3",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "parties",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-PR-1\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.partyId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 10,
+        "y": 15
+      },
+      "id": 88,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "PE-CE-RO-V2",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 14,
+        "y": 15
+      },
+      "id": 82,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "ED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-V2\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 19,
+        "y": 15
+      },
+      "id": 95,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "RELEASED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-V2\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 9,
+        "x": 0,
+        "y": 16
+      },
+      "id": 76,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 14,
+        "x": 10,
+        "y": 16
+      },
+      "id": 103,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 0,
+        "y": 17
+      },
+      "id": 99,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "PE-CE-RO-PR-2",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 4,
+        "y": 17
+      },
+      "id": 101,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "pluginVersion": "6.7.3",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "parties",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-PR-2\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.partyId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 10,
+        "y": 17
+      },
+      "id": 78,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "PE-R2",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 14,
+        "y": 17
+      },
+      "id": 92,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "ED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-R2\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 19,
+        "y": 17
+      },
+      "id": 96,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "RELEASED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-R2\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 9,
+        "x": 0,
+        "y": 18
+      },
+      "id": 90,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 14,
+        "x": 10,
+        "y": 18
+      },
+      "id": 104,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 0,
+        "y": 19
+      },
+      "id": 100,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "PE-CE-RO-PR-3",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 4,
+        "y": 19
+      },
+      "id": 102,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "pluginVersion": "6.7.3",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "parties",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-CE-RO-PR-3\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.partyId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 4,
+        "x": 10,
+        "y": 19
+      },
+      "id": 87,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "30%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "70%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "PE-21",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 14,
+        "y": 19
+      },
+      "id": 91,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "ED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-21\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorPrefix": false,
+      "colorValue": true,
+      "colors": [
+        "#73BF69",
+        "#73BF69",
+        "#73BF69"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 5,
+        "x": 19,
+        "y": 19
+      },
+      "id": 94,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "RELEASED",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "#FADE2A",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pe2020_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pe2020_dashboard_tally_sheet_status\nWHERE\n  ext_pe2020_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n  and ext_pe2020_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pe2020_dashboard_tally_sheet_status.templateName = \"PE-21\"\nGROUP BY\n  ext_pe2020_dashboard_tally_sheet_status.electoralDistrictId) AS ext_pe2020_dashboard_tally_sheet_status_aggregated\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": "",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "singlestat",
+      "valueFontSize": "50%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 9,
+        "x": 0,
+        "y": 20
+      },
+      "id": 89,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    },
+    {
+      "content": "",
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 14,
+        "x": 10,
+        "y": 20
+      },
+      "id": 105,
+      "mode": "markdown",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "type": "text"
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 22,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "307 - PE 2020 - All Island Test 2",
+          "value": "307"
+        },
+        "datasource": "MySQL",
+        "definition": "SELECT CONCAT(electionId, ' - ', electionName) as __text,  electionId as __value from election WHERE electionTemplateName = 'PARLIAMENT_ELECTION_2020' and parentElectionId IS NULL;",
+        "hide": 0,
+        "includeAll": false,
+        "index": -1,
+        "label": "Election",
+        "multi": false,
+        "name": "rootElectionId",
+        "options": [],
+        "query": "SELECT CONCAT(electionId, ' - ', electionName) as __text,  electionId as __value from election WHERE electionTemplateName = 'PARLIAMENT_ELECTION_2020' and parentElectionId IS NULL;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Parliament Election 2020 - Counting - All Island",
+  "uid": "GXrbHAVMk",
+  "variables": {
+    "list": []
+  },
+  "version": 3
+}
