@@ -147,7 +147,6 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
             for party_wise_result in party_wise_results.itertuples():
                 data_row = [
                     party_wise_result.partyName,
-                    party_wise_result.partyAbbreviation,
                     to_comma_seperated_num(party_wise_result.validVoteCount)
                 ]
 
@@ -156,7 +155,6 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
                 else:
                     data_row.append('')
 
-                data_row.append(to_comma_seperated_num(party_wise_result.seatsAllocated))
                 data_row.append(to_comma_seperated_num(party_wise_result.bonusSeatsAllocated))
                 data_row.append(to_comma_seperated_num(party_wise_result.totalSeatsAllocated))
 
@@ -221,7 +219,6 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
             for party_wise_result in party_wise_results.itertuples():
                 data_row = [
                     party_wise_result.partyName,
-                    party_wise_result.partyAbbreviation,
                     to_comma_seperated_num(party_wise_result.validVoteCount)
                 ]
 
@@ -230,7 +227,6 @@ class ExtendedTallySheet_PCE_PC_SA_2(ExtendedTallySheetReport):
                 else:
                     data_row.append('')
 
-                data_row.append(to_comma_seperated_num(party_wise_result.seatsAllocated))
                 data_row.append(to_comma_seperated_num(party_wise_result.bonusSeatsAllocated))
                 data_row.append(to_comma_seperated_num(party_wise_result.totalSeatsAllocated))
 

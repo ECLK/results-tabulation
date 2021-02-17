@@ -56,38 +56,22 @@
         <table class="table table-sm" style="width:100%;">
             <tbody>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col" style="width:40%;">Name of the Party</th>
-                <th scope="col">Party Abbreviation</th>
-                <th scope="col" style="text-align:right;">Votes Received</th>
-                <th scope="col" style="text-align:right;">Percentage</th>
-                <th scope="col" style="text-align:right;">Seats</th>
-                <th scope="col" style="text-align:right;">Bonus Seats</th>
-                <th scope="col" style="text-align:right;">Total Seats</th>
+                <th scope="col" style="width:40%;padding-left: 40px;">Name of the Party/Independent Group</th>
+                <th scope="col" style="text-align:center;">No. of Votes Received</th>
+                <th scope="col" style="text-align:center;">Percentage %</th>
+                <th scope="col" style="text-align:center;">No. of Members Elected</th>
             </tr>
             {% for row in content.data %}
                 <tr>
-                    <td>{{ loop.index }}</td>
                     <td class="{% if row[0]=='' %}missing-value{% endif %}">{{ row[0] }}</td>
                     <td class="{% if row[1]=='' %}missing-value{% endif %}">{{ row[1] }}</td>
                     <td class="{% if row[2]=='' %}missing-value{% endif %}"
                         style="text-align:right;">{{ row[2] }}</td>
-                    <td class="{% if row[3]=='' %}missing-value{% endif %}"
-                        style="text-align:right;">{{ row[3] }}</td>
                     <td class="{% if row[4]=='' %}missing-value{% endif %}"
-                        style="text-align:right;">{{ row[4] }}</td>
-                    <td class="{% if row[5]=='' %}missing-value{% endif %}"
-                        style="text-align:right;">{{ row[5] }}</td>
-                    <td class="{% if row[6]=='' %}missing-value{% endif %}"
-                        style="text-align:right;">{{ row[6] }}</td>
+                        style="text-align:right;">{{ row[4] }}{% if row[3]==2 %}*{% endif %}</td>
                 </tr>
             {% endfor %}
             <tr>
-                <td colspan="8" style="height: 50px;"></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
                 <td><b>Total Valid Votes</b></td>
                 <td class="{% if content.validVoteCounts[0]=='' %}missing-value{% endif %}"
                     style="text-align:right;">
@@ -97,11 +81,9 @@
                     style="text-align:right;">
                     {{ content.validVoteCounts[1] }}
                 </td>
-                <td colspan="3"></td>
+                <td></td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
                 <td><b>Rejected Votes</b></td>
                 <td class="{% if content.rejectedVoteCounts[0]=='' %}missing-value{% endif %}"
                     style="text-align:right;">
@@ -111,12 +93,10 @@
                     style="text-align:right;">
                     {{ content.rejectedVoteCounts[1] }}
                 </td>
-                <td colspan="3"></td>
+                <td></td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
-                <td><b>Total Polled</b></td>
+                <td><b>Total Votes Polled</b></td>
                 <td class="{% if content.totalVoteCounts[0]=='' %}missing-value{% endif %}"
                     style="text-align:right;">
                     <b>{{ content.totalVoteCounts[0] }}</b>
@@ -125,30 +105,21 @@
                     style="text-align:right;">
                     {{ content.totalVoteCounts[1] }}
                 </td>
-                <td colspan="3"></td>
+                <td></td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
-                <td><b>Registered No. of Electors</b></td>
+                <td><b>Registered Electors</b></td>
                 <td style="text-align:right"><b>{{ content.registeredVoters[0] }}</b></td>
                 <td style="text-align:right"></td>
-                <td colspan="3"></td>
+                <td></td>
             </tr>
             <tr>
+                <td>* Including two(2) bonus seats.</td>
                 <td></td>
                 <td></td>
-                <td><b>Time</b></td>
-                <td colspan="2" style="text-align:center;">{{ content.time }}</td>
-                <td colspan="3"></td>
+                <td></td>
             </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td><b>Date</b></td>
-                <td colspan="2" style="text-align:center;">{{ content.date }}</td>
-                <td colspan="3"></td>
-            </tr>
+            
             </tbody>
         </table>
     </div>
