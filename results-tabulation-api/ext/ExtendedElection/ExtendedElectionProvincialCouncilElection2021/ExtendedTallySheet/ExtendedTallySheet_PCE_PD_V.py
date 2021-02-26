@@ -6,7 +6,7 @@ from constants.VOTE_TYPES import NonPostal
 from ext.ExtendedTallySheet import ExtendedTallySheetReport
 from orm.entities import Area
 from orm.entities.Area import AreaModel
-from util import to_comma_seperated_num, to_percentage
+from util import to_comma_seperated_num, to_percentage, convert_image_to_data_uri
 from orm.enums import AreaTypeEnum
 
 
@@ -29,7 +29,9 @@ class ExtendedTallySheet_PCE_PD_V(ExtendedTallySheetReport):
 
             content = {
                 "election": {
-                    "electionName": tallySheetVersion.tallySheet.election.get_official_name()
+                    "electionName": tallySheetVersion.tallySheet.election.get_official_name(),
+                    "provinceName": Area.get_associated_areas(
+                    tallySheetVersion.tallySheet.area, AreaTypeEnum.Province)[0].areaName
                 },
                 "stamp": {
                     "createdAt": stamp.createdAt,
@@ -47,7 +49,8 @@ class ExtendedTallySheet_PCE_PD_V(ExtendedTallySheetReport):
                 "rejectedVotePercentage": '',
                 "totalVoteCount": '',
                 "totalVotePercentage": '',
-                "numberOfElectors": to_comma_seperated_num(registered_voters_count)
+                "numberOfElectors": to_comma_seperated_num(registered_voters_count),
+                "logo": convert_image_to_data_uri("static/Emblem_of_Sri_Lanka.png")
             }
 
             total_valid_vote_count = 0

@@ -1,86 +1,117 @@
 {% extends 'base.html' %}
 
 {% block container %}
-<div class="font1 pre-41">
+<style>
 
-    <table class="table table-borderless">
-        <tbody>
-          <tr>
-              <td class="bold no-padding-left no-padding-right" style="text-align:center;">{{content.election.electionName}}</td>
-          </tr>
-          <tr>
-              <td class="bold no-padding-left no-padding-right" style="text-align:center;">POLLING DIVISION RESULTS</td>
-          </tr>
-          <tr>
-              <td class="bold no-padding-left no-padding-right" style="text-align:center;">{{content.pollingDivision}}</td>
-          </tr>
-          <tr>
-              <td class="bold no-padding-left no-padding-right" style="text-align:center;">ADMINISTRATIVE DISTRICT: {{content.administrativeDistrict}}</td>
-          </tr>
-        </tbody>
-    </table>
+  @media print {
+      @page {
+          size: A4 portrait;
+      }
+  }
+
+  /* * {
+      font-family: "Lucida Console", Courier, monospace;
+  }
+
+  .table td, .table th {
+      padding: 3px;
+      font-size: 13px;
+      color: black;
+      font-weight: 400;
+      border-color: black;
+  }
+
+  .table th {
+      font-weight: 800;
+  } */
+
+</style>
+<div class="font1">
+  <table class="table table-borderless">
+    <tbody>
+        <tr>
+            <td style="width:15%; text-align:center;" class="no-padding-bottom no-padding-top" colspan="3">
+                <img src="data:image/png;base64, {{ content.logo }}" width="65px"
+                    style="display: inline-block"/>
+            </td>
+        </tr>
+        <tr>
+            <td style="width:15%; text-align:center;" class="no-padding-bottom no-padding-top"></td>
+            <td style="text-align:center; vertical-align:middle; width:70%;">
+                <span style="font-size: 23px;font-weight: 600;">Department of Elections</span><br/>
+                <span style="font-weight: 700;font-weight: 600;font-size: 18px;">{{ content.election.electionName }}</span><br/>
+                <span style="font-size:18px;font-weight: 500;"><strong>{{ content.election.provinceName }} Province</strong></span> <br/>
+                <span style="font-size:18px;font-weight: 500;"><strong><i>{{content.pollingDivision}} Votes Results</i></strong></span>
+            </td>
+            <td style="text-align:right; width:15%; font-size:12px; font-weight:bold;"></td>
+        </tr>    
+    </tbody>
+</table>
+
+  <div>Administrative District: <span style="text-transform: uppercase;">{{content.administrativeDistrict}}</span></div><br/>
+    
 
     <table class="table table-borderless" style="table-layout:fixed;">
       <thead>
-        <th style="width: 70%;"><u>Political Party / Independent Group</u></th>
-        <th style="width: 15%;" class="text-right"><u>Votes Obtained</u></th>
-        <th style="width: 15%;" class="text-right"><u>Percentage</u></th>
+        <th class="bottom top2px left2px right" style="width: 70%;">Name of the Party / Independent Group</th>
+        <th class="bottom left right top2px" style="width: 15%; text-align: center;">No. of Votes Received</th>
+        <th class="bottom left right2px top2px" style="width: 15%; text-align: center">Percentage %</th>
       </thead>
       <tbody>
 
         {% for row in content.data %}
         <tr>
-          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px;">{{row[0]}}</td>
-          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[1]}}</td>
-          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[2]}}</td>
+          <td class="left2px dotted-bottom dotted-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px;">{{row[0]}}</td>
+          <td class="dotted-bottom dotted-right dotted-left text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;">{{row[1]}}</td>
+          <td class="dotted-bottom dotted-left right2px {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial;text-align: center;">{{row[2]}}</td>
 
         </tr>
         {% endfor %}
         
+        <tr>
+          <td class="left2px top2px right2px" colspan="3">&nbsp;</td>
+        </tr>
+
+        <tr>
+          <td class="left2px" style="vertical-align: middle; text-align: right;">Total Valid Votes</td>
+          <td class="top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%; border-bottom: double;">{{content.totalValidVoteCount}}</td>
+          <td class="right2px {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; text-align: center;">{{content.totalValidVotePercentage}}</td>
+        </tr>
+        <tr>
+          <td class="left2px {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; text-align: right;">Rejected Votes</td>
+          <td class="text-right bottom {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.rejectedVoteCount}}</td>
+          <td class="right2px {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; text-align: center;">{{content.rejectedVotePercentage}}</td>
+        </tr>
+        <tr>
+          <td class="left2px {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; text-align: right;">Total Votes Polled</td>
+          <td class="text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%; border-bottom: double;">{{content.totalVoteCount}}</td>
+          <td class="right2px {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; text-align: center;">{{content.totalVotePercentage}}</td>
+        </tr>
+
+        <tr>
+          <td class="left2px right2px" colspan="3">&nbsp;</td>
+        </tr>
+        <tr>
+          <td class="left2px right2px" colspan="3">&nbsp;</td>
+        </tr>
+        <tr>
+          <td class="left2px right2px" colspan="3">&nbsp;</td>
+        </tr>
+ 
+        <tr>
+          <td class="left2px bottom2px"></td>
+          <td class="right2px bottom2px" colspan="2" style="text-align: center;">
+            ....................................................<br/>
+            Mahinda Deshapriya<br/>
+            Commissioner of Elections
+          </td>
+        </tr>
+
+
+        
       </tbody>
     </table>
 
-    <br/>
-
-    <table class="table table-borderless" style="table-layout:fixed;">
-        <tbody>
-            <tr>
-          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px; width: 70%;">Total Valid Votes</td>
-          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.totalValidVoteCount}}</td>
-          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.totalValidVotePercentage}}</td>
-        </tr>
-            <tr>
-          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px; width: 70%;">Rejected Votes</td>
-          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.rejectedVoteCount}}</td>
-          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.rejectedVotePercentage}}</td>
-        </tr>
-            <tr>
-          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px; width: 70%;">Total Polled</td>
-          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.totalVoteCount}}</td>
-          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.totalVotePercentage}}</td>
-        </tr>
-            <tr>
-          <td class="bottom left top {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:20px; width: 70%;">Registered No. of Electors</td>
-          <td class="bottom top text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%">{{content.numberOfElectors}}</td>
-          <td class="bottom top right text-right {%if cell=="" %}missing-value{% endif %}" style="vertical-align: middle; padding-left:initial; width: 15%"></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <div>The release of result is approved.</div>
-
-    <table class="table table-borderless" style="table-layout: fixed;">
-      <tbody>
-        <tr>
-          <td style="width: 75%;"></td>
-          <td>....................................................</td>
-        </tr>
-        <tr>
-          <td style="width: 75%;"></td>
-          <td>Commissioner of Elections</td>
-        </tr>
-      </tbody>
-    </table>
-
+ 
 </div>
 {% endblock %}
