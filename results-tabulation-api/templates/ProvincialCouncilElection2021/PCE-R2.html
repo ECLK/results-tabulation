@@ -30,238 +30,238 @@
         </tbody>
       </table>
 
-      <table class="table table-borderless">
-          <tbody>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="bold no-padding-left"><u>Calculating the number of MPs elected</u></td>
-          </tr>
-
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-left no-padding-right" colspan="2">
-                  1. Total number of valid votes counted
-              </td>
-              <td class="no-padding-left no-padding-right">:-</td>
-              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">
-                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.totalVoteCounts}}</div>
-              </td>
-          </tr>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-left no-padding-right" colspan="2">
-                  2. 1/20th portion of the total valid votes
-              </td>
-              <td class="no-padding-left no-padding-right">:-</td>
-              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">
-                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.twentiethOfTotalVoteCounts}}</div>
-              </td>
-          </tr>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-left no-padding-right" colspan="2">
-                  3. Total number of votes polled by all parties and independent groups
-                  with less than 1/20 of the total valid votes
-              </td>
-              <td class="no-padding-left no-padding-right">:-</td>
-              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">
-                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.total_less_than_twentiethOfTotalVoteCounts}}</div>
-              </td>
-          </tr>
-
-          <tr>
-              <td style="width:50px;"></td>
-          </tr>
-
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="bold no-padding-left no-padding-right" colspan="2">
-                  4. <u>Calculating the relevant number of votes</u>
-              </td>
-          </tr>
-
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="bold no-padding-left no-padding-right" colspan="2">
-                  To calculate the relevant number of votes, the total number of
-                  votes obtained by all parties and independent groups with less
-                  than 1/20 of the total valid votes (sum referred to in 3 above)
-                  should be deducted from the total number of valid votes (sum referred
-                  to in 1 above).
-              </td>
-              <td class="no-padding-left no-padding-right"></td>
-              <td class="no-padding-left no-padding-right" colspan="2"></td>
-          </tr>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-left no-padding-right" colspan="2">
-                  The deduction is indicated below.
-              </td>
-              <td class="no-padding-left no-padding-right"></td>
-              <td class="no-padding-left no-padding-right" colspan="2"></td>
-          </tr>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-right" colspan="2">
-                <div class="group">
-                    <div>(I)</div>
-                    <div>&nbsp;</div>
-                    <div>Total number of valid votes</div>
-                </div>
-              </td>
-              <td class="no-padding-left no-padding-right">=</td>
-              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">
-                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.totalVoteCounts}}</div>
-              </td>
-          </tr>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-right" colspan="2">
-                <div class="group">
-                    <div>(II)</div>
-                    <div>&nbsp;</div>
-                    <div>Total number of votes polled by all parties and groups with
-                    less than 1/20 of the total valid votes</div>
-                </div>
-              </td>
-              <td class="no-padding-left no-padding-right">=</td>
-              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">
-                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.total_less_than_twentiethOfTotalVoteCounts}}</div>
-              </td>
-          </tr>
-
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-right" colspan="2">
-                <div class="group">
-                    <div>(III)</div>
-                    <div>&nbsp;</div>
-                    <div>The number of votes resulting from such deduction (relevant
-                      number of votes)</div>
-                </div>
-              </td>
-              <td class="no-padding-left no-padding-right">=</td>
-              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">
-                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.total_votes_after_deduction}}</div>
-              </td>
-          </tr>
-
-
-
-          <tr>
-              <td style="width:50px;"></td>
-          </tr>
-
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="bold no-padding-left no-padding-right" colspan="2">
-                  5. Calculating the resulting number
-              </td>
-          </tr>
-
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="bold no-padding-right" colspan="2">
-                <div class="group">
-                    <div>I. </div>
-                    <div>&nbsp;</div>
-                    <div>To get the answer, the relevant number of votes (sum referred to
-                    in 4 (III) above) should be divided by the number of members to
-                    be elected for the relevant administrative district reduced by one.</div>
-                </div>
-              </td>
-              <td class="no-padding-left no-padding-right"></td>
-              <td class="no-padding-left no-padding-right" colspan="2"></td>
-          </tr>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-right" colspan="2">
-                <div class="group">
-                    <div>II. </div>
-                    <div>&nbsp;</div>
-                    <div>The number of members to be elected for the administrative
-                    district deducted by one</div>
-                </div>
-              </td>
-              <td class="no-padding-left no-padding-right">:-</td>
-              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">
-                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.number_of_members_to_be_elected_minus_1}}</div>
-              </td>
-          </tr>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-right" colspan="2">
-                <div class="group">
-                    <div>III. </div>
-                    <div>&nbsp;</div>
-                    <div>The relevant number of votes (number refered to in 4(III)
-                    above) shall be divided by the number of members to be elected
-                    for that administrative district reduced by one (number referred to in
-                    5(II) above) (indicate in interger and fractions)</div>
-                </div>
-              </td>
-              <td class="no-padding-left no-padding-right" style="vertical-align:bottom;">:-</td>
-              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px; vertical-align:bottom;">
-                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.relevant_no_of_votes_div_by_no_of_members}}</div>
-              </td>
-          </tr>
-
-
-
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-right" colspan="2">
-                  (If the number resulting from such division is an integer, that
-                  integer, or if that number is an integer and fraction, the integer
-                  immediately higher to that integer and fraction is deemed as  the
-                  “resulting number.”)
-              </td>
-              <td class="no-padding-left no-padding-right"></td>
-              <td class="no-padding-left no-padding-right" colspan="2"></td>
-          </tr>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-left no-padding-right" colspan="2">
-                  6. Accordingly, the resulting number is
-              </td>
-              <td class="no-padding-left no-padding-right">:-</td>
-              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">
-                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.rounded_relevant_no_of_votes_div_by_no_of_members}}</div>
-              </td>
-          </tr>
-
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-left no-padding-right" colspan="2">
-                <div class="group">
-                    <div>7. </div>
-                    <div>&nbsp;</div>
-                    <div>Details of the parties and independent groups entitled for the
-                    number of {{content.number_of_members_to_be_elected_minus_1}} members
-                    to be elected for the relevant administrative district
-                    reduced by one (enter only the details of parties and groups entitled
-                    for members to be retuned)</div>
-                </div>
-              </td>
-              <td class="no-padding-left no-padding-right"></td>
-              <td class="no-padding-left no-padding-right" colspan="2"></td>
-          </tr>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-right" colspan="2">
-                <div class="group">
-                    <div>&nbsp;</div>
-                    <div>(N.B. :- The number of votes polled by each party / independent
-                      group beginning with the party or group which polled the highest
-                      number of votes (descending order) shall be indicated in the second
-                      column against their names to be mentioned in the first column.)</div>
-                </div>
-              </td>
-              <td class="no-padding-left no-padding-right"></td>
-              <td class="no-padding-left no-padding-right" colspan="2"></td>
-          </tr>
-        </tbody>
-    </table>
+{#      <table class="table table-borderless">#}
+{#          <tbody>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="bold no-padding-left"><u>Calculating the number of MPs elected</u></td>#}
+{#          </tr>#}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2">#}
+{#                  1. Total number of valid votes counted#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right">:-</td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">#}
+{#                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.totalVoteCounts}}</div>#}
+{#              </td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2">#}
+{#                  2. 1/20th portion of the total valid votes#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right">:-</td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">#}
+{#                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.twentiethOfTotalVoteCounts}}</div>#}
+{#              </td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2">#}
+{#                  3. Total number of votes polled by all parties and independent groups#}
+{#                  with less than 1/20 of the total valid votes#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right">:-</td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">#}
+{#                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.total_less_than_twentiethOfTotalVoteCounts}}</div>#}
+{#              </td>#}
+{#          </tr>#}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#          </tr>#}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="bold no-padding-left no-padding-right" colspan="2">#}
+{#                  4. <u>Calculating the relevant number of votes</u>#}
+{#              </td>#}
+{#          </tr>#}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="bold no-padding-left no-padding-right" colspan="2">#}
+{#                  To calculate the relevant number of votes, the total number of#}
+{#                  votes obtained by all parties and independent groups with less#}
+{#                  than 1/20 of the total valid votes (sum referred to in 3 above)#}
+{#                  should be deducted from the total number of valid votes (sum referred#}
+{#                  to in 1 above).#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2"></td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2">#}
+{#                  The deduction is indicated below.#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2"></td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-right" colspan="2">#}
+{#                <div class="group">#}
+{#                    <div>(I)</div>#}
+{#                    <div>&nbsp;</div>#}
+{#                    <div>Total number of valid votes</div>#}
+{#                </div>#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right">=</td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">#}
+{#                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.totalVoteCounts}}</div>#}
+{#              </td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-right" colspan="2">#}
+{#                <div class="group">#}
+{#                    <div>(II)</div>#}
+{#                    <div>&nbsp;</div>#}
+{#                    <div>Total number of votes polled by all parties and groups with#}
+{#                    less than 1/20 of the total valid votes</div>#}
+{#                </div>#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right">=</td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">#}
+{#                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.total_less_than_twentiethOfTotalVoteCounts}}</div>#}
+{#              </td>#}
+{#          </tr>#}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-right" colspan="2">#}
+{#                <div class="group">#}
+{#                    <div>(III)</div>#}
+{#                    <div>&nbsp;</div>#}
+{#                    <div>The number of votes resulting from such deduction (relevant#}
+{#                      number of votes)</div>#}
+{#                </div>#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right">=</td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">#}
+{#                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.total_votes_after_deduction}}</div>#}
+{#              </td>#}
+{#          </tr>#}
+{##}
+{##}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#          </tr>#}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="bold no-padding-left no-padding-right" colspan="2">#}
+{#                  5. Calculating the resulting number#}
+{#              </td>#}
+{#          </tr>#}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="bold no-padding-right" colspan="2">#}
+{#                <div class="group">#}
+{#                    <div>I. </div>#}
+{#                    <div>&nbsp;</div>#}
+{#                    <div>To get the answer, the relevant number of votes (sum referred to#}
+{#                    in 4 (III) above) should be divided by the number of members to#}
+{#                    be elected for the relevant administrative district reduced by one.</div>#}
+{#                </div>#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2"></td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-right" colspan="2">#}
+{#                <div class="group">#}
+{#                    <div>II. </div>#}
+{#                    <div>&nbsp;</div>#}
+{#                    <div>The number of members to be elected for the administrative#}
+{#                    district deducted by one</div>#}
+{#                </div>#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right">:-</td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">#}
+{#                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.number_of_members_to_be_elected_minus_1}}</div>#}
+{#              </td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-right" colspan="2">#}
+{#                <div class="group">#}
+{#                    <div>III. </div>#}
+{#                    <div>&nbsp;</div>#}
+{#                    <div>The relevant number of votes (number refered to in 4(III)#}
+{#                    above) shall be divided by the number of members to be elected#}
+{#                    for that administrative district reduced by one (number referred to in#}
+{#                    5(II) above) (indicate in interger and fractions)</div>#}
+{#                </div>#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right" style="vertical-align:bottom;">:-</td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px; vertical-align:bottom;">#}
+{#                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.relevant_no_of_votes_div_by_no_of_members}}</div>#}
+{#              </td>#}
+{#          </tr>#}
+{##}
+{##}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-right" colspan="2">#}
+{#                  (If the number resulting from such division is an integer, that#}
+{#                  integer, or if that number is an integer and fraction, the integer#}
+{#                  immediately higher to that integer and fraction is deemed as  the#}
+{#                  “resulting number.”)#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2"></td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2">#}
+{#                  6. Accordingly, the resulting number is#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right">:-</td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2" style="width:550px;">#}
+{#                  <div style="border-bottom: 1px dotted #000; text-align:right;">{{content.rounded_relevant_no_of_votes_div_by_no_of_members}}</div>#}
+{#              </td>#}
+{#          </tr>#}
+{##}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2">#}
+{#                <div class="group">#}
+{#                    <div>7. </div>#}
+{#                    <div>&nbsp;</div>#}
+{#                    <div>Details of the parties and independent groups entitled for the#}
+{#                    number of {{content.number_of_members_to_be_elected_minus_1}} members#}
+{#                    to be elected for the relevant administrative district#}
+{#                    reduced by one (enter only the details of parties and groups entitled#}
+{#                    for members to be retuned)</div>#}
+{#                </div>#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2"></td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-right" colspan="2">#}
+{#                <div class="group">#}
+{#                    <div>&nbsp;</div>#}
+{#                    <div>(N.B. :- The number of votes polled by each party / independent#}
+{#                      group beginning with the party or group which polled the highest#}
+{#                      number of votes (descending order) shall be indicated in the second#}
+{#                      column against their names to be mentioned in the first column.)</div>#}
+{#                </div>#}
+{#              </td>#}
+{#              <td class="no-padding-left no-padding-right"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="2"></td>#}
+{#          </tr>#}
+{#        </tbody>#}
+{#    </table>#}
 
     <table class="table table-borderless" style="table-layout:fixed;">
       <tbody>
@@ -305,25 +305,25 @@
       </tbody>
     </table>
 
-    <table class="table table-borderless">
-        <tbody>
-          <tr>
-              <td style="width:50px;"></td>
-              <td class="no-padding-left no-padding-right" colspan="5">
-                <div class="group">
-                    <div>8.</div>
-                    <div>&nbsp;</div>
-                    <div>The number of members equal to the whole number resulting from
-                    the division by the resulting number of the votes polled by each
-                    party/group should be indicated in the 3rd column, the number of
-                    members elected on the basis of the highest of the remainder in the votes
-                    if any, in the 5th column, and the total number
-                    of members allotted to each party/group should be indicated in the 7th column.</div>
-                </div>
-              </td>
-          </tr>
-        </tbody>
-    </table>
+{#    <table class="table table-borderless">#}
+{#        <tbody>#}
+{#          <tr>#}
+{#              <td style="width:50px;"></td>#}
+{#              <td class="no-padding-left no-padding-right" colspan="5">#}
+{#                <div class="group">#}
+{#                    <div>8.</div>#}
+{#                    <div>&nbsp;</div>#}
+{#                    <div>The number of members equal to the whole number resulting from#}
+{#                    the division by the resulting number of the votes polled by each#}
+{#                    party/group should be indicated in the 3rd column, the number of#}
+{#                    members elected on the basis of the highest of the remainder in the votes#}
+{#                    if any, in the 5th column, and the total number#}
+{#                    of members allotted to each party/group should be indicated in the 7th column.</div>#}
+{#                </div>#}
+{#              </td>#}
+{#          </tr>#}
+{#        </tbody>#}
+{#    </table>#}
 
     <table class="table table-borderless">
         <tbody>
