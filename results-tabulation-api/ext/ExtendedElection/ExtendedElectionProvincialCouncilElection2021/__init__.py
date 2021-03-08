@@ -985,7 +985,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             )
             administrative_district_election.meta.add_meta_data(
                 metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION,
-                metaDataValue=0.05
+                metaDataValue=0.00
             )
 
         # extract_csv_files()
