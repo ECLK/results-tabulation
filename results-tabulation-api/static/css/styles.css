@@ -153,6 +153,34 @@
     margin-top: 50px;
 }
 
+.top2px {
+    border-top: 2px solid #000 !important;
+}
+
+.bottom2px {
+    border-bottom: 2px solid #000 !important;
+}
+
+.left2px {
+    border-left: 2px solid #000 !important;
+}
+
+.right2px {
+    border-right: 2px solid #000 !important;
+}
+
+.dotted-bottom {
+    border-bottom: 1px dotted #000 !important;;
+}
+
+.dotted-left {
+    border-left: 1px dotted #000 !important;;
+}
+
+.dotted-right {
+    border-right: 1px dotted #000 !important;;
+}
+
 /* styles for pre-41*/
 .pre-41 .top-thick {
     border-top: 4px solid #000 !important;
