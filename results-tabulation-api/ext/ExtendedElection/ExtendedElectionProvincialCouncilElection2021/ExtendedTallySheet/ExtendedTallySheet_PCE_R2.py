@@ -165,15 +165,15 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
             #         df.at[index, 'bonusSeatsAllocated'] = 0
 
             valid_vote_count_required_per_seat = total_valid_vote_count_of_qualified_parties / number_of_members_to_be_elected
-            valid_vote_count_required_per_seat_ceil = math.ceil(valid_vote_count_required_per_seat)
+            valid_vote_count_required_per_seat_floor = math.floor(valid_vote_count_required_per_seat)
 
             for index in df.index:
                 num_value = df.at[index, 'numValue']
                 if df.at[index, 'qualifiedForSeatsAllocation']:
-                    number_of_seats_qualified = math.floor(num_value / valid_vote_count_required_per_seat_ceil)
+                    number_of_seats_qualified = math.floor(num_value / valid_vote_count_required_per_seat_floor)
                     df.at[index, 'seatsAllocatedFromRound1'] = number_of_seats_qualified
                     number_of_members_to_be_elected -= number_of_seats_qualified
-                    df.at[index, 'validVotesRemainFromRound1'] = num_value % valid_vote_count_required_per_seat_ceil
+                    df.at[index, 'validVotesRemainFromRound1'] = num_value % valid_vote_count_required_per_seat_floor
                 else:
                     df.at[index, 'seatsAllocatedFromRound1'] = 0
                     df.at[index, 'validVotesRemainFromRound1'] = 0
@@ -196,7 +196,7 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
             df = df.sort_values(by=['numValue'], ascending=False)
 
             df["voteCountCeilPerSeat"] = pd.Series(
-                np.full(len(df.index), valid_vote_count_required_per_seat_ceil),
+                np.full(len(df.index), valid_vote_count_required_per_seat_floor),
                 index=df.index)
             df["minimumVoteCountRequiredForSeatAllocation"] = pd.Series(
                 np.full(len(df.index), _minimum_valid_vote_count_required_per_party_to_be_qualified),
