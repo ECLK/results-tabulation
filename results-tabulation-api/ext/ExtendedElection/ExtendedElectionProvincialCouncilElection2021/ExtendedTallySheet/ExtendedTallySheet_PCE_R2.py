@@ -81,10 +81,9 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
             election = self.tallySheetVersion.tallySheet.election
             tally_sheet_id = self.tallySheetVersion.tallySheetId
 
-            minimum_vote_count_percentage_required = election.meta.get_meta_data(
-                metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION)
+            minimum_vote_count_percentage_required = 0.00
             if minimum_vote_count_percentage_required is not None:
-                minimum_vote_count_percentage_required = float(minimum_vote_count_percentage_required)
+                minimum_vote_count_percentage_required = float(0.00)
 
             number_of_members_to_be_elected = election.meta.get_meta_data(
                 metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_SEATS_ALLOCATED)
@@ -246,8 +245,7 @@ class ExtendedTallySheet_PCE_R2(ExtendedEditableTallySheetReport):
             election = self.tallySheetVersion.tallySheet.election
             tally_sheet_id = self.tallySheetVersion.tallySheetId
 
-            minimum_vote_count_percentage_required = float(election.meta.get_meta_data(
-                metaDataKey=META_DATA_KEY_ELECTION_NUMBER_OF_VALID_VOTE_PERCENTAGE_REQUIRED_FOR_SEAT_ALLOCATION))
+            minimum_vote_count_percentage_required = float(0.00)
 
             minimum_valid_vote_count_required_per_party_to_be_qualified = total_valid_vote_count * minimum_vote_count_percentage_required
 

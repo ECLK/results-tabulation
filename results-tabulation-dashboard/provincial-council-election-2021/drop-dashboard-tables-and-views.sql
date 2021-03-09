@@ -1,0 +1,6 @@
+DROP table ext_pce2021_dashboard_increment;
+DROP table ext_pce2021_dashboard_tally_sheet_status;
+DROP table ext_pce2021_dashboard_area_map;
+DROP table ext_pce2021_dashboard_party_wise_vote_results;
+DROP table ext_pce2021_dashboard_vote_results;
+DROP table ext_pce2021_dashboard_party_wise_seat_allocation;
