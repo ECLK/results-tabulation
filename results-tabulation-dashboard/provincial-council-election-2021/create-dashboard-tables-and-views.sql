@@ -94,7 +94,7 @@ INSERT INTO ext_pce2021_dashboard_area_map (electionId, countryId, provinceId, a
         COALESCE(SUM(pollingStation._registeredPostalVotersCount)) AS registeredPostalVotersCount,
         COALESCE(SUM(pollingStation._registeredDisplacedVotersCount)) AS registeredDisplacedVotersCount
     FROM
-        area country area province, area administrativeDistrict, area pollingDivision, area pollingDistrict, area pollingStation,
+        area country, area province, area administrativeDistrict, area pollingDivision, area pollingDistrict, area pollingStation,
         area electionCommission, area districtCentre, area countingCentre,
 
         area_area country_province,

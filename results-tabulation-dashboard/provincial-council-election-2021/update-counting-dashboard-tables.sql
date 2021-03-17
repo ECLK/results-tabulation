@@ -1,4 +1,4 @@
-SET @election_template_name = "PARLIAMENT_ELECTION_2020";
+SET @election_template_name = "PROVINCIAL_COUNCIL_ELECTION_2021";
 
 INSERT INTO ext_pce2021_dashboard_increment (active) VALUES(0);
 
@@ -220,7 +220,8 @@ INSERT INTO ext_pce2021_dashboard_party_wise_seat_allocation (incrementId, elect
 SELECT
     @lastIncrementId,
     administrativeDistrictElection.rootElectionId AS provinceElectionId,
-    administrativeDistrict.areaId AS administrativeDistrictId,provinceElection.rootElectionId AS electionId,
+    administrativeDistrict.areaId AS administrativeDistrictId,
+--     provinceElection.rootElectionId AS electionId,
     province.areaId AS provinceId,
     party.partyId,
     (SELECT COALESCE(SUM(tallySheetVersionRow.numValue), 0)
