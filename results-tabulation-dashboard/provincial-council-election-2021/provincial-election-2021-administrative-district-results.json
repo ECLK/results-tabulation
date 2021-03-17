@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 46,
-  "iteration": 1596657503874,
+  "id": 54,
+  "iteration": 1615981784521,
   "links": [],
   "panels": [
     {
@@ -62,7 +62,7 @@
       "nullText": null,
       "postfix": "",
       "postfixFontSize": "50%",
-      "prefix": "ELECTORAL DISTRICT RESULTS DASHBOARD",
+      "prefix": "ADMINISTRATIVE DISTRICT RESULTS DASHBOARD",
       "prefixFontSize": "70%",
       "rangeMaps": [
         {
@@ -86,7 +86,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT GROUP_CONCAT(area.areaName) FROM area WHERE areaId IN ($electoralDistrictIds)",
+          "rawSql": "SELECT GROUP_CONCAT(area.areaName) FROM area WHERE areaId IN ($administrativeDistrictIds)",
           "refId": "A",
           "select": [
             [
@@ -170,7 +170,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  NOW() as \"time\", party.partyName as \"name\", COALESCE(SUM(ext_pe2020_dashboard_party_wise_vote_results.voteCount), 0) AS aggregatedVoteCount\nFROM\n  ext_pe2020_dashboard_party_wise_vote_results, party\nWHERE \n  party.partyId = ext_pe2020_dashboard_party_wise_vote_results.partyId\n  and ext_pe2020_dashboard_party_wise_vote_results.electionId = $rootElectionId\n  and ext_pe2020_dashboard_party_wise_vote_results.electoralDistrictId IN ($electoralDistrictIds)\n  and ext_pe2020_dashboard_party_wise_vote_results.incrementId IN (\n    SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\nGROUP BY\n  ext_pe2020_dashboard_party_wise_vote_results.partyId\nORDER BY\n  aggregatedVoteCount DESC,\n  ext_pe2020_dashboard_party_wise_vote_results.partyId;\n\n",
+          "rawSql": "SELECT\n  NOW() as \"time\", party.partyName as \"name\", COALESCE(SUM(ext_pce2021_dashboard_party_wise_vote_results.voteCount), 0) AS aggregatedVoteCount\nFROM\n  ext_pce2021_dashboard_party_wise_vote_results, party\nWHERE \n  party.partyId = ext_pce2021_dashboard_party_wise_vote_results.partyId\n  and ext_pce2021_dashboard_party_wise_vote_results.electionId = $rootElectionId\n  and ext_pce2021_dashboard_party_wise_vote_results.administrativeDistrictId IN ($administrativeDistrictIds)\n  and ext_pce2021_dashboard_party_wise_vote_results.incrementId IN (\n    SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\nGROUP BY\n  ext_pce2021_dashboard_party_wise_vote_results.partyId\nORDER BY\n  aggregatedVoteCount DESC,\n  ext_pce2021_dashboard_party_wise_vote_results.partyId;\n\n",
           "refId": "A",
           "select": [
             [
@@ -244,7 +244,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  NOW() as \"time\", party.partyName AS \"name\", \n  COALESCE(SUM(ext_pe2020_dashboard_party_wise_seat_allocation.seatCount), 0) AS aggregatedSeatCount\nFROM ext_pe2020_dashboard_party_wise_seat_allocation, party\nWHERE \n  party.partyId = ext_pe2020_dashboard_party_wise_seat_allocation.partyId\n  and ext_pe2020_dashboard_party_wise_seat_allocation.electionId = $rootElectionId\n  and ext_pe2020_dashboard_party_wise_seat_allocation.electoralDistrictId IN ($electoralDistrictIds)\n  and ext_pe2020_dashboard_party_wise_seat_allocation.incrementId IN (\n    SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\nGROUP BY\n  party.partyId\nORDER BY\n  aggregatedSeatCount DESC, party.partyId\n",
+          "rawSql": "SELECT\n  NOW() as \"time\", party.partyName AS \"name\", \n  COALESCE(SUM(ext_pce2021_dashboard_party_wise_seat_allocation.seatCount), 0) AS aggregatedSeatCount\nFROM ext_pce2021_dashboard_party_wise_seat_allocation, party\nWHERE \n  party.partyId = ext_pce2021_dashboard_party_wise_seat_allocation.partyId\n  and ext_pce2021_dashboard_party_wise_seat_allocation.electionId = $rootElectionId\n  and ext_pce2021_dashboard_party_wise_seat_allocation.administrativeDistrictId IN ($administrativeDistrictIds)\n  and ext_pce2021_dashboard_party_wise_seat_allocation.incrementId IN (\n    SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\nGROUP BY\n  party.partyId\nORDER BY\n  aggregatedSeatCount DESC, party.partyId\n",
           "refId": "A",
           "select": [
             [
@@ -906,7 +906,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \n  COALESCE(SUM(areaMap.registeredPostalVotersCount), 0) AS \"\",\n  COALESCE(SUM(areaMap.registeredDisplacedVotersCount), 0) AS \"\",\n  COALESCE(SUM(areaMap.registeredVotersCount), 0) AS \"\",\n  COALESCE(SUM(areaMap.registeredPostalVotersCount + areaMap.registeredVotersCount + areaMap.registeredDisplacedVotersCount), 0) AS \"\"\nFROM\n  ext_pe2020_dashboard_area_map as areaMap\nWHERE \n  areaMap.electionId = $rootElectionId\n  and areaMap.electoralDistrictId IN ($electoralDistrictIds)\n\n\n",
+          "rawSql": "SELECT \n  COALESCE(SUM(areaMap.registeredPostalVotersCount), 0) AS \"\",\n  COALESCE(SUM(areaMap.registeredDisplacedVotersCount), 0) AS \"\",\n  COALESCE(SUM(areaMap.registeredVotersCount), 0) AS \"\",\n  COALESCE(SUM(areaMap.registeredPostalVotersCount + areaMap.registeredVotersCount + areaMap.registeredDisplacedVotersCount), 0) AS \"\"\nFROM\n  ext_pce2021_dashboard_area_map as areaMap\nWHERE \n  areaMap.electionId = $rootElectionId\n  and areaMap.administrativeDistrictId IN ($administrativeDistrictIds)\n\n\n",
           "refId": "A",
           "select": [
             [
@@ -978,7 +978,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n    COALESCE(SUM(IF(ext_pe2020_dashboard_vote_results.voteType = \"Postal\", ext_pe2020_dashboard_vote_results.voteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pe2020_dashboard_vote_results.voteType = \"Displaced\", ext_pe2020_dashboard_vote_results.voteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pe2020_dashboard_vote_results.voteType = \"NonPostal\", ext_pe2020_dashboard_vote_results.voteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(ext_pe2020_dashboard_vote_results.voteCount), 0) AS \"\"\nFROM\n  ext_pe2020_dashboard_vote_results\nWHERE \n  ext_pe2020_dashboard_vote_results.electionId = $rootElectionId\n  and ext_pe2020_dashboard_vote_results.electoralDistrictId IN ($electoralDistrictIds)\n  and ext_pe2020_dashboard_vote_results.incrementId IN (\n    SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n\n",
+          "rawSql": "SELECT\n    COALESCE(SUM(IF(ext_pce2021_dashboard_vote_results.voteType = \"Postal\", ext_pce2021_dashboard_vote_results.voteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pce2021_dashboard_vote_results.voteType = \"Displaced\", ext_pce2021_dashboard_vote_results.voteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pce2021_dashboard_vote_results.voteType = \"NonPostal\", ext_pce2021_dashboard_vote_results.voteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(ext_pce2021_dashboard_vote_results.voteCount), 0) AS \"\"\nFROM\n  ext_pce2021_dashboard_vote_results\nWHERE \n  ext_pce2021_dashboard_vote_results.electionId = $rootElectionId\n  and ext_pce2021_dashboard_vote_results.administrativeDistrictId IN ($administrativeDistrictIds)\n  and ext_pce2021_dashboard_vote_results.incrementId IN (\n    SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n\n",
           "refId": "A",
           "select": [
             [
@@ -1050,7 +1050,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n    COALESCE(SUM(IF(ext_pe2020_dashboard_vote_results.voteType = \"Postal\", ext_pe2020_dashboard_vote_results.validVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pe2020_dashboard_vote_results.voteType = \"Displaced\", ext_pe2020_dashboard_vote_results.validVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pe2020_dashboard_vote_results.voteType = \"NonPostal\", ext_pe2020_dashboard_vote_results.validVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(ext_pe2020_dashboard_vote_results.validVoteCount), 0) AS \"\"\nFROM\n  ext_pe2020_dashboard_vote_results\nWHERE \n  ext_pe2020_dashboard_vote_results.electionId = $rootElectionId\n  and ext_pe2020_dashboard_vote_results.electoralDistrictId IN ($electoralDistrictIds)\n  and ext_pe2020_dashboard_vote_results.incrementId IN (\n    SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n\n",
+          "rawSql": "SELECT\n    COALESCE(SUM(IF(ext_pce2021_dashboard_vote_results.voteType = \"Postal\", ext_pce2021_dashboard_vote_results.validVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pce2021_dashboard_vote_results.voteType = \"Displaced\", ext_pce2021_dashboard_vote_results.validVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pce2021_dashboard_vote_results.voteType = \"NonPostal\", ext_pce2021_dashboard_vote_results.validVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(ext_pce2021_dashboard_vote_results.validVoteCount), 0) AS \"\"\nFROM\n  ext_pce2021_dashboard_vote_results\nWHERE \n  ext_pce2021_dashboard_vote_results.electionId = $rootElectionId\n  and ext_pce2021_dashboard_vote_results.administrativeDistrictId IN ($administrativeDistrictIds)\n  and ext_pce2021_dashboard_vote_results.incrementId IN (\n    SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n\n",
           "refId": "A",
           "select": [
             [
@@ -1122,7 +1122,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n    COALESCE(SUM(IF(ext_pe2020_dashboard_vote_results.voteType = \"Postal\", ext_pe2020_dashboard_vote_results.rejectedVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pe2020_dashboard_vote_results.voteType = \"Displaced\", ext_pe2020_dashboard_vote_results.rejectedVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pe2020_dashboard_vote_results.voteType = \"NonPostal\", ext_pe2020_dashboard_vote_results.rejectedVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(ext_pe2020_dashboard_vote_results.rejectedVoteCount), 0) AS \"\"\nFROM\n  ext_pe2020_dashboard_vote_results\nWHERE \n  ext_pe2020_dashboard_vote_results.electionId = $rootElectionId\n  and ext_pe2020_dashboard_vote_results.electoralDistrictId IN ($electoralDistrictIds)\n  and ext_pe2020_dashboard_vote_results.incrementId IN (\n    SELECT MAX(ext_pe2020_dashboard_increment.id) from ext_pe2020_dashboard_increment WHERE ext_pe2020_dashboard_increment.active=1)\n\n",
+          "rawSql": "SELECT\n    COALESCE(SUM(IF(ext_pce2021_dashboard_vote_results.voteType = \"Postal\", ext_pce2021_dashboard_vote_results.rejectedVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pce2021_dashboard_vote_results.voteType = \"Displaced\", ext_pce2021_dashboard_vote_results.rejectedVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(IF(ext_pce2021_dashboard_vote_results.voteType = \"NonPostal\", ext_pce2021_dashboard_vote_results.rejectedVoteCount, 0)), 0) AS \"\",\n    COALESCE(SUM(ext_pce2021_dashboard_vote_results.rejectedVoteCount), 0) AS \"\"\nFROM\n  ext_pce2021_dashboard_vote_results\nWHERE \n  ext_pce2021_dashboard_vote_results.electionId = $rootElectionId\n  and ext_pce2021_dashboard_vote_results.administrativeDistrictId IN ($administrativeDistrictIds)\n  and ext_pce2021_dashboard_vote_results.incrementId IN (\n    SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n\n",
           "refId": "A",
           "select": [
             [
@@ -1533,12 +1533,11 @@
       {
         "allValue": null,
         "current": {
-          "tags": [],
-          "text": "307 - PE 2020 - All Island Test 2",
-          "value": "307"
+          "text": "386 - Provincial Council Election 2021 - Test 1",
+          "value": "386"
         },
         "datasource": "MySQL",
-        "definition": "SELECT CONCAT(electionId, ' - ', electionName) as __text,  electionId as __value from election WHERE electionTemplateName = 'PARLIAMENT_ELECTION_2020' and parentElectionId IS NULL;",
+        "definition": "SELECT CONCAT(electionId, ' - ', electionName) as __text,  electionId as __value from election WHERE electionTemplateName = 'PROVINCIAL_COUNCIL_ELECTION_2021' and parentElectionId IS NULL;",
         "hide": 0,
         "includeAll": false,
         "index": -1,
@@ -1546,7 +1545,7 @@
         "multi": false,
         "name": "rootElectionId",
         "options": [],
-        "query": "SELECT CONCAT(electionId, ' - ', electionName) as __text,  electionId as __value from election WHERE electionTemplateName = 'PARLIAMENT_ELECTION_2020' and parentElectionId IS NULL;",
+        "query": "SELECT CONCAT(electionId, ' - ', electionName) as __text,  electionId as __value from election WHERE electionTemplateName = 'PROVINCIAL_COUNCIL_ELECTION_2021' and parentElectionId IS NULL;",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1565,126 +1564,21 @@
           "value": "98479"
         },
         "datasource": "MySQL",
-        "definition": "SELECT \n  areaName AS __text, areaId AS __value \nFROM area, election \nWHERE \n  election.electionId = area.electionId and election.rootElectionId = $rootElectionId and areaType = 'ElectoralDistrict';",
+        "definition": "SELECT \n  areaName AS __text, areaId AS __value \nFROM area, election \nWHERE \n  election.electionId = area.electionId and election.rootElectionId = $rootElectionId and areaType = 'AdministrativeDistrict';",
         "hide": 0,
         "includeAll": false,
         "index": -1,
-        "label": "Electoral District",
+        "label": "Administrative District",
         "multi": false,
-        "name": "electoralDistrictIds",
+        "name": "administrativeDistrictIds",
         "options": [
           {
             "selected": true,
             "text": "01 - Colombo",
-            "value": "98479"
-          },
-          {
-            "selected": false,
-            "text": "02 - Gampaha",
-            "value": "101115"
-          },
-          {
-            "selected": false,
-            "text": "03 - Kalutara",
-            "value": "103795"
-          },
-          {
-            "selected": false,
-            "text": "04 - Kandy",
-            "value": "105255"
-          },
-          {
-            "selected": false,
-            "text": "05 - Matale",
-            "value": "107140"
-          },
-          {
-            "selected": false,
-            "text": "06 - NuwaraEliya",
-            "value": "107862"
-          },
-          {
-            "selected": false,
-            "text": "07 - Galle",
-            "value": "108949"
-          },
-          {
-            "selected": false,
-            "text": "08 - Matara",
-            "value": "110520"
-          },
-          {
-            "selected": false,
-            "text": "09 - Hambantota",
-            "value": "111576"
-          },
-          {
-            "selected": false,
-            "text": "10 - Jaffna",
-            "value": "112490"
-          },
-          {
-            "selected": false,
-            "text": "11 - Vanni",
-            "value": "113820"
-          },
-          {
-            "selected": false,
-            "text": "12 - Batticaloa",
-            "value": "114578"
-          },
-          {
-            "selected": false,
-            "text": "13 - Digamadulla",
-            "value": "115499"
-          },
-          {
-            "selected": false,
-            "text": "14 - Trincomalee",
-            "value": "116606"
-          },
-          {
-            "selected": false,
-            "text": "15 - Kurunegala",
-            "value": "117260"
-          },
-          {
-            "selected": false,
-            "text": "16 - Puttalam",
-            "value": "119355"
-          },
-          {
-            "selected": false,
-            "text": "17 - Anuradhapura",
-            "value": "120292"
-          },
-          {
-            "selected": false,
-            "text": "18 - Polonnaruwa",
-            "value": "121664"
-          },
-          {
-            "selected": false,
-            "text": "19 - Badulla",
-            "value": "122291"
-          },
-          {
-            "selected": false,
-            "text": "20 - Monaragala",
-            "value": "123466"
-          },
-          {
-            "selected": false,
-            "text": "21 - Ratnapura",
-            "value": "124296"
-          },
-          {
-            "selected": false,
-            "text": "22 - Kegalle",
-            "value": "125692"
+            "value": "65917"
           }
         ],
-        "query": "SELECT \n  areaName AS __text, areaId AS __value \nFROM area, election \nWHERE \n  election.electionId = area.electionId and election.rootElectionId = $rootElectionId and areaType = 'ElectoralDistrict';",
+        "query": "SELECT \n  areaName AS __text, areaId AS __value \nFROM area, election \nWHERE \n  election.electionId = area.electionId and election.rootElectionId = $rootElectionId and areaType = 'AdministrativeDistrict';",
         "refresh": 0,
         "regex": "",
         "skipUrlSync": false,
@@ -1716,10 +1610,10 @@
     ]
   },
   "timezone": "",
-  "title": "Parliament Election 2020 - Results - Electoral District",
-  "uid": "7W5oXmIMk",
+  "title": "Provincial Council Election 2021 - Results - Administrative District",
+  "uid": "5ThAYmQGz",
   "variables": {
     "list": []
   },
-  "version": 5
+  "version": 12
 }
