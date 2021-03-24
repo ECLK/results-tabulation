@@ -52,7 +52,7 @@ python-jose==3.0.1
 pytz==2019.3
 PyYAML==5.3
 requests==2.22.0
-rsa==4.0
+rsa==4.1
 six==1.13.0
 SQLAlchemy==1.3.3
 swagger-ui-bundle==0.0.3
