@@ -49,7 +49,7 @@ python-dateutil==2.8.1
 python-editor==1.0.4
 python-jose==3.0.1
 pytz==2019.3
-PyYAML==5.3
+PyYAML==5.4
 requests==2.22.0
 rsa==4.0
 six==1.13.0
