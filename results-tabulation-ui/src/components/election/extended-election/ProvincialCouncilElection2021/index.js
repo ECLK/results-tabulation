@@ -144,8 +144,8 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                         "Seat Allocation 1",
                                         "Bonus Seat Allocation 1",
                                         "Bonus Seat Allocation 2",
-                                        "Seat Allocation 2",
-                                        "Candidates List"
+                                        "Seat Allocation (Votes + Seats)",
+                                        "Members List"
                                     ];
 
                                     return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
