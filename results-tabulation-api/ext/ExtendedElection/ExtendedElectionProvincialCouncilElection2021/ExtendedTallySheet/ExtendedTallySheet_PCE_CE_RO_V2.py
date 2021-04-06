@@ -230,9 +230,6 @@ class ExtendedTallySheet_PCE_CE_RO_V2(ExtendedTallySheetReport):
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
                 data_row = []
 
-                data_row_number = party_wise_valid_vote_count_result_item_index + 1
-                data_row.append(data_row_number)
-
                 data_row.append(party_wise_valid_vote_count_result_item.partyName)
 
                 for counting_centre_index in range(number_of_counting_centres):
