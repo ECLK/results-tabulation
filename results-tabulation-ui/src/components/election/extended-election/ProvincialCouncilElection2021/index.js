@@ -28,7 +28,8 @@ import {
     TALLY_SHEET_CODE_PCE_PC_BS_1,
     TALLY_SHEET_CODE_PCE_PC_BS_2,
     TALLY_SHEET_CODE_PCE_PC_SA_1,
-    TALLY_SHEET_CODE_PCE_PC_SA_2
+    TALLY_SHEET_CODE_PCE_PC_SA_2,
+    TALLY_SHEET_CODE_PCE_POST_PC
 } from "./TALLY_SHEET_CODE";
 import {Link, useHistory} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
@@ -146,6 +147,36 @@ export default class ExtendedElectionProvincialCouncilElection2021 extends Exten
                                         "Bonus Seat Allocation 2",
                                         "Seat Allocation (Votes + Seats)",
                                         "Members List"
+                                    ];
+
+                                    return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
+                                        return <li key={tallySheetCodeIndex}>
+                                            {tallySheetCodeLabels[tallySheetCodeIndex]}
+                                            <Link
+                                                className="tally-sheet-code-list-item btn-list"
+                                                to={PATH_ELECTION_TALLY_SHEET_LIST(electionId, tallySheetCode, VOTE_TYPE_POSTAL_AND_NON_POSTAL)}
+                                            >
+                                                List
+                                            </Link>
+                                        </li>
+                                    });
+                                })()}
+
+                            </ul>
+                        </Grid>
+
+
+                        <Grid item xs={12}><h2>Post Election Reports</h2></Grid>
+
+
+                        <Grid item xs={12}>
+                            <ul className="tally-sheet-code-list">
+                                {(() => {
+                                    let tallySheetCodes = [TALLY_SHEET_CODE_PCE_POST_PC
+
+                                    ];
+                                    let tallySheetCodeLabels = [
+                                        "Provincial Results Summary"
                                     ];
 
                                     return tallySheetCodes.map((tallySheetCode, tallySheetCodeIndex) => {
