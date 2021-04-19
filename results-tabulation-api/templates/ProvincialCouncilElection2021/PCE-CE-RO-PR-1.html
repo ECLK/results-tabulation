@@ -17,40 +17,24 @@
 }
 </style>
 <div class="font1">
-    <div style="margin-bottom:5px;text-align:right;">
-        Report: <b>CE-RO-PR/1</b>
-    </div>
     <table class="table table-borderless">
         <tbody>
         <tr>
-            <td></td>
-            <td class="bold no-padding-right" colspan="4" style="text-align:center;">
-                <h1>{{content.election.electionName}}</h1>
+            <td class="bold no-padding-right" colspan="5">
+                <h5 style="text-transform: uppercase;text-decoration-line: underline;">{{content.election.electionName}}</h5>
                 CENTER FOR DECLARATION OF RESULTS<br/>
                 TOTAL OF PREFERENCES COUNTED IN ALL THE COUNTING CENTERS<br/>
-                (Inclusive of those counted at the Postal Votes Counting Centers)
+                Name of Political Party/ Independent Group No :
+                <span style="text-decoration: underline; text-decoration-style:dotted;"> {{content.partyName}}</span><br/>
+                Administrative District :
+                <span style="text-transform: uppercase;"> {{content.administrativeDistrict}}</span>
             </td>
             <td>
-                <div class="all float-right"><h1 class="bold">RO</h1></div>
+                <div class="all float-right" style="padding-left:5px;padding-right:5px;"><h4 class="bold">CE-RO-PR/1</h4></div>
+                <br/><br/><br/>
+                <div class="all float-right bold" style="padding:5px;">Polling Division : {{content.pollingDivision}}</div>
             </td>
         </tr>
-        <tr>
-            <td></td>
-            <td colspan="2" class="no-padding-left no-padding-right">
-                *Polling Division/Postal Voting/Votes of displaced Voters :
-                <span style="text-decoration: underline; text-decoration-style:dotted;"> {{content.pollingDivision}}</span>
-
-            </td>
-            <td colspan="2" class="no-padding-left no-padding-right">
-                Name of Political Party/ Independent Group No :
-                <span style="text-decoration: underline; text-decoration-style:dotted;"> {{content.partyName}}</span>
-            </td>
-            <td class="no-padding-left no-padding-right" colspan="2">
-                Administrative District :
-                <span style="text-decoration: underline; text-decoration-style:dotted;"> {{content.administrativeDistrict}}</span>
-            </td>
-        </tr>
-
         </tbody>
     </table>
 
@@ -60,9 +44,6 @@
             <th class="left right top print-candidate-width" rowspan="2" style="border-bottom: 3px solid #000; vertical-align:middle;">Serial No. of the Candidate</th>
             <th class="left right top bottom" colspan="{{content.countingCentres|length}}" style="vertical-align:middle;width:{{content.countingCentres|length * 80}}px;">Counting Centre No.</th>
             <th class="left right top bottom" colspan="2" style="width:300px;vertical-align:middle;">Total</th>
-            <th class="left right top print-candidate-width" rowspan="2" style="width:200px; border-bottom: 3px solid #000;  vertical-align:middle;">
-              Order of Candidates according to the No. of Preferences
-            </th>
         </tr>
         <tr style="text-align:center;">
             {% for countingCentre in content.countingCentres %}
@@ -77,37 +58,72 @@
             <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}">{{cell}}</td>
             {% endfor %}
             <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}"></td>
-            <td class="left right top bottom text-right {%if cell=="" %}missing-value{% endif %}"></td>
         </tr>
         {% endfor %}
-
         <tr>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
+            <td style="text-align:right;">Total</td>
             {% for totalVoteCount in content.totalVoteCounts %}
             <td class="left right top bottom text-right {%if totalVoteCount=="" %}missing-value{% endif %}" style="vertical-align:middle;">{{totalVoteCount}}</td>
             {% endfor %}
             <td class="all"></td>
+        </tr>
+        <tr>
             <td></td>
-
+            <td colspan="{{content.countingCentres|length + 2}}">Ensure that the results are entered under the correct Center No.</td>
         </tr>
 
     </tbody>
 </table>
 <table class="table table-borderless">
-  <tr>
-    <td>Date: ............................................</td>
-    <td>Prepared by (Name): .......................................  Signature: .......................................</td>
-    <td></td>
-  </tr>
+    <tr>
+        <td rowspan="2" style="vertical-align: middle;" class="bold">Date: ............................................
+            <br/>
+            Time: ............................................
+        </td>
+        <td style="vertical-align: middle;" rowspan="2" class="bold">
+            .......................................
+            <br/>
+            Returning Officer<br/>
+            <span style="text-transform: uppercase;">{{content.administrativeDistrict}}</span> Administrative District
+        </td>
+        <td class="bold">1</td>
+        <td>
+            <div class="group all" style="padding:5px;">
+                <span class="sub-head bold">Prepared by:</span><br/><br/>
+                <span>Signature .......................</span><br/><br/>
+                <span>Name ..........................</span><br/><br/>
+                <span>Designation ........................</span>
+                </div>
+        </td>
+        <td>
+            <div class="group all" style="padding:5px;">
+                <span class="sub-head bold">Checked by:</span><br/><br/>
+                <span></span>Signature .......................</span><br/><br/>
+                <span>Name ..........................</span><br/><br/>
+                <span>Designation ........................</span>
+            </div>
+        </td>
+    </tr>
 
-  <tr>
-    <td></td>
-    <td>Checked by (Name): .......................................  Signature: .......................................</td>
-    <td style="text-align:center;">.......................................<br/>Returning Officer</td>
-  </tr>
+    <tr>
+        <td class="bold">2</td>
+        <td>
+            <div class="group all" style="padding:5px;">
+                <span class="sub-head bold">Prepared by:</span><br/><br/>
+                <span>Signature .......................</span><br/><br/>
+                <span>Name ..........................</span><br/><br/>
+                <span>Designation ........................</span>
+            </div>
+        </td>
+        <td>
+            <div class="group all" style="padding:5px;">
+                <span class="sub-head bold">Checked by:</span><br/><br/>
+                <span>Signature .......................</span><br/><br/>
+                <span>Name ..........................</span><br/><br/>
+                <span>Designation ........................</span>
+            </div>
+        </td>
+    </tr>
 </table>
 
 </div>
