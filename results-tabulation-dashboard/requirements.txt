@@ -39,7 +39,7 @@ packaging==20.0
 pandas==0.25.3
 pluggy==0.13.1
 psycopg2-binary==2.8.2
-py==1.8.1
+py==1.10.0
 pyasn1==0.4.8
 pycparser==2.19
 PyMySQL==0.9.3
