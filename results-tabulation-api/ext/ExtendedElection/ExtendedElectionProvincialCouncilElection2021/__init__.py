@@ -263,8 +263,11 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             area_key = area_name
 
             province_election = _get_province_election(row)
+            country = _get_country_entry(row)
 
             def _create_province_tally_sheets(area):
+                pce_post_pc_tally_sheet_list = country.pce_post_pc_tally_sheet_list
+
                 pce_pc_cd_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pce_pc_cd,
                     electionId=province_election.electionId,
@@ -308,7 +311,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "electionId": province_election.electionId
                     }).metaId,
                     parentTallySheets=[*pce_pc_bs_2_tally_sheet_list, *pce_pc_cd_tally_sheet_list,
-                                       *pce_pc_sa_2_tally_sheet_list],
+                                       *pce_pc_sa_2_tally_sheet_list, *pce_post_pc_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -410,6 +413,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
             return election
 
         def _get_sub_administrative_district_entry(row, vote_type=None):
+            country = _get_country_entry(row)
+            pce_post_pc_tally_sheet_list = country.pce_post_pc_tally_sheet_list
             administrative_district = _get_administrative_district_entry(row)
             administrative_district_sub_election = _get_administrative_district_sub_election(row, vote_type=vote_type)
 
@@ -433,7 +438,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                     "electionId": administrative_district_sub_election.electionId
                 }).metaId,
                 parentTallySheets=[pce_pd_v_tally_sheet,
-                                   *administrative_district.pce_ce_ro_v2_tally_sheet_list],
+                                   *administrative_district.pce_ce_ro_v2_tally_sheet_list,
+                                   *pce_post_pc_tally_sheet_list],
                 workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
             )
             administrative_district.pce_ce_ro_v1_tally_sheet_list.append(pce_ce_ro_v1_tally_sheet)
@@ -467,6 +473,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
         def _get_administrative_district_entry(row):
             administrative_district_election = _get_administrative_district_election(row)
             province = _get_province_entry(row)
+            country = _get_country_entry(row)
 
             area_class = AdministrativeDistrict
             area_name = row["Administrative District"]
@@ -479,6 +486,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                 pce_pc_bs_2_tally_sheet_list = province.pce_pc_bs_2_tally_sheet_list
                 pce_pc_cd_tally_sheet_list = province.pce_pc_cd_tally_sheet_list
                 pce_pc_v_tally_sheet_list = province.pce_pc_v_tally_sheet_list
+                pce_post_pc_tally_sheet_list = country.pce_post_pc_tally_sheet_list
 
                 pce_42_tally_sheet_list = [TallySheet.create(
                     template=tally_sheet_template_pce_42, electionId=administrative_district_election.electionId,
@@ -499,7 +507,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "electionId": administrative_district_election.electionId
                     }).metaId,
                     parentTallySheets=[*pce_pc_sa_1_tally_sheet_list, *pce_pc_sa_2_tally_sheet_list,
-                                       *pce_42_tally_sheet_list],
+                                       *pce_42_tally_sheet_list, *pce_post_pc_tally_sheet_list],
                     workflowInstanceId=workflow_edit_allowed_released_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -511,7 +519,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "electionId": administrative_district_election.electionId
                     }).metaId,
                     parentTallySheets=[*pce_r2_tally_sheet_list,
-                                       *pce_pc_v_tally_sheet_list],
+                                       *pce_pc_v_tally_sheet_list, *pce_post_pc_tally_sheet_list],
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -703,12 +711,14 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                                                                                                   vote_type=NonPostal)
 
             administrative_district = _get_administrative_district_entry(row)
+            country = _get_country_entry(row)
 
             area_class = PollingDivision
             area_name = row["Polling Division"]
             area_key = area_name
 
             def _create_polling_division_tally_sheets(area):
+                pce_post_pc_tally_sheet_list = country.pce_post_pc_tally_sheet_list
                 pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map = administrative_district.pce_ce_ro_pr_2_tally_sheet_list_party_id_wise_map
                 pce_ce_ro_v2_tally_sheet_list = administrative_district.pce_ce_ro_v2_tally_sheet_list
 
@@ -731,7 +741,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": administrative_district_ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pce_pd_v_tally_sheet_list, *pce_ce_ro_v2_tally_sheet_list],
+                    parentTallySheets=[*pce_pd_v_tally_sheet_list, *pce_ce_ro_v2_tally_sheet_list,
+                                       *pce_post_pc_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
