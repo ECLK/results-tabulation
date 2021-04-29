@@ -518,8 +518,8 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": administrative_district_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pce_r2_tally_sheet_list,
-                                       *pce_pc_v_tally_sheet_list, *pce_post_pc_tally_sheet_list],
+                    parentTallySheets=[*pce_r2_tally_sheet_list, *pce_post_pc_tally_sheet_list,
+                                       *pce_pc_v_tally_sheet_list],
                     workflowInstanceId=workflow_report.get_new_instance().workflowInstanceId
                 )]
 
@@ -741,8 +741,7 @@ class ExtendedElectionProvincialCouncilElection2021(ExtendedElection):
                         "areaId": area.areaId,
                         "electionId": administrative_district_ordinary_election.electionId
                     }).metaId,
-                    parentTallySheets=[*pce_pd_v_tally_sheet_list, *pce_ce_ro_v2_tally_sheet_list,
-                                       *pce_post_pc_tally_sheet_list],
+                    parentTallySheets=[*pce_pd_v_tally_sheet_list, *pce_ce_ro_v2_tally_sheet_list],
                     workflowInstanceId=workflow_released_report.get_new_instance().workflowInstanceId
                 )]
 
