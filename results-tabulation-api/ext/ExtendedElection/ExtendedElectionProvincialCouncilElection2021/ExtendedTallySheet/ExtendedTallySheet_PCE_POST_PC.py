@@ -68,10 +68,13 @@ class ExtendedTallySheet_PCE_POST_PC(ExtendedTallySheetReport):
         def html(self, title="", total_registered_voters=None):
             tallySheetVersion = self.tallySheetVersion
 
+            party_and_area_wise_valid_vote_count_result = self.get_party_and_area_wise_valid_vote_count_result()
             area_wise_valid_vote_count_result = self.get_area_wise_valid_vote_count_result()
             party_wise_valid_vote_count_result = self.get_party_wise_valid_vote_count_result()
-            # party_wise_valid_postal_vote_count_result = self.get_party_wise_valid_postal_vote_count_result()
-
+            party_and_area_wise_valid_postal_vote_count_result = self.get_party_and_area_wise_valid_postal_vote_count_result()
+            print("hello")
+            print(party_and_area_wise_valid_vote_count_result)
+            print(party_and_area_wise_valid_postal_vote_count_result)
             stamp = tallySheetVersion.stamp
             election = tallySheetVersion.tallySheet.election
 
@@ -91,6 +94,8 @@ class ExtendedTallySheet_PCE_POST_PC(ExtendedTallySheetReport):
                                "No. of Bonus Seats", "Total seats"],
             }
 
+            get_province_from_administrative_district_map = {}
+
             # Append the grand totals
             number_of_administrative_districts = len(area_wise_valid_vote_count_result)
 
@@ -98,9 +103,13 @@ class ExtendedTallySheet_PCE_POST_PC(ExtendedTallySheetReport):
                 province_name = Area.get_associated_areas(tallySheetVersion.tallySheet.area,
                                                           AreaTypeEnum.Province)[0].areaName
                 if province_name not in content['provinces']:
-                    content['provinces'][province_name] = []
-                content['provinces'][province_name].append(area_wise_valid_vote_count_result_item.areaName)
-            print(content['provinces'])
+                    content['provinces'][province_name] = {}
+
+                administrative_district_name = area_wise_valid_vote_count_result_item.areaName
+                if administrative_district_name not in content['provinces'][province_name]:
+                    get_province_from_administrative_district_map[administrative_district_name] = province_name
+                    content['provinces'][province_name][administrative_district_name] = {}
+
             for party_wise_valid_vote_count_result_item_index, party_wise_valid_vote_count_result_item in party_wise_valid_vote_count_result.iterrows():
                 data_row = []
 

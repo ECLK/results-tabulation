@@ -841,6 +841,18 @@ class ExtendedTallySheet:
             ).reset_index()
             return df
 
+        def get_party_and_area_wise_valid_postal_vote_count_result(self):
+            df = self.df.copy()
+
+            df = df.loc[df['templateRowType'] == "PARTY_WISE_POSTAL_VOTE"]
+            df = df.loc[df['voteType'] == Postal]
+
+            df = df.sort_values(
+                by=['electionPartyId', 'partyId', 'partyName', 'partyAbbreviation', 'partySymbol', 'areaId',
+                    'areaName'], ascending=True
+            ).reset_index()
+            return df
+
         def get_area_wise_valid_vote_count_result(self):
             df = self.df.copy()
             df['numValue'] = df['numValue'].astype(float)
