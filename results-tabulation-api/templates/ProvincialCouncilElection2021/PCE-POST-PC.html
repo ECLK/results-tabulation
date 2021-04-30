@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block container %}
+    <style>
+        .print-party-width {
+            width: 300px;
+        }
+
+        @media print {
+            @page {
+                size: 840mm 594mm;
+            }
+
+            .print-heading {
+                font-size: 20px;
+            }
+
+            .print-gap {
+                margin-right: 200px !important;
+            }
+
+            .print-party-width {
+                width: initial;
+                min-width: 300px !important;
+            }
+        }
+    </style>
+    <div class="font1 pre-30-ed">
+        <table class="table table-borderless">
+            <tbody>
+            <tr>
+                <td class="bold no-padding" colspan="4" style="text-align: center;">
+                    <h4 class="bold" style="text-transform: uppercase;text-decoration: underline;">
+                        {{ content.election.electionName }}
+                    </h4>
+                    <span>Post Election Summary Report - Internal Use Only</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-borderless" style="table-layout:fixed;">
+            <tr style="text-align:center;">
+                <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left print-party-width"
+                    rowspan="2" style="vertical-align: middle;">
+                    Political Party/ Independent Group
+                </th>
+                <th class="left right top bottom no-padding-top no-padding-bottom no-padding-left print-party-width"
+                    rowspan="2" style="vertical-align: middle;">
+
+                </th>
+                {% for province_name in content.provinces %}
+                    <th class="left right top bottom" colspan="{{ content.provinces[province_name]|length }}"
+                        style="vertical-align: middle; width:{{ content.provinces[province_name]|length * 80 }}px;">
+                        {{ province_name }} Province
+                    </th>
+                {% endfor %}
+            </tr>
+            <tr style="text-align:center;" class="ed">
+                {% for province in content.provinces %}
+                    {% for administrative_district in content.provinces[province] %}
+                        <th class="left right top bottom">
+                            <div>{{ administrative_district }}</div>
+                        </th>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+            {% for row in content.data %}
+                {% for attribute in content.attributes %}
+                    {% set attribute_loop = loop %}
+                    <tr>
+                        {% if loop.index0==0 %}
+                            <td class="left right top bottom text-right {% if cell=="" %}missing-value{% endif %}"
+                                style="vertical-align: middle; padding-left:initial;"
+                                rowspan="{{ content.attributes|length }}">{{ row[0] }}</td>
+                        {% endif %}
+                        <td class="left right top bottom text-right {% if cell=="" %}missing-value{% endif %}"
+                            style="vertical-align: middle; padding-left:initial;">{{ attribute }}
+                        </td>
+                        {% for cell in row %}
+                            {% if loop.index0 > 0 %}
+                                <td {% if attribute_loop.index0>4 %}colspan="1" {% endif %}class="left right top bottom text-right {% if cell=="" %}missing-value{% endif %}"
+                                    style="vertical-align: middle; padding-left:initial;">{{ cell }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}

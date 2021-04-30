@@ -23,3 +23,4 @@ export const TALLY_SHEET_CODE_PCE_PC_BS_1 = "PCE-PC-BS-1";
 export const TALLY_SHEET_CODE_PCE_PC_BS_2 = "PCE-PC-BS-2";
 export const TALLY_SHEET_CODE_PCE_PC_SA_1 = "PCE-PC-SA-1";
 export const TALLY_SHEET_CODE_PCE_PC_SA_2 = "PCE-PC-SA-2";
+export const TALLY_SHEET_CODE_PCE_POST_PC = "PCE-POST-PC";
