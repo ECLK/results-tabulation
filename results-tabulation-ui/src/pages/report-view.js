@@ -148,6 +148,10 @@ export default function ReportView(props) {
                                 </div>
                             } else {
                                 return <div className="report-view-status-actions">
+                                    <Button variant="contained" size="small" color="secondary"
+                                            onClick={() => history.push(PATH_ELECTION_TALLY_SHEET_LIST(electionId,tallySheetCode,voteType))}>
+                                        Go to List
+                                    </Button>
                                     <TallySheetActions
                                         tallySheetId={tallySheetId}
                                         electionId={electionId} history={history}

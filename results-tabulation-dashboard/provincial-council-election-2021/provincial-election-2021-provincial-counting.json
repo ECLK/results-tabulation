@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 55,
-  "iteration": 1615979626464,
+  "iteration": 1622701573304,
   "links": [],
   "panels": [
     {
@@ -86,7 +86,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT \"Sri Lanka\"",
+          "rawSql": "SELECT GROUP_CONCAT(areaName) FROM area WHERE areaId IN ($provinceIds)",
           "refId": "A",
           "select": [
             [
@@ -288,7 +288,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -396,7 +396,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n\n\n-- SELECT\n--   CONCAT(\n--     SUM(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedTallySheetCount), \"/\", COUNT(*), \" - \",\n--     ROUND(SUM(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedTallySheetCount) * 100 / COUNT(*), 0), \"%\"\n--   ) AS \"\"\n-- FROM\n-- (SELECT\n--   SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedTallySheetCount\n-- FROM\n--   ext_pce2021_dashboard_tally_sheet_status\n-- WHERE\n--   ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n--   and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n--   and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n--   and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\n-- GROUP BY\n--   ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n\n\n-- SELECT\n--   CONCAT(\n--     SUM(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedTallySheetCount), \"/\", COUNT(*), \" - \",\n--     ROUND(SUM(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedTallySheetCount) * 100 / COUNT(*), 0), \"%\"\n--   ) AS \"\"\n-- FROM\n-- (SELECT\n--   SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedTallySheetCount\n-- FROM\n--   ext_pce2021_dashboard_tally_sheet_status\n-- WHERE\n--   ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n--   and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n--   and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n--   and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\n-- GROUP BY\n--   ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -504,7 +504,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -612,7 +612,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -720,7 +720,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.countingCentreId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n\n\n-- SELECT\n--   CONCAT(\n--     SUM(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedTallySheetCount), \"/\", COUNT(*), \" - \",\n--     ROUND(SUM(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedTallySheetCount) * 100 / COUNT(*), 0), \"%\"\n--   ) AS \"\"\n-- FROM\n-- (SELECT\n--   SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedTallySheetCount\n-- FROM\n--   ext_pce2021_dashboard_tally_sheet_status\n-- WHERE\n--   ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n--   and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n--   and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n--   and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\n-- GROUP BY\n--   ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.countingCentreId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n\n\n-- SELECT\n--   CONCAT(\n--     SUM(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedTallySheetCount), \"/\", COUNT(*), \" - \",\n--     ROUND(SUM(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedTallySheetCount) * 100 / COUNT(*), 0), \"%\"\n--   ) AS \"\"\n-- FROM\n-- (SELECT\n--   SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedTallySheetCount\n-- FROM\n--   ext_pce2021_dashboard_tally_sheet_status\n-- WHERE\n--   ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n--   and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n--   and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-35\"\n--   and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\n-- GROUP BY\n--   ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -1137,7 +1137,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"CE-201\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"CE-201\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -1245,7 +1245,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"CE-201\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"CE-201\"\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -1353,7 +1353,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"CE-201-PV\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"CE-201-PV\"\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -1461,7 +1461,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"CE-201-PV\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"CE-201-PV\"\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -1986,7 +1986,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V1\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V1\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -2094,7 +2094,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V1\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V1\"\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"NonPostal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.pollingDivisionId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -2202,7 +2202,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V1\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V1\"\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Postal\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -2310,7 +2310,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V1\"\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V1\"\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.voteType = \"Displaced\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -2751,6 +2751,36 @@
         "ymin": null
       },
       "tableColumn": "",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  createdAt AS \"time\",\n  statusReportId\nFROM dashboard_status_report\nWHERE\n  $__timeFilter(createdAt)\nORDER BY createdAt",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -2761,7 +2791,7 @@
       "valueMaps": [
         {
           "op": "=",
-          "text": "PCE-4",
+          "text": "PCE-PD-V",
           "value": "null"
         }
       ],
@@ -2812,7 +2842,7 @@
       "pluginVersion": "6.7.3",
       "postfix": "",
       "postfixFontSize": "50%",
-      "prefix": "parties",
+      "prefix": "AD",
       "prefixFontSize": "50%",
       "rangeMaps": [
         {
@@ -2836,7 +2866,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-4\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.partyId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-PD-V\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -3055,7 +3085,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-PR-1\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.partyId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-PR-1\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.partyId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -3240,7 +3270,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -3348,7 +3378,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-V2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -3566,7 +3596,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-PR-2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.partyId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-PR-2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.partyId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -3751,7 +3781,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-R2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-R2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -3859,7 +3889,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-R2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-R2\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -4077,7 +4107,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-PR-3\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.partyId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-CE-RO-PR-3\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.partyId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -4178,6 +4208,36 @@
         "ymin": null
       },
       "tableColumn": "",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  createdAt AS \"time\",\n  statusReportId\nFROM dashboard_status_report\nWHERE\n  $__timeFilter(createdAt)\nORDER BY createdAt",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "statusReportId"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "dashboard_status_report",
+          "timeColumn": "createdAt",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
@@ -4188,7 +4248,7 @@
       "valueMaps": [
         {
           "op": "=",
-          "text": "PCE-21",
+          "text": "PCE-42",
           "value": "null"
         }
       ],
@@ -4262,7 +4322,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-21\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(verifiedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-42\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -4370,7 +4430,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-21\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
+          "rawSql": "SELECT\n  CONCAT(\n    SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)), \"/\", COUNT(*), \" - \",\n    ROUND(SUM(IF(ext_pce2021_dashboard_tally_sheet_status_aggregated.completedSections = totalSections, 1, 0)) * 100 / COUNT(*), 0), \"%\"\n  ) AS \"\"\nFROM\n(SELECT\n  SUM(IF(releasedTallySheetCount = totalTallySheetCount, 1, 0)) AS completedSections, COUNT(*) AS totalSections\nFROM\n  ext_pce2021_dashboard_tally_sheet_status\nWHERE\n  ext_pce2021_dashboard_tally_sheet_status.incrementId IN (SELECT MAX(ext_pce2021_dashboard_increment.id) from ext_pce2021_dashboard_increment WHERE ext_pce2021_dashboard_increment.active=1)\n  and ext_pce2021_dashboard_tally_sheet_status.electionId = $rootElectionId\n  and ext_pce2021_dashboard_tally_sheet_status.provinceId IN ($provinceIds)\n  and ext_pce2021_dashboard_tally_sheet_status.templateName = \"PCE-42\"\nGROUP BY\n  ext_pce2021_dashboard_tally_sheet_status.administrativeDistrictId) AS ext_pce2021_dashboard_tally_sheet_status_aggregated\n",
           "refId": "A",
           "select": [
             [
@@ -4474,6 +4534,32 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "Western",
+          "value": "65916"
+        },
+        "datasource": "MySQL",
+        "definition": "SELECT \n  areaName AS __text, areaId AS __value \nFROM area, election \nWHERE \n  election.electionId = area.electionId and election.rootElectionId = $rootElectionId and areaType = 'Province';",
+        "hide": 0,
+        "includeAll": false,
+        "index": -1,
+        "label": "Province",
+        "multi": false,
+        "name": "provinceIds",
+        "options": [],
+        "query": "SELECT \n  areaName AS __text, areaId AS __value \nFROM area, election \nWHERE \n  election.electionId = area.electionId and election.rootElectionId = $rootElectionId and areaType = 'Province';",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -4501,5 +4587,5 @@
   "variables": {
     "list": []
   },
-  "version": 3
+  "version": 44
 }
