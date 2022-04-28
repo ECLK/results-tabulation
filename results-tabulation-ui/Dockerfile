@@ -6,8 +6,11 @@ COPY ./public /app/public
 WORKDIR /app
 RUN npm install
 
-ENV REACT_APP_AUTH_APP_URL="https://tabulations.ecdev.opensource.lk"
-ENV REACT_APP_TABULATION_API_URL="https://apim-gateway.ecdev.opensource.lk/tabulation/0.1.0"
+ARG AUTH_APP_URL="https://tabulations.ecdev.opensource.lk"
+ARG TABULATION_API_URL="https://apim-gateway.ecdev.opensource.lk/tabulation/0.1.0"
+
+ENV REACT_APP_AUTH_APP_URL=$AUTH_APP_URL
+ENV REACT_APP_TABULATION_API_URL=$TABULATION_API_URL
 ENV REACT_APP_DEBUG=true
 ENV REACT_APP_TABULATION_API_PAGINATION_LIMIT=250
 ENV REACT_APP_USE_PDF_SERVICE=true
