@@ -32,7 +32,7 @@ marshmallow-enum==1.4.1
 marshmallow-sqlalchemy==0.16.3
 more-itertools==8.0.2
 num2words==0.5.10
-numpy==1.18.0
+numpy==1.22.0
 openapi-spec-validator==0.2.7
 packaging==20.0
 pandas==0.25.3
