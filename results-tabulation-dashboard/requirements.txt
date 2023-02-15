@@ -59,5 +59,5 @@ swagger-ui-bundle==0.0.3
 tqdm==4.42.1
 urllib3==1.25.7
 wcwidth==0.1.8
-Werkzeug==0.16.0
+Werkzeug==2.2.3
 mysqlclient
